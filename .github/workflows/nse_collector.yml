@@ -13,7 +13,7 @@ permissions:
 jobs:
   collect-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,9 +37,16 @@ jobs:
         run: python pipeline/v11_3_abcd_e.py
       - name: IPO-PLX V2.0 early-listing engine
         run: python pipeline/ipo_plx_v2.py
+      - name: Acquire Macro + FII/DII + Geo context
+        run: python collector/context_data.py
+      - name: Acquire Live 1m candidate feed
+        continue-on-error: true
+        run: python collector/live_1m.py
       - name: Risk modifier
         run: python pipeline/risk_modifier.py
-      - name: Deterministic provisional 30-10-3 selection + readiness gate
+      - name: Build full 56x12 = 672 diagnostic matrix
+        run: python pipeline/diagnostics_672.py
+      - name: Deterministic 30-10-3 final selection + readiness gate
         run: python pipeline/final_selection.py
       - name: Upload outputs
         if: always()
@@ -49,7 +56,10 @@ jobs:
           path: |
             data/processed/
             data/reference/
+            data/context/
+            data/live/
             data/qa/
             outputs/finalists/
+            outputs/diagnostics/
             outputs/ipo_plx/
           if-no-files-found: warn
