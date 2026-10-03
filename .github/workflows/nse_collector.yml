@@ -27,6 +27,7 @@ jobs:
       - name: Acquire 200 NSE market sessions
         run: python collector/nse_download.py --sessions 200
       - name: Acquire NSE Security Master
+        continue-on-error: true
         run: python collector/security_master.py
       - name: Build normalized adaptive dataset
         run: python collector/build_200_sessions.py
