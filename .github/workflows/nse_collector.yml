@@ -1,0 +1,46 @@
+name: NSE 200 Session Collector + V11.3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "30 4 * * 1-5"
+
+permissions:
+  contents: read
+
+jobs:
+  collect-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: python -m pip install -r requirements.txt
+      - name: Acquire 200 NSE sessions
+        run: python collector/nse_download.py --sessions 200
+      - name: Build normalized dataset
+        run: python collector/build_200_sessions.py
+      - name: Strict QA
+        run: python qa/validate_dataset.py
+      - name: V11.3 A/B/C/D/E technical core
+        run: python pipeline/v11_3_abcd_e.py
+      - name: Risk modifier
+        run: python pipeline/risk_modifier.py
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: precision-wires-nse200-${{ github.run_number }}
+          path: |
+            data/processed/
+            data/qa/
+            outputs/finalists/
+          if-no-files-found: warn
