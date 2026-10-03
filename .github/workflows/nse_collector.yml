@@ -39,6 +39,8 @@ jobs:
         run: python pipeline/ipo_plx_v2.py
       - name: Risk modifier
         run: python pipeline/risk_modifier.py
+      - name: Deterministic provisional 30-10-3 selection + readiness gate
+        run: python pipeline/final_selection.py
       - name: Upload outputs
         if: always()
         uses: actions/upload-artifact@v4
