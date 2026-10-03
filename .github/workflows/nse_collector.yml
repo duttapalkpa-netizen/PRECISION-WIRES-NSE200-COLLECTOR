@@ -1,4 +1,4 @@
-name: NSE 200 Session Collector + V11.3
+name: NSE Historical Backbone + Adaptive V11.3 + IPO-PLX
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
 jobs:
   collect-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,23 +24,29 @@ jobs:
           cache: pip
       - name: Install
         run: python -m pip install -r requirements.txt
-      - name: Acquire 200 NSE sessions
+      - name: Acquire 200 NSE market sessions
         run: python collector/nse_download.py --sessions 200
-      - name: Build normalized dataset
+      - name: Acquire NSE Security Master
+        run: python collector/security_master.py
+      - name: Build normalized adaptive dataset
         run: python collector/build_200_sessions.py
       - name: Strict QA
         run: python qa/validate_dataset.py
-      - name: V11.3 A/B/C/D/E technical core
+      - name: Adaptive V11.3 A/B/C/D/E technical core
         run: python pipeline/v11_3_abcd_e.py
+      - name: IPO-PLX V2.0 early-listing engine
+        run: python pipeline/ipo_plx_v2.py
       - name: Risk modifier
         run: python pipeline/risk_modifier.py
       - name: Upload outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: precision-wires-nse200-${{ github.run_number }}
+          name: precision-wires-adaptive-${{ github.run_number }}
           path: |
             data/processed/
+            data/reference/
             data/qa/
             outputs/finalists/
+            outputs/ipo_plx/
           if-no-files-found: warn
