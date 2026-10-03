@@ -174,6 +174,52 @@ def validate_legacy(content: bytes) -> bool:
         print(f"LEGACY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
         return False
 
+def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
+    """Validate NSE Full Bhavcopy and Security Deliverable CSV."""
+    if looks_blocked(content) or len(content) < 1000:
+        return False
+    try:
+        import pandas as pd
+        df = pd.read_csv(io.BytesIO(content), nrows=100, dtype=str)
+        cols = {_clean_key(x): x for x in df.columns}
+        def col(*names):
+            return next((cols[_clean_key(n)] for n in names if _clean_key(n) in cols), None)
+        symbol, series = col("SYMBOL"), col("SERIES")
+        close = col("CLOSE_PRICE", "CLOSEPRICE", "CLSPRIC")
+        dq = col("DELIV_QTY", "DELIVERY_QTY", "DELIVQTY")
+        dp = col("DELIV_PER", "DELIVERY_PER", "DELIVPER")
+        if not all((symbol, series, close, dq, dp)):
+            return False
+        eq = df[df[series].astype(str).str.strip().str.upper().eq("EQ")]
+        q = pd.to_numeric(eq[dq], errors="coerce")
+        p = pd.to_numeric(eq[dp], errors="coerce")
+        cl = pd.to_numeric(eq[close], errors="coerce")
+        return (not eq.empty and cl.notna().any() and q.notna().any()
+                and p.notna().any() and not ((p.dropna() < 0) | (p.dropna() > 100)).any())
+    except Exception as e:
+        print(f"FULL_DELIVERY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
+        return False
+
+
+def download_full_delivery(session, stamp: str, out: Path) -> bool:
+    """Prefer NSE's combined Full Bhavcopy + Security Deliverable report."""
+    urls = [
+        f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
+        f"https://archives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
+    ]
+    target = out / f"sec_bhavdata_full_{stamp}.csv"
+    for url in urls:
+        try:
+            r = session.get(url, timeout=(10, 25))
+            print(f"FULL_DELIVERY {stamp} status={r.status_code} bytes={len(r.content)}", flush=True)
+            if r.status_code == 200 and validate_full_delivery(r.content, stamp):
+                target.write_bytes(r.content)
+                return True
+        except requests.RequestException as e:
+            print(f"FULL_DELIVERY_WARN {stamp}: {type(e).__name__}", flush=True)
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sessions", type=int, default=200)
@@ -212,6 +258,14 @@ def main():
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
             print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
+            continue
+
+        got = download_full_delivery(s, stamp, out)
+        if got:
+            valid.append(d)
+            diagnostics.append({"date": d.isoformat(), "status": "OK_FULL_BHAVCOPY_DELIVERY"})
+            print(f"OK_FULL_BHAVCOPY_DELIVERY {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
+            time.sleep(0.3)
             continue
 
         got = False
