@@ -22,14 +22,14 @@ def main():
         dp=df["DELIV_PER"].dropna()
         if ((dp<0)|(dp>100)).any(): issues.append("DELIV_PER outside 0..100")
         dates=df["DATE"].nunique(); symbols=df["SYMBOL"].nunique()
-        delivery_qty_coverage=round(100*df["DELIV_QTY"].notna().mean(),2) if "DELIV_QTY" in df else 0.0
-        delivery_pct_coverage=round(100*df["DELIV_PER"].notna().mean(),2) if "DELIV_PER" in df else 0.0
-        delivery_ready=delivery_qty_coverage>=95 and delivery_pct_coverage>=95
+        delivery_qty_coverage=float(round(100*df["DELIV_QTY"].notna().mean(),2)) if "DELIV_QTY" in df else 0.0
+        delivery_pct_coverage=float(round(100*df["DELIV_PER"].notna().mean(),2)) if "DELIV_PER" in df else 0.0
+        delivery_ready=bool(delivery_qty_coverage>=95 and delivery_pct_coverage>=95)
     result={"status":"PASS" if sessions>=200 and not issues else "FAIL",
             "raw_files":len(files),"sessions":sessions,"processed_dates":dates,"symbols":symbols,
             "delivery_qty_coverage_pct":delivery_qty_coverage if f.exists() else 0.0,
             "delivery_pct_coverage_pct":delivery_pct_coverage if f.exists() else 0.0,
-            "delivery_ready_for_final_selection":delivery_ready if f.exists() else False,
+            "delivery_ready_for_final_selection":bool(delivery_ready) if f.exists() else False,
             "final_selection_data_ready":bool(f.exists() and delivery_ready),
             "issues":issues}
     (QA/"qa_report.json").write_text(json.dumps(result,indent=2,default=str)); print(json.dumps(result,indent=2))
