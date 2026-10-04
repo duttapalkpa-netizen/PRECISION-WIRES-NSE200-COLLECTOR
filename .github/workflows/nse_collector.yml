@@ -13,7 +13,7 @@ permissions:
 jobs:
   collect-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +33,11 @@ jobs:
         run: python collector/build_200_sessions.py
       - name: Strict QA
         run: python qa/validate_dataset.py
-      - name: Adaptive V11.3 A/B/C/D/E technical core
+      - name: 100-session leakage-safe V11.3 walk-forward behavioural backtest
+        env:
+          WF_SESSIONS: "100"
+        run: python pipeline/walk_forward_backtest.py
+      - name: Adaptive V11.3 A/B/C/D/E technical core + behavioural ranking
         run: python pipeline/v11_3_abcd_e.py
       - name: IPO-PLX V2.0 early-listing engine
         run: python pipeline/ipo_plx_v2.py
@@ -61,5 +65,5 @@ jobs:
             data/qa/
             outputs/finalists/
             outputs/diagnostics/
-            outputs/ipo_plx/
+            outputs/ipo_plx/\n            outputs/backtest/
           if-no-files-found: warn
