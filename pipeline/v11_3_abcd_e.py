@@ -1,6 +1,7 @@
 from pathlib import Path
 import numpy as np, pandas as pd
-import json\nfrom pipeline.walk_forward_backtest import add_features
+import json
+from pipeline.walk_forward_backtest import add_features
 
 SRC=Path("data/processed/nse_eq_200_sessions.csv")
 OUT=Path("outputs/finalists")
