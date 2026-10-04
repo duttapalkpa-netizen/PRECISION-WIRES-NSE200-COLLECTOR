@@ -34,6 +34,7 @@ def safe_div(a,b):
 
 def add_features(df):
     df=df.sort_values(["SYMBOL","DATE"]).copy()
+    df["HISTORY_DEPTH_AT_T"]=df.groupby("SYMBOL",sort=False).cumcount()+1
     g=df.groupby("SYMBOL",sort=False)
     c=g["CLOSE_PRICE"]; h=g["HIGH_PRICE"]; l=g["LOW_PRICE"]; v=g["TTL_TRD_QNTY"]
     for w in [1,3,5,10,20]:
@@ -137,7 +138,7 @@ def main():
     for dt in cutoffs:
         x=df[df["DATE"]==dt].dropna(subset=["READINESS"]).copy()
         # Minimum history: 20 sessions. Adaptive modes remain eligible.
-        x=x[x["HISTORY_DEPTH"].fillna(0)>=20]
+        x=x[x["HISTORY_DEPTH_AT_T"].fillna(0)>=20]
         if x.empty: continue
         x["BEHAVIOR_SCORE"]=(
             .45*x["EXPANSION_READY"]+.20*x["READINESS"]+
@@ -145,7 +146,7 @@ def main():
             .10*np.clip(50+x["RS20"].fillna(0)*3,0,100))
         x=x.sort_values(["BEHAVIOR_SCORE","EXPANSION_READY","READINESS","RS20","SYMBOL"],ascending=[False]*4+[True]).head(30)
         for _,r in x.iterrows():
-            rec={"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],"BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],
+            rec={"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],"HISTORY_DEPTH_AT_T":int(r["HISTORY_DEPTH_AT_T"]),"BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],
                  "STATE":r["STATE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
                  "EXPANSION_READY":r["EXPANSION_READY"],"EXHAUSTION":r["EXHAUSTION"],
                  "RVOL20":r["RVOL20"],"RS20":r["RS20"],"RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
