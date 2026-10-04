@@ -1,5 +1,5 @@
 from pathlib import Path
-import numpy as np, pandas as pd
+import numpy as np, pandas as pd\nimport json\nfrom pipeline.walk_forward_backtest import add_features
 
 SRC=Path("data/processed/nse_eq_200_sessions.csv")
 OUT=Path("outputs/finalists")
@@ -58,7 +58,16 @@ def main():
         D=c.iloc[-1]>=ema20 and c.iloc[-1]/max(c.tail(min(20,n)).min(),1e-9)-1>=.05
         E=not(A and B and C) and (energy>=55 or lead>=55)
 
-        score=.25*energy+.20*lead+.20*min(rvol*25,100)+.15*(100 if C else 0)+.10*(100 if D else 0)+.10*(100 if E else 0)
+        base_score=.25*energy+.20*lead+.20*min(rvol*25,100)+.15*(100 if C else 0)+.10*(100 if D else 0)+.10*(100 if E else 0)
+        if sym in latest.index:
+            br=latest.loc[sym]
+            behavior_score=float(br["BEHAVIOR_SCORE"]) if "BEHAVIOR_SCORE" in br else float(br["READINESS"])
+            behavior_state=str(br["STATE"])
+            hist_rate=float(calib.get(behavior_state,{}).get("hit10_h3",0)) if calib else 0.0
+            calibration_score=float(np.clip(50+50*(hist_rate/max_rate if max_rate>0 else 0),0,100))
+        else:
+            behavior_score=50.0; behavior_state="UNKNOWN"; hist_rate=0.0; calibration_score=50.0
+        score=.50*base_score+.35*behavior_score+.15*calibration_score
 
         rows.append({
             "SYMBOL":sym,
