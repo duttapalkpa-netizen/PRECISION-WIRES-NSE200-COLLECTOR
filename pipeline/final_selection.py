@@ -45,9 +45,20 @@ def main():
     else:
         try:
             ld=pd.read_csv(live)
-            required={"SYMBOL","TIMESTAMP","CLOSE","VWAP","RVOL","ORB_HIGH"}
+            required={"SYMBOL","TIMESTAMP","CLOSE","DAY_VWAP","DAY_RVOL","ORB_HIGH_15"}
             if not required.issubset({str(c).upper() for c in ld.columns}):
                 blockers.append("LIVE_INTRADAY_SCHEMA_INCOMPLETE")
+            if len(ld)==0:
+                blockers.append("LIVE_INTRADAY_NO_ROWS")
+            status_path=Path("data/live/live_1m_status.json")
+            if status_path.exists():
+                ls=json.loads(status_path.read_text())
+                if ls.get("status")!="LIVE_1M_CAPTURED":
+                    blockers.append("LIVE_INTRADAY_CAPTURE_NOT_CONFIRMED")
+                if int(ls.get("rows",0) or 0)<=0:
+                    blockers.append("LIVE_INTRADAY_NO_CAPTURED_ROWS")
+            else:
+                blockers.append("LIVE_INTRADAY_STATUS_MISSING")
         except Exception:
             blockers.append("LIVE_INTRADAY_FEED_UNREADABLE")
 
