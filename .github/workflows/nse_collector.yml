@@ -65,5 +65,6 @@ jobs:
             data/qa/
             outputs/finalists/
             outputs/diagnostics/
-            outputs/ipo_plx/\n            outputs/backtest/
+            outputs/ipo_plx/
+            outputs/backtest/
           if-no-files-found: warn
