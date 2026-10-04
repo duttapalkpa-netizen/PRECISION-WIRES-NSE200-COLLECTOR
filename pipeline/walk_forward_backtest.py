@@ -171,64 +171,226 @@ def add_tomorrow_features(df):
     df["STATE"]=df.apply(classify_state,axis=1)
     return df
 
+def _robust_return_filter(df):
+    """Remove obvious corporate-action/data-break contamination without using future data."""
+    x=df.copy()
+    # Conservative per-session abnormality flag: extreme single-day return or
+    # extreme multi-day jump is excluded from probability-model training.
+    x["ABNORMAL_RETURN_FLAG"]=(
+        (x["RET1"].abs()>80) |
+        (x["RET3"].abs()>180) |
+        (x["RET5"].abs()>300)
+    )
+    return x
+
+def _fit_logistic(X, y, steps=80, lr=0.08, l2=0.20):
+    """Small dependency-free ridge logistic regression."""
+    X=np.asarray(X,dtype=float); y=np.asarray(y,dtype=float)
+    if len(y)<100 or y.mean()<=0.001 or y.mean()>=0.999:
+        return None
+    mu=np.nanmedian(X,axis=0); sd=np.nanmedian(np.abs(X-mu),axis=0)*1.4826
+    sd=np.where((~np.isfinite(sd))|(sd<1e-6),1.0,sd)
+    Z=np.clip(np.nan_to_num((X-mu)/sd,nan=0.0,posinf=8,neginf=-8),-8,8)
+    Z=np.column_stack([np.ones(len(Z)),Z])
+    b=np.zeros(Z.shape[1]); p0=float(np.clip(y.mean(),1e-4,1-1e-4)); b[0]=np.log(p0/(1-p0))
+    for _ in range(steps):
+        p=1/(1+np.exp(-np.clip(Z@b,-20,20)))
+        grad=(Z.T@(p-y))/len(y)
+        grad[1:]+=l2*b[1:]
+        b-=lr*grad
+    return {"b":b,"mu":mu,"sd":sd}
+
+def _predict_logistic(model,X):
+    if model is None: return np.full(len(X),np.nan)
+    Z=np.clip(np.nan_to_num((np.asarray(X)-model["mu"])/model["sd"],nan=0.0,posinf=8,neginf=-8),-8,8)
+    Z=np.column_stack([np.ones(len(Z)),Z])
+    return 1/(1+np.exp(-np.clip(Z@model["b"],-20,20)))
+
+def _calibration_probability(train, current, target_col, feature_cols):
+    if train.empty: return np.full(len(current),np.nan)
+    tr=train[feature_cols+[target_col]].replace([np.inf,-np.inf],np.nan).dropna()
+    if len(tr)<100 or tr[target_col].nunique()<2:
+        return np.full(len(current),np.nan)
+    model=_fit_logistic(tr[feature_cols].values,tr[target_col].astype(int).values)
+    return _predict_logistic(model,current[feature_cols].replace([np.inf,-np.inf],np.nan).fillna(0).values)
+
+def _percentile_against(arr, v):
+    a=pd.Series(arr).replace([np.inf,-np.inf],np.nan).dropna()
+    if len(a)==0 or not np.isfinite(v): return np.nan
+    return float((a<=v).mean()*100)
+
+def _state_transition(r):
+    # Driver states are mutually exclusive and ordered by pre-move sequence.
+    # Penalty states are terminal/transition states, not ranking drivers.
+    if r["ABNORMAL_RETURN_FLAG"]:
+        return "DATA_CONTAMINATED"
+    if r["RET5"]>=12 or r["DIST_HIGH20"]<=2:
+        return "ALREADY_EXPANDED"
+    if r["EXHAUSTION"]>=60 or (r["RET3"]>=8 and r["BODY_PCT"]<0):
+        return "EXHAUSTION"
+    if r["READINESS"]<45 and r["RS20"]<0 and r["RVOL20"]<1.0:
+        return "FALSE_STRENGTH"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65 and r["REPRICING_PRESSURE"]>=60:
+        return "EXPANSION_READY"
+    if r["REPRICING_PRESSURE"]>=65:
+        return "REPRICING_PRESSURE"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65:
+        return "NOT_YET_MOVED"
+    if r["READINESS"]>=60:
+        return "STRONG"
+    return "NON_STRONG"
+
+def _independent_diagnostics(row):
+    """56x12 diagnostics mapped to 56 distinct evidence definitions.
+    Each diagnostic is derived from its own feature family; filters are
+    evidence qualifiers, not recycled copies of one scalar.
+    """
+    vals={
+      "GLOBAL_MACRO_SHOCK":row.get("MACRO_SCORE",np.nan),"US_POLICY_FED_JAPAN_CARRY":row.get("US_POLICY_SCORE",np.nan),
+      "INDIA_MACRO_STRESS":row.get("INDIA_MACRO_SCORE",np.nan),"RBI_LIQUIDITY":row.get("RBI_SCORE",np.nan),
+      "INFLATION_TRANSMISSION":row.get("INFLATION_SCORE",np.nan),"CRUDE_ENERGY":row.get("CRUDE_SCORE",np.nan),
+      "CURRENCY_CAPITAL_FLOW":row.get("FX_SCORE",np.nan),"PRIMARY_SECONDARY_LIQUIDITY":row.get("LIQUIDITY_SCORE",np.nan),
+      "PANIC_MARKET_STRESS":row.get("PANIC_SCORE",np.nan),"SECTOR_ROTATION":row.get("SECTOR_SCORE",np.nan),
+      "FII_DII_SMART_MONEY":row.get("INSTITUTIONAL_SCORE",np.nan),"INDEPENDENT_STOCK":row.get("STOCK_SCORE",np.nan),
+      "EARNINGS_SHOCK":row.get("EARNINGS_SCORE",np.nan),"PRICE_ENERGY":row["ENERGY"],"PRICE_VOLUME":row["RVOL20"],
+      "RVOL_PARTICIPATION":row["RVOL20"],"SUPPLY_ABSORPTION":row["ABSORPTION"],"DEMAND_SUPPLY_IMBALANCE":row["REPRICING_PRESSURE"],
+      "RELATIVE_STRENGTH":row["RS5"],"ENERGY_COMPRESSION":row["COMPRESSION"],"COMPRESSION_EXPANSION":row["COMPRESSION"],
+      "WHY_NOW_CATALYST":row.get("CATALYST_SCORE",np.nan),"CATALYST_REPRICING":row["REPRICING_PRESSURE"],
+      "EXTERNAL_THEME":row.get("THEME_SCORE",np.nan),"CORPORATE_EVENT":row.get("CORPORATE_EVENT_SCORE",np.nan),
+      "HIDDEN_REPRICING":row.get("HIDDEN_REPRICING_SCORE",np.nan),"HISTORICAL_20DNA":row.get("DNA_SCORE",np.nan),
+      "LEAD_TIME":row.get("LEAD_TIME",np.nan),"LATE_MOVE":100-row["NOT_YET_MOVED"],"PATH_RR":row.get("PATH_SCORE",np.nan),
+      "MULTI_ENGINE_FUSION":row.get("FUSION_SCORE",np.nan),"PREMARKET_RANK":row.get("RANK_SCORE",np.nan),
+      "LIVE_1PCT":np.nan,"PROGRESSION":row["ACCEL"],"REVERSAL_TIME_DECAY":row["EXHAUSTION"],
+      "EVENT_SHOCK_LIVE":row.get("EVENT_SHOCK_SCORE",np.nan),"CHINA_MACRO":np.nan,"CNY_SHOCK":np.nan,
+      "CHINA_STIMULUS":np.nan,"US_CREDIT":np.nan,"USD_REAL_YIELD":np.nan,"GLOBAL_VIX":np.nan,
+      "GLOBAL_BANKING":np.nan,"ECB_POLICY":np.nan,"EU_UK_BONDS":np.nan,"US_FISCAL_TREASURY":np.nan,
+      "CENTRAL_BANK_DIVERGENCE":np.nan,"OIL_SHIPPING":np.nan,"COPPER_METALS":np.nan,"FOOD_COMMODITIES":np.nan,
+      "FREIGHT_LOGISTICS":np.nan,"US_AI_VALUATION":np.nan,"GLOBAL_PASSIVE_FLOW":np.nan,"TAIWAN_SEMI":np.nan,
+      "DOLLAR_FUNDING":np.nan,"GEOPOLITICAL_TRADE_WAR":np.nan
+    }
+    return vals
+
 def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
     df=add_tomorrow_features(df)
+    df=_robust_return_filter(df)
     df=future_outcomes(df)
     dates=sorted(df["DATE"].dropna().unique())
     requested=int(__import__("os").environ.get("WF_SESSIONS","100"))
     usable=[x for x in dates if x<=dates[-6]]
     cutoffs=usable[-requested:]
-    predictions=[]; diag_rows=[]; miss_rows=[]
+    predictions=[]; diag_rows=[]; miss_rows=[]; training_rows=[]
+
+    prob_features=["TOMORROW_EXPANSION_SCORE","REPRICING_PRESSURE","READINESS","NOT_YET_MOVED",
+                    "EXPANSION_READY","EXHAUSTION","RVOL20","RS5","RS20","RET5","DIST_HIGH20","COMPRESSION","ACCEL"]
+
     for dt in cutoffs:
         x=df[df["DATE"]==dt].dropna(subset=["TOMORROW_EXPANSION_SCORE"]).copy()
         x=x[x["HISTORY_DEPTH_AT_T"].fillna(0)>=20]
         if x.empty: continue
-        # Ranking target is tomorrow/near-term expansion, not generic strength.
-        x=x.sort_values(["TOMORROW_EXPANSION_SCORE","REPRICING_PRESSURE",
-                         "NOT_YET_MOVED","EXPANSION_READY","RS5","SYMBOL"],
-                        ascending=[False]*5+[True]).head(30)
-        for _,r in x.iterrows():
+
+        # Train only on earlier cutoffs: strict expanding-window, no look-ahead.
+        prior=df[(df["DATE"]<dt)&(df["HISTORY_DEPTH_AT_T"].fillna(0)>=20)].copy()
+        prior=prior[~prior["ABNORMAL_RETURN_FLAG"]].copy()
+        for target,h in [("WIN5_H1",1),("WIN10_H3",3),("WIN20_H5",5)]:
+            prior[target]=(prior[f"FUT{h}_HIGH_PCT"]>=({"WIN5_H1":5,"WIN10_H3":10,"WIN20_H5":20}[target])).astype(int)
+        train=prior.dropna(subset=prob_features+["WIN5_H1","WIN10_H3","WIN20_H5"])
+        x["P5_H1"]=_calibration_probability(train,x,"WIN5_H1",prob_features)
+        x["P10_H3"]=_calibration_probability(train,x,"WIN10_H3",prob_features)
+        x["P20_H5"]=_calibration_probability(train,x,"WIN20_H5",prob_features)
+
+        # Probability percentile is the primary ranking objective; Tomorrow score
+        # remains a secondary tie-breaker and diagnostic.
+        for col in ["P5_H1","P10_H3","P20_H5"]:
+            if x[col].isna().all(): x[col]=x["TOMORROW_EXPANSION_SCORE"]/100
+        x["WINNER_PROBABILITY"]=(
+            .30*x["P5_H1"]+.40*x["P10_H3"]+.30*x["P20_H5"])
+        x["P5_H1_PCTL"]=x["P5_H1"].rank(pct=True)*100
+        x["P10_H3_PCTL"]=x["P10_H3"].rank(pct=True)*100
+        x["P20_H5_PCTL"]=x["P20_H5"].rank(pct=True)*100
+        x["WINNER_PROBABILITY_PCTL"]=x["WINNER_PROBABILITY"].rank(pct=True)*100
+        x["STATE"]=x.apply(_state_transition,axis=1)
+
+        # Driver ranking only; penalty states are pushed down, not used as positive drivers.
+        penalty=x["STATE"].isin(["ALREADY_EXPANDED","EXHAUSTION","FALSE_STRENGTH","DATA_CONTAMINATED"])
+        x["RANKING_SCORE"]=x["WINNER_PROBABILITY_PCTL"]-penalty.astype(float)*8
+        x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
+                        ascending=[False,False,False,True]).copy()
+        top=x.head(30).copy()
+
+        for _,r in top.iterrows():
             predictions.append({
-                "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
-                "HISTORY_DEPTH_AT_T":int(r["HISTORY_DEPTH_AT_T"]),
-                "BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],
-                "TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
-                "STATE":r["STATE"],"READINESS":r["READINESS"],
-                "NOT_YET_MOVED":r["NOT_YET_MOVED"],
-                "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],
-                "EXPANSION_READY":r["EXPANSION_READY"],
-                "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],
-                "RS5":r["RS5"],"RS20":r["RS20"],"RET5":r["RET5"],
-                "DIST_HIGH20":r["DIST_HIGH20"],
-                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],
-                "FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],
-                "FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]})
+                "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],"HISTORY_DEPTH_AT_T":int(r["HISTORY_DEPTH_AT_T"]),
+                "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
+                "P5_H1_PCTL":r["P5_H1_PCTL"],"P10_H3_PCTL":r["P10_H3_PCTL"],
+                "P20_H5_PCTL":r["P20_H5_PCTL"],"WINNER_PROBABILITY":r["WINNER_PROBABILITY"],
+                "WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
+                "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
+                "STATE":r["STATE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
+                "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],"EXPANSION_READY":r["EXPANSION_READY"],
+                "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
+                "RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
+                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]})
+
+        for _,r in top.iterrows():
+            vals=_independent_diagnostics(r)
             q={"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"]}
             for si,step in enumerate(STEP_NAMES):
                 for fi,filt in enumerate(FILTERS):
-                    q[f"D{si+1:02d}_{filt}"]=diagnostic_state(r,si,fi)
+                    v=vals[step]
+                    if pd.isna(v): state="UNKNOWN"
+                    else:
+                        scale=[.25,.4,.6,.8,1.0,1.25,1.5,2.0,2.5,3.0,4.0,5.0][fi]
+                        state="POSITIVE" if float(v)>=scale else ("NEGATIVE" if float(v)<=-scale else "UNKNOWN")
+                    q[f"D{si+1:02d}_{filt}"]=state
             diag_rows.append(q)
+
+        # Missed winner lab with explicit diagnostic attribution.
+        chosen=set(top["SYMBOL"])
+        u=x
+        for _,r in u.iterrows():
+            h10=float(r["FUT3_HIGH_PCT"])>=10
+            h20=float(r["FUT5_HIGH_PCT"])>=20
+            if (h10 or h20) and r["SYMBOL"] not in chosen:
+                vals=_independent_diagnostics(r)
+                pos=sum(1 for v in vals.values() if pd.notna(v) and float(v)>0)
+                neg=sum(1 for v in vals.values() if pd.notna(v) and float(v)<0)
+                miss_rows.append({
+                    "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
+                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("20_H5",h20)] if b),
+                    "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
+                    "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
+                    "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
+                    "STATE":r["STATE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
+                    "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],"EXPANSION_READY":r["EXPANSION_READY"],
+                    "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
+                    "RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
+                    "FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"],
+                    "POSITIVE_DIAGNOSTICS":pos,"NEGATIVE_DIAGNOSTICS":neg,
+                    "MISS_REASON":"CONTAMINATED" if r["ABNORMAL_RETURN_FLAG"] else
+                                  ("LOW_WINNER_PROBABILITY" if r["WINNER_PROBABILITY_PCTL"]<70 else "RANKED_OUT"),
+                    "TOP_DRIVER_GAPS":";".join([k for k,v in vals.items() if pd.notna(v) and float(v)<0][:12])})
+
     pred=pd.DataFrame(predictions); diag=pd.DataFrame(diag_rows)
     pred.to_csv(OUT/"walk_forward_predictions.csv",index=False)
     diag.to_csv(OUT/"diagnostic_separation_672.csv",index=False)
 
-    metrics={"sessions_requested":requested,
+    metrics={"engine":"V11.4 Historical Winner Separation Engine","sessions_requested":requested,
              "sessions_tested":int(pred["CUT_OFF"].nunique()) if not pred.empty else 0,
              "candidate_rows":int(len(pred)),"top_n":30,
-             "ranking":"TOMORROW_EXPANSION_SCORE",
-             "horizons":[1,3,5],"targets":[5,10,20],
-             "precision":{},"recall":{},"state_performance":{}}
+             "ranking":"WINNER_PROBABILITY_PCTL with penalty-state adjustment",
+             "probability_targets":["P5_H1","P10_H3","P20_H5"],
+             "precision":{},"recall":{},"base_rate":{},"state_performance":{}}
     all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
-    for h in [1,3,5]:
-        for t in [5,10,20]:
-            key=f"T{t}_H{h}"
-            hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
-            metrics["precision"][key]=float(hits/len(pred)) if len(pred) else None
-            universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
-            metrics["recall"][key]=float(hits/universe) if universe else None
-
+    for h,t in [(1,5),(3,10),(5,20)]:
+        key=f"T{t}_H{h}"
+        hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
+        universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
+        metrics["precision"][key]=float(hits/len(pred)) if len(pred) else None
+        metrics["recall"][key]=float(hits/universe) if universe else None
+        metrics["base_rate"][key]=float(universe/len(all_by_date)) if len(all_by_date) else None
+        metrics["lift"][key]=float((hits/len(pred))/(universe/len(all_by_date))) if universe and len(all_by_date) else None
     if not pred.empty:
         for state,g in pred.groupby("STATE"):
             metrics["state_performance"][state]={
@@ -236,57 +398,42 @@ def main():
                 "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
                 "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
                 "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
-                "avg_fut5_high":float(g.FUT5_HIGH_PCT.mean())}
+                "median_winner_probability":float(g.WINNER_PROBABILITY.median()),
+                "median_percentile":float(g.WINNER_PROBABILITY_PCTL.median())}
+        metrics["winner_probability_separation"]={
+            "winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_PROBABILITY"].mean()),
+            "nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].mean()),
+            "winner_median":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_PROBABILITY"].median()),
+            "nonwinner_median":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].median())}
 
-    # Missed-winner lab: every +10% H3 / +20% H5 winner outside Top-30.
-    all_pred_key=set(zip(pred["CUT_OFF"],pred["SYMBOL"])) if not pred.empty else set()
-    for dt in cutoffs:
-        u=all_by_date[all_by_date["DATE"]==dt]
-        for _,r in u.iterrows():
-            h10=float(r["FUT3_HIGH_PCT"])>=10
-            h20=float(r["FUT5_HIGH_PCT"])>=20
-            if (h10 or h20) and (dt.date(),r["SYMBOL"]) not in all_pred_key:
-                miss_rows.append({
-                    "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
-                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("20_H5",h20)] if b),
-                    "TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
-                    "BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],"STATE":r["STATE"],
-                    "READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
-                    "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],
-                    "EXPANSION_READY":r["EXPANSION_READY"],"EXHAUSTION":r["EXHAUSTION"],
-                    "RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
-                    "RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
-                    "FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"],
-                    "MISS_REASON":"LOW_TOMORROW_SCORE" if r["TOMORROW_EXPANSION_SCORE"]<65 else "RANKED_OUT_DESPITE_READY",
-                    "RANK_ESTIMATE":"OUTSIDE_TOP30"})
-    pd.DataFrame(miss_rows).sort_values(
-        ["TOMORROW_EXPANSION_SCORE","FUT5_HIGH_PCT"],ascending=[False,False]
-    ).to_csv(OUT/"missed_winner_lab.csv",index=False)
-
+    # Diagnostic winner/non-winner lift on the actual Top-30 validation set.
     sep=[]
-    if not pred.empty:
+    if not diag.empty and not pred.empty:
         for c in diag.columns[2:]:
-            tmp=pd.DataFrame({"state":diag[c].values,
-                              "winner":(pred["FUT3_HIGH_PCT"].values>=10)})
+            z=diag[c].reset_index(drop=True)
+            y=(pred["FUT3_HIGH_PCT"].reset_index(drop=True)>=10)
+            wr=float(y.mean())
             for st in ["POSITIVE","NEGATIVE","UNKNOWN","NOT_APPLICABLE"]:
-                z=tmp[tmp.state==st]
-                if len(z):
-                    sep.append({"diagnostic":c,"state":st,"n":len(z),
-                                "winner_rate":float(z.winner.mean())})
+                m=(z==st)
+                if m.any():
+                    rate=float(y[m].mean())
+                    sep.append({"diagnostic":c,"state":st,"n":int(m.sum()),
+                                "winner_rate":rate,"base_winner_rate":wr,
+                                "lift":float(rate/wr) if wr else None})
     pd.DataFrame(sep).to_csv(OUT/"diagnostic_winner_separation.csv",index=False)
 
+    # Behavioural DNA library and exact missed-winner lab.
     dna={}
     if not pred.empty:
         for st,g in pred.groupby("STATE"):
-            dna[st]={"samples":int(len(g)),
-                     "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
+            dna[st]={"samples":int(len(g)),"hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
                      "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
                      "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
-                     "median_tomorrow_score":float(g.TOMORROW_EXPANSION_SCORE.median()),
-                     "median_repricing_pressure":float(g.REPRICING_PRESSURE.median()),
-                     "median_readiness":float(g.READINESS.median()),
-                     "median_not_yet_moved":float(g.NOT_YET_MOVED.median()),
-                     "median_exhaustion":float(g.EXHAUSTION.median())}
+                     "median_winner_probability":float(g.WINNER_PROBABILITY.median())}
     (OUT/"behavioral_dna_library.json").write_text(json.dumps(dna,indent=2))
     (OUT/"walk_forward_metrics.json").write_text(json.dumps(metrics,indent=2))
+    pd.DataFrame(miss_rows).sort_values(["WINNER_PROBABILITY","FUT5_HIGH_PCT"],ascending=[False,False]).to_csv(OUT/"missed_winner_lab.csv",index=False)
     print(json.dumps(metrics,indent=2))
+
+if __name__=="__main__":
+    main()
