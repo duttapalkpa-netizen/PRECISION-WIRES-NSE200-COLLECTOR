@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from datetime import datetime, timezone
-import json, requests, feedparser
+import json, requests, xml.etree.ElementTree as ET
 
 ROOT=Path(".")
 OUT=ROOT/"data/context"
