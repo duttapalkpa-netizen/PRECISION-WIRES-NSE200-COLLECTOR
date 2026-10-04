@@ -130,54 +130,105 @@ def diagnostic_state(row,step_idx,filter_idx):
     z=float(v)
     return "POSITIVE" if z>=scale else ("NEGATIVE" if z<=-scale else "UNKNOWN")
 
+def classify_state(r):
+    """Eight-state pre-move behavioral taxonomy."""
+    strong = r["READINESS"] >= 65
+    not_yet = r["NOT_YET_MOVED"] >= 65
+    repricing = r["REPRICING_PRESSURE"] >= 65
+    ready = r["TOMORROW_EXPANSION_SCORE"] >= 65
+    already = r["RET5"] >= 12 or r["DIST_HIGH20"] <= 2
+    exhausted = r["EXHAUSTION"] >= 55 or (r["RET3"] >= 8 and r["BODY_PCT"] < 0)
+    false_strength = strong and not_yet < 65 and repricing < 45 and r["RS20"] < 0
+    if false_strength: return "FALSE_STRENGTH"
+    if already: return "ALREADY_EXPANDED"
+    if exhausted: return "EXHAUSTION"
+    if ready: return "EXPANSION_READY"
+    if repricing: return "REPRICING_PRESSURE"
+    if strong and not_yet: return "NOT_YET_MOVED"
+    if strong: return "STRONG"
+    return "NON_STRONG"
+
+def add_tomorrow_features(df):
+    df=df.copy()
+    # Repricing pressure: compression + demand + participation + relative strength,
+    # explicitly separated from generic strength/readiness.
+    df["REPRICING_PRESSURE"]=np.clip(
+        .25*np.clip(50+df["ACCEL"].fillna(0)*5,0,100)+
+        .20*np.clip(50+df["RS5"].fillna(0)*4,0,100)+
+        .20*np.clip(df["RVOL20"].fillna(1)*50,0,100)+
+        .20*np.clip(50+df["DELIV_GAP"].fillna(0)*3,0,100)+
+        .15*np.clip((1-df["COMPRESSION"].fillna(.5))*100,0,100),0,100)
+    # Tomorrow score is deliberately different from generic Behavior Score:
+    # it rewards near-term pressure and penalizes already-expanded/exhausted states.
+    df["TOMORROW_EXPANSION_SCORE"]=np.clip(
+        .25*df["REPRICING_PRESSURE"]+
+        .20*df["ENERGY"]+
+        .15*df["ABSORPTION"]+
+        .15*np.clip(50+df["RS5"].fillna(0)*4,0,100)+
+        .10*df["NOT_YET_MOVED"]+
+        .10*(100-df["EXHAUSTION"])+
+        .05*np.clip(50+df["ACCEL"].fillna(0)*5,0,100),0,100)
+    df["STATE"]=df.apply(classify_state,axis=1)
+    return df
+
 def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
+    df=add_tomorrow_features(df)
     df=future_outcomes(df)
     dates=sorted(df["DATE"].dropna().unique())
     requested=int(__import__("os").environ.get("WF_SESSIONS","100"))
     usable=[x for x in dates if x<=dates[-6]]
     cutoffs=usable[-requested:]
-    predictions=[]; diag_rows=[]
+    predictions=[]; diag_rows=[]; miss_rows=[]
     for dt in cutoffs:
-        x=df[df["DATE"]==dt].dropna(subset=["READINESS"]).copy()
-        # Minimum history: 20 sessions. Adaptive modes remain eligible.
+        x=df[df["DATE"]==dt].dropna(subset=["TOMORROW_EXPANSION_SCORE"]).copy()
         x=x[x["HISTORY_DEPTH_AT_T"].fillna(0)>=20]
         if x.empty: continue
-        x["BEHAVIOR_SCORE"]=(
-            .45*x["EXPANSION_READY"]+.20*x["READINESS"]+
-            .15*x["NOT_YET_MOVED"]+.10*(100-x["EXHAUSTION"])+
-            .10*np.clip(50+x["RS20"].fillna(0)*3,0,100))
-        x=x.sort_values(["BEHAVIOR_SCORE","EXPANSION_READY","READINESS","RS20","SYMBOL"],ascending=[False]*4+[True]).head(30)
+        # Ranking target is tomorrow/near-term expansion, not generic strength.
+        x=x.sort_values(["TOMORROW_EXPANSION_SCORE","REPRICING_PRESSURE",
+                         "NOT_YET_MOVED","EXPANSION_READY","RS5","SYMBOL"],
+                        ascending=[False]*5+[True]).head(30)
         for _,r in x.iterrows():
-            rec={"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],"HISTORY_DEPTH_AT_T":int(r["HISTORY_DEPTH_AT_T"]),"BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],
-                 "STATE":r["STATE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
-                 "EXPANSION_READY":r["EXPANSION_READY"],"EXHAUSTION":r["EXHAUSTION"],
-                 "RVOL20":r["RVOL20"],"RS20":r["RS20"],"RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
-                 "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]}
-            predictions.append(rec)
-            # Store 672 only for ranked candidates: manageable and directly auditable.
+            predictions.append({
+                "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
+                "HISTORY_DEPTH_AT_T":int(r["HISTORY_DEPTH_AT_T"]),
+                "BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],
+                "TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
+                "STATE":r["STATE"],"READINESS":r["READINESS"],
+                "NOT_YET_MOVED":r["NOT_YET_MOVED"],
+                "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],
+                "EXPANSION_READY":r["EXPANSION_READY"],
+                "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],
+                "RS5":r["RS5"],"RS20":r["RS20"],"RET5":r["RET5"],
+                "DIST_HIGH20":r["DIST_HIGH20"],
+                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],
+                "FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],
+                "FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]})
             q={"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"]}
             for si,step in enumerate(STEP_NAMES):
                 for fi,filt in enumerate(FILTERS):
                     q[f"D{si+1:02d}_{filt}"]=diagnostic_state(r,si,fi)
             diag_rows.append(q)
-    pred=pd.DataFrame(predictions)
-    diag=pd.DataFrame(diag_rows)
+    pred=pd.DataFrame(predictions); diag=pd.DataFrame(diag_rows)
     pred.to_csv(OUT/"walk_forward_predictions.csv",index=False)
     diag.to_csv(OUT/"diagnostic_separation_672.csv",index=False)
 
-    metrics={"sessions_requested":requested,"sessions_tested":int(pred["CUT_OFF"].nunique()) if not pred.empty else 0,
-             "candidate_rows":int(len(pred)),"top_n":30,"horizons":[1,3,5],"targets":[5,10,20],
+    metrics={"sessions_requested":requested,
+             "sessions_tested":int(pred["CUT_OFF"].nunique()) if not pred.empty else 0,
+             "candidate_rows":int(len(pred)),"top_n":30,
+             "ranking":"TOMORROW_EXPANSION_SCORE",
+             "horizons":[1,3,5],"targets":[5,10,20],
              "precision":{},"recall":{},"state_performance":{}}
     all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
     for h in [1,3,5]:
         for t in [5,10,20]:
             key=f"T{t}_H{h}"
-            hits=(pred[f"FUT{h}_HIGH_PCT"]>=t).sum()
+            hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
             metrics["precision"][key]=float(hits/len(pred)) if len(pred) else None
-            universe=(all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum()
+            universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
             metrics["recall"][key]=float(hits/universe) if universe else None
+
     if not pred.empty:
         for state,g in pred.groupby("STATE"):
             metrics["state_performance"][state]={
@@ -185,19 +236,45 @@ def main():
                 "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
                 "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
                 "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
-                "avg_fut5_high":float(g.FUT5_HIGH_PCT.mean())
-            }
-    # Separation table: each diagnostic's positive/negative/unknown occurrence versus W10 outcome.
+                "avg_fut5_high":float(g.FUT5_HIGH_PCT.mean())}
+
+    # Missed-winner lab: every +10% H3 / +20% H5 winner outside Top-30.
+    all_pred_key=set(zip(pred["CUT_OFF"],pred["SYMBOL"])) if not pred.empty else set()
+    for dt in cutoffs:
+        u=all_by_date[all_by_date["DATE"]==dt]
+        for _,r in u.iterrows():
+            h10=float(r["FUT3_HIGH_PCT"])>=10
+            h20=float(r["FUT5_HIGH_PCT"])>=20
+            if (h10 or h20) and (dt.date(),r["SYMBOL"]) not in all_pred_key:
+                miss_rows.append({
+                    "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
+                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("20_H5",h20)] if b),
+                    "TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
+                    "BEHAVIOR_SCORE":r["BEHAVIOR_SCORE"],"STATE":r["STATE"],
+                    "READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
+                    "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],
+                    "EXPANSION_READY":r["EXPANSION_READY"],"EXHAUSTION":r["EXHAUSTION"],
+                    "RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
+                    "RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
+                    "FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"],
+                    "MISS_REASON":"LOW_TOMORROW_SCORE" if r["TOMORROW_EXPANSION_SCORE"]<65 else "RANKED_OUT_DESPITE_READY",
+                    "RANK_ESTIMATE":"OUTSIDE_TOP30"})
+    pd.DataFrame(miss_rows).sort_values(
+        ["TOMORROW_EXPANSION_SCORE","FUT5_HIGH_PCT"],ascending=[False,False]
+    ).to_csv(OUT/"missed_winner_lab.csv",index=False)
+
     sep=[]
     if not pred.empty:
         for c in diag.columns[2:]:
-            tmp=pd.DataFrame({"state":diag[c].values,"winner":(pred["FUT5_HIGH_PCT"].values>=10)})
+            tmp=pd.DataFrame({"state":diag[c].values,
+                              "winner":(pred["FUT3_HIGH_PCT"].values>=10)})
             for st in ["POSITIVE","NEGATIVE","UNKNOWN","NOT_APPLICABLE"]:
                 z=tmp[tmp.state==st]
                 if len(z):
-                    sep.append({"diagnostic":c,"state":st,"n":len(z),"winner_rate":float(z.winner.mean())})
+                    sep.append({"diagnostic":c,"state":st,"n":len(z),
+                                "winner_rate":float(z.winner.mean())})
     pd.DataFrame(sep).to_csv(OUT/"diagnostic_winner_separation.csv",index=False)
-    # Behavioural DNA library is descriptive only; no future label is used to create a same-day score.
+
     dna={}
     if not pred.empty:
         for st,g in pred.groupby("STATE"):
@@ -205,12 +282,11 @@ def main():
                      "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
                      "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
                      "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
+                     "median_tomorrow_score":float(g.TOMORROW_EXPANSION_SCORE.median()),
+                     "median_repricing_pressure":float(g.REPRICING_PRESSURE.median()),
                      "median_readiness":float(g.READINESS.median()),
                      "median_not_yet_moved":float(g.NOT_YET_MOVED.median()),
-                     "median_expansion_ready":float(g.EXPANSION_READY.median()),
                      "median_exhaustion":float(g.EXHAUSTION.median())}
     (OUT/"behavioral_dna_library.json").write_text(json.dumps(dna,indent=2))
     (OUT/"walk_forward_metrics.json").write_text(json.dumps(metrics,indent=2))
     print(json.dumps(metrics,indent=2))
-
-if __name__=="__main__": main()
