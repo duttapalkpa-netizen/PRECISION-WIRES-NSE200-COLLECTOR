@@ -84,6 +84,10 @@ def add_features(df):
         .20*np.clip(df["DIST_HIGH20"].fillna(0)*8,0,100)+
         .15*np.clip(df["RVOL20"].fillna(1)*50,0,100)+
         .15*np.clip(50+df["RS5"].fillna(0)*4,0,100),0,100)
+    df["BEHAVIOR_SCORE"]=np.clip(
+        .45*df["EXPANSION_READY"]+.20*df["READINESS"]+
+        .15*df["NOT_YET_MOVED"]+.10*(100-df["EXHAUSTION"])+
+        .10*np.clip(50+df["RS20"].fillna(0)*3,0,100),0,100)
     df["STATE"]=np.select([
         (df["READINESS"]>=70)&(df["EXPANSION_READY"]>=70)&(df["EXHAUSTION"]<45),
         (df["READINESS"]>=65)&(df["NOT_YET_MOVED"]>=65)&(df["EXHAUSTION"]<45),
