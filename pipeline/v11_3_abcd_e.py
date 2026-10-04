@@ -1,5 +1,6 @@
 from pathlib import Path
-import numpy as np, pandas as pd\nimport json\nfrom pipeline.walk_forward_backtest import add_features
+import numpy as np, pandas as pd
+import json\nfrom pipeline.walk_forward_backtest import add_features
 
 SRC=Path("data/processed/nse_eq_200_sessions.csv")
 OUT=Path("outputs/finalists")
@@ -27,6 +28,12 @@ def data_confidence(n):
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
+    global calib
+    calib={}
+    lib=Path("outputs/backtest/behavioral_dna_library.json")
+    if lib.exists():
+        try: calib=json.loads(lib.read_text())
+        except Exception: calib={}
     df=pd.read_csv(SRC,parse_dates=["DATE"]).sort_values(["SYMBOL","DATE"])
     df=add_features(df)
     from pipeline.walk_forward_backtest import add_tomorrow_features
@@ -64,7 +71,7 @@ def main():
             "SYMBOL":sym,"DATE":g["DATE"].iloc[-1].date(),"CLOSE":c.iloc[-1],
             "EMA20":ema20,"EMA50":ema50,"RVOL20":rvol,"RET20_PCT":ret20,
             "DELIV20_AVG":delivery,"ENERGY":energy,"LEAD_TIME":lead,
-            "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],
+            "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],"RS5":r["RS5"],
             "TOMORROW_EXPANSION_SCORE":tomorrow,"BEHAVIOR_SCORE":behavior_score,
             "STATE":state,"A":A,"B":B,"C":C,"D":D,"E":E,
             "V11_3_CORE_SCORE":score,"SCORE":score,"HISTORY_DEPTH":n,
