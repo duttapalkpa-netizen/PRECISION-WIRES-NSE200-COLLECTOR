@@ -198,6 +198,9 @@ def main():
     if not pred.empty:
         for st,g in pred.groupby("STATE"):
             dna[st]={"samples":int(len(g)),
+                     "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
+                     "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
+                     "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
                      "median_readiness":float(g.READINESS.median()),
                      "median_not_yet_moved":float(g.NOT_YET_MOVED.median()),
                      "median_expansion_ready":float(g.EXPANSION_READY.median()),
