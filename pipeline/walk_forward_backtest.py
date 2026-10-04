@@ -138,7 +138,7 @@ def classify_state(r):
     ready = r["TOMORROW_EXPANSION_SCORE"] >= 65
     already = r["RET5"] >= 12 or r["DIST_HIGH20"] <= 2
     exhausted = r["EXHAUSTION"] >= 55 or (r["RET3"] >= 8 and r["BODY_PCT"] < 0)
-    false_strength = strong and not_yet < 65 and repricing < 45 and r["RS20"] < 0
+    false_strength = strong and (r["NOT_YET_MOVED"] < 65) and (repricing < 45) and (r["RS20"] < 0)
     if false_strength: return "FALSE_STRENGTH"
     if already: return "ALREADY_EXPANDED"
     if exhausted: return "EXHAUSTION"
