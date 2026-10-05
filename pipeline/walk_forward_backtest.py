@@ -302,6 +302,20 @@ def _calibration_stats(y,p,bins=10):
         rows.append({"bin":i+1,"n":n,"mean_pred":pred,"observed_rate":obs})
     return {"n":int(len(y)),"brier":float(np.mean((p-y)**2)),"ece":float(ece),"bins":rows}
 
+def _distribution_separation_score(r):
+    return float(np.clip(
+        0.30*r["P10_H3_PCTL"]+
+        0.40*r["P20_H5_PCTL"]+
+        0.15*r["P5_H1_PCTL"]+
+        0.15*r["RECOVERY_SCORE"],0,100))
+
+def _rare20_specialist_score(r):
+    return float(np.clip(
+        0.60*r["P20_H5_PCTL"]+
+        0.20*r["P10_H3_PCTL"]+
+        0.10*r["P5_H1_PCTL"]+
+        0.10*r["RECOVERY_SCORE"],0,100))
+
 def _percentile_against(arr, v):
     a=pd.Series(arr).replace([np.inf,-np.inf],np.nan).dropna()
     if len(a)==0 or not np.isfinite(v): return np.nan
