@@ -346,6 +346,70 @@ def _rare20_specialist_score(r):
         0.10*r["P5_H1_PCTL"]+
         0.10*r["RECOVERY_SCORE"],0,100))
 
+
+def _winner_interaction_score(r):
+    """Winner-specific interactions: joint conditions, not additive strength."""
+    pressure=np.clip(r["REPRICING_PRESSURE"],0,100); readiness=np.clip(r["READINESS"],0,100)
+    not_yet=np.clip(r["NOT_YET_MOVED"],0,100); rvol=np.clip(r["RVOL20"]*50,0,100)
+    rs=np.clip(50+r["RS5"]*4,0,100); delivery=np.clip(50+r["DELIV_GAP"]*3,0,100)
+    compression=np.clip((1-r["COMPRESSION"])*100,0,100)
+    p10=r["P10_H3_PCTL"]; p20=r["P20_H5_PCTL"]
+    interactions=[np.sqrt(pressure*not_yet),np.sqrt(rvol*max(rs,0)),
+                  np.sqrt(delivery*max(pressure,0)),np.sqrt(compression*max(pressure,0)),
+                  np.sqrt(readiness*max(p10,0)),np.sqrt(max(p10,0)*max(p20,0))]
+    return float(np.clip(np.mean(interactions),0,100))
+
+def _transition_features(df):
+    """Causal transition signature using current and prior sessions only."""
+    x=df.copy(); g=x.groupby("SYMBOL",sort=False)
+    for col in ["READINESS","REPRICING_PRESSURE","EXHAUSTION","RVOL20","RS5","DIST_HIGH20"]:
+        x[f"PREV_{col}"]=g[col].shift(1); x[f"D_{col}"]=x[col]-x[f"PREV_{col}"]
+    x["PRESSURE_BUILDING"]=(x["D_REPRICING_PRESSURE"]>3)&(x["D_RVOL20"]>0)&(x["D_RS5"]>0)
+    x["EXHAUSTION_BUILDING"]=(x["D_EXHAUSTION"]>8)&(x["D_REPRICING_PRESSURE"]<0)
+    x["TRANSITION_SIGNATURE"]=np.select([
+        x["PRESSURE_BUILDING"]&(x["D_EXHAUSTION"]<=0),
+        (x["D_REPRICING_PRESSURE"]>0)&(x["D_RS5"]>0)&(x["D_RVOL20"]>0),
+        x["EXHAUSTION_BUILDING"],
+        (x["D_REPRICING_PRESSURE"]<0)&(x["D_RS5"]<0)],
+        ["PRESSURE_BUILD","DEMAND_CONFIRMATION","EXHAUSTION_BUILD","PRESSURE_FADE"],
+        default="STABLE_TRANSITION")
+    return x
+
+def _continuation_exhaustion_scores(r):
+    continuation=np.mean([
+        np.clip(r["REPRICING_PRESSURE"],0,100),np.clip(50+r["RS5"]*4,0,100),
+        np.clip(r["RVOL20"]*50,0,100),np.clip(50+r["BODY_PCT"]*5,0,100),
+        np.clip(r["P20_H5_PCTL"],0,100),np.clip(100-r["EXHAUSTION"],0,100)])
+    exhaustion=np.mean([
+        np.clip(r["EXHAUSTION"],0,100),np.clip(100-r["REPRICING_PRESSURE"],0,100),
+        np.clip(100-(50+r["RS5"]*4),0,100),np.clip(100-(50+r["BODY_PCT"]*5),0,100),
+        np.clip((r["DIST_HIGH20"]<=2)*100,0,100)])
+    return float(np.clip(continuation,0,100)),float(np.clip(exhaustion,0,100))
+
+def _latent_winner_evidence(r):
+    latent=(.30*r["SEPARATION_SCORE"]+.25*r["P10_H3_PCTL"]+.25*r["P20_H5_PCTL"]+
+            .10*r["WINNER_INTERACTION_SCORE"]+.10*r["RECOVERY_SCORE"])
+    contradiction=max(0.0,65.0-r["READINESS"])+max(0.0,65.0-r["TOMORROW_EXPANSION_SCORE"])
+    bonus=.12*contradiction if (r["RS5"]>0 and r["RVOL20"]>=1.05) else 0.0
+    return float(np.clip(latent+bonus,0,100))
+
+def _state_transition_v4(r):
+    if r["ABNORMAL_RETURN_FLAG"]: return "DATA_CONTAMINATED"
+    if r["EXHAUSTION_RISK"]>=72 and r["CONTINUATION_SCORE"]<65: return "EXHAUSTION"
+    already=r["RET5"]>=12 or r["DIST_HIGH20"]<=2
+    if (r["CONTINUATION_SCORE"]>=72 and r["EXHAUSTION_RISK"]<55 and
+        (already or r["P20_H5_PCTL"]>=65)): return "CONTINUATION_READY"
+    if r["LATENT_WINNER_EVIDENCE"]>=72 and (r["P10_H3_PCTL"]>=70 or r["P20_H5_PCTL"]>=75):
+        return "HIDDEN_WINNER_RECOVERY"
+    if already: return "ALREADY_EXPANDED"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65 and r["REPRICING_PRESSURE"]>=60:
+        return "EXPANSION_READY"
+    if r["REPRICING_PRESSURE"]>=65: return "REPRICING_PRESSURE"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65: return "NOT_YET_MOVED"
+    if r["READINESS"]>=60 and r["P10_H3_PCTL"]>=60: return "STRONG"
+    if r["READINESS"]<45 and r["RS20"]<0 and r["RVOL20"]<1.0: return "FALSE_STRENGTH"
+    return "NON_STRONG"
+
 def _percentile_against(arr, v):
     a=pd.Series(arr).replace([np.inf,-np.inf],np.nan).dropna()
     if len(a)==0 or not np.isfinite(v): return np.nan
@@ -443,7 +507,12 @@ def main():
         x["RECOVERY_SCORE"]=x.apply(_hidden_recovery_score,axis=1)
         x["SEPARATION_SCORE"]=x.apply(_distribution_separation_score,axis=1)
         x["RARE20_SPECIALIST_SCORE"]=x.apply(_rare20_specialist_score,axis=1)
-        x["STATE"]=x.apply(_state_transition_v3,axis=1)
+        x["WINNER_INTERACTION_SCORE"]=x.apply(_winner_interaction_score,axis=1)
+        ce=x.apply(_continuation_exhaustion_scores,axis=1)
+        x["CONTINUATION_SCORE"]=[z[0] for z in ce]
+        x["EXHAUSTION_RISK"]=[z[1] for z in ce]
+        x["LATENT_WINNER_EVIDENCE"]=x.apply(_latent_winner_evidence,axis=1)
+        x["STATE"]=x.apply(_state_transition_v4,axis=1)
 
         state_adj=np.select([
             x["STATE"].eq("CONTINUATION_READY"),
@@ -454,9 +523,11 @@ def main():
             x["STATE"].eq("ALREADY_EXPANDED")],
             [4,3,-10,-6,-20,-3],default=0)
         x["RANKING_SCORE"]=(
-            0.45*x["SEPARATION_SCORE"]+
-            0.35*x["RARE20_SPECIALIST_SCORE"]+
-            0.20*x["WINNER_PROBABILITY_PCTL"]+
+            0.35*x["SEPARATION_SCORE"]+
+            0.30*x["RARE20_SPECIALIST_SCORE"]+
+            0.15*x["WINNER_PROBABILITY_PCTL"]+
+            0.10*x["WINNER_INTERACTION_SCORE"]+
+            0.10*x["LATENT_WINNER_EVIDENCE"]+
             state_adj)
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
@@ -464,7 +535,7 @@ def main():
         for _,r in x.iterrows():
             universe_predictions.append({"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
                 "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
-                "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"STATE":r["STATE"],
+                "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"WINNER_INTERACTION_SCORE":r["WINNER_INTERACTION_SCORE"],"CONTINUATION_SCORE":r["CONTINUATION_SCORE"],"EXHAUSTION_RISK":r["EXHAUSTION_RISK"],"LATENT_WINNER_EVIDENCE":r["LATENT_WINNER_EVIDENCE"],"TRANSITION_SIGNATURE":r["TRANSITION_SIGNATURE"],"STATE":r["STATE"],
                 "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]})
         for _,r in top.iterrows():
             predictions.append({
@@ -474,7 +545,7 @@ def main():
                 "P20_H5_PCTL":r["P20_H5_PCTL"],"WINNER_PROBABILITY":r["WINNER_PROBABILITY"],
                 "WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
                 "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],"RECOVERY_SCORE":r["RECOVERY_SCORE"],
-                "STATE":r["STATE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
+                "STATE":r["STATE"],"TRANSITION_SIGNATURE":r["TRANSITION_SIGNATURE"],"WINNER_INTERACTION_SCORE":r["WINNER_INTERACTION_SCORE"],"CONTINUATION_SCORE":r["CONTINUATION_SCORE"],"EXHAUSTION_RISK":r["EXHAUSTION_RISK"],"LATENT_WINNER_EVIDENCE":r["LATENT_WINNER_EVIDENCE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
                 "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],"EXPANSION_READY":r["EXPANSION_READY"],
                 "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
                 "RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
@@ -554,6 +625,14 @@ def main():
             "nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].mean()),
             "winner_median":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_PROBABILITY"].median()),
             "nonwinner_median":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].median())}
+
+    if not pred.empty:
+        metrics["transition_signature_performance"]={}
+        for sig,g in pred.groupby("TRANSITION_SIGNATURE"):
+            metrics["transition_signature_performance"][sig]={"rows":int(len(g)),"hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),"hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),"median_continuation_score":float(g.CONTINUATION_SCORE.median()),"median_exhaustion_risk":float(g.EXHAUSTION_RISK.median())}
+        metrics["winner_specific_interaction"]={"winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_INTERACTION_SCORE"].mean()),"nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_INTERACTION_SCORE"].mean())}
+        metrics["latent_winner_evidence"]={"winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"LATENT_WINNER_EVIDENCE"].mean()),"nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"LATENT_WINNER_EVIDENCE"].mean())}
+        metrics["continuation_vs_exhaustion"]={"winner_continuation_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"CONTINUATION_SCORE"].mean()),"winner_exhaustion_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"EXHAUSTION_RISK"].mean()),"nonwinner_continuation_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"CONTINUATION_SCORE"].mean()),"nonwinner_exhaustion_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"EXHAUSTION_RISK"].mean())}
 
     # Full-universe calibration/separation is intentionally separate from Top-30 ranking metrics.
     if not universe_pred.empty:
