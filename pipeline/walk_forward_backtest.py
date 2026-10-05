@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PRECISION-WIRES V11.3 Walk-Forward Behavioural Validation
+PRECISION-WIRES V11.4 Walk-Forward Behavioural Validation
 
 No look-ahead:
 - Features at cutoff T use only rows <= T.
