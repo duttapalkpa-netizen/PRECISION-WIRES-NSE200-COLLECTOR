@@ -214,6 +214,94 @@ def _calibration_probability(train, current, target_col, feature_cols):
     model=_fit_logistic(tr[feature_cols].values,tr[target_col].astype(int).values)
     return _predict_logistic(model,current[feature_cols].replace([np.inf,-np.inf],np.nan).fillna(0).values)
 
+def _logit(p):
+    p=np.clip(np.asarray(p,dtype=float),1e-6,1-1e-6)
+    return np.log(p/(1-p))
+
+def _calibrated_probability(train, current, target_col, feature_cols):
+    """Leakage-safe two-stage probability calibration."""
+    if train.empty:
+        return np.full(len(current),np.nan),{"method":"UNAVAILABLE"}
+    tr=train[feature_cols+[target_col,"DATE"]].replace([np.inf,-np.inf],np.nan).dropna()
+    if len(tr)<200 or tr[target_col].nunique()<2:
+        return np.full(len(current),np.nan),{"method":"UNAVAILABLE"}
+    dates=np.sort(tr["DATE"].unique())
+    if len(dates)<12:
+        raw=_calibration_probability(tr,current,target_col,feature_cols)
+        return raw,{"method":"RAW_FALLBACK","calibration_n":0}
+    split=max(8,int(len(dates)*0.80))
+    core=tr[tr["DATE"].isin(dates[:split])]
+    cal=tr[tr["DATE"].isin(dates[split:])]
+    base_model=_fit_logistic(core[feature_cols].values,core[target_col].astype(int).values)
+    if base_model is None:
+        return np.full(len(current),np.nan),{"method":"UNAVAILABLE"}
+    pcal=_predict_logistic(base_model,cal[feature_cols].values)
+    cal_model=None
+    if len(cal)>=100 and cal[target_col].nunique()==2:
+        cal_model=_fit_logistic(_logit(pcal).reshape(-1,1),cal[target_col].astype(int).values,
+                                steps=120,lr=0.05,l2=0.10)
+    raw_current=_predict_logistic(base_model,current[feature_cols].fillna(0).values)
+    base=float(np.clip(core[target_col].mean(),1e-5,1-1e-5))
+    if cal_model is not None:
+        out=_predict_logistic(cal_model,_logit(raw_current).reshape(-1,1))
+        method="TIME_SPLIT_PLATT"
+    else:
+        out=0.75*raw_current+0.25*base
+        method="BASE_RATE_SHRINK"
+    return np.clip(out,1e-5,1-1e-5),{
+        "method":method,"calibration_n":int(len(cal)),"base_rate":base,
+        "core_n":int(len(core)),"calibration_start":str(pd.Timestamp(dates[split]).date())
+    }
+
+def _hidden_recovery_score(r):
+    """Secondary recovery path for non-strong but expansion-capable winners."""
+    return float(np.clip(
+        .25*np.clip(50+r["REPRICING_PRESSURE"],0,100)+
+        .20*np.clip(50+r["RS5"]*4,0,100)+
+        .20*np.clip(r["RVOL20"]*50,0,100)+
+        .15*np.clip(50+r["ACCEL"]*5,0,100)+
+        .10*r["NOT_YET_MOVED"]+.10*(100-r["EXHAUSTION"]),0,100))
+
+def _state_transition_v2(r):
+    """Driver states plus explicit continuation/exhaustion transition states."""
+    if r["ABNORMAL_RETURN_FLAG"]:
+        return "DATA_CONTAMINATED"
+    already=r["RET5"]>=12 or r["DIST_HIGH20"]<=2
+    exhausted=r["EXHAUSTION"]>=60 or (r["RET3"]>=8 and r["BODY_PCT"]<0)
+    continuation=already and (r["REPRICING_PRESSURE"]>=65) and (r["RS5"]>0) and (r["EXHAUSTION"]<60)
+    if continuation:
+        return "CONTINUATION_READY"
+    if already:
+        return "ALREADY_EXPANDED"
+    if exhausted:
+        return "EXHAUSTION"
+    if r["READINESS"]<45 and r["RS20"]<0 and r["RVOL20"]<1.0:
+        return "FALSE_STRENGTH"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65 and r["REPRICING_PRESSURE"]>=60:
+        return "EXPANSION_READY"
+    if r["REPRICING_PRESSURE"]>=65:
+        return "REPRICING_PRESSURE"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65:
+        return "NOT_YET_MOVED"
+    if _hidden_recovery_score(r)>=68 and r["RS5"]>0 and r["RVOL20"]>=1.15:
+        return "HIDDEN_WINNER_RECOVERY"
+    if r["READINESS"]>=60:
+        return "STRONG"
+    return "NON_STRONG"
+
+def _calibration_stats(y,p,bins=10):
+    y=np.asarray(y,dtype=float); p=np.asarray(p,dtype=float)
+    m=np.isfinite(y)&np.isfinite(p); y=y[m]; p=p[m]
+    if len(y)==0: return {"n":0}
+    edges=np.linspace(0,1,bins+1); ece=0.0; rows=[]
+    for i in range(bins):
+        mask=(p>=edges[i])&((p<edges[i+1]) if i<bins-1 else (p<=edges[i+1]))
+        if not mask.any(): continue
+        obs=float(y[mask].mean()); pred=float(p[mask].mean()); n=int(mask.sum())
+        ece += (n/len(y))*abs(obs-pred)
+        rows.append({"bin":i+1,"n":n,"mean_pred":pred,"observed_rate":obs})
+    return {"n":int(len(y)),"brier":float(np.mean((p-y)**2)),"ece":float(ece),"bins":rows}
+
 def _percentile_against(arr, v):
     a=pd.Series(arr).replace([np.inf,-np.inf],np.nan).dropna()
     if len(a)==0 or not np.isfinite(v): return np.nan
@@ -280,7 +368,7 @@ def main():
     requested=int(__import__("os").environ.get("WF_SESSIONS","100"))
     usable=[x for x in dates if x<=dates[-6]]
     cutoffs=usable[-requested:]
-    predictions=[]; diag_rows=[]; miss_rows=[]; training_rows=[]
+    predictions=[]; diag_rows=[]; miss_rows=[]; training_rows=[]; universe_predictions=[]
 
     prob_features=["TOMORROW_EXPANSION_SCORE","REPRICING_PRESSURE","READINESS","NOT_YET_MOVED",
                     "EXPANSION_READY","EXHAUSTION","RVOL20","RS5","RS20","RET5","DIST_HIGH20","COMPRESSION","ACCEL"]
@@ -296,13 +384,11 @@ def main():
         for target,h in [("WIN5_H1",1),("WIN10_H3",3),("WIN20_H5",5)]:
             prior[target]=(prior[f"FUT{h}_HIGH_PCT"]>=({"WIN5_H1":5,"WIN10_H3":10,"WIN20_H5":20}[target])).astype(int)
         train=prior.dropna(subset=prob_features+["WIN5_H1","WIN10_H3","WIN20_H5"])
-        x["P5_H1"]=_calibration_probability(train,x,"WIN5_H1",prob_features)
-        x["P10_H3"]=_calibration_probability(train,x,"WIN10_H3",prob_features)
-        x["P20_H5"]=_calibration_probability(train,x,"WIN20_H5",prob_features)
-
-        # Probability percentile is the primary ranking objective; Tomorrow score
-        # remains a secondary tie-breaker and diagnostic.
-        for col in ["P5_H1","P10_H3","P20_H5"]:
+        cal_meta={}
+        for target,col in [("WIN5_H1","P5_H1"),("WIN10_H3","P10_H3"),("WIN20_H5","P20_H5")]:
+            probs,meta=_calibrated_probability(train,x,target,prob_features)
+            x[col]=probs
+            cal_meta[target]=meta
             if x[col].isna().all(): x[col]=x["TOMORROW_EXPANSION_SCORE"]/100
         x["WINNER_PROBABILITY"]=(
             .30*x["P5_H1"]+.40*x["P10_H3"]+.30*x["P20_H5"])
@@ -310,7 +396,8 @@ def main():
         x["P10_H3_PCTL"]=x["P10_H3"].rank(pct=True)*100
         x["P20_H5_PCTL"]=x["P20_H5"].rank(pct=True)*100
         x["WINNER_PROBABILITY_PCTL"]=x["WINNER_PROBABILITY"].rank(pct=True)*100
-        x["STATE"]=x.apply(_state_transition,axis=1)
+        x["RECOVERY_SCORE"]=x.apply(_hidden_recovery_score,axis=1)
+        x["STATE"]=x.apply(_state_transition_v2,axis=1)
 
         # Driver ranking only; penalty states are pushed down, not used as positive drivers.
         penalty=x["STATE"].isin(["ALREADY_EXPANDED","EXHAUSTION","FALSE_STRENGTH","DATA_CONTAMINATED"])
@@ -318,7 +405,11 @@ def main():
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
         top=x.head(30).copy()
-
+        for _,r in x.iterrows():
+            universe_predictions.append({"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
+                "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
+                "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"STATE":r["STATE"],
+                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]})
         for _,r in top.iterrows():
             predictions.append({
                 "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],"HISTORY_DEPTH_AT_T":int(r["HISTORY_DEPTH_AT_T"]),
@@ -326,7 +417,7 @@ def main():
                 "P5_H1_PCTL":r["P5_H1_PCTL"],"P10_H3_PCTL":r["P10_H3_PCTL"],
                 "P20_H5_PCTL":r["P20_H5_PCTL"],"WINNER_PROBABILITY":r["WINNER_PROBABILITY"],
                 "WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
-                "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
+                "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],"RECOVERY_SCORE":r["RECOVERY_SCORE"],
                 "STATE":r["STATE"],"READINESS":r["READINESS"],"NOT_YET_MOVED":r["NOT_YET_MOVED"],
                 "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],"EXPANSION_READY":r["EXPANSION_READY"],
                 "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
@@ -373,6 +464,8 @@ def main():
                     "TOP_DRIVER_GAPS":";".join([k for k,v in vals.items() if pd.notna(v) and float(v)<0][:12])})
 
     pred=pd.DataFrame(predictions); diag=pd.DataFrame(diag_rows)
+    universe_pred=pd.DataFrame(universe_predictions)
+    universe_pred.to_csv(OUT/"walk_forward_universe_probabilities.csv",index=False)
     pred.to_csv(OUT/"walk_forward_predictions.csv",index=False)
     diag.to_csv(OUT/"diagnostic_separation_672.csv",index=False)
 
@@ -405,6 +498,19 @@ def main():
             "nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].mean()),
             "winner_median":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_PROBABILITY"].median()),
             "nonwinner_median":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].median())}
+
+    # Full-universe calibration/separation is intentionally separate from Top-30 ranking metrics.
+    if not universe_pred.empty:
+        cal={}
+        for h,t,col in [(1,5,"P5_H1"),(3,10,"P10_H3"),(5,20,"P20_H5")]:
+            y=(universe_pred[f"FUT{h}_HIGH_PCT"]>=t).astype(int)
+            p=universe_pred[col].astype(float)
+            cal[f"T{t}_H{h}"]=_calibration_stats(y,p)
+            cal[f"T{t}_H{h}"]["winner_mean"]=float(p[y==1].mean()) if (y==1).any() else None
+            cal[f"T{t}_H{h}"]["nonwinner_mean"]=float(p[y==0].mean()) if (y==0).any() else None
+            cal[f"T{t}_H{h}"]["mean_gap"]=float(p[y==1].mean()-p[y==0].mean()) if (y==1).any() and (y==0).any() else None
+        metrics["full_universe_probability_calibration"]=cal
+        metrics["probability_interpretation"]="Out-of-sample time-split Platt calibration; full-universe separation is distinct from Top-30 ranking lift."
 
     # Diagnostic winner/non-winner lift on the actual Top-30 validation set.
     sep=[]
