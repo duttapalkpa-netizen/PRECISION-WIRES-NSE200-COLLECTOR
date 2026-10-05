@@ -381,7 +381,7 @@ def main():
              "candidate_rows":int(len(pred)),"top_n":30,
              "ranking":"WINNER_PROBABILITY_PCTL with penalty-state adjustment",
              "probability_targets":["P5_H1","P10_H3","P20_H5"],
-             "precision":{},"recall":{},"base_rate":{},"state_performance":{}}
+             "precision":{},"recall":{},"base_rate":{},"lift":{},"state_performance":{}}
     all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
     for h,t in [(1,5),(3,10),(5,20)]:
         key=f"T{t}_H{h}"
