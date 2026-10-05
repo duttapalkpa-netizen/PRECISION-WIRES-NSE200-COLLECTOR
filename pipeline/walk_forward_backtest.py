@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PRECISION-WIRES V11.3 Walk-Forward Behavioural Validation
+PRECISION-WIRES V11.4 Walk-Forward Behavioural Validation
 
 No look-ahead:
 - Features at cutoff T use only rows <= T.
@@ -289,6 +289,36 @@ def _state_transition_v2(r):
         return "STRONG"
     return "NON_STRONG"
 
+def _state_transition_v3(r):
+    if r["ABNORMAL_RETURN_FLAG"]:
+        return "DATA_CONTAMINATED"
+    already=r["RET5"]>=12 or r["DIST_HIGH20"]<=2
+    exhausted=r["EXHAUSTION"]>=60 or (r["RET3"]>=8 and r["BODY_PCT"]<0)
+    continuation=(already and r["REPRICING_PRESSURE"]>=60 and r["RS5"]>0
+                  and r["EXHAUSTION"]<60 and r["P20_H5_PCTL"]>=65)
+    if continuation:
+        return "CONTINUATION_READY"
+    if exhausted:
+        return "EXHAUSTION"
+    hidden=(r["SEPARATION_SCORE"]>=68 and
+            (r["P10_H3_PCTL"]>=70 or r["P20_H5_PCTL"]>=75) and
+            r["RS5"]>0 and r["RVOL20"]>=1.05 and r["EXHAUSTION"]<55)
+    if hidden:
+        return "HIDDEN_WINNER_RECOVERY"
+    if already:
+        return "ALREADY_EXPANDED"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65 and r["REPRICING_PRESSURE"]>=60:
+        return "EXPANSION_READY"
+    if r["REPRICING_PRESSURE"]>=65:
+        return "REPRICING_PRESSURE"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65:
+        return "NOT_YET_MOVED"
+    if r["READINESS"]>=60 and r["P10_H3_PCTL"]>=60:
+        return "STRONG"
+    if r["READINESS"]<45 and r["RS20"]<0 and r["RVOL20"]<1.0:
+        return "FALSE_STRENGTH"
+    return "NON_STRONG"
+
 def _calibration_stats(y,p,bins=10):
     y=np.asarray(y,dtype=float); p=np.asarray(p,dtype=float)
     m=np.isfinite(y)&np.isfinite(p); y=y[m]; p=p[m]
@@ -301,6 +331,20 @@ def _calibration_stats(y,p,bins=10):
         ece += (n/len(y))*abs(obs-pred)
         rows.append({"bin":i+1,"n":n,"mean_pred":pred,"observed_rate":obs})
     return {"n":int(len(y)),"brier":float(np.mean((p-y)**2)),"ece":float(ece),"bins":rows}
+
+def _distribution_separation_score(r):
+    return float(np.clip(
+        0.30*r["P10_H3_PCTL"]+
+        0.40*r["P20_H5_PCTL"]+
+        0.15*r["P5_H1_PCTL"]+
+        0.15*r["RECOVERY_SCORE"],0,100))
+
+def _rare20_specialist_score(r):
+    return float(np.clip(
+        0.60*r["P20_H5_PCTL"]+
+        0.20*r["P10_H3_PCTL"]+
+        0.10*r["P5_H1_PCTL"]+
+        0.10*r["RECOVERY_SCORE"],0,100))
 
 def _percentile_against(arr, v):
     a=pd.Series(arr).replace([np.inf,-np.inf],np.nan).dropna()
@@ -397,11 +441,23 @@ def main():
         x["P20_H5_PCTL"]=x["P20_H5"].rank(pct=True)*100
         x["WINNER_PROBABILITY_PCTL"]=x["WINNER_PROBABILITY"].rank(pct=True)*100
         x["RECOVERY_SCORE"]=x.apply(_hidden_recovery_score,axis=1)
-        x["STATE"]=x.apply(_state_transition_v2,axis=1)
+        x["SEPARATION_SCORE"]=x.apply(_distribution_separation_score,axis=1)
+        x["RARE20_SPECIALIST_SCORE"]=x.apply(_rare20_specialist_score,axis=1)
+        x["STATE"]=x.apply(_state_transition_v3,axis=1)
 
-        # Driver ranking only; penalty states are pushed down, not used as positive drivers.
-        penalty=x["STATE"].isin(["ALREADY_EXPANDED","EXHAUSTION","FALSE_STRENGTH","DATA_CONTAMINATED"])
-        x["RANKING_SCORE"]=x["WINNER_PROBABILITY_PCTL"]-penalty.astype(float)*8
+        state_adj=np.select([
+            x["STATE"].eq("CONTINUATION_READY"),
+            x["STATE"].eq("HIDDEN_WINNER_RECOVERY"),
+            x["STATE"].eq("EXHAUSTION"),
+            x["STATE"].eq("FALSE_STRENGTH"),
+            x["STATE"].eq("DATA_CONTAMINATED"),
+            x["STATE"].eq("ALREADY_EXPANDED")],
+            [4,3,-10,-6,-20,-3],default=0)
+        x["RANKING_SCORE"]=(
+            0.45*x["SEPARATION_SCORE"]+
+            0.35*x["RARE20_SPECIALIST_SCORE"]+
+            0.20*x["WINNER_PROBABILITY_PCTL"]+
+            state_adj)
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
         top=x.head(30).copy()
