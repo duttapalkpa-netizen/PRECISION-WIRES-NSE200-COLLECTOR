@@ -441,11 +441,23 @@ def main():
         x["P20_H5_PCTL"]=x["P20_H5"].rank(pct=True)*100
         x["WINNER_PROBABILITY_PCTL"]=x["WINNER_PROBABILITY"].rank(pct=True)*100
         x["RECOVERY_SCORE"]=x.apply(_hidden_recovery_score,axis=1)
-        x["STATE"]=x.apply(_state_transition_v2,axis=1)
+        x["SEPARATION_SCORE"]=x.apply(_distribution_separation_score,axis=1)
+        x["RARE20_SPECIALIST_SCORE"]=x.apply(_rare20_specialist_score,axis=1)
+        x["STATE"]=x.apply(_state_transition_v3,axis=1)
 
-        # Driver ranking only; penalty states are pushed down, not used as positive drivers.
-        penalty=x["STATE"].isin(["ALREADY_EXPANDED","EXHAUSTION","FALSE_STRENGTH","DATA_CONTAMINATED"])
-        x["RANKING_SCORE"]=x["WINNER_PROBABILITY_PCTL"]-penalty.astype(float)*8
+        state_adj=np.select([
+            x["STATE"].eq("CONTINUATION_READY"),
+            x["STATE"].eq("HIDDEN_WINNER_RECOVERY"),
+            x["STATE"].eq("EXHAUSTION"),
+            x["STATE"].eq("FALSE_STRENGTH"),
+            x["STATE"].eq("DATA_CONTAMINATED"),
+            x["STATE"].eq("ALREADY_EXPANDED")],
+            [4,3,-10,-6,-20,-3],default=0)
+        x["RANKING_SCORE"]=(
+            0.45*x["SEPARATION_SCORE"]+
+            0.35*x["RARE20_SPECIALIST_SCORE"]+
+            0.20*x["WINNER_PROBABILITY_PCTL"]+
+            state_adj)
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
         top=x.head(30).copy()
