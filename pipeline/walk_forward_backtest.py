@@ -289,6 +289,36 @@ def _state_transition_v2(r):
         return "STRONG"
     return "NON_STRONG"
 
+def _state_transition_v3(r):
+    if r["ABNORMAL_RETURN_FLAG"]:
+        return "DATA_CONTAMINATED"
+    already=r["RET5"]>=12 or r["DIST_HIGH20"]<=2
+    exhausted=r["EXHAUSTION"]>=60 or (r["RET3"]>=8 and r["BODY_PCT"]<0)
+    continuation=(already and r["REPRICING_PRESSURE"]>=60 and r["RS5"]>0
+                  and r["EXHAUSTION"]<60 and r["P20_H5_PCTL"]>=65)
+    if continuation:
+        return "CONTINUATION_READY"
+    if exhausted:
+        return "EXHAUSTION"
+    hidden=(r["SEPARATION_SCORE"]>=68 and
+            (r["P10_H3_PCTL"]>=70 or r["P20_H5_PCTL"]>=75) and
+            r["RS5"]>0 and r["RVOL20"]>=1.05 and r["EXHAUSTION"]<55)
+    if hidden:
+        return "HIDDEN_WINNER_RECOVERY"
+    if already:
+        return "ALREADY_EXPANDED"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65 and r["REPRICING_PRESSURE"]>=60:
+        return "EXPANSION_READY"
+    if r["REPRICING_PRESSURE"]>=65:
+        return "REPRICING_PRESSURE"
+    if r["READINESS"]>=65 and r["NOT_YET_MOVED"]>=65:
+        return "NOT_YET_MOVED"
+    if r["READINESS"]>=60 and r["P10_H3_PCTL"]>=60:
+        return "STRONG"
+    if r["READINESS"]<45 and r["RS20"]<0 and r["RVOL20"]<1.0:
+        return "FALSE_STRENGTH"
+    return "NON_STRONG"
+
 def _calibration_stats(y,p,bins=10):
     y=np.asarray(y,dtype=float); p=np.asarray(p,dtype=float)
     m=np.isfinite(y)&np.isfinite(p); y=y[m]; p=p[m]
