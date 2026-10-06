@@ -466,6 +466,45 @@ def _independent_diagnostics(row):
     }
     return vals
 
+
+
+def _feature_ablation_scores(x):
+    """Counterfactual ranking ablation using only existing V11.4 components.
+    Does not change the production ranking; measures whether each added layer
+    helps or harms separation when removed one-at-a-time.
+    """
+    comps={
+        "SEPARATION_SCORE":(0.35,x["SEPARATION_SCORE"]),
+        "RARE20_SPECIALIST_SCORE":(0.30,x["RARE20_SPECIALIST_SCORE"]),
+        "WINNER_PROBABILITY_PCTL":(0.15,x["WINNER_PROBABILITY_PCTL"]),
+        "WINNER_INTERACTION_SCORE":(0.10,x["WINNER_INTERACTION_SCORE"]),
+        "LATENT_WINNER_EVIDENCE":(0.10,x["LATENT_WINNER_EVIDENCE"]),
+    }
+    out={"CURRENT":x["RANKING_SCORE"]}
+    keys=list(comps)
+    for drop in keys:
+        kept=[k for k in keys if k!=drop]
+        denom=sum(comps[k][0] for k in kept)
+        s=sum((comps[k][0]/denom)*comps[k][1] for k in kept)
+        # Preserve the existing state adjustment so this is a one-component
+        # ablation rather than a simultaneous state-model rewrite.
+        state_adj=np.select([
+            x["STATE"].eq("CONTINUATION_READY"),
+            x["STATE"].eq("HIDDEN_WINNER_RECOVERY"),
+            x["STATE"].eq("EXHAUSTION"),
+            x["STATE"].eq("FALSE_STRENGTH"),
+            x["STATE"].eq("DATA_CONTAMINATED"),
+            x["STATE"].eq("ALREADY_EXPANDED")],
+            [4,3,-10,-6,-20,-3],default=0)
+        out["DROP_"+drop]=s+state_adj
+    # Separate test: remove the entire V4 state adjustment while retaining
+    # every continuous ranking component.
+    out["DROP_STATE_ADJUSTMENT"]=(
+        .35*x["SEPARATION_SCORE"]+.30*x["RARE20_SPECIALIST_SCORE"]+
+        .15*x["WINNER_PROBABILITY_PCTL"]+.10*x["WINNER_INTERACTION_SCORE"]+
+        .10*x["LATENT_WINNER_EVIDENCE"])
+    return pd.DataFrame(out,index=x.index)
+
 def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
@@ -477,7 +516,7 @@ def main():
     requested=int(__import__("os").environ.get("WF_SESSIONS","100"))
     usable=[x for x in dates if x<=dates[-6]]
     cutoffs=usable[-requested:]
-    predictions=[]; diag_rows=[]; miss_rows=[]; training_rows=[]; universe_predictions=[]
+    predictions=[]; diag_rows=[]; miss_rows=[]; training_rows=[]; universe_predictions=[]; ablation_rows=[]
 
     prob_features=["TOMORROW_EXPANSION_SCORE","REPRICING_PRESSURE","READINESS","NOT_YET_MOVED",
                     "EXPANSION_READY","EXHAUSTION","RVOL20","RS5","RS20","RET5","DIST_HIGH20","COMPRESSION","ACCEL"]
@@ -530,6 +569,23 @@ def main():
             0.10*x["WINNER_INTERACTION_SCORE"]+
             0.10*x["LATENT_WINNER_EVIDENCE"]+
             state_adj)
+        # Counterfactual ablation is audit-only; production ranking remains unchanged.
+        ab=_feature_ablation_scores(x)
+        for variant in ab.columns:
+            for h,t in [(1,5),(3,10),(5,20)]:
+                score=ab[variant]
+                order=score.rank(method="first",ascending=False)
+                chosen=order<=30
+                winners=(x[f"FUT{h}_HIGH_PCT"]>=t)
+                ablation_rows.append({
+                    "CUT_OFF":dt.date(),"VARIANT":variant,"TARGET":f"T{t}_H{h}",
+                    "TOP_N":int(chosen.sum()),
+                    "HITS":int((chosen&winners).sum()),
+                    "UNIVERSE_WINNERS":int(winners.sum()),
+                    "UNIVERSE_ROWS":int(len(x)),
+                    "PRECISION":float((chosen&winners).sum()/chosen.sum()) if chosen.sum() else np.nan,
+                    "RECALL":float((chosen&winners).sum()/winners.sum()) if winners.sum() else np.nan,
+                })
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
         top=x.head(30).copy()
@@ -593,6 +649,34 @@ def main():
 
     pred=pd.DataFrame(predictions); diag=pd.DataFrame(diag_rows)
     universe_pred=pd.DataFrame(universe_predictions)
+    # Feature-isolation report: aggregate counterfactual Top-30 performance.
+    # No new features are introduced and the production ranking above is untouched.
+    abdf=pd.DataFrame(ablation_rows)
+    if not abdf.empty:
+        agg_rows=[]
+        for (variant,target),g in abdf.groupby(["VARIANT","TARGET"]):
+            hits=int(g["HITS"].sum()); denom=int(g["TOP_N"].sum())
+            uw=int(g["UNIVERSE_WINNERS"].sum()); ur=int(g["UNIVERSE_ROWS"].sum())
+            precision=float(hits/denom) if denom else np.nan
+            recall=float(hits/uw) if uw else np.nan
+            base=float(uw/ur) if ur else np.nan
+            agg_rows.append({
+                "VARIANT":variant,"TARGET":target,"CUTOFFS":int(len(g)),
+                "HITS":hits,"UNIVERSE_WINNERS":uw,"PRECISION":precision,
+                "RECALL":recall,"BASE_RATE":base,
+                "LIFT":float(precision/base) if base else np.nan
+            })
+        abd=pd.DataFrame(agg_rows)
+        current=abd[abd.VARIANT=="CURRENT"][["TARGET","PRECISION","RECALL","LIFT"]].rename(
+            columns={"PRECISION":"CURRENT_PRECISION","RECALL":"CURRENT_RECALL","LIFT":"CURRENT_LIFT"})
+        abd=abd.merge(current,on="TARGET",how="left")
+        abd["DELTA_PRECISION_PP"]=(abd["PRECISION"]-abd["CURRENT_PRECISION"])*100
+        abd["DELTA_RECALL_PP"]=(abd["RECALL"]-abd["CURRENT_RECALL"])*100
+        abd["DELTA_LIFT"]=abd["LIFT"]-abd["CURRENT_LIFT"]
+        abd.to_csv(OUT/"feature_ablation_effects.csv",index=False)
+    else:
+        pd.DataFrame().to_csv(OUT/"feature_ablation_effects.csv",index=False)
+
     universe_pred.to_csv(OUT/"walk_forward_universe_probabilities.csv",index=False)
     pred.to_csv(OUT/"walk_forward_predictions.csv",index=False)
     diag.to_csv(OUT/"diagnostic_separation_672.csv",index=False)
