@@ -470,6 +470,7 @@ def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
     df=add_tomorrow_features(df)
+    df=_transition_features(df)
     df=_robust_return_filter(df)
     df=future_outcomes(df)
     dates=sorted(df["DATE"].dropna().unique())
