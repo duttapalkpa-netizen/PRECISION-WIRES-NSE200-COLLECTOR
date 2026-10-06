@@ -562,12 +562,13 @@ def main():
             x["STATE"].eq("DATA_CONTAMINATED"),
             x["STATE"].eq("ALREADY_EXPANDED")],
             [4,3,-10,-6,-20,-3],default=0)
+        # Minimal Run #52 ablation revision:
+        # remove harmful Winner Interaction + Latent Winner Evidence;
+        # renormalize the three retained continuous components.
         x["RANKING_SCORE"]=(
-            0.35*x["SEPARATION_SCORE"]+
-            0.30*x["RARE20_SPECIALIST_SCORE"]+
-            0.15*x["WINNER_PROBABILITY_PCTL"]+
-            0.10*x["WINNER_INTERACTION_SCORE"]+
-            0.10*x["LATENT_WINNER_EVIDENCE"]+
+            0.4375*x["SEPARATION_SCORE"]+
+            0.3750*x["RARE20_SPECIALIST_SCORE"]+
+            0.1875*x["WINNER_PROBABILITY_PCTL"]+
             state_adj)
         # Counterfactual ablation is audit-only; production ranking remains unchanged.
         ab=_feature_ablation_scores(x)
