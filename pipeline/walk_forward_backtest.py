@@ -495,7 +495,7 @@ def _feature_ablation_scores(x):
             x["STATE"].eq("FALSE_STRENGTH"),
             x["STATE"].eq("DATA_CONTAMINATED"),
             x["STATE"].eq("ALREADY_EXPANDED")],
-            [4,3,1,-10,-6,-20,-3],default=0)
+            [4,3,-10,-6,-20,-3],default=0)
         out["DROP_"+drop]=s+state_adj
     # Separate test: remove the entire V4 state adjustment while retaining
     # every continuous ranking component.
@@ -561,7 +561,7 @@ def main():
             x["STATE"].eq("FALSE_STRENGTH"),
             x["STATE"].eq("DATA_CONTAMINATED"),
             x["STATE"].eq("ALREADY_EXPANDED")],
-            [4,3,-10,-6,-20,-3],default=0)
+            [4,3,-10,-6,-20,-3],default=0) + np.where(x["TRANSITION_SIGNATURE"].eq("PRESSURE_FADE"),1,0)
         # Minimal Run #52 ablation revision:
         # remove harmful Winner Interaction + Latent Winner Evidence;
         # renormalize the three retained continuous components.
