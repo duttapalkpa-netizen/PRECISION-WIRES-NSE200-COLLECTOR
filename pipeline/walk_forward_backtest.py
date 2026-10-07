@@ -566,9 +566,9 @@ def main():
         # remove harmful Winner Interaction + Latent Winner Evidence;
         # renormalize the three retained continuous components.
         x["RANKING_SCORE"]=(
-            0.4375*x["SEPARATION_SCORE"]+
-            0.3750*x["RARE20_SPECIALIST_SCORE"]+
-            0.1875*x["WINNER_PROBABILITY_PCTL"]+
+            0.43125*x["SEPARATION_SCORE"]+
+            0.34375*x["RARE20_SPECIALIST_SCORE"]+
+            0.2250*x["WINNER_PROBABILITY_PCTL"]+
             state_adj)
         # Counterfactual ablation is audit-only; production ranking remains unchanged.
         ab=_feature_ablation_scores(x)
