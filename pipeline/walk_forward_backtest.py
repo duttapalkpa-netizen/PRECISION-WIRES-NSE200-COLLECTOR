@@ -95,13 +95,27 @@ def add_features(df):
         ["STRONG_EXPANSION_READY","STRONG_NOT_YET_MOVED","STRONG_EXHAUSTED"],default="NON_STRONG")
     return df
 
+def _forward_window_max(series, horizon):
+    """Max over the next horizon observed sessions (T+1..T+h), never T or the past.
+
+    Full-horizon labels require all h future observations. The trailing-window-on-
+    shifted-series implementation used previously accidentally looked backward
+    for h>1 and silently treated missing future horizons as negatives downstream.
+    """
+    shifted = series.shift(-1)
+    return shifted.iloc[::-1].rolling(window=horizon, min_periods=horizon).max().iloc[::-1]
+
+
 def future_outcomes(df):
     g=df.groupby("SYMBOL",sort=False)
     for h in [1,3,5]:
-        fut=g["HIGH_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
+        fut=g["HIGH_PRICE"].transform(lambda x:_forward_window_max(x,h))
         df[f"FUT{h}_HIGH_PCT"]=(fut/df["CLOSE_PRICE"]-1)*100
-        futclose=g["CLOSE_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
+        futclose=g["CLOSE_PRICE"].transform(lambda x:_forward_window_max(x,h))
         df[f"FUT{h}_CLOSE_PCT"]=(futclose/df["CLOSE_PRICE"]-1)*100
+        # End date of the last observation used by this target. Training labels
+        # must be fully matured before the current walk-forward cutoff.
+        df[f"FUT{h}_END_DATE"]=g["DATE"].transform(lambda x:x.shift(-h))
     return df
 
 def diagnostic_state(row,step_idx,filter_idx):
@@ -505,6 +519,12 @@ def _feature_ablation_scores(x):
         .10*x["LATENT_WINNER_EVIDENCE"])
     return pd.DataFrame(out,index=x.index)
 
+def _hit_rate(frame, column, threshold):
+    """Rate among rows with a fully observed forward outcome only."""
+    outcome=frame[column].dropna()
+    return float((outcome>=threshold).mean()) if len(outcome) else float("nan")
+
+
 def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
@@ -529,8 +549,11 @@ def main():
         # Train only on earlier cutoffs: strict expanding-window, no look-ahead.
         prior=df[(df["DATE"]<dt)&(df["HISTORY_DEPTH_AT_T"].fillna(0)>=20)].copy()
         prior=prior[~prior["ABNORMAL_RETURN_FLAG"]].copy()
-        for target,h in [("WIN5_H1",1),("WIN10_H3",3),("WIN20_H5",5)]:
-            prior[target]=(prior[f"FUT{h}_HIGH_PCT"]>=({"WIN5_H1":5,"WIN10_H3":10,"WIN20_H5":20}[target])).astype(int)
+        for target,h,threshold in [("WIN5_H1",1,5),("WIN10_H3",3,10),("WIN20_H5",5,20)]:
+            outcome=prior[f"FUT{h}_HIGH_PCT"]
+            # Label must be complete and its last outcome observation must precede cutoff dt.
+            matured=prior[f"FUT{h}_END_DATE"].notna() & (prior[f"FUT{h}_END_DATE"] < dt)
+            prior[target]=np.where(outcome.notna() & matured,(outcome>=threshold).astype(float),np.nan)
         train=prior.dropna(subset=prob_features+["WIN5_H1","WIN10_H3","WIN20_H5"])
         cal_meta={}
         for target,col in [("WIN5_H1","P5_H1"),("WIN10_H3","P10_H3"),("WIN20_H5","P20_H5")]:
@@ -573,19 +596,26 @@ def main():
         # Counterfactual ablation is audit-only; production ranking remains unchanged.
         ab=_feature_ablation_scores(x)
         for variant in ab.columns:
-            for h,t in [(1,5),(3,10),(5,20)]:
+            for h,t in [(1,5),(3,10),(5,15),(5,20)]:
                 score=ab[variant]
                 order=score.rank(method="first",ascending=False)
                 chosen=order<=30
-                winners=(x[f"FUT{h}_HIGH_PCT"]>=t)
+                outcome=x[f"FUT{h}_HIGH_PCT"]
+                valid=outcome.notna()
+                winners=outcome>=t
+                evaluated=chosen&valid
+                hits=int((evaluated&winners).sum())
+                top_valid=int(evaluated.sum())
+                universe_winners=int((valid&winners).sum())
+                universe_valid=int(valid.sum())
                 ablation_rows.append({
                     "CUT_OFF":dt.date(),"VARIANT":variant,"TARGET":f"T{t}_H{h}",
-                    "TOP_N":int(chosen.sum()),
-                    "HITS":int((chosen&winners).sum()),
-                    "UNIVERSE_WINNERS":int(winners.sum()),
-                    "UNIVERSE_ROWS":int(len(x)),
-                    "PRECISION":float((chosen&winners).sum()/chosen.sum()) if chosen.sum() else np.nan,
-                    "RECALL":float((chosen&winners).sum()/winners.sum()) if winners.sum() else np.nan,
+                    "TOP_N":top_valid,
+                    "HITS":hits,
+                    "UNIVERSE_WINNERS":universe_winners,
+                    "UNIVERSE_ROWS":universe_valid,
+                    "PRECISION":float(hits/top_valid) if top_valid else np.nan,
+                    "RECALL":float(hits/universe_winners) if universe_winners else np.nan,
                 })
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
@@ -632,15 +662,16 @@ def main():
         chosen=set(top["SYMBOL"])
         u=x
         for _,r in u.iterrows():
-            h10=float(r["FUT3_HIGH_PCT"])>=10
-            h20=float(r["FUT5_HIGH_PCT"])>=20
-            if (h10 or h20) and r["SYMBOL"] not in chosen:
+            h10=pd.notna(r["FUT3_HIGH_PCT"]) and float(r["FUT3_HIGH_PCT"])>=10
+            h15=pd.notna(r["FUT5_HIGH_PCT"]) and float(r["FUT5_HIGH_PCT"])>=15
+            h20=pd.notna(r["FUT5_HIGH_PCT"]) and float(r["FUT5_HIGH_PCT"])>=20
+            if (h10 or h15 or h20) and r["SYMBOL"] not in chosen:
                 vals=_independent_diagnostics(r)
                 pos=sum(1 for v in vals.values() if pd.notna(v) and float(v)>0)
                 neg=sum(1 for v in vals.values() if pd.notna(v) and float(v)<0)
                 miss_rows.append({
                     "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
-                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("20_H5",h20)] if b),
+                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("15_H5",h15),("20_H5",h20)] if b),
                     "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
                     "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
                     "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
@@ -695,21 +726,29 @@ def main():
              "probability_targets":["P5_H1","P10_H3","P20_H5"],
              "precision":{},"recall":{},"base_rate":{},"lift":{},"state_performance":{}}
     all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
-    for h,t in [(1,5),(3,10),(5,20)]:
+    for h,t in [(1,5),(3,10),(5,15),(5,20)]:
         key=f"T{t}_H{h}"
-        hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
-        universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
-        metrics["precision"][key]=float(hits/len(pred)) if len(pred) else None
-        metrics["recall"][key]=float(hits/universe) if universe else None
-        metrics["base_rate"][key]=float(universe/len(all_by_date)) if len(all_by_date) else None
-        metrics["lift"][key]=float((hits/len(pred))/(universe/len(all_by_date))) if universe and len(all_by_date) else None
+        pcol=f"FUT{h}_HIGH_PCT"
+        valid_pred=pred[pcol].notna() if not pred.empty else pd.Series(dtype=bool)
+        valid_universe=all_by_date[pcol].notna()
+        hits=int((pred.loc[valid_pred,pcol]>=t).sum()) if not pred.empty else 0
+        universe=int((all_by_date.loc[valid_universe,pcol]>=t).sum())
+        pred_n=int(valid_pred.sum()) if not pred.empty else 0
+        universe_n=int(valid_universe.sum())
+        precision=float(hits/pred_n) if pred_n else None
+        recall=float(hits/universe) if universe else None
+        base=float(universe/universe_n) if universe_n else None
+        metrics["precision"][key]=precision
+        metrics["recall"][key]=recall
+        metrics["base_rate"][key]=base
+        metrics["lift"][key]=float(precision/base) if precision is not None and base else None
     if not pred.empty:
         for state,g in pred.groupby("STATE"):
             metrics["state_performance"][state]={
                 "rows":int(len(g)),
-                "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
-                "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
-                "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
+                "hit5_h1":_hit_rate(g,"FUT1_HIGH_PCT",5),
+                "hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),
+                "hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),"hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),
                 "median_winner_probability":float(g.WINNER_PROBABILITY.median()),
                 "median_percentile":float(g.WINNER_PROBABILITY_PCTL.median())}
         metrics["winner_probability_separation"]={
@@ -721,7 +760,7 @@ def main():
     if not pred.empty:
         metrics["transition_signature_performance"]={}
         for sig,g in pred.groupby("TRANSITION_SIGNATURE"):
-            metrics["transition_signature_performance"][sig]={"rows":int(len(g)),"hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),"hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),"median_continuation_score":float(g.CONTINUATION_SCORE.median()),"median_exhaustion_risk":float(g.EXHAUSTION_RISK.median())}
+            metrics["transition_signature_performance"][sig]={"rows":int(len(g)),"hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),"hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),"hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),"median_continuation_score":float(g.CONTINUATION_SCORE.median()),"median_exhaustion_risk":float(g.EXHAUSTION_RISK.median())}
         metrics["winner_specific_interaction"]={"winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_INTERACTION_SCORE"].mean()),"nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_INTERACTION_SCORE"].mean())}
         metrics["latent_winner_evidence"]={"winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"LATENT_WINNER_EVIDENCE"].mean()),"nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"LATENT_WINNER_EVIDENCE"].mean())}
         metrics["continuation_vs_exhaustion"]={"winner_continuation_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"CONTINUATION_SCORE"].mean()),"winner_exhaustion_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"EXHAUSTION_RISK"].mean()),"nonwinner_continuation_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"CONTINUATION_SCORE"].mean()),"nonwinner_exhaustion_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"EXHAUSTION_RISK"].mean())}
@@ -730,12 +769,15 @@ def main():
     if not universe_pred.empty:
         cal={}
         for h,t,col in [(1,5,"P5_H1"),(3,10,"P10_H3"),(5,20,"P20_H5")]:
-            y=(universe_pred[f"FUT{h}_HIGH_PCT"]>=t).astype(int)
+            outcome=universe_pred[f"FUT{h}_HIGH_PCT"]
+            y=np.where(outcome.notna(),(outcome>=t).astype(float),np.nan)
             p=universe_pred[col].astype(float)
             cal[f"T{t}_H{h}"]=_calibration_stats(y,p)
-            cal[f"T{t}_H{h}"]["winner_mean"]=float(p[y==1].mean()) if (y==1).any() else None
-            cal[f"T{t}_H{h}"]["nonwinner_mean"]=float(p[y==0].mean()) if (y==0).any() else None
-            cal[f"T{t}_H{h}"]["mean_gap"]=float(p[y==1].mean()-p[y==0].mean()) if (y==1).any() and (y==0).any() else None
+            valid=(np.isfinite(y)&np.isfinite(p))
+            winner=(y==1)&valid; nonwinner=(y==0)&valid
+            cal[f"T{t}_H{h}"]["winner_mean"]=float(p[winner].mean()) if winner.any() else None
+            cal[f"T{t}_H{h}"]["nonwinner_mean"]=float(p[nonwinner].mean()) if nonwinner.any() else None
+            cal[f"T{t}_H{h}"]["mean_gap"]=float(p[winner].mean()-p[nonwinner].mean()) if winner.any() and nonwinner.any() else None
         metrics["full_universe_probability_calibration"]=cal
         metrics["probability_interpretation"]="Out-of-sample time-split Platt calibration; full-universe separation is distinct from Top-30 ranking lift."
 
@@ -759,9 +801,10 @@ def main():
     dna={}
     if not pred.empty:
         for st,g in pred.groupby("STATE"):
-            dna[st]={"samples":int(len(g)),"hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
-                     "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
-                     "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
+            dna[st]={"samples":int(len(g)),"hit5_h1":_hit_rate(g,"FUT1_HIGH_PCT",5),
+                     "hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),
+                     "hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),
+                     "hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),
                      "median_winner_probability":float(g.WINNER_PROBABILITY.median())}
     (OUT/"behavioral_dna_library.json").write_text(json.dumps(dna,indent=2))
     (OUT/"walk_forward_metrics.json").write_text(json.dumps(metrics,indent=2))
