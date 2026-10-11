@@ -95,12 +95,23 @@ def add_features(df):
         ["STRONG_EXPANSION_READY","STRONG_NOT_YET_MOVED","STRONG_EXHAUSTED"],default="NON_STRONG")
     return df
 
+def _forward_window_max(series, horizon):
+    """Max over the next horizon observed sessions (T+1..T+h), never T or the past.
+
+    Full-horizon labels require all h future observations. The trailing-window-on-
+    shifted-series implementation used previously accidentally looked backward
+    for h>1 and silently treated missing future horizons as negatives downstream.
+    """
+    shifted = series.shift(-1)
+    return shifted.iloc[::-1].rolling(window=horizon, min_periods=horizon).max().iloc[::-1]
+
+
 def future_outcomes(df):
     g=df.groupby("SYMBOL",sort=False)
     for h in [1,3,5]:
-        fut=g["HIGH_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
+        fut=g["HIGH_PRICE"].transform(lambda x:_forward_window_max(x,h))
         df[f"FUT{h}_HIGH_PCT"]=(fut/df["CLOSE_PRICE"]-1)*100
-        futclose=g["CLOSE_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
+        futclose=g["CLOSE_PRICE"].transform(lambda x:_forward_window_max(x,h))
         df[f"FUT{h}_CLOSE_PCT"]=(futclose/df["CLOSE_PRICE"]-1)*100
     return df
 
@@ -529,8 +540,10 @@ def main():
         # Train only on earlier cutoffs: strict expanding-window, no look-ahead.
         prior=df[(df["DATE"]<dt)&(df["HISTORY_DEPTH_AT_T"].fillna(0)>=20)].copy()
         prior=prior[~prior["ABNORMAL_RETURN_FLAG"]].copy()
-        for target,h in [("WIN5_H1",1),("WIN10_H3",3),("WIN20_H5",5)]:
-            prior[target]=(prior[f"FUT{h}_HIGH_PCT"]>=({"WIN5_H1":5,"WIN10_H3":10,"WIN20_H5":20}[target])).astype(int)
+        for target,h,threshold in [("WIN5_H1",1,5),("WIN10_H3",3,10),("WIN20_H5",5,20)]:
+            outcome=prior[f"FUT{h}_HIGH_PCT"]
+            # Preserve unavailable/incomplete future horizons as NaN, not false negatives.
+            prior[target]=np.where(outcome.notna(),(outcome>=threshold).astype(float),np.nan)
         train=prior.dropna(subset=prob_features+["WIN5_H1","WIN10_H3","WIN20_H5"])
         cal_meta={}
         for target,col in [("WIN5_H1","P5_H1"),("WIN10_H3","P10_H3"),("WIN20_H5","P20_H5")]:
@@ -573,7 +586,7 @@ def main():
         # Counterfactual ablation is audit-only; production ranking remains unchanged.
         ab=_feature_ablation_scores(x)
         for variant in ab.columns:
-            for h,t in [(1,5),(3,10),(5,20)]:
+            for h,t in [(1,5),(3,10),(5,15),(5,20)]:
                 score=ab[variant]
                 order=score.rank(method="first",ascending=False)
                 chosen=order<=30
@@ -695,7 +708,7 @@ def main():
              "probability_targets":["P5_H1","P10_H3","P20_H5"],
              "precision":{},"recall":{},"base_rate":{},"lift":{},"state_performance":{}}
     all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
-    for h,t in [(1,5),(3,10),(5,20)]:
+    for h,t in [(1,5),(3,10),(5,15),(5,20)]:
         key=f"T{t}_H{h}"
         hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
         universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
@@ -709,7 +722,7 @@ def main():
                 "rows":int(len(g)),
                 "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
                 "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
-                "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
+                "hit15_h5":float((g.FUT5_HIGH_PCT>=15).mean()),"hit15_h5":float((g.FUT5_HIGH_PCT>=15).mean()),"hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
                 "median_winner_probability":float(g.WINNER_PROBABILITY.median()),
                 "median_percentile":float(g.WINNER_PROBABILITY_PCTL.median())}
         metrics["winner_probability_separation"]={
