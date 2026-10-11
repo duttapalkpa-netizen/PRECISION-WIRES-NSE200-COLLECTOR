@@ -645,15 +645,16 @@ def main():
         chosen=set(top["SYMBOL"])
         u=x
         for _,r in u.iterrows():
-            h10=float(r["FUT3_HIGH_PCT"])>=10
-            h20=float(r["FUT5_HIGH_PCT"])>=20
-            if (h10 or h20) and r["SYMBOL"] not in chosen:
+            h10=pd.notna(r["FUT3_HIGH_PCT"]) and float(r["FUT3_HIGH_PCT"])>=10
+            h15=pd.notna(r["FUT5_HIGH_PCT"]) and float(r["FUT5_HIGH_PCT"])>=15
+            h20=pd.notna(r["FUT5_HIGH_PCT"]) and float(r["FUT5_HIGH_PCT"])>=20
+            if (h10 or h15 or h20) and r["SYMBOL"] not in chosen:
                 vals=_independent_diagnostics(r)
                 pos=sum(1 for v in vals.values() if pd.notna(v) and float(v)>0)
                 neg=sum(1 for v in vals.values() if pd.notna(v) and float(v)<0)
                 miss_rows.append({
                     "CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
-                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("20_H5",h20)] if b),
+                    "TARGETS":"+".join(x for x,b in [("10_H3",h10),("15_H5",h15),("20_H5",h20)] if b),
                     "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
                     "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
                     "RANKING_SCORE":r["RANKING_SCORE"],"TOMORROW_EXPANSION_SCORE":r["TOMORROW_EXPANSION_SCORE"],
@@ -710,12 +711,20 @@ def main():
     all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
     for h,t in [(1,5),(3,10),(5,15),(5,20)]:
         key=f"T{t}_H{h}"
-        hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
-        universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
-        metrics["precision"][key]=float(hits/len(pred)) if len(pred) else None
-        metrics["recall"][key]=float(hits/universe) if universe else None
-        metrics["base_rate"][key]=float(universe/len(all_by_date)) if len(all_by_date) else None
-        metrics["lift"][key]=float((hits/len(pred))/(universe/len(all_by_date))) if universe and len(all_by_date) else None
+        pcol=f"FUT{h}_HIGH_PCT"
+        valid_pred=pred[pcol].notna() if not pred.empty else pd.Series(dtype=bool)
+        valid_universe=all_by_date[pcol].notna()
+        hits=int((pred.loc[valid_pred,pcol]>=t).sum()) if not pred.empty else 0
+        universe=int((all_by_date.loc[valid_universe,pcol]>=t).sum())
+        pred_n=int(valid_pred.sum()) if not pred.empty else 0
+        universe_n=int(valid_universe.sum())
+        precision=float(hits/pred_n) if pred_n else None
+        recall=float(hits/universe) if universe else None
+        base=float(universe/universe_n) if universe_n else None
+        metrics["precision"][key]=precision
+        metrics["recall"][key]=recall
+        metrics["base_rate"][key]=base
+        metrics["lift"][key]=float(precision/base) if precision is not None and base else None
     if not pred.empty:
         for state,g in pred.groupby("STATE"):
             metrics["state_performance"][state]={
@@ -743,12 +752,15 @@ def main():
     if not universe_pred.empty:
         cal={}
         for h,t,col in [(1,5,"P5_H1"),(3,10,"P10_H3"),(5,20,"P20_H5")]:
-            y=(universe_pred[f"FUT{h}_HIGH_PCT"]>=t).astype(int)
+            outcome=universe_pred[f"FUT{h}_HIGH_PCT"]
+            y=np.where(outcome.notna(),(outcome>=t).astype(float),np.nan)
             p=universe_pred[col].astype(float)
             cal[f"T{t}_H{h}"]=_calibration_stats(y,p)
-            cal[f"T{t}_H{h}"]["winner_mean"]=float(p[y==1].mean()) if (y==1).any() else None
-            cal[f"T{t}_H{h}"]["nonwinner_mean"]=float(p[y==0].mean()) if (y==0).any() else None
-            cal[f"T{t}_H{h}"]["mean_gap"]=float(p[y==1].mean()-p[y==0].mean()) if (y==1).any() and (y==0).any() else None
+            valid=(np.isfinite(y)&np.isfinite(p))
+            winner=(y==1)&valid; nonwinner=(y==0)&valid
+            cal[f"T{t}_H{h}"]["winner_mean"]=float(p[winner].mean()) if winner.any() else None
+            cal[f"T{t}_H{h}"]["nonwinner_mean"]=float(p[nonwinner].mean()) if nonwinner.any() else None
+            cal[f"T{t}_H{h}"]["mean_gap"]=float(p[winner].mean()-p[nonwinner].mean()) if winner.any() and nonwinner.any() else None
         metrics["full_universe_probability_calibration"]=cal
         metrics["probability_interpretation"]="Out-of-sample time-split Platt calibration; full-universe separation is distinct from Top-30 ranking lift."
 
