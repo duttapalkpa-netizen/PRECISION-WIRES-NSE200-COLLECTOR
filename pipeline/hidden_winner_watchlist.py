@@ -54,9 +54,9 @@ def main():
             [rank_col, "RANKING_SCORE"], ascending=[False, False], kind="stable"
         ).head(WATCH_N)
         base = g[g["BASE_RANK"] <= TOP_N]
-        for _, row in watch.iterrows():
+        for watch_rank, (_, row) in enumerate(watch.iterrows(), start=1):
             rec = {"CUT_OFF": cutoff, "SYMBOL": row["SYMBOL"],
-                   "WATCH_RANK": len(picks) + 1, "BASE_RANK": int(row["BASE_RANK"]),
+                   "WATCH_RANK": watch_rank, "BASE_RANK": int(row["BASE_RANK"]),
                    "SELECTION_SCORE": rank_col,
                    "SELECTION_SCORE_VALUE": row.get(rank_col, np.nan)}
             # Only the historical diagnostic file contains outcomes.
@@ -132,6 +132,12 @@ def main():
             "last30_baseline_top30_precision": float(last30["BASELINE_TOP30_PRECISION"].mean()),
             "interpretation": "Descriptive only; no ranking replacement or causal claim."
         }
+    def finite_or_none(value):
+        return value if np.isfinite(value) else None
+    for metrics in summary["targets"].values():
+        for key, value in list(metrics.items()):
+            if isinstance(value, (float, np.floating)):
+                metrics[key] = finite_or_none(float(value))
     (OUT / "hidden_winner_watchlist_summary.json").write_text(
         json.dumps(summary, indent=2, allow_nan=False), encoding="utf-8"
     )
