@@ -1,0 +1,50 @@
+name: Audit-only Corrected Target Label Walk-Forward
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  corrected-label-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: audit/corrected-forward-targets
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Regression tests for forward-only labels
+        run: python -m unittest discover -s qa -p "test_*.py" -v
+      - name: Acquire normalized NSE history
+        run: python collector/nse_download.py --sessions 200
+      - name: Build normalized adaptive dataset
+        run: python collector/build_200_sessions.py
+      - name: Strict dataset QA
+        run: python qa/validate_dataset.py
+      - name: Run corrected-label walk-forward refit (audit only)
+        env:
+          WF_SESSIONS: "100"
+        run: python pipeline/walk_forward_backtest.py
+      - name: Upload audit-only results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: corrected-target-label-audit
+          path: |
+            data/qa/
+            outputs/backtest/walk_forward_metrics.json
+            outputs/backtest/walk_forward_predictions.csv
+            outputs/backtest/walk_forward_universe_probabilities.csv
+            outputs/backtest/missed_winner_lab.csv
+            outputs/backtest/feature_ablation_effects.csv
+            outputs/backtest/behavioral_dna_library.json
+          if-no-files-found: warn
