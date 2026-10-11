@@ -756,7 +756,7 @@ def main():
     if not pred.empty:
         metrics["transition_signature_performance"]={}
         for sig,g in pred.groupby("TRANSITION_SIGNATURE"):
-            metrics["transition_signature_performance"][sig]={"rows":int(len(g)),"hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),"hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),"median_continuation_score":float(g.CONTINUATION_SCORE.median()),"median_exhaustion_risk":float(g.EXHAUSTION_RISK.median())}
+            metrics["transition_signature_performance"][sig]={"rows":int(len(g)),"hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),"hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),"hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),"median_continuation_score":float(g.CONTINUATION_SCORE.median()),"median_exhaustion_risk":float(g.EXHAUSTION_RISK.median())}
         metrics["winner_specific_interaction"]={"winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_INTERACTION_SCORE"].mean()),"nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_INTERACTION_SCORE"].mean())}
         metrics["latent_winner_evidence"]={"winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"LATENT_WINNER_EVIDENCE"].mean()),"nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"LATENT_WINNER_EVIDENCE"].mean())}
         metrics["continuation_vs_exhaustion"]={"winner_continuation_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"CONTINUATION_SCORE"].mean()),"winner_exhaustion_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"EXHAUSTION_RISK"].mean()),"nonwinner_continuation_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"CONTINUATION_SCORE"].mean()),"nonwinner_exhaustion_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"EXHAUSTION_RISK"].mean())}
@@ -799,6 +799,7 @@ def main():
         for st,g in pred.groupby("STATE"):
             dna[st]={"samples":int(len(g)),"hit5_h1":_hit_rate(g,"FUT1_HIGH_PCT",5),
                      "hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),
+                     "hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),
                      "hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),
                      "median_winner_probability":float(g.WINNER_PROBABILITY.median())}
     (OUT/"behavioral_dna_library.json").write_text(json.dumps(dna,indent=2))
