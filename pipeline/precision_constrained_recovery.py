@@ -75,7 +75,7 @@ def main():
 
     # Fixed Top-30 replacement experiments: preserve the top (30-k) baseline
     # rows and replace only the bottom k slots with candidates from outside it.
-    for score in SCORE_COLS[1:]:
+    for score in [x for x in SCORE_COLS[1:] if x != "EXHAUSTION_RISK"]:
         variants["SLOT_" + score.upper()] = score + "_PCTL"
     variants.update({
         "SLOT_RECOVERY_CONFIRMED": "RECOVERY_SCORE_PCTL",
