@@ -36,6 +36,8 @@ jobs:
         env:
           WF_SESSIONS: "100"
         run: python pipeline/walk_forward_backtest.py
+      - name: Run precision-constrained Top-30 recovery experiment (audit only)
+        run: python pipeline/precision_constrained_recovery.py
       - name: Upload audit-only results
         if: always()
         uses: actions/upload-artifact@v4
@@ -48,5 +50,8 @@ jobs:
             outputs/backtest/walk_forward_universe_probabilities.csv
             outputs/backtest/missed_winner_lab.csv
             outputs/backtest/feature_ablation_effects.csv
+            outputs/backtest/precision_constrained_recovery_daily.csv
+            outputs/backtest/precision_constrained_recovery_comparison.csv
+            outputs/backtest/precision_constrained_recovery_summary.json
             outputs/backtest/behavioral_dna_library.json
           if-no-files-found: warn
