@@ -113,6 +113,9 @@ def future_outcomes(df):
         df[f"FUT{h}_HIGH_PCT"]=(fut/df["CLOSE_PRICE"]-1)*100
         futclose=g["CLOSE_PRICE"].transform(lambda x:_forward_window_max(x,h))
         df[f"FUT{h}_CLOSE_PCT"]=(futclose/df["CLOSE_PRICE"]-1)*100
+        # End date of the last observation used by this target. Training labels
+        # must be fully matured before the current walk-forward cutoff.
+        df[f"FUT{h}_END_DATE"]=g["DATE"].transform(lambda x:x.shift(-h))
     return df
 
 def diagnostic_state(row,step_idx,filter_idx):
@@ -548,8 +551,9 @@ def main():
         prior=prior[~prior["ABNORMAL_RETURN_FLAG"]].copy()
         for target,h,threshold in [("WIN5_H1",1,5),("WIN10_H3",3,10),("WIN20_H5",5,20)]:
             outcome=prior[f"FUT{h}_HIGH_PCT"]
-            # Preserve unavailable/incomplete future horizons as NaN, not false negatives.
-            prior[target]=np.where(outcome.notna(),(outcome>=threshold).astype(float),np.nan)
+            # Label must be complete and its last outcome observation must precede cutoff dt.
+            matured=prior[f"FUT{h}_END_DATE"].notna() & (prior[f"FUT{h}_END_DATE"] < dt)
+            prior[target]=np.where(outcome.notna() & matured,(outcome>=threshold).astype(float),np.nan)
         train=prior.dropna(subset=prob_features+["WIN5_H1","WIN10_H3","WIN20_H5"])
         cal_meta={}
         for target,col in [("WIN5_H1","P5_H1"),("WIN10_H3","P10_H3"),("WIN20_H5","P20_H5")]:
