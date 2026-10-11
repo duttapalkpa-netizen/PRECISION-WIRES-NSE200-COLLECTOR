@@ -2,6 +2,8 @@ name: Audit-only Corrected Target Label Walk-Forward
 
 on:
   workflow_dispatch:
+  push:
+    branches: [audit/corrected-forward-targets]
 
 permissions:
   contents: read
