@@ -12,6 +12,9 @@ class ForwardTargetLabelTests(unittest.TestCase):
         self.assertAlmostEqual(out.loc[0,'FUT3_HIGH_PCT'],10.0)
         self.assertAlmostEqual(out.loc[0,'FUT5_HIGH_PCT'],30.0)
         self.assertAlmostEqual(out.loc[1,'FUT3_HIGH_PCT'],30.0)
+        self.assertEqual(out.loc[0,'FUT3_END_DATE'], dates[3])
+        # A label ending on the cutoff date is not yet available at that cutoff.
+        self.assertFalse(out.loc[0,'FUT3_END_DATE'] < dates[3])
         self.assertTrue(np.isnan(out.loc[1,'FUT5_HIGH_PCT']))
         self.assertTrue(np.isnan(out.loc[3,'FUT3_HIGH_PCT']))
         self.assertTrue(np.isnan(out.loc[5,'FUT1_HIGH_PCT']))
