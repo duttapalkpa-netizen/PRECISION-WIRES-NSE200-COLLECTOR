@@ -516,6 +516,12 @@ def _feature_ablation_scores(x):
         .10*x["LATENT_WINNER_EVIDENCE"])
     return pd.DataFrame(out,index=x.index)
 
+def _hit_rate(frame, column, threshold):
+    """Rate among rows with a fully observed forward outcome only."""
+    outcome=frame[column].dropna()
+    return float((outcome>=threshold).mean()) if len(outcome) else float("nan")
+
+
 def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
@@ -590,15 +596,22 @@ def main():
                 score=ab[variant]
                 order=score.rank(method="first",ascending=False)
                 chosen=order<=30
-                winners=(x[f"FUT{h}_HIGH_PCT"]>=t)
+                outcome=x[f"FUT{h}_HIGH_PCT"]
+                valid=outcome.notna()
+                winners=outcome>=t
+                evaluated=chosen&valid
+                hits=int((evaluated&winners).sum())
+                top_valid=int(evaluated.sum())
+                universe_winners=int((valid&winners).sum())
+                universe_valid=int(valid.sum())
                 ablation_rows.append({
                     "CUT_OFF":dt.date(),"VARIANT":variant,"TARGET":f"T{t}_H{h}",
-                    "TOP_N":int(chosen.sum()),
-                    "HITS":int((chosen&winners).sum()),
-                    "UNIVERSE_WINNERS":int(winners.sum()),
-                    "UNIVERSE_ROWS":int(len(x)),
-                    "PRECISION":float((chosen&winners).sum()/chosen.sum()) if chosen.sum() else np.nan,
-                    "RECALL":float((chosen&winners).sum()/winners.sum()) if winners.sum() else np.nan,
+                    "TOP_N":top_valid,
+                    "HITS":hits,
+                    "UNIVERSE_WINNERS":universe_winners,
+                    "UNIVERSE_ROWS":universe_valid,
+                    "PRECISION":float(hits/top_valid) if top_valid else np.nan,
+                    "RECALL":float(hits/universe_winners) if universe_winners else np.nan,
                 })
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
@@ -729,9 +742,9 @@ def main():
         for state,g in pred.groupby("STATE"):
             metrics["state_performance"][state]={
                 "rows":int(len(g)),
-                "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
-                "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
-                "hit15_h5":float((g.FUT5_HIGH_PCT>=15).mean()),"hit15_h5":float((g.FUT5_HIGH_PCT>=15).mean()),"hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
+                "hit5_h1":_hit_rate(g,"FUT1_HIGH_PCT",5),
+                "hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),
+                "hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),"hit15_h5":float((g.FUT5_HIGH_PCT>=15).mean()),"hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),
                 "median_winner_probability":float(g.WINNER_PROBABILITY.median()),
                 "median_percentile":float(g.WINNER_PROBABILITY_PCTL.median())}
         metrics["winner_probability_separation"]={
