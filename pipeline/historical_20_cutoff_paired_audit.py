@@ -52,14 +52,35 @@ def main():
     outside["P10_P20_MEAN"] = (pd.to_numeric(outside["P10_H3_PCTL"], errors="coerce") +
                                pd.to_numeric(outside["P20_H5_PCTL"], errors="coerce")) / 2
     all_dates = sorted(pd.Timestamp(x) for x in df["CUT_OFF"].dropna().unique())
-    # Only dates where both labels are complete for the full evaluated universe count as matured.
+    # Maturity is target/pick-specific, not "every symbol in the universe has a label".
+    # Missing/incomplete outcomes are unresolved and never counted as negatives.
+    # Keep only cutoffs where each target has known outcomes for at least one pick
+    # from BOTH frozen selectors and at least one labeled outside-Top-30 universe row.
     mature_dates = []
     for d in all_dates:
         g = df[df["CUT_OFF"].eq(d)]
-        if all(g[label].notna().all() for label, _ in TARGETS.values()):
+        out = g[g["BASE_RANK"] > TOP_N].copy()
+        eligible = True
+        for label, _threshold in TARGETS.values():
+            known_universe = out[label].notna()
+            if not known_universe.any():
+                eligible = False
+                break
+            for sel in SCORE_COLS:
+                score = out[sel] if sel in out.columns else (out["P10_H3_PCTL"] + out["P20_H5_PCTL"]) / 2
+                picks = out.assign(_score=score).sort_values(
+                    ["_score", "RANKING_SCORE", "SYMBOL"],
+                    ascending=[False, False, True], kind="stable"
+                ).head(WATCH_N)
+                if not picks[label].notna().any():
+                    eligible = False
+                    break
+            if not eligible:
+                break
+        if eligible:
             mature_dates.append(d)
     if len(mature_dates) < N_CUTOFFS:
-        raise SystemExit(f"Need {N_CUTOFFS} fully matured cutoff dates; found {len(mature_dates)}")
+        raise SystemExit(f"Need {N_CUTOFFS} cutoff dates with matured outcomes for both selectors; found {len(mature_dates)}")
     dates = mature_dates[-N_CUTOFFS:]
     rng = np.random.default_rng(SEED)
     summary = {
@@ -81,17 +102,24 @@ def main():
         for d in dates:
             day = df[df["CUT_OFF"].eq(d)].copy()
             out = day[day["BASE_RANK"] > TOP_N].copy()
-            n_winners = int((out[label] >= threshold).sum())
-            row = {"CUT_OFF": d.date().isoformat(), "OUTSIDE_WINNERS": n_winners}
+            labeled_universe = out[out[label].notna()].copy()
+            n_winners = int((labeled_universe[label] >= threshold).sum())
+            row = {"CUT_OFF": d.date().isoformat(), "OUTSIDE_WINNERS": n_winners,
+                   "OUTSIDE_LABELED_N": int(len(labeled_universe)),
+                   "OUTSIDE_UNRESOLVED_N": int(len(out) - len(labeled_universe))}
             for sel in SCORE_COLS:
                 score = out[sel] if sel in out.columns else (out["P10_H3_PCTL"] + out["P20_H5_PCTL"]) / 2
                 picks = out.assign(_score=score).sort_values(
                     ["_score", "RANKING_SCORE", "SYMBOL"], ascending=[False, False, True], kind="stable"
                 ).head(WATCH_N)
-                hits = int((picks[label] >= threshold).sum())
-                row[f"{sel}_n"] = int(len(picks))
+                # Select first, then evaluate only matured picks. Unresolved labels are excluded, not misses.
+                valid_picks = picks[picks[label].notna()].copy()
+                hits = int((valid_picks[label] >= threshold).sum())
+                row[f"{sel}_selected_n"] = int(len(picks))
+                row[f"{sel}_unresolved_n"] = int(len(picks) - len(valid_picks))
+                row[f"{sel}_n"] = int(len(valid_picks))
                 row[f"{sel}_hits"] = hits
-                row[f"{sel}_precision"] = hits / len(picks) if len(picks) else np.nan
+                row[f"{sel}_precision"] = hits / len(valid_picks) if len(valid_picks) else np.nan
                 row[f"{sel}_capture"] = hits / n_winners if n_winners else np.nan
             rows.append(row)
             daily_records.append({"TARGET": target, **row})
