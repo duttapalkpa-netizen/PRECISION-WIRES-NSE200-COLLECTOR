@@ -61,6 +61,8 @@ jobs:
         run: python pipeline/sep16_anchor_retrospective_audit.py
       - name: Run multiple non-overlapping retrospective 20-session windows (exploratory only)
         run: python pipeline/multiwindow_retrospective_audit.py
+      - name: Repeat audit and verify byte-for-byte reproducibility (audit only)
+        run: python pipeline/check_retrospective_audit_reproducibility.py
       - name: Generate label-free picks from latest NSE session
         run: python pipeline/live_prospective_selector.py
       - name: Append picks and mature only complete outcomes
@@ -93,4 +95,5 @@ jobs:
             outputs/prospective/sep16_anchor_retrospective_daily.csv
             outputs/prospective/multiwindow_retrospective_audit.json
             outputs/prospective/multiwindow_retrospective_daily.csv
+            outputs/prospective/reproducibility_check.json
           if-no-files-found: warn
