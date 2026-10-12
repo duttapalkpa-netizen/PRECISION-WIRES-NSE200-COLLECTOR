@@ -1,0 +1,81 @@
+name: Audit-only Prospective Watchlist Tracking
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 17:00 India time (11:30 UTC), weekdays; GitHub may delay scheduled starts.
+    - cron: "30 11 * * 1-5"
+  push:
+    branches: [audit/prospective-selector-tracking]
+    paths:
+      - "prospective_watchlist_tracker.py"
+      - "qa/**"
+      - "pipeline/**"
+      - "collector/**"
+      - "requirements.txt"
+      - ".github/workflows/prospective_watchlist_tracking.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prospective-watchlist-audit
+  cancel-in-progress: false
+
+jobs:
+  prospective-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated prospective audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: audit/prospective-selector-tracking
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test corrected forward labels and prospective ledger
+        run: python -m unittest discover -s qa -p "test_*.py" -v
+      - name: Acquire normalized NSE history
+        run: python collector/nse_download.py --sessions 200
+      - name: Build normalized adaptive dataset
+        run: python collector/build_200_sessions.py
+      - name: Strict dataset QA
+        run: python qa/validate_dataset.py
+      - name: Run corrected-label walk-forward audit only
+        env:
+          WF_SESSIONS: "100"
+        run: python pipeline/walk_forward_backtest.py
+      - name: Generate frozen-selector diagnostics (audit only)
+        run: |
+          python pipeline/hidden_winner_watchlist.py
+          python pipeline/watchlist_selector_experiment.py
+      - name: Append picks and mature only complete outcomes
+        run: python prospective_watchlist_tracker.py
+      - name: Persist audit ledger on this branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/prospective/watchlist_ledger.csv
+          if git diff --cached --quiet; then
+            echo "No new picks or matured outcomes to persist."
+          else
+            git commit -m "Audit: update prospective selector ledger"
+            git push origin HEAD:audit/prospective-selector-tracking
+          fi
+      - name: Upload prospective audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prospective-watchlist-audit
+          path: |
+            data/qa/qa_report.json
+            outputs/prospective/watchlist_ledger.csv
+            outputs/backtest/walk_forward_metrics.json
+            outputs/backtest/watchlist_selector_experiment_summary.json
+          if-no-files-found: warn
