@@ -6,7 +6,7 @@ import hashlib
 from pathlib import Path
 import pandas as pd
 
-PICKS_DEFAULT = Path("outputs/backtest/watchlist_selector_experiment_latest.csv")
+PICKS_DEFAULT = Path("outputs/prospective/latest_picks.csv")
 PRICES_DEFAULT = Path("data/processed/nse_eq_200_sessions.csv")
 LEDGER_DEFAULT = Path("outputs/prospective/watchlist_ledger.csv")
 SELECTORS = {"CURRENT_WINNER_PROB", "P10_P20_MEAN"}
