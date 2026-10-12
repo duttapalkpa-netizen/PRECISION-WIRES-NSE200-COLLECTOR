@@ -57,6 +57,8 @@ jobs:
           python pipeline/watchlist_selector_experiment.py
       - name: Compare last 20 fully matured historical cutoffs (exploratory only)
         run: python pipeline/historical_20_cutoff_paired_audit.py
+      - name: Run Sep 16 anchored retrospective audit (exploratory only)
+        run: python pipeline/sep16_anchor_retrospective_audit.py
       - name: Generate label-free picks from latest NSE session
         run: python pipeline/live_prospective_selector.py
       - name: Append picks and mature only complete outcomes
@@ -85,4 +87,6 @@ jobs:
             outputs/backtest/watchlist_selector_experiment_summary.json
             outputs/prospective/historical_20_cutoff_paired_comparison.json
             outputs/prospective/historical_20_cutoff_daily.csv
+            outputs/prospective/sep16_anchor_retrospective_audit.json
+            outputs/prospective/sep16_anchor_retrospective_daily.csv
           if-no-files-found: warn
