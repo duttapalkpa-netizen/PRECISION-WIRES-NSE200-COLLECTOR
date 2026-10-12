@@ -55,6 +55,8 @@ jobs:
         run: |
           python pipeline/hidden_winner_watchlist.py
           python pipeline/watchlist_selector_experiment.py
+      - name: Generate label-free picks from latest NSE session
+        run: python pipeline/live_prospective_selector.py
       - name: Append picks and mature only complete outcomes
         run: python prospective_watchlist_tracker.py
       - name: Persist audit ledger on this branch only
@@ -76,6 +78,7 @@ jobs:
           path: |
             data/qa/qa_report.json
             outputs/prospective/watchlist_ledger.csv
+            outputs/prospective/latest_picks.csv
             outputs/backtest/walk_forward_metrics.json
             outputs/backtest/watchlist_selector_experiment_summary.json
           if-no-files-found: warn
