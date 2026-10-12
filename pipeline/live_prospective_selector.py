@@ -8,7 +8,7 @@ never reads future outcomes for today's picks.
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from pipeline import walk_forward_backtest as wf
+import walk_forward_backtest as wf
 
 SRC = Path("data/processed/nse_eq_200_sessions.csv")
 OUT = Path("outputs/prospective/latest_picks.csv")
