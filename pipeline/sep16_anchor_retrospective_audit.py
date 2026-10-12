@@ -92,6 +92,7 @@ def main():
             daily_rows.append(row)
     daily = pd.DataFrame(daily_rows)
     for target in TARGETS:
+        threshold = TARGETS[target][1]
         d = daily[daily["TARGET"].eq(target)].copy()
         paired = d.dropna(subset=["CURRENT_WINNER_PROB_PRECISION", "P10_P20_MEAN_PRECISION"])
         pdelta = paired["P10_P20_MEAN_PRECISION"] - paired["CURRENT_WINNER_PROB_PRECISION"]
