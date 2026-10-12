@@ -55,6 +55,8 @@ jobs:
         run: |
           python pipeline/hidden_winner_watchlist.py
           python pipeline/watchlist_selector_experiment.py
+      - name: Compare last 20 fully matured historical cutoffs (exploratory only)
+        run: python pipeline/historical_20_cutoff_paired_audit.py
       - name: Generate label-free picks from latest NSE session
         run: python pipeline/live_prospective_selector.py
       - name: Append picks and mature only complete outcomes
@@ -81,4 +83,6 @@ jobs:
             outputs/prospective/latest_picks.csv
             outputs/backtest/walk_forward_metrics.json
             outputs/backtest/watchlist_selector_experiment_summary.json
+            outputs/prospective/historical_20_cutoff_paired_comparison.json
+            outputs/prospective/historical_20_cutoff_daily.csv
           if-no-files-found: warn
