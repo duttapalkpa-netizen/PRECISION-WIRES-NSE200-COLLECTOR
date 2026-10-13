@@ -88,3 +88,15 @@ Phase 5: only after evidence, propose a reviewable PR for optional Risk Modifier
 - A 2021 Journal of International Money and Finance study finds stronger Indian equity sensitivity to US monetary shocks since the early 2000s, transmitted through exchange rates, foreign institutional flows and global risk aversion.
 - An open-access 2026 study examines global and India-specific geopolitical risk across 28 broad and sectoral NSE indices through Feb 2025.
 - These references motivate tests; they do not by themselves determine the final ranking or prove a tradable edge.
+
+
+## Expanded coverage and implementation status (audit branch)
+The machine-readable registry now contains 35 factor groups (F01–F35), including geopolitical escalation, sanctions/tariffs, shipping chokepoints, global central banks, weather/monsoon, household demand, credit stress, supply chains, AI/cyber, disasters, gold/safe havens, market positioning, governance, surveillance/liquidity, IPO float/lock-ups, research-house actions and global volatility contagion. This broad taxonomy is deliberately redundant at the inventory stage; later analysis must test overlap and avoid double-counting.
+
+Audit-only scripts:
+- `pipeline/macro_geo_source_coverage.py`: inventories 23 logical source groups and reports missing columns, missing-cell rate, duplicate keys, invalid dates/timestamps, date coverage and source gaps. A present file is not considered fully trusted just because its schema matches.
+- `pipeline/macro_geo_event_study.py`: consumes sourced `data/external/market_panel.csv` and `data/external/events.csv`, producing event-window returns at H+1/H+5/H+20 and a descriptive summary. Missing/invalid inputs create a BLOCKED report; the script does not manufacture data.
+- `qa/test_macro_geo_engine.py`: synthetic tests for missing-input handling, event-window arithmetic and duplicate panel detection.
+- The audit workflow runs the inventory and event-study scripts and uploads their reports; the source files are not connected automatically yet.
+
+Important limits: the event study currently provides descriptive unadjusted returns only. It is not yet a causal event study and does not yet implement benchmark-adjusted abnormal returns, matched controls, overlapping-event corrections, robust confidence intervals or rolling out-of-sample factor ranking. Those are subsequent research stages. A workflow trigger is not proof of a passing run; only the completed Actions result and its reports can establish that.
