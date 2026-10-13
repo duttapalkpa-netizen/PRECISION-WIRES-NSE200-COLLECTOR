@@ -47,8 +47,8 @@ def compute_event_windows(panel, events):
             if pos>=len(g) or pos==0: continue
             # Event-date reaction is only interpretable if event timestamp precedes that market's close.
             event_ts=ev.get("PUBLISHED_AT",pd.NaT)
-            known_before_close=bool(pd.notna(event_ts) and event_ts.date() <= dates[pos].date() and
-                                    (event_ts.date() < dates[pos].date() or event_ts.time().replace(tzinfo=None).hour < 10))
+            known_before_close=bool(pd.notna(event_ts) and event_ts.tz_convert("Asia/Kolkata").date() <= dates[pos].date() and
+                                    (event_ts.tz_convert("Asia/Kolkata").date() < dates[pos].date() or event_ts.tz_convert("Asia/Kolkata").time().replace(tzinfo=None) <= pd.Timestamp("15:30").time()))
             base=float(g.iloc[pos-1]["CLOSE"])
             rec={"EVENT_ID":ev["EVENT_ID"],"EVENT_TYPE":ev["EVENT_TYPE"],"EVENT_DATE":ev["EVENT_DATE"].date().isoformat(),
                  "SERIES":series,"SOURCE":ev.get("SOURCE",""),"CONFIDENCE":ev.get("CONFIDENCE",np.nan),
