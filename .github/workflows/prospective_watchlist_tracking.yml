@@ -63,6 +63,8 @@ jobs:
         run: python pipeline/multiwindow_retrospective_audit.py
       - name: Run strict target-specific 30 matured-cutoff historical audit (exploratory only)
         run: python pipeline/strict_30_matured_cutoff_audit.py
+      - name: Run target-first +5% H+1 selector experiment (historical exploratory only)
+        run: python pipeline/target5_h1_selector_experiment.py
       - name: Repeat audit and verify byte-for-byte reproducibility (audit only)
         run: python pipeline/check_retrospective_audit_reproducibility.py
       - name: Generate label-free picks from latest NSE session
@@ -99,5 +101,8 @@ jobs:
             outputs/prospective/multiwindow_retrospective_daily.csv
             outputs/prospective/strict_30_matured_cutoff_audit.json
             outputs/prospective/strict_30_matured_cutoff_daily.csv
+            outputs/prospective/target5_h1_selector_experiment.json
+            outputs/prospective/target5_h1_selector_experiment_daily.csv
+            outputs/prospective/target5_h1_selector_experiment_picks.csv
             outputs/prospective/reproducibility_check.json
           if-no-files-found: warn
