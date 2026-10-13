@@ -20,13 +20,13 @@ class MacroGeoTests(unittest.TestCase):
             self.assertIsNone(panel); self.assertIsNone(events); self.assertIn("Missing input",error)
 
     def test_event_window_returns_are_reproducible(self):
-        panel=pd.DataFrame({"DATE":pd.to_datetime(["2026-01-01","2026-01-02","2026-01-05","2026-01-06","2026-01-07"]),
-                            "SERIES":["NIFTY 50"]*5,"CLOSE":[100,101,102,103,105]})
+        panel=pd.DataFrame({"DATE":pd.to_datetime(["2026-01-01","2026-01-02","2026-01-05","2026-01-06","2026-01-07","2026-01-08"]),
+                            "SERIES":["NIFTY 50"]*6,"CLOSE":[100,101,102,103,104,105]})
         events=pd.DataFrame([{"EVENT_DATE":pd.Timestamp("2026-01-02"),"EVENT_ID":"E1","EVENT_TYPE":"OIL_SHOCK",
                               "PUBLISHED_AT":pd.Timestamp("2026-01-02T03:00:00Z"),"SOURCE":"official","CONFIDENCE":0.9}])
         result=event.compute_event_windows(panel,events)
         self.assertEqual(len(result),1)
-        self.assertAlmostEqual(result.iloc[0]["RETURN_H1_PCT"],2.0)
+        self.assertAlmostEqual(result.iloc[0]["RETURN_H1_PCT"],1.0)
         self.assertAlmostEqual(result.iloc[0]["RETURN_H5_PCT"],5.0)
 
     def test_duplicate_panel_rows_rejected(self):
