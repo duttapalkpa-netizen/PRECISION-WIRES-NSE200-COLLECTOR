@@ -6,6 +6,7 @@ Expected data/external/events.csv: EVENT_DATE,EVENT_ID,EVENT_TYPE,PUBLISHED_AT,S
 Optional benchmark series name: NIFTY 50. No post-event headline timestamp is allowed to masquerade as known pre-close information.
 """
 from pathlib import Path
+from datetime import time as clock_time
 import json
 import numpy as np
 import pandas as pd
@@ -48,7 +49,7 @@ def compute_event_windows(panel, events):
             # Event-date reaction is only interpretable if event timestamp precedes that market's close.
             event_ts=ev.get("PUBLISHED_AT",pd.NaT)
             known_before_close=bool(pd.notna(event_ts) and event_ts.tz_convert("Asia/Kolkata").date() <= dates[pos].date() and
-                                    (event_ts.tz_convert("Asia/Kolkata").date() < dates[pos].date() or event_ts.tz_convert("Asia/Kolkata").time().replace(tzinfo=None) <= pd.Timestamp("15:30").time()))
+                                    (event_ts.tz_convert("Asia/Kolkata").date() < dates[pos].date() or event_ts.tz_convert("Asia/Kolkata").time().replace(tzinfo=None) <= clock_time(15, 30)))
             base=float(g.iloc[pos-1]["CLOSE"])
             rec={"EVENT_ID":ev["EVENT_ID"],"EVENT_TYPE":ev["EVENT_TYPE"],"EVENT_DATE":ev["EVENT_DATE"].date().isoformat(),
                  "SERIES":series,"SOURCE":ev.get("SOURCE",""),"CONFIDENCE":ev.get("CONFIDENCE",np.nan),
