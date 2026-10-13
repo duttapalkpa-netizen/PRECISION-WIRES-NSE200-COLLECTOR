@@ -13,6 +13,8 @@ on:
       - "pipeline/**"
       - "collector/**"
       - "requirements.txt"
+      - "research/**"
+      - "config/macro_factor_registry.csv"
       - ".github/workflows/prospective_watchlist_tracking.yml"
 
 permissions:
@@ -51,6 +53,10 @@ jobs:
         env:
           WF_SESSIONS: "100"
         run: python pipeline/walk_forward_backtest.py
+      - name: Audit macro-geopolitical and sector source coverage (audit only)
+        run: python pipeline/macro_geo_source_coverage.py
+      - name: Run historical macro/geo event study when sourced inputs exist (audit only)
+        run: python pipeline/macro_geo_event_study.py
       - name: Generate frozen-selector diagnostics (audit only)
         run: |
           python pipeline/hidden_winner_watchlist.py
@@ -105,4 +111,9 @@ jobs:
             outputs/prospective/target5_h1_selector_experiment_daily.csv
             outputs/prospective/target5_h1_selector_experiment_picks.csv
             outputs/prospective/reproducibility_check.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/source_coverage.csv
+            outputs/macro_geo/event_study_report.json
+            outputs/macro_geo/event_study_summary.csv
+            outputs/macro_geo/event_study_windows.csv
           if-no-files-found: warn
