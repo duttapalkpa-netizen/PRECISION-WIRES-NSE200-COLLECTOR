@@ -1,0 +1,71 @@
+name: Audit-only Macro Geo P0 Collection and Event Study
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/prospective-selector-tracking]
+    paths:
+      - "pipeline/macro_geo_collect_p0.py"
+      - "pipeline/macro_geo_source_coverage.py"
+      - "pipeline/macro_geo_event_study.py"
+      - "qa/test_macro_geo_engine.py"
+      - "collector/**"
+      - "requirements.txt"
+      - ".github/workflows/macro_geo_p0_event_study.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-p0-audit
+  cancel-in-progress: false
+
+jobs:
+  macro-geo-p0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout audit branch only
+        uses: actions/checkout@v4
+        with:
+          ref: audit/prospective-selector-tracking
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test event-study timestamp and data-quality logic
+        run: python -m unittest qa.test_macro_geo_engine -v
+      - name: Acquire NSE history for the audit window
+        run: python collector/nse_download.py --sessions 200
+      - name: Build normalized NSE session panel
+        run: python collector/build_200_sessions.py
+      - name: Validate normalized NSE panel
+        run: python qa/validate_dataset.py
+      - name: Collect P0 market series and timestamped media evidence
+        run: python pipeline/macro_geo_collect_p0.py
+      - name: Audit source coverage and data quality
+        run: python pipeline/macro_geo_source_coverage.py
+      - name: Run historical event study (blocked if sourced inputs are absent)
+        run: python pipeline/macro_geo_event_study.py
+      - name: Upload P0 data and audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-p0-event-study
+          path: |
+            data/processed/nse_eq_200_sessions.csv
+            data/external/market_panel.csv
+            data/external/events.csv
+            data/external/geopolitical_events.csv
+            data/external/benchmark_indices.csv
+            data/external/sector_indices.csv
+            data/external/volatility.csv
+            data/external/brent_crude.csv
+            data/external/usd_inr.csv
+            data/external/corporate_events.csv
+            data/external/fpi_dii_flows.csv
+            outputs/macro_geo/**
+          if-no-files-found: warn
