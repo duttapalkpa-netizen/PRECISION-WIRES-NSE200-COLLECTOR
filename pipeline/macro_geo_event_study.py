@@ -100,12 +100,25 @@ def main():
     summary=[]
     if not results.empty:
         metrics=[f"RETURN_H{h}_PCT" for h in WINDOWS]+[f"ABNORMAL_RETURN_H{h}_PCT" for h in WINDOWS if f"ABNORMAL_RETURN_H{h}_PCT" in results.columns]
+        # Deterministic non-parametric bootstrap interval for the mean. This is
+        # descriptive uncertainty, not causal inference; overlapping events can
+        # still make the nominal interval too narrow.
+        rng=np.random.default_rng(20261014)
         for (typ,series),g in results.groupby(["EVENT_TYPE","SERIES"]):
             for col in metrics:
-                vals=pd.to_numeric(g[col],errors="coerce").dropna()
-                summary.append({"EVENT_TYPE":typ,"SERIES":series,"METRIC":col,"N_EVENTS":len(vals),
-                    "MEAN_PCT":float(vals.mean()) if len(vals) else None,"MEDIAN_PCT":float(vals.median()) if len(vals) else None,
-                    "STD_PCT":float(vals.std(ddof=1)) if len(vals)>1 else None})
+                vals=pd.to_numeric(g[col],errors="coerce").dropna().to_numpy(dtype=float)
+                if len(vals):
+                    boot=np.array([rng.choice(vals,size=len(vals),replace=True).mean() for _ in range(2000)])
+                    ci_low,ci_high=np.quantile(boot,[0.025,0.975])
+                    mean=float(vals.mean()); median=float(np.median(vals))
+                else:
+                    ci_low=ci_high=mean=median=None
+                summary.append({"EVENT_TYPE":typ,"SERIES":series,"METRIC":col,"N_EVENTS":int(len(vals)),
+                    "MEAN_PCT":mean,"MEDIAN_PCT":median,
+                    "STD_PCT":float(np.std(vals,ddof=1)) if len(vals)>1 else None,
+                    "BOOTSTRAP_95CI_LOW_PCT":float(ci_low) if ci_low is not None else None,
+                    "BOOTSTRAP_95CI_HIGH_PCT":float(ci_high) if ci_high is not None else None,
+                    "CI_METHOD":"percentile bootstrap, 2000 resamples, seed=20261014" if len(vals) else "not estimable"})
     pd.DataFrame(summary).to_csv(OUT/"event_study_summary.csv",index=False)
     if results.empty:
         report={"status":"NO_MATCHING_EVENT_WINDOWS","panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":0,
@@ -116,7 +129,9 @@ def main():
         "series":sorted(panel.SERIES.unique().tolist()),
         "publication_time_rule":"Baseline is last 15:30 Asia/Kolkata close at/before PUBLISHED_AT; H+1/H+5/H+20 are the 1st/5th/20th closes strictly after publication.",
         "benchmark_adjustment":"Same-event NIFTY 50 return subtraction when available; descriptive only.",
-        "limitations":["GDELT publication timestamp is a news-mention proxy, not verified event occurrence.","News-selection bias and overlapping windows remain.","No matched controls, confidence intervals or multiple-testing correction yet.","Yahoo Finance is a secondary market-data source; validate against official/licensed sources before production."],
-        "warning":"Exploratory only; no ranking integration."}
+        "uncertainty":"Summary includes deterministic 95% percentile-bootstrap intervals for mean returns; overlapping events, selection bias and multiple comparisons mean these are not causal confidence intervals.",
+        "event_source_quality":"Collector filters to explicit market-relevant titles from trusted publisher domains; publication timestamps remain proxies and headlines are not independently coded as verified event occurrence.",
+        "limitations":["News-selection bias and overlapping windows remain.","No matched-control design or multiple-testing correction.","Bootstrap intervals are descriptive and may understate uncertainty under dependent/overlapping events.","NSE official index closes are used for Indian indices; any Yahoo fallback series are secondary and identified in the panel source column.","P0 FPI/DII and official corporate-event sources may remain unavailable; missing data stays UNKNOWN."],
+        "warning":"Exploratory historical publication-time study only; no ranking integration or causal claims."}
     (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
 if __name__=="__main__": raise SystemExit(main())
