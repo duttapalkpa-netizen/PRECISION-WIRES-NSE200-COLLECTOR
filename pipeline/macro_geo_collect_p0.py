@@ -173,9 +173,13 @@ def main():
             manifest["market_series"].append({"series":label,"group":spec["group"],"symbol":spec["symbol"],
                 "status":"BLOCKED","error":f"{type(exc).__name__}: {exc}"})
         time.sleep(0.2)
-    panel=pd.DataFrame(panel_rows)
-    if not panel.empty:
-        panel=panel.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+    all_panel=pd.DataFrame(panel_rows)
+    if not all_panel.empty:
+        all_panel=all_panel.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+        # Event-study panel is restricted to NSE-traded Indian series that share the
+        # 15:30 IST close convention. Foreign-market commodities/FX stay in separate
+        # files until their own close timestamps and calendars are modelled.
+        panel=all_panel[~all_panel["SERIES"].map(lambda name: SERIES[name]["group"] in ("crude_oil","usd_inr"))].copy()
         panel.to_csv(RAW/"market_panel.csv",index=False)
         # Keep standardized group-level input files for the coverage inventory.
         for group,labels in {
@@ -183,7 +187,7 @@ def main():
             "sector_indices":[x for x,s in SERIES.items() if s["group"]=="sector_indices"],
             "volatility":["INDIA VIX"],"crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"]
         }.items():
-            subset=panel[panel.SERIES.isin(labels)][["DATE","SERIES","CLOSE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]].copy()
+            subset=all_panel[all_panel.SERIES.isin(labels)][["DATE","SERIES","CLOSE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]].copy()
             if subset.empty: continue
             if group in ("crude_oil","usd_inr"):
                 subset=subset.rename(columns={"SERIES":"INSTRUMENT"})
