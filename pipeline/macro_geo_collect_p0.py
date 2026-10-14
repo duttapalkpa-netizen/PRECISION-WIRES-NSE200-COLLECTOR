@@ -416,23 +416,33 @@ def main():
         # benchmark, sectors, volatility, crude and USD/INR. Missing series stay absent/UNKNOWN.
         panel=all_panel[all_panel["SERIES"].isin(list(SERIES.keys()))].copy()
         panel.to_csv(RAW/"market_panel.csv",index=False)
-        for group,labels in {
+        group_labels={
           "benchmark_indices":["NIFTY 50"],
           "sector_indices":[x for x,s in SERIES.items() if s["group"]=="sector_indices"],
           "volatility":[x for x,s in SERIES.items() if s["group"]=="volatility"],
           "crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"],
-          "us_yields":[x for x,s in SERIES.items() if s["group"] in ("us_yields","us_real_yields")],
+          "us_yields":[x for x,s in SERIES.items() if s["group"]=="us_yields"],
+          "us_real_yields":[x for x,s in SERIES.items() if s["group"]=="us_real_yields"],
           "dollar_index":["US DOLLAR BROAD INDEX"],
           "global_commodities":[x for x,s in SERIES.items() if s["group"]=="global_commodities"],
           "fx_carry":[x for x,s in SERIES.items() if s["group"]=="fx_carry"]
-        }.items():
+        }
+        group_files={"benchmark_indices":"benchmark_indices.csv","sector_indices":"sector_indices.csv",
+          "volatility":"volatility.csv","crude_oil":"brent_crude.csv","usd_inr":"usd_inr.csv",
+          "us_yields":"us_yields.csv","us_real_yields":"us_real_yields.csv",
+          "dollar_index":"dxy.csv","global_commodities":"commodity_prices.csv","fx_carry":"fx_carry.csv"}
+        for group,labels in group_labels.items():
             subset=all_panel[all_panel.SERIES.isin(labels)][["DATE","SERIES","CLOSE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]].copy()
             if subset.empty: continue
             if group in ("crude_oil","usd_inr"):
                 subset=subset.rename(columns={"SERIES":"INSTRUMENT"})
-                subset.to_csv(RAW/("brent_crude.csv" if group=="crude_oil" else "usd_inr.csv"),index=False)
-            else:
-                subset.to_csv(RAW/("benchmark_indices.csv" if group=="benchmark_indices" else "sector_indices.csv" if group=="sector_indices" else "volatility.csv"),index=False)
+            elif group=="dollar_index":
+                subset=subset.drop(columns=["SERIES"])
+            elif group=="global_commodities":
+                subset=subset.rename(columns={"SERIES":"COMMODITY"})
+            elif group=="fx_carry":
+                subset=subset.rename(columns={"SERIES":"PAIR","CLOSE":"VALUE"})
+            subset.to_csv(RAW/group_files[group],index=False)
     events,failures,event_start=fetch_gdelt_events(start,end)
     # Always materialize header-only files on an empty collection so QA can
     # distinguish "connected but zero rows" from a missing file.
