@@ -174,6 +174,7 @@ def main():
                 "status":"BLOCKED","error":f"{type(exc).__name__}: {exc}"})
         time.sleep(0.2)
     all_panel=pd.DataFrame(panel_rows)
+    panel=pd.DataFrame()
     if not all_panel.empty:
         all_panel=all_panel.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
         # Event-study panel is restricted to NSE-traded Indian series that share the
