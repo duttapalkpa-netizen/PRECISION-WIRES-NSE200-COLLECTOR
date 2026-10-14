@@ -94,13 +94,13 @@ def nse_index_history(start,end):
         if day.weekday()<5:
             stamp=day.strftime("%d%m%Y")
             urls=[
-              f"https://archives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
-              f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv"
+              f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
+              f"https://archives.nseindia.com/content/indices/ind_close_all_{stamp}.csv"
             ]
             found=False
             for url in urls:
                 try:
-                    resp=session.get(url,timeout=(5,15),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":NSE+"/all-reports"})
+                    resp=session.get(url,timeout=(4,8),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":NSE+"/all-reports"})
                     if resp.status_code==404: continue
                     resp.raise_for_status()
                     from io import StringIO
