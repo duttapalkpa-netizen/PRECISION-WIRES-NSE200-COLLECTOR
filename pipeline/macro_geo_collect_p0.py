@@ -216,11 +216,30 @@ def parse_gdelt_date(value):
     return None
 
 def classify(title,query_label):
-    t=title.lower()
-    if any(k in t for k in ["oil","crude","strait of hormuz","red sea","shipping","tanker","opec"]): return "ENERGY_SHIPPING_NEWS"
-    if any(k in t for k in ["sanction","tariff","trade war","export ban","export control"]): return "SANCTIONS_TARIFF_NEWS"
-    if any(k in t for k in ["war","missile","attack","strike","conflict","military","ceasefire","border","iran","israel","ukraine","russia","pakistan"]): return "GEOPOLITICAL_CONFLICT_NEWS"
-    return query_label
+    """Reject broad-query false positives; label only titles with explicit market-relevant terms."""
+    t=str(title or "").lower()
+    energy_terms=["oil","crude","strait of hormuz","red sea","shipping","tanker","opec","lng","natural gas","refinery","fuel supply","energy infrastructure"]
+    policy_terms=["sanction","tariff","trade war","export ban","export control","embargo","trade restriction"]
+    conflict_terms=["war","missile","attack","airstrike","strike","conflict","military","ceasefire","invasion","border clash","iran","israel","ukraine","russia","pakistan","taiwan","china","drone strike","blockade","bombing"]
+    if any(k in t for k in energy_terms): return "ENERGY_SHIPPING_NEWS"
+    if any(k in t for k in policy_terms): return "SANCTIONS_TARIFF_NEWS"
+    if any(k in t for k in conflict_terms): return "GEOPOLITICAL_CONFLICT_NEWS"
+    return None
+
+TRUSTED_NEWS_DOMAINS={
+    "reuters.com","apnews.com","bbc.com","bbc.co.uk","aljazeera.com","bloomberg.com",
+    "cnbc.com","theguardian.com","ft.com","dw.com","france24.com","npr.org",
+    "abc.net.au","thehindu.com","indianexpress.com","economictimes.indiatimes.com",
+    "business-standard.com","moneycontrol.com","hindustantimes.com","nytimes.com","wsj.com"
+}
+
+def is_trusted_news_url(url):
+    try:
+        from urllib.parse import urlparse
+        host=(urlparse(str(url)).hostname or "").lower().split(":")[0]
+        return any(host==domain or host.endswith("."+domain) for domain in TRUSTED_NEWS_DOMAINS)
+    except Exception:
+        return False
 
 def fetch_gdelt_events(start,end):
     # DOC 2.0 is rate-limited. Use a small result cap, honor Retry-After, and
@@ -254,11 +273,16 @@ def fetch_gdelt_events(start,end):
                     title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
                     published=parse_gdelt_date(article.get("seendate"))
                     if not title or not url or not published or not event_start<=published.date()<=end: continue
+                    # A broad GDELT OR query is discovery only. Keep a row only when
+                    # the title is explicitly relevant AND the publisher is on the
+                    # documented trusted-source allowlist; otherwise it is a false positive.
                     event_type=classify(title,query_label)
+                    if event_type is None or not is_trusted_news_url(url): continue
+                    domain=str(article.get("domain") or "")
                     event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
                     events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
-                      "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
-                      "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
+                      "PUBLISHED_AT":published.isoformat(),"SOURCE":domain or "trusted publisher via GDELT", 
+                      "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.75,
                       "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
                       "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
                       "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
@@ -330,19 +354,33 @@ def main():
         else:
             series_id="DCOILBRENTEU" if spec["group"]=="crude_oil" else "DEXINUS"
             try:
-                rows,url=fred_history(label,series_id,start,end); all_rows.extend(rows)
+                rows,url=fred_history(label,series_id,start,end)
+                all_rows.extend(rows)
                 manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
                   "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
                   "source":f"FRED series {series_id}","source_url":url,
                   "units":"USD per barrel" if series_id=="DCOILBRENTEU" else "Indian rupees per USD"})
-            except Exception as exc:
-                manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
-                  "source":f"FRED series {series_id}","error":f"{type(exc).__name__}: {exc}"})
+            except Exception as fred_exc:
+                # Public Yahoo chart fallback is explicitly secondary and its symbol
+                # is recorded. Never label it as an official/FRED observation.
+                try:
+                    rows,url=yahoo_history(label,spec,start,end)
+                    all_rows.extend(rows)
+                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE_SECONDARY",
+                      "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
+                      "source":"Yahoo Finance chart API (secondary fallback)","source_url":url,
+                      "source_symbol":spec["symbol"],"fred_failure":f"{type(fred_exc).__name__}: {fred_exc}",
+                      "units":"USD per barrel" if series_id=="DCOILBRENTEU" else "Indian rupees per USD"})
+                except Exception as fallback_exc:
+                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
+                      "source":f"FRED series {series_id}; Yahoo fallback","error":f"FRED {type(fred_exc).__name__}: {fred_exc}; Yahoo {type(fallback_exc).__name__}: {fallback_exc}"})
     all_panel=pd.DataFrame(all_rows)
     panel=pd.DataFrame()
     if not all_panel.empty:
         all_panel=all_panel.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
-        panel=all_panel[all_panel["SERIES"].isin([x for x,s in SERIES.items() if s["group"] in ("benchmark_index","sector_indices","volatility")])].copy()
+        # The event-study panel includes all successfully collected P0 series:
+        # benchmark, sectors, volatility, crude and USD/INR. Missing series stay absent/UNKNOWN.
+        panel=all_panel[all_panel["SERIES"].isin([x for x,s in SERIES.items() if s["group"] in ("benchmark_index","sector_indices","volatility","crude_oil","usd_inr")])].copy()
         panel.to_csv(RAW/"market_panel.csv",index=False)
         for group,labels in {
           "benchmark_indices":["NIFTY 50"],
@@ -364,8 +402,10 @@ def main():
     manifest["event_collection"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),
       "window_start":event_start.isoformat(),"window_end":end.isoformat(),
       "date_min":events.EVENT_DATE.min() if len(events) else None,"date_max":events.EVENT_DATE.max() if len(events) else None,
-      "source":"GDELT DOC 2.0 API","failures":failures,
-      "warning":"EVENT_DATE is the article publication date proxy, not a verified occurrence timestamp; deduplicate and manually validate before causal interpretation."}
+      "source":"GDELT DOC 2.0 API filtered to trusted publisher domains and relevant titles","failures":failures,
+      "trusted_domains":sorted(TRUSTED_NEWS_DOMAINS),
+      "quality_filter":"Only explicit market-relevant title keywords plus trusted publisher domain; broad-query false positives are excluded.",
+      "warning":"PUBLISHED_AT/EVENT_DATE are publication-time proxies, not verified occurrence timestamps; this remains a media-publication event study, not causal identification."}
     for name,endpoint,params in [
       ("corporate_events","/api/corporates-announcements",{"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
       ("fpi_dii_flows","/api/fiidiiTradeReact",{}),
@@ -407,7 +447,13 @@ def main():
     manifest["market_panel"]={"status":"AVAILABLE" if not panel.empty else "BLOCKED","rows":len(panel),
       "series":int(panel.SERIES.nunique()) if not panel.empty else 0,"path":str(RAW/"market_panel.csv")}
     manifest["events_file"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),"path":str(RAW/"events.csv")}
-    manifest["status"]="COLLECTED_WITH_GAPS" if not panel.empty and len(events) else "BLOCKED_INCOMPLETE"
+    p0_series_ok=all(any(x.get("series")==name and x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") for x in manifest["market_series"])
+      for name in ("NIFTY 50","NIFTY IT","NIFTY BANK","INDIA VIX","BRENT CRUDE FRONT MONTH","USD INR"))
+    manifest["p0_coverage"]={"required_series":["NIFTY 50","NIFTY IT","NIFTY BANK","INDIA VIX","BRENT CRUDE FRONT MONTH","USD INR"],
+      "required_series_available":p0_series_ok,"trusted_event_rows":len(events),
+      "fpi_dii_status":"UNKNOWN/BLOCKED unless official source returns mapped rows",
+      "corporate_events_status":"UNKNOWN/BLOCKED unless official source returns mapped rows"}
+    manifest["status"]="P0_CORE_AVAILABLE_WITH_GAPS" if not panel.empty and len(events) and p0_series_ok else "BLOCKED_INCOMPLETE"
     (OUT/"p0_collection_manifest.json").write_text(json.dumps(manifest,indent=2))
     print(json.dumps({"status":manifest["status"],"window_start":str(start),"window_end":str(end),
       "market_panel_rows":len(panel),"market_panel_series":int(panel.SERIES.nunique()) if not panel.empty else 0,
