@@ -63,7 +63,9 @@ class MacroGeoTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
             pd.DataFrame({"DATE":["2026-01-01","2026-01-01"],"SERIES":["NIFTY 50"]*2,"CLOSE":[100,101]}).to_csv(p,index=False)
-            pd.DataFrame(columns=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","CONFIDENCE","EVENT_DATE_BASIS"]).to_csv(e,index=False)
+            pd.DataFrame([{"EVENT_DATE":"2026-01-01","EVENT_ID":"DUP1","EVENT_TYPE":"GEO","PUBLISHED_AT":"2026-01-01T03:00:00Z",
+                           "SOURCE":"example","SOURCE_URL":"https://example.com/news","CONFIDENCE":0.5,
+                           "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY"}]).to_csv(e,index=False)
             panel,events,error=event.load_inputs(p,e)
             self.assertIsNone(panel); self.assertIn("Duplicate",error)
 
