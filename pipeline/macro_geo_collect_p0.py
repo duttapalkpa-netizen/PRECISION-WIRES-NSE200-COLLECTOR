@@ -198,16 +198,16 @@ def fred_history(label,series_id,start,end):
     """Public FRED CSV observations with explicit series IDs and source URLs."""
     url="https://fred.stlouisfed.org/graph/fredgraph.csv"
     last_error=None
-    for attempt,wait in enumerate((0,5,15),start=1):
+    for attempt,wait in enumerate((0,3),start=1):
         if wait: time.sleep(wait)
         try:
             resp=session.get(url,params={"id":series_id,"cosd":start.isoformat(),"coed":end.isoformat()},
-                timeout=(10,60),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+                timeout=(5,15),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
             resp.raise_for_status()
             break
         except Exception as exc:
             last_error=exc
-            if attempt==3: raise
+            if attempt==2: raise
     from io import StringIO
     df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
     date_col=next((c for c in df.columns if str(c).strip().upper() in ("DATE","OBSERVATION_DATE")),None)
