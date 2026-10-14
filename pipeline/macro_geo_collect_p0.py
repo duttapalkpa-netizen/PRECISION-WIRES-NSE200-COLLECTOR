@@ -11,7 +11,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
-import hashlib, json, time
+import ast, hashlib, json, time
 import requests
 import pandas as pd
 
@@ -98,7 +98,10 @@ def niftyindices_history(start,end):
         payload={"cinfo":f"{{'name':'{api_name}','startDate':'{start_text}','endDate':'{end_text}','indexName':'{api_name}'}}"}
         try:
             resp=session.post(base+"getHistoricaldatatabletoString",json=payload,headers=headers,timeout=(5,20))
-            resp.raise_for_status(); body=resp.json(); data=json.loads(body.get("d","[]"))
+            resp.raise_for_status(); body=resp.json(); raw_data=body.get("d","[]")
+            try: data=raw_data if isinstance(raw_data,list) else json.loads(raw_data) if str(raw_data).strip().lower() not in ("false","none","null","") else []
+            except Exception: data=ast.literal_eval(raw_data) if isinstance(raw_data,str) else []
+            if not isinstance(data,list): data=[]
             for item in data:
                 raw_date=item.get("HistoricalDate") or item.get("DATE")
                 dt=pd.to_datetime(raw_date,errors="coerce",dayfirst=True)
@@ -116,7 +119,9 @@ def niftyindices_history(start,end):
         resp=session.post(base+"BindHistoricalIndiaVixData",data=vix_payload,
           headers=headers,timeout=(5,20))
         resp.raise_for_status(); body=resp.json(); raw=body.get("d","false")
-        data=json.loads(raw) if isinstance(raw,str) and raw.startswith("[") else []
+        try: data=raw if isinstance(raw,list) else json.loads(raw) if str(raw).strip().lower() not in ("false","none","null","") else []
+        except Exception: data=ast.literal_eval(raw) if isinstance(raw,str) else []
+        if not isinstance(data,list): data=[]
         for item in data:
             dt=pd.to_datetime(item.get("date") or item.get("Date"),errors="coerce",dayfirst=True)
             close=pd.to_numeric(pd.Series([item.get("close") or item.get("CLOSE")]),errors="coerce").iloc[0]
@@ -274,10 +279,21 @@ def main():
       "market_series":[],"event_collection":{},"official_nse_attempts":[],
       "important_boundary":"Indian benchmark/sector/VIX closes are from official NSE daily index archives. Brent/USDINR are attempted as secondary-source proxies. GDELT rows are timestamped media mentions, not independently verified event occurrence. Missing source stays UNKNOWN."}
     all_rows=[]
-    # Official NSE archive supplies the Indian market panel and avoids Yahoo's rate limits.
-    nse_rows,nse_report=niftyindices_history(start,end); all_rows.extend(nse_rows)
-    manifest["niftyindices_api"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
-      "series":nse_report["series"],"failures":nse_report["failures"]}
+    # Prefer NSE Indices API; fall back to daily official index archive if the API
+    # returns an empty/blocked payload. Never create placeholder market values.
+    nse_rows,nse_report=niftyindices_history(start,end)
+    nse_source="NSE Indices historical data API"
+    if len(nse_rows)<100:
+        archive_rows,archive_report=nse_index_history(start,end)
+        if len(archive_rows)>len(nse_rows):
+            nse_rows=archive_rows
+            nse_source="NSE daily index close archive"
+        manifest["nse_archive_fallback"]={"rows":len(archive_rows),"weekday_requests":archive_report["weekday_requests"],
+            "failures":archive_report["failures"][-25:]}
+    all_rows.extend(nse_rows)
+    manifest["nse_market_data"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
+      "series":len(set(x["SERIES"] for x in nse_rows)) if nse_rows else 0,"source":nse_source,
+      "api_failures":nse_report["failures"]}
     for label,spec in SERIES.items():
         if spec["group"] in ("benchmark_index","sector_indices","volatility"):
             found=[x for x in nse_rows if x["SERIES"]==label]
