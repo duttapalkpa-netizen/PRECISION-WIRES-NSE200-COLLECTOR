@@ -18,7 +18,7 @@ permissions:
 
 concurrency:
   group: macro-geo-p0-audit
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   macro-geo-p0:
