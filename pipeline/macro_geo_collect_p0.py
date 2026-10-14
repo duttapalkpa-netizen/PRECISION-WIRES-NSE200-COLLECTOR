@@ -52,7 +52,7 @@ def session_bounds():
     # 400 calendar days normally cover ~200 NSE sessions; exact available dates
     # are determined by each source response and recorded in the manifest.
     end=datetime.now(timezone.utc).date()
-    return end-timedelta(days=400),end
+    return end-timedelta(days=360),end
 
 def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
@@ -79,6 +79,56 @@ def yahoo_history(label,spec,start,end):
                          "SOURCE_SYMBOL":spec["symbol"],"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
     if not rows: raise RuntimeError("No usable closes in requested window")
     return rows,resp.url
+
+def niftyindices_history(start,end):
+    """Fetch official NSE Indices price-index OHLC history in one request per index."""
+    index_map={
+      "NIFTY 50":"NIFTY 50","NIFTY IT":"NIFTY IT","NIFTY BANK":"NIFTY BANK",
+      "NIFTY AUTO":"NIFTY AUTO","NIFTY METAL":"NIFTY METAL","NIFTY PHARMA":"NIFTY PHARMA",
+      "NIFTY ENERGY":"NIFTY ENERGY","NIFTY FMCG":"NIFTY FMCG","NIFTY REALTY":"NIFTY REALTY",
+      "NIFTY INFRA":"NIFTY INFRASTRUCTURE"
+    }
+    start_text=start.strftime("%d-%b-%Y"); end_text=end.strftime("%d-%b-%Y")
+    base="https://www.niftyindices.com/Backpage.aspx/"
+    headers={"User-Agent":UA,"Accept":"application/json, text/plain, */*",
+      "Content-Type":"application/json; charset=UTF-8","X-Requested-With":"XMLHttpRequest",
+      "Referer":"https://www.niftyindices.com/reports/historical-data"}
+    rows=[]; failures=[]
+    for label,api_name in index_map.items():
+        payload={"cinfo":f"{{'name':'{api_name}','startDate':'{start_text}','endDate':'{end_text}','indexName':'{api_name}'}}"}
+        try:
+            resp=session.post(base+"getHistoricaldatatabletoString",json=payload,headers=headers,timeout=(5,20))
+            resp.raise_for_status(); body=resp.json(); data=json.loads(body.get("d","[]"))
+            for item in data:
+                raw_date=item.get("HistoricalDate") or item.get("DATE")
+                dt=pd.to_datetime(raw_date,errors="coerce",dayfirst=True)
+                close=pd.to_numeric(pd.Series([item.get("CLOSE") or item.get("Closing")]),errors="coerce").iloc[0]
+                if pd.isna(dt) or pd.isna(close) or close<=0: continue
+                rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(close),
+                  "SOURCE":"NSE Indices historical data API","SOURCE_URL":resp.url,
+                  "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+        except Exception as exc:
+            failures.append({"series":label,"api_index_name":api_name,"error":f"{type(exc).__name__}: {exc}"})
+        time.sleep(0.15)
+    # India VIX is served by a separate official endpoint.
+    vix_payload=f"{{'name':'India VIX','startDate':'{start.strftime('%d %b %Y')}','endDate':'{end.strftime('%d %b %Y')}'}}"
+    try:
+        resp=session.post(base+"BindHistoricalIndiaVixData",data=vix_payload,
+          headers=headers,timeout=(5,20))
+        resp.raise_for_status(); body=resp.json(); raw=body.get("d","false")
+        data=json.loads(raw) if isinstance(raw,str) and raw.startswith("[") else []
+        for item in data:
+            dt=pd.to_datetime(item.get("date") or item.get("Date"),errors="coerce",dayfirst=True)
+            close=pd.to_numeric(pd.Series([item.get("close") or item.get("CLOSE")]),errors="coerce").iloc[0]
+            if pd.isna(dt) or pd.isna(close) or close<=0: continue
+            rows.append({"DATE":dt.date().isoformat(),"SERIES":"INDIA VIX","CLOSE":float(close),
+              "SOURCE":"NSE Indices India VIX historical API","SOURCE_URL":resp.url,
+              "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+    except Exception as exc:
+        failures.append({"series":"INDIA VIX","error":f"{type(exc).__name__}: {exc}"})
+    df=pd.DataFrame(rows)
+    if not df.empty: df=df.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+    return df.to_dict("records"),{"rows":len(df),"series":int(df.SERIES.nunique()) if not df.empty else 0,"failures":failures}
 
 def nse_index_history(start,end):
     """Download official NSE daily multi-index close CSVs; no main-site session required."""
@@ -137,7 +187,7 @@ def fred_history(label,series_id,start,end):
     resp.raise_for_status()
     from io import StringIO
     df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
-    date_col=next((c for c in df.columns if str(c).strip().upper()=="DATE"),None)
+    date_col=next((c for c in df.columns if str(c).strip().upper() in ("DATE","OBSERVATION_DATE")),None)
     value_col=next((c for c in df.columns if str(c).strip().upper()==series_id.upper()),None)
     if not date_col or not value_col: raise RuntimeError("FRED CSV schema mismatch: "+str(list(df.columns)))
     rows=[]
@@ -225,7 +275,7 @@ def main():
       "important_boundary":"Indian benchmark/sector/VIX closes are from official NSE daily index archives. Brent/USDINR are attempted as secondary-source proxies. GDELT rows are timestamped media mentions, not independently verified event occurrence. Missing source stays UNKNOWN."}
     all_rows=[]
     # Official NSE archive supplies the Indian market panel and avoids Yahoo's rate limits.
-    nse_rows,nse_report=nse_index_history(start,end); all_rows.extend(nse_rows)
+    nse_rows,nse_report=niftyindices_history(start,end); all_rows.extend(nse_rows)
     manifest["nse_index_archive"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
       "weekday_requests":nse_report["weekday_requests"],"failures":nse_report["failures"][-25:]}
     for label,spec in SERIES.items():
