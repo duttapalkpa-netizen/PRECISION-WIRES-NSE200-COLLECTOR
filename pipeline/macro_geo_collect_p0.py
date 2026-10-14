@@ -165,8 +165,10 @@ def nse_index_history(start,end):
                     datecol=next((c for c in ["INDEX DATE","INDEX_DATE","DATE"] if c in df.columns),None)
                     closecol=next((c for c in ["CLOSING","CLOSE","CLOSE VALUE"] if c in df.columns),None)
                     if not namecol or not datecol or not closecol:
-                        failures.append({"date":day.isoformat(),"url":url,"error":"Unrecognized official NSE index CSV schema"})
-                        found=True; break
+                        failures.append({"date":day.isoformat(),"url":url,"error":"Unrecognized official NSE index CSV schema",
+                          "columns":list(df.columns),"preview":resp.text[:180]})
+                        # A 200 response can still be an HTML/block page; try the alternate archive host.
+                        continue
                     df["_KEY"]=df[namecol].astype(str).str.lower().str.replace(r"[^a-z0-9]","",regex=True)
                     for _,row in df[df["_KEY"].isin(aliases)].iterrows():
                         close=pd.to_numeric(pd.Series([row[closecol]]),errors="coerce").iloc[0]
@@ -188,7 +190,7 @@ def fred_history(label,series_id,start,end):
     """Public FRED CSV observations with explicit series IDs and source URLs."""
     url="https://fred.stlouisfed.org/graph/fredgraph.csv"
     resp=session.get(url,params={"id":series_id,"cosd":start.isoformat(),"coed":end.isoformat()},
-        timeout=(5,15),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+        timeout=20,headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
     resp.raise_for_status()
     from io import StringIO
     df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
