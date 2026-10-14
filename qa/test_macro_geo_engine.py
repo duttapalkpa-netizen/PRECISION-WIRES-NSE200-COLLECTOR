@@ -12,8 +12,28 @@ ROOT=Path(__file__).resolve().parents[1]
 coverage=load_module(ROOT/"pipeline/macro_geo_source_coverage.py","coverage")
 event=load_module(ROOT/"pipeline/macro_geo_event_study.py","event")
 collector=load_module(ROOT/"pipeline/macro_geo_collect_p0.py","collector")
+factor_audit=load_module(ROOT/"pipeline/macro_geo_factor_coverage_audit.py","factor_audit")
+regime_study=load_module(ROOT/"pipeline/historical_regime_event_study.py","regime_study")
 
 class MacroGeoTests(unittest.TestCase):
+    def test_factor_registry_has_source_mapping_for_every_factor(self):
+        registry=pd.read_csv(ROOT/"config/macro_factor_registry.csv")
+        self.assertGreaterEqual(len(registry),35)
+        self.assertEqual(set(registry["factor_id"].astype(str)),set(factor_audit.MAP.keys()))
+
+    def test_historical_regime_registry_covers_requested_stress_episodes(self):
+        regimes=pd.read_csv(ROOT/"config/macro_geo_historical_regimes.csv")
+        labels=set(regimes["regime_label"].astype(str))
+        for expected in ["GFC_2008_09","TAPER_TANTRUM_2013","ILFS_NBFC_LIQUIDITY_2018",
+                         "COVID_CRASH_2020","RUSSIA_UKRAINE_ENERGY_FOOD_2022","YEN_CARRY_UNWIND_2024"]:
+            self.assertIn(expected,labels)
+        self.assertTrue((pd.to_datetime(regimes["start_date"],errors="coerce")<=pd.to_datetime(regimes["end_date"],errors="coerce")).all())
+
+    def test_sector_rotation_hypotheses_are_not_marked_validated(self):
+        sectors=pd.read_csv(ROOT/"config/macro_geo_sector_transmission_map.csv")
+        self.assertTrue(sectors["empirical_status"].astype(str).eq("HYPOTHESIS_NOT_VALIDATED").all())
+        self.assertTrue(sectors["sector"].astype(str).str.contains("Pharma healthcare|Pharma",case=False).any())
+
     def test_gdelt_broad_query_false_positive_is_rejected(self):
         self.assertIsNone(collector.classify("I review smartwatches and my favorite Garmin is on sale", "ENERGY_SHIPPING_NEWS"))
         self.assertEqual(collector.classify("Oil tanker traffic disrupted near Strait of Hormuz", "ENERGY_SHIPPING_NEWS"), "ENERGY_SHIPPING_NEWS")
