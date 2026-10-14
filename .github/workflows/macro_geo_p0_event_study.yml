@@ -7,7 +7,13 @@ on:
     paths:
       - "pipeline/macro_geo_collect_p0.py"
       - "pipeline/macro_geo_source_coverage.py"
+      - "pipeline/macro_geo_factor_coverage_audit.py"
       - "pipeline/macro_geo_event_study.py"
+      - "pipeline/historical_regime_event_study.py"
+      - "config/macro_factor_registry.csv"
+      - "config/macro_geo_data_gap_register.csv"
+      - "config/macro_geo_historical_regimes.csv"
+      - "config/macro_geo_sector_transmission_map.csv"
       - "qa/test_macro_geo_engine.py"
       - "collector/**"
       - "requirements.txt"
@@ -42,8 +48,12 @@ jobs:
         run: python pipeline/macro_geo_collect_p0.py
       - name: Audit source coverage and data quality
         run: python pipeline/macro_geo_source_coverage.py
-      - name: Run historical event study (blocked if sourced inputs are absent)
+      - name: Audit all registered factors against observed source coverage
+        run: python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Run sourced publication-time event study
         run: python pipeline/macro_geo_event_study.py
+      - name: Run historical regime and sector-relative study
+        run: python pipeline/historical_regime_event_study.py
       - name: Upload P0 data and audit reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -61,4 +71,6 @@ jobs:
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
             outputs/macro_geo/**
+            config/macro_geo_historical_regimes.csv
+            config/macro_geo_sector_transmission_map.csv
           if-no-files-found: warn
