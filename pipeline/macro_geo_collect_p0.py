@@ -163,7 +163,7 @@ def nse_index_history(start,end):
                     df.columns=[str(c).strip().upper() for c in df.columns]
                     namecol=next((c for c in ["INDEX NAME","INDEX_NAME"] if c in df.columns),None)
                     datecol=next((c for c in ["INDEX DATE","INDEX_DATE","DATE"] if c in df.columns),None)
-                    closecol=next((c for c in ["CLOSING","CLOSE","CLOSE VALUE"] if c in df.columns),None)
+                    closecol=next((c for c in ["CLOSING INDEX VALUE","CLOSING","CLOSE","CLOSE VALUE"] if c in df.columns),None)
                     if not namecol or not datecol or not closecol:
                         failures.append({"date":day.isoformat(),"url":url,"error":"Unrecognized official NSE index CSV schema",
                           "columns":list(df.columns),"preview":resp.text[:180]})
