@@ -29,6 +29,17 @@ class MacroGeoTests(unittest.TestCase):
         self.assertAlmostEqual(result.iloc[0]["RETURN_H1_PCT"],1.0)
         self.assertAlmostEqual(result.iloc[0]["RETURN_H5_PCT"],5.0)
 
+    def test_after_close_event_uses_same_day_close_as_base(self):
+        panel=pd.DataFrame({"DATE":pd.to_datetime(["2026-01-01","2026-01-02","2026-01-05","2026-01-06"]),
+                            "SERIES":["NIFTY 50"]*4,"CLOSE":[100,101,102,103]})
+        events=pd.DataFrame([{"EVENT_DATE":pd.Timestamp("2026-01-02"),"EVENT_ID":"E_AFTER","EVENT_TYPE":"GEO_NEWS",
+                              "PUBLISHED_AT":pd.Timestamp("2026-01-02T11:00:00Z"),"SOURCE":"test","CONFIDENCE":0.5}])
+        result=event.compute_event_windows(panel,events)
+        self.assertEqual(len(result),1)
+        self.assertEqual(result.iloc[0]["BASE_DATE"],"2026-01-02")
+        self.assertEqual(result.iloc[0]["TARGET_DATE_H1"],"2026-01-05")
+        self.assertAlmostEqual(result.iloc[0]["RETURN_H1_PCT"],(102/101-1)*100)
+
     def test_duplicate_panel_rows_rejected(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
