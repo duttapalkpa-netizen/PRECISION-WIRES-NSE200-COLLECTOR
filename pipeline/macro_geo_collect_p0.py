@@ -276,8 +276,8 @@ def main():
     all_rows=[]
     # Official NSE archive supplies the Indian market panel and avoids Yahoo's rate limits.
     nse_rows,nse_report=niftyindices_history(start,end); all_rows.extend(nse_rows)
-    manifest["nse_index_archive"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
-      "weekday_requests":nse_report["weekday_requests"],"failures":nse_report["failures"][-25:]}
+    manifest["niftyindices_api"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
+      "series":nse_report["series"],"failures":nse_report["failures"]}
     for label,spec in SERIES.items():
         if spec["group"] in ("benchmark_index","sector_indices","volatility"):
             found=[x for x in nse_rows if x["SERIES"]==label]
