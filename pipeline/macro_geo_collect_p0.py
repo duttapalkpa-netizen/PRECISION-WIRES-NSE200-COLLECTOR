@@ -234,7 +234,7 @@ def fetch_gdelt_events(start,end):
     for query_label,query in queries:
         params={"query":query,"mode":"ArtList","format":"json","maxrecords":250,"sort":"DateDesc","timespan":"90d"}
         try:
-            resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,20))
+            resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=20)
             resp.raise_for_status(); payload=resp.json()
             for article in payload.get("articles",[]):
                 title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
