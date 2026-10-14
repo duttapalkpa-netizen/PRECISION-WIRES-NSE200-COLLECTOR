@@ -281,6 +281,12 @@ def main():
       "market_series":[],"event_collection":{},"official_nse_attempts":[],
       "important_boundary":"Indian benchmark/sector/VIX closes are from official NSE daily index archives. Brent/USDINR are attempted as secondary-source proxies. GDELT rows are timestamped media mentions, not independently verified event occurrence. Missing source stays UNKNOWN."}
     all_rows=[]
+    # Bootstrap official sites with browser-like headers before their data endpoints.
+    bootstrap_headers={"User-Agent":UA,"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language":"en-US,en;q=0.9","Referer":"https://www.nseindia.com/","Connection":"keep-alive"}
+    for home in ("https://www.niftyindices.com/reports/historical-data","https://www.nseindia.com/","https://www.nseindia.com/all-reports"):
+        try: session.get(home,headers=bootstrap_headers,timeout=8)
+        except Exception: pass
     # Prefer NSE Indices API; fall back to daily official index archive if the API
     # returns an empty/blocked payload. Never create placeholder market values.
     nse_rows,nse_report=niftyindices_history(start,end)
