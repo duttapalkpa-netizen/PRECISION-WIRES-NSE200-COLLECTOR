@@ -191,7 +191,9 @@ def main():
             else:
                 subset.to_csv(RAW/("benchmark_indices.csv" if group=="benchmark_indices" else "sector_indices.csv" if group=="sector_indices" else "volatility.csv"),index=False)
     events,failures=fetch_gdelt_events(start,end)
-    if not events.empty: events.to_csv(RAW/"events.csv",index=False)
+    if not events.empty:
+        events.to_csv(RAW/"events.csv",index=False)
+        events[["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE"]].to_csv(RAW/"geopolitical_events.csv",index=False)
     manifest["event_collection"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),
         "date_min":events.EVENT_DATE.min() if len(events) else None,"date_max":events.EVENT_DATE.max() if len(events) else None,
         "source":"GDELT DOC 2.0 API","failures":failures,
