@@ -40,10 +40,10 @@ SERIES={
     "GLOBAL VIX":{"symbol":"%5EVIX","group":"volatility"},
     "BRENT CRUDE FRONT MONTH":{"symbol":"BZ%3DF","group":"crude_oil","fred_id":"DCOILBRENTEU"},
     "USD INR":{"symbol":"USDINR%3DX","group":"usd_inr","fred_id":"DEXINUS"},
-    "US DOLLAR BROAD INDEX":{"symbol":"DX-Y.NYB","group":"dollar_index","fred_id":"DTWEXBGS"},
-    "US 2Y TREASURY YIELD":{"symbol":"%5EIRX","group":"us_yields","fred_id":"DGS2"},
-    "US 10Y TREASURY YIELD":{"symbol":"%5ETNX","group":"us_yields","fred_id":"DGS10"},
-    "US 10Y REAL YIELD":{"symbol":"%5EIRX","group":"us_real_yields","fred_id":"DFII10"},
+    "USD STRENGTH PROXY":{"symbol":"DX-Y.NYB","group":"dollar_index","fred_id":"DTWEXBGS"},
+    "US 2Y TREASURY YIELD":{"symbol":"%5EIRX","group":"us_yields","fred_id":"DGS2","fallback_allowed":False},
+    "US 10Y TREASURY YIELD":{"symbol":"%5ETNX","group":"us_yields","fred_id":"DGS10","fallback_allowed":False},
+    "US 10Y REAL YIELD":{"symbol":"%5EIRX","group":"us_real_yields","fred_id":"DFII10","fallback_allowed":False},
     "GOLD FRONT MONTH":{"symbol":"GC%3DF","group":"global_commodities"},
     "COPPER FRONT MONTH":{"symbol":"HG%3DF","group":"global_commodities"},
     "USD JPY":{"symbol":"JPY%3DX","group":"fx_carry"},
@@ -381,33 +381,40 @@ def main():
       "api_failures":nse_report["failures"]}
     for label,spec in SERIES.items():
         if spec["group"] in ("benchmark_index","sector_indices","volatility"):
-            found=[x for x in nse_rows if x["SERIES"]==label]
+            found=[x for x in all_rows if x["SERIES"]==label]
+            sources=sorted(set(x["SOURCE"] for x in found))
             manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE" if found else "BLOCKED",
               "rows":len(found),"date_min":min((x["DATE"] for x in found),default=None),
-              "date_max":max((x["DATE"] for x in found),default=None),"source":"NSE daily index close archive"})
-        else:
-            series_id="DCOILBRENTEU" if spec["group"]=="crude_oil" else "DEXINUS"
+              "date_max":max((x["DATE"] for x in found),default=None),"sources":sources})
+            continue
+        series_id=spec.get("fred_id")
+        fred_exc=None
+        if series_id:
             try:
                 rows,url=fred_history(label,series_id,start,end)
                 all_rows.extend(rows)
                 manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
                   "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
-                  "source":f"FRED series {series_id}","source_url":url,
-                  "units":"USD per barrel" if series_id=="DCOILBRENTEU" else "Indian rupees per USD"})
-            except Exception as fred_exc:
-                # Public Yahoo chart fallback is explicitly secondary and its symbol
-                # is recorded. Never label it as an official/FRED observation.
-                try:
-                    rows,url=yahoo_history(label,spec,start,end)
-                    all_rows.extend(rows)
-                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE_SECONDARY",
-                      "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
-                      "source":"Yahoo Finance chart API (secondary fallback)","source_url":url,
-                      "source_symbol":spec["symbol"],"fred_failure":f"{type(fred_exc).__name__}: {fred_exc}",
-                      "units":"USD per barrel" if series_id=="DCOILBRENTEU" else "Indian rupees per USD"})
-                except Exception as fallback_exc:
-                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
-                      "source":f"FRED series {series_id}; Yahoo fallback","error":f"FRED {type(fred_exc).__name__}: {fred_exc}; Yahoo {type(fallback_exc).__name__}: {fallback_exc}"})
+                  "source":f"FRED series {series_id}","source_url":url,"fred_series_id":series_id})
+                continue
+            except Exception as exc:
+                fred_exc=exc
+        if spec.get("fallback_allowed") is False:
+            manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
+              "source":f"FRED series {series_id}","error":f"FRED unavailable: {type(fred_exc).__name__}: {fred_exc}; Yahoo fallback deliberately disabled to avoid incompatible units/proxies"})
+            continue
+        try:
+            rows,url=yahoo_history(label,spec,start,end)
+            all_rows.extend(rows)
+            manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE_SECONDARY",
+              "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
+              "source":"Yahoo Finance chart API (secondary source/fallback)","source_url":url,
+              "source_symbol":spec["symbol"],"fred_series_id":series_id,
+              "fred_failure":f"{type(fred_exc).__name__}: {fred_exc}" if fred_exc else None})
+        except Exception as fallback_exc:
+            manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
+              "source":f"FRED series {series_id}; Yahoo fallback" if series_id else "Yahoo Finance chart API",
+              "error":f"FRED {type(fred_exc).__name__}: {fred_exc}; Yahoo {type(fallback_exc).__name__}: {fallback_exc}" if fred_exc else f"{type(fallback_exc).__name__}: {fallback_exc}"})
     all_panel=pd.DataFrame(all_rows)
     panel=pd.DataFrame()
     if not all_panel.empty:
@@ -423,7 +430,7 @@ def main():
           "crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"],
           "us_yields":[x for x,s in SERIES.items() if s["group"]=="us_yields"],
           "us_real_yields":[x for x,s in SERIES.items() if s["group"]=="us_real_yields"],
-          "dollar_index":["US DOLLAR BROAD INDEX"],
+          "dollar_index":["USD STRENGTH PROXY"],
           "global_commodities":[x for x,s in SERIES.items() if s["group"]=="global_commodities"],
           "fx_carry":[x for x,s in SERIES.items() if s["group"]=="fx_carry"]
         }
