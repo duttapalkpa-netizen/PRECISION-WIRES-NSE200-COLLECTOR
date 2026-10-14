@@ -37,17 +37,17 @@ SERIES={
     "NIFTY REALTY":{"symbol":"%5ECNXREALTY","group":"sector_indices"},
     "NIFTY INFRA":{"symbol":"%5ECNXINFRA","group":"sector_indices"},
     "INDIA VIX":{"symbol":"%5EINDIAVIX","group":"volatility"},
-    "GLOBAL VIX":{"symbol":"%5EVIX","group":"volatility"},
+    "GLOBAL VIX":{"symbol":"%5EVIX","group":"volatility","fred_id":"VIXCLS"},
     "BRENT CRUDE FRONT MONTH":{"symbol":"BZ%3DF","group":"crude_oil","fred_id":"DCOILBRENTEU"},
     "USD INR":{"symbol":"USDINR%3DX","group":"usd_inr","fred_id":"DEXINUS"},
     "USD STRENGTH PROXY":{"symbol":"DX-Y.NYB","group":"dollar_index","fred_id":"DTWEXBGS"},
     "US 2Y TREASURY YIELD":{"symbol":"%5EIRX","group":"us_yields","fred_id":"DGS2","fallback_allowed":False},
     "US 10Y TREASURY YIELD":{"symbol":"%5ETNX","group":"us_yields","fred_id":"DGS10","fallback_allowed":False},
     "US 10Y REAL YIELD":{"symbol":"%5EIRX","group":"us_real_yields","fred_id":"DFII10","fallback_allowed":False},
-    "GOLD FRONT MONTH":{"symbol":"GC%3DF","group":"global_commodities"},
-    "COPPER FRONT MONTH":{"symbol":"HG%3DF","group":"global_commodities"},
-    "USD JPY":{"symbol":"JPY%3DX","group":"fx_carry"},
-    "USD CNY":{"symbol":"CNY%3DX","group":"fx_carry"},
+    "GOLD FRONT MONTH":{"symbol":"GC%3DF","group":"global_commodities","fred_id":"GOLDAMGBD228NLBM"},
+    "COPPER FRONT MONTH":{"symbol":"HG%3DF","group":"global_commodities","fred_id":"PCOPPUSDM"},
+    "USD JPY":{"symbol":"JPY%3DX","group":"fx_carry","fred_id":"DEXJPUS"},
+    "USD CNY":{"symbol":"CNY%3DX","group":"fx_carry","fred_id":"DEXCHUS"},
 }
 HEADERS={"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"https://finance.yahoo.com/"}
 session=requests.Session(); session.headers.update(HEADERS)
@@ -197,9 +197,17 @@ def nse_index_history(start,end):
 def fred_history(label,series_id,start,end):
     """Public FRED CSV observations with explicit series IDs and source URLs."""
     url="https://fred.stlouisfed.org/graph/fredgraph.csv"
-    resp=session.get(url,params={"id":series_id,"cosd":start.isoformat(),"coed":end.isoformat()},
-        timeout=20,headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
-    resp.raise_for_status()
+    last_error=None
+    for attempt,wait in enumerate((0,5,15),start=1):
+        if wait: time.sleep(wait)
+        try:
+            resp=session.get(url,params={"id":series_id,"cosd":start.isoformat(),"coed":end.isoformat()},
+                timeout=(10,60),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+            resp.raise_for_status()
+            break
+        except Exception as exc:
+            last_error=exc
+            if attempt==3: raise
     from io import StringIO
     df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
     date_col=next((c for c in df.columns if str(c).strip().upper() in ("DATE","OBSERVATION_DATE")),None)
@@ -352,12 +360,17 @@ def main():
     # Avoid thousands of day-by-day archive requests for a 20-year panel.
     # The official index API is preferred where it responds; public Yahoo history
     # fills only missing date+series keys and remains explicitly labelled secondary.
-    if len(nse_rows)<100 and (end-start).days<=500:
-        archive_rows,archive_report=nse_index_history(start,end)
-        if len(archive_rows)>len(nse_rows):
-            nse_rows=archive_rows
-            nse_source="NSE daily index close archive"
-        manifest["nse_archive_fallback"]={"rows":len(archive_rows),"weekday_requests":archive_report["weekday_requests"],
+    if len(nse_rows)<100:
+        # The index API may return a WAF/HTML response instead of JSON. In that
+        # case collect a bounded, recent official archive window rather than
+        # skipping the archive merely because the requested research window is 20y.
+        archive_start=max(start,end-timedelta(days=400))
+        archive_rows,archive_report=nse_index_history(archive_start,end)
+        existing={(x["DATE"],x["SERIES"]) for x in nse_rows}
+        nse_rows.extend(x for x in archive_rows if (x["DATE"],x["SERIES"]) not in existing)
+        if archive_rows: nse_source="NSE Indices API + official daily index close archive (recent fallback)"
+        manifest["nse_archive_fallback"]={"window_start":archive_start.isoformat(),"window_end":end.isoformat(),
+            "rows":len(archive_rows),"weekday_requests":archive_report["weekday_requests"],
             "failures":archive_report["failures"][-25:]}
     all_rows.extend(nse_rows)
     official_keys={(x["DATE"],x["SERIES"]) for x in nse_rows}
@@ -374,7 +387,21 @@ def main():
               "source_url":url,"date_min":min((x["DATE"] for x in missing),default=None),
               "date_max":max((x["DATE"] for x in missing),default=None)})
         except Exception as exc:
-            historical_fill["blocked"].append({"series":label,"error":f"{type(exc).__name__}: {exc}"})
+            # FRED's VIX close is an explicit alternative for GLOBAL VIX only;
+            # never use it as a substitute for India VIX or NSE sector indices.
+            if spec.get("fred_id"):
+                try:
+                    hist,url=fred_history(label,spec["fred_id"],start,end)
+                    all_rows.extend(hist)
+                    historical_fill["available"]+=len(hist)
+                    manifest.setdefault("secondary_historical_series",[]).append({"series":label,"rows_added":len(hist),
+                      "source":f"FRED series {spec['fred_id']} (alternative source)","source_url":url,
+                      "date_min":min(x["DATE"] for x in hist),"date_max":max(x["DATE"] for x in hist)})
+                    continue
+                except Exception as fred_exc:
+                    historical_fill["blocked"].append({"series":label,"error":f"Yahoo {type(exc).__name__}: {exc}; FRED {type(fred_exc).__name__}: {fred_exc}"})
+            else:
+                historical_fill["blocked"].append({"series":label,"error":f"{type(exc).__name__}: {exc}"})
     manifest["historical_index_fill"]=historical_fill
     manifest["nse_market_data"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
       "series":len(set(x["SERIES"] for x in nse_rows)) if nse_rows else 0,"source":nse_source,
