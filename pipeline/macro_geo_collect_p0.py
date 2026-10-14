@@ -205,11 +205,44 @@ def main():
         if data is None:
             manifest["official_nse_attempts"].append({"source":name,"status":"BLOCKED","detail":detail})
             continue
-        manifest["official_nse_attempts"].append({"source":name,"status":"AVAILABLE" if data else "NO_DATA_RETURNED",
-            "rows":len(data),"url":detail})
-        if data:
-            df=pd.DataFrame(data)
-            df.to_csv(RAW/(name+".csv"),index=False)
+        if not data:
+            manifest["official_nse_attempts"].append({"source":name,"status":"NO_DATA_RETURNED","rows":0,"url":detail})
+            continue
+        rawdf=pd.DataFrame(data)
+        rawdf.columns=[str(c).strip().upper() for c in rawdf.columns]
+        if name=="corporate_events":
+            def first(row, candidates):
+                return next((row[c] for c in candidates if c in row and pd.notna(row[c]) and str(row[c]).strip()), "")
+            normalized=[]
+            for _,row in rawdf.iterrows():
+                day=first(row,["AN_DT","DATE","DT","SORT_DATE","ANNOUNCEMENT_DATE","BROADCAST_DATE"])
+                symbol=first(row,["SYMBOL","SM_SYMBOL","TCKRSYMB"])
+                desc=first(row,["DESC","SUBJECT","ATTACHMENT","PURPOSE"])
+                pub=first(row,["AN_DT","PUBLISHED_AT","BROADCAST_DATE","DATE","SORT_DATE"])
+                link=first(row,["ATTCHMNTFILE","ATTACHMENTFILE","ATTACHMENT","URL","LINK"])
+                if day and symbol and desc:
+                    normalized.append({"DATE":day,"SYMBOL":symbol,"EVENT_TYPE":desc,"PUBLISHED_AT":pub,
+                        "SOURCE_URL":link if str(link).startswith("http") else (NSE+str(link) if link else ""),
+                        "SOURCE":"NSE corporate announcements"})
+            df=pd.DataFrame(normalized)
+            required={"DATE","SYMBOL","EVENT_TYPE","PUBLISHED_AT","SOURCE_URL"}
+        else:
+            normalized=[]
+            for _,row in rawdf.iterrows():
+                day=next((row[c] for c in ["DATE","TRADE_DATE","TRADING_DATE"] if c in row and pd.notna(row[c])), "")
+                group=next((row[c] for c in ["CATEGORY","GROUP","INVESTOR_TYPE","INVESTOR"] if c in row and pd.notna(row[c])), "")
+                net=next((row[c] for c in ["NETVALUE","NET_VALUE","NET","NETAMOUNT"] if c in row and pd.notna(row[c])), "")
+                if day and group and net!="":
+                    normalized.append({"DATE":day,"GROUP":group,"NET_VALUE":net,"SOURCE":"NSE FPI/DII activity"})
+            df=pd.DataFrame(normalized)
+            required={"DATE","GROUP","NET_VALUE"}
+        if df.empty or not required.issubset(set(df.columns)):
+            manifest["official_nse_attempts"].append({"source":name,"status":"SCHEMA_UNMAPPED","raw_rows":len(rawdf),
+                "raw_columns":list(rawdf.columns),"url":detail})
+            continue
+        df.to_csv(RAW/(name+".csv"),index=False)
+        manifest["official_nse_attempts"].append({"source":name,"status":"AVAILABLE","rows":len(df),
+            "date_min":str(df["DATE"].min()),"date_max":str(df["DATE"].max()),"url":detail})
     manifest["market_panel"]={"status":"AVAILABLE" if not panel.empty else "BLOCKED","rows":len(panel),
         "series":int(panel.SERIES.nunique()) if not panel.empty else 0,"path":str(RAW/"market_panel.csv")}
     manifest["events_file"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),"path":str(RAW/"events.csv")}
