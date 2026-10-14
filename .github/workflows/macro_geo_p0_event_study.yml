@@ -10,6 +10,7 @@ on:
       - "pipeline/macro_geo_factor_coverage_audit.py"
       - "pipeline/macro_geo_event_study.py"
       - "pipeline/historical_regime_event_study.py"
+      - "pipeline/sector_rotation_features.py"
       - "config/macro_factor_registry.csv"
       - "config/macro_geo_data_gap_register.csv"
       - "config/macro_geo_historical_regimes.csv"
@@ -54,6 +55,8 @@ jobs:
         run: python pipeline/macro_geo_event_study.py
       - name: Run historical regime and sector-relative study
         run: python pipeline/historical_regime_event_study.py
+      - name: Build daily sector rotation features
+        run: python pipeline/sector_rotation_features.py
       - name: Upload P0 data and audit reports
         if: always()
         uses: actions/upload-artifact@v4
