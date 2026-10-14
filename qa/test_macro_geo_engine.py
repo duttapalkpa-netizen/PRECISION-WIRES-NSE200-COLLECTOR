@@ -11,8 +11,19 @@ def load_module(path, name):
 ROOT=Path(__file__).resolve().parents[1]
 coverage=load_module(ROOT/"pipeline/macro_geo_source_coverage.py","coverage")
 event=load_module(ROOT/"pipeline/macro_geo_event_study.py","event")
+collector=load_module(ROOT/"pipeline/macro_geo_collect_p0.py","collector")
 
 class MacroGeoTests(unittest.TestCase):
+    def test_gdelt_broad_query_false_positive_is_rejected(self):
+        self.assertIsNone(collector.classify("I review smartwatches and my favorite Garmin is on sale", "ENERGY_SHIPPING_NEWS"))
+        self.assertEqual(collector.classify("Oil tanker traffic disrupted near Strait of Hormuz", "ENERGY_SHIPPING_NEWS"), "ENERGY_SHIPPING_NEWS")
+
+    def test_only_trusted_publisher_domains_are_kept(self):
+        self.assertTrue(collector.is_trusted_news_url("https://www.reuters.com/world/example"))
+        self.assertTrue(collector.is_trusted_news_url("https://www.bbc.co.uk/news/example"))
+        self.assertFalse(collector.is_trusted_news_url("https://www.tomsguide.com/wellness/example"))
+        self.assertFalse(collector.is_trusted_news_url("https://reuters.com.evil.example/news"))
+
     def test_missing_inputs_are_blocked_not_fabricated(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
