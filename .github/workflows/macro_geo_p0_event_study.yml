@@ -38,12 +38,6 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Test event-study timestamp and data-quality logic
         run: python -m unittest qa.test_macro_geo_engine -v
-      - name: Acquire NSE history for the audit window
-        run: python collector/nse_download.py --sessions 200
-      - name: Build normalized NSE session panel
-        run: python collector/build_200_sessions.py
-      - name: Validate normalized NSE panel
-        run: python qa/validate_dataset.py
       - name: Collect P0 market series and timestamped media evidence
         run: python pipeline/macro_geo_collect_p0.py
       - name: Audit source coverage and data quality
@@ -56,7 +50,6 @@ jobs:
         with:
           name: macro-geo-p0-event-study
           path: |
-            data/processed/nse_eq_200_sessions.csv
             data/external/market_panel.csv
             data/external/events.csv
             data/external/geopolitical_events.csv
