@@ -98,20 +98,18 @@ def fetch_gdelt_events(start,end):
     # DOC API date range is queried in 14-day chunks to reduce truncation risk.
     # The API's observed/published timestamp is used as the event-date proxy.
     queries=[
-      ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR missile OR attack OR sanctions OR tariff OR "trade war")'),
-      ("ENERGY_SHIPPING_NEWS",'("oil supply" OR crude OR tanker OR "Red Sea" OR "Strait of Hormuz" OR shipping OR freight)'),
-      ("REGIONAL_RISK_NEWS",'("Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR "South China Sea" OR Taiwan)'),
+      ("GEOPOLITICAL_AND_SUPPLY_RISK_NEWS",'(war OR conflict OR military OR missile OR attack OR sanctions OR tariff OR crude OR tanker OR shipping OR freight OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR Taiwan OR "oil supply" OR "Red Sea" OR "Strait of Hormuz")'),
     ]
     events=[]; failures=[]
     cursor=start
     while cursor<=end:
-        chunk_end=min(end,cursor+timedelta(days=13))
+        chunk_end=min(end,cursor+timedelta(days=29))
         for query_label,query in queries:
             params={"query":query,"mode":"ArtList","format":"json","maxrecords":250,"sort":"DateDesc",
                     "startdatetime":cursor.strftime("%Y%m%d")+"000000",
                     "enddatetime":chunk_end.strftime("%Y%m%d")+"235959"}
             try:
-                r=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=45)
+                r=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,15))
                 r.raise_for_status()
                 payload=r.json()
                 for article in payload.get("articles",[]):
@@ -135,7 +133,7 @@ def fetch_gdelt_events(start,end):
             except Exception as exc:
                 failures.append({"query_group":query_label,"start":cursor.isoformat(),"end":chunk_end.isoformat(),
                                  "error":f"{type(exc).__name__}: {exc}"})
-            time.sleep(0.15)
+            time.sleep(0.1)
         cursor=chunk_end+timedelta(days=1)
     if events:
         df=pd.DataFrame(events).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
