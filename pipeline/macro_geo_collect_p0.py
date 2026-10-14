@@ -48,7 +48,11 @@ def session_bounds():
         df=pd.read_csv(PROCESSED,usecols=["DATE"])
         dates=pd.to_datetime(df.DATE,errors="coerce").dropna()
         if not dates.empty: return dates.min().date(), dates.max().date()
-    raise RuntimeError("Validated 200-session dataset is missing; collect/build NSE history first.")
+    # The macro/geo-only workflow can run independently of the equity collector.
+    # 400 calendar days normally cover ~200 NSE sessions; exact available dates
+    # are determined by each source response and recorded in the manifest.
+    end=datetime.now(timezone.utc).date()
+    return end-timedelta(days=400),end
 
 def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
