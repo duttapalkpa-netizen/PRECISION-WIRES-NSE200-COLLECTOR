@@ -129,6 +129,28 @@ def nse_index_history(start,end):
         day+=timedelta(days=1)
     return rows,{"weekday_requests":days_seen,"rows":len(rows),"failures":failures}
 
+def fred_history(label,series_id,start,end):
+    """Public FRED CSV observations with explicit series IDs and source URLs."""
+    url="https://fred.stlouisfed.org/graph/fredgraph.csv"
+    resp=session.get(url,params={"id":series_id,"cosd":start.isoformat(),"coed":end.isoformat()},
+        timeout=(5,15),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+    resp.raise_for_status()
+    from io import StringIO
+    df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
+    date_col=next((c for c in df.columns if str(c).strip().upper()=="DATE"),None)
+    value_col=next((c for c in df.columns if str(c).strip().upper()==series_id.upper()),None)
+    if not date_col or not value_col: raise RuntimeError("FRED CSV schema mismatch: "+str(list(df.columns)))
+    rows=[]
+    for _,row in df.iterrows():
+        dt=pd.to_datetime(row[date_col],errors="coerce")
+        value=pd.to_numeric(pd.Series([row[value_col]]),errors="coerce").iloc[0]
+        if pd.isna(dt) or pd.isna(value) or value<=0: continue
+        rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(value),
+          "SOURCE":f"FRED series {series_id}","SOURCE_URL":resp.url,
+          "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+    if not rows: raise RuntimeError("FRED returned no valid observations for "+series_id)
+    return rows,resp.url
+
 def parse_gdelt_date(value):
     s=str(value or "").strip()
     for fmt in ("%Y%m%dT%H%M%SZ","%Y-%m-%dT%H:%M:%SZ","%Y-%m-%d %H:%M:%S"):
@@ -144,40 +166,35 @@ def classify(title,query_label):
     return query_label
 
 def fetch_gdelt_events(start,end):
-    # Use a recent 90-day window first: a manageable, point-in-time news sample.
+    # Query the most recent 90 days using the DOC API's native timespan filter.
+    # This avoids dozens of long historical-range requests and keeps timestamps/provenance.
     event_start=max(start,end-timedelta(days=90))
     queries=[
       ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan")'),
       ("ENERGY_SHIPPING_NEWS",'(crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz")'),
     ]
-    events=[]; failures=[]; cursor=event_start
-    while cursor<=end:
-        chunk_end=min(end,cursor+timedelta(days=6))
-        for query_label,query in queries:
-            params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc",
-                    "startdatetime":cursor.strftime("%Y%m%d")+"000000",
-                    "enddatetime":chunk_end.strftime("%Y%m%d")+"235959"}
-            try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,20))
-                resp.raise_for_status(); payload=resp.json()
-                for article in payload.get("articles",[]):
-                    title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
-                    published=parse_gdelt_date(article.get("seendate"))
-                    if not title or not url or not published or not event_start<=published.date()<=end: continue
-                    event_type=classify(title,query_label)
-                    event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
-                    events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
-                      "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
-                      "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
-                      "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
-                      "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
-                      "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
-                      "GDELT_API_URL":resp.url})
-            except Exception as exc:
-                failures.append({"query_group":query_label,"start":cursor.isoformat(),"end":chunk_end.isoformat(),
-                    "error":f"{type(exc).__name__}: {exc}"})
-            time.sleep(0.1)
-        cursor=chunk_end+timedelta(days=1)
+    events=[]; failures=[]
+    for query_label,query in queries:
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":250,"sort":"DateDesc","timespan":"90d"}
+        try:
+            resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,20))
+            resp.raise_for_status(); payload=resp.json()
+            for article in payload.get("articles",[]):
+                title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
+                published=parse_gdelt_date(article.get("seendate"))
+                if not title or not url or not published or not event_start<=published.date()<=end: continue
+                event_type=classify(title,query_label)
+                event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
+                events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
+                  "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
+                  "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
+                  "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
+                  "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
+                  "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
+                  "GDELT_API_URL":resp.url})
+        except Exception as exc:
+            failures.append({"query_group":query_label,"error":f"{type(exc).__name__}: {exc}"})
+        time.sleep(0.2)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE","EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     if events:
         df=pd.DataFrame(events,columns=cols).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
@@ -218,14 +235,16 @@ def main():
               "rows":len(found),"date_min":min((x["DATE"] for x in found),default=None),
               "date_max":max((x["DATE"] for x in found),default=None),"source":"NSE daily index close archive"})
         else:
+            series_id="DCOILBRENTEU" if spec["group"]=="crude_oil" else "DEXINUS"
             try:
-                rows,url=yahoo_history(label,spec,start,end); all_rows.extend(rows)
+                rows,url=fred_history(label,series_id,start,end); all_rows.extend(rows)
                 manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
                   "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
-                  "source":"Yahoo Finance chart API","source_url":url})
+                  "source":f"FRED series {series_id}","source_url":url,
+                  "units":"USD per barrel" if series_id=="DCOILBRENTEU" else "Indian rupees per USD"})
             except Exception as exc:
                 manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
-                  "error":f"{type(exc).__name__}: {exc}"})
+                  "source":f"FRED series {series_id}","error":f"{type(exc).__name__}: {exc}"})
     all_panel=pd.DataFrame(all_rows)
     panel=pd.DataFrame()
     if not all_panel.empty:
