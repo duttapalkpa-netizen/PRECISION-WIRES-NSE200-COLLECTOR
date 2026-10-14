@@ -242,25 +242,32 @@ def is_trusted_news_url(url):
         return False
 
 def fetch_gdelt_events(start,end):
-    # DOC 2.0 is rate-limited. Use a small result cap, honor Retry-After, and
-    # never interpret HTTP 429 or an empty response as evidence of no events.
+    # Collect in separate 30-day windows to avoid a "latest 100 articles" sample
+    # masquerading as a historical sample. Honor rate limits and retain failures.
     event_start=max(start,end-timedelta(days=90))
     queries=[
-      ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan")'),
-      ("ENERGY_SHIPPING_NEWS",'(crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz")'),
+      ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR missile OR invasion OR ceasefire)'),
+      ("ENERGY_SHIPPING_NEWS",'(crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)'),
     ]
     events=[]; failures=[]
-    for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc","timespan":"90d"}
+    slices=[]; cursor=event_start
+    while cursor<=end:
+        slice_end=min(end,cursor+timedelta(days=29))
+        slices.append((cursor,slice_end)); cursor=slice_end+timedelta(days=1)
+    for slice_start,slice_end in slices:
+      for query_label,query in queries:
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc",
+          "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
+          "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         for attempt in range(3):
             try:
                 resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=30)
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
-                    try: wait=min(60,max(5,int(float(retry_after))))
-                    except (TypeError,ValueError): wait=5*(attempt+1)
-                    last_error=f"HTTP 429 rate limit; retry {attempt+1}/3 after {wait}s"
+                    try: wait=min(90,max(10,int(float(retry_after))))
+                    except (TypeError,ValueError): wait=15*(attempt+1)
+                    last_error=f"HTTP 429 rate limit; slice {slice_start}/{slice_end}; retry {attempt+1}/3 after {wait}s"
                     if attempt<2:
                         time.sleep(wait)
                         continue
@@ -272,35 +279,35 @@ def fetch_gdelt_events(start,end):
                 for article in payload.get("articles",[]):
                     title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
                     published=parse_gdelt_date(article.get("seendate"))
-                    if not title or not url or not published or not event_start<=published.date()<=end: continue
-                    # A broad GDELT OR query is discovery only. Keep a row only when
-                    # the title is explicitly relevant AND the publisher is on the
-                    # documented trusted-source allowlist; otherwise it is a false positive.
+                    if not title or not url or not published or not slice_start<=published.date()<=slice_end: continue
                     event_type=classify(title,query_label)
+                    # Discovery queries are intentionally broad; only keep explicit
+                    # market-relevant titles from trusted publishers for the study.
                     if event_type is None or not is_trusted_news_url(url): continue
                     domain=str(article.get("domain") or "")
                     event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
                     events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
-                      "PUBLISHED_AT":published.isoformat(),"SOURCE":domain or "trusted publisher via GDELT", 
+                      "PUBLISHED_AT":published.isoformat(),"SOURCE":domain or "trusted publisher via GDELT",
                       "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.75,
-                      "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
+                      "EVIDENCE_TYPE":"TRUSTED_MEDIA_MENTION_NOT_VERIFIED_EVENT",
                       "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
                       "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
                       "GDELT_API_URL":resp.url})
                 last_error=None
                 break
             except Exception as exc:
-                last_error=f"{type(exc).__name__}: {exc}"
-                if attempt<2: time.sleep(5*(attempt+1))
+                last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
+                if attempt<2: time.sleep(8*(attempt+1))
         if last_error:
-            failures.append({"query_group":query_label,"error":last_error})
-        time.sleep(5.2)
+            failures.append({"query_group":query_label,"slice_start":slice_start.isoformat(),
+              "slice_end":slice_end.isoformat(),"error":last_error})
+        # Stay below GDELT's burst/rate limit; retry failures remain in the manifest.
+        time.sleep(8.0)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE","EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     if events:
         df=pd.DataFrame(events,columns=cols).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
         return df,failures,event_start
     return pd.DataFrame(columns=cols),failures,event_start
-
 def try_nse_json(endpoint,params,start,end):
     """Attempt official NSE endpoint; return rows or explicit failure without hiding access denial."""
     url=NSE+endpoint
