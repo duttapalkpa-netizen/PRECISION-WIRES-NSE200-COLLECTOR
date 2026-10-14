@@ -80,6 +80,55 @@ def yahoo_history(label,spec,start,end):
     if not rows: raise RuntimeError("No usable closes in requested window")
     return rows,resp.url
 
+def nse_index_history(start,end):
+    """Download official NSE daily multi-index close CSVs; no main-site session required."""
+    aliases={
+      "nifty50":"NIFTY 50","niftyit":"NIFTY IT","niftybank":"NIFTY BANK","niftyauto":"NIFTY AUTO",
+      "niftymetal":"NIFTY METAL","niftypharma":"NIFTY PHARMA","niftyenergy":"NIFTY ENERGY",
+      "niftyfmcg":"NIFTY FMCG","niftyrealty":"NIFTY REALTY","niftyinfrastructure":"NIFTY INFRA",
+      "indiavix":"INDIA VIX"
+    }
+    rows=[]; failures=[]; days_seen=0
+    day=start
+    while day<=end:
+        if day.weekday()<5:
+            stamp=day.strftime("%d%m%Y")
+            urls=[
+              f"https://archives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
+              f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv"
+            ]
+            found=False
+            for url in urls:
+                try:
+                    resp=session.get(url,timeout=(5,15),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":NSE+"/all-reports"})
+                    if resp.status_code==404: continue
+                    resp.raise_for_status()
+                    from io import StringIO
+                    df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
+                    df.columns=[str(c).strip().upper() for c in df.columns]
+                    namecol=next((c for c in ["INDEX NAME","INDEX_NAME"] if c in df.columns),None)
+                    datecol=next((c for c in ["INDEX DATE","INDEX_DATE","DATE"] if c in df.columns),None)
+                    closecol=next((c for c in ["CLOSING","CLOSE","CLOSE VALUE"] if c in df.columns),None)
+                    if not namecol or not datecol or not closecol:
+                        failures.append({"date":day.isoformat(),"url":url,"error":"Unrecognized official NSE index CSV schema"})
+                        found=True; break
+                    df["_KEY"]=df[namecol].astype(str).str.lower().str.replace(r"[^a-z0-9]","",regex=True)
+                    for _,row in df[df["_KEY"].isin(aliases)].iterrows():
+                        close=pd.to_numeric(pd.Series([row[closecol]]),errors="coerce").iloc[0]
+                        dt=pd.to_datetime(row[datecol],errors="coerce",dayfirst=True)
+                        if pd.isna(close) or close<=0 or pd.isna(dt): continue
+                        label=aliases[row["_KEY"]]
+                        rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(close),
+                          "SOURCE":"NSE daily index close archive","SOURCE_URL":url,
+                          "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+                    found=True; days_seen+=1; break
+                except Exception as exc:
+                    failures.append({"date":day.isoformat(),"url":url,"error":f"{type(exc).__name__}: {exc}"})
+            # A weekend/holiday 404 is normal. Keep a small pause for archive courtesy.
+            time.sleep(0.08)
+        day+=timedelta(days=1)
+    return rows,{"weekday_requests":days_seen,"rows":len(rows),"failures":failures}
+
 def parse_gdelt_date(value):
     s=str(value or "").strip()
     for fmt in ("%Y%m%dT%H%M%SZ","%Y-%m-%dT%H:%M:%SZ","%Y-%m-%d %H:%M:%S"):
@@ -95,50 +144,45 @@ def classify(title,query_label):
     return query_label
 
 def fetch_gdelt_events(start,end):
-    # DOC API date range is queried in 14-day chunks to reduce truncation risk.
-    # The API's observed/published timestamp is used as the event-date proxy.
+    # Use a recent 90-day window first: a manageable, point-in-time news sample.
+    event_start=max(start,end-timedelta(days=90))
     queries=[
-      ("GEOPOLITICAL_AND_SUPPLY_RISK_NEWS",'(war OR conflict OR military OR missile OR attack OR sanctions OR tariff OR crude OR tanker OR shipping OR freight OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR Taiwan OR "oil supply" OR "Red Sea" OR "Strait of Hormuz")'),
+      ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan")'),
+      ("ENERGY_SHIPPING_NEWS",'(crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz")'),
     ]
-    events=[]; failures=[]
-    cursor=start
+    events=[]; failures=[]; cursor=event_start
     while cursor<=end:
-        chunk_end=min(end,cursor+timedelta(days=29))
+        chunk_end=min(end,cursor+timedelta(days=6))
         for query_label,query in queries:
-            params={"query":query,"mode":"ArtList","format":"json","maxrecords":250,"sort":"DateDesc",
+            params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc",
                     "startdatetime":cursor.strftime("%Y%m%d")+"000000",
                     "enddatetime":chunk_end.strftime("%Y%m%d")+"235959"}
             try:
-                r=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,15))
-                r.raise_for_status()
-                payload=r.json()
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,20))
+                resp.raise_for_status(); payload=resp.json()
                 for article in payload.get("articles",[]):
-                    title=str(article.get("title") or "").strip()
-                    url=str(article.get("url") or "").strip()
+                    title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
                     published=parse_gdelt_date(article.get("seendate"))
-                    if not title or not url or not published: continue
-                    pub_day=published.date()
-                    if pub_day<start or pub_day>end: continue
+                    if not title or not url or not published or not event_start<=published.date()<=end: continue
                     event_type=classify(title,query_label)
                     event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
-                    events.append({
-                        "EVENT_DATE":pub_day.isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
-                        "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
-                        "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
-                        "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
-                        "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
-                        "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
-                        "GDELT_API_URL":r.url,
-                    })
+                    events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
+                      "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
+                      "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
+                      "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
+                      "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
+                      "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
+                      "GDELT_API_URL":resp.url})
             except Exception as exc:
                 failures.append({"query_group":query_label,"start":cursor.isoformat(),"end":chunk_end.isoformat(),
-                                 "error":f"{type(exc).__name__}: {exc}"})
+                    "error":f"{type(exc).__name__}: {exc}"})
             time.sleep(0.1)
         cursor=chunk_end+timedelta(days=1)
+    cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE","EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     if events:
-        df=pd.DataFrame(events).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
-        return df,failures
-    return pd.DataFrame(columns=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE","EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]),failures
+        df=pd.DataFrame(events,columns=cols).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
+        return df,failures,event_start
+    return pd.DataFrame(columns=cols),failures,event_start
 
 def try_nse_json(endpoint,params,start,end):
     """Attempt official NSE endpoint; return rows or explicit failure without hiding access denial."""
@@ -160,35 +204,38 @@ def main():
     RAW.mkdir(parents=True,exist_ok=True); OUT.mkdir(parents=True,exist_ok=True)
     start,end=session_bounds()
     manifest={"status":"PARTIAL_COLLECTION","window_start":start.isoformat(),"window_end":end.isoformat(),
-              "market_series":[],"event_collection":{},"official_nse_attempts":[],
-              "important_boundary":"Yahoo chart data are public secondary-source market proxies; GDELT rows are news mentions, not independently verified event occurrence. Missing source stays UNKNOWN."}
-    panel_rows=[]
+      "market_series":[],"event_collection":{},"official_nse_attempts":[],
+      "important_boundary":"Indian benchmark/sector/VIX closes are from official NSE daily index archives. Brent/USDINR are attempted as secondary-source proxies. GDELT rows are timestamped media mentions, not independently verified event occurrence. Missing source stays UNKNOWN."}
+    all_rows=[]
+    # Official NSE archive supplies the Indian market panel and avoids Yahoo's rate limits.
+    nse_rows,nse_report=nse_index_history(start,end); all_rows.extend(nse_rows)
+    manifest["nse_index_archive"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
+      "weekday_requests":nse_report["weekday_requests"],"failures":nse_report["failures"][-25:]}
     for label,spec in SERIES.items():
-        try:
-            rows,url=yahoo_history(label,spec,start,end)
-            panel_rows.extend(rows)
-            dates={r["DATE"] for r in rows}
-            manifest["market_series"].append({"series":label,"group":spec["group"],"symbol":spec["symbol"],
-                "status":"AVAILABLE","rows":len(rows),"date_min":min(dates),"date_max":max(dates),
-                "source":"Yahoo Finance chart API","source_url":url})
-        except Exception as exc:
-            manifest["market_series"].append({"series":label,"group":spec["group"],"symbol":spec["symbol"],
-                "status":"BLOCKED","error":f"{type(exc).__name__}: {exc}"})
-        time.sleep(0.2)
-    all_panel=pd.DataFrame(panel_rows)
+        if spec["group"] in ("benchmark_index","sector_indices","volatility"):
+            found=[x for x in nse_rows if x["SERIES"]==label]
+            manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE" if found else "BLOCKED",
+              "rows":len(found),"date_min":min((x["DATE"] for x in found),default=None),
+              "date_max":max((x["DATE"] for x in found),default=None),"source":"NSE daily index close archive"})
+        else:
+            try:
+                rows,url=yahoo_history(label,spec,start,end); all_rows.extend(rows)
+                manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
+                  "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
+                  "source":"Yahoo Finance chart API","source_url":url})
+            except Exception as exc:
+                manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
+                  "error":f"{type(exc).__name__}: {exc}"})
+    all_panel=pd.DataFrame(all_rows)
     panel=pd.DataFrame()
     if not all_panel.empty:
         all_panel=all_panel.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
-        # Event-study panel is restricted to NSE-traded Indian series that share the
-        # 15:30 IST close convention. Foreign-market commodities/FX stay in separate
-        # files until their own close timestamps and calendars are modelled.
-        panel=all_panel[~all_panel["SERIES"].map(lambda name: SERIES[name]["group"] in ("crude_oil","usd_inr"))].copy()
+        panel=all_panel[all_panel["SERIES"].isin([x for x,s in SERIES.items() if s["group"] in ("benchmark_index","sector_indices","volatility")])].copy()
         panel.to_csv(RAW/"market_panel.csv",index=False)
-        # Keep standardized group-level input files for the coverage inventory.
         for group,labels in {
-            "benchmark_indices":["NIFTY 50"],
-            "sector_indices":[x for x,s in SERIES.items() if s["group"]=="sector_indices"],
-            "volatility":["INDIA VIX"],"crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"]
+          "benchmark_indices":["NIFTY 50"],
+          "sector_indices":[x for x,s in SERIES.items() if s["group"]=="sector_indices"],
+          "volatility":["INDIA VIX"],"crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"]
         }.items():
             subset=all_panel[all_panel.SERIES.isin(labels)][["DATE","SERIES","CLOSE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]].copy()
             if subset.empty: continue
@@ -197,70 +244,61 @@ def main():
                 subset.to_csv(RAW/("brent_crude.csv" if group=="crude_oil" else "usd_inr.csv"),index=False)
             else:
                 subset.to_csv(RAW/("benchmark_indices.csv" if group=="benchmark_indices" else "sector_indices.csv" if group=="sector_indices" else "volatility.csv"),index=False)
-    events,failures=fetch_gdelt_events(start,end)
+    events,failures,event_start=fetch_gdelt_events(start,end)
     if not events.empty:
         events.to_csv(RAW/"events.csv",index=False)
         events[["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE"]].to_csv(RAW/"geopolitical_events.csv",index=False)
     manifest["event_collection"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),
-        "date_min":events.EVENT_DATE.min() if len(events) else None,"date_max":events.EVENT_DATE.max() if len(events) else None,
-        "source":"GDELT DOC 2.0 API","failures":failures,
-        "warning":"EVENT_DATE is the article publication date proxy, not a verified occurrence timestamp; deduplicate and manually validate before causal interpretation."}
-    # Official NSE endpoints are attempted but never represented as successful without data.
+      "window_start":event_start.isoformat(),"window_end":end.isoformat(),
+      "date_min":events.EVENT_DATE.min() if len(events) else None,"date_max":events.EVENT_DATE.max() if len(events) else None,
+      "source":"GDELT DOC 2.0 API","failures":failures,
+      "warning":"EVENT_DATE is the article publication date proxy, not a verified occurrence timestamp; deduplicate and manually validate before causal interpretation."}
     for name,endpoint,params in [
-        ("corporate_events","/api/corporates-announcements",{"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
-        ("fpi_dii_flows","/api/fiidiiTradeReact",{}),
+      ("corporate_events","/api/corporates-announcements",{"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
+      ("fpi_dii_flows","/api/fiidiiTradeReact",{}),
     ]:
         data,detail=try_nse_json(endpoint,params,start,end)
         if data is None:
-            manifest["official_nse_attempts"].append({"source":name,"status":"BLOCKED","detail":detail})
-            continue
+            manifest["official_nse_attempts"].append({"source":name,"status":"BLOCKED","detail":detail}); continue
         if not data:
-            manifest["official_nse_attempts"].append({"source":name,"status":"NO_DATA_RETURNED","rows":0,"url":detail})
-            continue
-        rawdf=pd.DataFrame(data)
-        rawdf.columns=[str(c).strip().upper() for c in rawdf.columns]
+            manifest["official_nse_attempts"].append({"source":name,"status":"NO_DATA_RETURNED","rows":0,"url":detail}); continue
+        rawdf=pd.DataFrame(data); rawdf.columns=[str(c).strip().upper() for c in rawdf.columns]
         if name=="corporate_events":
-            def first(row, candidates):
-                return next((row[c] for c in candidates if c in row and pd.notna(row[c]) and str(row[c]).strip()), "")
+            def first(row,candidates):
+                return next((row[c] for c in candidates if c in row and pd.notna(row[c]) and str(row[c]).strip()),"")
             normalized=[]
             for _,row in rawdf.iterrows():
                 day=first(row,["AN_DT","DATE","DT","SORT_DATE","ANNOUNCEMENT_DATE","BROADCAST_DATE"])
-                symbol=first(row,["SYMBOL","SM_SYMBOL","TCKRSYMB"])
-                desc=first(row,["DESC","SUBJECT","ATTACHMENT","PURPOSE"])
+                symbol=first(row,["SYMBOL","SM_SYMBOL","TCKRSYMB"]); desc=first(row,["DESC","SUBJECT","PURPOSE"])
                 pub=first(row,["AN_DT","PUBLISHED_AT","BROADCAST_DATE","DATE","SORT_DATE"])
                 link=first(row,["ATTCHMNTFILE","ATTACHMENTFILE","ATTACHMENT","URL","LINK"])
                 if day and symbol and desc:
                     normalized.append({"DATE":day,"SYMBOL":symbol,"EVENT_TYPE":desc,"PUBLISHED_AT":pub,
-                        "SOURCE_URL":link if str(link).startswith("http") else (NSE+str(link) if link else ""),
-                        "SOURCE":"NSE corporate announcements"})
-            df=pd.DataFrame(normalized)
-            required={"DATE","SYMBOL","EVENT_TYPE","PUBLISHED_AT","SOURCE_URL"}
+                      "SOURCE_URL":link if str(link).startswith("http") else (NSE+str(link) if link else ""),
+                      "SOURCE":"NSE corporate announcements"})
+            df=pd.DataFrame(normalized); required={"DATE","SYMBOL","EVENT_TYPE","PUBLISHED_AT","SOURCE_URL"}
         else:
             normalized=[]
             for _,row in rawdf.iterrows():
-                day=next((row[c] for c in ["DATE","TRADE_DATE","TRADING_DATE"] if c in row and pd.notna(row[c])), "")
-                group=next((row[c] for c in ["CATEGORY","GROUP","INVESTOR_TYPE","INVESTOR"] if c in row and pd.notna(row[c])), "")
-                net=next((row[c] for c in ["NETVALUE","NET_VALUE","NET","NETAMOUNT"] if c in row and pd.notna(row[c])), "")
-                if day and group and net!="":
-                    normalized.append({"DATE":day,"GROUP":group,"NET_VALUE":net,"SOURCE":"NSE FPI/DII activity"})
-            df=pd.DataFrame(normalized)
-            required={"DATE","GROUP","NET_VALUE"}
+                day=next((row[c] for c in ["DATE","TRADE_DATE","TRADING_DATE"] if c in row and pd.notna(row[c])),"")
+                group=next((row[c] for c in ["CATEGORY","GROUP","INVESTOR_TYPE","INVESTOR"] if c in row and pd.notna(row[c])),"")
+                net=next((row[c] for c in ["NETVALUE","NET_VALUE","NET","NETAMOUNT"] if c in row and pd.notna(row[c])),"")
+                if day and group and net!="": normalized.append({"DATE":day,"GROUP":group,"NET_VALUE":net,"SOURCE":"NSE FPI/DII activity"})
+            df=pd.DataFrame(normalized); required={"DATE","GROUP","NET_VALUE"}
         if df.empty or not required.issubset(set(df.columns)):
             manifest["official_nse_attempts"].append({"source":name,"status":"SCHEMA_UNMAPPED","raw_rows":len(rawdf),
-                "raw_columns":list(rawdf.columns),"url":detail})
-            continue
+              "raw_columns":list(rawdf.columns),"url":detail}); continue
         df.to_csv(RAW/(name+".csv"),index=False)
         manifest["official_nse_attempts"].append({"source":name,"status":"AVAILABLE","rows":len(df),
-            "date_min":str(df["DATE"].min()),"date_max":str(df["DATE"].max()),"url":detail})
+          "date_min":str(df["DATE"].min()),"date_max":str(df["DATE"].max()),"url":detail})
     manifest["market_panel"]={"status":"AVAILABLE" if not panel.empty else "BLOCKED","rows":len(panel),
-        "series":int(panel.SERIES.nunique()) if not panel.empty else 0,"path":str(RAW/"market_panel.csv")}
+      "series":int(panel.SERIES.nunique()) if not panel.empty else 0,"path":str(RAW/"market_panel.csv")}
     manifest["events_file"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),"path":str(RAW/"events.csv")}
     manifest["status"]="COLLECTED_WITH_GAPS" if not panel.empty and len(events) else "BLOCKED_INCOMPLETE"
     (OUT/"p0_collection_manifest.json").write_text(json.dumps(manifest,indent=2))
     print(json.dumps({"status":manifest["status"],"window_start":str(start),"window_end":str(end),
-        "market_panel_rows":len(panel),"market_panel_series":int(panel.SERIES.nunique()) if not panel.empty else 0,
-        "events_rows":len(events),"gdelt_failures":len(failures),
-        "official_nse_attempts":manifest["official_nse_attempts"]},indent=2))
-    # Do not fail the whole audit on a third-party source outage; manifest exposes it.
+      "market_panel_rows":len(panel),"market_panel_series":int(panel.SERIES.nunique()) if not panel.empty else 0,
+      "events_rows":len(events),"event_window_start":event_start.isoformat(),"gdelt_failures":len(failures),
+      "official_nse_attempts":manifest["official_nse_attempts"]},indent=2))
     return 0
 if __name__=="__main__": raise SystemExit(main())
