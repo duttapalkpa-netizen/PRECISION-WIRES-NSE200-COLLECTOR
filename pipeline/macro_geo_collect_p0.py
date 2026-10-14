@@ -37,8 +37,17 @@ SERIES={
     "NIFTY REALTY":{"symbol":"%5ECNXREALTY","group":"sector_indices"},
     "NIFTY INFRA":{"symbol":"%5ECNXINFRA","group":"sector_indices"},
     "INDIA VIX":{"symbol":"%5EINDIAVIX","group":"volatility"},
-    "BRENT CRUDE FRONT MONTH":{"symbol":"BZ%3DF","group":"crude_oil"},
-    "USD INR":{"symbol":"USDINR%3DX","group":"usd_inr"},
+    "GLOBAL VIX":{"symbol":"%5EVIX","group":"volatility"},
+    "BRENT CRUDE FRONT MONTH":{"symbol":"BZ%3DF","group":"crude_oil","fred_id":"DCOILBRENTEU"},
+    "USD INR":{"symbol":"USDINR%3DX","group":"usd_inr","fred_id":"DEXINUS"},
+    "US DOLLAR BROAD INDEX":{"symbol":"DX-Y.NYB","group":"dollar_index","fred_id":"DTWEXBGS"},
+    "US 2Y TREASURY YIELD":{"symbol":"%5EIRX","group":"us_yields","fred_id":"DGS2"},
+    "US 10Y TREASURY YIELD":{"symbol":"%5ETNX","group":"us_yields","fred_id":"DGS10"},
+    "US 10Y REAL YIELD":{"symbol":"%5EIRX","group":"us_real_yields","fred_id":"DFII10"},
+    "GOLD FRONT MONTH":{"symbol":"GC%3DF","group":"global_commodities"},
+    "COPPER FRONT MONTH":{"symbol":"HG%3DF","group":"global_commodities"},
+    "USD JPY":{"symbol":"JPY%3DX","group":"fx_carry"},
+    "USD CNY":{"symbol":"CNY%3DX","group":"fx_carry"},
 }
 HEADERS={"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"https://finance.yahoo.com/"}
 session=requests.Session(); session.headers.update(HEADERS)
@@ -48,11 +57,10 @@ def session_bounds():
         df=pd.read_csv(PROCESSED,usecols=["DATE"])
         dates=pd.to_datetime(df.DATE,errors="coerce").dropna()
         if not dates.empty: return dates.min().date(), dates.max().date()
-    # The macro/geo-only workflow can run independently of the equity collector.
-    # 400 calendar days normally cover ~200 NSE sessions; exact available dates
-    # are determined by each source response and recorded in the manifest.
+    # The macro/geo-only workflow must not silently downgrade a requested
+    # twenty-year research panel to one year. Series-specific starts are recorded.
     end=datetime.now(timezone.utc).date()
-    return end-timedelta(days=360),end
+    return datetime(2006,1,1).date(),end
 
 def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
@@ -201,7 +209,7 @@ def fred_history(label,series_id,start,end):
     for _,row in df.iterrows():
         dt=pd.to_datetime(row[date_col],errors="coerce")
         value=pd.to_numeric(pd.Series([row[value_col]]),errors="coerce").iloc[0]
-        if pd.isna(dt) or pd.isna(value) or value<=0: continue
+        if pd.isna(dt) or pd.isna(value): continue
         rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(value),
           "SOURCE":f"FRED series {series_id}","SOURCE_URL":resp.url,
           "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
@@ -341,7 +349,10 @@ def main():
     # returns an empty/blocked payload. Never create placeholder market values.
     nse_rows,nse_report=niftyindices_history(start,end)
     nse_source="NSE Indices historical data API"
-    if len(nse_rows)<100:
+    # Avoid thousands of day-by-day archive requests for a 20-year panel.
+    # The official index API is preferred where it responds; public Yahoo history
+    # fills only missing date+series keys and remains explicitly labelled secondary.
+    if len(nse_rows)<100 and (end-start).days<=500:
         archive_rows,archive_report=nse_index_history(start,end)
         if len(archive_rows)>len(nse_rows):
             nse_rows=archive_rows
@@ -349,6 +360,22 @@ def main():
         manifest["nse_archive_fallback"]={"rows":len(archive_rows),"weekday_requests":archive_report["weekday_requests"],
             "failures":archive_report["failures"][-25:]}
     all_rows.extend(nse_rows)
+    official_keys={(x["DATE"],x["SERIES"]) for x in nse_rows}
+    historical_fill={"available":0,"blocked":[]}
+    for label,spec in SERIES.items():
+        if spec["group"] not in ("benchmark_index","sector_indices","volatility"): continue
+        try:
+            hist,url=yahoo_history(label,spec,start,end)
+            missing=[x for x in hist if (x["DATE"],x["SERIES"]) not in official_keys]
+            all_rows.extend(missing)
+            historical_fill["available"]+=len(missing)
+            manifest.setdefault("secondary_historical_series",[]).append({"series":label,"rows_added":len(missing),
+              "source":"Yahoo Finance chart API; fills dates absent from official NSE index archive/API",
+              "source_url":url,"date_min":min((x["DATE"] for x in missing),default=None),
+              "date_max":max((x["DATE"] for x in missing),default=None)})
+        except Exception as exc:
+            historical_fill["blocked"].append({"series":label,"error":f"{type(exc).__name__}: {exc}"})
+    manifest["historical_index_fill"]=historical_fill
     manifest["nse_market_data"]={"status":"AVAILABLE" if nse_rows else "BLOCKED","rows":len(nse_rows),
       "series":len(set(x["SERIES"] for x in nse_rows)) if nse_rows else 0,"source":nse_source,
       "api_failures":nse_report["failures"]}
@@ -387,12 +414,17 @@ def main():
         all_panel=all_panel.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
         # The event-study panel includes all successfully collected P0 series:
         # benchmark, sectors, volatility, crude and USD/INR. Missing series stay absent/UNKNOWN.
-        panel=all_panel[all_panel["SERIES"].isin([x for x,s in SERIES.items() if s["group"] in ("benchmark_index","sector_indices","volatility","crude_oil","usd_inr")])].copy()
+        panel=all_panel[all_panel["SERIES"].isin(list(SERIES.keys()))].copy()
         panel.to_csv(RAW/"market_panel.csv",index=False)
         for group,labels in {
           "benchmark_indices":["NIFTY 50"],
           "sector_indices":[x for x,s in SERIES.items() if s["group"]=="sector_indices"],
-          "volatility":["INDIA VIX"],"crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"]
+          "volatility":[x for x,s in SERIES.items() if s["group"]=="volatility"],
+          "crude_oil":["BRENT CRUDE FRONT MONTH"],"usd_inr":["USD INR"],
+          "us_yields":[x for x,s in SERIES.items() if s["group"] in ("us_yields","us_real_yields")],
+          "dollar_index":["US DOLLAR BROAD INDEX"],
+          "global_commodities":[x for x,s in SERIES.items() if s["group"]=="global_commodities"],
+          "fx_carry":[x for x,s in SERIES.items() if s["group"]=="fx_carry"]
         }.items():
             subset=all_panel[all_panel.SERIES.isin(labels)][["DATE","SERIES","CLOSE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]].copy()
             if subset.empty: continue
@@ -456,6 +488,10 @@ def main():
     manifest["events_file"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),"path":str(RAW/"events.csv")}
     p0_series_ok=all(any(x.get("series")==name and x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") for x in manifest["market_series"])
       for name in ("NIFTY 50","NIFTY IT","NIFTY BANK","INDIA VIX","BRENT CRUDE FRONT MONTH","USD INR"))
+    manifest["historical_research_window"]={"requested_start":start.isoformat(),"requested_end":end.isoformat(),
+      "series_with_rows":sum(bool(x.get("rows")) for x in manifest["market_series"]),
+      "series_coverage":{x["series"]:{"status":x["status"],"date_min":x.get("date_min"),"date_max":x.get("date_max"),"rows":x.get("rows",0)} for x in manifest["market_series"]},
+      "boundary":"Requested 2006 onward; each series may start later. A complete 20-year study is not claimed unless panel coverage supports it."}
     manifest["p0_coverage"]={"required_series":["NIFTY 50","NIFTY IT","NIFTY BANK","INDIA VIX","BRENT CRUDE FRONT MONTH","USD INR"],
       "required_series_available":p0_series_ok,"trusted_event_rows":len(events),
       "fpi_dii_status":"UNKNOWN/BLOCKED unless official source returns mapped rows",
