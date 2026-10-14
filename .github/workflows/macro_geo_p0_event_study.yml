@@ -23,7 +23,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: macro-geo-p0-audit-v4
+  group: macro-geo-p0-audit-v5
   cancel-in-progress: true
 
 jobs:
