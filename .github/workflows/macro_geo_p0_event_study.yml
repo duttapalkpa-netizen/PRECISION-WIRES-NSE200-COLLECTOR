@@ -71,6 +71,11 @@ jobs:
             data/external/volatility.csv
             data/external/brent_crude.csv
             data/external/usd_inr.csv
+            data/external/us_yields.csv
+            data/external/us_real_yields.csv
+            data/external/dxy.csv
+            data/external/commodity_prices.csv
+            data/external/fx_carry.csv
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
             outputs/macro_geo/**
