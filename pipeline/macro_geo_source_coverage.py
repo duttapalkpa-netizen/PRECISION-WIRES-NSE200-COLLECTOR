@@ -73,10 +73,23 @@ def main():
             except Exception as e: row.update(status="READ_ERROR",notes=f"Could not read file: {type(e).__name__}: {e}")
         rows.append(row)
     frame=pd.DataFrame(rows)
+    # Explicitly distinguish the P0 decision-support backbone from the wider
+    # optional context inventory. A file's presence is not proof of officialness.
+    by_name={r["source"]:r for r in rows}
+    p0_required=["benchmark_index","sector_indices","volatility","crude_oil","usd_inr","fpi_dii_flows","corporate_events","geopolitical_events"]
+    p0_rows={name:{"status":by_name.get(name,{}).get("status","NOT_CONNECTED"),
+                   "rows":by_name.get(name,{}).get("rows",0),
+                   "selected_path":by_name.get(name,{}).get("selected_path","")} for name in p0_required}
+    p0_available=[name for name,info in p0_rows.items() if info["status"]=="AVAILABLE" and info["rows"]>0]
     report={"status":"INVENTORY_COMPLETE_WITH_GAPS" if (frame.status!="AVAILABLE").any() else "SCHEMA_AND_GENERIC_QA_AVAILABLE",
             "as_of_utc":now.isoformat(),"sources_total":len(rows),"available":int((frame.status=="AVAILABLE").sum()),
             "not_connected":int((frame.status=="NOT_CONNECTED").sum()),"schema_fail":int((frame.status=="SCHEMA_FAIL").sum()),
             "quality_warn":int((frame.status=="DATA_QUALITY_WARN").sum()),"read_error":int((frame.status=="READ_ERROR").sum()),
+            "p0_coverage":{"required_groups":p0_required,"available_groups":p0_available,
+                "available_count":len(p0_available),"required_count":len(p0_required),
+                "status":"P0_COMPLETE" if len(p0_available)==len(p0_required) else "P0_INCOMPLETE",
+                "groups":p0_rows,
+                "boundary":"AVAILABLE means file/schema/generic QA only; secondary-source provenance and point-in-time validity remain separately qualified."},
             "important_boundary":"This is a source inventory and generic QA only. It does not imply live-feed connectivity, verified units, causal validity or complete 20-year history. Missing data remains UNKNOWN.",
             "sources":rows}
     REPORT.write_text(json.dumps(report,indent=2)); frame.to_csv(OUT/"source_coverage.csv",index=False)
