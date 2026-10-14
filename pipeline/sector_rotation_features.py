@@ -40,7 +40,8 @@ def main():
         out[f"SECTOR_RS_RANK_{h}D"]=out.groupby("DATE")[f"RELATIVE_RETURN_{h}D_PCT"].rank(ascending=False,method="min")
     out["IS_SECTOR_INDEX"]=out.SERIES.str.startswith("NIFTY ") & ~out.SERIES.eq("NIFTY 50")
     out.to_csv(OUT/"sector_rotation_daily.csv",index=False)
-    latest=out[out.IS_SECTOR_INDEX].sort_values("DATE").groupby("SERIES",as_index=False).tail(1)
+    latest=out[out.IS_SECTOR_INDEX].sort_values("DATE").groupby("SERIES",as_index=False).tail(1).copy()
+    latest["DATE"]=latest["DATE"].dt.strftime("%Y-%m-%d")
     report={"status":"COMPUTED_DESCRIPTIVE","panel_start":out.DATE.min().date().isoformat(),"panel_end":out.DATE.max().date().isoformat(),
       "panel_rows":len(out),"series":int(out.SERIES.nunique()),"sector_series":int(out[out.IS_SECTOR_INDEX].SERIES.nunique()),
       "latest_sector_snapshot":latest[["DATE","SERIES","RETURN_5D_PCT","RETURN_20D_PCT","RETURN_60D_PCT","RELATIVE_RETURN_20D_PCT","SECTOR_RS_RANK_20D"]].to_dict("records"),
