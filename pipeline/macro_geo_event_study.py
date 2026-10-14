@@ -18,17 +18,36 @@ def load_inputs(panel_path=PANEL, events_path=EVENTS):
     panel.columns=[str(c).strip().upper() for c in panel.columns]
     events.columns=[str(c).strip().upper() for c in events.columns]
     needp={"DATE","SERIES","CLOSE"}
-    neede={"EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","CONFIDENCE"}
+    neede={"EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","CONFIDENCE","EVENT_DATE_BASIS"}
     if needp-set(panel.columns): return None,None,"Panel missing columns: "+",".join(sorted(needp-set(panel.columns)))
     if neede-set(events.columns): return None,None,"Events missing columns: "+",".join(sorted(neede-set(events.columns)))
     panel["DATE"]=pd.to_datetime(panel["DATE"],errors="coerce").dt.normalize()
     panel["CLOSE"]=pd.to_numeric(panel["CLOSE"],errors="coerce")
+    if events.empty: return None,None,"Events file contains no rows."
+    raw_published=events["PUBLISHED_AT"].astype(str).str.strip()
+    has_timezone=raw_published.str.contains(r"(?:Z|[+-][0-9]{2}:?[0-9]{2})$",case=False,regex=True,na=False)
+    if not bool(has_timezone.all()): return None,None,"Every PUBLISHED_AT must include an explicit UTC offset or Z timezone."
     events["EVENT_DATE"]=pd.to_datetime(events["EVENT_DATE"],errors="coerce").dt.normalize()
     events["PUBLISHED_AT"]=pd.to_datetime(events["PUBLISHED_AT"],errors="coerce",utc=True)
     events["CONFIDENCE"]=pd.to_numeric(events["CONFIDENCE"],errors="coerce")
     panel=panel.dropna(subset=["DATE","SERIES","CLOSE"]).sort_values(["SERIES","DATE"])
-    events=events.dropna(subset=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT"])
     if panel.empty: return None,None,"Market panel contains no valid rows."
+    if events[["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","EVENT_DATE_BASIS","CONFIDENCE"]].isna().any().any():
+        return None,None,"Events contain missing required date, ID, type, source, URL, basis, or confidence values."
+    if events["EVENT_ID"].astype(str).str.strip().eq("").any() or events["SOURCE"].astype(str).str.strip().eq("").any():
+        return None,None,"Events contain blank IDs or source names."
+    if not events["SOURCE_URL"].astype(str).str.match(r"^https?://",case=False).all():
+        return None,None,"Every event must include an HTTP(S) source URL."
+    if not events["CONFIDENCE"].between(0,1).all():
+        return None,None,"CONFIDENCE must be numeric and between 0 and 1."
+    proxy=events["EVENT_DATE_BASIS"].astype(str).eq("GDELT_SEENDATE_PUBLICATION_PROXY")
+    published_dates=events["PUBLISHED_AT"].dt.date.astype(str)
+    event_dates=events["EVENT_DATE"].dt.date.astype(str)
+    if (proxy & (published_dates!=event_dates)).any():
+        return None,None,"GDELT publication-proxy EVENT_DATE must match the UTC publication date."
+    panel_min=panel["DATE"].min().date(); panel_max=panel["DATE"].max().date()
+    if ((events["EVENT_DATE"].dt.date<panel_min)|(events["EVENT_DATE"].dt.date>panel_max)).any():
+        return None,None,"One or more event dates fall outside the market-panel date range."
     if (panel["CLOSE"]<=0).any(): return None,None,"Non-positive close detected."
     if panel.duplicated(["DATE","SERIES"]).any(): return None,None,"Duplicate DATE+SERIES rows detected."
     if events["EVENT_ID"].duplicated().any(): return None,None,"Duplicate EVENT_ID rows detected; deduplicate before study."
@@ -74,8 +93,8 @@ def main():
     OUT.mkdir(parents=True,exist_ok=True)
     panel,events,error=load_inputs()
     if error:
-        report={"status":"BLOCKED_MISSING_OR_INVALID_INPUTS","reason":error,"required_panel":str(PANEL),"required_events":str(EVENTS),"note":"No synthetic market result was substituted."}
-        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
+        report={"status":"BLOCKED_MISSING_OR_INVALID_INPUTS","reason":error,"required_panel":str(PANEL),"required_events":str(EVENTS),"note":"No synthetic market result was substituted; this is not a successful study."}
+        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 2
     results=compute_event_windows(panel,events)
     results.to_csv(OUT/"event_study_windows.csv",index=False)
     summary=[]
@@ -88,7 +107,11 @@ def main():
                     "MEAN_PCT":float(vals.mean()) if len(vals) else None,"MEDIAN_PCT":float(vals.median()) if len(vals) else None,
                     "STD_PCT":float(vals.std(ddof=1)) if len(vals)>1 else None})
     pd.DataFrame(summary).to_csv(OUT/"event_study_summary.csv",index=False)
-    report={"status":"COMPUTED_EXPLORATORY" if not results.empty else "NO_MATCHING_EVENT_WINDOWS",
+    if results.empty:
+        report={"status":"NO_MATCHING_EVENT_WINDOWS","panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":0,
+                "reason":"No event had both a valid pre/post publication close window; study is blocked, not successful."}
+        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 2
+    report={"status":"COMPUTED_EXPLORATORY",
         "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":len(results),
         "series":sorted(panel.SERIES.unique().tolist()),
         "publication_time_rule":"Baseline is last 15:30 Asia/Kolkata close at/before PUBLISHED_AT; H+1/H+5/H+20 are the 1st/5th/20th closes strictly after publication.",

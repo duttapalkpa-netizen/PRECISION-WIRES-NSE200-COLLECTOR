@@ -62,6 +62,7 @@ def main():
                     ts=pd.to_datetime(df["PUBLISHED_AT"],errors="coerce",utc=True)
                     row["invalid_timestamp_rows"]=int(ts.isna().sum())
                 quality_issues=[]
+                if df.empty: quality_issues.append("source file exists but contains zero data rows")
                 if missing: quality_issues.append("missing required columns")
                 if row["duplicate_key_rows"] not in (None,0): quality_issues.append("duplicate keys")
                 if row["invalid_date_rows"] not in (None,0): quality_issues.append("invalid dates")

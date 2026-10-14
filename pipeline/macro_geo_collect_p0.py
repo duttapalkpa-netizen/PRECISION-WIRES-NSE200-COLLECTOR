@@ -223,8 +223,8 @@ def classify(title,query_label):
     return query_label
 
 def fetch_gdelt_events(start,end):
-    # Query the most recent 90 days using the DOC API's native timespan filter.
-    # This avoids dozens of long historical-range requests and keeps timestamps/provenance.
+    # DOC 2.0 is rate-limited. Use a small result cap, honor Retry-After, and
+    # never interpret HTTP 429 or an empty response as evidence of no events.
     event_start=max(start,end-timedelta(days=90))
     queries=[
       ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan")'),
@@ -232,26 +232,45 @@ def fetch_gdelt_events(start,end):
     ]
     events=[]; failures=[]
     for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":250,"sort":"DateDesc","timespan":"90d"}
-        try:
-            resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=20)
-            resp.raise_for_status(); payload=resp.json()
-            for article in payload.get("articles",[]):
-                title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
-                published=parse_gdelt_date(article.get("seendate"))
-                if not title or not url or not published or not event_start<=published.date()<=end: continue
-                event_type=classify(title,query_label)
-                event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
-                events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
-                  "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
-                  "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
-                  "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
-                  "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
-                  "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
-                  "GDELT_API_URL":resp.url})
-        except Exception as exc:
-            failures.append({"query_group":query_label,"error":f"{type(exc).__name__}: {exc}"})
-        time.sleep(0.2)
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc","timespan":"90d"}
+        last_error=None
+        for attempt in range(3):
+            try:
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=30)
+                if resp.status_code==429:
+                    retry_after=resp.headers.get("Retry-After","")
+                    try: wait=min(60,max(5,int(float(retry_after))))
+                    except (TypeError,ValueError): wait=5*(attempt+1)
+                    last_error=f"HTTP 429 rate limit; retry {attempt+1}/3 after {wait}s"
+                    if attempt<2:
+                        time.sleep(wait)
+                        continue
+                    break
+                resp.raise_for_status()
+                payload=resp.json()
+                if not isinstance(payload,dict) or not isinstance(payload.get("articles",[]),list):
+                    raise RuntimeError("GDELT response did not contain a valid articles list")
+                for article in payload.get("articles",[]):
+                    title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
+                    published=parse_gdelt_date(article.get("seendate"))
+                    if not title or not url or not published or not event_start<=published.date()<=end: continue
+                    event_type=classify(title,query_label)
+                    event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
+                    events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
+                      "PUBLISHED_AT":published.isoformat(),"SOURCE":str(article.get("domain") or "GDELT-indexed source"),
+                      "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.5,
+                      "EVIDENCE_TYPE":"MEDIA_MENTION_NOT_VERIFIED_EVENT",
+                      "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
+                      "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
+                      "GDELT_API_URL":resp.url})
+                last_error=None
+                break
+            except Exception as exc:
+                last_error=f"{type(exc).__name__}: {exc}"
+                if attempt<2: time.sleep(5*(attempt+1))
+        if last_error:
+            failures.append({"query_group":query_label,"error":last_error})
+        time.sleep(5.2)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE","EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     if events:
         df=pd.DataFrame(events,columns=cols).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
@@ -338,9 +357,10 @@ def main():
             else:
                 subset.to_csv(RAW/("benchmark_indices.csv" if group=="benchmark_indices" else "sector_indices.csv" if group=="sector_indices" else "volatility.csv"),index=False)
     events,failures,event_start=fetch_gdelt_events(start,end)
-    if not events.empty:
-        events.to_csv(RAW/"events.csv",index=False)
-        events[["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE"]].to_csv(RAW/"geopolitical_events.csv",index=False)
+    # Always materialize header-only files on an empty collection so QA can
+    # distinguish "connected but zero rows" from a missing file.
+    events.to_csv(RAW/"events.csv",index=False)
+    events[["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE"]].to_csv(RAW/"geopolitical_events.csv",index=False)
     manifest["event_collection"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),
       "window_start":event_start.isoformat(),"window_end":end.isoformat(),
       "date_min":events.EVENT_DATE.min() if len(events) else None,"date_max":events.EVENT_DATE.max() if len(events) else None,

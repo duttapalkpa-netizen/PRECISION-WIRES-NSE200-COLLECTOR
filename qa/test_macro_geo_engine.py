@@ -40,11 +40,30 @@ class MacroGeoTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["TARGET_DATE_H1"],"2026-01-05")
         self.assertAlmostEqual(result.iloc[0]["RETURN_H1_PCT"],(102/101-1)*100)
 
+
+    def test_empty_events_file_is_blocked(self):
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
+            pd.DataFrame({"DATE":["2026-01-01"],"SERIES":["NIFTY 50"],"CLOSE":[100]}).to_csv(p,index=False)
+            pd.DataFrame(columns=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","CONFIDENCE","EVENT_DATE_BASIS"]).to_csv(e,index=False)
+            panel,events,error=event.load_inputs(p,e)
+            self.assertIsNone(panel); self.assertIsNone(events); self.assertIn("no rows",error)
+
+    def test_publication_timestamp_requires_timezone(self):
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
+            pd.DataFrame({"DATE":["2026-01-01","2026-01-02"],"SERIES":["NIFTY 50"]*2,"CLOSE":[100,101]}).to_csv(p,index=False)
+            pd.DataFrame([{"EVENT_DATE":"2026-01-01","EVENT_ID":"E1","EVENT_TYPE":"GEO","PUBLISHED_AT":"2026-01-01 10:00:00",
+                           "SOURCE":"example","SOURCE_URL":"https://example.com/news","CONFIDENCE":0.5,
+                           "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY"}]).to_csv(e,index=False)
+            panel,events,error=event.load_inputs(p,e)
+            self.assertIsNone(panel); self.assertIsNone(events); self.assertIn("timezone",error)
+
     def test_duplicate_panel_rows_rejected(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
             pd.DataFrame({"DATE":["2026-01-01","2026-01-01"],"SERIES":["NIFTY 50"]*2,"CLOSE":[100,101]}).to_csv(p,index=False)
-            pd.DataFrame(columns=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","CONFIDENCE"]).to_csv(e,index=False)
+            pd.DataFrame(columns=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","CONFIDENCE","EVENT_DATE_BASIS"]).to_csv(e,index=False)
             panel,events,error=event.load_inputs(p,e)
             self.assertIsNone(panel); self.assertIn("Duplicate",error)
 
