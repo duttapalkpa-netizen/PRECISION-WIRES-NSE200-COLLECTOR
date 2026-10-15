@@ -24,6 +24,7 @@ HEADERS = {"User-Agent": UA, "Accept": "application/json,text/plain,*/*",
 RESULTS_URL = NSE_HOME + "/api/corporates-financial-results"
 MEETINGS_URL = NSE_HOME + "/api/corporates-board-meetings"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
+EVENT_COLUMNS = ["SYMBOL", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
 REQUIRED_METRICS = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT",
                     "REVENUE", "PAT", "EPS"}
 OPTIONAL_METRICS = {"EBITDA", "INTEREST_EXPENSE", "DEBT", "OPERATING_CASH_FLOW",
@@ -253,8 +254,8 @@ def main():
         time.sleep(0.2)
     disclosures_path = RAW / "quarterly_results_disclosures.csv"
     calendar_path = RAW / "quarterly_results_calendar.csv"
-    pd.DataFrame(result_events).to_csv(disclosures_path, index=False)
-    pd.DataFrame(calendar_events).to_csv(calendar_path, index=False)
+    pd.DataFrame(result_events, columns=EVENT_COLUMNS).to_csv(disclosures_path, index=False)
+    pd.DataFrame(calendar_events, columns=EVENT_COLUMNS).to_csv(calendar_path, index=False)
     financials, financial_report = build_financial_features(FINANCIALS_INPUT)
     financials.to_csv(OUT / "quarterly_financial_features.csv", index=False)
     event_study, event_report = build_event_study(disclosures_path, PANEL)
