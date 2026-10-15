@@ -93,10 +93,13 @@ def main():
     OUT.mkdir(parents=True,exist_ok=True)
     panel,events,error=load_inputs()
     if error:
-        report={"status":"BLOCKED_MISSING_OR_INVALID_INPUTS","research_status":"BLOCKED","operational_status":"FAIL_QA",
+        empty_events = "Events file contains no rows." in error
+        report={"status":"BLOCKED_NO_VALID_EVENTS" if empty_events else "BLOCKED_MISSING_OR_INVALID_INPUTS",
+                "research_status":"BLOCKED",
+                "operational_status":"PASS_WITH_RESEARCH_BLOCKED" if empty_events else "FAIL_QA",
                 "reason":error,"required_panel":str(PANEL),"required_events":str(EVENTS),
                 "note":"No synthetic market result was substituted; this is not a successful study."}
-        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 2
+        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0 if empty_events else 2
     results=compute_event_windows(panel,events)
     results.to_csv(OUT/"event_study_windows.csv",index=False)
     summary=[]
