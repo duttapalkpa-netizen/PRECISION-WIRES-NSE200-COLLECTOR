@@ -57,8 +57,14 @@ jobs:
         run: python pipeline/macro_geo_collect_p0.py
       - name: Audit macro-geopolitical and sector source coverage (audit only)
         run: python pipeline/macro_geo_source_coverage.py
-      - name: Run historical macro/geo event study when sourced inputs exist (audit only)
-        run: python pipeline/macro_geo_event_study.py
+      - name: Run secondary historical macro/geo event study without blocking primary +5% audit
+        run: |
+          if python pipeline/macro_geo_event_study.py; then
+            echo "Macro-Geo secondary study completed or explicitly reported research BLOCKED."
+          else
+            rc=$?
+            echo "::warning::Macro-Geo secondary study exited ${rc}; inspect its report/artifact. Continuing the primary +5% H+1 audit."
+          fi
       - name: Generate frozen-selector diagnostics (audit only)
         run: |
           python pipeline/hidden_winner_watchlist.py
