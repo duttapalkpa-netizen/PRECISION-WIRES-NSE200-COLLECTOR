@@ -23,6 +23,7 @@ HEADERS = {"User-Agent": UA, "Accept": "application/json,text/plain,*/*",
            "Referer": "https://www.nseindia.com/companies-listing/corporate-filings-application"}
 RESULTS_URL = NSE_HOME + "/api/corporates-financial-results"
 MEETINGS_URL = NSE_HOME + "/api/corporates-board-meetings"
+ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporates-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
 EVENT_COLUMNS = ["SYMBOL", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
 REQUIRED_METRICS = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT",
@@ -77,7 +78,7 @@ def normalize_event(row, kind, source_url):
     symbol = str(first(row, ["symbol", "sm_symbol", "ticker", "securitysymbol"])).upper().strip()
     company = str(first(row, ["company", "companyname", "sm_name", "securityname"])).strip()
     subject = str(first(row, ["subject", "purpose", "description", "meetingpurpose", "details"])).strip()
-    broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "date"]))
+    broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "an_dt", "sort_date", "sortdate", "dt", "dateandtime", "date"]))
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
     period = str(first(row, ["periodended", "period_end", "financialperiod", "quarterended"])).strip()
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "pdfurl", "xbrl", "fileurl"])).strip()
@@ -93,19 +94,42 @@ def normalize_event(row, kind, source_url):
     }
 
 def fetch_nse(endpoint, start, end):
+    """Try the specialized NSE endpoint, then the official announcements feed.
+    Fallback rows are filtered to the requested event class; no row is fabricated.
+    """
     session = requests.Session()
     session.headers.update(HEADERS)
-    # NSE may change access controls; failures must be visible, not silently replaced.
     session.get(NSE_HOME, timeout=(5, 20))
     params = {"index": "equities", "from_date": start.strftime("%d-%m-%Y"),
               "to_date": end.strftime("%d-%m-%Y")}
-    response = session.get(endpoint, params=params, timeout=(5, 30))
-    response.raise_for_status()
-    payload = response.json()
-    rows = records_from(payload)
-    if not rows:
-        raise RuntimeError("NSE endpoint returned no recognizable rows")
-    return rows, response.url, payload
+    candidates = [endpoint]
+    if endpoint in (RESULTS_URL, MEETINGS_URL):
+        candidates.append(ANNOUNCEMENTS_URL)
+    failures = []
+    for candidate in candidates:
+        try:
+            response = session.get(candidate, params=params, timeout=(5, 30))
+            response.raise_for_status()
+            payload = response.json()
+            rows = records_from(payload)
+            if candidate == ANNOUNCEMENTS_URL:
+                def subject_text(row):
+                    return " ".join(str(first(row, names)) for names in (
+                        ["subject", "purpose", "description", "details"],
+                        ["company", "companyname", "sm_name"]
+                    )).lower()
+                if endpoint == RESULTS_URL:
+                    rows = [r for r in rows if re.search(
+                        r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter",
+                        subject_text(r))]
+                elif endpoint == MEETINGS_URL:
+                    rows = [r for r in rows if re.search(r"board meeting|meeting of the board", subject_text(r))]
+            if rows:
+                return rows, response.url, payload
+            failures.append(f"{candidate}: no recognizable rows for requested event class")
+        except Exception as exc:
+            failures.append(f"{candidate}: {type(exc).__name__}: {exc}")
+    raise RuntimeError("All NSE endpoints failed or returned no matching rows: " + " | ".join(failures))
 
 def pct_change(current, previous):
     try:
@@ -193,6 +217,11 @@ def build_event_study(events_path, panel_path):
     events = pd.read_csv(events_path)
     panel = pd.read_csv(panel_path)
     required_e = {"SYMBOL", "RESULT_DECLARED", "BROADCAST_AT", "SOURCE_URL"}
+    panel.columns = [str(c).strip().upper() for c in panel.columns]
+    # The normalized NSE daily dataset uses CLOSE_PRICE; explicitly normalize this
+    # known schema variant rather than falsely blocking the event study.
+    if "CLOSE" not in panel.columns and "CLOSE_PRICE" in panel.columns:
+        panel = panel.rename(columns={"CLOSE_PRICE": "CLOSE"})
     required_p = {"SYMBOL", "DATE", "CLOSE"}
     if required_e - set(events.columns) or required_p - set(panel.columns):
         return pd.DataFrame(), {"status": "BLOCKED_BAD_EVENT_OR_PRICE_SCHEMA",
