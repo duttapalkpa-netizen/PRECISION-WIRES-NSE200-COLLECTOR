@@ -99,6 +99,11 @@ class MacroGeoTests(unittest.TestCase):
             panel,events,error=event.load_inputs(p,e)
             self.assertIsNone(panel); self.assertIn("Duplicate",error)
 
+    def test_empty_exclusion_list_is_a_valid_zero_count(self):
+        empty=pd.DataFrame()
+        self.assertEqual(event.exclusion_count(empty, "PENDING_PANEL_NOT_YET_AVAILABLE"), 0)
+        self.assertEqual(event.exclusion_count(empty, "EVENT_BEFORE_PANEL_HISTORY"), 0)
+
     def test_future_events_are_pending_not_input_qa_failure(self):
         panel=pd.DataFrame({"DATE":pd.to_datetime(["2026-10-13","2026-10-14"]),"SERIES":["NIFTY 50"]*2,"CLOSE":[100,101]})
         events=pd.DataFrame([
