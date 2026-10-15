@@ -195,34 +195,44 @@ def nse_index_history(start,end):
     return rows,{"weekday_requests":days_seen,"rows":len(rows),"failures":failures}
 
 def fred_history(label,series_id,start,end):
-    """Public FRED CSV observations with explicit series IDs and source URLs."""
-    url="https://fred.stlouisfed.org/graph/fredgraph.csv"
-    last_error=None
-    for attempt,wait in enumerate((0,3),start=1):
-        if wait: time.sleep(wait)
-        try:
-            resp=session.get(url,params={"id":series_id,"cosd":start.isoformat(),"coed":end.isoformat()},
-                timeout=(5,15),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
-            resp.raise_for_status()
-            break
-        except Exception as exc:
-            last_error=exc
-            if attempt==2: raise
+    """Fetch public FRED CSV in bounded 5-year windows to avoid long-request timeouts."""
     from io import StringIO
-    df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
-    date_col=next((c for c in df.columns if str(c).strip().upper() in ("DATE","OBSERVATION_DATE")),None)
-    value_col=next((c for c in df.columns if str(c).strip().upper()==series_id.upper()),None)
-    if not date_col or not value_col: raise RuntimeError("FRED CSV schema mismatch: "+str(list(df.columns)))
-    rows=[]
-    for _,row in df.iterrows():
-        dt=pd.to_datetime(row[date_col],errors="coerce")
-        value=pd.to_numeric(pd.Series([row[value_col]]),errors="coerce").iloc[0]
-        if pd.isna(dt) or pd.isna(value): continue
-        rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(value),
-          "SOURCE":f"FRED series {series_id}","SOURCE_URL":resp.url,
-          "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
-    if not rows: raise RuntimeError("FRED returned no valid observations for "+series_id)
-    return rows,resp.url
+    url="https://fred.stlouisfed.org/graph/fredgraph.csv"
+    rows=[]; source_urls=[]; cursor=start
+    while cursor<=end:
+        chunk_end=min(end,cursor+timedelta(days=365*5-1))
+        resp=None; last_error=None
+        for attempt,wait in enumerate((0,2),start=1):
+            if wait: time.sleep(wait)
+            try:
+                resp=session.get(url,params={"id":series_id,"cosd":cursor.isoformat(),"coed":chunk_end.isoformat()},
+                    timeout=(5,20),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+                resp.raise_for_status()
+                break
+            except Exception as exc:
+                last_error=exc
+                if attempt==2: raise RuntimeError(
+                    f"FRED {series_id} failed for {cursor.isoformat()}..{chunk_end.isoformat()}: {type(last_error).__name__}: {last_error}"
+                ) from exc
+        df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
+        date_col=next((c for c in df.columns if str(c).strip().upper() in ("DATE","OBSERVATION_DATE")),None)
+        value_col=next((c for c in df.columns if str(c).strip().upper()==series_id.upper()),None)
+        if not date_col or not value_col:
+            raise RuntimeError(f"FRED CSV schema mismatch for {series_id}: {list(df.columns)}")
+        source_urls.append(resp.url)
+        for _,row in df.iterrows():
+            dt=pd.to_datetime(row[date_col],errors="coerce")
+            value=pd.to_numeric(pd.Series([row[value_col]]),errors="coerce").iloc[0]
+            if pd.isna(dt) or pd.isna(value): continue
+            if not cursor<=dt.date()<=chunk_end: continue
+            rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(value),
+              "SOURCE":f"FRED series {series_id}","SOURCE_URL":resp.url,
+              "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+        cursor=chunk_end+timedelta(days=1)
+    df_rows=pd.DataFrame(rows)
+    if df_rows.empty: raise RuntimeError("FRED returned no valid observations for "+series_id)
+    df_rows=df_rows.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+    return df_rows.to_dict("records"),";".join(source_urls)
 
 def parse_gdelt_date(value):
     s=str(value or "").strip()
