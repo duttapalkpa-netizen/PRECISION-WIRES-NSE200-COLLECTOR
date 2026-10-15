@@ -79,24 +79,86 @@ jobs:
         run: python pipeline/strict_30_matured_cutoff_audit.py
       - name: Run target-first +5% H+1 selector experiment (historical exploratory only)
         run: python pipeline/target5_h1_selector_experiment.py
+      - name: Collect timestamped stock-news discovery for frozen H+1 candidates (audit only)
+        run: python pipeline/stock_news_24h_collect.py
       - name: Build stock-specific last-24-hour news join readiness (audit only)
         run: python pipeline/stock_news_24h_join.py
       - name: Repeat audit and verify byte-for-byte reproducibility (audit only)
         run: python pipeline/check_retrospective_audit_reproducibility.py
+      - name: Enforce strict Macro-Geo hard gate before releasing prospective picks
+        run: python pipeline/macro_geo_hard_gate.py
       - name: Generate label-free picks from latest NSE session
         run: python pipeline/live_prospective_selector.py
       - name: Append picks and mature only complete outcomes
         run: python prospective_watchlist_tracker.py
-      - name: Persist audit ledger on this branch only
+      - name: Persist audit ledger with remote-branch reconciliation
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add outputs/prospective/watchlist_ledger.csv
-          if git diff --cached --quiet; then
-            echo "No new picks or matured outcomes to persist."
-          else
+          ledger="outputs/prospective/watchlist_ledger.csv"
+          local_ledger="$RUNNER_TEMP/watchlist_ledger_local.csv"
+          cp "$ledger" "$local_ledger"
+          pushed=0
+          for attempt in 1 2 3; do
+            echo "LEDGER_PUSH_ATTEMPT=$attempt"
+            git fetch origin audit/prospective-selector-tracking
+            git reset --hard origin/audit/prospective-selector-tracking
+            python - "$local_ledger" "$ledger" <<'PY'
+          import sys
+          from pathlib import Path
+          import pandas as pd
+          local_path, remote_path = map(Path, sys.argv[1:])
+          local = pd.read_csv(local_path, dtype={"CUT_OFF": str, "SYMBOL": str, "SELECTOR": str})
+          if remote_path.exists():
+              remote = pd.read_csv(remote_path, dtype={"CUT_OFF": str, "SYMBOL": str, "SELECTOR": str})
+          else:
+              remote = local.iloc[0:0].copy()
+          key = ["CUT_OFF", "SYMBOL", "SELECTOR"]
+          outcomes = ["T1_HIGH_PCT", "T3_HIGH_PCT", "T5_HIGH_PCT", "T5_H1_HIT",
+                      "T10_H3_HIT", "T20_H5_HIT", "MATURED_T1", "MATURED_T3",
+                      "MATURED_T5", "OUTCOME_LAST_DATE"]
+          columns = list(dict.fromkeys(list(remote.columns) + list(local.columns)))
+          for col in columns:
+              if col not in remote: remote[col] = pd.NA
+              if col not in local: local[col] = pd.NA
+          remote, local = remote[columns], local[columns]
+          if not remote.empty and remote.duplicated(key).any():
+              raise SystemExit("Remote ledger has duplicate keys; refusing automatic reconciliation")
+          remote_idx = {tuple(str(row[k]) for k in key): i for i, row in remote.iterrows()}
+          for _, row in local.iterrows():
+              k = tuple(str(row[c]) for c in key)
+              if k not in remote_idx:
+                  remote = pd.concat([remote, row.to_frame().T], ignore_index=True)
+                  remote_idx[k] = remote.index[-1]
+                  continue
+              i = remote_idx[k]
+              for col in outcomes:
+                  old, new = remote.at[i, col], row[col]
+                  old_empty = pd.isna(old) or str(old).strip() == ""
+                  new_empty = pd.isna(new) or str(new).strip() == ""
+                  if old_empty and not new_empty:
+                      remote.at[i, col] = new
+          remote = remote.sort_values(key).reset_index(drop=True)
+          remote.to_csv(remote_path, index=False)
+          PY
+            git add "$ledger"
+            if git diff --cached --quiet; then
+              echo "No new ledger changes to persist."
+              pushed=1
+              break
+            fi
             git commit -m "Audit: update prospective selector ledger"
-            git push origin HEAD:audit/prospective-selector-tracking
+            if git push origin HEAD:audit/prospective-selector-tracking; then
+              pushed=1
+              break
+            fi
+            echo "::warning::Ledger push raced with another branch update; reconciling again."
+          done
+          if [ "$pushed" -ne 1 ]; then
+            echo "::error::Unable to persist ledger after three remote reconciliations."
+            exit 1
           fi
       - name: Upload prospective audit report
         if: always()
@@ -120,7 +182,11 @@ jobs:
             outputs/prospective/target5_h1_selector_experiment.json
             outputs/prospective/target5_h1_selector_experiment_daily.csv
             outputs/prospective/target5_h1_selector_experiment_picks.csv
+            outputs/news_24h/stock_news_collection_report.json
             outputs/news_24h/stock_news_24h_readiness.json
+            outputs/macro_geo/hard_gate_report.json
+            data/raw/stock_news_events.csv
+            data/raw/stock_news_coverage.csv
             outputs/news_24h/stock_news_24h_cutoff_join.csv
             outputs/prospective/reproducibility_check.json
             outputs/macro_geo/p0_collection_manifest.json
