@@ -71,7 +71,6 @@ class MacroGeoTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["TARGET_DATE_H1"],"2026-01-05")
         self.assertAlmostEqual(result.iloc[0]["RETURN_H1_PCT"],(102/101-1)*100)
 
-
     def test_empty_events_file_is_blocked(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"panel.csv"; e=Path(td)/"events.csv"
@@ -99,5 +98,16 @@ class MacroGeoTests(unittest.TestCase):
                            "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY"}]).to_csv(e,index=False)
             panel,events,error=event.load_inputs(p,e)
             self.assertIsNone(panel); self.assertIn("Duplicate",error)
+
+    def test_future_events_are_pending_not_input_qa_failure(self):
+        panel=pd.DataFrame({"DATE":pd.to_datetime(["2026-10-13","2026-10-14"]),"SERIES":["NIFTY 50"]*2,"CLOSE":[100,101]})
+        events=pd.DataFrame([
+            {"EVENT_DATE":pd.Timestamp("2026-10-14"),"EVENT_ID":"MATURE","EVENT_TYPE":"GEO","PUBLISHED_AT":pd.Timestamp("2026-10-14T08:00:00Z"),"SOURCE":"test","SOURCE_URL":"https://example.com/a","CONFIDENCE":0.8,"EVENT_DATE_BASIS":"ACTUAL_EVENT_DATE"},
+            {"EVENT_DATE":pd.Timestamp("2026-10-15"),"EVENT_ID":"PENDING","EVENT_TYPE":"GEO","PUBLISHED_AT":pd.Timestamp("2026-10-15T08:00:00Z"),"SOURCE":"test","SOURCE_URL":"https://example.com/b","CONFIDENCE":0.8,"EVENT_DATE_BASIS":"ACTUAL_EVENT_DATE"}
+        ])
+        eligible,excluded=event.split_events_by_panel_coverage(panel,events)
+        self.assertEqual(eligible["EVENT_ID"].tolist(),["MATURE"])
+        self.assertEqual(excluded["EVENT_ID"].tolist(),["PENDING"])
+        self.assertEqual(excluded.iloc[0]["EXCLUSION_REASON"],"PENDING_PANEL_NOT_YET_AVAILABLE")
 
 if __name__=="__main__": unittest.main()
