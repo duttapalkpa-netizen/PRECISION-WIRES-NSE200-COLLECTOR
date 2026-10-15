@@ -249,7 +249,7 @@ def classify(title,query_label):
     return None
 
 TRUSTED_NEWS_DOMAINS={
-    "reuters.com","apnews.com","bbc.com","bbc.co.uk","aljazeera.com","bloomberg.com",
+    "reuters.com","reutersagency.com","apnews.com","bbc.com","bbc.co.uk","aljazeera.com","bloomberg.com",
     "cnbc.com","theguardian.com","ft.com","dw.com","france24.com","npr.org",
     "abc.net.au","thehindu.com","indianexpress.com","economictimes.indiatimes.com",
     "business-standard.com","moneycontrol.com","hindustantimes.com","nytimes.com","wsj.com"
