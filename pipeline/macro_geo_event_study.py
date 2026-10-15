@@ -67,6 +67,12 @@ def split_events_by_panel_coverage(panel, events):
         exclusions["PANEL_MAX_DATE"]=panel_max.date().isoformat()
     return eligible,exclusions
 
+def exclusion_count(exclusions, reason):
+    """Count exclusion reasons safely, including the valid empty-exclusions case."""
+    if exclusions.empty or "EXCLUSION_REASON" not in exclusions.columns:
+        return 0
+    return int(exclusions["EXCLUSION_REASON"].eq(reason).sum())
+
 def compute_event_windows(panel, events):
     rows=[]
     for series,g0 in panel.groupby("SERIES"):
@@ -138,12 +144,13 @@ def main():
                     "CI_METHOD":"percentile bootstrap, 2000 resamples, seed=20261014" if len(vals) else "not estimable"})
     pd.DataFrame(summary).to_csv(OUT/"event_study_summary.csv",index=False)
     if results.empty:
-        only_future=not eligible.empty is False and not exclusions.empty and exclusions["EXCLUSION_REASON"].eq("PENDING_PANEL_NOT_YET_AVAILABLE").all()
+        only_future=(eligible.empty and not exclusions.empty and
+                     exclusion_count(exclusions, "PENDING_PANEL_NOT_YET_AVAILABLE") == len(exclusions))
         report={"status":"BLOCKED_NO_MATURE_EVENT_WINDOWS","research_status":"BLOCKED",
                 "operational_status":"PASS_WITH_RESEARCH_BLOCKED",
                 "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),
-                "eligible_event_rows":len(eligible),"pending_event_rows":int(exclusions["EXCLUSION_REASON"].eq("PENDING_PANEL_NOT_YET_AVAILABLE").sum()),
-                "excluded_pre_panel_rows":int(exclusions["EXCLUSION_REASON"].eq("EVENT_BEFORE_PANEL_HISTORY").sum()),"window_rows":0,
+                "eligible_event_rows":len(eligible),"pending_event_rows":exclusion_count(exclusions, "PENDING_PANEL_NOT_YET_AVAILABLE"),
+                "excluded_pre_panel_rows":exclusion_count(exclusions, "EVENT_BEFORE_PANEL_HISTORY"),"window_rows":0,
                 "reason":"No event had both a valid pre/post publication close window. Future events are pending until market-panel closes exist; no prices were fabricated.",
                 "only_future_events":bool(only_future)}
         (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
@@ -151,8 +158,8 @@ def main():
         "research_status":"COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS" if not exclusions.empty else "COMPUTED_EXPLORATORY",
         "operational_status":"PASS",
         "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),
-        "eligible_event_rows":len(eligible),"pending_event_rows":int(exclusions["EXCLUSION_REASON"].eq("PENDING_PANEL_NOT_YET_AVAILABLE").sum()),
-        "excluded_pre_panel_rows":int(exclusions["EXCLUSION_REASON"].eq("EVENT_BEFORE_PANEL_HISTORY").sum()),"window_rows":len(results),
+        "eligible_event_rows":len(eligible),"pending_event_rows":exclusion_count(exclusions, "PENDING_PANEL_NOT_YET_AVAILABLE"),
+        "excluded_pre_panel_rows":exclusion_count(exclusions, "EVENT_BEFORE_PANEL_HISTORY"),"window_rows":len(results),
         "series":sorted(panel.SERIES.unique().tolist()),
         "publication_time_rule":"Baseline is last 15:30 Asia/Kolkata close at/before PUBLISHED_AT; H+1/H+5/H+20 are the 1st/5th/20th closes strictly after publication.",
         "event_maturity_rule":"Events beyond the latest panel date are recorded as pending, not treated as QA failures and not included in computed returns; events before panel history are explicitly excluded.",
