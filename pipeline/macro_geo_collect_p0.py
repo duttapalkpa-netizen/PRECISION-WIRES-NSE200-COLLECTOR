@@ -53,12 +53,8 @@ HEADERS={"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"h
 session=requests.Session(); session.headers.update(HEADERS)
 
 def session_bounds():
-    if PROCESSED.exists():
-        df=pd.read_csv(PROCESSED,usecols=["DATE"])
-        dates=pd.to_datetime(df.DATE,errors="coerce").dropna()
-        if not dates.empty: return dates.min().date(), dates.max().date()
-    # The macro/geo-only workflow must not silently downgrade a requested
-    # twenty-year research panel to one year. Series-specific starts are recorded.
+    # Macro/Geo research has its own long-history requirement; never inherit the
+    # 200-session equity file's short date range. Keep the equity cutoff separate.
     end=datetime.now(timezone.utc).date()
     return datetime(2006,1,1).date(),end
 
@@ -371,10 +367,10 @@ def main():
     # The official index API is preferred where it responds; public Yahoo history
     # fills only missing date+series keys and remains explicitly labelled secondary.
     if len(nse_rows)<100:
-        # The index API may return a WAF/HTML response instead of JSON. In that
-        # case collect a bounded, recent official archive window rather than
-        # skipping the archive merely because the requested research window is 20y.
-        archive_start=max(start,end-timedelta(days=400))
+        # The index API may return a WAF/HTML response instead of JSON.
+        # Backfill the entire requested research window from official daily
+        # archive files; index-specific inception dates remain explicit gaps.
+        archive_start=start
         archive_rows,archive_report=nse_index_history(archive_start,end)
         existing={(x["DATE"],x["SERIES"]) for x in nse_rows}
         nse_rows.extend(x for x in archive_rows if (x["DATE"],x["SERIES"]) not in existing)
