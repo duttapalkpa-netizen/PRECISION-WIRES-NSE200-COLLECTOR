@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Audit-only stock-specific last-24-hour news join readiness.
+"""Audit-only join of GDELT discovery results to frozen H+1 candidate cutoffs.
 
-No ranking changes. Missing/blocked source coverage is UNKNOWN, never NO_NEWS.
+No ranking changes. Missing/blocked source coverage is UNKNOWN. An empty
+GDELT query is not proof that no material news exists across all sources.
 """
 from pathlib import Path
 import json
 import pandas as pd
 
-CUTS = Path("outputs/backtest/walk_forward_universe_probabilities.csv")
+CUTS = Path("outputs/prospective/target5_h1_selector_experiment_picks.csv")
 NEWS = Path("data/raw/stock_news_events.csv")
 COVERAGE = Path("data/raw/stock_news_coverage.csv")
 OUT = Path("outputs/news_24h")
@@ -34,7 +35,7 @@ def main():
             "research_status": "BLOCKED",
             "missing_files": missing_files,
             "news_window_hours": 24,
-            "no_news_semantics": "UNKNOWN unless symbol/cutoff coverage is COMPLETE",
+            "no_news_semantics": "UNKNOWN unless source query coverage is COMPLETE; even then only no match in the observed source/query",
             "production_selector_changed": False,
             "ranking_score_changed": False,
             "pressure_fade_changed": False,
@@ -48,8 +49,8 @@ def main():
     coverage = pd.read_csv(COVERAGE)
     missing_news_cols = sorted(NEWS_COLUMNS - set(news.columns))
     missing_cov_cols = sorted(COVERAGE_COLUMNS - set(coverage.columns))
-    if "CUT_OFF" not in cuts or "SYMBOL" not in cuts:
-        report = {"status": "BLOCKED_BAD_CUTOFF_SCHEMA", "research_status": "BLOCKED",
+    if not {"CUT_OFF", "SYMBOL"}.issubset(cuts.columns):
+        report = {"status": "BLOCKED_BAD_CANDIDATE_SCHEMA", "research_status": "BLOCKED",
                   "required_cutoff_columns": ["CUT_OFF", "SYMBOL"],
                   "production_selector_changed": False}
         write_report(report)
@@ -71,10 +72,7 @@ def main():
     cuts["SYMBOL"] = cuts["SYMBOL"].astype(str).str.upper().str.strip()
     cuts["CUT_OFF"] = pd.to_datetime(cuts["CUT_OFF"], errors="coerce")
     cuts = cuts.dropna(subset=["CUT_OFF"])
-    cuts["CUTOFF_AT"] = (
-        cuts["CUT_OFF"].dt.normalize()
-        .dt.tz_localize(TZ) + pd.Timedelta(hours=15, minutes=30)
-    )
+    cuts["CUTOFF_AT"] = cuts["CUT_OFF"].dt.normalize().dt.tz_localize(TZ) + pd.Timedelta(hours=15, minutes=30)
 
     news["SYMBOL"] = news["SYMBOL"].astype(str).str.upper().str.strip()
     news["PUBLISHED_AT"] = pd.to_datetime(news["PUBLISHED_AT"], errors="coerce", utc=True)
@@ -102,36 +100,46 @@ def main():
             & (news["PUBLISHED_AT"] > start)
             & (news["PUBLISHED_AT"] < cutoff)
         ].copy()
+        verified_count = int(hits["VERIFICATION_STATUS"].astype(str).str.upper().eq("VERIFIED").sum()) if len(hits) else 0
         if len(cov) == 0:
             status = "UNKNOWN_COVERAGE"
+        elif len(hits) and verified_count == len(hits):
+            status = "VERIFIED_NEWS_PRESENT"
         elif len(hits):
-            status = "OBSERVED_NEWS_REQUIRES_VERIFICATION"
+            status = "UNVERIFIED_NEWS_PRESENT"
         else:
-            status = "NO_MATERIAL_NEWS"
+            status = "NO_MATCH_IN_GDELT_QUERY_WINDOW"
         rows.append({
             "CUT_OFF": row.CUT_OFF.date().isoformat(),
             "SYMBOL": row.SYMBOL,
             "CUTOFF_AT": cutoff.isoformat(),
             "WINDOW_START": start.isoformat(),
             "NEWS_ITEMS_24H": int(len(hits)),
-            "VERIFIED_ITEMS_24H": int((hits["VERIFICATION_STATUS"].astype(str).str.upper() == "VERIFIED").sum()) if len(hits) else 0,
+            "VERIFIED_ITEMS_24H": verified_count,
             "NEWS_STATUS": status,
             "LATEST_PUBLISHED_AT": hits["PUBLISHED_AT"].max().isoformat() if len(hits) else "",
         })
     result = pd.DataFrame(rows)
     OUT.mkdir(parents=True, exist_ok=True)
     result.to_csv(OUT / "stock_news_24h_cutoff_join.csv", index=False)
+    unknown = int(result["NEWS_STATUS"].eq("UNKNOWN_COVERAGE").sum())
+    unverified = int(result["NEWS_STATUS"].eq("UNVERIFIED_NEWS_PRESENT").sum())
+    verified = int(result["NEWS_STATUS"].eq("VERIFIED_NEWS_PRESENT").sum())
+    no_match = int(result["NEWS_STATUS"].eq("NO_MATCH_IN_GDELT_QUERY_WINDOW").sum())
+    all_coverage = len(result) > 0 and unknown == 0
+    ready = all_coverage and verified > 0 and unverified == 0
     report = {
         "status": "JOIN_BUILT_AUDIT_ONLY",
-        "research_status": "READY_FOR_PAIRED_ABLATION" if len(result) and (result["NEWS_STATUS"] != "UNKNOWN_COVERAGE").any() else "BLOCKED_COVERAGE",
+        "research_status": "READY_FOR_PAIRED_ABLATION" if ready else "BLOCKED_VERIFICATION_OR_COVERAGE",
         "cutoff_symbol_rows": int(len(result)),
         "news_window_hours": 24,
         "news_rows_loaded": int(len(news)),
         "coverage_rows_loaded": int(len(coverage)),
-        "coverage_unknown_rows": int((result["NEWS_STATUS"] == "UNKNOWN_COVERAGE").sum()),
-        "observed_news_rows": int((result["NEWS_STATUS"] == "OBSERVED_NEWS_REQUIRES_VERIFICATION").sum()),
-        "no_material_news_rows": int((result["NEWS_STATUS"] == "NO_MATERIAL_NEWS").sum()),
-        "warning": "This builds a feature-join table only; it does not compute lift or change ranking.",
+        "coverage_unknown_rows": unknown,
+        "unverified_news_rows": unverified,
+        "verified_news_rows": verified,
+        "no_match_in_gdelt_query_window_rows": no_match,
+        "warning": "GDELT symbol-query matches are discovery leads only. Do not treat a zero-result query as no material news across all sources. Paired ablation remains blocked until relevant stories are independently verified and coverage gaps resolved.",
         "production_selector_changed": False,
         "ranking_score_changed": False,
         "pressure_fade_changed": False,
