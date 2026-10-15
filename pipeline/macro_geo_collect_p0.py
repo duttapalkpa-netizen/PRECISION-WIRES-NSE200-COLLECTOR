@@ -326,7 +326,7 @@ def fetch_gdelt_events(start,end):
                     break
                 resp.raise_for_status()
                 payload=resp.json()
-                if not isinstance(payload,dict) or not isinstance(payload.get("articles",[]),list):
+                if not isinstance(payload,dict) or not isinstance(payload.get("articles"),list):
                     raise RuntimeError("GDELT response did not contain a valid articles list")
                 articles=payload.get("articles",[])
                 metrics["gdelt"]["successful_responses"]+=1
