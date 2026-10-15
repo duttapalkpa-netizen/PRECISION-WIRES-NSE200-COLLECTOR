@@ -130,7 +130,7 @@ def main():
                 "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":0,
                 "reason":"No event had both a valid pre/post publication close window; research is blocked, not successful."}
         (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
-    report={"status":"COMPUTED_EXPLORATORY",
+    report={"status":"COMPUTED_EXPLORATORY","research_status":"COMPUTED_EXPLORATORY","operational_status":"PASS",
         "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":len(results),
         "series":sorted(panel.SERIES.unique().tolist()),
         "publication_time_rule":"Baseline is last 15:30 Asia/Kolkata close at/before PUBLISHED_AT; H+1/H+5/H+20 are the 1st/5th/20th closes strictly after publication.",
