@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""Audit-only stock-specific last-24-hour news join readiness.
+
+No ranking changes. Missing/blocked source coverage is UNKNOWN, never NO_NEWS.
+"""
+from pathlib import Path
+import json
+import pandas as pd
+
+CUTS = Path("outputs/backtest/walk_forward_universe_probabilities.csv")
+NEWS = Path("data/raw/stock_news_events.csv")
+COVERAGE = Path("data/raw/stock_news_coverage.csv")
+OUT = Path("outputs/news_24h")
+TZ = "Asia/Kolkata"
+NEWS_COLUMNS = {
+    "SYMBOL", "PUBLISHED_AT", "PUBLISHER", "HEADLINE", "CANONICAL_URL",
+    "SOURCE_TYPE", "VERIFICATION_STATUS",
+}
+COVERAGE_COLUMNS = {"SYMBOL", "WINDOW_START", "WINDOW_END", "COVERAGE_STATUS"}
+
+
+def write_report(report):
+    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "stock_news_24h_readiness.json").write_text(
+        json.dumps(report, indent=2, allow_nan=False), encoding="utf-8"
+    )
+
+
+def main():
+    missing_files = [str(p) for p in (CUTS, NEWS, COVERAGE) if not p.exists()]
+    if missing_files:
+        report = {
+            "status": "BLOCKED_MISSING_INPUTS",
+            "research_status": "BLOCKED",
+            "missing_files": missing_files,
+            "news_window_hours": 24,
+            "no_news_semantics": "UNKNOWN unless symbol/cutoff coverage is COMPLETE",
+            "production_selector_changed": False,
+            "ranking_score_changed": False,
+            "pressure_fade_changed": False,
+        }
+        write_report(report)
+        print(json.dumps(report, indent=2))
+        return 0
+
+    cuts = pd.read_csv(CUTS)
+    news = pd.read_csv(NEWS)
+    coverage = pd.read_csv(COVERAGE)
+    missing_news_cols = sorted(NEWS_COLUMNS - set(news.columns))
+    missing_cov_cols = sorted(COVERAGE_COLUMNS - set(coverage.columns))
+    if "CUT_OFF" not in cuts or "SYMBOL" not in cuts:
+        report = {"status": "BLOCKED_BAD_CUTOFF_SCHEMA", "research_status": "BLOCKED",
+                  "required_cutoff_columns": ["CUT_OFF", "SYMBOL"],
+                  "production_selector_changed": False}
+        write_report(report)
+        print(json.dumps(report, indent=2))
+        return 0
+    if missing_news_cols or missing_cov_cols:
+        report = {
+            "status": "BLOCKED_BAD_NEWS_SCHEMA",
+            "research_status": "BLOCKED",
+            "missing_news_columns": missing_news_cols,
+            "missing_coverage_columns": missing_cov_cols,
+            "production_selector_changed": False,
+        }
+        write_report(report)
+        print(json.dumps(report, indent=2))
+        return 0
+
+    cuts = cuts[["CUT_OFF", "SYMBOL"]].dropna().drop_duplicates().copy()
+    cuts["SYMBOL"] = cuts["SYMBOL"].astype(str).str.upper().str.strip()
+    cuts["CUT_OFF"] = pd.to_datetime(cuts["CUT_OFF"], errors="coerce")
+    cuts = cuts.dropna(subset=["CUT_OFF"])
+    cuts["CUTOFF_AT"] = (
+        cuts["CUT_OFF"].dt.normalize()
+        .dt.tz_localize(TZ) + pd.Timedelta(hours=15, minutes=30)
+    )
+
+    news["SYMBOL"] = news["SYMBOL"].astype(str).str.upper().str.strip()
+    news["PUBLISHED_AT"] = pd.to_datetime(news["PUBLISHED_AT"], errors="coerce", utc=True)
+    news["PUBLISHED_AT"] = news["PUBLISHED_AT"].dt.tz_convert(TZ)
+    news = news.dropna(subset=["PUBLISHED_AT", "SYMBOL"])
+    news = news.drop_duplicates(["SYMBOL", "PUBLISHED_AT", "CANONICAL_URL"])
+
+    coverage["SYMBOL"] = coverage["SYMBOL"].astype(str).str.upper().str.strip()
+    coverage["WINDOW_START"] = pd.to_datetime(coverage["WINDOW_START"], errors="coerce", utc=True).dt.tz_convert(TZ)
+    coverage["WINDOW_END"] = pd.to_datetime(coverage["WINDOW_END"], errors="coerce", utc=True).dt.tz_convert(TZ)
+    coverage["COVERAGE_STATUS"] = coverage["COVERAGE_STATUS"].astype(str).str.upper().str.strip()
+
+    rows = []
+    for row in cuts.itertuples(index=False):
+        cutoff = row.CUTOFF_AT
+        start = cutoff - pd.Timedelta(hours=24)
+        cov = coverage[
+            (coverage["SYMBOL"] == row.SYMBOL)
+            & (coverage["WINDOW_START"] <= start)
+            & (coverage["WINDOW_END"] >= cutoff)
+            & (coverage["COVERAGE_STATUS"] == "COMPLETE")
+        ]
+        hits = news[
+            (news["SYMBOL"] == row.SYMBOL)
+            & (news["PUBLISHED_AT"] > start)
+            & (news["PUBLISHED_AT"] < cutoff)
+        ].copy()
+        if len(cov) == 0:
+            status = "UNKNOWN_COVERAGE"
+        elif len(hits):
+            status = "OBSERVED_NEWS_REQUIRES_VERIFICATION"
+        else:
+            status = "NO_MATERIAL_NEWS"
+        rows.append({
+            "CUT_OFF": row.CUT_OFF.date().isoformat(),
+            "SYMBOL": row.SYMBOL,
+            "CUTOFF_AT": cutoff.isoformat(),
+            "WINDOW_START": start.isoformat(),
+            "NEWS_ITEMS_24H": int(len(hits)),
+            "VERIFIED_ITEMS_24H": int((hits["VERIFICATION_STATUS"].astype(str).str.upper() == "VERIFIED").sum()) if len(hits) else 0,
+            "NEWS_STATUS": status,
+            "LATEST_PUBLISHED_AT": hits["PUBLISHED_AT"].max().isoformat() if len(hits) else "",
+        })
+    result = pd.DataFrame(rows)
+    OUT.mkdir(parents=True, exist_ok=True)
+    result.to_csv(OUT / "stock_news_24h_cutoff_join.csv", index=False)
+    report = {
+        "status": "JOIN_BUILT_AUDIT_ONLY",
+        "research_status": "READY_FOR_PAIRED_ABLATION" if len(result) and (result["NEWS_STATUS"] != "UNKNOWN_COVERAGE").any() else "BLOCKED_COVERAGE",
+        "cutoff_symbol_rows": int(len(result)),
+        "news_window_hours": 24,
+        "news_rows_loaded": int(len(news)),
+        "coverage_rows_loaded": int(len(coverage)),
+        "coverage_unknown_rows": int((result["NEWS_STATUS"] == "UNKNOWN_COVERAGE").sum()),
+        "observed_news_rows": int((result["NEWS_STATUS"] == "OBSERVED_NEWS_REQUIRES_VERIFICATION").sum()),
+        "no_material_news_rows": int((result["NEWS_STATUS"] == "NO_MATERIAL_NEWS").sum()),
+        "warning": "This builds a feature-join table only; it does not compute lift or change ranking.",
+        "production_selector_changed": False,
+        "ranking_score_changed": False,
+        "pressure_fade_changed": False,
+    }
+    write_report(report)
+    print(json.dumps(report, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
