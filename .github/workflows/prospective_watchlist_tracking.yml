@@ -79,6 +79,8 @@ jobs:
         run: python pipeline/strict_30_matured_cutoff_audit.py
       - name: Run target-first +5% H+1 selector experiment (historical exploratory only)
         run: python pipeline/target5_h1_selector_experiment.py
+      - name: Build stock-specific last-24-hour news join readiness (audit only)
+        run: python pipeline/stock_news_24h_join.py
       - name: Repeat audit and verify byte-for-byte reproducibility (audit only)
         run: python pipeline/check_retrospective_audit_reproducibility.py
       - name: Generate label-free picks from latest NSE session
@@ -118,6 +120,8 @@ jobs:
             outputs/prospective/target5_h1_selector_experiment.json
             outputs/prospective/target5_h1_selector_experiment_daily.csv
             outputs/prospective/target5_h1_selector_experiment_picks.csv
+            outputs/news_24h/stock_news_24h_readiness.json
+            outputs/news_24h/stock_news_24h_cutoff_join.csv
             outputs/prospective/reproducibility_check.json
             outputs/macro_geo/p0_collection_manifest.json
             outputs/macro_geo/source_coverage.json
