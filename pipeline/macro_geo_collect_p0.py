@@ -264,24 +264,54 @@ def is_trusted_news_url(url):
         return False
 
 def fetch_gdelt_events(start,end):
-    # Collect in separate 30-day windows to avoid a "latest 100 articles" sample
-    # masquerading as a historical sample. Honor rate limits and retain failures.
+    """Collect timestamped trusted media mentions from GDELT plus public publisher RSS feeds."""
     event_start=max(start,end-timedelta(days=90))
     queries=[
       ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR missile OR invasion OR ceasefire)'),
       ("ENERGY_SHIPPING_NEWS",'(crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)'),
     ]
+    metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
+      "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
+      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0},
+      "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
+      "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
+      "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
     events=[]; failures=[]
     slices=[]; cursor=event_start
     while cursor<=end:
         slice_end=min(end,cursor+timedelta(days=29))
         slices.append((cursor,slice_end)); cursor=slice_end+timedelta(days=1)
+    cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE",
+      "EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
+    def add_article(title,url,published,provider,group,evidence,basis,confidence,metric_group,source_country=""):
+        m=metrics[metric_group]
+        if not title or not url:
+            m["filtered_invalid_timestamp"]+=1
+            return
+        if published is None:
+            m["filtered_invalid_timestamp"]+=1
+            return
+        if not is_trusted_news_url(url):
+            m["filtered_untrusted_publisher"]+=1
+            return
+        event_type=classify(title,group)
+        if event_type is None:
+            m["filtered_irrelevant_title"]+=1
+            return
+        event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
+        events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
+          "PUBLISHED_AT":published.isoformat(),"SOURCE":provider or "trusted publisher",
+          "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":confidence,"EVIDENCE_TYPE":evidence,
+          "EVENT_DATE_BASIS":basis,"QUERY_GROUP":group,"SOURCE_COUNTRY":source_country,
+          "GDELT_API_URL":""})
+        m["accepted_articles"]+=1
     for slice_start,slice_end in slices:
       for query_label,query in queries:
         params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
           "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
+        metrics["gdelt"]["requests_attempted"]+=1
         for attempt in range(3):
             try:
                 resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=30)
@@ -298,38 +328,102 @@ def fetch_gdelt_events(start,end):
                 payload=resp.json()
                 if not isinstance(payload,dict) or not isinstance(payload.get("articles",[]),list):
                     raise RuntimeError("GDELT response did not contain a valid articles list")
-                for article in payload.get("articles",[]):
+                articles=payload.get("articles",[])
+                metrics["gdelt"]["successful_responses"]+=1
+                if len(articles)==0: metrics["gdelt"]["successful_empty_responses"]+=1
+                metrics["gdelt"]["articles_seen"]+=len(articles)
+                for article in articles:
                     title=str(article.get("title") or "").strip(); url=str(article.get("url") or "").strip()
                     published=parse_gdelt_date(article.get("seendate"))
-                    if not title or not url or not published or not slice_start<=published.date()<=slice_end: continue
-                    event_type=classify(title,query_label)
-                    # Discovery queries are intentionally broad; only keep explicit
-                    # market-relevant titles from trusted publishers for the study.
-                    if event_type is None or not is_trusted_news_url(url): continue
-                    domain=str(article.get("domain") or "")
-                    event_id=hashlib.sha256((published.isoformat()+"|"+url).encode()).hexdigest()[:20]
-                    events.append({"EVENT_DATE":published.date().isoformat(),"EVENT_ID":event_id,"EVENT_TYPE":event_type,
-                      "PUBLISHED_AT":published.isoformat(),"SOURCE":domain or "trusted publisher via GDELT",
-                      "SOURCE_URL":url,"TITLE":title,"CONFIDENCE":0.75,
-                      "EVIDENCE_TYPE":"TRUSTED_MEDIA_MENTION_NOT_VERIFIED_EVENT",
-                      "EVENT_DATE_BASIS":"GDELT_SEENDATE_PUBLICATION_PROXY",
-                      "QUERY_GROUP":query_label,"SOURCE_COUNTRY":str(article.get("sourcecountry") or ""),
-                      "GDELT_API_URL":resp.url})
+                    if published is None or not slice_start<=published.date()<=slice_end:
+                        metrics["gdelt"]["filtered_invalid_timestamp"]+=1
+                        continue
+                    before=len(events)
+                    add_article(title,url,published,str(article.get("domain") or "trusted publisher via GDELT"),
+                      query_label,"TRUSTED_MEDIA_MENTION_NOT_VERIFIED_EVENT",
+                      "GDELT_SEENDATE_PUBLICATION_PROXY",0.75,"gdelt",str(article.get("sourcecountry") or ""))
+                    if len(events)>before:
+                        events[-1]["GDELT_API_URL"]=resp.url
                 last_error=None
                 break
             except Exception as exc:
                 last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
                 if attempt<2: time.sleep(8*(attempt+1))
         if last_error:
-            failures.append({"query_group":query_label,"slice_start":slice_start.isoformat(),
+            metrics["gdelt"]["request_failures"]+=1
+            failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
               "slice_end":slice_end.isoformat(),"error":last_error})
-        # Stay below GDELT's burst/rate limit; retry failures remain in the manifest.
         time.sleep(8.0)
-    cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE","EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
+
+    # Public RSS/Atom feeds are a fallback and are audited independently.
+    # Publication times are feed publication timestamps, not verified event-occurrence times.
+    feeds=[
+      ("Reuters","https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best"),
+      ("AP News","https://apnews.com/hub/world-news?output=rss"),
+      ("BBC","https://feeds.bbci.co.uk/news/world/rss.xml"),
+      ("Al Jazeera","https://www.aljazeera.com/xml/rss/all.xml"),
+      ("Bloomberg","https://feeds.bloomberg.com/markets/news.rss"),
+    ]
+    import xml.etree.ElementTree as ET
+    from email.utils import parsedate_to_datetime
+    def parse_feed_date(value):
+        if not value: return None
+        try:
+            dt=pd.to_datetime(value,utc=True,errors="coerce")
+            if not pd.isna(dt): return dt.to_pydatetime()
+        except Exception: pass
+        try:
+            dt=parsedate_to_datetime(value)
+            if dt.tzinfo is None: return None
+            return dt.astimezone(timezone.utc)
+        except Exception: return None
+    for publisher,feed_url in feeds:
+        rm=metrics["rss"]; rm["feeds_attempted"]+=1
+        try:
+            response=session.get(feed_url,headers={"User-Agent":UA,"Accept":"application/rss+xml, application/atom+xml, application/xml, text/xml, */*"},timeout=(5,15))
+            response.raise_for_status()
+            root=ET.fromstring(response.content)
+            items=root.findall(".//item")
+            atom_ns={"atom":"http://www.w3.org/2005/Atom"}
+            if not items:
+                items=root.findall(".//atom:entry",atom_ns)
+            rm["successful_feeds"]+=1
+            if not items: rm["successful_empty_feeds"]+=1
+            rm["articles_seen"]+=len(items)
+            accepted_before=rm["accepted_articles"]
+            for item in items:
+                def child_text(names):
+                    for name in names:
+                        el=item.find(name)
+                        if el is not None and (el.text or "").strip(): return (el.text or "").strip()
+                    return ""
+                title=child_text(["title","{http://www.w3.org/2005/Atom}title"])
+                url=child_text(["link","{http://www.w3.org/2005/Atom}link"])
+                if not url:
+                    el=item.find("{http://www.w3.org/2005/Atom}link")
+                    if el is not None: url=str(el.attrib.get("href") or "")
+                pub=child_text(["pubDate","published","updated","{http://www.w3.org/2005/Atom}published","{http://www.w3.org/2005/Atom}updated"])
+                published=parse_feed_date(pub)
+                before=len(events)
+                add_article(title,url,published,publisher,"PUBLISHER_RSS",
+                  "TRUSTED_PUBLISHER_RSS_MENTION_NOT_VERIFIED_EVENT",
+                  "PUBLISHER_FEED_PUBLICATION_TIMESTAMP",0.80,"rss")
+                if len(events)>before:
+                    events[-1]["GDELT_API_URL"]=feed_url
+            rm["feed_results"].append({"publisher":publisher,"feed_url":feed_url,"status":"AVAILABLE",
+              "items_seen":len(items),"accepted":rm["accepted_articles"]-accepted_before})
+        except Exception as exc:
+            rm["feed_failures"]+=1
+            err=f"{type(exc).__name__}: {exc}"
+            failures.append({"provider":"RSS","publisher":publisher,"feed_url":feed_url,"error":err})
+            rm["feed_results"].append({"publisher":publisher,"feed_url":feed_url,"status":"BLOCKED","error":err})
     if events:
         df=pd.DataFrame(events,columns=cols).drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT","EVENT_ID"])
-        return df,failures,event_start
-    return pd.DataFrame(columns=cols),failures,event_start
+        # Accepted counters are article-level before deduplication; report final unique event count too.
+        metrics["unique_events_after_deduplication"]=int(len(df))
+        return df,failures,event_start,metrics
+    metrics["unique_events_after_deduplication"]=0
+    return pd.DataFrame(columns=cols),failures,event_start,metrics
 def try_nse_json(endpoint,params,start,end):
     """Attempt official NSE endpoint; return rows or explicit failure without hiding access denial."""
     url=NSE+endpoint
@@ -483,15 +577,15 @@ def main():
             elif group=="fx_carry":
                 subset=subset.rename(columns={"SERIES":"PAIR","CLOSE":"VALUE"})
             subset.to_csv(RAW/group_files[group],index=False)
-    events,failures,event_start=fetch_gdelt_events(start,end)
+    events,failures,event_start,event_metrics=fetch_gdelt_events(start,end)
     # Always materialize header-only files on an empty collection so QA can
     # distinguish "connected but zero rows" from a missing file.
     events.to_csv(RAW/"events.csv",index=False)
     events[["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE"]].to_csv(RAW/"geopolitical_events.csv",index=False)
-    manifest["event_collection"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),
+    manifest["event_collection"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),"collection_metrics":event_metrics,
       "window_start":event_start.isoformat(),"window_end":end.isoformat(),
       "date_min":events.EVENT_DATE.min() if len(events) else None,"date_max":events.EVENT_DATE.max() if len(events) else None,
-      "source":"GDELT DOC 2.0 API filtered to trusted publisher domains and relevant titles","failures":failures,
+      "source":"GDELT DOC 2.0 API plus direct public RSS feeds from Reuters, AP News, BBC, Al Jazeera, Bloomberg; trusted-domain and relevance filtering applied","failures":failures,
       "trusted_domains":sorted(TRUSTED_NEWS_DOMAINS),
       "quality_filter":"Only explicit market-relevant title keywords plus trusted publisher domain; broad-query false positives are excluded.",
       "warning":"PUBLISHED_AT/EVENT_DATE are publication-time proxies, not verified occurrence timestamps; this remains a media-publication event study, not causal identification."}
@@ -546,11 +640,13 @@ def main():
       "required_series_available":p0_series_ok,"trusted_event_rows":len(events),
       "fpi_dii_status":"UNKNOWN/BLOCKED unless official source returns mapped rows",
       "corporate_events_status":"UNKNOWN/BLOCKED unless official source returns mapped rows"}
-    manifest["status"]="P0_CORE_AVAILABLE_WITH_GAPS" if not panel.empty and len(events) and p0_series_ok else "BLOCKED_INCOMPLETE"
+    manifest["operational_status"]="PASS_WITH_GAPS" if not panel.empty and p0_series_ok else "PASS_WITH_CRITICAL_DATA_GAPS"
+    manifest["research_status"]="READY_FOR_EXPLORATORY_EVENT_STUDY" if len(events) else "BLOCKED_NO_VALID_EVENTS"
+    manifest["status"]=manifest["operational_status"]
     (OUT/"p0_collection_manifest.json").write_text(json.dumps(manifest,indent=2))
-    print(json.dumps({"status":manifest["status"],"window_start":str(start),"window_end":str(end),
+    print(json.dumps({"operational_status":manifest["operational_status"],"research_status":manifest["research_status"],"status":manifest["status"],"window_start":str(start),"window_end":str(end),
       "market_panel_rows":len(panel),"market_panel_series":int(panel.SERIES.nunique()) if not panel.empty else 0,
-      "events_rows":len(events),"event_window_start":event_start.isoformat(),"gdelt_failures":len(failures),
+      "events_rows":len(events),"event_window_start":event_start.isoformat(),"event_collection_metrics":event_metrics,"total_source_failures":len(failures),
       "official_nse_attempts":manifest["official_nse_attempts"]},indent=2))
     return 0
 if __name__=="__main__": raise SystemExit(main())
