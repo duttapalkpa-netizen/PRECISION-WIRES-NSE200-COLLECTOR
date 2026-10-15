@@ -462,9 +462,10 @@ def main():
     # fills only missing date+series keys and remains explicitly labelled secondary.
     if len(nse_rows)<100:
         # The index API may return a WAF/HTML response instead of JSON.
-        # Backfill the entire requested research window from official daily
-        # archive files; index-specific inception dates remain explicit gaps.
-        archive_start=start
+        # Bound the official day-by-day fallback to the recent ~18 months;
+        # a 2006-to-present loop can make thousands of requests and stall CI.
+        # Longer history is filled separately from labelled Yahoo/FRED sources.
+        archive_start=max(start,end-timedelta(days=550))
         archive_rows,archive_report=nse_index_history(archive_start,end)
         existing={(x["DATE"],x["SERIES"]) for x in nse_rows}
         nse_rows.extend(x for x in archive_rows if (x["DATE"],x["SERIES"]) not in existing)
