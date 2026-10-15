@@ -33,23 +33,24 @@ Run #57 completed the event study with `COMPUTED_EXPLORATORY`; 29 events were el
 
 Run #89 still reports critical source gaps: 34 sources inventoried, 5 available and 29 not connected. Several official or publisher feeds can be blocked/unavailable. A missing or blocked source must remain `UNKNOWN`; do not interpret it as no catalyst. Macro-Geo stays secondary and must never gate the H+1 selector.
 
-## 4. Next stage — stock-specific last-24-hour news ablation
+## 4. Next stage — stock-specific last-24-hour news ablation and Macro-Geo hard gate
 
-**Start with an audit-only feature-readiness and join stage; do not alter ranking yet.**
+**The audit-only collector and join are now wired into the workflow. Macro-Geo is a strict hard gate before live prospective picks; incomplete P0 coverage blocks release. Do not alter ranking.**
 
-1. Freeze each historical cutoff and decision timestamp. Build a canonical stock-news/filings table with at least `SYMBOL`, `PUBLISHED_AT` (timezone-aware), `PUBLISHER`, `HEADLINE`, `CANONICAL_URL`, `SOURCE_TYPE`, `VERIFICATION_STATUS`, and deduplication key.
-2. Join only stories published in the 24 hours strictly before that cutoff. Prevent post-cutoff information leakage. Exchange/company disclosures take priority; use trusted media where accessible. Store unavailable feeds and missing timestamps as `UNKNOWN`, not negative.
+1. Freeze each historical cutoff and decision timestamp. The new GDELT discovery collector creates `data/raw/stock_news_events.csv` and `data/raw/stock_news_coverage.csv` for frozen H+1 candidates. Build/extend the canonical table with `SYMBOL`, `PUBLISHED_AT` (timezone-aware), `PUBLISHER`, `HEADLINE`, `CANONICAL_URL`, `SOURCE_TYPE`, `VERIFICATION_STATUS`, and deduplication key.
+2. Join only stories published in the 24 hours strictly before that cutoff. Prevent post-cutoff information leakage. Exchange/company disclosures take priority; use trusted media where accessible. GDELT hits are unverified discovery leads, and a zero-result query is only no match in that query—not `NO_MATERIAL_NEWS`. Store unavailable feeds and missing timestamps as `UNKNOWN`, not negative.
 3. Keep the technical history long enough for price/volume, EMA, relative strength, liquidity and market-structure features. The 24-hour restriction applies only to news/catalyst evidence.
 4. Run paired, same-cutoff experiments: (A) price/volume-only baseline; (B) identical baseline plus the last-24-hour stock-specific news feature. Same universe, reference prices, labels, and eligible cutoffs.
 5. Report precision, recall/capture, false positives, missed +5% winners, Top-10/Top-30 capture, per-cutoff bootstrap intervals, sector/liquidity/circuit breakdown, news coverage and UNKNOWN rate. A no-news label is allowed only when coverage is adequate and the search window is actually observed.
 6. Add a separate prospective shadow ledger that records picks before outcomes. Mature labels only after the next eligible session is complete. No retrospective label may enter selection.
-7. Promotion gate: require robust paired improvement across cutoffs, full reproducibility, leakage QA, feasible liquidity/circuit/entry assumptions, and explicit review. Until then, all results remain exploratory.
+7. Macro-Geo hard gate: the audit workflow blocks live candidate release unless P0 source coverage is `P0_COMPLETE`, the event study has computed mature windows, and the market/equity panels are date-aligned. Missing critical evidence fails closed as `BLOCKED`. This can withhold all picks until the required feeds are connected.
+8. Promotion gate: require robust paired improvement across cutoffs, full reproducibility, leakage QA, feasible liquidity/circuit/entry assumptions, and explicit review. Until then, all results remain exploratory.
 
 ## 5. Immutable safeguards
 
 - Do not modify production `RANKING_SCORE`.
 - Do not modify the frozen `+1 PRESSURE_FADE`.
-- Do not make Macro-Geo a hard gate.
+- Macro-Geo is a strict hard gate for candidate release in the audit branch only; it is not silently propagated to production.
 - Do not use future labels in ranking or prospective picks.
 - Do not claim intraday tradability from daily OHLC alone.
 - Do not claim successful news ablation until a symbol-level news table and paired result artifact actually exist.
