@@ -88,12 +88,37 @@ jobs:
       - name: Repeat audit and verify byte-for-byte reproducibility (audit only)
         run: python pipeline/check_retrospective_audit_reproducibility.py
       - name: Enforce strict Macro-Geo hard gate before releasing prospective picks
-        run: python pipeline/macro_geo_hard_gate.py
+        id: macro_geo_gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python pipeline/macro_geo_hard_gate.py
+          gate_rc=$?
+          set -e
+          if [ ! -s outputs/macro_geo/hard_gate_report.json ]; then
+            echo "::error::Macro-Geo gate did not produce a report; this is a real workflow failure."
+            exit 1
+          fi
+          gate_status="$(python -c 'import json; print(json.load(open("outputs/macro_geo/hard_gate_report.json")).get("status", "INVALID"))')"
+          if [ "$gate_status" = "PASS" ] && [ "$gate_rc" -eq 0 ]; then
+            echo "candidate_release_allowed=true" >> "$GITHUB_OUTPUT"
+            echo "Macro-Geo gate PASS; candidate release may proceed."
+          elif [ "$gate_status" = "BLOCKED" ] && [ "$gate_rc" -ne 0 ]; then
+            echo "candidate_release_allowed=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Research completed, but candidate release is BLOCKED by strict Macro-Geo hard gate. No prospective picks or ledger updates will be produced."
+          else
+            echo "::error::Unexpected Macro-Geo gate status/exit combination: status=$gate_status rc=$gate_rc"
+            exit 1
+          fi
       - name: Generate label-free picks from latest NSE session
+        if: steps.macro_geo_gate.outputs.candidate_release_allowed == 'true'
         run: python pipeline/live_prospective_selector.py
       - name: Append picks and mature only complete outcomes
+        if: steps.macro_geo_gate.outputs.candidate_release_allowed == 'true'
         run: python prospective_watchlist_tracker.py
       - name: Persist audit ledger with remote-branch reconciliation
+        if: steps.macro_geo_gate.outputs.candidate_release_allowed == 'true'
         shell: bash
         run: |
           set -euo pipefail
