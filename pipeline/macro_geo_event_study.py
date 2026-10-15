@@ -45,13 +45,27 @@ def load_inputs(panel_path=PANEL, events_path=EVENTS):
     event_dates=events["EVENT_DATE"].dt.date.astype(str)
     if (proxy & (published_dates!=event_dates)).any():
         return None,None,"GDELT publication-proxy EVENT_DATE must match the UTC publication date."
-    panel_min=panel["DATE"].min().date(); panel_max=panel["DATE"].max().date()
-    if ((events["EVENT_DATE"].dt.date<panel_min)|(events["EVENT_DATE"].dt.date>panel_max)).any():
-        return None,None,"One or more event dates fall outside the market-panel date range."
     if (panel["CLOSE"]<=0).any(): return None,None,"Non-positive close detected."
     if panel.duplicated(["DATE","SERIES"]).any(): return None,None,"Duplicate DATE+SERIES rows detected."
     if events["EVENT_ID"].duplicated().any(): return None,None,"Duplicate EVENT_ID rows detected; deduplicate before study."
     return panel,events,None
+
+def split_events_by_panel_coverage(panel, events):
+    """Separate study-eligible events from immature/future or pre-panel events without fabricating prices."""
+    panel_min=panel["DATE"].min().normalize()
+    panel_max=panel["DATE"].max().normalize()
+    future=events["EVENT_DATE"]>panel_max
+    before=events["EVENT_DATE"]<panel_min
+    eligible=events.loc[~(future|before)].copy()
+    exclusions=events.loc[future|before].copy()
+    if not exclusions.empty:
+        exclusions["EXCLUSION_REASON"]=np.where(
+            exclusions["EVENT_DATE"]>panel_max,
+            "PENDING_PANEL_NOT_YET_AVAILABLE",
+            "EVENT_BEFORE_PANEL_HISTORY")
+        exclusions["PANEL_MIN_DATE"]=panel_min.date().isoformat()
+        exclusions["PANEL_MAX_DATE"]=panel_max.date().isoformat()
+    return eligible,exclusions
 
 def compute_event_windows(panel, events):
     rows=[]
@@ -81,7 +95,6 @@ def compute_event_windows(panel, events):
             rows.append(rec)
     result=pd.DataFrame(rows)
     if result.empty: return result
-    # Simple same-event NIFTY 50 subtraction; descriptive proxy, not a causal model.
     if "NIFTY 50" in set(result["SERIES"]):
         b=result[result.SERIES.eq("NIFTY 50")][["EVENT_ID"]+[f"RETURN_H{h}_PCT" for h in WINDOWS]].copy()
         b=b.rename(columns={f"RETURN_H{h}_PCT":f"BENCHMARK_RETURN_H{h}_PCT" for h in WINDOWS})
@@ -100,14 +113,13 @@ def main():
                 "reason":error,"required_panel":str(PANEL),"required_events":str(EVENTS),
                 "note":"No synthetic market result was substituted; this is not a successful study."}
         (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0 if empty_events else 2
-    results=compute_event_windows(panel,events)
+    eligible,exclusions=split_events_by_panel_coverage(panel,events)
+    exclusions.to_csv(OUT/"event_study_exclusions.csv",index=False)
+    results=compute_event_windows(panel,eligible)
     results.to_csv(OUT/"event_study_windows.csv",index=False)
     summary=[]
     if not results.empty:
         metrics=[f"RETURN_H{h}_PCT" for h in WINDOWS]+[f"ABNORMAL_RETURN_H{h}_PCT" for h in WINDOWS if f"ABNORMAL_RETURN_H{h}_PCT" in results.columns]
-        # Deterministic non-parametric bootstrap interval for the mean. This is
-        # descriptive uncertainty, not causal inference; overlapping events can
-        # still make the nominal interval too narrow.
         rng=np.random.default_rng(20261014)
         for (typ,series),g in results.groupby(["EVENT_TYPE","SERIES"]):
             for col in metrics:
@@ -126,14 +138,24 @@ def main():
                     "CI_METHOD":"percentile bootstrap, 2000 resamples, seed=20261014" if len(vals) else "not estimable"})
     pd.DataFrame(summary).to_csv(OUT/"event_study_summary.csv",index=False)
     if results.empty:
-        report={"status":"BLOCKED_NO_MATCHING_EVENT_WINDOWS","research_status":"BLOCKED","operational_status":"PASS",
-                "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":0,
-                "reason":"No event had both a valid pre/post publication close window; research is blocked, not successful."}
+        only_future=not eligible.empty is False and not exclusions.empty and exclusions["EXCLUSION_REASON"].eq("PENDING_PANEL_NOT_YET_AVAILABLE").all()
+        report={"status":"BLOCKED_NO_MATURE_EVENT_WINDOWS","research_status":"BLOCKED",
+                "operational_status":"PASS_WITH_RESEARCH_BLOCKED",
+                "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),
+                "eligible_event_rows":len(eligible),"pending_event_rows":int(exclusions["EXCLUSION_REASON"].eq("PENDING_PANEL_NOT_YET_AVAILABLE").sum()),
+                "excluded_pre_panel_rows":int(exclusions["EXCLUSION_REASON"].eq("EVENT_BEFORE_PANEL_HISTORY").sum()),"window_rows":0,
+                "reason":"No event had both a valid pre/post publication close window. Future events are pending until market-panel closes exist; no prices were fabricated.",
+                "only_future_events":bool(only_future)}
         (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
-    report={"status":"COMPUTED_EXPLORATORY","research_status":"COMPUTED_EXPLORATORY","operational_status":"PASS",
-        "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":len(results),
+    report={"status":"COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS" if not exclusions.empty else "COMPUTED_EXPLORATORY",
+        "research_status":"COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS" if not exclusions.empty else "COMPUTED_EXPLORATORY",
+        "operational_status":"PASS",
+        "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),
+        "eligible_event_rows":len(eligible),"pending_event_rows":int(exclusions["EXCLUSION_REASON"].eq("PENDING_PANEL_NOT_YET_AVAILABLE").sum()),
+        "excluded_pre_panel_rows":int(exclusions["EXCLUSION_REASON"].eq("EVENT_BEFORE_PANEL_HISTORY").sum()),"window_rows":len(results),
         "series":sorted(panel.SERIES.unique().tolist()),
         "publication_time_rule":"Baseline is last 15:30 Asia/Kolkata close at/before PUBLISHED_AT; H+1/H+5/H+20 are the 1st/5th/20th closes strictly after publication.",
+        "event_maturity_rule":"Events beyond the latest panel date are recorded as pending, not treated as QA failures and not included in computed returns; events before panel history are explicitly excluded.",
         "benchmark_adjustment":"Same-event NIFTY 50 return subtraction when available; descriptive only.",
         "uncertainty":"Summary includes deterministic 95% percentile-bootstrap intervals for mean returns; overlapping events, selection bias and multiple comparisons mean these are not causal confidence intervals.",
         "event_source_quality":"Collector filters to explicit market-relevant titles from trusted publisher domains; publication timestamps remain proxies and headlines are not independently coded as verified event occurrence.",
