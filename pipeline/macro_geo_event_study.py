@@ -93,7 +93,9 @@ def main():
     OUT.mkdir(parents=True,exist_ok=True)
     panel,events,error=load_inputs()
     if error:
-        report={"status":"BLOCKED_MISSING_OR_INVALID_INPUTS","reason":error,"required_panel":str(PANEL),"required_events":str(EVENTS),"note":"No synthetic market result was substituted; this is not a successful study."}
+        report={"status":"BLOCKED_MISSING_OR_INVALID_INPUTS","research_status":"BLOCKED","operational_status":"FAIL_QA",
+                "reason":error,"required_panel":str(PANEL),"required_events":str(EVENTS),
+                "note":"No synthetic market result was substituted; this is not a successful study."}
         (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 2
     results=compute_event_windows(panel,events)
     results.to_csv(OUT/"event_study_windows.csv",index=False)
@@ -121,9 +123,10 @@ def main():
                     "CI_METHOD":"percentile bootstrap, 2000 resamples, seed=20261014" if len(vals) else "not estimable"})
     pd.DataFrame(summary).to_csv(OUT/"event_study_summary.csv",index=False)
     if results.empty:
-        report={"status":"NO_MATCHING_EVENT_WINDOWS","panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":0,
-                "reason":"No event had both a valid pre/post publication close window; study is blocked, not successful."}
-        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 2
+        report={"status":"BLOCKED_NO_MATCHING_EVENT_WINDOWS","research_status":"BLOCKED","operational_status":"PASS",
+                "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":0,
+                "reason":"No event had both a valid pre/post publication close window; research is blocked, not successful."}
+        (OUT/"event_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
     report={"status":"COMPUTED_EXPLORATORY",
         "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()),"event_rows":len(events),"window_rows":len(results),
         "series":sorted(panel.SERIES.unique().tolist()),
