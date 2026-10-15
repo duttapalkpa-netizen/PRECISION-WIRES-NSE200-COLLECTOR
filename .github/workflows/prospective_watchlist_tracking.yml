@@ -49,6 +49,8 @@ jobs:
         run: python collector/build_200_sessions.py
       - name: Strict dataset QA
         run: python qa/validate_dataset.py
+      - name: Collect quarterly results, board calendar, and source-linked earnings features (audit only)
+        run: python pipeline/quarterly_results_research.py
       - name: Run corrected-label walk-forward audit only
         env:
           WF_SESSIONS: "100"
@@ -185,6 +187,11 @@ jobs:
             outputs/news_24h/stock_news_collection_report.json
             outputs/news_24h/stock_news_24h_readiness.json
             outputs/macro_geo/hard_gate_report.json
+            data/raw/quarterly_results_disclosures.csv
+            data/raw/quarterly_results_calendar.csv
+            outputs/quarterly_results/quarterly_financial_features.csv
+            outputs/quarterly_results/quarterly_results_event_study.csv
+            outputs/quarterly_results/quarterly_results_research_report.json
             data/raw/stock_news_events.csv
             data/raw/stock_news_coverage.csv
             outputs/news_24h/stock_news_24h_cutoff_join.csv
