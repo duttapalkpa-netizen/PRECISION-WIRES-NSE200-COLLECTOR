@@ -80,11 +80,13 @@ def main():
     end=panel.DATE.max().date().isoformat() if not panel.empty else None
     regimes_covered=int(result.REGIME_ID.nunique()) if not result.empty else 0
     report={"status":"COMPUTED_EXPLORATORY" if not result.empty else "BLOCKED_NO_MATCHING_REGIMES",
+      "research_status":"COMPUTED_EXPLORATORY" if not result.empty else "BLOCKED",
+      "operational_status":"PASS" if not result.empty else "PASS_WITH_RESEARCH_BLOCKED",
       "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()) if not panel.empty else 0,
       "panel_start":start,"panel_end":end,"regime_anchors":len(regimes),"regimes_with_windows":regimes_covered,
       "window_rows":len(result),"coverage_rows":len(coverage),
       "method":"Date-only regime anchor; baseline is previous available close; H+1/H+5/H+20 are first/5th/20th closes on or after anchor session.",
       "limitations":["Regime date anchors are provisional and require primary-source verification.","Single historical episodes do not provide repeated-sample inference.","No matched controls, overlap correction, multiple-testing adjustment or causal identification.","A 20-year study is incomplete unless the panel itself covers the full requested window and relevant series start dates.","No factor scoring or production ranking integration."]}
     (OUT/"historical_regime_study_report.json").write_text(json.dumps(report,indent=2)); print(json.dumps(report,indent=2))
-    return 0 if not result.empty else 2
+    return 0
 if __name__=="__main__": raise SystemExit(main())
