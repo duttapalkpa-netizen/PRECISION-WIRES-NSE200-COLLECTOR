@@ -80,7 +80,7 @@ def main():
                 }, timeout=(8, 25))
                 response.raise_for_status()
                 payload = response.json()
-                if not isinstance(payload, dict) or not isinstance(payload.get("articles", []), list):
+                if not isinstance(payload, dict) or "articles" not in payload or not isinstance(payload.get("articles"), list):
                     raise ValueError("GDELT response missing articles list")
                 articles = payload.get("articles", [])
                 for article in articles:
@@ -119,6 +119,11 @@ def main():
     cov_cols = ["CUT_OFF", "SYMBOL", "WINDOW_START", "WINDOW_END", "COVERAGE_STATUS",
                 "SOURCE_SCOPE", "QUERY", "RESULTS_RETURNED", "ERROR"]
     news_df = pd.DataFrame(news_rows, columns=news_cols).drop_duplicates(["SYMBOL", "PUBLISHED_AT", "CANONICAL_URL"])
+    news_before_syndication_dedupe = len(news_df)
+    if not news_df.empty:
+        news_df["_TITLE_KEY"] = news_df["HEADLINE"].astype(str).str.lower().str.replace(r"[^a-z0-9]+", " ", regex=True).str.strip()
+        news_df = news_df.drop_duplicates(["SYMBOL", "CUT_OFF", "_TITLE_KEY"]).drop(columns=["_TITLE_KEY"])
+    syndicated_duplicates_removed = news_before_syndication_dedupe - len(news_df)
     cov_df = pd.DataFrame(coverage_rows, columns=cov_cols)
     news_df.to_csv(NEWS_OUT, index=False)
     cov_df.to_csv(COVERAGE_OUT, index=False)
@@ -128,6 +133,7 @@ def main():
         "queries_failed": int(failed), "news_rows": int(len(news_df)),
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
+        "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
         "source": "GDELT DOC API", "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
