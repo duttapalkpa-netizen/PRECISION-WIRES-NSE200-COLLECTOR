@@ -29,6 +29,37 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertTrue(normalized["RESULT_DECLARED"])
         self.assertTrue(normalized["SOURCE_RECORD_SHA256"])
 
+    def test_nse_announcement_date_alias_is_normalized(self):
+        row = {
+            "symbol": "ABC", "companyName": "ABC Limited",
+            "subject": "Outcome: Unaudited financial results for the quarter",
+            "an_dt": "15-Oct-2026",
+        }
+        normalized = stage.normalize_event(row, "RESULT_DISCLOSURE", "https://www.nseindia.com/api/corporates-announcements")
+        self.assertTrue(normalized["RESULT_DECLARED"])
+        self.assertTrue(normalized["BROADCAST_AT"])
+
+    def test_event_study_accepts_normalized_close_price_column(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            events_path = root / "events.csv"
+            panel_path = root / "panel.csv"
+            pd.DataFrame([{
+                "SYMBOL": "ABC", "RESULT_DECLARED": True,
+                "BROADCAST_AT": "2026-10-01T12:00:00Z",
+                "SOURCE_URL": "https://example.test/result.pdf",
+            }]).to_csv(events_path, index=False)
+            pd.DataFrame([
+                {"SYMBOL":"ABC","DATE":"2026-10-01","CLOSE_PRICE":100},
+                {"SYMBOL":"ABC","DATE":"2026-10-02","CLOSE_PRICE":101},
+                {"SYMBOL":"ABC","DATE":"2026-10-05","CLOSE_PRICE":105},
+                {"SYMBOL":"ABC","DATE":"2026-10-06","CLOSE_PRICE":106},
+                {"SYMBOL":"ABC","DATE":"2026-10-07","CLOSE_PRICE":107},
+            ]).to_csv(panel_path, index=False)
+            study, report = stage.build_event_study(events_path, panel_path)
+            self.assertEqual(report["status"], "COMPUTED_EXPLORATORY")
+            self.assertEqual(report["matched_result_events"], 1)
+
     def test_financial_features_calculate_yoy_and_only_consensus_surprise_when_available(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "quarterly_financial_metrics.csv"
