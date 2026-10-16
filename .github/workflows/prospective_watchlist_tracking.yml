@@ -215,6 +215,9 @@ jobs:
             outputs/news_24h/stock_news_24h_readiness.json
             outputs/macro_geo/hard_gate_report.json
             data/raw/quarterly_results_disclosures.csv
+            data/raw/quarterly_results_raw_responses/*.json
+            outputs/quarterly_results/source_validation_report.csv
+            data/raw/quarterly_financial_metrics.csv
             data/raw/quarterly_results_calendar.csv
             outputs/quarterly_results/quarterly_financial_features.csv
             outputs/quarterly_results/quarterly_results_event_study.csv
