@@ -22,10 +22,10 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/132 Safari/537.3
 HEADERS = {"User-Agent": UA, "Accept": "application/json,text/plain,*/*",
            "Referer": "https://www.nseindia.com/companies-listing/corporate-filings-application"}
 RESULTS_URL = NSE_HOME + "/api/corporates-financial-results"
-MEETINGS_URL = NSE_HOME + "/api/corporates-board-meetings"
-ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporates-announcements"
+MEETINGS_URL = NSE_HOME + "/api/corporate-boardMeetings"
+ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporate-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
-EVENT_COLUMNS = ["SYMBOL", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
+EVENT_COLUMNS = ["SYMBOL", "ISIN", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
 REQUIRED_METRICS = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT",
                     "REVENUE", "PAT", "EPS"}
 OPTIONAL_METRICS = {"EBITDA", "INTEREST_EXPENSE", "DEBT", "OPERATING_CASH_FLOW",
@@ -77,15 +77,16 @@ def parse_date(value):
 def normalize_event(row, kind, source_url):
     symbol = str(first(row, ["symbol", "sm_symbol", "ticker", "securitysymbol"])).upper().strip()
     company = str(first(row, ["company", "companyname", "sm_name", "securityname"])).strip()
-    subject = str(first(row, ["subject", "purpose", "description", "meetingpurpose", "details"])).strip()
+    subject = str(first(row, ["subject", "purpose", "description", "desc", "attchmntText", "meetingpurpose", "details", "relatingTo"])).strip()
     broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "an_dt", "sort_date", "sortdate", "dt", "dateandtime", "date"]))
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
-    period = str(first(row, ["periodended", "period_end", "financialperiod", "quarterended"])).strip()
+    period = str(first(row, ["periodended", "period_end", "financialperiod", "quarterended", "toDate", "period"])).strip()
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "pdfurl", "xbrl", "fileurl"])).strip()
     text = (subject + " " + company).lower()
-    is_results = bool(re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter", text))
+    is_results = kind == "RESULT_DISCLOSURE" and (not subject or bool(re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter", text)))
     return {
-        "SYMBOL": symbol, "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
+        "SYMBOL": symbol, "ISIN": str(first(row, ["sm_isin", "isin", "securityisin"])).upper().strip(),
+        "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
         "RESULT_DECLARED": bool(kind == "RESULT_DISCLOSURE" and is_results),
         "BROADCAST_AT": broadcast, "MEETING_DATE": meeting, "PERIOD_END": period,
         "ATTACHMENT_URL": attachment, "SOURCE_URL": source_url,
@@ -115,7 +116,7 @@ def fetch_nse(endpoint, start, end):
             if candidate == ANNOUNCEMENTS_URL:
                 def subject_text(row):
                     return " ".join(str(first(row, names)) for names in (
-                        ["subject", "purpose", "description", "details"],
+                        ["subject", "purpose", "description", "desc", "attchmntText", "details", "relatingTo"],
                         ["company", "companyname", "sm_name"]
                     )).lower()
                 if endpoint == RESULTS_URL:
@@ -270,17 +271,35 @@ def main():
     manifest = {"observed_at_utc": now_utc(), "window_start": start.isoformat(), "window_end": end.isoformat(),
                 "primary_source": "NSE India corporate filings API", "sources": {}, "production_selector_changed": False}
     result_events, calendar_events = [], []
+    validation_rows = []
+    raw_dir = RAW / "quarterly_results_raw_responses"
+    raw_dir.mkdir(parents=True, exist_ok=True)
     for kind, endpoint, target in (
         ("RESULT_DISCLOSURE", RESULTS_URL, result_events),
         ("BOARD_MEETING", MEETINGS_URL, calendar_events),
     ):
         try:
             raw, source_url, payload = fetch_nse(endpoint, start, end + (timedelta(days=30) if kind == "BOARD_MEETING" else timedelta(0)))
-            target.extend(normalize_event(row, kind, source_url) for row in raw)
-            manifest["sources"][kind] = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url}
+            raw_path = raw_dir / ("".join(ch.lower() if ch.isalnum() else "_" for ch in kind) + ".json")
+            raw_path.write_text(json.dumps({"request_url": source_url, "observed_at_utc": now_utc(), "payload": payload}, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+            normalized = [normalize_event(row, kind, source_url) for row in raw]
+            target.extend(normalized)
+            for item in normalized:
+                fields = {
+                    "source_url": bool(re.match(r"^https://www\\.nseindia\\.com/", str(item.get("SOURCE_URL", "")))),
+                    "publication_timestamp": bool(parse_date(item.get("BROADCAST_AT"))),
+                    "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()),
+                    "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
+                    "isin": bool(re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}[0-9]", str(item.get("ISIN", "")))),
+                }
+                validation_rows.append({"EVENT_KIND": kind, "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
+            manifest["sources"][kind] = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url, "raw_response_file": str(raw_path)}
         except Exception as exc:
             manifest["sources"][kind] = {"status": "UNKNOWN", "error": f"{type(exc).__name__}: {exc}"}
         time.sleep(0.2)
+    validation_path = OUT / "source_validation_report.csv"
+    pd.DataFrame(validation_rows, columns=["EVENT_KIND", "SYMBOL", "ISIN", "SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SOURCE_URL_VALID", "PUBLICATION_TIMESTAMP_VALID", "REPORTING_PERIOD_VALID", "SYMBOL_VALID", "ISIN_VALID", "RECORD_VALID", "MISSING_FIELDS", "SOURCE_RECORD_SHA256"]).to_csv(validation_path, index=False)
+    manifest["source_validation"] = {"status": "PASS" if validation_rows and all(x["RECORD_VALID"] for x in validation_rows) else "BLOCKED", "records_checked": len(validation_rows), "valid_records": sum(bool(x["RECORD_VALID"]) for x in validation_rows), "report_file": str(validation_path), "required_fields": ["source_url", "publication_timestamp", "reporting_period", "symbol", "isin"]}
     disclosures_path = RAW / "quarterly_results_disclosures.csv"
     calendar_path = RAW / "quarterly_results_calendar.csv"
     pd.DataFrame(result_events, columns=EVENT_COLUMNS).to_csv(disclosures_path, index=False)
