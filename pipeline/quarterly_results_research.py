@@ -86,7 +86,7 @@ def normalize_event(row, kind, source_url):
         period_text = " ".join(str(first(row, names)) for names in (
             ["attchmntText", "subject", "purpose", "description", "desc", "relatingTo"],))
         period_match = re.search(
-            r"(?:period|quarter|half year|year)\\s+ended\\s+(\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Za-z]+\\s+\\d{4}|[A-Za-z]+\\s+\\d{1,2},?\\s+\\d{4}|\\d{1,2}[-/][A-Za-z]{3,9}[-/]\\d{4})",
+            r"(?:period|quarter|half year|year)\s+ended\s+(\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}|[A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}[-/][A-Za-z]{3,9}[-/]\d{4})",
             period_text, flags=re.IGNORECASE)
         if period_match:
             parsed_period = pd.to_datetime(re.sub(r"(?i)(st|nd|rd|th)", "", period_match.group(1)), errors="coerce", dayfirst=True)
