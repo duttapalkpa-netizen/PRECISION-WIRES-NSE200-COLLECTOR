@@ -85,9 +85,9 @@ def parse_reporting_period(row):
                            "quarterenddate", "financialperiod", "quarterended",
                            "toDate", "period"])
     if explicit:
-        parsed = pd.to_datetime(explicit, errors="coerce", dayfirst=True)
-        if pd.notna(parsed):
-            return parsed.date().isoformat()
+        # Preserve the legacy explicit-field representation for compatibility.
+        # Normalize only dates newly recovered from free-text filing metadata.
+        return str(explicit).strip()
 
     metadata = " ".join(str(first(row, [key])) for key in
                         ("attchmntText", "subject", "purpose", "description",
