@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -15,7 +16,7 @@ class MacroGeoP0WindowTests(unittest.TestCase):
             with patch.object(repair, "EQUITY_PANEL", panel):
                 start, end = repair.p0_window()
             self.assertEqual(start.isoformat(), "2025-12-06")
-            self.assertEqual(end.isoformat(), "2026-10-19")
+            self.assertEqual(end, min(datetime.now(timezone.utc).date(), pd.Timestamp("2026-10-16").date() + timedelta(days=3)))
 
     def test_p0_window_blocks_if_backbone_missing(self):
         with patch.object(repair, "EQUITY_PANEL", Path("/nonexistent/nse_eq_200_sessions.csv")):
