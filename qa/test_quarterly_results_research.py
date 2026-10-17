@@ -9,6 +9,43 @@ import pipeline.quarterly_results_research as stage
 
 
 class QuarterlyResultsResearchTests(unittest.TestCase):
+    def test_step1_endpoint_schema_pass_is_separate_from_step2_period_validation(self):
+        sources = {
+            "RESULT_DISCLOSURE": {"status": "AVAILABLE",
+                "request_url": "https://www.nseindia.com/api/corporate-announcements"},
+            "BOARD_MEETING": {"status": "AVAILABLE",
+                "request_url": "https://www.nseindia.com/api/corporate-announcements"},
+        }
+        result_rows = [{
+            "SYMBOL": "ADROITIND", "ISIN": "INE505M01015",
+            "BROADCAST_AT": "2026-10-12T15:38:52+00:00",
+            "ATTACHMENT_URL": "https://nsearchives.nseindia.com/corporate/result.pdf",
+            "RAW_RECORD_JSON": "{\"symbol\":\"ADROITIND\"}", "PERIOD_END": "",
+        }]
+        calendar_rows = [{
+            "SYMBOL": "ABC", "BROADCAST_AT": "2026-10-15T10:00:00+00:00",
+            "RAW_RECORD_JSON": "{\"symbol\":\"ABC\"}",
+        }]
+        report = stage.evaluate_endpoint_schema(sources, result_rows, calendar_rows)
+        self.assertEqual(report["status"], "PASS")
+        self.assertEqual(report["source_mode"], "ANNOUNCEMENT_FALLBACK")
+        self.assertEqual(report["schema_contract"]["reporting_period_validation"],
+                         "DEFERRED_TO_STEP_2_RECORD_VALIDATION")
+        # Missing reporting period is not silently made valid by Step 1 PASS.
+        self.assertFalse(bool(result_rows[0]["PERIOD_END"]))
+
+    def test_step1_endpoint_schema_blocks_missing_required_schema_field(self):
+        sources = {
+            "RESULT_DISCLOSURE": {"status": "AVAILABLE", "request_url": "https://www.nseindia.com/api/x"},
+            "BOARD_MEETING": {"status": "AVAILABLE", "request_url": "https://www.nseindia.com/api/y"},
+        }
+        result_rows = [{"SYMBOL": "ABC", "ISIN": "", "BROADCAST_AT": "2026-10-15",
+                        "ATTACHMENT_URL": "https://example.test/a.pdf", "RAW_RECORD_JSON": "{}"}]
+        calendar_rows = [{"SYMBOL": "ABC", "BROADCAST_AT": "2026-10-15", "RAW_RECORD_JSON": "{}"}]
+        report = stage.evaluate_endpoint_schema(sources, result_rows, calendar_rows)
+        self.assertEqual(report["status"], "BLOCKED")
+        self.assertFalse(report["checks"]["result_schema_fields_present"])
+
     def test_board_meeting_is_not_a_declared_result(self):
         row = {
             "symbol": "ABC", "companyName": "ABC Limited",
