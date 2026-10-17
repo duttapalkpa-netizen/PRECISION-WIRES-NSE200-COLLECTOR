@@ -91,7 +91,7 @@ def normalize_event(row, kind, source_url):
         "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
         "RESULT_DECLARED": bool(kind == "RESULT_DISCLOSURE" and is_results),
         "BROADCAST_AT": broadcast, "MEETING_DATE": meeting, "PERIOD_END": period,
-        "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if re.match(r"^https://(?:www\\.)?nseindia\\.com/|^https://nsearchives\\.nseindia\\.com/", attachment) else source_url,
+        "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if (attachment.startswith("https://www.nseindia.com/") or attachment.startswith("https://nsearchives.nseindia.com/")) else source_url,
         "SOURCE_RECORD_SHA256": digest(row), "OBSERVED_AT_UTC": now_utc(),
         "RAW_RECORD_JSON": json.dumps(row, sort_keys=True, default=str),
     }
@@ -308,7 +308,7 @@ def main():
             target.extend(normalized)
             for item in normalized:
                 fields = {
-                    "source_url": bool(re.match(r"^https://(?:www\\.)?nseindia\\.com/|^https://nsearchives\\.nseindia\\.com/", str(item.get("SOURCE_URL", "")))),
+                    "source_url": (str(item.get("SOURCE_URL", "")).startswith("https://www.nseindia.com/") or str(item.get("SOURCE_URL", "")).startswith("https://nsearchives.nseindia.com/")),
                     "publication_timestamp": bool(parse_date(item.get("BROADCAST_AT"))),
                     "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()),
                     "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
