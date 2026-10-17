@@ -59,6 +59,24 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertEqual(normalized["PERIOD_END"], "30-Sep-2026")
         self.assertEqual(normalized["SOURCE_URL"], "https://nsearchives.nseindia.com/corporate/result.xml")
 
+
+    def test_result_period_can_be_parsed_from_explicit_nse_filing_metadata(self):
+        row = {"symbol": "ABC", "sm_isin": "INE123A01011",
+               "desc": "Outcome of Board Meeting",
+               "attchmntText": "The company has submitted financial results for the period ended September 30, 2026.",
+               "an_dt": "16-Oct-2026 20:49:34"}
+        normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                           "https://www.nseindia.com/api/corporate-announcements")
+        self.assertEqual(normalized["PERIOD_END"], "2026-09-30")
+        self.assertTrue(normalized["RESULT_DECLARED"])
+
+    def test_board_calendar_reporting_period_is_not_mandatory(self):
+        row = {"symbol": "ABC", "sm_isin": "INE123A01011",
+               "desc": "Outcome of Board Meeting", "an_dt": "16-Oct-2026"}
+        normalized = stage.normalize_event(row, "BOARD_MEETING",
+                                           "https://www.nseindia.com/api/corporate-announcements")
+        self.assertFalse(normalized["RESULT_DECLARED"])
+
     def test_event_study_accepts_normalized_close_price_column(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
