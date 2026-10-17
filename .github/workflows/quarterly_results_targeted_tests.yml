@@ -1,0 +1,37 @@
+name: Quarterly Results Targeted Tests
+
+on:
+  push:
+    branches:
+      - audit/prospective-selector-tracking
+    paths:
+      - ".github/workflows/quarterly_results_targeted_tests.yml"
+      - "pipeline/quarterly_results_research.py"
+      - "qa/test_quarterly_results_research.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  targeted-quarterly-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: audit/prospective-selector-tracking
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install minimal dependencies
+        run: python -m pip install "pandas>=2.2,<3" "requests>=2.31,<3"
+      - name: Run only the four quarterly disclosure tests
+        run: |
+          python -m unittest -v \
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_result_period_can_be_parsed_from_explicit_nse_filing_metadata \
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_board_meeting_is_not_a_declared_result \
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_clarification_and_delayed_submission_are_not_result_events \
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_reporting_period_alias_and_nse_attachment_source_are_preserved
