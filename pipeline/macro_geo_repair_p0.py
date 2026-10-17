@@ -7,7 +7,7 @@ FPI/DII is accepted only from a successful official NSE response with mapped
 date/group/net-value columns; otherwise it stays BLOCKED. No synthetic rows.
 """
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from io import StringIO
 import json, re
 import pandas as pd
@@ -15,13 +15,32 @@ import requests
 
 RAW=Path("data/external"); RAW.mkdir(parents=True,exist_ok=True)
 REPORT=Path("outputs/macro_geo/p0_repair_report.json"); REPORT.parent.mkdir(parents=True,exist_ok=True)
+EQUITY_PANEL=Path("data/processed/nse_eq_200_sessions.csv")
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/132 Safari/537.36"
+def p0_window():
+ """Bound P0 macro retrieval to the available 200-session research backbone.
+
+ Historical regime studies must use their own separately bounded job; a P0
+ coverage check should not repeatedly download two decades of observations.
+ """
+ if not EQUITY_PANEL.exists():
+  raise RuntimeError("Cannot bound P0 series: 200-session NSE equity panel is missing")
+ panel=pd.read_csv(EQUITY_PANEL,usecols=lambda c: str(c).strip().upper()=="DATE")
+ if panel.empty or "DATE" not in panel.columns:
+  raise RuntimeError("Cannot bound P0 series: equity panel has no DATE rows")
+ dates=pd.to_datetime(panel["DATE"],errors="coerce").dropna()
+ if dates.empty: raise RuntimeError("Cannot bound P0 series: equity panel DATE values are invalid")
+ # Pad the panel's first date by 30 calendar days for macro context and its
+ # last date by 3 days; do not use the wall clock to manufacture market rows.
+ return (max(pd.Timestamp("1990-01-01").date(), (dates.min().date()-timedelta(days=30))),
+         min(datetime.now(timezone.utc).date(), dates.max().date()+timedelta(days=3)))
+
 def fred(series_id,label,outfile):
  url="https://fred.stlouisfed.org/graph/fredgraph.csv"
- rows=[]; urls=[]; cursor=pd.Timestamp("2006-01-01").date(); end_date=datetime.now(timezone.utc).date()
+ rows=[]; urls=[]; cursor, end_date=p0_window()
  sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
  while cursor<=end_date:
-  chunk_end=min(end_date,cursor+pd.Timedelta(days=365*4).to_pytimedelta())
+  chunk_end=min(end_date,cursor+timedelta(days=89))
   response=None; last_error=None
   for timeout in (20,35):
    try:
@@ -52,7 +71,9 @@ def fred(series_id,label,outfile):
   "source":"FRED "+series_id,"url":";".join(urls),"path":str(RAW/outfile)}
 
 def main():
- report={"observed_at_utc":datetime.now(timezone.utc).isoformat(),"groups":{},"policy":"Secondary series remain explicitly labelled; no missing values are fabricated."}
+ report={"observed_at_utc":datetime.now(timezone.utc).isoformat(),"groups":{},"p0_window":None,"policy":"Secondary series remain explicitly labelled; no missing values are fabricated. P0 series are bounded to the NSE 200-session panel; longer regime studies are separate."}
+ try: report["p0_window"]={"start":p0_window()[0].isoformat(),"end":p0_window()[1].isoformat(),"basis":"NSE 200-session panel +/- 30-day lookback and 3-day freshness pad"}
+ except Exception as e: report["p0_window"]={"status":"BLOCKED","error":type(e).__name__+": "+str(e)[:250]}
  for name,series,label,file in [("crude_oil","DCOILBRENTEU","BRENT_CRUDE_USD_PER_BBL","brent_crude.csv"),("usd_inr","DEXINUS","USD_INR_INR_PER_USD","usd_inr.csv")]:
   try: report["groups"][name]=fred(series,label,file)
   except Exception as e: report["groups"][name]={"status":"BLOCKED","rows":0,"error":type(e).__name__+": "+str(e)[:300]}
@@ -74,7 +95,7 @@ def main():
     if symbol and desc and stamp and link:
      if str(link).startswith("/"): link="https://www.nseindia.com"+str(link)
      normalized.append({"DATE":stamp,"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),"PUBLISHED_AT":stamp,
-      "SOURCE_URL":str(link),"SOURCE":"NSE corporate announcements","ISIN":pick("sm_isin","isin")})
+      "SOURCE_URL":str(link),"SOURCE":"NSE corporate announcements"})
    ev=pd.DataFrame(normalized)
    if not ev.empty:
     ev.to_csv(RAW/"corporate_events.csv",index=False)
