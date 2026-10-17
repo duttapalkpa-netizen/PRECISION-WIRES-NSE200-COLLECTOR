@@ -49,7 +49,11 @@ jobs:
         run: python collector/build_200_sessions.py
       - name: Strict dataset QA
         run: python qa/validate_dataset.py
-      - name: Collect quarterly results, board calendar, and source-linked earnings features (audit only)
+      - name: Collect quarterly results and board calendar (audit only)
+        run: python pipeline/quarterly_results_research.py
+      - name: Extract source-linked metrics from NSE XBRL attachments (audit only)
+        run: python pipeline/quarterly_pdf_xbrl_metrics.py
+      - name: Validate normalized quarterly metrics and build features (audit only)
         run: python pipeline/quarterly_results_research.py
       - name: Run corrected-label walk-forward audit only
         env:
