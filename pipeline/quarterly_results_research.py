@@ -92,9 +92,25 @@ def normalize_event(row, kind, source_url):
             parsed_period = pd.to_datetime(re.sub(r"(?i)(st|nd|rd|th)", "", period_match.group(1)), errors="coerce", dayfirst=True)
             period = "" if pd.isna(parsed_period) else parsed_period.date().isoformat()
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "detailsurl", "xbrlurl", "pdfurl", "xbrl", "fileurl"])).strip()
-    text = (subject + " " + company).lower()
-    excluded = bool(re.search(r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing|board meeting", text))
-    is_results = kind == "RESULT_DISCLOSURE" and bool(re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter|integrated filing.*financial", text)) and not excluded and bool(period)
+    # NSE announcement metadata often labels the row "Outcome of Board Meeting"
+    # while attchmntText explicitly states that financial results were submitted.
+    # Classify using all filing metadata, not only the first display subject.
+    event_text = " ".join(
+        str(first(row, names))
+        for names in (
+            ["attchmntText"], ["subject"], ["purpose"], ["description"], ["desc"],
+            ["relatingTo"], ["details"], ["company", "companyname", "sm_name"]
+        )
+    ).lower()
+    has_results_phrase = bool(re.search(
+        r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter|integrated filing.*financial",
+        event_text
+    ))
+    excluded = bool(re.search(
+        r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing",
+        event_text
+    ))
+    is_results = kind == "RESULT_DISCLOSURE" and has_results_phrase and not excluded and bool(period)
     return {
         "SYMBOL": symbol, "ISIN": str(first(row, ["sm_isin", "isin", "securityisin"])).upper().strip(),
         "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
