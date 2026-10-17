@@ -75,22 +75,51 @@ def parse_date(value):
     dt = pd.to_datetime(value, errors="coerce", dayfirst=True, utc=True)
     return "" if pd.isna(dt) else dt.isoformat()
 
+def parse_reporting_period(row):
+    """Parse an explicitly stated period end from NSE filing metadata only.
+
+    Do not infer a period from the filing date, attachment filename or quarter
+    number. A financial-results announcement without a period stays UNKNOWN.
+    """
+    explicit = first(row, ["periodended", "period_end", "periodenddate",
+                           "quarterenddate", "financialperiod", "quarterended",
+                           "toDate", "period"])
+    if explicit:
+        parsed = pd.to_datetime(explicit, errors="coerce", dayfirst=True)
+        if pd.notna(parsed):
+            return parsed.date().isoformat()
+
+    metadata = " ".join(str(first(row, [key])) for key in
+                        ("attchmntText", "subject", "purpose", "description",
+                         "desc", "relatingTo", "details"))
+    date_pattern = (
+        r"(?:\\d{1,2}(?:st|nd|rd|th)?\\s+"
+        r"[A-Za-z]+,?\\s+\\d{4}"
+        r"|[A-Za-z]+\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}"
+        r"|\\d{1,2}[-/][A-Za-z]{3,9}[-/]\\d{4}"
+        r"|\\d{4}-\\d{2}-\\d{2})"
+    )
+    pattern = (r"\\b(?:quarter|qtr|half[\\s-]*year|six months|"
+               r"financial year|year|financial period|period)\\s+"
+               r"ended\\s+(?:on\\s+|as\\s+on\\s+)?"
+               + "(" + date_pattern + ")")
+    matches = re.findall(pattern, metadata, flags=re.IGNORECASE)
+    periods = set()
+    for raw in matches:
+        cleaned = re.sub(r"(?i)(?<=\\d)(st|nd|rd|th)\\b", "", raw)
+        parsed = pd.to_datetime(cleaned, errors="coerce", dayfirst=True)
+        if pd.notna(parsed):
+            periods.add(parsed.date().isoformat())
+    return next(iter(periods)) if len(periods) == 1 else ""
+
+
 def normalize_event(row, kind, source_url):
     symbol = str(first(row, ["symbol", "sm_symbol", "ticker", "securitysymbol"])).upper().strip()
     company = str(first(row, ["company", "companyname", "sm_name", "securityname"])).strip()
     subject = str(first(row, ["subject", "purpose", "description", "desc", "attchmntText", "meetingpurpose", "details", "relatingTo"])).strip()
     broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "an_dt", "sort_date", "sortdate", "dt", "dateandtime", "date"]))
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
-    period = str(first(row, ["periodended", "period_end", "periodenddate", "quarterenddate", "financialperiod", "quarterended", "toDate", "period"])).strip()
-    if not period:
-        period_text = " ".join(str(first(row, names)) for names in (
-            ["attchmntText", "subject", "purpose", "description", "desc", "relatingTo"],))
-        period_match = re.search(
-            r"(?:period|quarter|half year|year)\s+ended\s+(\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}|[A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}[-/][A-Za-z]{3,9}[-/]\d{4})",
-            period_text, flags=re.IGNORECASE)
-        if period_match:
-            parsed_period = pd.to_datetime(re.sub(r"(?i)(st|nd|rd|th)", "", period_match.group(1)), errors="coerce", dayfirst=True)
-            period = "" if pd.isna(parsed_period) else parsed_period.date().isoformat()
+    period = parse_reporting_period(row)
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "detailsurl", "xbrlurl", "pdfurl", "xbrl", "fileurl"])).strip()
     # NSE announcement metadata often labels the row "Outcome of Board Meeting"
     # while attchmntText explicitly states that financial results were submitted.
