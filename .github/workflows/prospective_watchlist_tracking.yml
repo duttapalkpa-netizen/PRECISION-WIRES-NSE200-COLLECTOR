@@ -61,6 +61,8 @@ jobs:
         run: python pipeline/walk_forward_backtest.py
       - name: Collect P0 market panel and timestamped geopolitical news (audit only)
         run: python pipeline/macro_geo_collect_p0.py
+      - name: Repair four missing Macro-Geo P0 groups (audit only)
+        run: python pipeline/macro_geo_repair_p0.py
       - name: Audit macro-geopolitical and sector source coverage (audit only)
         run: python pipeline/macro_geo_source_coverage.py
       - name: Run secondary historical macro/geo event study without blocking primary +5% audit
