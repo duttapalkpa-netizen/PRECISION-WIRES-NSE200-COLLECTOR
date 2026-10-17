@@ -23,7 +23,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         row = {
             "symbol": "ABC", "companyName": "ABC Limited",
             "subject": "Outcome: Unaudited financial results for the quarter",
-            "broadcastDate": "15-Oct-2026", "attachment": "https://example.test/result.pdf",
+            "broadcastDate": "15-Oct-2026", "quarterEndDate": "30-Sep-2026", "attachment": "https://nsearchives.nseindia.com/corporate/result.pdf",
         }
         normalized = stage.normalize_event(row, "RESULT_DISCLOSURE", "https://www.nseindia.com/example")
         self.assertTrue(normalized["RESULT_DECLARED"])
@@ -33,11 +33,31 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         row = {
             "symbol": "ABC", "companyName": "ABC Limited",
             "subject": "Outcome: Unaudited financial results for the quarter",
-            "an_dt": "15-Oct-2026",
+            "an_dt": "15-Oct-2026", "periodEndDate": "30-Sep-2026",
         }
         normalized = stage.normalize_event(row, "RESULT_DISCLOSURE", "https://www.nseindia.com/api/corporates-announcements")
         self.assertTrue(normalized["RESULT_DECLARED"])
         self.assertTrue(normalized["BROADCAST_AT"])
+
+
+    def test_clarification_and_delayed_submission_are_not_result_events(self):
+        for subject in ("Reply to Clarification- Financial results",
+                        "Reasons for Delayed/Non-submission of Financial Results"):
+            row = {"symbol": "ABC", "subject": subject, "an_dt": "15-Oct-2026",
+                   "periodEndDate": "30-Sep-2026"}
+            normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                               "https://www.nseindia.com/api/corporate-integrated-filings")
+            self.assertFalse(normalized["RESULT_DECLARED"])
+
+    def test_reporting_period_alias_and_nse_attachment_source_are_preserved(self):
+        row = {"symbol": "ABC", "subject": "Outcome: Unaudited financial results",
+               "broadcastDateTime": "15-Oct-2026", "quarterEndDate": "30-Sep-2026",
+               "xbrl": "https://nsearchives.nseindia.com/corporate/result.xml"}
+        normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                           "https://www.nseindia.com/api/corporate-integrated-filings")
+        self.assertTrue(normalized["RESULT_DECLARED"])
+        self.assertEqual(normalized["PERIOD_END"], "30-Sep-2026")
+        self.assertEqual(normalized["SOURCE_URL"], "https://nsearchives.nseindia.com/corporate/result.xml")
 
     def test_event_study_accepts_normalized_close_price_column(self):
         with tempfile.TemporaryDirectory() as tmp:
