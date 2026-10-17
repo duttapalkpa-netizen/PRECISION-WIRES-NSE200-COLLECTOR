@@ -93,20 +93,20 @@ def parse_reporting_period(row):
                         ("attchmntText", "subject", "purpose", "description",
                          "desc", "relatingTo", "details"))
     date_pattern = (
-        r"(?:\\d{1,2}(?:st|nd|rd|th)?\\s+"
-        r"[A-Za-z]+,?\\s+\\d{4}"
-        r"|[A-Za-z]+\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}"
-        r"|\\d{1,2}[-/][A-Za-z]{3,9}[-/]\\d{4}"
-        r"|\\d{4}-\\d{2}-\\d{2})"
+        r"(?:\d{1,2}(?:st|nd|rd|th)?\s+"
+        r"[A-Za-z]+,?\s+\d{4}"
+        r"|[A-Za-z]+\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4}"
+        r"|\d{1,2}[-/][A-Za-z]{3,9}[-/]\d{4}"
+        r"|\d{4}-\d{2}-\d{2})"
     )
-    pattern = (r"\\b(?:quarter|qtr|half[\\s-]*year|six months|"
-               r"financial year|year|financial period|period)\\s+"
-               r"ended\\s+(?:on\\s+|as\\s+on\\s+)?"
+    pattern = (r"\b(?:quarter|qtr|half[\s-]*year|six months|"
+               r"financial year|year|financial period|period)\s+"
+               r"ended\s+(?:on\s+|as\s+on\s+)?"
                + "(" + date_pattern + ")")
     matches = re.findall(pattern, metadata, flags=re.IGNORECASE)
     periods = set()
     for raw in matches:
-        cleaned = re.sub(r"(?i)(?<=\\d)(st|nd|rd|th)\\b", "", raw)
+        cleaned = re.sub(r"(?i)(?<=\d)(st|nd|rd|th)\b", "", raw)
         parsed = pd.to_datetime(cleaned, errors="coerce", dayfirst=True)
         if pd.notna(parsed):
             periods.add(parsed.date().isoformat())
