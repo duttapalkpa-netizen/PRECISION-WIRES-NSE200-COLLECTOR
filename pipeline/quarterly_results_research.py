@@ -208,6 +208,42 @@ def fetch_nse(endpoint, start, end):
             failures.append(f"{candidate}: {type(exc).__name__}: {exc}")
     raise RuntimeError("All NSE endpoints failed or returned no matching structured rows: " + " | ".join(failures))
 
+def evaluate_endpoint_schema(sources, result_events, calendar_events):
+    """Evaluate Step 1 endpoint/envelope/schema readiness separately from Step 2
+    record-level provenance validation. Reporting-period completeness is a
+    Step 2 field-validation concern and must remain BLOCKED there if unknown.
+    """
+    required_result = ("SYMBOL", "ISIN", "BROADCAST_AT", "ATTACHMENT_URL", "RAW_RECORD_JSON")
+    required_calendar = ("SYMBOL", "BROADCAST_AT", "RAW_RECORD_JSON")
+    checks = {
+        "result_disclosure_source_available": sources.get("RESULT_DISCLOSURE", {}).get("status") == "AVAILABLE",
+        "board_calendar_source_available": sources.get("BOARD_MEETING", {}).get("status") == "AVAILABLE",
+        "result_disclosure_rows_present": bool(result_events),
+        "board_calendar_rows_present": bool(calendar_events),
+        "result_schema_fields_present": bool(result_events) and all(
+            all(str(row.get(k, "")).strip() for k in required_result) for row in result_events
+        ),
+        "calendar_schema_fields_present": bool(calendar_events) and all(
+            all(str(row.get(k, "")).strip() for k in required_calendar) for row in calendar_events
+        ),
+    }
+    urls = [str(sources.get(k, {}).get("request_url", "")) for k in ("RESULT_DISCLOSURE", "BOARD_MEETING")]
+    fallback_used = any("/api/corporate-announcements" in url for url in urls)
+    passed = all(checks.values())
+    return {
+        "status": "PASS" if passed else "BLOCKED",
+        "checks": checks,
+        "source_mode": "ANNOUNCEMENT_FALLBACK" if fallback_used else "DEDICATED_ENDPOINT",
+        "fallback_used": fallback_used,
+        "schema_contract": {
+            "result_disclosure_required_fields": list(required_result),
+            "board_calendar_required_fields": list(required_calendar),
+            "reporting_period_validation": "DEFERRED_TO_STEP_2_RECORD_VALIDATION",
+        },
+        "boundary": "Step 1 PASS confirms endpoint response/envelope and normalized schema readiness only. It does not override source_validation, financial-metric extraction, or Macro-Geo hard-gate blockers.",
+    }
+
+
 def pct_change(current, previous):
     try:
         current, previous = float(current), float(previous)
@@ -376,6 +412,7 @@ def main():
     validation_path = OUT / "source_validation_report.csv"
     pd.DataFrame(validation_rows, columns=["EVENT_KIND", "SYMBOL", "ISIN", "SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SOURCE_URL_VALID", "PUBLICATION_TIMESTAMP_VALID", "REPORTING_PERIOD_VALID", "SYMBOL_VALID", "ISIN_VALID", "RECORD_VALID", "MISSING_FIELDS", "SOURCE_RECORD_SHA256"]).to_csv(validation_path, index=False)
     manifest["source_validation"] = {"status": "PASS" if validation_rows and all(x["RECORD_VALID"] for x in validation_rows) else "BLOCKED", "records_checked": len(validation_rows), "valid_records": sum(bool(x["RECORD_VALID"]) for x in validation_rows), "report_file": str(validation_path), "required_fields": ["source_url", "publication_timestamp", "reporting_period", "symbol", "isin"]}
+    manifest["endpoint_schema_step_1"] = evaluate_endpoint_schema(manifest["sources"], result_events, calendar_events)
     disclosures_path = RAW / "quarterly_results_disclosures.csv"
     calendar_path = RAW / "quarterly_results_calendar.csv"
     pd.DataFrame(result_events, columns=EVENT_COLUMNS).to_csv(disclosures_path, index=False)
