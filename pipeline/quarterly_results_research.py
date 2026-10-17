@@ -22,6 +22,7 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/132 Safari/537.3
 HEADERS = {"User-Agent": UA, "Accept": "application/json,text/plain,*/*",
            "Referer": "https://www.nseindia.com/companies-listing/corporate-filings-application"}
 RESULTS_URL = NSE_HOME + "/api/corporates-financial-results"
+INTEGRATED_RESULTS_URL = NSE_HOME + "/api/corporate-integrated-filings"
 MEETINGS_URL = NSE_HOME + "/api/corporate-boardMeetings"
 ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporate-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
@@ -80,57 +81,78 @@ def normalize_event(row, kind, source_url):
     subject = str(first(row, ["subject", "purpose", "description", "desc", "attchmntText", "meetingpurpose", "details", "relatingTo"])).strip()
     broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "an_dt", "sort_date", "sortdate", "dt", "dateandtime", "date"]))
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
-    period = str(first(row, ["periodended", "period_end", "financialperiod", "quarterended", "toDate", "period"])).strip()
-    attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "pdfurl", "xbrl", "fileurl"])).strip()
+    period = str(first(row, ["periodended", "period_end", "periodenddate", "quarterenddate", "financialperiod", "quarterended", "toDate", "period"])).strip()
+    attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "detailsurl", "xbrlurl", "pdfurl", "xbrl", "fileurl"])).strip()
     text = (subject + " " + company).lower()
-    is_results = kind == "RESULT_DISCLOSURE" and (not subject or bool(re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter", text)))
+    excluded = bool(re.search(r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing|board meeting", text))
+    is_results = kind == "RESULT_DISCLOSURE" and bool(re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter|integrated filing.*financial", text)) and not excluded and bool(period)
     return {
         "SYMBOL": symbol, "ISIN": str(first(row, ["sm_isin", "isin", "securityisin"])).upper().strip(),
         "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
         "RESULT_DECLARED": bool(kind == "RESULT_DISCLOSURE" and is_results),
         "BROADCAST_AT": broadcast, "MEETING_DATE": meeting, "PERIOD_END": period,
-        "ATTACHMENT_URL": attachment, "SOURCE_URL": source_url,
+        "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if re.match(r"^https://(?:www\\.)?nseindia\\.com/|^https://nsearchives\\.nseindia\\.com/", attachment) else source_url,
         "SOURCE_RECORD_SHA256": digest(row), "OBSERVED_AT_UTC": now_utc(),
         "RAW_RECORD_JSON": json.dumps(row, sort_keys=True, default=str),
     }
 
 def fetch_nse(endpoint, start, end):
-    """Try the specialized NSE endpoint, then the official announcements feed.
-    Fallback rows are filtered to the requested event class; no row is fabricated.
-    """
+    """Fetch structured filings first; announcements are a strict metadata-only fallback."""
     session = requests.Session()
     session.headers.update(HEADERS)
     session.get(NSE_HOME, timeout=(5, 20))
     params = {"index": "equities", "from_date": start.strftime("%d-%m-%Y"),
               "to_date": end.strftime("%d-%m-%Y")}
-    candidates = [endpoint]
-    if endpoint in (RESULTS_URL, MEETINGS_URL):
-        candidates.append(ANNOUNCEMENTS_URL)
+    if endpoint == RESULTS_URL:
+        candidates = [
+            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials"}),
+            (RESULTS_URL, {}),
+            (ANNOUNCEMENTS_URL, {}),
+        ]
+    elif endpoint == MEETINGS_URL:
+        candidates = [(MEETINGS_URL, {}), (ANNOUNCEMENTS_URL, {})]
+    else:
+        candidates = [(endpoint, {})]
     failures = []
-    for candidate in candidates:
+    for candidate, extra_params in candidates:
         try:
-            response = session.get(candidate, params=params, timeout=(5, 30))
+            request_params = {**params, **extra_params}
+            response = session.get(candidate, params=request_params, timeout=(5, 30))
             response.raise_for_status()
             payload = response.json()
             rows = records_from(payload)
             if candidate == ANNOUNCEMENTS_URL:
-                def subject_text(row):
+                def announcement_text(row):
                     return " ".join(str(first(row, names)) for names in (
                         ["subject", "purpose", "description", "desc", "attchmntText", "details", "relatingTo"],
                         ["company", "companyname", "sm_name"]
                     )).lower()
+                def row_date(row):
+                    return pd.to_datetime(first(row, [
+                        "broadcastDateTime", "broadcastDate", "broadcast_date",
+                        "exchdisstime", "an_dt", "sort_date", "sortdate", "dt", "date"
+                    ]), errors="coerce", dayfirst=True, utc=True)
+                start_ts = pd.Timestamp(start, tz="UTC")
+                end_ts = pd.Timestamp(end + timedelta(days=1), tz="UTC")
+                in_window = []
+                for row in rows:
+                    stamp = row_date(row)
+                    if pd.notna(stamp) and start_ts <= stamp < end_ts:
+                        in_window.append(row)
+                rows = in_window
                 if endpoint == RESULTS_URL:
-                    rows = [r for r in rows if re.search(
-                        r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter",
-                        subject_text(r))]
+                    rows = [r for r in rows
+                            if re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter|integrated filing.*financial", announcement_text(r))
+                            and not re.search(r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing|board meeting", announcement_text(r))
+                            and bool(first(r, ["periodEndDate", "period_ended", "periodEnded", "period_end", "quarterEndDate", "toDate", "period"]))]
                 elif endpoint == MEETINGS_URL:
-                    rows = [r for r in rows if re.search(r"board meeting|meeting of the board", subject_text(r))]
+                    rows = [r for r in rows if re.search(r"board meeting|meeting of the board", announcement_text(r))]
             if rows:
                 return rows, response.url, payload
-            failures.append(f"{candidate}: no recognizable rows for requested event class")
+            failures.append(f"{candidate}: no recognizable rows for requested event class/window")
         except Exception as exc:
             failures.append(f"{candidate}: {type(exc).__name__}: {exc}")
-    raise RuntimeError("All NSE endpoints failed or returned no matching rows: " + " | ".join(failures))
+    raise RuntimeError("All NSE endpoints failed or returned no matching structured rows: " + " | ".join(failures))
 
 def pct_change(current, previous):
     try:
@@ -286,7 +308,7 @@ def main():
             target.extend(normalized)
             for item in normalized:
                 fields = {
-                    "source_url": bool(re.match(r"^https://www\\.nseindia\\.com/", str(item.get("SOURCE_URL", "")))),
+                    "source_url": bool(re.match(r"^https://(?:www\\.)?nseindia\\.com/|^https://nsearchives\\.nseindia\\.com/", str(item.get("SOURCE_URL", "")))),
                     "publication_timestamp": bool(parse_date(item.get("BROADCAST_AT"))),
                     "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()),
                     "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
