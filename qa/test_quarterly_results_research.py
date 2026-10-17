@@ -118,5 +118,53 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             self.assertFalse(bool(features.iloc[0]["FINANCIALS_STATUS"] == "BLOCKED_MISSING_SOURCE_URL"))
 
 
+    def test_run121_four_invalid_disclosures_preserve_provenance_and_unknown(self):
+        """Exact Run #121 filing metadata; never guess a missing period."""
+        cases = [
+            ("MWL", "INE0JYY01011", "15-Oct-2026 19:27:10",
+             "Submission of standalone and consolidated Unaudited Financial Results of the Company for the Quarter and half year ended on September 30, 2026.",
+             "MWL_15102026192701_OUTCOMEOFBM15102026FINALSIGNED.pdf", "2026-09-30"),
+            ("ADROITIND", "INE505M01015", "12-Oct-2026 15:38:52",
+             "Outcome and financial results",
+             "ADROIT_12102026153818_Outcome_of_Board_Meeting.pdf", ""),
+            ("PRANAV", "INE0H4201019", "01-Oct-2026 19:48:20",
+             "Integrated Filing (Financials) for the quarter ended 30th June, 2026",
+             "PCPL_01102026194801_Integrated_Filing_Financials_Q1_30_June_2026.pdf", "2026-06-30"),
+            ("TEMPSENS", "INE1KZI01025", "16-Sep-2026 19:26:26",
+             "Unaudited Financial Results Standalone and Consolidated  for the Quarter ended 30th June, 2026",
+             "TEMPSENS_16092026192542_Outcome__-_Copy.pdf", "2026-06-30"),
+        ]
+        for symbol, isin, timestamp, attachment_text, filename, expected_period in cases:
+            with self.subTest(symbol=symbol):
+                url = "https://nsearchives.nseindia.com/corporate/" + filename
+                row = {"symbol": symbol, "sm_isin": isin, "an_dt": timestamp,
+                       "desc": "Integrated Filing- Financial",
+                       "attchmntText": attachment_text, "attchmntFile": url}
+                normalized = stage.normalize_event(
+                    row, "RESULT_DISCLOSURE",
+                    "https://www.nseindia.com/api/corporate-announcements")
+                self.assertEqual(normalized["SYMBOL"], symbol)
+                self.assertEqual(normalized["ISIN"], isin)
+                self.assertEqual(normalized["SOURCE_URL"], url)
+                self.assertTrue(normalized["BROADCAST_AT"])
+                self.assertEqual(normalized["PERIOD_END"], expected_period)
+                self.assertEqual(normalized["RESULT_DECLARED"], bool(expected_period))
+                self.assertEqual(normalized["SOURCE_RECORD_SHA256"], stage.digest(row))
+
+    def test_period_aliases_are_explicit_and_conflicts_remain_unknown(self):
+        examples = [
+            ("quarter ended 30th June, 2026", "2026-06-30"),
+            ("half-year ended on September 30, 2026", "2026-09-30"),
+            ("period ended 2026-09-30", "2026-09-30"),
+            ("financial year ended 31 March 2026", "2026-03-31"),
+            ("quarter ended June 30, 2026 and half year ended September 30, 2026", ""),
+            ("Q1 2026-27 results", ""),
+        ]
+        for text, expected in examples:
+            with self.subTest(text=text):
+                self.assertEqual(stage.parse_reporting_period({"attchmntText": text}), expected)
+
+
+
 if __name__ == "__main__":
     unittest.main()
