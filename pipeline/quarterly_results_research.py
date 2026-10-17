@@ -82,6 +82,15 @@ def normalize_event(row, kind, source_url):
     broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "an_dt", "sort_date", "sortdate", "dt", "dateandtime", "date"]))
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
     period = str(first(row, ["periodended", "period_end", "periodenddate", "quarterenddate", "financialperiod", "quarterended", "toDate", "period"])).strip()
+    if not period:
+        period_text = " ".join(str(first(row, names)) for names in (
+            ["attchmntText", "subject", "purpose", "description", "desc", "relatingTo"],))
+        period_match = re.search(
+            r"(?:period|quarter|half year|year)\\s+ended\\s+(\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Za-z]+\\s+\\d{4}|[A-Za-z]+\\s+\\d{1,2},?\\s+\\d{4}|\\d{1,2}[-/][A-Za-z]{3,9}[-/]\\d{4})",
+            period_text, flags=re.IGNORECASE)
+        if period_match:
+            parsed_period = pd.to_datetime(re.sub(r"(?i)(st|nd|rd|th)", "", period_match.group(1)), errors="coerce", dayfirst=True)
+            period = "" if pd.isna(parsed_period) else parsed_period.date().isoformat()
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "detailsurl", "xbrlurl", "pdfurl", "xbrl", "fileurl"])).strip()
     text = (subject + " " + company).lower()
     excluded = bool(re.search(r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing|board meeting", text))
@@ -144,7 +153,7 @@ def fetch_nse(endpoint, start, end):
                     rows = [r for r in rows
                             if re.search(r"financial results|quarterly results|half year results|unaudited financial|audited financial results|results for the quarter|integrated filing.*financial", announcement_text(r))
                             and not re.search(r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing|board meeting", announcement_text(r))
-                            and bool(first(r, ["periodEndDate", "period_ended", "periodEnded", "period_end", "quarterEndDate", "toDate", "period"]))]
+                            ]
                 elif endpoint == MEETINGS_URL:
                     rows = [r for r in rows if re.search(r"board meeting|meeting of the board", announcement_text(r))]
             if rows:
@@ -310,7 +319,7 @@ def main():
                 fields = {
                     "source_url": (str(item.get("SOURCE_URL", "")).startswith("https://www.nseindia.com/") or str(item.get("SOURCE_URL", "")).startswith("https://nsearchives.nseindia.com/")),
                     "publication_timestamp": bool(parse_date(item.get("BROADCAST_AT"))),
-                    "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()),
+                    "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()) if kind == "RESULT_DISCLOSURE" else True,
                     "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
                     "isin": bool(re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}[0-9]", str(item.get("ISIN", "")))),
                 }
