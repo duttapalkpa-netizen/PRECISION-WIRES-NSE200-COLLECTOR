@@ -15,6 +15,7 @@ import hashlib, json, re, zipfile, io
 import requests
 import pandas as pd
 import xml.etree.ElementTree as ET
+from pypdf import PdfReader
 
 ROOT=Path(".")
 DISC=ROOT/"data/raw/quarterly_results_disclosures.csv"
@@ -84,6 +85,25 @@ def parse_xbrl(blob):
                 "start_date":date_iso(period.get("startdate","")),"instant":bool(period.get("instant")),
                 "unit":node.attrib.get("unitRef","")})
  return facts
+def parse_pdf_text(blob):
+ """Extract selectable PDF text; scanned/image-only PDFs remain blocked, never OCR-guessed."""
+ try:
+  reader=PdfReader(io.BytesIO(blob))
+  return "\\n".join((page.extract_text() or "") for page in reader.pages)
+ except Exception:
+  return ""
+def pdf_evidence_lines(text):
+ """Capture candidate lines around financial labels for auditable manual review."""
+ lines=[re.sub(r"\\s+"," ",x).strip() for x in text.splitlines() if x.strip()]
+ patterns={
+  "REVENUE":re.compile(r"revenue from operations|total income|income from operations",re.I),
+  "PAT":re.compile(r"profit/(?:loss )?for the period|profit for the year|net profit|profit after tax",re.I),
+  "EPS":re.compile(r"earnings per share|basic and diluted|basic earnings per share",re.I),
+ }
+ found={}
+ for metric,pat in patterns.items():
+  found[metric]=[{"line_index":i,"text":line} for i,line in enumerate(lines) if pat.search(line)][:20]
+ return {"line_count":len(lines),"text_chars":len(text),"metric_candidates":found}
 def choose(facts, aliases, period, instant_preference=False):
  terms={re.sub(r"[^a-z0-9]","",x.lower()) for x in aliases}
  cand=[f for f in facts if re.sub(r"[^a-z0-9]","",f["tag"]) in terms and f["period_end"]==period]
@@ -121,11 +141,22 @@ def main():
    attempted+=1
    try:
     resp=sess.get(url,timeout=(8,35)); resp.raise_for_status()
-    blob=resp.content; digest=sha(blob)
-    suffix=".xbrl" if ("xml" in resp.headers.get("Content-Type","").lower() or blob.lstrip().startswith(b"<?xml")) else ".bin"
+    blob=resp.content; digest=sha(blob); ctype=resp.headers.get("Content-Type","")
+    is_pdf=("pdf" in ctype.lower() or blob.startswith(b"%PDF"))
+    is_xml=("xml" in ctype.lower() or blob.lstrip().startswith(b"<?xml"))
+    suffix=".pdf" if is_pdf else ".xbrl" if is_xml else ".bin"
     ev=EVIDENCE/(digest+suffix)
     if not ev.exists(): ev.write_bytes(blob)
+    evidence_path=str(ev); source_digest=digest; source_content_type=ctype
     facts=parse_xbrl(blob)
+    if is_pdf:
+     pdf_text=parse_pdf_text(blob)
+     text_path=EVIDENCE/(digest+".txt")
+     if pdf_text and not text_path.exists(): text_path.write_text(pdf_text,encoding="utf-8")
+     evidence_path=str(ev)
+     pdf_candidates={"source_url":url,"sha256":digest,"text_path":str(text_path) if pdf_text else "",
+      "text_extraction":pdf_evidence_lines(pdf_text),"status":"TEXT_EXTRACTED_REQUIRES_CONTEXTUAL_VALIDATION" if pdf_text else "BLOCKED_SCANNED_OR_UNREADABLE_PDF"}
+     if not facts: errors.append({"symbol":symbol,"url":url,"reason":pdf_candidates["status"],"pdf_text_chars":len(pdf_text),"pdf_candidates":pdf_candidates})
     if not period:
      # Only use a period explicitly represented in the downloaded XBRL contexts;
      # never infer from the filing timestamp.
@@ -153,8 +184,9 @@ def main():
   if not extracted:
    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"","SOURCE_URL":links[0] if links else norm_url(r.get("SOURCE_URL","")),
     "DISCLOSED_AT":disclosed_at,"REVENUE":"","PAT":"","EPS":"","REVENUE_FACT":"","PAT_FACT":"","EPS_FACT":"",
-    "SOURCE_SHA256":"","SOURCE_CONTENT_TYPE":"","EXTRACTION_STATUS":"BLOCKED_NO_VERIFIED_XBRL_METRICS",
-    "EVIDENCE_PATH":"","OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+    "SOURCE_SHA256":source_digest,"SOURCE_CONTENT_TYPE":source_content_type,
+    "EXTRACTION_STATUS":"BLOCKED_NO_VERIFIED_XBRL_METRICS",
+    "EVIDENCE_PATH":evidence_path,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
  result=pd.DataFrame(out,columns=FIELDS)
  # No ambiguous duplicates can silently pass into the feature builder.
  if not result.empty:
@@ -170,7 +202,9 @@ def main():
   "attachment_attempts":attempted,"ledger_rows":len(result),"verified_metric_rows":valid,
   "blocked_rows":int(len(result)-valid),"ledger_path":str(OUT),"evidence_dir":str(EVIDENCE),
   "required_provenance":["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENUE","PAT","EPS","SOURCE_SHA256","fact tags and context refs"],
-  "policy":"No PDF OCR guessing or headline-derived values; unparsed PDF/XBRL facts stay BLOCKED; source timestamp and basis must be explicit.",
+  "policy":"No PDF OCR guessing or headline-derived values; PDF text candidates are evidence only until symbol, period, basis, units and table columns are unambiguously verified; unparsed facts stay BLOCKED.",
+  "pdf_text_extraction_attempts":sum(1 for e in errors if "pdf_candidates" in e),
+  "pdf_candidate_diagnostics":[e["pdf_candidates"] for e in errors if "pdf_candidates" in e][:20],
   "errors":errors[:100]}
  REPORT.write_text(json.dumps(report,indent=2),encoding="utf-8")
  print(json.dumps(report,indent=2)); return 0
