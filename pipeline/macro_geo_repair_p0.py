@@ -18,24 +18,39 @@ REPORT=Path("outputs/macro_geo/p0_repair_report.json"); REPORT.parent.mkdir(pare
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/132 Safari/537.36"
 def fred(series_id,label,outfile):
  url="https://fred.stlouisfed.org/graph/fredgraph.csv"
- r=requests.get(url,params={"id":series_id,"cosd":"2006-01-01","coed":datetime.now(timezone.utc).date().isoformat()},
-  headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"},timeout=45)
- r.raise_for_status(); df=pd.read_csv(StringIO(r.content.decode("utf-8-sig",errors="replace")))
- if not {"observation_date",series_id}.issubset({str(c).lower() for c in df.columns}):
-  # FRED may uppercase DATE or series identifier; normalize then check.
+ rows=[]; urls=[]; cursor=pd.Timestamp("2006-01-01").date(); end_date=datetime.now(timezone.utc).date()
+ sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+ while cursor<=end_date:
+  chunk_end=min(end_date,cursor+pd.Timedelta(days=365*4).to_pytimedelta())
+  response=None; last_error=None
+  for timeout in (20,35):
+   try:
+    response=sess.get(url,params={"id":series_id,"cosd":cursor.isoformat(),"coed":chunk_end.isoformat()},
+      headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"},timeout=(8,timeout))
+    response.raise_for_status(); break
+   except Exception as exc:
+    last_error=exc; response=None
+  if response is None: raise RuntimeError(f"FRED {series_id} failed {cursor}..{chunk_end}: {type(last_error).__name__}: {last_error}")
+  df=pd.read_csv(StringIO(response.content.decode("utf-8-sig",errors="replace")))
   df.columns=[str(c).strip().upper() for c in df.columns]
   datecol=next((c for c in df if c in ("DATE","OBSERVATION_DATE")),None)
   valcol=next((c for c in df if c==series_id.upper()),None)
- else:
-  df.columns=[str(c).strip().upper() for c in df.columns]; datecol="OBSERVATION_DATE"; valcol=series_id.upper()
- if not datecol or not valcol: raise RuntimeError("FRED schema mismatch: "+str(list(df.columns)))
- out=pd.DataFrame({"DATE":pd.to_datetime(df[datecol],errors="coerce").dt.date.astype("string"),
-  "CLOSE":pd.to_numeric(df[valcol],errors="coerce"),"SERIES":label,"SOURCE":"FRED",
-  "SOURCE_SERIES":series_id,"SOURCE_URL":r.url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
- out=out.dropna(subset=["DATE","CLOSE"]); out=out[out.CLOSE>0].drop_duplicates(["DATE","SERIES"])
+  if not datecol or not valcol: raise RuntimeError("FRED schema mismatch: "+str(list(df.columns)))
+  urls.append(response.url)
+  for _,row in df.iterrows():
+   dt=pd.to_datetime(row[datecol],errors="coerce")
+   value=pd.to_numeric(pd.Series([row[valcol]]),errors="coerce").iloc[0]
+   if pd.isna(dt) or pd.isna(value) or not cursor<=dt.date()<=chunk_end: continue
+   rows.append({"DATE":dt.date().isoformat(),"CLOSE":float(value),"SERIES":label,"SOURCE":"FRED",
+    "SOURCE_SERIES":series_id,"SOURCE_URL":response.url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+  cursor=chunk_end+pd.Timedelta(days=1).to_pytimedelta()
+ out=pd.DataFrame(rows)
+ if not out.empty: out=out.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
  if out.empty: raise RuntimeError("FRED returned zero valid rows")
  out.to_csv(RAW/outfile,index=False)
- return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),"source":"FRED "+series_id,"url":r.url,"path":str(RAW/outfile)}
+ return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),
+  "source":"FRED "+series_id,"url":";".join(urls),"path":str(RAW/outfile)}
+
 def main():
  report={"observed_at_utc":datetime.now(timezone.utc).isoformat(),"groups":{},"policy":"Secondary series remain explicitly labelled; no missing values are fabricated."}
  for name,series,label,file in [("crude_oil","DCOILBRENTEU","BRENT_CRUDE_USD_PER_BBL","brent_crude.csv"),("usd_inr","DEXINUS","USD_INR_INR_PER_USD","usd_inr.csv")]:
