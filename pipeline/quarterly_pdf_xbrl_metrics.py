@@ -106,9 +106,11 @@ def pdf_evidence_lines(text):
  return {"line_count":len(lines),"text_chars":len(text),"metric_candidates":found}
 def choose(facts, aliases, period, instant_preference=False):
  terms={re.sub(r"[^a-z0-9]","",x.lower()) for x in aliases}
- cand=[f for f in facts if re.sub(r"[^a-z0-9]","",f["tag"]) in terms and f["period_end"]==period]
+ # Reject facts without an explicit unit/context. Revenue and PAT must be duration
+ # facts; EPS may be duration-based but never inferred from a presentation table.
+ cand=[f for f in facts if re.sub(r"[^a-z0-9]","",f["tag"]) in terms
+       and f["period_end"]==period and f.get("unit") and f.get("context")]
  if not cand: return None
- # Prefer duration facts for revenue/PAT and instant facts only when explicitly applicable.
  if instant_preference: cand.sort(key=lambda f:(not f["instant"],f["tag"]))
  else: cand.sort(key=lambda f:(f["instant"],f["tag"]))
  return cand[0]
@@ -130,7 +132,7 @@ def main():
   disclosed=pd.to_datetime(r.get("BROADCAST_AT",""),errors="coerce",utc=True)
   disclosed_at="" if pd.isna(disclosed) else disclosed.isoformat()
   links=[]
-  for key in ("xbrl","xbrlurl","xbrlfile","xbrlFile","attchmntfile","attachment","attachmenturl","detailsurl","pdfurl","fileurl"):
+  for key in ("xbrl","xbrlurl","xbrlfile","xbrlfileurl","xbrlfilepath","xbrlattachment","xbrlattachmenturl","attchmntfile","attachment","attachmenturl","detailsurl","pdfurl","fileurl"):
    for k,v in raw.items():
     if k.lower()==key.lower() and v:
      u=norm_url(v)
