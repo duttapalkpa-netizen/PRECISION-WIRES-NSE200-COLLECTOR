@@ -46,6 +46,27 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertEqual(report["status"], "BLOCKED")
         self.assertFalse(report["checks"]["result_schema_fields_present"])
 
+
+    def test_integrated_financials_route_variants_are_tried_before_announcement_fallback(self):
+        from unittest.mock import MagicMock
+        session = MagicMock()
+        def get(url, params=None, **kwargs):
+            response = MagicMock()
+            response.url = url
+            response.raise_for_status.return_value = None
+            response.json.return_value = ([{"symbol":"ABC","xbrlFileUrl":"https://example.test/a.xbrl"}]
+                                          if params and params.get("integratedType") == "integratedfilingfinancials"
+                                          else [])
+            return response
+        session.get.side_effect = get
+        with patch.object(stage.requests, "Session", return_value=session):
+            rows, url, payload = stage.fetch_nse(
+                stage.RESULTS_URL, pd.Timestamp("2026-10-01").date(),
+                pd.Timestamp("2026-10-17").date())
+        self.assertTrue(rows)
+        self.assertIn("corporate-integrated-filings", url)
+        self.assertEqual(rows[0]["symbol"], "ABC")
+
     def test_board_meeting_is_not_a_declared_result(self):
         row = {
             "symbol": "ABC", "companyName": "ABC Limited",
