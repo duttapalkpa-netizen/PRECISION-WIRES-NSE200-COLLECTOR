@@ -26,6 +26,7 @@ INTEGRATED_RESULTS_URL = NSE_HOME + "/api/corporate-integrated-filings"
 MEETINGS_URL = NSE_HOME + "/api/corporate-boardMeetings"
 ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporate-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
+FETCH_DIAGNOSTICS = []
 EVENT_COLUMNS = ["SYMBOL", "ISIN", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
 REQUIRED_METRICS = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT",
                     "REVENUE", "PAT", "EPS"}
@@ -184,13 +185,29 @@ def fetch_nse(endpoint, start, end):
     else:
         candidates = [(endpoint, {})]
     failures = []
+    FETCH_DIAGNOSTICS.clear()
     for candidate, extra_params in candidates:
+        diagnostic = {"endpoint": candidate, "params": {**params, **extra_params}}
         try:
             request_params = {**params, **extra_params}
             response = session.get(candidate, params=request_params, timeout=(5, 30))
+            diagnostic["http_status"] = getattr(response, "status_code", None)
+            diagnostic["response_url"] = getattr(response, "url", candidate)
             response.raise_for_status()
             payload = response.json()
             rows = records_from(payload)
+            diagnostic["response_type"] = type(payload).__name__
+            diagnostic["row_count"] = len(rows)
+            diagnostic["sample_keys"] = sorted(list(rows[0].keys()))[:80] if rows else []
+            if endpoint == RESULTS_URL and candidate == INTEGRATED_RESULTS_URL:
+                xbrl_aliases = ("xbrlurl", "xbrlfileurl", "xbrlfilepath", "xbrlattachmenturl", "ixbrlurl", "xbrllink")
+                diagnostic["rows_with_xbrl_url"] = sum(bool(first(row, list(xbrl_aliases))) for row in rows)
+                # A non-empty grid response without an XBRL link is not sufficient
+                # for the verified-financial-metrics pipeline. Keep probing routes.
+                if rows and not diagnostic["rows_with_xbrl_url"]:
+                    FETCH_DIAGNOSTICS.append(diagnostic)
+                    failures.append(f"{candidate}: {len(rows)} rows but no explicit XBRL URL field")
+                    continue
             if candidate == ANNOUNCEMENTS_URL:
                 def announcement_text(row):
                     return " ".join(str(first(row, names)) for names in (
@@ -217,10 +234,14 @@ def fetch_nse(endpoint, start, end):
                             ]
                 elif endpoint == MEETINGS_URL:
                     rows = [r for r in rows if re.search(r"board meeting|meeting of the board", announcement_text(r))]
+            diagnostic["filtered_row_count"] = len(rows)
+            FETCH_DIAGNOSTICS.append(diagnostic)
             if rows:
                 return rows, response.url, payload
             failures.append(f"{candidate}: no recognizable rows for requested event class/window")
         except Exception as exc:
+            diagnostic["error"] = f"{type(exc).__name__}: {exc}"
+            FETCH_DIAGNOSTICS.append(diagnostic)
             failures.append(f"{candidate}: {type(exc).__name__}: {exc}")
     raise RuntimeError("All NSE endpoints failed or returned no matching structured rows: " + " | ".join(failures))
 
@@ -397,7 +418,8 @@ def main():
     end = datetime.now(timezone.utc).date()
     start = end - timedelta(days=45)
     manifest = {"observed_at_utc": now_utc(), "window_start": start.isoformat(), "window_end": end.isoformat(),
-                "primary_source": "NSE India corporate filings API", "sources": {}, "production_selector_changed": False}
+                "primary_source": "NSE India corporate filings API", "sources": {}, "production_selector_changed": False,
+                "integrated_filing_route_diagnostics": []}
     result_events, calendar_events = [], []
     validation_rows = []
     raw_dir = RAW / "quarterly_results_raw_responses"
@@ -408,7 +430,9 @@ def main():
     ):
         try:
             raw, source_url, payload = fetch_nse(endpoint, start, end + (timedelta(days=30) if kind == "BOARD_MEETING" else timedelta(0)))
-            raw_path = raw_dir / ("".join(ch.lower() if ch.isalnum() else "_" for ch in kind) + ".json")
+            if kind == "RESULT_DISCLOSURE":
+                manifest["integrated_filing_route_diagnostics"] = list(FETCH_DIAGNOSTICS)
+            raw_path = ("".join(ch.lower() if ch.isalnum() else "_" for ch in kind) + ".json")
             raw_path.write_text(json.dumps({"request_url": source_url, "observed_at_utc": now_utc(), "payload": payload}, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
             normalized = [normalize_event(row, kind, source_url) for row in raw]
             target.extend(normalized)
@@ -423,6 +447,8 @@ def main():
                 validation_rows.append({"EVENT_KIND": kind, "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
             manifest["sources"][kind] = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url, "raw_response_file": str(raw_path)}
         except Exception as exc:
+            if kind == "RESULT_DISCLOSURE":
+                manifest["integrated_filing_route_diagnostics"] = list(FETCH_DIAGNOSTICS)
             manifest["sources"][kind] = {"status": "UNKNOWN", "error": f"{type(exc).__name__}: {exc}"}
         time.sleep(0.2)
     validation_path = OUT / "source_validation_report.csv"
