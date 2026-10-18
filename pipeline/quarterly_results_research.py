@@ -158,7 +158,14 @@ def fetch_nse(endpoint, start, end):
     params = {"index": "equities", "from_date": start.strftime("%d-%m-%Y"),
               "to_date": end.strftime("%d-%m-%Y")}
     if endpoint == RESULTS_URL:
+        # NSE's Integrated Filing - Financials UI has used both the human-readable
+        # and machine token for integratedType. Try both official route variants
+        # before falling back to general announcements, which do not expose the
+        # structured XBRL link/context fields required for financial metrics.
         candidates = [
+            (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing- Financials", "tabIndex": "equity"}),
+            (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing - Financials", "tabIndex": "equity"}),
+            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity"}),
             (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials"}),
             (RESULTS_URL, {}),
             (ANNOUNCEMENTS_URL, {}),
