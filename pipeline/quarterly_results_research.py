@@ -162,11 +162,20 @@ def fetch_nse(endpoint, start, end):
         # and machine token for integratedType. Try both official route variants
         # before falling back to general announcements, which do not expose the
         # structured XBRL link/context fields required for financial metrics.
+        # NSE's integrated-filings grid has had multiple query contracts across
+        # releases. Try the known UI variants (including equity/equities index,
+        # blank symbol, and explicit first-page pagination) before using the
+        # announcement API, whose attachment is usually only a PDF.
         candidates = [
             (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing- Financials", "tabIndex": "equity"}),
             (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing - Financials", "tabIndex": "equity"}),
             (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity"}),
+            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity", "symbol": ""}),
+            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity", "symbol": "", "page": "0", "size": "500"}),
+            (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing- Financials", "tabIndex": "equity", "symbol": "", "page": "0", "size": "500"}),
+            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "index": "equity", "tabIndex": "equity"}),
             (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials"}),
+            (INTEGRATED_RESULTS_URL, {"tabIndex": "equity", "symbol": "", "page": "0", "size": "500"}),
             (RESULTS_URL, {}),
             (ANNOUNCEMENTS_URL, {}),
         ]
