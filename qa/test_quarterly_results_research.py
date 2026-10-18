@@ -67,6 +67,35 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertIn("corporate-integrated-filings", url)
         self.assertEqual(rows[0]["symbol"], "ABC")
 
+    def test_integrated_rows_without_xbrl_url_are_not_accepted_as_structured_financial_source(self):
+        from unittest.mock import MagicMock
+        session = MagicMock()
+        def get(url, params=None, **kwargs):
+            response = MagicMock()
+            response.url = url
+            response.status_code = 200
+            response.raise_for_status.return_value = None
+            if "corporate-integrated-filings" in url and params and params.get("integratedType") == "integratedfilingfinancials":
+                response.json.return_value = [{"symbol": "ABC", "quarterEndDate": "30-Sep-2026"}]
+            elif "corporate-announcements" in url:
+                response.json.return_value = [{"symbol": "ABC", "attchmntFile": "https://nsearchives.nseindia.com/corporate/a.pdf",
+                                               "an_dt": "16-Oct-2026", "attchmntText": "financial results"}]
+            else:
+                response.json.return_value = []
+            return response
+        session.get.side_effect = get
+        with patch.object(stage.requests, "Session", return_value=session):
+            rows, url, payload = stage.fetch_nse(
+                stage.RESULTS_URL, pd.Timestamp("2026-10-01").date(),
+                pd.Timestamp("2026-10-17").date())
+        self.assertIn("corporate-announcements", url)
+        diag = [d for d in stage.FETCH_DIAGNOSTICS if "corporate-integrated-filings" in d["endpoint"]]
+        self.assertTrue(diag)
+        self.assertTrue(all(d.get("rows_with_xbrl_url", 0) == 0 for d in diag if d.get("row_count", 0)))
+        self.assertTrue(any("no explicit XBRL URL field" in x for x in [
+            f for d in diag for f in ([d.get("error", "")] + [str(d.get("row_count", ""))])
+        ]) or any(d.get("row_count", 0) > 0 for d in diag))
+
     def test_integrated_financials_explicit_page_query_is_tried_before_pdf_fallback(self):
         from unittest.mock import MagicMock
         session = MagicMock()
