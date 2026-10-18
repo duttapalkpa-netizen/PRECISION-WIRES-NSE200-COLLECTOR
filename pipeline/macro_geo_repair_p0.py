@@ -40,9 +40,9 @@ def fred(series_id,label,outfile):
  rows=[]; urls=[]; cursor, end_date=p0_window()
  sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
  while cursor<=end_date:
-  chunk_end=min(end_date,cursor+timedelta(days=89))
+  chunk_end=min(end_date,cursor+timedelta(days=29))
   response=None; last_error=None
-  for timeout in (20,35):
+  for timeout in (12,20):
    try:
     response=sess.get(url,params={"id":series_id,"cosd":cursor.isoformat(),"coed":chunk_end.isoformat()},
       headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"},timeout=(8,timeout))
@@ -91,15 +91,19 @@ def main():
      return next((row.get(k) for k in keys if row.get(k) not in (None,"")), "")
     symbol=pick("symbol","sm_symbol","ticker"); desc=pick("subject","purpose","description","desc","attchmntText")
     stamp=pick("broadcastDateTime","broadcastDate","broadcast_date","an_dt","sort_date","date")
+    stamp_parsed=pd.to_datetime(stamp,errors="coerce",dayfirst=True,utc=True)
+    if pd.isna(stamp_parsed): continue
+    stamp=stamp_parsed.isoformat()
+    event_date=stamp_parsed.date().isoformat()
     link=pick("attchmntFile","attachment","attachmentUrl","detailsUrl","xbrl","pdfUrl")
     if symbol and desc and stamp and link:
      if str(link).startswith("/"): link="https://www.nseindia.com"+str(link)
-     normalized.append({"DATE":stamp,"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),"PUBLISHED_AT":stamp,
+     normalized.append({"DATE":event_date,"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),"PUBLISHED_AT":stamp,
       "SOURCE_URL":str(link),"SOURCE":"NSE corporate announcements"})
    ev=pd.DataFrame(normalized)
    if not ev.empty:
     ev.to_csv(RAW/"corporate_events.csv",index=False)
-    report["groups"]["corporate_events"]={"status":"AVAILABLE","rows":len(ev),"path":str(RAW/"corporate_events.csv"),"source":"NSE corporate announcements","note":"Timestamp and URL retained; raw filing rows only."}
+    report["groups"]["corporate_events"]={"status":"AVAILABLE","rows":len(ev),"path":str(RAW/"corporate_events.csv"),"source":"NSE corporate announcements","note":"Publication timestamps normalized to ISO-8601 UTC; source URL retained. Event semantics still require downstream classification."}
    else: report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"reason":"No rows with symbol, description, publication timestamp and attachment URL"}
   except Exception as e: report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"error":type(e).__name__+": "+str(e)[:250]}
  else: report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"reason":"NSE raw disclosure response missing"}
