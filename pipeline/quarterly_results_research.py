@@ -124,24 +124,44 @@ def security_isin(symbol, row):
     global _SECURITY_ISIN_MAP
     if _SECURITY_ISIN_MAP is None:
         _SECURITY_ISIN_MAP = {}
-        candidates = [
-            ROOT / "data/reference/security_master.csv",
-        ]
-        for path in candidates:
-            try:
-                if path.exists():
-                    master = pd.read_csv(path, dtype=str).fillna("")
-                    master.columns = [str(c).strip().upper() for c in master.columns]
-                    sym_col = "SYMBOL" if "SYMBOL" in master.columns else None
-                    isin_col = "ISIN" if "ISIN" in master.columns else ("ISIN NUMBER" if "ISIN NUMBER" in master.columns else None)
-                    if sym_col and isin_col:
-                        _SECURITY_ISIN_MAP.update({
-                            str(rr[sym_col]).strip().upper(): str(rr[isin_col]).strip().upper()
-                            for _, rr in master.iterrows() if str(rr[isin_col]).strip()
-                        })
-                        break
-            except Exception:
-                continue
+        # Official historical evidence is checked before the current NSE master,
+        # because delisted/legacy symbols may no longer appear in today's master.
+        evidence_path = ROOT / "data/reference/historical_security_isin_evidence.csv"
+        try:
+            if evidence_path.exists():
+                evidence = pd.read_csv(evidence_path, dtype=str).fillna("")
+                evidence.columns = [str(c).strip().upper() for c in evidence.columns]
+                if {"SYMBOL", "ISIN", "SOURCE_URL", "EVIDENCE_TYPE"}.issubset(evidence.columns):
+                    for _, rr in evidence.iterrows():
+                        symbol_key = str(rr["SYMBOL"]).strip().upper()
+                        isin_value = str(rr["ISIN"]).strip().upper()
+                        source_url = str(rr["SOURCE_URL"]).strip()
+                        evidence_type = str(rr["EVIDENCE_TYPE"]).strip().upper()
+                        if (symbol_key and isin_value and source_url.startswith("https://nsearchives.nseindia.com/")
+                                and evidence_type in {"OFFICIAL_NSE_IXBRL", "OFFICIAL_NSE_PRESS_RELEASE", "OFFICIAL_NSE_CIRCULAR"}):
+                            # Conflicting official identifiers remain unresolved.
+                            existing = _SECURITY_ISIN_MAP.get(symbol_key)
+                            if existing and existing != isin_value:
+                                _SECURITY_ISIN_MAP.pop(symbol_key, None)
+                            elif symbol_key not in _SECURITY_ISIN_MAP:
+                                _SECURITY_ISIN_MAP[symbol_key] = isin_value
+        except Exception:
+            pass
+        master_path = ROOT / "data/reference/security_master.csv"
+        try:
+            if master_path.exists():
+                master = pd.read_csv(master_path, dtype=str).fillna("")
+                master.columns = [str(c).strip().upper() for c in master.columns]
+                sym_col = "SYMBOL" if "SYMBOL" in master.columns else None
+                isin_col = "ISIN" if "ISIN" in master.columns else ("ISIN NUMBER" if "ISIN NUMBER" in master.columns else None)
+                if sym_col and isin_col:
+                    for _, rr in master.iterrows():
+                        symbol_key = str(rr[sym_col]).strip().upper()
+                        isin_value = str(rr[isin_col]).strip().upper()
+                        if symbol_key and isin_value and symbol_key not in _SECURITY_ISIN_MAP:
+                            _SECURITY_ISIN_MAP[symbol_key] = isin_value
+        except Exception:
+            pass
         if not _SECURITY_ISIN_MAP:
             # Official NSE security master only; no inferred or third-party identifiers.
             for url in ("https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
