@@ -125,7 +125,7 @@ def main():
  result_rows=df[df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")].copy()
  if max_disclosures > 0 and len(result_rows) > max_disclosures:
   result_rows=result_rows.head(max_disclosures)
-  df=pd.concat([result_rows, df[~df.index.isin(result_rows.index)]], ignore_index=True)
+  df=pd.concat([result_rows, df[~df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")]], ignore_index=True)
  sess=requests.Session(); sess.headers.update(HEADERS)
  out=[]; errors=[]; attempted=0
  for _,r in df.iterrows():
