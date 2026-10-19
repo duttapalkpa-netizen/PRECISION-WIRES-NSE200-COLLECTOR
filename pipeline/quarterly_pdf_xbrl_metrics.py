@@ -43,7 +43,17 @@ def norm_url(value):
  if s.startswith("/"): return urljoin(NSE,s)
  return s if s.startswith("http") else ""
 def date_iso(v):
- d=pd.to_datetime(v,errors="coerce",dayfirst=True)
+ s=str(v or "").strip()
+ if not s:
+  return ""
+ # ISO dates must be parsed as year-month-day; pandas dayfirst=True can
+ # silently reinterpret 2026-04-01 as 2026-01-04 and corrupt XBRL contexts.
+ if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",s):
+  try:
+   return datetime.strptime(s,"%Y-%m-%d").date().isoformat()
+  except ValueError:
+   return ""
+ d=pd.to_datetime(s,errors="coerce",dayfirst=True)
  return "" if pd.isna(d) else d.date().isoformat()
 def get(row,*names):
  for n in names:
