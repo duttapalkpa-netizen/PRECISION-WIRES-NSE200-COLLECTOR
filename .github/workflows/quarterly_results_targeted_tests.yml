@@ -41,3 +41,31 @@ jobs:
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_reporting_period_alias_and_nse_attachment_source_are_preserved \
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_run121_four_invalid_disclosures_preserve_provenance_and_unknown \
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_period_aliases_are_explicit_and_conflicts_remain_unknown
+      - name: Run bounded live quarterly endpoint/schema audit only
+        run: |
+          python pipeline/quarterly_results_research.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("outputs/quarterly_results/quarterly_results_research_report.json")
+          if not p.exists():
+              raise SystemExit("BLOCKED: quarterly results report was not created")
+          report = json.loads(p.read_text(encoding="utf-8"))
+          print("ENDPOINT_SCHEMA_STEP_1=" + json.dumps(report.get("endpoint_schema_step_1", {}), sort_keys=True))
+          print("RECORD_SOURCE_VALIDATION=" + json.dumps(report.get("source_validation", {}), sort_keys=True))
+          print("FINANCIAL_METRICS=" + json.dumps(report.get("financial_metrics", {}), sort_keys=True))
+          print("RESEARCH_STATUS=" + str(report.get("status", "UNKNOWN")))
+          PY
+      - name: Upload bounded endpoint/schema report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarterly-endpoint-schema-audit
+          path: |
+            outputs/quarterly_results/quarterly_results_research_report.json
+            outputs/quarterly_results/source_validation_report.csv
+            outputs/quarterly_results/quarterly_financial_features.csv
+            data/raw/quarterly_results_disclosures.csv
+            data/raw/quarterly_results_calendar.csv
+            data/raw/quarterly_results_raw_responses/*.json
+          if-no-files-found: warn
