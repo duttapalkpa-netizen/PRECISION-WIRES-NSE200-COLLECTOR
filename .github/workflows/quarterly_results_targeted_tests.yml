@@ -58,6 +58,22 @@ jobs:
           print("FINANCIAL_METRICS=" + json.dumps(report.get("financial_metrics", {}), sort_keys=True))
           print("RESEARCH_STATUS=" + str(report.get("status", "UNKNOWN")))
           PY
+      - name: Run bounded source-linked XBRL metric extraction
+        env:
+          QUARTERLY_METRIC_MAX_DISCLOSURES: "12"
+        run: |
+          python pipeline/quarterly_pdf_xbrl_metrics.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("outputs/quarterly_results/filing_metric_extraction_report.json")
+          if not p.exists():
+              raise SystemExit("BLOCKED: metric extraction report missing")
+          r = json.loads(p.read_text(encoding="utf-8"))
+          print("METRIC_EXTRACTION=" + json.dumps({k:r.get(k) for k in ("status","input_result_disclosures","attachment_attempts","ledger_rows","verified_metric_rows","blocked_rows")}, sort_keys=True))
+          if int(r.get("attachment_attempts", 0)) > 24:
+              raise SystemExit("TIME_BUDGET_GUARD: attachment attempts exceeded bounded cap")
+          PY
       - name: Diagnose unresolved filing timestamps and ISINs from raw NSE metadata
         if: always()
         run: |
@@ -164,4 +180,7 @@ jobs:
             data/raw/quarterly_results_calendar.csv
             data/raw/quarterly_results_raw_responses/*.json
             outputs/quarterly_results/step2_root_cause_diagnostic.json
+            outputs/quarterly_results/filing_metric_extraction_report.json
+            data/raw/quarterly_financial_metrics.csv
+            data/raw/quarterly_filing_evidence/*
           if-no-files-found: warn
