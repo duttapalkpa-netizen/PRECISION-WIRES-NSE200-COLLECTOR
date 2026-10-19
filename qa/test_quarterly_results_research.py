@@ -305,5 +305,51 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
 
 
 
+
+    def test_missing_broadcast_does_not_fall_back_to_creation_or_revision_time(self):
+        row = {
+            "symbol": "ABC", "sm_isin": "INE123A01011",
+            "subject": "Unaudited financial results for the quarter ended September 30, 2026",
+            "qe_Date": "30-SEP-2026", "broadcast_Date": None,
+            "creation_Date": "16-Oct-2026 18:00:00",
+            "revised_Date": "17-Oct-2026 09:30:00",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/ABC.xbrl",
+        }
+        normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                           "https://www.nseindia.com/api/integrated-filing-results")
+        self.assertEqual(normalized["BROADCAST_AT"], "")
+        self.assertEqual(normalized["REVISION_TIMESTAMP"], "2026-10-17T09:30:00+00:00")
+        self.assertEqual(normalized["ORIGINAL_BROADCAST_AT"], "")
+        self.assertEqual(normalized["PERIOD_END"], "30-SEP-2026")
+
+    def test_revision_timestamp_is_preserved_separately_from_original_broadcast(self):
+        row = {
+            "symbol": "ABC", "sm_isin": "INE123A01011",
+            "subject": "Unaudited financial results for the quarter ended September 30, 2026",
+            "broadcast_Date": "16-Oct-2026 18:00:00",
+            "originalBroadcastDateTime": "16-Oct-2026 17:55:00",
+            "revised_Date": "17-Oct-2026 09:30:00",
+            "qe_Date": "30-SEP-2026",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/ABC.xbrl",
+        }
+        normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                           "https://www.nseindia.com/api/integrated-filing-results")
+        self.assertEqual(normalized["BROADCAST_AT"], "2026-10-16T18:00:00+00:00")
+        self.assertEqual(normalized["ORIGINAL_BROADCAST_AT"], "2026-10-16T17:55:00+00:00")
+        self.assertEqual(normalized["REVISION_TIMESTAMP"], "2026-10-17T09:30:00+00:00")
+
+    def test_unresolved_isin_remains_unknown_without_official_mapping(self):
+        row = {
+            "symbol": "LEGACYXYZ", "subject": "Unaudited financial results for the quarter ended September 30, 2026",
+            "broadcast_Date": "16-Oct-2026 18:00:00", "qe_Date": "30-SEP-2026",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/LEGACYXYZ.xbrl",
+        }
+        with patch.object(stage, "_SECURITY_ISIN_MAP", {}):
+            normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                               "https://www.nseindia.com/api/integrated-filing-results")
+        self.assertEqual(normalized["ISIN"], "")
+        self.assertTrue(normalized["BROADCAST_AT"])
+        self.assertEqual(normalized["RESULT_DECLARED"], True)
+
 if __name__ == "__main__":
     unittest.main()
