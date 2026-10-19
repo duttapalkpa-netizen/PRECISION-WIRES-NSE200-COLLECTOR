@@ -48,7 +48,7 @@ def date_iso(v):
   return ""
  # ISO dates must be parsed as year-month-day; pandas dayfirst=True can
  # silently reinterpret 2026-04-01 as 2026-01-04 and corrupt XBRL contexts.
- if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",s):
+ if re.fullmatch(r"\d{4}-\d{2}-\d{2}",s):
   try:
    return datetime.strptime(s,"%Y-%m-%d").date().isoformat()
   except ValueError:
