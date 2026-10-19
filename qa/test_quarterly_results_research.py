@@ -55,7 +55,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             response.url = url
             response.raise_for_status.return_value = None
             response.json.return_value = ([{"symbol":"ABC","xbrlFileUrl":"https://example.test/a.xbrl"}]
-                                          if params and params.get("integratedType") == "integratedfilingfinancials"
+                                          if params and params.get("type") == "Integrated Filing- Financials"
                                           else [])
             return response
         session.get.side_effect = get
@@ -75,7 +75,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             response.url = url
             response.status_code = 200
             response.raise_for_status.return_value = None
-            if "corporate-integrated-filings" in url and params and params.get("integratedType") == "integratedfilingfinancials":
+            if "corporate-integrated-filings" in url and params and params.get("type") == "Integrated Filing- Financials":
                 response.json.return_value = [{"symbol": "ABC", "quarterEndDate": "30-Sep-2026"}]
             elif "corporate-announcements" in url:
                 response.json.return_value = [{"symbol": "ABC", "attchmntFile": "https://nsearchives.nseindia.com/corporate/a.pdf",
@@ -111,8 +111,8 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                 "broadcastDateTime": "16-Oct-2026 20:00:00",
                 "xbrlFileUrl": "https://nsearchives.nseindia.com/corporate/ABC.xbrl"
             }] if params and params.get("size") == "500" and
-                 params.get("page") == "0" and
-                 params.get("integratedType") == "integratedfilingfinancials"
+                 params.get("page") == "1" and
+                 params.get("type") == "Integrated Filing- Financials"
                  else [])
             return response
         session.get.side_effect = get
@@ -122,7 +122,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                 pd.Timestamp("2026-10-17").date())
         self.assertTrue(rows)
         self.assertIn("corporate-integrated-filings", url)
-        self.assertTrue(any(p.get("size") == "500" and p.get("page") == "0" for _, p in seen))
+        self.assertTrue(any(p.get("size") == "500" and p.get("page") == "1" and p.get("type") == "Integrated Filing- Financials" for _, p in seen))
         self.assertIn("xbrlFileUrl", rows[0])
 
     def test_board_meeting_is_not_a_declared_result(self):
