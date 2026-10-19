@@ -146,7 +146,11 @@ def main():
   symbol=str(r.get("SYMBOL","") or "").strip().upper()
   isin=str(r.get("ISIN","") or "").strip().upper()
   period=date_iso(r.get("PERIOD_END",""))
-  disclosed=pd.to_datetime(r.get("BROADCAST_AT",""),errors="coerce",utc=True)
+  # Revision disclosures can lack BROADCAST_AT while the event normalizer
+  # preserves their explicit revision publication time separately. Use that
+  # timestamp for the revision event only; never infer from creation_Date.
+  disclosed_raw = r.get("PUBLICATION_TIMESTAMP", "") or r.get("BROADCAST_AT", "")
+  disclosed=pd.to_datetime(disclosed_raw,errors="coerce",utc=True)
   disclosed_at="" if pd.isna(disclosed) else disclosed.isoformat()
   links=[]
   for key in ("xbrl","xbrlurl","xbrlfile","xbrlfileurl","xbrlfilepath","xbrlattachment","xbrlattachmenturl","attchmntfile","attachment","attachmenturl","detailsurl","pdfurl","fileurl"):
@@ -184,6 +188,11 @@ def main():
      periods=sorted(set(f["period_end"] for f in facts if f["period_end"]))
      if len(periods)==1: period=periods[0]
     rev=choose(facts,ALIASES["REVENUE"],period)
+    # Banking/NBFC integrated filings use taxonomy concept income for total
+    # income rather than industrial revenueFromOperations. Restrict this
+    # fallback to these filing families and retain the exact source fact tag.
+    if rev is None and re.search(r"INTEGRATED_FILING_(BANKING|NBFC)", url, re.I):
+     rev=choose(facts,["income"],period)
     pat=choose(facts,ALIASES["PAT"],period)
     eps=choose(facts,ALIASES["EPS"],period)
     if rev and pat and eps and symbol and isin and period and disclosed_at:
