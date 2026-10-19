@@ -310,11 +310,16 @@ def evaluate_endpoint_schema(sources, result_events, calendar_events):
         "board_calendar_source_available": sources.get("BOARD_MEETING", {}).get("status") == "AVAILABLE",
         "result_disclosure_rows_present": bool(result_events),
         "board_calendar_rows_present": bool(calendar_events),
+        # Step 1 validates the normalized schema contract (keys/columns), not
+        # whether every individual filing has every value. Missing ISIN or
+        # broadcast time is a Step 2 record-level blocker; making one such row
+        # fail the endpoint schema gate conflates two different gates and can
+        # block the entire 500-row endpoint even when its schema is valid.
         "result_schema_fields_present": bool(result_events) and all(
-            all(str(row.get(k, "")).strip() for k in required_result) for row in result_events
+            all(k in row for k in required_result) for row in result_events
         ),
         "calendar_schema_fields_present": bool(calendar_events) and all(
-            all(str(row.get(k, "")).strip() for k in required_calendar) for row in calendar_events
+            all(k in row for k in required_calendar) for row in calendar_events
         ),
     }
     urls = [str(sources.get(k, {}).get("request_url", "")) for k in ("RESULT_DISCLOSURE", "BOARD_MEETING")]
