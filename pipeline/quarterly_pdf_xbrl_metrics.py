@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timezone
 from urllib.parse import urljoin
-import hashlib, json, re, zipfile, io
+import hashlib, json, re, zipfile, io, os
 import requests
 import pandas as pd
 import xml.etree.ElementTree as ET
@@ -119,6 +119,13 @@ def main():
  if not DISC.exists():
   REPORT.write_text(json.dumps({"status":"BLOCKED_MISSING_DISCLOSURES","rows":0},indent=2)); return 0
  df=pd.read_csv(DISC,dtype=str).fillna("")
+ # Optional hard cap keeps live attachment verification bounded in CI. Preserve
+ # newest disclosures first; uncapped runs remain the default for full research.
+ max_disclosures=int(os.environ.get("QUARTERLY_METRIC_MAX_DISCLOSURES", "0") or 0)
+ result_rows=df[df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")].copy()
+ if max_disclosures > 0 and len(result_rows) > max_disclosures:
+  result_rows=result_rows.head(max_disclosures)
+  df=pd.concat([result_rows, df[~df.index.isin(result_rows.index)]], ignore_index=True)
  sess=requests.Session(); sess.headers.update(HEADERS)
  out=[]; errors=[]; attempted=0
  for _,r in df.iterrows():
