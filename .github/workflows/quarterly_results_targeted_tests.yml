@@ -41,6 +41,8 @@ jobs:
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_reporting_period_alias_and_nse_attachment_source_are_preserved \
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_run121_four_invalid_disclosures_preserve_provenance_and_unknown \
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_period_aliases_are_explicit_and_conflicts_remain_unknown
+      - name: Refresh official NSE security master for missing ISIN resolution
+        run: python collector/security_master.py
       - name: Run bounded live quarterly endpoint/schema audit only
         run: |
           python pipeline/quarterly_results_research.py
