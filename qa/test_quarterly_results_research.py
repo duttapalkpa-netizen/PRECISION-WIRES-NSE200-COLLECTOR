@@ -135,6 +135,23 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertFalse(normalized["RESULT_DECLARED"])
         self.assertEqual(normalized["EVENT_KIND"], "BOARD_MEETING")
 
+    def test_structured_integrated_filing_is_result_and_uses_official_security_master_isin(self):
+        row = {
+            "symbol": "ABC", "companyName": "ABC Limited",
+            "qe_Date": "30-SEP-2026", "broadcast_Date": "16-Oct-2026 20:00:00",
+            "consolidated": "Consolidated",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/ABC.xbrl",
+            "ixbrl": "https://nsearchives.nseindia.com/corporate/ABC.html",
+        }
+        with patch.object(stage, "_SECURITY_ISIN_MAP", {"ABC": "INE123A01011"}):
+            normalized = stage.normalize_event(
+                row, "RESULT_DISCLOSURE",
+                "https://www.nseindia.com/api/integrated-filing-results")
+        self.assertTrue(normalized["RESULT_DECLARED"])
+        self.assertEqual(normalized["PERIOD_END"], "30-SEP-2026")
+        self.assertEqual(normalized["ISIN"], "INE123A01011")
+        self.assertEqual(normalized["SOURCE_URL"], row["xbrl"])
+
     def test_results_disclosure_flag_requires_result_event_type(self):
         row = {
             "symbol": "ABC", "companyName": "ABC Limited",
