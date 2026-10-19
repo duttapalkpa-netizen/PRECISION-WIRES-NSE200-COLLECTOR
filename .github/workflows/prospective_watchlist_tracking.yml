@@ -27,7 +27,7 @@ concurrency:
 jobs:
   prospective-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 10
     steps:
       - name: Checkout isolated prospective audit branch
         uses: actions/checkout@v4
