@@ -27,7 +27,7 @@ MEETINGS_URL = NSE_HOME + "/api/corporate-boardMeetings"
 ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporate-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
 FETCH_DIAGNOSTICS = []
-EVENT_COLUMNS = ["SYMBOL", "ISIN", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "ORIGINAL_BROADCAST_AT", "REVISION_TIMESTAMP", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
+EVENT_COLUMNS = ["SYMBOL", "ISIN", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "PUBLICATION_TIMESTAMP", "ORIGINAL_BROADCAST_AT", "REVISION_TIMESTAMP", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
 REQUIRED_METRICS = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT",
                     "REVENUE", "PAT", "EPS"}
 OPTIONAL_METRICS = {"EBITDA", "INTEREST_EXPENSE", "DEBT", "OPERATING_CASH_FLOW",
@@ -179,6 +179,14 @@ def normalize_event(row, kind, source_url):
         "revised_Date", "revisedDate", "revisionDate", "revision_Date",
         "revisionTimestamp", "revision_timestamp", "modifiedDate", "modified_Date"
     ]))
+    subtype = str(first(row, ["type_Sub", "typeSub", "filingType", "submissionType"])).strip().lower()
+    # For a record explicitly labelled Revision, its revised_Date is the event's
+    # publication timestamp when broadcast_Date is absent. Keep BROADCAST_AT
+    # empty and retain REVISION_TIMESTAMP separately; never backfill an original
+    # filing's publication time from a revision record.
+    publication_timestamp = broadcast
+    if not publication_timestamp and subtype == "revision":
+        publication_timestamp = revision_timestamp
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
     period = parse_reporting_period(row)
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "detailsurl", "xbrlurl", "pdfurl", "xbrl", "fileurl"])).strip()
@@ -213,8 +221,9 @@ def normalize_event(row, kind, source_url):
         "SYMBOL": symbol, "ISIN": security_isin(symbol, row),
         "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
         "RESULT_DECLARED": bool(kind == "RESULT_DISCLOSURE" and is_results),
-        "BROADCAST_AT": broadcast, "ORIGINAL_BROADCAST_AT": original_broadcast,
-        "REVISION_TIMESTAMP": revision_timestamp, "MEETING_DATE": meeting, "PERIOD_END": period,
+        "BROADCAST_AT": broadcast, "PUBLICATION_TIMESTAMP": publication_timestamp,
+        "ORIGINAL_BROADCAST_AT": original_broadcast, "REVISION_TIMESTAMP": revision_timestamp,
+        "MEETING_DATE": meeting, "PERIOD_END": period,
         "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if (attachment.startswith("https://www.nseindia.com/") or attachment.startswith("https://nsearchives.nseindia.com/")) else source_url,
         "SOURCE_RECORD_SHA256": digest(row), "OBSERVED_AT_UTC": now_utc(),
         "RAW_RECORD_JSON": json.dumps(row, sort_keys=True, default=str),
@@ -510,12 +519,12 @@ def main():
             for item in normalized:
                 fields = {
                     "source_url": (str(item.get("SOURCE_URL", "")).startswith("https://www.nseindia.com/") or str(item.get("SOURCE_URL", "")).startswith("https://nsearchives.nseindia.com/")),
-                    "publication_timestamp": bool(parse_date(item.get("BROADCAST_AT"))),
+                    "publication_timestamp": bool(parse_date(item.get("PUBLICATION_TIMESTAMP") or item.get("BROADCAST_AT"))),
                     "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()) if kind == "RESULT_DISCLOSURE" else True,
                     "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
                     "isin": bool(re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}[0-9]", str(item.get("ISIN", "")))),
                 }
-                validation_rows.append({"EVENT_KIND": kind, "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
+                validation_rows.append({"EVENT_KIND": kind, "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("PUBLICATION_TIMESTAMP") or item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
             manifest["sources"][kind] = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url, "raw_response_file": str(raw_path)}
         except Exception as exc:
             if kind == "RESULT_DISCLOSURE":
