@@ -31,7 +31,7 @@ FIELDS=["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENU
         "EVIDENCE_PATH","OBSERVED_AT_UTC"]
 ALIASES={
  "REVENUE":["revenuefromoperations","revenuefromoperation","revenue","incomefromoperations"],
- "PAT":["profitlossfortheperiod","profitloss","profitaftertax","profitaftertaxation","profitlossfromcontinuingoperations"],
+ "PAT":["profitlossforperiod","profitlossfortheperiod","profitloss","profitaftertax","profitaftertaxation","profitlossfromcontinuingoperations"],
  "EPS":["earningspersharebasic","basicearningspershare","earningspersharediluted","dilutedearningspershare","basicearningslosspersharefromcontinuinganddiscontinuedoperations","basicearningslosspersharefromcontinuingoperations","dilutedearningslosspersharefromcontinuinganddiscontinuedoperations","dilutedearningslosspersharefromcontinuingoperations"]
 }
 def local(tag): return tag.rsplit("}",1)[-1].split(":")[-1].lower()
