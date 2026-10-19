@@ -112,6 +112,42 @@ jobs:
                   if sym and isin:
                       mp = dict(zip(m[sym].str.strip().str.upper(), m[isin].str.strip().str.upper()))
                       report["security_master_resolution"] = {s: {"found": bool(mp.get(s)), "isin": mp.get(s,"")} for s in missing_isin}
+          # Inspect official filing attachments for explicit ISIN identifiers.
+          # Evidence is recorded per row; never infer ISIN from a symbol/name.
+          import re, requests
+          evidence = []
+          if val_path.exists():
+              df = pd.read_csv(val_path, dtype=str).fillna("")
+              invalid = df[df.get("RECORD_VALID", pd.Series(dtype=str)).str.lower().isin(["false","0"])]
+              for _, row in invalid.iterrows():
+                  symbol = str(row.get("SYMBOL", "")).strip().upper()
+                  if str(row.get("ISIN", "")).strip():
+                      continue
+                  url = str(row.get("SOURCE_URL", "")).strip()
+                  item = {"symbol": symbol, "source_url": url, "status": "BLOCKED_NO_OFFICIAL_ISIN_EVIDENCE", "isin_candidates": []}
+                  if url.startswith(("https://nsearchives.nseindia.com/", "https://www.nseindia.com/")):
+                      try:
+                          resp = requests.get(url, headers={"User-Agent":"Mozilla/5.0","Accept":"*/*"}, timeout=(4,8))
+                          item["http_status"] = resp.status_code
+                          if resp.status_code == 200:
+                              body = resp.text[:5000000]
+                              candidates = sorted(set(re.findall(r"\\bINE[A-Z0-9]{9}\\b", body.upper())))
+                              item["isin_candidates"] = candidates
+                              if len(candidates) == 1:
+                                  item["status"] = "CANDIDATE_REQUIRES_ISSUER_CONTEXT_CHECK"
+                              elif len(candidates) > 1:
+                                  item["status"] = "AMBIGUOUS_MULTIPLE_ISIN_CANDIDATES"
+                              else:
+                                  item["status"] = "NO_ISIN_IN_OFFICIAL_ATTACHMENT"
+                          else:
+                              item["status"] = "OFFICIAL_ATTACHMENT_FETCH_FAILED"
+                      except Exception as exc:
+                          item["error"] = type(exc).__name__
+                          item["status"] = "OFFICIAL_ATTACHMENT_FETCH_FAILED"
+                  evidence.append(item)
+          report["official_filing_isin_evidence"] = evidence
+          evidence_path = out.parent / "official_filing_isin_evidence.json"
+          evidence_path.write_text(json.dumps(evidence, indent=2, ensure_ascii=False), encoding="utf-8")
           out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
           print("STEP2_ROOT_CAUSE_DIAGNOSTIC=" + json.dumps(report, sort_keys=True))
           PY
