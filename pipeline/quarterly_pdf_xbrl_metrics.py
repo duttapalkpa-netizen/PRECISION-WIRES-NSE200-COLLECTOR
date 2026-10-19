@@ -138,6 +138,8 @@ def main():
      u=norm_url(v)
      if u and u not in links: links.append(u)
   if not links and r.get("ATTACHMENT_URL"): links=[norm_url(r["ATTACHMENT_URL"])]
+  # Initialize per-disclosure evidence fields so missing/bad attachments remain BLOCKED, not a crash.
+  source_digest=""; source_content_type=""; evidence_path=""
   extracted=False
   for url in links:
    attempted+=1
