@@ -58,6 +58,52 @@ jobs:
           print("FINANCIAL_METRICS=" + json.dumps(report.get("financial_metrics", {}), sort_keys=True))
           print("RESEARCH_STATUS=" + str(report.get("status", "UNKNOWN")))
           PY
+      - name: Diagnose unresolved filing timestamps and ISINs from raw NSE metadata
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+          raw_path = Path("data/raw/quarterly_results_raw_responses/result_disclosure.json")
+          val_path = Path("outputs/quarterly_results/source_validation_report.csv")
+          master_path = Path("data/reference/security_master.csv")
+          out = Path("outputs/quarterly_results/step2_root_cause_diagnostic.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          report = {"status": "BLOCKED", "diagnostic_only": True}
+          if raw_path.exists():
+              payload = json.loads(raw_path.read_text(encoding="utf-8"))
+              rows = payload if isinstance(payload, list) else payload.get("data", [])
+              if not isinstance(rows, list):
+                  rows = []
+              report["raw_response"] = {"rows": len(rows), "field_names": sorted({k for r in rows if isinstance(r, dict) for k in r})}
+              report["timestamp_field_coverage"] = {}
+              for field in ("broadcast_Date", "broadcastDateTime", "broadcastDate", "disseminationDate", "creation_Date", "revised_Date", "seq_Id"):
+                  present = sum(bool(str(r.get(field) or "").strip()) for r in rows if isinstance(r, dict))
+                  report["timestamp_field_coverage"][field] = {"present": present, "missing": len(rows)-present}
+              report["raw_missing_broadcast_samples"] = [
+                  {k:r.get(k) for k in ("symbol","seq_Id","type_Sub","qe_Date","broadcast_Date","creation_Date","revised_Date","revision_Remark","xbrl","ixbrl")}
+                  for r in rows if isinstance(r, dict) and not str(r.get("broadcast_Date") or "").strip()
+              ][:100]
+          if val_path.exists():
+              df = pd.read_csv(val_path, dtype=str).fillna("")
+              invalid = df[df.get("RECORD_VALID", pd.Series(dtype=str)).str.lower().isin(["false","0"])]
+              report["validation"] = {"rows": len(df), "valid": int((df.get("RECORD_VALID", pd.Series(dtype=str)).str.lower().isin(["true","1"])).sum()), "invalid": len(invalid)}
+              report["invalid_by_missing_fields"] = invalid["MISSING_FIELDS"].value_counts().to_dict() if "MISSING_FIELDS" in invalid else {}
+              report["invalid_samples"] = invalid[[c for c in ("SYMBOL","ISIN","PUBLICATION_TIMESTAMP","REPORTING_PERIOD","MISSING_FIELDS","SOURCE_URL") if c in invalid]].head(100).to_dict("records")
+              missing_isin = sorted(set(invalid.loc[invalid.get("ISIN", pd.Series(dtype=str)).eq(""), "SYMBOL"].tolist())) if "ISIN" in invalid else []
+              report["invalid_missing_isin_symbols"] = missing_isin
+              if master_path.exists():
+                  m = pd.read_csv(master_path, dtype=str).fillna("")
+                  m.columns = [str(x).strip().upper() for x in m.columns]
+                  sym = "SYMBOL" if "SYMBOL" in m else None
+                  isin = "ISIN" if "ISIN" in m else ("ISIN NUMBER" if "ISIN NUMBER" in m else None)
+                  if sym and isin:
+                      mp = dict(zip(m[sym].str.strip().str.upper(), m[isin].str.strip().str.upper()))
+                      report["security_master_resolution"] = {s: {"found": bool(mp.get(s)), "isin": mp.get(s,"")} for s in missing_isin}
+          out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+          print("STEP2_ROOT_CAUSE_DIAGNOSTIC=" + json.dumps(report, sort_keys=True))
+          PY
       - name: Upload bounded endpoint/schema report
         if: always()
         uses: actions/upload-artifact@v4
@@ -70,4 +116,5 @@ jobs:
             data/raw/quarterly_results_disclosures.csv
             data/raw/quarterly_results_calendar.csv
             data/raw/quarterly_results_raw_responses/*.json
+            outputs/quarterly_results/step2_root_cause_diagnostic.json
           if-no-files-found: warn
