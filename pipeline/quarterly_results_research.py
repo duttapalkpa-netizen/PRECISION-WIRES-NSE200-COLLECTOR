@@ -195,8 +195,9 @@ def fetch_nse(endpoint, start, end):
             diagnostic["response_type"] = type(payload).__name__
             diagnostic["row_count"] = len(rows)
             diagnostic["sample_keys"] = sorted(list(rows[0].keys()))[:80] if rows else []
+            diagnostic["sample_xbrl_fields"] = [{k: row.get(k) for k in ("symbol", "qe_Date", "broadcast_Date", "consolidated", "xbrl", "ixbrl", "pdf_attach", "seq_Id")} for row in rows[:3]]
             if endpoint == RESULTS_URL and candidate == INTEGRATED_RESULTS_URL:
-                xbrl_aliases = ("xbrlurl", "xbrlfileurl", "xbrlfilepath", "xbrlattachmenturl", "ixbrlurl", "xbrllink")
+                xbrl_aliases = ("xbrlurl", "xbrlfileurl", "xbrlfilepath", "xbrlattachmenturl", "ixbrlurl", "xbrllink", "xbrl", "ixbrl")
                 diagnostic["rows_with_xbrl_url"] = sum(bool(first(row, list(xbrl_aliases))) for row in rows)
                 # A non-empty grid response without an XBRL link is not sufficient
                 # for the verified-financial-metrics pipeline. Keep probing routes.
