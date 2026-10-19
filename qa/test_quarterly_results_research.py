@@ -64,7 +64,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                 stage.RESULTS_URL, pd.Timestamp("2026-10-01").date(),
                 pd.Timestamp("2026-10-17").date())
         self.assertTrue(rows)
-        self.assertIn("corporate-integrated-filings", url)
+        self.assertIn("integrated-filing-results", url)
         self.assertEqual(rows[0]["symbol"], "ABC")
 
     def test_integrated_rows_without_xbrl_url_are_not_accepted_as_structured_financial_source(self):
@@ -75,7 +75,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             response.url = url
             response.status_code = 200
             response.raise_for_status.return_value = None
-            if "corporate-integrated-filings" in url and params and params.get("type") == "Integrated Filing- Financials":
+            if "integrated-filing-results" in url and params and params.get("type") == "Integrated Filing- Financials":
                 response.json.return_value = [{"symbol": "ABC", "quarterEndDate": "30-Sep-2026"}]
             elif "corporate-announcements" in url:
                 response.json.return_value = [{"symbol": "ABC", "attchmntFile": "https://nsearchives.nseindia.com/corporate/a.pdf",
@@ -89,7 +89,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                 stage.RESULTS_URL, pd.Timestamp("2026-10-01").date(),
                 pd.Timestamp("2026-10-17").date())
         self.assertIn("corporate-announcements", url)
-        diag = [d for d in stage.FETCH_DIAGNOSTICS if "corporate-integrated-filings" in d["endpoint"]]
+        diag = [d for d in stage.FETCH_DIAGNOSTICS if "integrated-filing-results" in d["endpoint"]]
         self.assertTrue(diag)
         self.assertTrue(all(d.get("rows_with_xbrl_url", 0) == 0 for d in diag if d.get("row_count", 0)))
         self.assertTrue(any("no explicit XBRL URL field" in x for x in [
@@ -121,7 +121,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                 stage.RESULTS_URL, pd.Timestamp("2026-10-01").date(),
                 pd.Timestamp("2026-10-17").date())
         self.assertTrue(rows)
-        self.assertIn("corporate-integrated-filings", url)
+        self.assertIn("integrated-filing-results", url)
         self.assertTrue(any(p.get("size") == "500" and p.get("page") == "1" and p.get("type") == "Integrated Filing- Financials" for _, p in seen))
         self.assertIn("xbrlFileUrl", rows[0])
 
@@ -162,7 +162,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             row = {"symbol": "ABC", "subject": subject, "an_dt": "15-Oct-2026",
                    "periodEndDate": "30-Sep-2026"}
             normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
-                                               "https://www.nseindia.com/api/corporate-integrated-filings")
+                                               "https://www.nseindia.com/api/integrated-filing-results")
             self.assertFalse(normalized["RESULT_DECLARED"])
 
     def test_reporting_period_alias_and_nse_attachment_source_are_preserved(self):
@@ -170,7 +170,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                "broadcastDateTime": "15-Oct-2026", "quarterEndDate": "30-Sep-2026",
                "xbrl": "https://nsearchives.nseindia.com/corporate/result.xml"}
         normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
-                                           "https://www.nseindia.com/api/corporate-integrated-filings")
+                                           "https://www.nseindia.com/api/integrated-filing-results")
         self.assertTrue(normalized["RESULT_DECLARED"])
         self.assertEqual(normalized["PERIOD_END"], "30-Sep-2026")
         self.assertEqual(normalized["SOURCE_URL"], "https://nsearchives.nseindia.com/corporate/result.xml")
