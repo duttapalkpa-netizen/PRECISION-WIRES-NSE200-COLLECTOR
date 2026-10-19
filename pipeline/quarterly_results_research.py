@@ -83,8 +83,8 @@ def parse_reporting_period(row):
     number. A financial-results announcement without a period stays UNKNOWN.
     """
     explicit = first(row, ["periodended", "period_end", "periodenddate",
-                           "quarterenddate", "financialperiod", "quarterended",
-                           "toDate", "period"])
+                           "quarterenddate", "quarter_end_date", "qe_Date",
+                           "financialperiod", "quarterended", "toDate", "period"])
     if explicit:
         # Preserve the legacy explicit-field representation for compatibility.
         # Normalize only dates newly recovered from free-text filing metadata.
