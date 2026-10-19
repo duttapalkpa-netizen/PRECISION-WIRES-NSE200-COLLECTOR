@@ -432,7 +432,7 @@ def main():
             raw, source_url, payload = fetch_nse(endpoint, start, end + (timedelta(days=30) if kind == "BOARD_MEETING" else timedelta(0)))
             if kind == "RESULT_DISCLOSURE":
                 manifest["integrated_filing_route_diagnostics"] = list(FETCH_DIAGNOSTICS)
-            raw_path = ("".join(ch.lower() if ch.isalnum() else "_" for ch in kind) + ".json")
+            raw_path = raw_dir / ("".join(ch.lower() if ch.isalnum() else "_" for ch in kind) + ".json")
             raw_path.write_text(json.dumps({"request_url": source_url, "observed_at_utc": now_utc(), "payload": payload}, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
             normalized = [normalize_event(row, kind, source_url) for row in raw]
             target.extend(normalized)
