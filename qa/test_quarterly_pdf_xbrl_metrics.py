@@ -34,5 +34,15 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertIsNone(choose(facts, ALIASES["REVENUE"], "2026-09-30"))
 
 
+    def test_iso_context_dates_are_not_reinterpreted_day_first(self):
+        from pipeline.quarterly_pdf_xbrl_metrics import date_iso
+        self.assertEqual(date_iso("2026-04-01"), "2026-04-01")
+        self.assertEqual(date_iso("2026-06-30"), "2026-06-30")
+
+    def test_nse_month_name_date_and_invalid_iso_date(self):
+        from pipeline.quarterly_pdf_xbrl_metrics import date_iso
+        self.assertEqual(date_iso("30-JUN-2026"), "2026-06-30")
+        self.assertEqual(date_iso("2026-02-30"), "")
+
 if __name__ == "__main__":
     unittest.main()
