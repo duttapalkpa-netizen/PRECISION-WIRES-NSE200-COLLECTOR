@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/quarterly_results_targeted_tests.yml"
       - "pipeline/quarterly_results_research.py"
+      - "pipeline/quarterly_pdf_xbrl_metrics.py"
       - "qa/test_quarterly_results_research.py"
   workflow_dispatch:
 
