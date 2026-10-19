@@ -322,6 +322,23 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertEqual(normalized["ORIGINAL_BROADCAST_AT"], "")
         self.assertEqual(normalized["PERIOD_END"], "30-SEP-2026")
 
+    def test_revision_record_uses_revised_time_as_its_own_publication_time_only(self):
+        row = {
+            "symbol": "ABC", "sm_isin": "INE123A01011",
+            "type_Sub": "Revision", "broadcast_Date": None,
+            "creation_Date": "17-Oct-2026 09:31:00",
+            "revised_Date": "17-Oct-2026 09:30:00",
+            "qe_Date": "30-SEP-2026",
+            "subject": "Financial results revised",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/ABC.xbrl",
+        }
+        normalized = stage.normalize_event(row, "RESULT_DISCLOSURE",
+                                           "https://www.nseindia.com/api/integrated-filing-results")
+        self.assertEqual(normalized["BROADCAST_AT"], "")
+        self.assertEqual(normalized["REVISION_TIMESTAMP"], "2026-10-17T09:30:00+00:00")
+        self.assertEqual(normalized["PUBLICATION_TIMESTAMP"], "2026-10-17T09:30:00+00:00")
+        self.assertNotEqual(normalized["PUBLICATION_TIMESTAMP"], "2026-10-17T09:31:00+00:00")
+
     def test_revision_timestamp_is_preserved_separately_from_original_broadcast(self):
         row = {
             "symbol": "ABC", "sm_isin": "INE123A01011",
