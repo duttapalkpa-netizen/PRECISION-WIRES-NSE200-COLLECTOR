@@ -27,7 +27,7 @@ HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome
          "Accept":"application/json,text/html,application/pdf,application/xml,*/*",
          "Referer":NSE+"/companies-listing/corporate-filings-application"}
 FIELDS=["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENUE","PAT","EPS",
-        "REVENUE_FACT","PAT_FACT","EPS_FACT","SOURCE_SHA256","SOURCE_CONTENT_TYPE","EXTRACTION_STATUS",
+        "REVENUE_FACT","PAT_FACT","EPS_FACT","REVENUE_UNIT","PAT_UNIT","EPS_UNIT","REVENUE_CONTEXT_START","PAT_CONTEXT_START","EPS_CONTEXT_START","SOURCE_SHA256","SOURCE_CONTENT_TYPE","EXTRACTION_STATUS",
         "EVIDENCE_PATH","OBSERVED_AT_UTC"]
 ALIASES={
  "REVENUE":["revenuefromoperations","revenuefromoperation","revenue","incomefromoperations"],
@@ -189,7 +189,8 @@ def main():
       out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":basis,"SOURCE_URL":url,
        "DISCLOSED_AT":disclosed_at,"REVENUE":rev["value"],"PAT":pat["value"],"EPS":eps["value"],
        "REVENUE_FACT":rev["tag"]+":"+rev["context"],"PAT_FACT":pat["tag"]+":"+pat["context"],
-       "EPS_FACT":eps["tag"]+":"+eps["context"],"SOURCE_SHA256":digest,
+       "EPS_FACT":eps["tag"]+":"+eps["context"],"REVENUE_UNIT":rev["unit"],"PAT_UNIT":pat["unit"],"EPS_UNIT":eps["unit"],
+       "REVENUE_CONTEXT_START":rev["start_date"],"PAT_CONTEXT_START":pat["start_date"],"EPS_CONTEXT_START":eps["start_date"],"SOURCE_SHA256":digest,
        "SOURCE_CONTENT_TYPE":resp.headers.get("Content-Type",""),"EXTRACTION_STATUS":"SOURCE_LINKED_XBRL_FACTS",
        "EVIDENCE_PATH":str(ev),"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
       extracted=True; break
