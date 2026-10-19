@@ -22,7 +22,7 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/132 Safari/537.3
 HEADERS = {"User-Agent": UA, "Accept": "application/json,text/plain,*/*",
            "Referer": "https://www.nseindia.com/companies-listing/corporate-filings-application"}
 RESULTS_URL = NSE_HOME + "/api/corporates-financial-results"
-INTEGRATED_RESULTS_URL = NSE_HOME + "/api/corporate-integrated-filings"
+INTEGRATED_RESULTS_URL = NSE_HOME + "/api/integrated-filing-results"
 MEETINGS_URL = NSE_HOME + "/api/corporate-boardMeetings"
 ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporate-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
@@ -168,15 +168,11 @@ def fetch_nse(endpoint, start, end):
         # blank symbol, and explicit first-page pagination) before using the
         # announcement API, whose attachment is usually only a PDF.
         candidates = [
-            (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing- Financials", "tabIndex": "equity"}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing - Financials", "tabIndex": "equity"}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity"}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity", "symbol": ""}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "tabIndex": "equity", "symbol": "", "page": "0", "size": "500"}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "Integrated Filing- Financials", "tabIndex": "equity", "symbol": "", "page": "0", "size": "500"}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials", "index": "equity", "tabIndex": "equity"}),
-            (INTEGRATED_RESULTS_URL, {"integratedType": "integratedfilingfinancials"}),
-            (INTEGRATED_RESULTS_URL, {"tabIndex": "equity", "symbol": "", "page": "0", "size": "500"}),
+            # Current NSE integrated-filing route and parameter contract:
+            # /api/integrated-filing-results?type=...&page=1&size=...&index=equities
+            (INTEGRATED_RESULTS_URL, {"type": "Integrated Filing- Financials", "page": "1", "size": "500"}),
+            (INTEGRATED_RESULTS_URL, {"type": "Integrated Filing- Financials", "page": "1", "size": "500", "index": "equities"}),
+            (INTEGRATED_RESULTS_URL, {"type": "Integrated Filing- Financials", "page": "1", "size": "500", "index": "equities", "period_ended": "all"}),
             (RESULTS_URL, {}),
             (ANNOUNCEMENTS_URL, {}),
         ]
