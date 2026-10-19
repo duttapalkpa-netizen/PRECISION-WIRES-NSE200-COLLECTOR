@@ -27,7 +27,7 @@ MEETINGS_URL = NSE_HOME + "/api/corporate-boardMeetings"
 ANNOUNCEMENTS_URL = NSE_HOME + "/api/corporate-announcements"
 FINANCIALS_INPUT = RAW / "quarterly_financial_metrics.csv"
 FETCH_DIAGNOSTICS = []
-EVENT_COLUMNS = ["SYMBOL", "ISIN", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
+EVENT_COLUMNS = ["SYMBOL", "ISIN", "COMPANY", "SUBJECT", "EVENT_KIND", "RESULT_DECLARED", "BROADCAST_AT", "ORIGINAL_BROADCAST_AT", "REVISION_TIMESTAMP", "MEETING_DATE", "PERIOD_END", "ATTACHMENT_URL", "SOURCE_URL", "SOURCE_RECORD_SHA256", "OBSERVED_AT_UTC", "RAW_RECORD_JSON"]
 REQUIRED_METRICS = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT",
                     "REVENUE", "PAT", "EPS"}
 OPTIONAL_METRICS = {"EBITDA", "INTEREST_EXPENSE", "DEBT", "OPERATING_CASH_FLOW",
@@ -166,7 +166,19 @@ def normalize_event(row, kind, source_url):
     symbol = str(first(row, ["symbol", "sm_symbol", "ticker", "securitysymbol"])).upper().strip()
     company = str(first(row, ["company", "companyname", "sm_name", "securityname"])).strip()
     subject = str(first(row, ["subject", "purpose", "description", "desc", "attchmntText", "meetingpurpose", "details", "relatingTo"])).strip()
-    broadcast = parse_date(first(row, ["broadcastdate", "broadcast_date", "disseminationdate", "filingdate", "an_dt", "sort_date", "sortdate", "dt", "dateandtime", "date"]))
+    # Never substitute creation/revision timestamps for the exchange broadcast
+    # time. Keep event time and revision time as separate provenance fields.
+    broadcast = parse_date(first(row, [
+        "broadcast_Date", "broadcastDate", "broadcastDateTime", "broadcast_date",
+        "disseminationDate", "dissemination_Date", "an_dt", "dateAndTime"
+    ]))
+    original_broadcast = parse_date(first(row, [
+        "originalBroadcastDate", "original_broadcast_date", "originalBroadcastDateTime"
+    ]))
+    revision_timestamp = parse_date(first(row, [
+        "revised_Date", "revisedDate", "revisionDate", "revision_Date",
+        "revisionTimestamp", "revision_timestamp", "modifiedDate", "modified_Date"
+    ]))
     meeting = parse_date(first(row, ["meetingdate", "meeting_date", "bm_date", "dateofmeeting"]))
     period = parse_reporting_period(row)
     attachment = str(first(row, ["attchmntfile", "attachment", "attachmenturl", "detailsurl", "xbrlurl", "pdfurl", "xbrl", "fileurl"])).strip()
@@ -201,7 +213,8 @@ def normalize_event(row, kind, source_url):
         "SYMBOL": symbol, "ISIN": security_isin(symbol, row),
         "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
         "RESULT_DECLARED": bool(kind == "RESULT_DISCLOSURE" and is_results),
-        "BROADCAST_AT": broadcast, "MEETING_DATE": meeting, "PERIOD_END": period,
+        "BROADCAST_AT": broadcast, "ORIGINAL_BROADCAST_AT": original_broadcast,
+        "REVISION_TIMESTAMP": revision_timestamp, "MEETING_DATE": meeting, "PERIOD_END": period,
         "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if (attachment.startswith("https://www.nseindia.com/") or attachment.startswith("https://nsearchives.nseindia.com/")) else source_url,
         "SOURCE_RECORD_SHA256": digest(row), "OBSERVED_AT_UTC": now_utc(),
         "RAW_RECORD_JSON": json.dumps(row, sort_keys=True, default=str),
