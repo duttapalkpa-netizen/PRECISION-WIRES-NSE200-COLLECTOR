@@ -141,6 +141,23 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertFalse(normalized["RESULT_DECLARED"])
         self.assertEqual(normalized["EVENT_KIND"], "BOARD_MEETING")
 
+    def test_official_historical_isin_evidence_resolves_legacy_symbol_and_keeps_unknown_unresolved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ref = root / "data" / "reference"
+            ref.mkdir(parents=True)
+            (ref / "historical_security_isin_evidence.csv").write_text(
+                "SYMBOL,ISIN,COMPANY,SOURCE_URL,EVIDENCE_TYPE,EVIDENCE_NOTE\\n"
+                "BALLARPUR,INE294A01037,BALLARPUR INDUSTRIES LIMITED,"
+                "https://nsearchives.nseindia.com/corporate/ixbrl/example.html,"
+                "OFFICIAL_NSE_IXBRL,official\\n",
+                encoding="utf-8",
+            )
+            with patch.object(stage, "ROOT", root), patch.object(stage, "_SECURITY_ISIN_MAP", None):
+                self.assertEqual(stage.security_isin("BALLARPUR", {"symbol": "BALLARPUR"}),
+                                 "INE294A01037")
+                self.assertEqual(stage.security_isin("KUNDANMM", {"symbol": "KUNDANMM"}), "")
+
     def test_structured_integrated_filing_is_result_and_uses_official_security_master_isin(self):
         row = {
             "symbol": "ABC", "companyName": "ABC Limited",
