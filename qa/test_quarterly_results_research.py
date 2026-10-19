@@ -43,6 +43,12 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                         "ATTACHMENT_URL": "https://example.test/a.pdf", "RAW_RECORD_JSON": "{}"}]
         calendar_rows = [{"SYMBOL": "ABC", "BROADCAST_AT": "2026-10-15", "RAW_RECORD_JSON": "{}"}]
         report = stage.evaluate_endpoint_schema(sources, result_rows, calendar_rows)
+        # Empty record-level values belong to Step 2, not endpoint schema.
+        self.assertEqual(report["status"], "PASS")
+        self.assertTrue(report["checks"]["result_schema_fields_present"])
+        # A genuinely absent normalized field remains a schema blocker.
+        del result_rows[0]["ISIN"]
+        report = stage.evaluate_endpoint_schema(sources, result_rows, calendar_rows)
         self.assertEqual(report["status"], "BLOCKED")
         self.assertFalse(report["checks"]["result_schema_fields_present"])
 
