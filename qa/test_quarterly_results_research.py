@@ -147,7 +147,7 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             ref = root / "data" / "reference"
             ref.mkdir(parents=True)
             (ref / "historical_security_isin_evidence.csv").write_text(
-                "SYMBOL,ISIN,COMPANY,SOURCE_URL,EVIDENCE_TYPE,EVIDENCE_NOTE\\n"
+                "SYMBOL,ISIN,COMPANY,SOURCE_URL,EVIDENCE_TYPE,EVIDENCE_NOTE\n"
                 "BALLARPUR,INE294A01037,BALLARPUR INDUSTRIES LIMITED,"
                 "https://nsearchives.nseindia.com/corporate/ixbrl/example.html,"
                 "OFFICIAL_NSE_IXBRL,official\\n",
