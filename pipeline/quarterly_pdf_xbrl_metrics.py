@@ -32,7 +32,7 @@ FIELDS=["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENU
 ALIASES={
  "REVENUE":["revenuefromoperations","revenuefromoperation","revenue","incomefromoperations"],
  "PAT":["profitlossforperiod","profitlossfortheperiod","profitloss","profitaftertax","profitaftertaxation","profitlossfromcontinuingoperations"],
- "EPS":["earningspersharebasic","basicearningspershare","earningspersharediluted","dilutedearningspershare","basicearningslosspersharefromcontinuinganddiscontinuedoperations","basicearningslosspersharefromcontinuingoperations","dilutedearningslosspersharefromcontinuinganddiscontinuedoperations","dilutedearningslosspersharefromcontinuingoperations"]
+ "EPS":["earningspersharebasic","basicearningspershare","earningspersharediluted","dilutedearningspershare","basicearningslosspersharefromcontinuinganddiscontinuedoperations","basicearningslosspersharefromcontinuingoperations","dilutedearningslosspersharefromcontinuinganddiscontinuedoperations","dilutedearningslosspersharefromcontinuingoperations","basicearningspershareafterextraordinaryitems","basicearningspersharebeforeextraordinaryitems","dilutedearningspershareafterextraordinaryitems","dilutedearningspersharebeforeextraordinaryitems"]
 }
 def local(tag): return tag.rsplit("}",1)[-1].split(":")[-1].lower()
 def sha(b): return hashlib.sha256(b).hexdigest()
