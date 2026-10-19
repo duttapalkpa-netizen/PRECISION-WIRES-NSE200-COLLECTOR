@@ -137,8 +137,8 @@ def security_isin(symbol, row):
                         isin_value = str(rr["ISIN"]).strip().upper()
                         source_url = str(rr["SOURCE_URL"]).strip()
                         evidence_type = str(rr["EVIDENCE_TYPE"]).strip().upper()
-                        if (symbol_key and isin_value and source_url.startswith("https://nsearchives.nseindia.com/")
-                                and evidence_type in {"OFFICIAL_NSE_IXBRL", "OFFICIAL_NSE_PRESS_RELEASE", "OFFICIAL_NSE_CIRCULAR"}):
+                        if (symbol_key and isin_value and source_url.startswith(("https://nsearchives.nseindia.com/", "https://www.kundanmineralsandmetals.com/"))
+                                and evidence_type in {"OFFICIAL_NSE_IXBRL", "OFFICIAL_NSE_PRESS_RELEASE", "OFFICIAL_NSE_CIRCULAR", "OFFICIAL_ISSUER_FILING"}):
                             # Conflicting official identifiers remain unresolved.
                             existing = _SECURITY_ISIN_MAP.get(symbol_key)
                             if existing and existing != isin_value:
