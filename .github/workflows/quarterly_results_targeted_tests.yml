@@ -72,10 +72,21 @@ jobs:
           out.parent.mkdir(parents=True, exist_ok=True)
           report = {"status": "BLOCKED", "diagnostic_only": True}
           if raw_path.exists():
-              payload = json.loads(raw_path.read_text(encoding="utf-8"))
-              rows = payload if isinstance(payload, list) else payload.get("data", [])
-              if not isinstance(rows, list):
-                  rows = []
+              envelope = json.loads(raw_path.read_text(encoding="utf-8"))
+              payload = envelope.get("payload", envelope) if isinstance(envelope, dict) else envelope
+              def find_rows(obj):
+                  if isinstance(obj, list) and (not obj or isinstance(obj[0], dict)):
+                      return obj
+                  if isinstance(obj, dict):
+                      for key in ("data", "rows", "results", "financialResults"):
+                          if isinstance(obj.get(key), list) and (not obj[key] or isinstance(obj[key][0], dict)):
+                              return obj[key]
+                      for value in obj.values():
+                          found = find_rows(value) if isinstance(value, (dict, list)) else []
+                          if found:
+                              return found
+                  return []
+              rows = find_rows(payload)
               report["raw_response"] = {"rows": len(rows), "field_names": sorted({k for r in rows if isinstance(r, dict) for k in r})}
               report["timestamp_field_coverage"] = {}
               for field in ("broadcast_Date", "broadcastDateTime", "broadcastDate", "disseminationDate", "creation_Date", "revised_Date", "seq_Id"):
