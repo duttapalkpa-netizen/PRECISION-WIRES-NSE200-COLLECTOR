@@ -169,8 +169,11 @@ def main():
     eps=choose(facts,ALIASES["EPS"],period)
     if rev and pat and eps and symbol and isin and period and disclosed_at:
      # Keep facts with exact filing provenance. Basis must be explicit in metadata/URL.
-     txt=" ".join([str(r.get("SUBJECT","")),str(raw.get("attchmntText","")),str(raw.get("subject","")),url]).lower()
-     if "consolidated" in txt and "standalone" not in txt: basis="CONSOLIDATED"
+     txt=" ".join([str(r.get("SUBJECT","")),str(raw.get("attchmntText","")),str(raw.get("subject","")),str(raw.get("consolidated","")),url]).lower()
+     basis_value=str(raw.get("consolidated","")).strip().lower()
+     if basis_value == "consolidated": basis="CONSOLIDATED"
+     elif basis_value == "standalone": basis="STANDALONE"
+     elif "consolidated" in txt and "standalone" not in txt: basis="CONSOLIDATED"
      elif "standalone" in txt and "consolidated" not in txt: basis="STANDALONE"
      else: basis=""
      if basis:
