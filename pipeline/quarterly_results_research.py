@@ -114,6 +114,54 @@ def parse_reporting_period(row):
     return next(iter(periods)) if len(periods) == 1 else ""
 
 
+_SECURITY_ISIN_MAP = None
+
+def security_isin(symbol, row):
+    """Resolve ISIN from explicit filing metadata or NSE's official security master."""
+    explicit = str(first(row, ["sm_isin", "isin", "securityisin"])).upper().strip()
+    if explicit:
+        return explicit
+    global _SECURITY_ISIN_MAP
+    if _SECURITY_ISIN_MAP is None:
+        _SECURITY_ISIN_MAP = {}
+        candidates = [
+            ROOT / "data/reference/security_master.csv",
+        ]
+        for path in candidates:
+            try:
+                if path.exists():
+                    master = pd.read_csv(path, dtype=str).fillna("")
+                    master.columns = [str(c).strip().upper() for c in master.columns]
+                    sym_col = "SYMBOL" if "SYMBOL" in master.columns else None
+                    isin_col = "ISIN" if "ISIN" in master.columns else ("ISIN NUMBER" if "ISIN NUMBER" in master.columns else None)
+                    if sym_col and isin_col:
+                        _SECURITY_ISIN_MAP.update({
+                            str(rr[sym_col]).strip().upper(): str(rr[isin_col]).strip().upper()
+                            for _, rr in master.iterrows() if str(rr[isin_col]).strip()
+                        })
+                        break
+            except Exception:
+                continue
+        if not _SECURITY_ISIN_MAP:
+            # Official NSE security master only; no inferred or third-party identifiers.
+            for url in ("https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
+                        "https://archives.nseindia.com/content/equities/EQUITY_L.csv"):
+                try:
+                    response = requests.get(url, headers=HEADERS, timeout=(5, 12))
+                    response.raise_for_status()
+                    master = pd.read_csv(__import__("io").BytesIO(response.content), dtype=str).fillna("")
+                    master.columns = [str(col).strip().upper() for col in master.columns]
+                    isin_col = "ISIN NUMBER" if "ISIN NUMBER" in master.columns else ("ISIN" if "ISIN" in master.columns else None)
+                    if "SYMBOL" in master.columns and isin_col:
+                        _SECURITY_ISIN_MAP.update({
+                            str(rr["SYMBOL"]).strip().upper(): str(rr[isin_col]).strip().upper()
+                            for _, rr in master.iterrows() if str(rr[isin_col]).strip()
+                        })
+                        break
+                except Exception:
+                    continue
+    return _SECURITY_ISIN_MAP.get(str(symbol).strip().upper(), "")
+
 def normalize_event(row, kind, source_url):
     symbol = str(first(row, ["symbol", "sm_symbol", "ticker", "securitysymbol"])).upper().strip()
     company = str(first(row, ["company", "companyname", "sm_name", "securityname"])).strip()
@@ -140,9 +188,17 @@ def normalize_event(row, kind, source_url):
         r"reply to clarification|clarification|delayed|non-submission|non submission|resubmission|revised filing",
         event_text
     ))
-    is_results = kind == "RESULT_DISCLOSURE" and has_results_phrase and not excluded and bool(period)
+    # The structured Integrated Filing - Financials endpoint is itself an official
+    # result-disclosure source: its XBRL/iXBRL link + explicit qe_Date are stronger
+    # classification evidence than display text, which can omit "financial results".
+    structured_financial_filing = bool(
+        kind == "RESULT_DISCLOSURE"
+        and first(row, ["xbrl", "ixbrl", "xbrlurl", "ixbrlurl"])
+        and first(row, ["qe_Date", "periodended", "period_end", "quarterenddate"])
+    )
+    is_results = kind == "RESULT_DISCLOSURE" and (has_results_phrase or structured_financial_filing) and not excluded and bool(period)
     return {
-        "SYMBOL": symbol, "ISIN": str(first(row, ["sm_isin", "isin", "securityisin"])).upper().strip(),
+        "SYMBOL": symbol, "ISIN": security_isin(symbol, row),
         "COMPANY": company, "SUBJECT": subject, "EVENT_KIND": kind,
         "RESULT_DECLARED": bool(kind == "RESULT_DISCLOSURE" and is_results),
         "BROADCAST_AT": broadcast, "MEETING_DATE": meeting, "PERIOD_END": period,
