@@ -201,7 +201,7 @@ jobs:
           if not joined["TIMESTAMP_WINDOW_VALID"].astype(str).str.lower().isin(["true", "1"]).all():
               raise SystemExit("STEP3_BLOCKED_TIMESTAMP_WINDOW_ALIGNMENT")
           has_news = joined["NEWS_ITEMS_24H"].fillna(0).astype(int).gt(0)
-          article_url_valid = joined.loc[has_news, "LATEST_CANONICAL_URL"].astype(str).str.match(r"^https?://[^\\s]+$", case=False)
+          article_url_valid = joined.loc[has_news, "LATEST_CANONICAL_URL"].astype(str).str.match(r"^https?://[^\s]+$", case=False)
           if not article_url_valid.all():
               raise SystemExit("STEP3_BLOCKED_INVALID_ARTICLE_SOURCE_URL")
           source_validation = quarterly_report.get("source_validation", {})
