@@ -62,13 +62,31 @@ jobs:
           validation = pd.read_csv(validation_path, dtype=str).fillna("")
           disclosures = pd.read_csv(disclosure_path, dtype=str).fillna("")
           ledger = pd.read_csv(ledger_path, dtype=str).fillna("")
-          required_validation = {"SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SYMBOL", "ISIN", "RECORD_VALID"}
+          required_validation = {"EVENT_KIND", "RESULT_DECLARED", "SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SYMBOL", "ISIN", "RECORD_VALID"}
           if not required_validation.issubset(validation.columns):
               raise SystemExit("STEP3_BLOCKED_STEP2_SOURCE_VALIDATION_SCHEMA")
-          valid = validation["RECORD_VALID"].astype(str).str.lower().isin(["true", "1"])
-          source_pass = len(validation) > 0 and bool(valid.all())
+          result_events = validation[
+              validation["EVENT_KIND"].astype(str).str.upper().eq("RESULT_DISCLOSURE")
+              & validation["RESULT_DECLARED"].astype(str).str.lower().isin(["true", "1"])
+          ].copy()
+          valid = result_events["RECORD_VALID"].astype(str).str.lower().isin(["true", "1"])
+          invalid = result_events.loc[~valid]
+          invalid_counts = {}
+          for value in invalid.get("MISSING_FIELDS", pd.Series(dtype=str)).astype(str):
+              for field in value.split(";"):
+                  if field:
+                      invalid_counts[field] = invalid_counts.get(field, 0) + 1
+          print("STEP2_SOURCE_VALIDATION_DIAGNOSTIC=" + json.dumps({
+              "all_validation_rows": int(len(validation)),
+              "result_disclosure_rows": int(len(result_events)),
+              "valid_result_rows": int(valid.sum()),
+              "invalid_result_rows": int((~valid).sum()),
+              "invalid_by_missing_fields": invalid_counts,
+              "invalid_samples": invalid[["SYMBOL", "ISIN", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "MISSING_FIELDS", "SOURCE_URL"]].head(20).to_dict("records")
+          }, sort_keys=True))
+          source_pass = len(result_events) > 0 and bool(valid.all())
           if not source_pass:
-              raise SystemExit("STEP3_BLOCKED_STEP2_SOURCE_VALIDATION_RECORDS")
+              raise SystemExit("STEP3_BLOCKED_STEP2_SOURCE_VALIDATION_RESULT_RECORDS")
           required_metrics = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS", "EXTRACTION_STATUS"}
           if not required_metrics.issubset(ledger.columns):
               raise SystemExit("STEP3_BLOCKED_STEP2_METRIC_LEDGER_SCHEMA")
