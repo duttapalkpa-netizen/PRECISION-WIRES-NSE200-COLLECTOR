@@ -10,6 +10,7 @@ from datetime import timedelta
 import json
 import time
 import requests
+from requests.exceptions import HTTPError
 import pandas as pd
 
 PICKS = Path("outputs/prospective/target5_h1_selector_experiment_picks.csv")
@@ -19,7 +20,9 @@ COVERAGE_OUT = RAW / "stock_news_coverage.csv"
 REPORT_OUT = Path("outputs/news_24h/stock_news_collection_report.json")
 API = "https://api.gdeltproject.org/api/v2/doc/doc"
 TZ = "Asia/Kolkata"
-HEADERS = {"User-Agent": "PRECISION-WIRES-Research/1.0 (audit-only; contact via repository)"}
+HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES-Research/1.0; audit-only)", "Accept": "application/json"}
+MAX_RETRIES = 3
+BACKOFF_SECONDS = (5, 15)
 
 
 def utc_stamp(ts):
@@ -73,15 +76,39 @@ def main():
                 "QUERY": query, "ERROR": "",
             }
             try:
-                response = session.get(API, params={
+                payload = None
+                last_error = None
+                params = {
                     "query": query, "mode": "ArtList", "format": "json",
                     "startdatetime": utc_stamp(start), "enddatetime": utc_stamp(cutoff),
                     "maxrecords": 75, "sort": "DateDesc",
-                }, timeout=(20, 35))
-                response.raise_for_status()
-                payload = response.json()
-                if not isinstance(payload, dict) or "articles" not in payload or not isinstance(payload.get("articles"), list):
-                    raise ValueError("GDELT response missing articles list")
+                }
+                for attempt in range(MAX_RETRIES):
+                    try:
+                        response = session.get(API, params=params, timeout=(8, 20))
+                        response.raise_for_status()
+                        candidate_payload = response.json()
+                        if not isinstance(candidate_payload, dict) or "articles" not in candidate_payload or not isinstance(candidate_payload.get("articles"), list):
+                            raise ValueError("GDELT response missing articles list")
+                        payload = candidate_payload
+                        break
+                    except Exception as exc:
+                        last_error = exc
+                        retryable = isinstance(exc, (requests.Timeout, requests.ConnectionError)) or (
+                            isinstance(exc, HTTPError) and getattr(exc.response, "status_code", None) in (429, 500, 502, 503, 504)
+                        )
+                        if not retryable or attempt + 1 >= MAX_RETRIES:
+                            raise
+                        delay = BACKOFF_SECONDS[min(attempt, len(BACKOFF_SECONDS) - 1)]
+                        retry_after = getattr(getattr(exc, "response", None), "headers", {}).get("Retry-After")
+                        try:
+                            delay = max(delay, min(30, int(retry_after))) if retry_after else delay
+                        except (TypeError, ValueError):
+                            pass
+                        print(f"RETRY symbol={pair.SYMBOL} attempt={attempt+1}/{MAX_RETRIES} delay_s={delay} reason={type(exc).__name__}", flush=True)
+                        time.sleep(delay)
+                if payload is None:
+                    raise last_error or RuntimeError("GDELT request failed without response")
                 articles = payload.get("articles", [])
                 for article in articles:
                     raw_date = str(article.get("seendate", "")).strip()
@@ -112,7 +139,7 @@ def main():
             coverage_rows.append(coverage)
             if n % 25 == 0:
                 print(f"PROGRESS={n}/{len(pairs)} queries_ok={ok} queries_failed={failed}", flush=True)
-            time.sleep(0.15)
+            time.sleep(2.0)
 
     news_cols = ["EVENT_ID", "CUT_OFF", "SYMBOL", "PUBLISHED_AT", "PUBLISHER",
                  "HEADLINE", "CANONICAL_URL", "SOURCE_TYPE", "VERIFICATION_STATUS"]
@@ -135,7 +162,7 @@ def main():
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 20, "read": 35}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 8, "read": 20}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS)}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
