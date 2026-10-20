@@ -393,14 +393,16 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             ref = root / "data" / "reference"
             ref.mkdir(parents=True)
             (ref / "security_master.csv").write_text(
-                "SYMBOL,ISIN\\nLOCALONLY,INE111A01011\\n", encoding="utf-8"
+                "SYMBOL,ISIN\nLOCALONLY,INE111A01011\n", encoding="utf-8"
             )
             response = MagicMock()
             response.raise_for_status.return_value = None
-            response.content = b"SYMBOL,ISIN NUMBER\\nLOCALONLY,INE111A01011\\nMISSINGLOCAL,INE222A01012\\n"
-            with patch.object(stage, "ROOT", root), \\
-                 patch.object(stage, "_SECURITY_ISIN_MAP", None), \\
-                 patch.object(stage.requests, "get", return_value=response) as mocked_get:
+            response.content = b"SYMBOL,ISIN NUMBER\nLOCALONLY,INE111A01011\nMISSINGLOCAL,INE222A01012\n"
+            with (
+                patch.object(stage, "ROOT", root),
+                patch.object(stage, "_SECURITY_ISIN_MAP", None),
+                patch.object(stage.requests, "get", return_value=response) as mocked_get,
+            ):
                 self.assertEqual(stage.security_isin("MISSINGLOCAL", {"symbol": "MISSINGLOCAL"}),
                                  "INE222A01012")
                 self.assertGreaterEqual(mocked_get.call_count, 1)
