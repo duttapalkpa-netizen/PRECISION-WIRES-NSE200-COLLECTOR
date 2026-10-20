@@ -122,7 +122,7 @@ jobs:
               "provenance_source": str(normalized)
           }
           manifest["step_2_status"] = "PASS"
-          report_path.write_text(json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8")
+          report_path.write_text(json.dumps(manifest, indent=2, allow_nan=False, default=str), encoding="utf-8")
           print("STEP2_SOURCE_VALIDATION_AND_METRIC_COVERAGE=PASS " + json.dumps({
               "source_validation_rows": len(validation), "verified_metric_rows": len(verified),
               "ledger_rows": len(ledger), "disclosure_rows": disclosure_rows,
