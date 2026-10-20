@@ -60,7 +60,7 @@ jobs:
           PY
       - name: Run bounded source-linked XBRL metric extraction
         env:
-          QUARTERLY_METRIC_MAX_DISCLOSURES: "50"
+          QUARTERLY_METRIC_MAX_DISCLOSURES: "500"
         run: |
           python pipeline/quarterly_pdf_xbrl_metrics.py
           python - <<'PY'
@@ -71,7 +71,7 @@ jobs:
               raise SystemExit("BLOCKED: metric extraction report missing")
           r = json.loads(p.read_text(encoding="utf-8"))
           print("METRIC_EXTRACTION=" + json.dumps({k:r.get(k) for k in ("status","input_result_disclosures","attachment_attempts","ledger_rows","verified_metric_rows","blocked_rows")}, sort_keys=True))
-          if int(r.get("attachment_attempts", 0)) > 100:
+          if int(r.get("attachment_attempts", 0)) > 500:
               raise SystemExit("TIME_BUDGET_GUARD: attachment attempts exceeded bounded cap")
           PY
       - name: Rebuild normalized financial features from verified metric ledger
@@ -98,13 +98,21 @@ jobs:
           features.to_csv(OUT / "quarterly_financial_features.csv", index=False)
           root = OUT / "quarterly_results_research_report.json"
           manifest = json.loads(root.read_text(encoding="utf-8")) if root.exists() else {}
-          coverage = {"status": "PASS" if len(verified) > 0 else "BLOCKED_NO_VERIFIED_ROWS",
+          disclosure_count = int(len(pd.read_csv("data/raw/quarterly_results_disclosures.csv"))) if Path("data/raw/quarterly_results_disclosures.csv").exists() else 0
+          ledger_rows = int(len(ledger))
+          blocked_rows = int(ledger["EXTRACTION_STATUS"].str.startswith("BLOCKED").sum())
+          superseded_rows = int(ledger["EXTRACTION_STATUS"].eq("SUPERSEDED_BY_LATER_DISCLOSURE").sum())
+          complete_coverage = ledger_rows == disclosure_count and disclosure_count > 0 and blocked_rows == 0
+          coverage = {"status": "PASS" if complete_coverage else "BLOCKED_INCOMPLETE_OR_UNVERIFIED_COVERAGE",
                       "verified_metric_rows": int(len(verified)),
-                      "disclosure_rows_in_current_source": int(len(pd.read_csv("data/raw/quarterly_results_disclosures.csv"))) if Path("data/raw/quarterly_results_disclosures.csv").exists() else 0,
-                      "coverage_scope": "bounded sample only; not full disclosure coverage",
-                      "unverified_rows_remain_blocked": int(len(ledger) - len(verified))}
+                      "ledger_rows_evaluated": ledger_rows,
+                      "disclosure_rows_in_current_source": disclosure_count,
+                      "coverage_scope": "full current disclosure set" if complete_coverage else "incomplete; no coverage claim",
+                      "blocked_rows": blocked_rows,
+                      "superseded_revision_rows": superseded_rows,
+                      "unverified_rows_remain_blocked": blocked_rows}
           manifest["financial_metrics"] = {**report, "coverage": coverage, "provenance_source": str(tmp)}
-          manifest["step_2_status"] = "PARTIAL_VERIFIED_BLOCKED_INCOMPLETE_COVERAGE" if len(verified) else "BLOCKED"
+          manifest["step_2_status"] = "PASS" if complete_coverage else "BLOCKED_INCOMPLETE_OR_UNVERIFIED_COVERAGE"
           manifest["status"] = "COLLECTED_WITH_BLOCKERS"
           root.write_text(json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8")
           print("STEP2_FINANCIAL_FEATURES=" + json.dumps({"report":report,"coverage":coverage,"step_2_status":manifest["step_2_status"]}, sort_keys=True))
