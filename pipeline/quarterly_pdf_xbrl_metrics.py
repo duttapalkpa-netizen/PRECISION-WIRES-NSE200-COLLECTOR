@@ -131,7 +131,7 @@ def main():
  df=pd.read_csv(DISC,dtype=str).fillna("")
  # Optional hard cap keeps live attachment verification bounded in CI. Preserve
  # newest disclosures first; uncapped runs remain the default for full research.
- max_disclosures=int(os.environ.get("QUARTERLY_METRIC_MAX_DISCLOSURES", "0") or 0)
+ max_disclosures=int(os.environ.get("QUARTERLY_METRIC_MAX_DISCLOSURES", "500") or 500)
  result_rows=df[df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")].copy()
  if max_disclosures > 0 and len(result_rows) > max_disclosures:
   result_rows=result_rows.head(max_disclosures)
@@ -222,19 +222,33 @@ def main():
     "EXTRACTION_STATUS":"BLOCKED_NO_VERIFIED_XBRL_METRICS",
     "EVIDENCE_PATH":evidence_path,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
  result=pd.DataFrame(out,columns=FIELDS)
- # No ambiguous duplicates can silently pass into the feature builder.
+ # A later official revision supersedes an earlier filing for the same symbol,
+ # period and basis. Do not block both rows merely because revision history
+ # exists. If multiple different source files share the exact latest timestamp,
+ # keep them blocked as ambiguous rather than selecting one arbitrarily.
  if not result.empty:
-  valid=result[result.EXTRACTION_STATUS.eq("SOURCE_LINKED_XBRL_FACTS")]
-  if valid.duplicated(["SYMBOL","PERIOD_END","BASIS"]).any():
-   dup=valid[valid.duplicated(["SYMBOL","PERIOD_END","BASIS"],keep=False)].index
-   result.loc[dup,"EXTRACTION_STATUS"]="BLOCKED_DUPLICATE_PERIOD_BASIS"
-   result.loc[dup,["REVENUE","PAT","EPS"]]=""
+  valid_mask=result.EXTRACTION_STATUS.eq("SOURCE_LINKED_XBRL_FACTS")
+  valid_rows=result.loc[valid_mask].copy()
+  if not valid_rows.empty:
+   valid_rows["_DISCLOSED_SORT"]=pd.to_datetime(valid_rows["DISCLOSED_AT"],errors="coerce",utc=True)
+   for _, group in valid_rows.groupby(["SYMBOL","PERIOD_END","BASIS"],dropna=False):
+    if len(group) < 2:
+     continue
+    latest=group["_DISCLOSED_SORT"].max()
+    latest_rows=group[group["_DISCLOSED_SORT"].eq(latest)]
+    if len(latest_rows) == 1 and pd.notna(latest):
+     superseded=group.index.difference(latest_rows.index)
+     result.loc[superseded,"EXTRACTION_STATUS"]="SUPERSEDED_BY_LATER_DISCLOSURE"
+    else:
+     result.loc[group.index,"EXTRACTION_STATUS"]="BLOCKED_AMBIGUOUS_LATEST_PERIOD_BASIS"
+     result.loc[group.index,["REVENUE","PAT","EPS"]]=""
  result.to_csv(OUT,index=False)
  valid=int(result.EXTRACTION_STATUS.eq("SOURCE_LINKED_XBRL_FACTS").sum())
+ superseded=int(result.EXTRACTION_STATUS.eq("SUPERSEDED_BY_LATER_DISCLOSURE").sum())
  report={"status":"COMPUTED_WITH_VERIFIED_ROWS" if valid else "BLOCKED_NO_VERIFIED_ROWS",
   "input_result_disclosures":int((df.get("EVENT_KIND","")== "RESULT_DISCLOSURE").sum()),
   "attachment_attempts":attempted,"ledger_rows":len(result),"verified_metric_rows":valid,
-  "blocked_rows":int(len(result)-valid),"ledger_path":str(OUT),"evidence_dir":str(EVIDENCE),
+  "blocked_rows":int(result.EXTRACTION_STATUS.str.startswith("BLOCKED").sum()),"superseded_revision_rows":superseded,"ledger_path":str(OUT),"evidence_dir":str(EVIDENCE),
   "required_provenance":["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENUE","PAT","EPS","SOURCE_SHA256","fact tags and context refs"],
   "policy":"No PDF OCR guessing or headline-derived values; PDF text candidates are evidence only until symbol, period, basis, units and table columns are unambiguously verified; unparsed facts stay BLOCKED.",
   "pdf_text_extraction_attempts":sum(1 for e in errors if "pdf_candidates" in e),
