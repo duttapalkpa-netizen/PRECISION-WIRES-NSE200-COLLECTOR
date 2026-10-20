@@ -1,6 +1,6 @@
 import unittest
 
-from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment
+from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment, basis_from_xbrl_facts
 
 
 class QuarterlyXbrlMetricTests(unittest.TestCase):
@@ -27,6 +27,29 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertEqual(pat["value"], 23456)
         self.assertEqual(eps["value"], 2.34)
         self.assertEqual(eps["tag"], "basicearningsloss-persharefromcontinuinganddiscontinuedoperations".replace("-", ""))
+
+    def test_basis_is_resolved_only_from_matching_explicit_xbrl_dimensions(self):
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <xbrl xmlns="http://www.xbrl.org/2003/instance"
+              xmlns:xbrldi="http://xbrl.org/2006/xbrldi">
+          <context id="QTR"><entity><identifier scheme="https://example.test">INE123A01011</identifier>
+            <segment><xbrldi:explicitMember dimension="ind:StatementTypeAxis">ind:ConsolidatedMember</xbrldi:explicitMember></segment>
+          </entity><period><startDate>2026-04-01</startDate><endDate>2026-06-30</endDate></period></context>
+          <unit id="INR"><measure>INR</measure></unit>
+          <unit id="INRPS"><measure>INRPerShare</measure></unit>
+          <RevenueFromOperations contextRef="QTR" unitRef="INR">123</RevenueFromOperations>
+          <ProfitLossForPeriod contextRef="QTR" unitRef="INR">45</ProfitLossForPeriod>
+          <BasicEarningsPerShare contextRef="QTR" unitRef="INRPS">2</BasicEarningsPerShare>
+        </xbrl>"""
+        facts = parse_xbrl(xml)
+        selected = [
+            choose(facts, ALIASES["REVENUE"], "2026-06-30"),
+            choose(facts, ALIASES["PAT"], "2026-06-30"),
+            choose(facts, ALIASES["EPS"], "2026-06-30"),
+        ]
+        self.assertEqual(basis_from_xbrl_facts(selected), "CONSOLIDATED")
+        selected[1] = dict(selected[1], dimensions=[])
+        self.assertEqual(basis_from_xbrl_facts(selected), "")
 
     def test_missing_period_or_unit_cannot_be_selected(self):
         facts = [{"tag": "revenuefromoperations", "value": 100, "context": "QTR",
