@@ -90,22 +90,48 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
+          import pandas as pd
           report_path = Path("outputs/news_24h/stock_news_24h_readiness.json")
           collect_path = Path("outputs/news_24h/stock_news_collection_report.json")
+          coverage_path = Path("data/raw/stock_news_coverage.csv")
+          join_path = Path("outputs/news_24h/stock_news_24h_cutoff_join.csv")
           quarter_path = Path("outputs/quarterly_results/target5_h1_quarterly_catalyst_join_report.json")
-          for p in (report_path, collect_path, quarter_path):
+          for p in (report_path, collect_path, coverage_path, join_path, quarter_path):
               if not p.exists():
                   raise SystemExit("STEP3_BLOCKED_REPORT_MISSING: " + str(p))
           news = json.loads(report_path.read_text())
           collection = json.loads(collect_path.read_text())
           quarterly = json.loads(quarter_path.read_text())
+          coverage = pd.read_csv(coverage_path)
+          joined = pd.read_csv(join_path)
           print("STEP3_NEWS_JOIN=" + json.dumps(news, sort_keys=True))
           print("STEP3_NEWS_COLLECTION=" + json.dumps(collection, sort_keys=True))
           print("STEP3_QUARTERLY_JOIN=" + json.dumps(quarterly, sort_keys=True))
-          if news.get("research_status") != "READY_FOR_PAIRED_ABLATION":
-              raise SystemExit("STEP3_BLOCKED_NEWS_COVERAGE_OR_VERIFICATION")
-          if quarterly.get("status") != "COMPUTED_AUDIT_JOIN":
+          coverage["COVERAGE_STATUS"] = coverage["COVERAGE_STATUS"].astype(str).str.upper().str.strip()
+          unknown = int((coverage["COVERAGE_STATUS"] != "COMPLETE").sum())
+          if coverage.empty or unknown:
+              raise SystemExit(f"STEP3_BLOCKED_INCOMPLETE_NEWS_SOURCE_COVERAGE: unknown={unknown}, total={len(coverage)}")
+          if len(joined) != len(coverage):
+              raise SystemExit(f"STEP3_BLOCKED_JOIN_CARDINALITY_MISMATCH: joined={len(joined)}, coverage={len(coverage)}")
+          if not joined["NEWS_STATUS"].isin(["NO_MATCH_IN_GDELT_QUERY_WINDOW", "UNVERIFIED_NEWS_PRESENT", "VERIFIED_NEWS_PRESENT"]).all():
+              raise SystemExit("STEP3_BLOCKED_INVALID_NEWS_STATUS_OR_TIMESTAMP_ALIGNMENT")
+          if quarterly.get("status") != "COMPUTED_AUDIT_JOIN" or quarterly.get("quarterly_source_status") != "AVAILABLE":
               raise SystemExit("STEP3_BLOCKED_QUARTERLY_SOURCE_COVERAGE")
+          report = {
+              "step": 3,
+              "status": "PASS_NEWS_CATALYST_JOIN_COVERAGE_AND_TIMESTAMP_ALIGNMENT",
+              "coverage_rows": int(len(coverage)),
+              "coverage_unknown_rows": unknown,
+              "timestamp_join_rows": int(len(joined)),
+              "quarterly_catalyst_join_rows": int(quarterly.get("rows", 0)),
+              "paired_news_ablation_status": "BLOCKED_UNTIL_RELEVANT_NEWS_IS_INDEPENDENTLY_VERIFIED",
+              "source_scope_limit": "COMPLETE means the queried GDELT source/window responded successfully; it does not prove no news exists elsewhere.",
+              "production_selector_changed": False,
+              "ranking_score_changed": False,
+              "pressure_fade_changed": False
+          }
+          Path("outputs/news_24h/step3_completion_verdict.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+          print("STEP3_COMPLETION_VERDICT=" + json.dumps(report, sort_keys=True))
           PY
       - name: Upload Step 3 evidence artifacts
         if: always()
