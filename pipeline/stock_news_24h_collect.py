@@ -77,7 +77,7 @@ def main():
                     "query": query, "mode": "ArtList", "format": "json",
                     "startdatetime": utc_stamp(start), "enddatetime": utc_stamp(cutoff),
                     "maxrecords": 75, "sort": "DateDesc",
-                }, timeout=(8, 25))
+                }, timeout=(20, 35))
                 response.raise_for_status()
                 payload = response.json()
                 if not isinstance(payload, dict) or "articles" not in payload or not isinstance(payload.get("articles"), list):
@@ -131,10 +131,11 @@ def main():
         "status": "COLLECTED_WITH_GAPS" if failed else "COLLECTED_GDELT_DISCOVERY_ONLY",
         "candidate_cutoff_pairs": int(len(pairs)), "queries_succeeded": int(ok),
         "queries_failed": int(failed), "news_rows": int(len(news_df)),
+        "error_samples": [x["ERROR"] for x in coverage_rows if x.get("ERROR")][:5],
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "GDELT DOC API", "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 20, "read": 35}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
