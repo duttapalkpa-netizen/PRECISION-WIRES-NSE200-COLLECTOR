@@ -385,5 +385,25 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertTrue(normalized["BROADCAST_AT"])
         self.assertEqual(normalized["RESULT_DECLARED"], True)
 
+
+    def test_partial_local_isin_map_is_completed_from_official_nse_master(self):
+        from unittest.mock import MagicMock
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ref = root / "data" / "reference"
+            ref.mkdir(parents=True)
+            (ref / "security_master.csv").write_text(
+                "SYMBOL,ISIN\\nLOCALONLY,INE111A01011\\n", encoding="utf-8"
+            )
+            response = MagicMock()
+            response.raise_for_status.return_value = None
+            response.content = b"SYMBOL,ISIN NUMBER\\nLOCALONLY,INE111A01011\\nMISSINGLOCAL,INE222A01012\\n"
+            with patch.object(stage, "ROOT", root), \\
+                 patch.object(stage, "_SECURITY_ISIN_MAP", None), \\
+                 patch.object(stage.requests, "get", return_value=response) as mocked_get:
+                self.assertEqual(stage.security_isin("MISSINGLOCAL", {"symbol": "MISSINGLOCAL"}),
+                                 "INE222A01012")
+                self.assertGreaterEqual(mocked_get.call_count, 1)
+
 if __name__ == "__main__":
     unittest.main()
