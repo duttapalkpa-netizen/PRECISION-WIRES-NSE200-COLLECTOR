@@ -1,0 +1,109 @@
+name: Step 3 News and Catalyst Join Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/prospective-selector-tracking]
+    paths:
+      - ".github/workflows/step3_news_catalyst_audit.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: step3-news-catalyst-audit
+  cancel-in-progress: false
+
+jobs:
+  step3-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audit branch only
+        uses: actions/checkout@v4
+        with:
+          ref: audit/prospective-selector-tracking
+          fetch-depth: 1
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify prerequisite candidate and quarterly evidence files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          required = [
+            Path("outputs/prospective/target5_h1_selector_experiment_picks.csv"),
+            Path("data/raw/quarterly_results_disclosures.csv"),
+            Path("outputs/quarterly_results/quarterly_financial_features.csv"),
+            Path("outputs/quarterly_results/quarterly_results_research_report.json"),
+          ]
+          missing = [str(p) for p in required if not p.exists()]
+          if missing:
+              raise SystemExit("STEP3_BLOCKED_MISSING_PREREQUISITES: " + ", ".join(missing))
+          print("STEP3_PREREQUISITES_PRESENT")
+          PY
+      - name: Join point-in-time quarterly results to frozen candidates
+        run: python pipeline/quarterly_results_candidate_join.py
+      - name: Collect timestamped 24-hour stock-news discovery for latest cutoff only
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          from pathlib import Path
+          p = Path("outputs/prospective/target5_h1_selector_experiment_picks.csv")
+          df = pd.read_csv(p, dtype={"SYMBOL": str})
+          if not {"CUT_OFF", "SYMBOL"}.issubset(df.columns):
+              raise SystemExit("STEP3_BLOCKED_BAD_CANDIDATE_SCHEMA")
+          df["CUT_OFF"] = pd.to_datetime(df["CUT_OFF"], errors="coerce")
+          df = df.dropna(subset=["CUT_OFF"])
+          if df.empty:
+              raise SystemExit("STEP3_BLOCKED_NO_VALID_CUTOFFS")
+          latest = df["CUT_OFF"].max()
+          df = df[df["CUT_OFF"].eq(latest)].copy()
+          if df.empty:
+              raise SystemExit("STEP3_BLOCKED_LATEST_CUTOFF_EMPTY")
+          df.to_csv(p, index=False)
+          print(f"STEP3_SCOPED_CUTOFF={latest.date().isoformat()} PAIRS={len(df[['CUT_OFF','SYMBOL']].drop_duplicates())}")
+          PY
+          python pipeline/stock_news_24h_collect.py
+      - name: Build stock-specific 24-hour timestamp-aligned news join
+        run: python pipeline/stock_news_24h_join.py
+      - name: Enforce evidence-based Step 3 status
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report_path = Path("outputs/news_24h/stock_news_24h_readiness.json")
+          collect_path = Path("outputs/news_24h/stock_news_collection_report.json")
+          quarter_path = Path("outputs/quarterly_results/target5_h1_quarterly_catalyst_join_report.json")
+          for p in (report_path, collect_path, quarter_path):
+              if not p.exists():
+                  raise SystemExit("STEP3_BLOCKED_REPORT_MISSING: " + str(p))
+          news = json.loads(report_path.read_text())
+          collection = json.loads(collect_path.read_text())
+          quarterly = json.loads(quarter_path.read_text())
+          print("STEP3_NEWS_JOIN=" + json.dumps(news, sort_keys=True))
+          print("STEP3_NEWS_COLLECTION=" + json.dumps(collection, sort_keys=True))
+          print("STEP3_QUARTERLY_JOIN=" + json.dumps(quarterly, sort_keys=True))
+          if news.get("research_status") != "READY_FOR_PAIRED_ABLATION":
+              raise SystemExit("STEP3_BLOCKED_NEWS_COVERAGE_OR_VERIFICATION")
+          if quarterly.get("status") not in {"COMPUTED_AUDIT_JOIN"}:
+              raise SystemExit("STEP3_BLOCKED_QUARTERLY_SOURCE_COVERAGE")
+          PY
+      - name: Upload Step 3 evidence artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: step3-news-catalyst-join-audit
+          if-no-files-found: warn
+          path: |
+            outputs/news_24h/stock_news_collection_report.json
+            outputs/news_24h/stock_news_24h_readiness.json
+            outputs/news_24h/stock_news_24h_cutoff_join.csv
+            data/raw/stock_news_events.csv
+            data/raw/stock_news_coverage.csv
+            outputs/quarterly_results/target5_h1_quarterly_catalyst_join.csv
+            outputs/quarterly_results/target5_h1_quarterly_catalyst_join_report.json
