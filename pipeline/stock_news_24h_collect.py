@@ -21,8 +21,8 @@ REPORT_OUT = Path("outputs/news_24h/stock_news_collection_report.json")
 API = "https://api.gdeltproject.org/api/v2/doc/doc"
 TZ = "Asia/Kolkata"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES-Research/1.0; audit-only)", "Accept": "application/json"}
-MAX_RETRIES = 3
-BACKOFF_SECONDS = (5, 15)
+MAX_RETRIES = 2
+BACKOFF_SECONDS = (8,)
 
 
 def utc_stamp(ts):
@@ -73,7 +73,7 @@ def main():
                 "CUT_OFF": cutoff.date().isoformat(), "SYMBOL": pair.SYMBOL,
                 "WINDOW_START": start.isoformat(), "WINDOW_END": cutoff.isoformat(),
                 "COVERAGE_STATUS": "UNKNOWN", "SOURCE_SCOPE": "GDELT_DOC_API_SYMBOL_QUERY",
-                "QUERY": query, "ERROR": "",
+                "QUERY": query, "SOURCE_URL": "", "ERROR": "",
             }
             try:
                 payload = None
@@ -83,6 +83,7 @@ def main():
                     "startdatetime": utc_stamp(start), "enddatetime": utc_stamp(cutoff),
                     "maxrecords": 75, "sort": "DateDesc",
                 }
+                coverage["SOURCE_URL"] = requests.Request("GET", API, params=params).prepare().url
                 for attempt in range(MAX_RETRIES):
                     try:
                         response = session.get(API, params=params, timeout=(8, 20))
@@ -102,7 +103,7 @@ def main():
                         delay = BACKOFF_SECONDS[min(attempt, len(BACKOFF_SECONDS) - 1)]
                         retry_after = getattr(getattr(exc, "response", None), "headers", {}).get("Retry-After")
                         try:
-                            delay = max(delay, min(30, int(retry_after))) if retry_after else delay
+                            delay = max(delay, min(20, int(retry_after))) if retry_after else delay
                         except (TypeError, ValueError):
                             pass
                         print(f"RETRY symbol={pair.SYMBOL} attempt={attempt+1}/{MAX_RETRIES} delay_s={delay} reason={type(exc).__name__}", flush=True)
@@ -139,12 +140,12 @@ def main():
             coverage_rows.append(coverage)
             if n % 25 == 0:
                 print(f"PROGRESS={n}/{len(pairs)} queries_ok={ok} queries_failed={failed}", flush=True)
-            time.sleep(2.0)
+            time.sleep(3.0)
 
     news_cols = ["EVENT_ID", "CUT_OFF", "SYMBOL", "PUBLISHED_AT", "PUBLISHER",
                  "HEADLINE", "CANONICAL_URL", "SOURCE_TYPE", "VERIFICATION_STATUS"]
     cov_cols = ["CUT_OFF", "SYMBOL", "WINDOW_START", "WINDOW_END", "COVERAGE_STATUS",
-                "SOURCE_SCOPE", "QUERY", "RESULTS_RETURNED", "ERROR"]
+                "SOURCE_SCOPE", "QUERY", "SOURCE_URL", "RESULTS_RETURNED", "ERROR"]
     news_df = pd.DataFrame(news_rows, columns=news_cols).drop_duplicates(["SYMBOL", "PUBLISHED_AT", "CANONICAL_URL"])
     news_before_syndication_dedupe = len(news_df)
     if not news_df.empty:
@@ -162,7 +163,7 @@ def main():
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 8, "read": 20}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS)}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 8, "read": 20}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 20, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
