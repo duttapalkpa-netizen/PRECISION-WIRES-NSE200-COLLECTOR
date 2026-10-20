@@ -75,10 +75,18 @@ def parse_xbrl(blob):
  contexts={}
  for node in root.iter():
   if local(node.tag)=="context":
-   ident=node.attrib.get("id",""); period={}
+   ident=node.attrib.get("id",""); period={}; dimensions=[]
    for child in node.iter():
     k=local(child.tag)
     if k in ("instant","startdate","enddate"): period[k]=child.text or ""
+    # Preserve explicit XBRL dimensional members: these can be the only
+    # machine-readable distinction between standalone and consolidated filings.
+    if k == "explicitmember":
+     member=(child.text or "").strip()
+     dimension=str(child.attrib.get("dimension","")).strip()
+     if member and dimension:
+      dimensions.append({"dimension":dimension,"member":member})
+   period["dimensions"]=dimensions
    contexts[ident]=period
  facts=[]
  for node in root.iter():
@@ -93,7 +101,8 @@ def parse_xbrl(blob):
   if not end: continue
   facts.append({"tag":tag,"value":value,"context":ctx,"period_end":date_iso(end),
                 "start_date":date_iso(period.get("startdate","")),"instant":bool(period.get("instant")),
-                "unit":node.attrib.get("unitRef","")})
+                "unit":node.attrib.get("unitRef",""),
+                "dimensions":period.get("dimensions",[])})
  return facts
 def fetch_attachment(session, url):
  """Fetch an official NSE attachment, falling back between official archive hosts on 403."""
@@ -146,6 +155,23 @@ def choose(facts, aliases, period, instant_preference=False):
  if instant_preference: cand.sort(key=lambda f:(not f["instant"],f["tag"]))
  else: cand.sort(key=lambda f:(f["instant"],f["tag"]))
  return cand[0]
+def basis_from_xbrl_facts(selected_facts):
+ """Return a basis only when each selected metric fact explicitly agrees via XBRL dimensions."""
+ if not selected_facts:
+  return ""
+ observed=[]
+ for fact in selected_facts:
+  labels=[]
+  for dimension in fact.get("dimensions",[]) or []:
+   labels.extend([str(dimension.get("dimension","")),str(dimension.get("member",""))])
+  text_value=" ".join(labels).lower()
+  has_consolidated=bool(re.search(r"consolidat(?:ed|ion)",text_value))
+  has_standalone=bool(re.search(r"standalone",text_value))
+  if has_consolidated == has_standalone:
+   return ""
+  observed.append("CONSOLIDATED" if has_consolidated else "STANDALONE")
+ return observed[0] if len(set(observed)) == 1 and len(observed) == len(selected_facts) else ""
+
 def main():
  EVIDENCE.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True)
  if not DISC.exists():
@@ -237,6 +263,10 @@ def main():
      elif "consolidated" in txt and "standalone" not in txt: basis="CONSOLIDATED"
      elif "standalone" in txt and "consolidated" not in txt: basis="STANDALONE"
      else: basis=""
+     # If filing metadata is silent, accept basis only when Revenue, PAT and
+     # EPS contexts each carry the same explicit XBRL dimensional member.
+     if not basis:
+      basis=basis_from_xbrl_facts([rev,pat,eps])
      if basis:
       out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":basis,"SOURCE_URL":url,
        "DISCLOSED_AT":disclosed_at,"REVENUE":rev["value"],"PAT":pat["value"],"EPS":eps["value"],
