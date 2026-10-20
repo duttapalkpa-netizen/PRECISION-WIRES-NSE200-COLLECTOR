@@ -607,7 +607,7 @@ def main():
         "missing_data_semantics": "UNKNOWN/BLOCKED, never zero or negative",
         "retrospective_returns_are_not_live_signal_validation": True
     }
-    (OUT / "quarterly_results_research_report.json").write_text(json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8")
+    (OUT / "quarterly_results_research_report.json").write_text(json.dumps(manifest, indent=2, allow_nan=False, default=str), encoding="utf-8")
     print(json.dumps(manifest, indent=2))
     # A failed/blocked source is represented in the report; workflow remains auditable.
     return 0
