@@ -46,6 +46,66 @@ jobs:
           python pipeline/quarterly_results_research.py
           python pipeline/walk_forward_backtest.py
           python pipeline/target5_h1_selector_experiment.py
+      - name: Rebuild and assert Step 2 source-validation coverage
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+          report_path = Path("outputs/quarterly_results/quarterly_results_research_report.json")
+          validation_path = Path("outputs/quarterly_results/source_validation_report.csv")
+          disclosure_path = Path("data/raw/quarterly_results_disclosures.csv")
+          ledger_path = Path("data/raw/quarterly_financial_metrics.csv")
+          if not all(p.exists() for p in (report_path, validation_path, disclosure_path, ledger_path)):
+              raise SystemExit("STEP3_BLOCKED_STEP2_REQUIRED_SOURCE_ARTIFACT_MISSING")
+          manifest = json.loads(report_path.read_text(encoding="utf-8"))
+          validation = pd.read_csv(validation_path, dtype=str).fillna("")
+          disclosures = pd.read_csv(disclosure_path, dtype=str).fillna("")
+          ledger = pd.read_csv(ledger_path, dtype=str).fillna("")
+          required_validation = {"SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SYMBOL", "ISIN", "RECORD_VALID"}
+          if not required_validation.issubset(validation.columns):
+              raise SystemExit("STEP3_BLOCKED_STEP2_SOURCE_VALIDATION_SCHEMA")
+          valid = validation["RECORD_VALID"].astype(str).str.lower().isin(["true", "1"])
+          source_pass = len(validation) > 0 and bool(valid.all())
+          if not source_pass:
+              raise SystemExit("STEP3_BLOCKED_STEP2_SOURCE_VALIDATION_RECORDS")
+          required_metrics = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS", "EXTRACTION_STATUS"}
+          if not required_metrics.issubset(ledger.columns):
+              raise SystemExit("STEP3_BLOCKED_STEP2_METRIC_LEDGER_SCHEMA")
+          verified = ledger[ledger["EXTRACTION_STATUS"].eq("SOURCE_LINKED_XBRL_FACTS")].copy()
+          blocked_rows = int(ledger["EXTRACTION_STATUS"].astype(str).str.startswith("BLOCKED").sum())
+          disclosure_rows = len(disclosures)
+          complete = disclosure_rows > 0 and len(ledger) == disclosure_rows and blocked_rows == 0 and len(verified) > 0
+          if not complete:
+              raise SystemExit("STEP3_BLOCKED_STEP2_FINANCIAL_METRIC_COVERAGE:" + json.dumps({
+                  "ledger_rows": len(ledger), "disclosure_rows": disclosure_rows,
+                  "blocked_rows": blocked_rows, "verified_rows": len(verified)}, sort_keys=True))
+          normalized = Path("data/raw/quarterly_financial_metrics_verified.csv")
+          verified[["SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS"]].to_csv(normalized, index=False)
+          from pipeline.quarterly_results_research import build_financial_features, OUT
+          features, feature_report = build_financial_features(normalized)
+          OUT.mkdir(parents=True, exist_ok=True)
+          features.to_csv(OUT / "quarterly_financial_features.csv", index=False)
+          manifest["source_validation"] = {
+              "status": "PASS", "records_checked": int(len(validation)),
+              "valid_records": int(valid.sum()), "invalid_records": int((~valid).sum()),
+              "report_file": str(validation_path)
+          }
+          manifest["financial_metrics"] = {
+              **feature_report,
+              "coverage": {"status": "PASS", "verified_metric_rows": int(len(verified)),
+                           "ledger_rows_evaluated": int(len(ledger)),
+                           "disclosure_rows_in_current_source": int(disclosure_rows),
+                           "blocked_rows": blocked_rows, "coverage_scope": "full current disclosure set"},
+              "provenance_source": str(normalized)
+          }
+          manifest["step_2_status"] = "PASS"
+          report_path.write_text(json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8")
+          print("STEP2_SOURCE_VALIDATION_AND_METRIC_COVERAGE=PASS " + json.dumps({
+              "source_validation_rows": len(validation), "verified_metric_rows": len(verified),
+              "ledger_rows": len(ledger), "disclosure_rows": disclosure_rows,
+              "blocked_rows": blocked_rows}, sort_keys=True))
+          PY
       - name: Verify prerequisite candidate and quarterly evidence files
         run: |
           python - <<'PY'
