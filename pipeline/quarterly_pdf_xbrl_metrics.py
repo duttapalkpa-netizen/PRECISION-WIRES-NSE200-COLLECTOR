@@ -95,6 +95,28 @@ def parse_xbrl(blob):
                 "start_date":date_iso(period.get("startdate","")),"instant":bool(period.get("instant")),
                 "unit":node.attrib.get("unitRef","")})
  return facts
+def fetch_attachment(session, url):
+ """Fetch an official NSE attachment, falling back between official archive hosts on 403."""
+ candidates = [url]
+ if url.startswith("https://nsearchives.nseindia.com/"):
+  candidates.append(url.replace("https://nsearchives.nseindia.com/", "https://archives.nseindia.com/", 1))
+ elif url.startswith("https://archives.nseindia.com/"):
+  candidates.append(url.replace("https://archives.nseindia.com/", "https://nsearchives.nseindia.com/", 1))
+ last_error = None
+ for candidate in dict.fromkeys(candidates):
+  try:
+   response = session.get(candidate, timeout=(8, 35))
+   if response.status_code == 403 and candidate != candidates[-1]:
+    last_error = requests.HTTPError(f"403 from official archive host: {candidate}")
+    continue
+   response.raise_for_status()
+   return response, candidate
+  except Exception as exc:
+   last_error = exc
+ if last_error:
+  raise last_error
+ raise RuntimeError("No official attachment URL candidates")
+
 def parse_pdf_text(blob):
  """Extract selectable PDF text; scanned/image-only PDFs remain blocked, never OCR-guessed."""
  try:
@@ -137,6 +159,11 @@ def main():
   result_rows=result_rows.head(max_disclosures)
   df=pd.concat([result_rows, df[~df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")]], ignore_index=True)
  sess=requests.Session(); sess.headers.update(HEADERS)
+ # Establish NSE web-session cookies before requesting archived filing attachments.
+ try:
+  sess.get(NSE + "/companies-listing/corporate-filings-application", timeout=(5, 12))
+ except Exception:
+  pass
  out=[]; errors=[]; attempted=0
  for _,r in df.iterrows():
   if str(r.get("EVENT_KIND",""))!="RESULT_DISCLOSURE": continue
@@ -165,7 +192,8 @@ def main():
   for url in links:
    attempted+=1
    try:
-    resp=sess.get(url,timeout=(8,35)); resp.raise_for_status()
+    resp, fetched_url=fetch_attachment(sess, url)
+    url=fetched_url
     blob=resp.content; digest=sha(blob); ctype=resp.headers.get("Content-Type","")
     is_pdf=("pdf" in ctype.lower() or blob.startswith(b"%PDF"))
     is_xml=("xml" in ctype.lower() or blob.lstrip().startswith(b"<?xml"))
