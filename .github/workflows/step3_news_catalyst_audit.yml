@@ -6,6 +6,7 @@ on:
     branches: [audit/prospective-selector-tracking]
     paths:
       - ".github/workflows/step3_news_catalyst_audit.yml"
+      - "pipeline/stock_news_24h_collect.py"
 
 permissions:
   contents: read
