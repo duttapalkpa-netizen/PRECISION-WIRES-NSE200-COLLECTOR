@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/step3_news_catalyst_audit.yml"
       - "pipeline/stock_news_24h_collect.py"
+      - "pipeline/stock_news_24h_join.py"
 
 permissions:
   contents: read
@@ -18,7 +19,7 @@ concurrency:
 jobs:
   step3-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout audit branch only
         uses: actions/checkout@v4
@@ -103,8 +104,10 @@ jobs:
           news = json.loads(report_path.read_text())
           collection = json.loads(collect_path.read_text())
           quarterly = json.loads(quarter_path.read_text())
-          coverage = pd.read_csv(coverage_path)
-          joined = pd.read_csv(join_path)
+          coverage = pd.read_csv(coverage_path, dtype={"SYMBOL": str, "CUT_OFF": str})
+          joined = pd.read_csv(join_path, dtype={"SYMBOL": str, "CUT_OFF": str})
+          candidates = pd.read_csv("outputs/prospective/target5_h1_selector_experiment_picks.csv", dtype={"SYMBOL": str})
+          quarterly_report = json.loads(Path("outputs/quarterly_results/quarterly_results_research_report.json").read_text())
           print("STEP3_NEWS_JOIN=" + json.dumps(news, sort_keys=True))
           print("STEP3_NEWS_COLLECTION=" + json.dumps(collection, sort_keys=True))
           print("STEP3_QUARTERLY_JOIN=" + json.dumps(quarterly, sort_keys=True))
@@ -112,10 +115,40 @@ jobs:
           unknown = int((coverage["COVERAGE_STATUS"] != "COMPLETE").sum())
           if coverage.empty or unknown:
               raise SystemExit(f"STEP3_BLOCKED_INCOMPLETE_NEWS_SOURCE_COVERAGE: unknown={unknown}, total={len(coverage)}")
-          if len(joined) != len(coverage):
+          required_join = {"CUT_OFF", "SYMBOL", "CUTOFF_AT", "WINDOW_START", "SOURCE_QUERY_URL",
+                           "SOURCE_QUERY_URL_VALID", "COVERAGE_STATUS", "NEWS_STATUS",
+                           "LATEST_PUBLISHED_AT", "LATEST_CANONICAL_URL", "SYMBOL_CUTOFF_MATCH",
+                           "TIMESTAMP_WINDOW_VALID"}
+          missing_join = sorted(required_join - set(joined.columns))
+          if missing_join:
+              raise SystemExit("STEP3_BLOCKED_JOIN_EVIDENCE_FIELDS_MISSING: " + ",".join(missing_join))
+          if len(joined) != len(coverage) or len(joined) != len(candidates[["CUT_OFF", "SYMBOL"]].drop_duplicates()):
               raise SystemExit(f"STEP3_BLOCKED_JOIN_CARDINALITY_MISMATCH: joined={len(joined)}, coverage={len(coverage)}")
+          pair_cols = ["CUT_OFF", "SYMBOL"]
+          expected_pairs = set(map(tuple, candidates[pair_cols].astype(str).drop_duplicates().values.tolist()))
+          joined_pairs = set(map(tuple, joined[pair_cols].astype(str).drop_duplicates().values.tolist()))
+          coverage_pairs = set(map(tuple, coverage[pair_cols].astype(str).drop_duplicates().values.tolist()))
+          if expected_pairs != joined_pairs or expected_pairs != coverage_pairs:
+              raise SystemExit("STEP3_BLOCKED_CUTOFF_SYMBOL_PAIR_MISMATCH")
+          if joined.duplicated(pair_cols).any() or coverage.duplicated(pair_cols).any():
+              raise SystemExit("STEP3_BLOCKED_DUPLICATE_CUTOFF_SYMBOL_PAIRS")
           if not joined["NEWS_STATUS"].isin(["NO_MATCH_IN_GDELT_QUERY_WINDOW", "UNVERIFIED_NEWS_PRESENT", "VERIFIED_NEWS_PRESENT"]).all():
               raise SystemExit("STEP3_BLOCKED_INVALID_NEWS_STATUS_OR_TIMESTAMP_ALIGNMENT")
+          if not joined["SOURCE_QUERY_URL_VALID"].astype(str).str.lower().isin(["true", "1"]).all():
+              raise SystemExit("STEP3_BLOCKED_INVALID_QUERY_SOURCE_URL")
+          if not joined["SYMBOL_CUTOFF_MATCH"].astype(str).str.lower().isin(["true", "1"]).all():
+              raise SystemExit("STEP3_BLOCKED_SYMBOL_CUTOFF_ALIGNMENT")
+          if not joined["TIMESTAMP_WINDOW_VALID"].astype(str).str.lower().isin(["true", "1"]).all():
+              raise SystemExit("STEP3_BLOCKED_TIMESTAMP_WINDOW_ALIGNMENT")
+          has_news = joined["NEWS_ITEMS_24H"].fillna(0).astype(int).gt(0)
+          article_url_valid = joined.loc[has_news, "LATEST_CANONICAL_URL"].astype(str).str.match(r"^https?://[^\\s]+$", case=False)
+          if not article_url_valid.all():
+              raise SystemExit("STEP3_BLOCKED_INVALID_ARTICLE_SOURCE_URL")
+          source_validation = quarterly_report.get("source_validation", {})
+          financial_metrics = quarterly_report.get("financial_metrics", {})
+          metric_coverage = financial_metrics.get("coverage", {})
+          if quarterly_report.get("step_2_status") != "PASS" or source_validation.get("status") != "PASS" or metric_coverage.get("status") != "PASS":
+              raise SystemExit("STEP3_BLOCKED_STEP2_SOURCE_VALIDATION_OR_FINANCIAL_METRIC_COVERAGE")
           if quarterly.get("status") != "COMPUTED_AUDIT_JOIN" or quarterly.get("quarterly_source_status") != "AVAILABLE":
               raise SystemExit("STEP3_BLOCKED_QUARTERLY_SOURCE_COVERAGE")
           report = {
@@ -125,6 +158,12 @@ jobs:
               "coverage_unknown_rows": unknown,
               "timestamp_join_rows": int(len(joined)),
               "quarterly_catalyst_join_rows": int(quarterly.get("rows", 0)),
+              "step_2_source_validation_status": source_validation.get("status", "UNKNOWN"),
+              "step_2_financial_metric_coverage_status": metric_coverage.get("status", "UNKNOWN"),
+              "cutoff_symbol_pair_match": True,
+              "source_query_urls_valid": True,
+              "article_source_urls_valid_for_present_news": True,
+              "timestamp_window_alignment": True,
               "paired_news_ablation_status": "BLOCKED_UNTIL_RELEVANT_NEWS_IS_INDEPENDENTLY_VERIFIED",
               "source_scope_limit": "COMPLETE means the queried GDELT source/window responded successfully; it does not prove no news exists elsewhere.",
               "production_selector_changed": False,
@@ -147,6 +186,7 @@ jobs:
             outputs/news_24h/stock_news_collection_report.json
             outputs/news_24h/stock_news_24h_readiness.json
             outputs/news_24h/stock_news_24h_cutoff_join.csv
+            outputs/news_24h/step3_completion_verdict.json
             data/raw/stock_news_events.csv
             data/raw/stock_news_coverage.csv
             outputs/quarterly_results/target5_h1_quarterly_catalyst_join.csv
