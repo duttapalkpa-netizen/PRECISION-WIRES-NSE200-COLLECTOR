@@ -162,24 +162,27 @@ def security_isin(symbol, row):
                             _SECURITY_ISIN_MAP[symbol_key] = isin_value
         except Exception:
             pass
-        if not _SECURITY_ISIN_MAP:
-            # Official NSE security master only; no inferred or third-party identifiers.
-            for url in ("https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
-                        "https://archives.nseindia.com/content/equities/EQUITY_L.csv"):
-                try:
-                    response = requests.get(url, headers=HEADERS, timeout=(5, 12))
-                    response.raise_for_status()
-                    master = pd.read_csv(__import__("io").BytesIO(response.content), dtype=str).fillna("")
-                    master.columns = [str(col).strip().upper() for col in master.columns]
-                    isin_col = "ISIN NUMBER" if "ISIN NUMBER" in master.columns else ("ISIN" if "ISIN" in master.columns else None)
-                    if "SYMBOL" in master.columns and isin_col:
-                        _SECURITY_ISIN_MAP.update({
-                            str(rr["SYMBOL"]).strip().upper(): str(rr[isin_col]).strip().upper()
-                            for _, rr in master.iterrows() if str(rr[isin_col]).strip()
-                        })
-                        break
-                except Exception:
-                    continue
+        # Always merge the official current NSE security master for symbols
+        # absent from partial historical/local evidence. A non-empty partial map
+        # must not suppress this lookup. Existing official historical mappings
+        # are retained and never silently overwritten by current-master values.
+        for url in ("https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
+                    "https://archives.nseindia.com/content/equities/EQUITY_L.csv"):
+            try:
+                response = requests.get(url, headers=HEADERS, timeout=(5, 12))
+                response.raise_for_status()
+                master = pd.read_csv(__import__("io").BytesIO(response.content), dtype=str).fillna("")
+                master.columns = [str(col).strip().upper() for col in master.columns]
+                isin_col = "ISIN NUMBER" if "ISIN NUMBER" in master.columns else ("ISIN" if "ISIN" in master.columns else None)
+                if "SYMBOL" in master.columns and isin_col:
+                    for _, rr in master.iterrows():
+                        symbol_key = str(rr["SYMBOL"]).strip().upper()
+                        isin_value = str(rr[isin_col]).strip().upper()
+                        if symbol_key and isin_value and symbol_key not in _SECURITY_ISIN_MAP:
+                            _SECURITY_ISIN_MAP[symbol_key] = isin_value
+                    break
+            except Exception:
+                continue
     return _SECURITY_ISIN_MAP.get(str(symbol).strip().upper(), "")
 
 def normalize_event(row, kind, source_url):
@@ -544,7 +547,7 @@ def main():
                     "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
                     "isin": bool(re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}[0-9]", str(item.get("ISIN", "")))),
                 }
-                validation_rows.append({"EVENT_KIND": kind, "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("PUBLICATION_TIMESTAMP") or item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
+                validation_rows.append({"EVENT_KIND": kind, "RESULT_DECLARED": bool(item.get("RESULT_DECLARED", False)), "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("PUBLICATION_TIMESTAMP") or item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
             manifest["sources"][kind] = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url, "raw_response_file": str(raw_path)}
         except Exception as exc:
             if kind == "RESULT_DISCLOSURE":
@@ -552,8 +555,35 @@ def main():
             manifest["sources"][kind] = {"status": "UNKNOWN", "error": f"{type(exc).__name__}: {exc}"}
         time.sleep(0.2)
     validation_path = OUT / "source_validation_report.csv"
-    pd.DataFrame(validation_rows, columns=["EVENT_KIND", "SYMBOL", "ISIN", "SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SOURCE_URL_VALID", "PUBLICATION_TIMESTAMP_VALID", "REPORTING_PERIOD_VALID", "SYMBOL_VALID", "ISIN_VALID", "RECORD_VALID", "MISSING_FIELDS", "SOURCE_RECORD_SHA256"]).to_csv(validation_path, index=False)
-    manifest["source_validation"] = {"status": "PASS" if validation_rows and all(x["RECORD_VALID"] for x in validation_rows) else "BLOCKED", "records_checked": len(validation_rows), "valid_records": sum(bool(x["RECORD_VALID"]) for x in validation_rows), "report_file": str(validation_path), "required_fields": ["source_url", "publication_timestamp", "reporting_period", "symbol", "isin"]}
+    validation_columns = ["EVENT_KIND", "RESULT_DECLARED", "SYMBOL", "ISIN", "SOURCE_URL", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "SOURCE_URL_VALID", "PUBLICATION_TIMESTAMP_VALID", "REPORTING_PERIOD_VALID", "SYMBOL_VALID", "ISIN_VALID", "RECORD_VALID", "MISSING_FIELDS", "SOURCE_RECORD_SHA256"]
+    pd.DataFrame(validation_rows, columns=validation_columns).to_csv(validation_path, index=False)
+    # Financial-result source validation is scoped to actual declared result
+    # events. Board-meeting/calendar announcements remain separately observable
+    # and are not incorrectly required to carry a financial reporting period/ISIN.
+    result_validation = [x for x in validation_rows if x["EVENT_KIND"] == "RESULT_DISCLOSURE" and x["RESULT_DECLARED"]]
+    calendar_validation = [x for x in validation_rows if x["EVENT_KIND"] == "BOARD_MEETING"]
+    invalid_results = [x for x in result_validation if not x["RECORD_VALID"]]
+    manifest["source_validation"] = {
+        "status": "PASS" if result_validation and not invalid_results else "BLOCKED",
+        "records_checked": len(result_validation),
+        "valid_records": sum(bool(x["RECORD_VALID"]) for x in result_validation),
+        "invalid_records": len(invalid_results),
+        "invalid_by_missing_fields": {},
+        "invalid_samples": [{k: x.get(k, "") for k in ("SYMBOL", "ISIN", "PUBLICATION_TIMESTAMP", "REPORTING_PERIOD", "MISSING_FIELDS", "SOURCE_URL")} for x in invalid_results[:25]],
+        "report_file": str(validation_path),
+        "required_fields": ["source_url", "publication_timestamp", "reporting_period", "symbol", "isin"],
+        "scope": "RESULT_DISCLOSURE rows with RESULT_DECLARED=true; board/calendar announcements are validated separately"
+    }
+    for item in invalid_results:
+        for field in str(item.get("MISSING_FIELDS", "")).split(";"):
+            if field:
+                manifest["source_validation"]["invalid_by_missing_fields"][field] = manifest["source_validation"]["invalid_by_missing_fields"].get(field, 0) + 1
+    manifest["calendar_validation"] = {
+        "status": "AVAILABLE" if calendar_validation else "UNKNOWN",
+        "records_checked": len(calendar_validation),
+        "valid_records": sum(bool(x["RECORD_VALID"]) for x in calendar_validation),
+        "note": "Calendar records are not financial-result metric source records."
+    }
     manifest["endpoint_schema_step_1"] = evaluate_endpoint_schema(manifest["sources"], result_events, calendar_events)
     disclosures_path = RAW / "quarterly_results_disclosures.csv"
     calendar_path = RAW / "quarterly_results_calendar.csv"
