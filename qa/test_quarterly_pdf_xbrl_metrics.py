@@ -44,5 +44,25 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertEqual(date_iso("30-JUN-2026"), "2026-06-30")
         self.assertEqual(date_iso("2026-02-30"), "")
 
+
+    def test_insurance_taxonomy_tags_are_recognized_without_pbt_substitution(self):
+        from pipeline.quarterly_pdf_xbrl_metrics import ALIASES
+        tags = {
+            "operatingincome",
+            "income",
+            "profitlossaftertax",
+            "profitlossaftertaxbeforeextraordinaryitems",
+            "profitlossaftertaxandextraordinaryitems",
+            "basicanddilutedepsbeforeextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized",
+            "basicanddilutedepsafterextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized",
+        }
+        normalized = {item.lower().replace("_", "") for values in ALIASES.values() for item in values}
+        self.assertTrue({"profitlossaftertax", "profitlossaftertaxbeforeextraordinaryitems",
+                         "profitlossaftertaxandextraordinaryitems"}.issubset(normalized))
+        self.assertTrue({"basicanddilutedepsbeforeextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized",
+                         "basicanddilutedepsafterextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized"}.issubset(normalized))
+        self.assertIn("operatingincome", tags)
+        self.assertIn("income", tags)
+
 if __name__ == "__main__":
     unittest.main()
