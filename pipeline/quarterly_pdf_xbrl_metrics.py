@@ -31,8 +31,8 @@ FIELDS=["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENU
         "EVIDENCE_PATH","OBSERVED_AT_UTC"]
 ALIASES={
  "REVENUE":["revenuefromoperations","revenuefromoperation","revenue","incomefromoperations"],
- "PAT":["profitlossforperiod","profitlossfortheperiod","profitloss","profitaftertax","profitaftertaxation","profitlossfromcontinuingoperations"],
- "EPS":["earningspersharebasic","basicearningspershare","earningspersharediluted","dilutedearningspershare","basicearningslosspersharefromcontinuinganddiscontinuedoperations","basicearningslosspersharefromcontinuingoperations","dilutedearningslosspersharefromcontinuinganddiscontinuedoperations","dilutedearningslosspersharefromcontinuingoperations","basicearningspershareafterextraordinaryitems","basicearningspersharebeforeextraordinaryitems","dilutedearningspershareafterextraordinaryitems","dilutedearningspersharebeforeextraordinaryitems"]
+ "PAT":["profitlossforperiod","profitlossfortheperiod","profitloss","profitaftertax","profitaftertaxation","profitlossaftertax","profitlossaftertaxbeforeextraordinaryitems","profitlossaftertaxandextraordinaryitems","profitlossfromcontinuingoperations"],
+ "EPS":["earningspersharebasic","basicearningspershare","earningspersharediluted","dilutedearningspershare","basicearningslosspersharefromcontinuinganddiscontinuedoperations","basicearningslosspersharefromcontinuingoperations","dilutedearningslosspersharefromcontinuinganddiscontinuedoperations","dilutedearningslosspersharefromcontinuingoperations","basicearningspershareafterextraordinaryitems","basicearningspersharebeforeextraordinaryitems","dilutedearningspershareafterextraordinaryitems","dilutedearningspersharebeforeextraordinaryitems","basicanddilutedepsbeforeextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized","basicanddilutedepsafterextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized"]
 }
 def local(tag): return tag.rsplit("}",1)[-1].split(":")[-1].lower()
 def sha(b): return hashlib.sha256(b).hexdigest()
@@ -188,9 +188,14 @@ def main():
      periods=sorted(set(f["period_end"] for f in facts if f["period_end"]))
      if len(periods)==1: period=periods[0]
     rev=choose(facts,ALIASES["REVENUE"],period)
-    # Banking/NBFC integrated filings use taxonomy concept income for total
-    # income rather than industrial revenueFromOperations. Restrict this
-    # fallback to these filing families and retain the exact source fact tag.
+    # Insurance filing taxonomies use sector-specific aggregate income concepts,
+    # not the industrial RevenueFromOperations tag. Keep the exact source fact
+    # tag in the ledger; never substitute PBT or a component premium fact.
+    if rev is None and re.search(r"INTEGRATED_FILING_GI_", url, re.I):
+     rev=choose(facts,["operatingincome"],period)
+    if rev is None and re.search(r"INTEGRATED_FILING_LI_", url, re.I):
+     rev=choose(facts,["income"],period)
+    # Banking/NBFC integrated filings also use taxonomy concept Income.
     if rev is None and re.search(r"INTEGRATED_FILING_(BANKING|NBFC)", url, re.I):
      rev=choose(facts,["income"],period)
     pat=choose(facts,ALIASES["PAT"],period)
