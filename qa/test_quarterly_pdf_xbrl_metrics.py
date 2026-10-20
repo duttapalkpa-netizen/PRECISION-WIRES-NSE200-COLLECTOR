@@ -1,6 +1,6 @@
 import unittest
 
-from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl
+from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment
 
 
 class QuarterlyXbrlMetricTests(unittest.TestCase):
@@ -63,6 +63,30 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
                          "basicanddilutedepsafterextraordinaryitemsnetoftaxexpensefortheperiodnottobeannualized"}.issubset(normalized))
         self.assertIn("operatingincome", tags)
         self.assertIn("income", tags)
+
+
+    def test_official_archive_host_fallback_on_403(self):
+        from unittest.mock import MagicMock
+        import requests
+        first = MagicMock()
+        first.status_code = 403
+        second = MagicMock()
+        second.status_code = 200
+        second.content = b"<xbrl/>"
+        second.headers = {"Content-Type": "application/xml"}
+        second.raise_for_status.return_value = None
+        session = MagicMock()
+        session.get.side_effect = [first, second]
+        response, fetched_url = fetch_attachment(
+            session,
+            "https://nsearchives.nseindia.com/corporate/xbrl/sample.xml",
+        )
+        self.assertIs(response, second)
+        self.assertEqual(
+            fetched_url,
+            "https://archives.nseindia.com/corporate/xbrl/sample.xml",
+        )
+        self.assertEqual(session.get.call_count, 2)
 
 if __name__ == "__main__":
     unittest.main()
