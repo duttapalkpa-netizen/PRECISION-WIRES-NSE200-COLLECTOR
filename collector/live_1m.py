@@ -46,7 +46,18 @@ def chart(s,sym):
     r.raise_for_status()
     j=r.json()
     gd=j.get("grapthData",[])
-    return [(pd.to_datetime(ts,unit="ms",utc=True),float(val)) for ts,val in gd]
+    if not isinstance(gd, list) or not gd:
+        raise ValueError("NSE_CHART_EMPTY_OR_SCHEMA_CHANGED: keys="+",".join(sorted(map(str,j.keys())))+
+                         "; grapthData_type="+type(gd).__name__+
+                         "; response_sample="+json.dumps(j,default=str)[:500])
+    rows=[]
+    for item in gd:
+        try:
+            ts,val=item[0],item[1]
+            rows.append((pd.to_datetime(ts,unit="ms",utc=True),float(val)))
+        except Exception as exc:
+            raise ValueError("NSE_CHART_POINT_SCHEMA_INVALID: "+repr(item)[:160]) from exc
+    return rows
 
 def main():
     cand=Path("outputs/finalists/v11_3_candidates.csv")
@@ -68,28 +79,45 @@ def main():
     attempts=12
     all_rows=[]
     quote_rows=[]
+    failure_rows=[]
     for attempt in range(attempts):
-        all_rows=[]; quote_rows=[]
+        all_rows=[]; quote_rows=[]; failure_rows=[]
         for sym in syms:
+            chart_rows=0
             try:
                 gd=chart(s,sym)
-                q=quote(s,sym)
-                if gd:
-                    for ts,val in gd:
-                        all_rows.append({"SYMBOL":sym,"TIMESTAMP":ts.isoformat(),"CLOSE":val})
-                    quote_rows.append({"SYMBOL":sym,**q,"CHART_POINTS":len(gd)})
-            except Exception:
-                pass
+                chart_rows=len(gd)
+                if not gd:
+                    failure_rows.append({"SYMBOL":sym,"STAGE":"CHART","ERROR":"EMPTY_CHART_ROWS"})
+                    continue
+                try:
+                    q=quote(s,sym)
+                except Exception as exc:
+                    failure_rows.append({"SYMBOL":sym,"STAGE":"QUOTE","ERROR":type(exc).__name__+":"+str(exc)[:240],
+                                         "CHART_POINTS":chart_rows})
+                    continue
+                for ts,val in gd:
+                    all_rows.append({"SYMBOL":sym,"TIMESTAMP":ts.isoformat(),"CLOSE":val})
+                quote_rows.append({"SYMBOL":sym,**q,"CHART_POINTS":len(gd)})
+            except Exception as exc:
+                failure_rows.append({"SYMBOL":sym,"STAGE":"CHART","ERROR":type(exc).__name__+":"+str(exc)[:300],
+                                     "CHART_POINTS":chart_rows})
             time.sleep(.10)
         if all_rows:
             break
         time.sleep(60)
 
     if not all_rows:
+        from collections import Counter
+        failure_counts=dict(Counter(f.get("STAGE","UNKNOWN")+":"+f.get("ERROR","UNKNOWN").split(":")[0]
+                                     for f in failure_rows))
         meta={"status":"NO_LIVE_1M_DATA","rows":0,"symbols":0,"attempts":attempts,
               "market_open_observed":capital_market_open(s),
+              "failure_count":len(failure_rows),"failure_counts":failure_counts,
+              "failure_samples":failure_rows[:100],
               "captured_at":datetime.now(timezone.utc).isoformat(),
-              "source":"NSE current-day chart-databyindex + quote-equity"}
+              "source":"NSE current-day chart-databyindex + quote-equity",
+              "diagnostic_note":"Per-symbol request/JSON/schema failures are recorded; no rows are fabricated."}
     else:
         d=pd.DataFrame(all_rows).drop_duplicates(["SYMBOL","TIMESTAMP"]).sort_values(["SYMBOL","TIMESTAMP"])
         qdf=pd.DataFrame(quote_rows).drop_duplicates("SYMBOL")
