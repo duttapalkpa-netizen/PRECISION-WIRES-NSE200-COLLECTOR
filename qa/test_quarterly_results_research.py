@@ -449,5 +449,66 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             self.assertEqual(stage.security_isin("IMPEXFERRO", row), "")
 
 
+
+    def test_missing_isin_reads_official_xbrl_url_and_company_from_raw_record_json(self):
+        from unittest.mock import MagicMock
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <xbrl xmlns="http://www.xbrl.org/2003/instance">
+          <ISIN contextRef="OneD">INE691G01015</ISIN>
+          <NameOfTheCompany contextRef="OneD">Impex Ferro Tech Limited</NameOfTheCompany>
+        </xbrl>"""
+        response = MagicMock()
+        response.content = xml
+        response.raise_for_status.return_value = None
+        row = {
+            "SYMBOL": "IMPEXFERRO",
+            "SOURCE_URL": "https://nsearchives.nseindia.com/corporate/xbrl/official.xml",
+            "RAW_RECORD_JSON": json.dumps({"companyName": "Impex Ferro Tech Limited"}),
+        }
+        with patch.object(stage, "_SECURITY_ISIN_MAP", {}), patch.object(
+            stage.requests, "get", return_value=response
+        ):
+            self.assertEqual(stage.security_isin("IMPEXFERRO", row), "INE691G01015")
+
+    def test_financial_features_select_unique_latest_revision_and_dedupe_exact_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "metrics.csv"
+            rows = [
+                {"SYMBOL":"ABC","PERIOD_END":"2026-06-30","BASIS":"STANDALONE",
+                 "SOURCE_URL":"https://nsearchives.nseindia.com/old.xml","DISCLOSED_AT":"2026-07-01T10:00:00Z",
+                 "REVENUE":100,"PAT":10,"EPS":1},
+                {"SYMBOL":"ABC","PERIOD_END":"2026-06-30","BASIS":"STANDALONE",
+                 "SOURCE_URL":"https://nsearchives.nseindia.com/old.xml","DISCLOSED_AT":"2026-07-01T10:00:00Z",
+                 "REVENUE":100,"PAT":10,"EPS":1},
+                {"SYMBOL":"ABC","PERIOD_END":"2026-06-30","BASIS":"STANDALONE",
+                 "SOURCE_URL":"https://nsearchives.nseindia.com/revised.xml","DISCLOSED_AT":"2026-07-02T10:00:00Z",
+                 "REVENUE":120,"PAT":12,"EPS":1.2},
+            ]
+            pd.DataFrame(rows).to_csv(path, index=False)
+            features, report = stage.build_financial_features(path)
+            self.assertEqual(report["status"], "COMPUTED")
+            self.assertEqual(len(features), 1)
+            self.assertEqual(float(features.iloc[0]["REVENUE"]), 120)
+            self.assertEqual(report["exact_duplicate_rows_removed"], 1)
+            self.assertEqual(report["superseded_revision_rows"], 1)
+
+    def test_financial_features_keep_conflicting_latest_timestamp_blocked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "metrics.csv"
+            rows = [
+                {"SYMBOL":"ABC","PERIOD_END":"2026-06-30","BASIS":"STANDALONE",
+                 "SOURCE_URL":"https://nsearchives.nseindia.com/a.xml","DISCLOSED_AT":"2026-07-02T10:00:00Z",
+                 "REVENUE":120,"PAT":12,"EPS":1.2},
+                {"SYMBOL":"ABC","PERIOD_END":"2026-06-30","BASIS":"STANDALONE",
+                 "SOURCE_URL":"https://nsearchives.nseindia.com/b.xml","DISCLOSED_AT":"2026-07-02T10:00:00Z",
+                 "REVENUE":125,"PAT":13,"EPS":1.3},
+            ]
+            pd.DataFrame(rows).to_csv(path, index=False)
+            features, report = stage.build_financial_features(path)
+            self.assertEqual(report["status"], "BLOCKED_DUPLICATE_PERIOD_BASIS")
+            self.assertTrue(features.empty)
+            self.assertEqual(len(report["duplicate_keys"]), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
