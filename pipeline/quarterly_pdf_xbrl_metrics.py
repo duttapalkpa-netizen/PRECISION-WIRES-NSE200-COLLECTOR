@@ -160,7 +160,7 @@ def parse_xbrl(blob):
   if not end: continue
   facts.append({"tag":tag,"value":value,"context":ctx,"period_end":date_iso(end),
                 "start_date":date_iso(period.get("startdate","")),"instant":bool(period.get("instant")),
-                "unit":node.attrib.get("unitRef",""),
+                "unit":node.attrib.get("unitRef","") or node.attrib.get("unitref",""),
                 "dimensions":period.get("dimensions",[])})
  return facts
 def fetch_attachment(session, url):
