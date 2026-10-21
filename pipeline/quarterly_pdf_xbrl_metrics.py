@@ -339,7 +339,7 @@ def main():
     evidence_path=str(ev); source_digest=digest; source_content_type=ctype
     facts=parse_xbrl(blob)
     # Follow explicit attachment links on rendered NSE IndAS Details pages only.
-    if not facts and ("html" in ctype.lower() or re.search(br"<\\s*(?:!doctype\\s+)?html\\b",blob[:8192],re.I)) and link_index < 8:
+    if not facts and ("html" in ctype.lower() or re.search(br"<\s*(?:!doctype\s+)?html\b",blob[:8192],re.I)) and link_index < 8:
      for discovered_url in discover_official_attachments(blob, resp.url, limit=8):
       if discovered_url not in links and len(links) < 8:
        links.append(discovered_url)
