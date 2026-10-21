@@ -289,7 +289,7 @@ def main():
       "REVENUE":None if not rev else {"tag":rev.get("tag"),"context":rev.get("context"),"unit":rev.get("unit"),"period_end":rev.get("period_end"),"start_date":rev.get("start_date"),"dimensions":rev.get("dimensions",[])},
       "PAT":None if not pat else {"tag":pat.get("tag"),"context":pat.get("context"),"unit":pat.get("unit"),"period_end":pat.get("period_end"),"start_date":pat.get("start_date"),"dimensions":pat.get("dimensions",[])} ,
       "EPS":None if not eps else {"tag":eps.get("tag"),"context":eps.get("context"),"unit":eps.get("unit"),"period_end":eps.get("period_end"),"start_date":eps.get("start_date"),"dimensions":eps.get("dimensions",[])}},
-     "basis_metadata":{"consolidated":str(raw.get("consolidated","")),"subject":str(r.get("SUBJECT","")),"attachment_text":str(raw.get("attchmntText",""))[:300}})
+     "basis_metadata":{"consolidated":str(raw.get("consolidated","")),"subject":str(r.get("SUBJECT","")),"attachment_text":str(raw.get("attchmntText",""))[:300]}})
    except Exception as exc: errors.append({"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]})
   if not extracted:
    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"","SOURCE_URL":links[0] if links else norm_url(r.get("SOURCE_URL","")),
