@@ -276,7 +276,20 @@ def main():
        "SOURCE_CONTENT_TYPE":resp.headers.get("Content-Type",""),"EXTRACTION_STATUS":"SOURCE_LINKED_XBRL_FACTS",
        "EVIDENCE_PATH":str(ev),"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
       extracted=True; break
-    errors.append({"symbol":symbol,"url":url,"reason":"BLOCKED_FACTS_OR_BASIS_INCOMPLETE","facts_found":len(facts),"period_end":period})
+    fact_tag_counts={}
+    for fact in facts:
+     tag=str(fact.get("tag","")).lower()
+     if any(token in tag for token in ("revenue","income","profit","earningspershare","eps","premium")):
+      fact_tag_counts[tag]=fact_tag_counts.get(tag,0)+1
+    errors.append({"symbol":symbol,"url":url,"reason":"BLOCKED_FACTS_OR_BASIS_INCOMPLETE",
+     "facts_found":len(facts),"period_end":period,
+     "metric_presence":{"REVENUE":bool(rev),"PAT":bool(pat),"EPS":bool(eps)},
+     "metric_candidate_tags":sorted(fact_tag_counts)[:100],
+     "selected_fact_details":{
+      "REVENUE":None if not rev else {"tag":rev.get("tag"),"context":rev.get("context"),"unit":rev.get("unit"),"period_end":rev.get("period_end"),"start_date":rev.get("start_date"),"dimensions":rev.get("dimensions",[])},
+      "PAT":None if not pat else {"tag":pat.get("tag"),"context":pat.get("context"),"unit":pat.get("unit"),"period_end":pat.get("period_end"),"start_date":pat.get("start_date"),"dimensions":pat.get("dimensions",[])} ,
+      "EPS":None if not eps else {"tag":eps.get("tag"),"context":eps.get("context"),"unit":eps.get("unit"),"period_end":eps.get("period_end"),"start_date":eps.get("start_date"),"dimensions":eps.get("dimensions",[])}},
+     "basis_metadata":{"consolidated":str(raw.get("consolidated","")),"subject":str(r.get("SUBJECT","")),"attachment_text":str(raw.get("attchmntText",""))[:300}})
    except Exception as exc: errors.append({"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]})
   if not extracted:
    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"","SOURCE_URL":links[0] if links else norm_url(r.get("SOURCE_URL","")),
