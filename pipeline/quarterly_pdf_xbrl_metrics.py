@@ -10,49 +10,7 @@ the row is BLOCKED for manual PDF review.
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timezone
-from urllib.parse import urlparse
-
-class _AttachmentLinkCollector(HTMLParser):
- """Collect candidate attachment links from NSE's rendered IndAS Details pages."""
- def __init__(self):
-  super().__init__(convert_charrefs=True)
-  self.values=[]
- def handle_starttag(self,tag,attrs):
-  attrs={str(k).lower():str(v or "") for k,v in attrs if k}
-  for key in ("href","src","data","data-href","data-url","onclick"):
-   if attrs.get(key):
-    self.values.append(attrs[key])
-
-def discover_official_attachments(blob, base_url, limit=8):
- """Find bounded official NSE attachment URLs; reject off-host and unrelated links."""
- try:
-  parser=_AttachmentLinkCollector()
-  parser.feed(blob.decode("utf-8",errors="replace"))
-  parser.close()
- except Exception:
-  return []
- allowed_hosts={"nsearchives.nseindia.com","archives.nseindia.com","www.nseindia.com","www1.nseindia.com"}
- allowed_paths=("/corporate/xbrl/","/corporate/ixbrl/","/corporate/pdf/","/corporate/attachments/","/corporate/announcements/")
- found=[]
- for raw in parser.values:
-  candidates=re.findall(r"(?:https?:)?//[^\\s\\\"'<>]+|(?:/|\\./)[^\\s\\\"'<>]+",raw)
-  for candidate in candidates:
-   url=urljoin(base_url,candidate.rstrip(")],;}"))
-   try:
-    parsed=urlparse(url)
-    path=parsed.path.lower()
-    if parsed.scheme!="https" or parsed.hostname not in allowed_hosts:
-     continue
-    if not path.startswith(allowed_paths) or not re.search(r"\\.(?:xml|xbrl|html?|pdf|zip)$",path):
-     continue
-    if url not in found:
-     found.append(url)
-    if len(found)>=limit:
-     return found
-   except Exception:
-    continue
- return found
-
+from urllib.parse import urljoin, urlparse
 
 import hashlib, json, re, zipfile, io, os
 import requests
@@ -141,6 +99,46 @@ def _parse_html_tree(blob):
  parser.feed(blob.decode("utf-8",errors="replace"))
  parser.close()
  return parser.root
+
+class _AttachmentLinkCollector(HTMLParser):
+ """Collect candidate attachment links from NSE's rendered IndAS Details pages."""
+ def __init__(self):
+  super().__init__(convert_charrefs=True)
+  self.values=[]
+ def handle_starttag(self,tag,attrs):
+  attrs={str(k).lower():str(v or "") for k,v in attrs if k}
+  for key in ("href","src","data","data-href","data-url","onclick"):
+   if attrs.get(key):
+    self.values.append(attrs[key])
+
+def discover_official_attachments(blob, base_url, limit=8):
+ """Find bounded official NSE attachment URLs; reject off-host and unrelated links."""
+ try:
+  parser=_AttachmentLinkCollector()
+  parser.feed(blob.decode("utf-8",errors="replace"))
+  parser.close()
+ except Exception:
+  return []
+ allowed_hosts={"nsearchives.nseindia.com","archives.nseindia.com","www.nseindia.com","www1.nseindia.com"}
+ allowed_paths=("/corporate/xbrl/","/corporate/ixbrl/","/corporate/pdf/","/corporate/attachments/","/corporate/announcements/")
+ found=[]
+ for raw in parser.values:
+  for candidate in re.findall(r"(?:https?:)?//[^\\s\\\"'<>]+|(?:/|\\./)[^\\s\\\"'<>]+",raw):
+   url=urljoin(base_url,candidate.rstrip(")],;}"))
+   try:
+    parsed=urlparse(url)
+    path=parsed.path.lower()
+    if parsed.scheme!="https" or parsed.hostname not in allowed_hosts:
+     continue
+    if not path.startswith(allowed_paths) or not re.search(r"\\.(?:xml|xbrl|html?|pdf|zip)$",path):
+     continue
+    if url not in found:
+     found.append(url)
+    if len(found)>=limit:
+     return found
+   except Exception:
+    continue
+ return found
 
 def parse_xbrl(blob):
  """Return recognized facts only when context and numeric value are explicit."""
