@@ -15,6 +15,7 @@ import hashlib, json, re, zipfile, io, os
 import requests
 import pandas as pd
 import xml.etree.ElementTree as ET
+from html.parser import HTMLParser
 from pypdf import PdfReader
 
 ROOT=Path(".")
@@ -62,16 +63,62 @@ def get(row,*names):
     v=row[c]
     if pd.notna(v) and str(v).strip(): return v
  return ""
+class _InlineXbrlHTMLTree(HTMLParser):
+ """Build a small tolerant tree for NSE's occasionally non-well-formed iXBRL HTML."""
+ VOID={"area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"}
+ def __init__(self):
+  super().__init__(convert_charrefs=True)
+  self.root=ET.Element("htmlroot")
+  self.stack=[self.root]
+ def handle_starttag(self,tag,attrs):
+  node=ET.SubElement(self.stack[-1],tag,{str(k).lower():str(v or "") for k,v in attrs if k})
+  if tag.lower() not in self.VOID:
+   self.stack.append(node)
+ def handle_startendtag(self,tag,attrs):
+  self.handle_starttag(tag,attrs)
+  if tag.lower() not in self.VOID and len(self.stack)>1:
+   self.stack.pop()
+ def handle_endtag(self,tag):
+  wanted=tag.lower()
+  for i in range(len(self.stack)-1,0,-1):
+   if self.stack[i].tag.lower()==wanted:
+    del self.stack[i:]
+    break
+ def handle_data(self,data):
+  if not self.stack: return
+  node=self.stack[-1]
+  if len(node):
+   child=node[-1]
+   child.tail=(child.tail or "")+data
+  else:
+   node.text=(node.text or "")+data
+
+def _parse_html_tree(blob):
+ parser=_InlineXbrlHTMLTree()
+ parser.feed(blob.decode("utf-8",errors="replace"))
+ parser.close()
+ return parser.root
+
 def parse_xbrl(blob):
  """Return recognized facts only when context and numeric value are explicit."""
- try: root=ET.fromstring(blob)
- except Exception:
-  try:
-   with zipfile.ZipFile(io.BytesIO(blob)) as z:
-    name=next((n for n in z.namelist() if n.lower().endswith((".xml",".xbrl"))),None)
-    if not name: return []
-    root=ET.fromstring(z.read(name))
-  except Exception: return []
+ root=None
+ # NSE iXBRL files are HTML documents and can contain harmless HTML constructs
+ # that ElementTree rejects. Parse them with a tolerant tree while preserving
+ # ix:fact attributes, xbrli contexts, period dates, and explicit dimensions.
+ if re.search(br"<\\s*(?:[a-z0-9_-]+:)?html\\b",blob[:8192],re.I):
+  try: root=_parse_html_tree(blob)
+  except Exception: root=None
+ if root is None:
+  try: root=ET.fromstring(blob)
+  except Exception:
+   try:
+    with zipfile.ZipFile(io.BytesIO(blob)) as z:
+     name=next((n for n in z.namelist() if n.lower().endswith((".xml",".xbrl"))),None)
+     if not name: return []
+     root=ET.fromstring(z.read(name))
+   except Exception:
+    try: root=_parse_html_tree(blob)
+    except Exception: return []
  contexts={}
  for node in root.iter():
   if local(node.tag)=="context":
@@ -101,7 +148,7 @@ def parse_xbrl(blob):
   ctx=node.attrib.get("contextRef","") or node.attrib.get("contextref","")
   if not ctx or ctx not in contexts: continue
   try:
-   clean=re.sub(r"\\s+","",text_value).replace(",","")
+   clean=re.sub(r"\s+","",text_value).replace(",","")
    value=float(clean)
    if node.attrib.get("scale") not in (None,""):
     value *= 10 ** int(node.attrib["scale"])
