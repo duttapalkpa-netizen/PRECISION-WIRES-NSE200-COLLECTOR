@@ -407,5 +407,47 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
                                  "INE222A01012")
                 self.assertGreaterEqual(mocked_get.call_count, 1)
 
+
+    def test_missing_isin_resolves_only_from_matching_official_nse_xbrl(self):
+        from unittest.mock import MagicMock
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <xbrl xmlns="http://www.xbrl.org/2003/instance">
+          <ISIN contextRef="OneD">INE691G01015</ISIN>
+          <NameOfTheCompany contextRef="OneD">Impex Ferro Tech Limited</NameOfTheCompany>
+        </xbrl>"""
+        response = MagicMock()
+        response.content = xml
+        response.raise_for_status.return_value = None
+        row = {
+            "symbol": "IMPEXFERRO",
+            "companyName": "Impex Ferro Tech Limited",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/official.xml",
+        }
+        with patch.object(stage, "_SECURITY_ISIN_MAP", {}), patch.object(
+            stage.requests, "get", return_value=response
+        ):
+            self.assertEqual(stage.security_isin("IMPEXFERRO", row), "INE691G01015")
+
+    def test_missing_isin_does_not_resolve_when_company_name_mismatches_official_xbrl(self):
+        from unittest.mock import MagicMock
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <xbrl xmlns="http://www.xbrl.org/2003/instance">
+          <ISIN contextRef="OneD">INE691G01015</ISIN>
+          <NameOfTheCompany contextRef="OneD">Different Company Limited</NameOfTheCompany>
+        </xbrl>"""
+        response = MagicMock()
+        response.content = xml
+        response.raise_for_status.return_value = None
+        row = {
+            "symbol": "IMPEXFERRO",
+            "companyName": "Impex Ferro Tech Limited",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/official.xml",
+        }
+        with patch.object(stage, "_SECURITY_ISIN_MAP", {}), patch.object(
+            stage.requests, "get", return_value=response
+        ):
+            self.assertEqual(stage.security_isin("IMPEXFERRO", row), "")
+
+
 if __name__ == "__main__":
     unittest.main()
