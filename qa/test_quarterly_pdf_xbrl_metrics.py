@@ -1,6 +1,6 @@
 import unittest
 
-from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment, basis_from_xbrl_facts
+from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment, basis_from_xbrl_facts, pdf_evidence_lines
 
 
 class QuarterlyXbrlMetricTests(unittest.TestCase):
@@ -205,6 +205,17 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
             links, "https://www.nseindia.com/corporate/ixbrl/details.html", limit=3
         )
         self.assertEqual(len(found), 3)
+
+
+    def test_pdf_evidence_lines_normalizes_whitespace_and_keeps_metric_labels(self):
+        text = """Revenue   from operations       4,019
+Profit for the period     1,234
+Basic and diluted earnings per share      5.67"""
+        report = pdf_evidence_lines(text)
+        self.assertEqual(report["line_count"], 3)
+        self.assertEqual(report["metric_candidates"]["REVENUE"][0]["text"], "Revenue from operations 4,019")
+        self.assertEqual(report["metric_candidates"]["PAT"][0]["text"], "Profit for the period 1,234")
+        self.assertEqual(report["metric_candidates"]["EPS"][0]["text"], "Basic and diluted earnings per share 5.67")
 
 
 if __name__ == "__main__":
