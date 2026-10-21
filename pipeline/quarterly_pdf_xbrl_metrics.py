@@ -105,7 +105,7 @@ def parse_xbrl(blob):
  # NSE iXBRL files are HTML documents and can contain harmless HTML constructs
  # that ElementTree rejects. Parse them with a tolerant tree while preserving
  # ix:fact attributes, xbrli contexts, period dates, and explicit dimensions.
- if re.search(br"<\\s*(?:[a-z0-9_-]+:)?html\\b",blob[:8192],re.I):
+ if re.search(br"<\s*(?:[a-z0-9_-]+:)?html\b",blob[:8192],re.I):
   try: root=_parse_html_tree(blob)
   except Exception: root=None
  if root is None:
