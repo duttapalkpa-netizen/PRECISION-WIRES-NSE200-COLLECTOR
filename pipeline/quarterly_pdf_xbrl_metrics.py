@@ -123,14 +123,14 @@ def discover_official_attachments(blob, base_url, limit=8):
  allowed_paths=("/corporate/xbrl/","/corporate/ixbrl/","/corporate/pdf/","/corporate/attachments/","/corporate/announcements/")
  found=[]
  for raw in parser.values:
-  for candidate in re.findall(r"(?:https?:)?//[^\\s\\\"'<>]+|(?:/|\\./)[^\\s\\\"'<>]+",raw):
+  for candidate in re.findall(r"""(?:https?:)?//[^\s"'<>]+|(?:/|\./)[^\s"'<>]+""",raw):
    url=urljoin(base_url,candidate.rstrip(")],;}"))
    try:
     parsed=urlparse(url)
     path=parsed.path.lower()
     if parsed.scheme!="https" or parsed.hostname not in allowed_hosts:
      continue
-    if not path.startswith(allowed_paths) or not re.search(r"\\.(?:xml|xbrl|html?|pdf|zip)$",path):
+    if not path.startswith(allowed_paths) or not re.search(r"\.(?:xml|xbrl|html?|pdf|zip)$",path):
      continue
     if url not in found:
      found.append(url)
