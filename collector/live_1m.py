@@ -38,26 +38,38 @@ def quote(s,sym):
         "ltp":num(pi.get("lastPrice")),
         "vwap":num(pi.get("vwap") if pi.get("vwap") is not None else pi.get("averagePrice")),
         "volume":num(pi.get("totalTradedVolume") if pi.get("totalTradedVolume") is not None else j.get("securityWiseDP",{}).get("quantityTraded")),
-        "company":info.get("companyName","")
+        "company":info.get("companyName",""),
+        "identifier":str(info.get("identifier","") or "").strip()
     }
 
-def chart(s,sym):
-    r=s.get("https://www.nseindia.com/api/chart-databyindex",params={"index":sym+"EQN"},timeout=(10,15))
-    r.raise_for_status()
-    j=r.json()
-    gd=j.get("grapthData",[])
-    if not isinstance(gd, list) or not gd:
-        raise ValueError("NSE_CHART_EMPTY_OR_SCHEMA_CHANGED: keys="+",".join(sorted(map(str,j.keys())))+
-                         "; grapthData_type="+type(gd).__name__+
-                         "; response_sample="+json.dumps(j,default=str)[:500])
-    rows=[]
-    for item in gd:
-        try:
-            ts,val=item[0],item[1]
-            rows.append((pd.to_datetime(ts,unit="ms",utc=True),float(val)))
-        except Exception as exc:
-            raise ValueError("NSE_CHART_POINT_SCHEMA_INVALID: "+repr(item)[:160]) from exc
-    return rows
+def chart(s,sym,identifier=""):
+    # NSE's quote response exposes the chart identifier. Prefer that authoritative
+    # identifier; symbol + EQN is only a compatibility fallback.
+    indices=[]
+    for value in (str(identifier or "").strip(),str(sym).strip()+"EQN"):
+        if value and value not in indices:
+            indices.append(value)
+    diagnostics=[]
+    for index_value in indices:
+        r=s.get("https://www.nseindia.com/api/chart-databyindex",
+                params={"index":index_value},timeout=(10,15))
+        r.raise_for_status()
+        j=r.json()
+        gd=j.get("grapthData",[])
+        if isinstance(gd,list) and gd:
+            rows=[]
+            for item in gd:
+                try:
+                    ts,val=item[0],item[1]
+                    rows.append((pd.to_datetime(ts,unit="ms",utc=True),float(val)))
+                except Exception as exc:
+                    raise ValueError("NSE_CHART_POINT_SCHEMA_INVALID: index="+index_value+
+                                     "; item="+repr(item)[:160]) from exc
+            return rows
+        diagnostics.append({"index":index_value,"keys":sorted(map(str,j.keys())),
+                            "grapthData_type":type(gd).__name__,
+                            "response_sample":json.dumps(j,default=str)[:300]})
+    raise ValueError("NSE_CHART_EMPTY_OR_SCHEMA_CHANGED: attempted="+json.dumps(diagnostics,default=str)[:900])
 
 def main():
     cand=Path("outputs/finalists/v11_3_candidates.csv")
@@ -84,24 +96,28 @@ def main():
         all_rows=[]; quote_rows=[]; failure_rows=[]
         for sym in syms:
             chart_rows=0
+            q=None
             try:
-                gd=chart(s,sym)
+                q=quote(s,sym)
+            except Exception as exc:
+                failure_rows.append({"SYMBOL":sym,"STAGE":"QUOTE","ERROR":type(exc).__name__+":"+str(exc)[:240]})
+            try:
+                gd=chart(s,sym,(q or {}).get("identifier",""))
                 chart_rows=len(gd)
                 if not gd:
                     failure_rows.append({"SYMBOL":sym,"STAGE":"CHART","ERROR":"EMPTY_CHART_ROWS"})
                     continue
-                try:
-                    q=quote(s,sym)
-                except Exception as exc:
-                    failure_rows.append({"SYMBOL":sym,"STAGE":"QUOTE","ERROR":type(exc).__name__+":"+str(exc)[:240],
+                if q is None:
+                    failure_rows.append({"SYMBOL":sym,"STAGE":"QUOTE","ERROR":"QUOTE_UNAVAILABLE_WITH_CHART_DATA",
                                          "CHART_POINTS":chart_rows})
                     continue
                 for ts,val in gd:
                     all_rows.append({"SYMBOL":sym,"TIMESTAMP":ts.isoformat(),"CLOSE":val})
                 quote_rows.append({"SYMBOL":sym,**q,"CHART_POINTS":len(gd)})
             except Exception as exc:
-                failure_rows.append({"SYMBOL":sym,"STAGE":"CHART","ERROR":type(exc).__name__+":"+str(exc)[:300],
-                                     "CHART_POINTS":chart_rows})
+                failure_rows.append({"SYMBOL":sym,"STAGE":"CHART","ERROR":type(exc).__name__+":"+str(exc)[:900],
+                                     "CHART_POINTS":chart_rows,"QUOTE_IDENTIFIER":(q or {}).get("identifier",""),
+                                     "QUOTE_LTP":(q or {}).get("ltp","")})
             time.sleep(.10)
         if all_rows:
             break
