@@ -191,7 +191,21 @@ def security_isin(symbol, row):
     # Some historical/suspended symbols are absent from the current NSE equity
     # master. Resolve only from the exact official NSE filing attached to this
     # disclosure, and only when the filing's company name matches the row.
+    raw = {}
+    try:
+        raw_text = first(row, ["raw_record_json", "rawrecordjson"])
+        if raw_text:
+            raw = json.loads(raw_text) if isinstance(raw_text, str) else raw_text
+            if not isinstance(raw, dict):
+                raw = {}
+    except Exception:
+        raw = {}
+    # The normalized disclosure row may only retain SOURCE_URL; the original
+    # XBRL attachment fields can live inside RAW_RECORD_JSON.
     attachment = str(first(row, [
+        "xbrl", "xbrlurl", "xbrlfile", "xbrlfileurl", "attchmntfile",
+        "attachment", "attachmenturl", "pdfurl", "fileurl", "sourceurl"
+    ]) or first(raw, [
         "xbrl", "xbrlurl", "xbrlfile", "xbrlfileurl", "attchmntfile",
         "attachment", "attachmenturl", "pdfurl", "fileurl"
     ])).strip()
@@ -206,16 +220,20 @@ def security_isin(symbol, row):
         for node in root.iter():
             tag = str(node.tag).rsplit("}", 1)[-1].split(":")[-1].lower()
             value = str(node.text or "").strip()
-            if tag == "isin" and re.fullmatch(r"INE[A-Z0-9]{9}", value.upper()):
+            if tag in {"isin", "isinofsecurity", "securityisin"} and re.fullmatch(r"INE[A-Z0-9]{9}", value.upper()):
                 values.add(value.upper())
-            elif tag in {"nameofcompany", "companyname"} and value:
+            elif tag in {"nameofcompany", "companyname", "nameofthecompany", "entityname"} and value:
                 names.add(re.sub(r"[^a-z0-9]", "", value.lower()))
-        expected = re.sub(r"[^a-z0-9]", "", str(first(row, [
-            "company", "companyname", "sm_name", "securityname"
-        ])).lower())
-        if len(values) == 1 and expected and expected in names:
-            resolved = next(iter(values))
-            return resolved
+        expected_raw = first(row, ["company", "companyname", "sm_name", "securityname"]) or first(raw, [
+            "company", "companyname", "sm_name", "securityname", "name"
+        ])
+        expected = re.sub(r"[^a-z0-9]", "", str(expected_raw).lower())
+        company_matches = expected and any(
+            expected == name or (min(len(expected), len(name)) >= 10 and (expected in name or name in expected))
+            for name in names
+        )
+        if len(values) == 1 and company_matches:
+            return next(iter(values))
     except Exception:
         return ""
     return ""
@@ -452,13 +470,38 @@ def build_financial_features(path):
         if col not in {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT"}:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     df = df.dropna(subset=["SYMBOL", "PERIOD_END", "DISCLOSED_AT", "REVENUE", "PAT", "EPS"])
-    # A duplicate key is ambiguous (e.g. standalone and consolidated); BASIS is part of key.
-    key = ["SYMBOL", "PERIOD_END", "BASIS"]
-    if df.duplicated(key).any():
-        dupes = df.loc[df.duplicated(key, keep=False), key].to_dict("records")
+    # Collapse byte-for-byte repeated evidence, then select a uniquely latest
+    # disclosure for each symbol/period/basis. Conflicting filings at the same
+    # latest timestamp remain blocked; never choose arbitrarily.
+    evidence_cols = key + ["SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS"]
+    before_exact = len(df)
+    df = df.drop_duplicates(subset=evidence_cols, keep="first").copy()
+    exact_duplicate_rows_removed = before_exact - len(df)
+    superseded_revision_rows = 0
+    ambiguous_keys = []
+    keep_indices = []
+    for key_values, group in df.groupby(key, dropna=False, sort=False):
+        if len(group) == 1:
+            keep_indices.extend(group.index.tolist())
+            continue
+        latest_time = group["DISCLOSED_AT"].max()
+        latest = group[group["DISCLOSED_AT"].eq(latest_time)]
+        if len(latest) == 1 and pd.notna(latest_time):
+            keep_indices.extend(latest.index.tolist())
+            superseded_revision_rows += len(group) - 1
+        else:
+            if not isinstance(key_values, tuple):
+                key_values = (key_values,)
+            ambiguous_keys.append(dict(zip(key, key_values)))
+    if ambiguous_keys:
         return pd.DataFrame(columns=FINANCIAL_OUTPUT_COLUMNS), {
-            "status": "BLOCKED_DUPLICATE_PERIOD_BASIS", "duplicate_keys": dupes[:50]
+            "status": "BLOCKED_DUPLICATE_PERIOD_BASIS",
+            "duplicate_keys": ambiguous_keys[:50],
+            "exact_duplicate_rows_removed": exact_duplicate_rows_removed,
+            "superseded_revision_rows": superseded_revision_rows,
+            "note": "Conflicting source evidence shares the latest disclosure timestamp; retained as BLOCKED."
         }
+    df = df.loc[keep_indices].copy()
     df = df.sort_values(["SYMBOL", "BASIS", "PERIOD_END"])
     rows = []
     for (symbol, basis), group in df.groupby(["SYMBOL", "BASIS"], sort=False):
@@ -496,6 +539,8 @@ def build_financial_features(path):
     out = pd.DataFrame(rows, columns=FINANCIAL_OUTPUT_COLUMNS)
     return out, {"status": "COMPUTED" if len(out) else "BLOCKED_NO_VALID_ROWS",
                  "valid_financial_rows": int(len(out)), "symbols": int(out.SYMBOL.nunique()) if len(out) else 0,
+                 "exact_duplicate_rows_removed": exact_duplicate_rows_removed,
+                 "superseded_revision_rows": superseded_revision_rows,
                  "consensus_rows": int(out[["CONSENSUS_REVENUE", "CONSENSUS_PAT", "CONSENSUS_EPS"]].notna().any(axis=1).sum()) if len(out) else 0}
 
 def build_event_study(events_path, panel_path):
