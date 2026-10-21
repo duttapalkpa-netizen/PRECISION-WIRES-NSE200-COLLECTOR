@@ -220,7 +220,7 @@ def security_isin(symbol, row):
         for node in root.iter():
             tag = str(node.tag).rsplit("}", 1)[-1].split(":")[-1].lower()
             value = str(node.text or "").strip()
-            if tag in {"isin", "isinofsecurity", "securityisin"} and re.fullmatch(r"INE[A-Z0-9]{9}", value.upper()):
+            if tag in {"isin", "isinofsecurity", "securityisin", "identifier"} and re.fullmatch(r"INE[A-Z0-9]{9}", value.upper()):
                 values.add(value.upper())
             elif tag in {"nameofcompany", "companyname", "nameofthecompany", "entityname"} and value:
                 names.add(re.sub(r"[^a-z0-9]", "", value.lower()))
