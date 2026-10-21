@@ -235,7 +235,7 @@ def parse_pdf_text(blob):
   return ""
 def pdf_evidence_lines(text):
  """Capture candidate lines around financial labels for auditable manual review."""
- lines=[re.sub(r"\\s+"," ",x).strip() for x in text.splitlines() if x.strip()]
+ lines=[re.sub(r"\s+"," ",x).strip() for x in text.splitlines() if x.strip()]
  patterns={
   "REVENUE":re.compile(r"revenue from operations|total income|income from operations",re.I),
   "PAT":re.compile(r"profit/(?:loss )?for the period|profit for the year|net profit|profit after tax",re.I),
