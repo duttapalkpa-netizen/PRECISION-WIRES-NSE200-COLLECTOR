@@ -215,7 +215,6 @@ def security_isin(symbol, row):
         ])).lower())
         if len(values) == 1 and expected and expected in names:
             resolved = next(iter(values))
-            _SECURITY_ISIN_MAP[str(symbol).strip().upper()] = resolved
             return resolved
     except Exception:
         return ""
