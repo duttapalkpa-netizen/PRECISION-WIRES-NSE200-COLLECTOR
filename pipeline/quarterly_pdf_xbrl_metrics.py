@@ -10,7 +10,50 @@ the row is BLOCKED for manual PDF review.
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timezone
-from urllib.parse import urljoin
+from urllib.parse import urlparse
+
+class _AttachmentLinkCollector(HTMLParser):
+ """Collect candidate attachment links from NSE's rendered IndAS Details pages."""
+ def __init__(self):
+  super().__init__(convert_charrefs=True)
+  self.values=[]
+ def handle_starttag(self,tag,attrs):
+  attrs={str(k).lower():str(v or "") for k,v in attrs if k}
+  for key in ("href","src","data","data-href","data-url","onclick"):
+   if attrs.get(key):
+    self.values.append(attrs[key])
+
+def discover_official_attachments(blob, base_url, limit=8):
+ """Find bounded official NSE attachment URLs; reject off-host and unrelated links."""
+ try:
+  parser=_AttachmentLinkCollector()
+  parser.feed(blob.decode("utf-8",errors="replace"))
+  parser.close()
+ except Exception:
+  return []
+ allowed_hosts={"nsearchives.nseindia.com","archives.nseindia.com","www.nseindia.com","www1.nseindia.com"}
+ allowed_paths=("/corporate/xbrl/","/corporate/ixbrl/","/corporate/pdf/","/corporate/attachments/","/corporate/announcements/")
+ found=[]
+ for raw in parser.values:
+  candidates=re.findall(r"(?:https?:)?//[^\\s\\\"'<>]+|(?:/|\\./)[^\\s\\\"'<>]+",raw)
+  for candidate in candidates:
+   url=urljoin(base_url,candidate.rstrip(")],;}"))
+   try:
+    parsed=urlparse(url)
+    path=parsed.path.lower()
+    if parsed.scheme!="https" or parsed.hostname not in allowed_hosts:
+     continue
+    if not path.startswith(allowed_paths) or not re.search(r"\\.(?:xml|xbrl|html?|pdf|zip)$",path):
+     continue
+    if url not in found:
+     found.append(url)
+    if len(found)>=limit:
+     return found
+   except Exception:
+    continue
+ return found
+
+
 import hashlib, json, re, zipfile, io, os
 import requests
 import pandas as pd
@@ -279,9 +322,7 @@ def main():
   # Initialize per-disclosure evidence fields so missing/bad attachments remain BLOCKED, not a crash.
   source_digest=""; source_content_type=""; evidence_path=""
   extracted=False
-  for url in links:
-   attempted+=1
-   try:
+  # Bounded queue: rendered NSE detail HTML may link to the actual iXBRL/XML.\n  links=list(dict.fromkeys(u for u in links if u))\n  link_index=0\n  while link_index < len(links) and link_index < 8:\n   url=links[link_index]\n   link_index+=1\n   attempted+=1\n   try:
     resp, fetched_url=fetch_attachment(sess, url)
     url=fetched_url
     blob=resp.content; digest=sha(blob); ctype=resp.headers.get("Content-Type","")
@@ -292,6 +333,11 @@ def main():
     if not ev.exists(): ev.write_bytes(blob)
     evidence_path=str(ev); source_digest=digest; source_content_type=ctype
     facts=parse_xbrl(blob)
+    # Follow explicit attachment links on rendered NSE IndAS Details pages only.
+    if not facts and ("html" in ctype.lower() or re.search(br"<\\s*(?:!doctype\\s+)?html\\b",blob[:8192],re.I)) and link_index < 8:
+     for discovered_url in discover_official_attachments(blob, resp.url, limit=8):
+      if discovered_url not in links and len(links) < 8:
+       links.append(discovered_url)
     if is_pdf:
      pdf_text=parse_pdf_text(blob)
      text_path=EVIDENCE/(digest+".txt")
