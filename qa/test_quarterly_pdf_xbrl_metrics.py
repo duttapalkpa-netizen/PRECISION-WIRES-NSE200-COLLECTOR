@@ -111,5 +111,24 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         )
         self.assertEqual(session.get.call_count, 2)
 
+
+    def test_insurance_company_revenue_uses_explicit_insurance_revenue_fact(self):
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <xbrl xmlns="http://www.xbrl.org/2003/instance">
+          <context id="OneD"><entity><identifier scheme="https://example.test">INE575P01011</identifier></entity>
+            <period><startDate>2026-04-01</startDate><endDate>2026-06-30</endDate></period></context>
+          <unit id="INR"><measure>INR</measure></unit>
+          <InsuranceRevenue contextRef="OneD" unitRef="INR">49172000000</InsuranceRevenue>
+          <GrossWrittenPremium contextRef="OneD">428713</GrossWrittenPremium>
+          <ProfitLossForPeriod contextRef="OneD" unitRef="INR">5497300000</ProfitLossForPeriod>
+        </xbrl>"""
+        facts = parse_xbrl(xml)
+        revenue = choose(facts, ["insurancerevenue"], "2026-06-30")
+        self.assertIsNotNone(revenue)
+        self.assertEqual(revenue["tag"], "insurancerevenue")
+        self.assertEqual(revenue["value"], 49172000000)
+        self.assertEqual(revenue["unit"], "INR")
+
+
 if __name__ == "__main__":
     unittest.main()
