@@ -204,11 +204,11 @@ def security_isin(symbol, row):
     # XBRL attachment fields can live inside RAW_RECORD_JSON.
     attachment = str(first(row, [
         "xbrl", "xbrlurl", "xbrlfile", "xbrlfileurl", "attchmntfile",
-        "attachment", "attachmenturl", "pdfurl", "fileurl", "sourceurl"
+        "attachment", "attachmenturl", "pdfurl", "fileurl"
     ]) or first(raw, [
         "xbrl", "xbrlurl", "xbrlfile", "xbrlfileurl", "attchmntfile",
         "attachment", "attachmenturl", "pdfurl", "fileurl"
-    ])).strip()
+    ]) or first(row, ["sourceurl"])).strip()
     if not attachment.startswith(("https://nsearchives.nseindia.com/", "https://archives.nseindia.com/")):
         return ""
     try:
