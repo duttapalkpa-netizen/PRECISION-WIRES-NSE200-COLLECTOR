@@ -320,7 +320,14 @@ def main():
   # Initialize per-disclosure evidence fields so missing/bad attachments remain BLOCKED, not a crash.
   source_digest=""; source_content_type=""; evidence_path=""
   extracted=False
-  # Bounded queue: rendered NSE detail HTML may link to the actual iXBRL/XML.\n  links=list(dict.fromkeys(u for u in links if u))\n  link_index=0\n  while link_index < len(links) and link_index < 8:\n   url=links[link_index]\n   link_index+=1\n   attempted+=1\n   try:
+  # Bounded queue: rendered NSE detail HTML may link to the actual iXBRL/XML.
+  links=list(dict.fromkeys(u for u in links if u))
+  link_index=0
+  while link_index < len(links) and link_index < 8:
+   url=links[link_index]
+   link_index+=1
+   attempted+=1
+   try:
     resp, fetched_url=fetch_attachment(sess, url)
     url=fetched_url
     blob=resp.content; digest=sha(blob); ctype=resp.headers.get("Content-Type","")
