@@ -455,7 +455,8 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         from unittest.mock import MagicMock
         xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <xbrl xmlns="http://www.xbrl.org/2003/instance">
-          <ISIN contextRef="OneD">INE691G01015</ISIN>
+          <context id="OneD"><entity><identifier scheme="https://example.test">INE691G01015</identifier></entity>
+            <period><instant>2026-06-30</instant></period></context>
           <NameOfTheCompany contextRef="OneD">Impex Ferro Tech Limited</NameOfTheCompany>
         </xbrl>"""
         response = MagicMock()
