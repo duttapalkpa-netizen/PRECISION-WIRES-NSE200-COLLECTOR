@@ -10,6 +10,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import hashlib, json, re, time
+import xml.etree.ElementTree as ET
 import requests
 import pandas as pd
 
