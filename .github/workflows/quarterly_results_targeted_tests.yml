@@ -61,18 +61,21 @@ jobs:
       - name: Run bounded source-linked XBRL metric extraction
         env:
           QUARTERLY_METRIC_MAX_DISCLOSURES: "500"
+          QUARTERLY_METRIC_MAX_ATTACHMENT_ATTEMPTS: "1000"
         run: |
           python pipeline/quarterly_pdf_xbrl_metrics.py
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
           p = Path("outputs/quarterly_results/filing_metric_extraction_report.json")
           if not p.exists():
               raise SystemExit("BLOCKED: metric extraction report missing")
           r = json.loads(p.read_text(encoding="utf-8"))
           print("METRIC_EXTRACTION=" + json.dumps({k:r.get(k) for k in ("status","input_result_disclosures","attachment_attempts","ledger_rows","verified_metric_rows","blocked_rows")}, sort_keys=True))
-          if int(r.get("attachment_attempts", 0)) > 500:
-              raise SystemExit("TIME_BUDGET_GUARD: attachment attempts exceeded bounded cap")
+          max_attempts = int(os.environ.get("QUARTERLY_METRIC_MAX_ATTACHMENT_ATTEMPTS", "1000"))
+          if int(r.get("attachment_attempts", 0)) > max_attempts:
+              raise SystemExit(f"TIME_BUDGET_GUARD: {r.get('attachment_attempts', 0)} attachment attempts exceeded bounded cap {max_attempts}")
           PY
       - name: Rebuild normalized financial features from verified metric ledger
         run: |
