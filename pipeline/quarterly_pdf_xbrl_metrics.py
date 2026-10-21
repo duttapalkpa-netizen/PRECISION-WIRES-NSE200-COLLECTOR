@@ -91,10 +91,22 @@ def parse_xbrl(blob):
  facts=[]
  for node in root.iter():
   tag=local(node.tag)
-  if not node.text or not node.text.strip(): continue
-  ctx=node.attrib.get("contextRef","")
+  # Inline XBRL facts are rendered as ix:nonfraction/ix:fraction nodes; the
+  # taxonomy concept is carried by their "name" attribute, not the element tag.
+  fact_name=str(node.attrib.get("name","")).strip()
+  if fact_name and tag in {"nonfraction","fraction","nonnumeric"}:
+   tag=local(fact_name)
+  text_value="".join(node.itertext()).strip()
+  if not text_value: continue
+  ctx=node.attrib.get("contextRef","") or node.attrib.get("contextref","")
   if not ctx or ctx not in contexts: continue
-  try: value=float(node.text.strip().replace(",",""))
+  try:
+   clean=re.sub(r"\\s+","",text_value).replace(",","")
+   value=float(clean)
+   if node.attrib.get("scale") not in (None,""):
+    value *= 10 ** int(node.attrib["scale"])
+   if str(node.attrib.get("sign","")).strip()=="-":
+    value = -abs(value)
   except Exception: continue
   period=contexts[ctx]
   end=period.get("enddate") or period.get("instant","")
@@ -211,7 +223,7 @@ def main():
   disclosed=pd.to_datetime(disclosed_raw,errors="coerce",utc=True)
   disclosed_at="" if pd.isna(disclosed) else disclosed.isoformat()
   links=[]
-  for key in ("xbrl","xbrlurl","xbrlfile","xbrlfileurl","xbrlfilepath","xbrlattachment","xbrlattachmenturl","attchmntfile","attachment","attachmenturl","detailsurl","pdfurl","fileurl"):
+  for key in ("xbrl","xbrlurl","xbrlfile","xbrlfileurl","xbrlfilepath","xbrlattachment","xbrlattachmenturl","ixbrl","ixbrlurl","ixbrlfile","ixbrlfileurl","ixbrlfilepath","attchmntfile","attachment","attachmenturl","detailsurl","pdfurl","fileurl"):
    for k,v in raw.items():
     if k.lower()==key.lower() and v:
      u=norm_url(v)
