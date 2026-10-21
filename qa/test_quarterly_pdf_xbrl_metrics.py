@@ -156,5 +156,24 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertEqual(eps["value"], 4.2)
 
 
+    def test_malformed_nse_ixbrl_html_uses_tolerant_parser(self):
+        # Real NSE iXBRL responses can be HTML rather than well-formed XHTML.
+        # Facts must remain source-derived; no metric or basis is synthesized.
+        html = b"""<!doctype html><html><body>
+          <xbrli:context id="QTR"><xbrli:entity>
+            <xbrli:identifier scheme="https://example.test">INE123A01011</xbrli:identifier>
+          </xbrli:entity><xbrli:period><xbrli:startDate>2026-07-01</xbrli:startDate>
+          <xbrli:endDate>2026-09-30</xbrli:endDate></xbrli:period></xbrli:context>
+          <ix:nonFraction name="in-gaap:RevenueFromOperations" contextRef="QTR" unitRef="INR" scale="6">123.45</ix:nonFraction>
+          <ix:nonFraction name="in-gaap:ProfitLossForPeriod" contextRef="QTR" unitRef="INR" sign="-" scale="6">2.5</ix:nonFraction>
+          <ix:nonFraction name="in-gaap:BasicEarningsPerShare" contextRef="QTR" unitRef="INRPerShare">4.2</ix:nonFraction>
+        </body>"""
+        facts = parse_xbrl(html)
+        self.assertEqual(len(facts), 3)
+        self.assertEqual(choose(facts, ALIASES["REVENUE"], "2026-09-30")["value"], 123450000.0)
+        self.assertEqual(choose(facts, ALIASES["PAT"], "2026-09-30")["value"], -2500000.0)
+        self.assertEqual(choose(facts, ALIASES["EPS"], "2026-09-30")["value"], 4.2)
+
+
 if __name__ == "__main__":
     unittest.main()
