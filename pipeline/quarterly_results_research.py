@@ -183,7 +183,42 @@ def security_isin(symbol, row):
                     break
             except Exception:
                 continue
-    return _SECURITY_ISIN_MAP.get(str(symbol).strip().upper(), "")
+    mapped = _SECURITY_ISIN_MAP.get(str(symbol).strip().upper(), "")
+    if mapped:
+        return mapped
+
+    # Some historical/suspended symbols are absent from the current NSE equity
+    # master. Resolve only from the exact official NSE filing attached to this
+    # disclosure, and only when the filing's company name matches the row.
+    attachment = str(first(row, [
+        "xbrl", "xbrlurl", "xbrlfile", "xbrlfileurl", "attchmntfile",
+        "attachment", "attachmenturl", "pdfurl", "fileurl"
+    ])).strip()
+    if not attachment.startswith(("https://nsearchives.nseindia.com/", "https://archives.nseindia.com/")):
+        return ""
+    try:
+        response = requests.get(attachment, headers=HEADERS, timeout=(5, 15))
+        response.raise_for_status()
+        root = ET.fromstring(response.content)
+        values = set()
+        names = set()
+        for node in root.iter():
+            tag = str(node.tag).rsplit("}", 1)[-1].split(":")[-1].lower()
+            value = str(node.text or "").strip()
+            if tag == "isin" and re.fullmatch(r"INE[A-Z0-9]{9}", value.upper()):
+                values.add(value.upper())
+            elif tag in {"nameofcompany", "companyname"} and value:
+                names.add(re.sub(r"[^a-z0-9]", "", value.lower()))
+        expected = re.sub(r"[^a-z0-9]", "", str(first(row, [
+            "company", "companyname", "sm_name", "securityname"
+        ])).lower())
+        if len(values) == 1 and expected and expected in names:
+            resolved = next(iter(values))
+            _SECURITY_ISIN_MAP[str(symbol).strip().upper()] = resolved
+            return resolved
+    except Exception:
+        return ""
+    return ""
 
 def normalize_event(row, kind, source_url):
     symbol = str(first(row, ["symbol", "sm_symbol", "ticker", "securitysymbol"])).upper().strip()
