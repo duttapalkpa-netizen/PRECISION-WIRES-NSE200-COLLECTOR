@@ -92,6 +92,7 @@ def main():
     all_rows=[]
     quote_rows=[]
     failure_rows=[]
+    source_access_blocked=False
     for attempt in range(attempts):
         all_rows=[]; quote_rows=[]; failure_rows=[]
         for sym in syms:
@@ -100,7 +101,14 @@ def main():
             try:
                 q=quote(s,sym)
             except Exception as exc:
-                failure_rows.append({"SYMBOL":sym,"STAGE":"QUOTE","ERROR":type(exc).__name__+":"+str(exc)[:240]})
+                status_code=getattr(getattr(exc,"response",None),"status_code",None)
+                failure_rows.append({"SYMBOL":sym,"STAGE":"QUOTE","HTTP_STATUS":status_code,
+                                     "ERROR":type(exc).__name__+":"+str(exc)[:240]})
+                # A 403 is an access-control response, not a transient missing
+                # candle. Do not hammer NSE endpoints or pretend the feed is live.
+                if status_code == 403:
+                    source_access_blocked=True
+                    break
             try:
                 gd=chart(s,sym,(q or {}).get("identifier",""))
                 chart_rows=len(gd)
@@ -119,7 +127,7 @@ def main():
                                      "CHART_POINTS":chart_rows,"QUOTE_IDENTIFIER":(q or {}).get("identifier",""),
                                      "QUOTE_LTP":(q or {}).get("ltp","")})
             time.sleep(.10)
-        if all_rows:
+        if all_rows or source_access_blocked:
             break
         time.sleep(60)
 
@@ -127,7 +135,8 @@ def main():
         from collections import Counter
         failure_counts=dict(Counter(f.get("STAGE","UNKNOWN")+":"+f.get("ERROR","UNKNOWN").split(":")[0]
                                      for f in failure_rows))
-        meta={"status":"NO_LIVE_1M_DATA","rows":0,"symbols":0,"attempts":attempts,
+        meta={"status":"BLOCKED_SOURCE_ACCESS_403" if source_access_blocked else "NO_LIVE_1M_DATA",
+              "rows":0,"symbols":0,"attempts":attempt+1 if "attempt" in locals() else 0,
               "market_open_observed":capital_market_open(s),
               "failure_count":len(failure_rows),"failure_counts":failure_counts,
               "failure_samples":failure_rows[:100],
