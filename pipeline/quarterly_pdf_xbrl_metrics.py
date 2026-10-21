@@ -198,6 +198,11 @@ def main():
   except Exception: raw={}
   symbol=str(r.get("SYMBOL","") or "").strip().upper()
   isin=str(r.get("ISIN","") or "").strip().upper()
+  if not isin and symbol:
+   # Use the same evidence-backed resolver as Step 2. It only returns an ISIN
+   # from the official security master or a company-matched official filing.
+   from pipeline.quarterly_results_research import security_isin
+   isin=security_isin(symbol,raw)
   period=date_iso(r.get("PERIOD_END",""))
   # Revision disclosures can lack BROADCAST_AT while the event normalizer
   # preserves their explicit revision publication time separately. Use that
