@@ -470,6 +470,7 @@ def build_financial_features(path):
         if col not in {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT"}:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     df = df.dropna(subset=["SYMBOL", "PERIOD_END", "DISCLOSED_AT", "REVENUE", "PAT", "EPS"])
+    key = ["SYMBOL", "PERIOD_END", "BASIS"]
     # Collapse byte-for-byte repeated evidence, then select a uniquely latest
     # disclosure for each symbol/period/basis. Conflicting filings at the same
     # latest timestamp remain blocked; never choose arbitrarily.
