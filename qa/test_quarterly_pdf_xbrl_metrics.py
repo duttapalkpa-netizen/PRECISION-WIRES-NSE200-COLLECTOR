@@ -130,5 +130,31 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertEqual(revenue["unit"], "INR")
 
 
+    def test_inline_ixbrl_facts_use_taxonomy_name_scale_and_sign(self):
+        html = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+              xmlns:xbrli="http://www.xbrl.org/2003/instance">
+          <body>
+            <xbrli:context id="QTR"><xbrli:entity><xbrli:identifier scheme="https://example.test">INE123A01011</xbrli:identifier></xbrli:entity>
+              <xbrli:period><xbrli:startDate>2026-07-01</xbrli:startDate><xbrli:endDate>2026-09-30</xbrli:endDate></xbrli:period></xbrli:context>
+            <ix:nonFraction name="in-gaap:RevenueFromOperations" contextRef="QTR" unitRef="INR" scale="6">123.45</ix:nonFraction>
+            <ix:nonFraction name="in-gaap:ProfitLossForPeriod" contextRef="QTR" unitRef="INR" scale="6" sign="-">2.5</ix:nonFraction>
+            <ix:nonFraction name="in-gaap:BasicEarningsPerShare" contextRef="QTR" unitRef="INRPerShare">4.2</ix:nonFraction>
+          </body>
+        </html>"""
+        facts = parse_xbrl(html)
+        period = "2026-09-30"
+        revenue = choose(facts, ALIASES["REVENUE"], period)
+        pat = choose(facts, ALIASES["PAT"], period)
+        eps = choose(facts, ALIASES["EPS"], period)
+        self.assertIsNotNone(revenue)
+        self.assertEqual(revenue["value"], 123450000.0)
+        self.assertIsNotNone(pat)
+        self.assertEqual(pat["value"], -2500000.0)
+        self.assertIsNotNone(eps)
+        self.assertEqual(eps["value"], 4.2)
+
+
 if __name__ == "__main__":
     unittest.main()
