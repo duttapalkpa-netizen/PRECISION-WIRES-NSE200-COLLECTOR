@@ -175,5 +175,37 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertEqual(choose(facts, ALIASES["EPS"], "2026-09-30")["value"], 4.2)
 
 
+    def test_rendered_nse_details_discovers_only_official_attachment_links(self):
+        from pipeline.quarterly_pdf_xbrl_metrics import discover_official_attachments
+        html = b"""<!doctype html><html><body>
+          <a href="/corporate/ixbrl/INTEGRATED_FILING_INDAS_202816_iXBRL_WEB.html">iXBRL</a>
+          <a href="https://nsearchives.nseindia.com/corporate/xbrl/filing.xml">XML</a>
+          <a href="https://evil.example/corporate/xbrl/fake.xml">off host</a>
+          <a href="/other/path/unrelated.xml">unrelated</a>
+        </body></html>"""
+        links = discover_official_attachments(
+            html, "https://www.nseindia.com/corporate/ixbrl/details.html"
+        )
+        self.assertIn(
+            "https://www.nseindia.com/corporate/ixbrl/INTEGRATED_FILING_INDAS_202816_iXBRL_WEB.html",
+            links,
+        )
+        self.assertIn(
+            "https://nsearchives.nseindia.com/corporate/xbrl/filing.xml", links
+        )
+        self.assertFalse(any("evil.example" in link for link in links))
+        self.assertFalse(any("/other/path/" in link for link in links))
+
+    def test_rendered_nse_details_attachment_discovery_is_bounded(self):
+        from pipeline.quarterly_pdf_xbrl_metrics import discover_official_attachments
+        links = "".join(
+            f'<a href="/corporate/xbrl/file{i}.xml">file</a>' for i in range(20)
+        ).encode()
+        found = discover_official_attachments(
+            links, "https://www.nseindia.com/corporate/ixbrl/details.html", limit=3
+        )
+        self.assertEqual(len(found), 3)
+
+
 if __name__ == "__main__":
     unittest.main()
