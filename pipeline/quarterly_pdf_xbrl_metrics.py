@@ -247,6 +247,10 @@ def main():
     # tag in the ledger; never substitute PBT or a component premium fact.
     if rev is None and re.search(r"INTEGRATED_FILING_GI_", url, re.I):
      rev=choose(facts,["operatingincome"],period)
+    if rev is None and re.search(r"IF_INS_COM_IND_AS_", url, re.I):
+     # Insurance-company Ind AS 117 taxonomy explicitly reports InsuranceRevenue.
+     # Do not substitute GrossWrittenPremium or segment-level revenue.
+     rev=choose(facts,["insurancerevenue"],period)
     if rev is None and re.search(r"INTEGRATED_FILING_LI_", url, re.I):
      rev=choose(facts,["income"],period)
     # Banking/NBFC integrated filings also use taxonomy concept Income.
