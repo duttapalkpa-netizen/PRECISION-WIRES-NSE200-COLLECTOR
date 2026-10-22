@@ -10,6 +10,8 @@ from datetime import timedelta
 import json
 import time
 import requests
+import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
 from requests.exceptions import HTTPError
 import pandas as pd
 
@@ -19,6 +21,7 @@ NEWS_OUT = RAW / "stock_news_events.csv"
 COVERAGE_OUT = RAW / "stock_news_coverage.csv"
 REPORT_OUT = Path("outputs/news_24h/stock_news_collection_report.json")
 API = "https://api.gdeltproject.org/api/v2/doc/doc"
+GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 TZ = "Asia/Kolkata"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES-Research/1.0; audit-only)", "Accept": "application/json"}
 MAX_RETRIES = 4
@@ -132,11 +135,44 @@ def main():
                     })
                 coverage["COVERAGE_STATUS"] = "COMPLETE"
                 coverage["RESULTS_RETURNED"] = len(articles)
+                coverage["SOURCE_SCOPE"] = "GDELT_DOC_API_SYMBOL_QUERY"
                 ok += 1
             except Exception as exc:
-                coverage["ERROR"] = f"{type(exc).__name__}: {exc}"
-                coverage["RESULTS_RETURNED"] = ""
-                failed += 1
+                gdelt_error = "{}: {}".format(type(exc).__name__, exc)
+                try:
+                    rss_params = {"q": '"{}" NSE stock after:{} before:{}'.format(pair.SYMBOL, start.date().isoformat(), cutoff.date().isoformat()), "hl": "en-IN", "gl": "IN", "ceid": "IN:en"}
+                    rss_url = requests.Request("GET", GOOGLE_NEWS_RSS, params=rss_params).prepare().url
+                    rss_response = session.get(GOOGLE_NEWS_RSS, params=rss_params, timeout=(15, 30))
+                    rss_response.raise_for_status()
+                    root = ET.fromstring(rss_response.content)
+                    channel = root.find("channel")
+                    if channel is None:
+                        raise ValueError("Google News RSS missing channel")
+                    rss_articles = channel.findall("item")
+                    for article in rss_articles:
+                        title = (article.findtext("title") or "").strip()
+                        url = (article.findtext("link") or "").strip()
+                        raw_date = (article.findtext("pubDate") or "").strip()
+                        domain = (article.findtext("source") or "Google News RSS").strip()
+                        try:
+                            published = pd.Timestamp(parsedate_to_datetime(raw_date)).tz_convert("UTC")
+                        except Exception:
+                            continue
+                        published_ist = published.tz_convert(TZ)
+                        if not title or not url.startswith(("http://", "https://")) or not (start < published_ist < cutoff):
+                            continue
+                        event_id = "{}|{}|{}".format(pair.SYMBOL, published.isoformat(), url)
+                        news_rows.append({"EVENT_ID": event_id, "CUT_OFF": cutoff.date().isoformat(), "SYMBOL": pair.SYMBOL, "PUBLISHED_AT": published.isoformat(), "PUBLISHER": domain, "HEADLINE": title, "CANONICAL_URL": url, "SOURCE_TYPE": "GOOGLE_NEWS_RSS_DISCOVERY", "VERIFICATION_STATUS": "UNVERIFIED_GOOGLE_NEWS_RSS_MATCH"})
+                    coverage["COVERAGE_STATUS"] = "COMPLETE"
+                    coverage["SOURCE_SCOPE"] = "GOOGLE_NEWS_RSS_SYMBOL_QUERY"
+                    coverage["SOURCE_URL"] = rss_url
+                    coverage["RESULTS_RETURNED"] = len(rss_articles)
+                    coverage["ERROR"] = "GDELT fallback used: " + gdelt_error
+                    ok += 1
+                except Exception as rss_exc:
+                    coverage["ERROR"] = gdelt_error + " | GoogleNewsRSS {}: {}".format(type(rss_exc).__name__, rss_exc)
+                    coverage["RESULTS_RETURNED"] = ""
+                    failed += 1
             coverage_rows.append(coverage)
             if n % 25 == 0:
                 print(f"PROGRESS={n}/{len(pairs)} queries_ok={ok} queries_failed={failed}", flush=True)
@@ -163,7 +199,7 @@ def main():
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "source": "GDELT DOC API with Google News RSS fallback", "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
