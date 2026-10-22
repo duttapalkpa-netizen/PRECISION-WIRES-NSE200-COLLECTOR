@@ -1,0 +1,31 @@
+name: Step 3 Small Live RSS Collector Test
+
+on:
+  push:
+    branches: [audit/step3-rss-diagnostics]
+    paths:
+      - ".github/workflows/step3_live_rss_smoke.yml"
+      - "qa/step3_live_rss_smoke.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-rss-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/step3-rss-diagnostics
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - name: One live Google News RSS request and schema validation
+        env:
+          NEWS_SYMBOL: TESTCO
+          NEWS_CUTOFF: "2026-10-14"
+        run: python qa/step3_live_rss_smoke.py
