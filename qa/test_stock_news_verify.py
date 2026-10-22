@@ -29,7 +29,7 @@ def test_google_news_url_is_decoded_and_canonicalized_after_headline_verificatio
     }]).to_csv(news, index=False)
     monkeypatch.setattr(verifier, "NEWS", news)
     monkeypatch.setattr(verifier, "REPORT", report)
-    monkeypatch.setattr(verifier, "new_decoderv1", lambda url, interval=1: {
+    monkeypatch.setattr(verifier, "gnewsdecoder", lambda url, interval=1: {
         "status": True, "decoded_url": "https://publisher.example/article"
     })
     monkeypatch.setattr(verifier.requests, "get", lambda url, **kwargs: FakeResponse(url))
