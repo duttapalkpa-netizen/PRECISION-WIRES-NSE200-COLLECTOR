@@ -13,7 +13,7 @@ RSS = b"""<?xml version="1.0" encoding="UTF-8"?>
 <title>Google News</title>
 <item><title>Example Co announces quarterly results</title>
 <link>https://example.com/story</link>
-<pubDate>Wed, 14 Oct 2026 10:00:00 +0000</pubDate>
+<pubDate>Wed, 14 Oct 2026 11:00:00 +0000</pubDate>
 <source>Example News</source></item>
 <item><title>Out of window article</title>
 <link>https://example.com/old</link>
@@ -54,7 +54,7 @@ class GoogleNewsFallbackTests(unittest.TestCase):
             session.__enter__.return_value = session
             session.__exit__.return_value = False
             session.headers = {}
-            session.get.side_effect = [first_gdelt_response, FakeResponse(content=RSS)]
+            session.get.side_effect = ([first_gdelt_response, FakeResponse(content=RSS)] if not isinstance(first_gdelt_response, BaseException) else [first_gdelt_response, FakeResponse(content=RSS)])
 
             with patch.object(collector, "PICKS", picks), \
                  patch.object(collector, "NEWS_OUT", news_out), \
