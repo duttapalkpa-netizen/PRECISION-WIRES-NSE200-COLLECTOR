@@ -21,8 +21,8 @@ REPORT_OUT = Path("outputs/news_24h/stock_news_collection_report.json")
 API = "https://api.gdeltproject.org/api/v2/doc/doc"
 TZ = "Asia/Kolkata"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES-Research/1.0; audit-only)", "Accept": "application/json"}
-MAX_RETRIES = 2
-BACKOFF_SECONDS = (8,)
+MAX_RETRIES = 4
+BACKOFF_SECONDS = (8, 16, 24)
 
 
 def utc_stamp(ts):
@@ -86,7 +86,7 @@ def main():
                 coverage["SOURCE_URL"] = requests.Request("GET", API, params=params).prepare().url
                 for attempt in range(MAX_RETRIES):
                     try:
-                        response = session.get(API, params=params, timeout=(8, 20))
+                        response = session.get(API, params=params, timeout=(15, 60))
                         response.raise_for_status()
                         candidate_payload = response.json()
                         if not isinstance(candidate_payload, dict) or "articles" not in candidate_payload or not isinstance(candidate_payload.get("articles"), list):
@@ -103,7 +103,7 @@ def main():
                         delay = BACKOFF_SECONDS[min(attempt, len(BACKOFF_SECONDS) - 1)]
                         retry_after = getattr(getattr(exc, "response", None), "headers", {}).get("Retry-After")
                         try:
-                            delay = max(delay, min(20, int(retry_after))) if retry_after else delay
+                            delay = max(delay, min(45, int(retry_after))) if retry_after else delay
                         except (TypeError, ValueError):
                             pass
                         print(f"RETRY symbol={pair.SYMBOL} attempt={attempt+1}/{MAX_RETRIES} delay_s={delay} reason={type(exc).__name__}", flush=True)
@@ -163,7 +163,7 @@ def main():
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 8, "read": 20}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 20, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "source": "GDELT DOC API", "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
