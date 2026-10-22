@@ -254,13 +254,13 @@ def parse_agel_q2fy27_pdf_metrics(pdf_path):
  pages=[(page.extract_text() or "") for page in reader.pages]
  def norm(s): return re.sub(r"\s+"," ",s).strip()
  def row_values(page_text, label_pattern):
-  for line in page_text.splitlines():
-   line=norm(line)
-   if re.search(label_pattern,line,re.I):
-    tail=re.sub(label_pattern,"",line,count=1,flags=re.I).strip()
-    vals=re.findall(r"(?<![A-Za-z])\(?-?\d[\d,]*(?:\.\d+)?\)?",tail)
-    vals=[float(v.replace(",","").replace("(","-").replace(")","")) for v in vals]
-    if len(vals)>=6: return vals[:6]
+  flat_text=norm(page_text)
+  match=re.search(label_pattern,flat_text,re.I)
+  if not match: return None
+  tail=flat_text[match.end():]
+  vals=re.findall(r"(?<![A-Za-z])\(?-?\d[\d,]*(?:\.\d+)?\)?",tail)
+  vals=[float(v.replace(",","").replace("(","-").replace(")","")) for v in vals]
+  if len(vals)>=6: return vals[:6]
   return None
  result={}
  for basis, page_no, heading in [
