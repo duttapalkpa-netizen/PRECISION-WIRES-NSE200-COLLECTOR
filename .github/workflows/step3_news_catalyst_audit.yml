@@ -304,7 +304,10 @@ jobs:
               and int(news.get("invalid_query_source_url_rows", -1)) == 0
               and int(news.get("timestamp_window_failures", -1)) == 0
               and int(news.get("duplicate_cutoff_symbol_pairs", -1)) == 0
-              and int(news.get("verified_news_rows", -1)) == 0
+              # Partial verification is a valid audit outcome; research remains blocked
+              # whenever any matched news row is still unverified. Do not require zero
+              # verified rows to recognize an internally consistent audit.
+              and int(news.get("verified_news_rows", -1)) >= 0
               and int(news.get("unverified_news_rows", 0)) > 0
           ):
               print("STEP3_VERDICT=PASS_AUDIT_ONLY_RESEARCH_HARD_GATE_BLOCKED")
