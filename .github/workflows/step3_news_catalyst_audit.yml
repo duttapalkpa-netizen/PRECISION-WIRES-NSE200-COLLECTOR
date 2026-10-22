@@ -143,7 +143,7 @@ jobs:
           required_metrics = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS", "EXTRACTION_STATUS"}
           if not required_metrics.issubset(ledger.columns):
               raise SystemExit("STEP3_BLOCKED_STEP2_METRIC_LEDGER_SCHEMA")
-          verified = ledger[ledger["EXTRACTION_STATUS"].eq("SOURCE_LINKED_XBRL_FACTS")].copy()
+          verified = ledger[ledger["EXTRACTION_STATUS"].isin(["SOURCE_LINKED_XBRL_FACTS", "SOURCE_LINKED_PDF_TABLE_FACTS"])].copy()
           blocked_rows = int(ledger["EXTRACTION_STATUS"].astype(str).str.startswith("BLOCKED").sum())
           disclosure_rows = len(disclosures)
           complete = disclosure_rows > 0 and len(ledger) == disclosure_rows and blocked_rows == 0 and len(verified) > 0
