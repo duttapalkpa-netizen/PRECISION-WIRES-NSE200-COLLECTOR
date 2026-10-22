@@ -4,3 +4,4 @@ requests>=2.31,<3
 pypdf>=5,<7
 googlenewsdecoder==0.2.2
 selectolax<1.0
+pytest>=8,<9
