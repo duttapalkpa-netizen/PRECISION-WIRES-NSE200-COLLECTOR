@@ -16,6 +16,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
 import requests
 
+try:
+    from googlenewsdecoder import new_decoderv1
+except Exception:  # Keep non-Google publisher URLs verifiable if decoder import fails.
+    new_decoderv1 = None
+
 NEWS = Path("data/raw/stock_news_events.csv")
 REPORT = Path("outputs/news_24h/stock_news_verification_report.json")
 USER_AGENT = "Mozilla/5.0 (compatible; PRECISION-WIRES-audit/1.0)"
@@ -81,15 +86,29 @@ def main():
 
     def verify_one(item):
         idx, url, headline = item
+        resolved_url = url
         try:
+            host = (urlparse(url).hostname or "").lower()
+            if host == "news.google.com" or host.endswith(".news.google.com"):
+                if new_decoderv1 is None:
+                    raise ValueError("GOOGLE_NEWS_DECODER_UNAVAILABLE")
+                decoded = new_decoderv1(url, interval=1)
+                if not isinstance(decoded, dict) or not decoded.get("status") or not decoded.get("decoded_url"):
+                    message = decoded.get("message", "GOOGLE_NEWS_URL_NOT_DECODED") if isinstance(decoded, dict) else "GOOGLE_NEWS_URL_NOT_DECODED"
+                    raise ValueError("GOOGLE_NEWS_URL_NOT_DECODED:" + str(message)[:120])
+                resolved_url = str(decoded["decoded_url"]).strip()
+                decoded_parts = urlparse(resolved_url)
+                if decoded_parts.scheme not in {"http", "https"} or not decoded_parts.hostname:
+                    raise ValueError("DECODER_RETURNED_INVALID_PUBLISHER_URL")
+                if (decoded_parts.hostname or "").lower().endswith("google.com"):
+                    raise ValueError("DECODER_RETURNED_GOOGLE_URL")
             response = requests.get(
-                url, timeout=(5, 8), allow_redirects=True,
-                headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml",
-                         "Range": "bytes=0-300000"}
+                resolved_url, timeout=(5, 12), allow_redirects=True,
+                headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
             )
             response.raise_for_status()
             final = urlparse(response.url)
-            if not final.hostname or final.hostname.lower() in {"news.google.com", "google.com", "www.google.com"}:
+            if not final.hostname or final.hostname.lower() == "news.google.com" or final.hostname.lower() == "google.com" or final.hostname.lower().endswith(".google.com"):
                 raise ValueError("URL_DID_NOT_RESOLVE_TO_PUBLISHER")
             if "html" not in response.headers.get("Content-Type", "").lower():
                 raise ValueError("PUBLISHER_RESPONSE_NOT_HTML")
@@ -103,17 +122,18 @@ def main():
             overlap = len(headline_tokens & page_tokens) / len(headline_tokens)
             if not page_title or overlap < 0.50:
                 raise ValueError("PUBLISHER_TITLE_MISMATCH")
-            return idx, True, ""
+            return idx, True, "", response.url
         except Exception as exc:
-            return idx, False, f"{type(exc).__name__}:{str(exc)[:180]}"
+            return idx, False, f"{type(exc).__name__}:{str(exc)[:180]}", resolved_url
 
     checked = verified = 0
     with ThreadPoolExecutor(max_workers=8) as pool:
         futures = [pool.submit(verify_one, item) for item in pending]
         for future in as_completed(futures):
-            idx, ok, reason = future.result()
+            idx, ok, reason, resolved_url = future.result()
             checked += 1
             if ok:
+                df.at[idx, "CANONICAL_URL"] = resolved_url
                 df.at[idx, "VERIFICATION_STATUS"] = "VERIFIED"
                 verified += 1
             else:
@@ -125,7 +145,8 @@ def main():
         "checked_rows": checked, "newly_verified_rows": verified,
         "verified_rows_total": int(df["VERIFICATION_STATUS"].astype(str).str.upper().eq("VERIFIED").sum()),
         "unverified_rows_remaining": remaining,
-        "verification_rule": "HTTP 200 publisher HTML after redirects, non-Google final host, page title token overlap >= 0.50; max 8 concurrent requests",
+        "verification_rule": "Decode Google News RSS article URL to publisher URL when needed; then require HTTP 200 publisher HTML after redirects, non-Google final host, page title token overlap >= 0.50; max 8 concurrent requests",
+        "url_resolution": "Google News article links are decoded with googlenewsdecoder; canonical URL is replaced only after publisher-page and headline verification passes.",
         "failure_samples": failures[:20],
         "note": "Failed or ambiguous rows remain UNVERIFIED; verification never fabricates evidence."
     }
