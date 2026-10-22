@@ -167,7 +167,7 @@ jobs:
               "coverage": {"status": "PASS", "verified_metric_rows": int(len(verified)),
                            "ledger_rows_evaluated": int(len(ledger)),
                            "disclosure_rows_in_current_source": int(disclosure_rows),
-                           "blocked_rows": blocked_rows, "coverage_scope": "full current disclosure set"},
+                           "blocked_rows": blocked_rows, "coverage_scope": "full current disclosure set", "accepted_evidence_statuses": ["SOURCE_LINKED_XBRL_FACTS", "SOURCE_LINKED_PDF_TABLE_FACTS"]},
               "provenance_source": str(normalized)
           }
           manifest["step_2_status"] = "PASS"
