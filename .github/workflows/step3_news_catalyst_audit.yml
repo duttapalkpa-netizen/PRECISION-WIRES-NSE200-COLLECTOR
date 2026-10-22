@@ -289,8 +289,14 @@ jobs:
               raise SystemExit("STEP3_BLOCKED_BAD_COVERAGE_SCHEMA")
           if joined.empty or candidates.empty:
               raise SystemExit("STEP3_BLOCKED_EMPTY_NEWS_JOIN_OR_CANDIDATES")
-          if not news.get("status") == "PASS":
-              raise SystemExit("STEP3_BLOCKED_NEWS_READINESS_NOT_PASS")
+          if news.get("research_status") != "READY_FOR_PAIRED_ABLATION":
+              raise SystemExit("STEP3_BLOCKED_NEWS_READINESS_NOT_READY: " + json.dumps({
+                  "research_status": news.get("research_status"),
+                  "verified_news_rows": news.get("verified_news_rows"),
+                  "unverified_news_rows": news.get("unverified_news_rows"),
+                  "coverage_unknown_rows": news.get("coverage_unknown_rows"),
+                  "timestamp_window_failures": news.get("timestamp_window_failures"),
+              }, sort_keys=True))
           print("STEP3_VERDICT=PASS")
           PY
       - name: Upload Step 3 audit artifacts
