@@ -289,15 +289,30 @@ jobs:
               raise SystemExit("STEP3_BLOCKED_BAD_COVERAGE_SCHEMA")
           if joined.empty or candidates.empty:
               raise SystemExit("STEP3_BLOCKED_EMPTY_NEWS_JOIN_OR_CANDIDATES")
-          if news.get("research_status") != "READY_FOR_PAIRED_ABLATION":
-              raise SystemExit("STEP3_BLOCKED_NEWS_READINESS_NOT_READY: " + json.dumps({
+          # Audit integrity and research eligibility are distinct outcomes.
+          # A complete timestamp-aligned discovery join may pass its audit while
+          # the paired-news research hard gate remains BLOCKED for unverified rows.
+          if news.get("research_status") == "READY_FOR_PAIRED_ABLATION":
+              print("STEP3_VERDICT=PASS")
+          elif (
+              news.get("status") == "JOIN_BUILT_AUDIT_ONLY"
+              and news.get("research_status") == "BLOCKED_VERIFICATION_OR_COVERAGE"
+              and int(news.get("coverage_unknown_rows", -1)) == 0
+              and int(news.get("invalid_query_source_url_rows", -1)) == 0
+              and int(news.get("timestamp_window_failures", -1)) == 0
+              and int(news.get("duplicate_cutoff_symbol_pairs", -1)) == 0
+              and int(news.get("verified_news_rows", -1)) == 0
+              and int(news.get("unverified_news_rows", 0)) > 0
+          ):
+              print("STEP3_VERDICT=PASS_AUDIT_ONLY_RESEARCH_HARD_GATE_BLOCKED")
+          else:
+              raise SystemExit("STEP3_BLOCKED_INVALID_OR_INCONSISTENT_READINESS_REPORT: " + json.dumps({
                   "research_status": news.get("research_status"),
                   "verified_news_rows": news.get("verified_news_rows"),
                   "unverified_news_rows": news.get("unverified_news_rows"),
                   "coverage_unknown_rows": news.get("coverage_unknown_rows"),
                   "timestamp_window_failures": news.get("timestamp_window_failures"),
               }, sort_keys=True))
-          print("STEP3_VERDICT=PASS")
           PY
       - name: Upload Step 3 audit artifacts
         if: always()
