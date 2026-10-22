@@ -53,7 +53,7 @@ def test_failed_google_news_decode_remains_unverified(tmp_path, monkeypatch):
     }]).to_csv(news, index=False)
     monkeypatch.setattr(verifier, "NEWS", news)
     monkeypatch.setattr(verifier, "REPORT", report)
-    monkeypatch.setattr(verifier, "new_decoderv1", lambda url, interval=1: {
+    monkeypatch.setattr(verifier, "gnewsdecoder", lambda url, interval=1, **kwargs: {
         "status": False, "message": "simulated decode failure"
     })
 
