@@ -254,6 +254,8 @@ jobs:
           PY
       - name: Collect timestamped 24-hour stock-news discovery for latest cutoff only
         run: python pipeline/stock_news_24h_collect.py
+      - name: Independently verify publisher URLs and headline matches
+        run: python pipeline/stock_news_verify.py
       - name: Build stock-specific 24-hour timestamp-aligned news join
         run: python pipeline/stock_news_24h_join.py
       - name: Enforce evidence-based Step 3 status
