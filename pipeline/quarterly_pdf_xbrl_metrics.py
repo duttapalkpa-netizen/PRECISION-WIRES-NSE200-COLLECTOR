@@ -289,8 +289,8 @@ def parse_agel_q2fy27_pdf_metrics(pdf_path):
   result[basis]={"period_end":"2026-09-30","revenue":revenue,"pat":pat[0],"eps":eps[0],
    "revenue_unit":"INR_CRORE","pat_unit":"INR_CRORE","eps_unit":"INR_PER_SHARE",
    "revenue_fact":f"PDF:p{page_no}:Revenue from Operations = Power Supply {power[0]} + Sale of Goods/Equipments and related Services {goods[0]} + Others {other[0]}",
-   "pat_fact":f"PDF:p{page_no}:{"Profit/(Loss) after tax" if basis=="STANDALONE" else "Profit for the period/year"}",
-   "eps_fact":f"PDF:p{page_no}:{"Basic and Diluted EPS" if basis=="STANDALONE" else "Basic EPS"}",
+   "pat_fact":"PDF:p"+str(page_no)+":"+("Profit/(Loss) after tax" if basis=="STANDALONE" else "Profit for the period/year"),
+   "eps_fact":"PDF:p"+str(page_no)+":"+("Basic and Diluted EPS" if basis=="STANDALONE" else "Basic EPS"),
    "evidence_page":page_no}
  return result
 
