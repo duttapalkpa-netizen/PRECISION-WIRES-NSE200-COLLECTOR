@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Conservative independent URL/headline verification for the audit-only news feed.
+"""Conservative independent URL/headline verification for the audit-only news feed (Step 3).
 
 A row is marked VERIFIED only when its article URL resolves to a non-Google
 publisher page, the page returns HTTP 200, and the extracted page title has
