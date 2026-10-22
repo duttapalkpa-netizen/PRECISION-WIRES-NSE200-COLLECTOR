@@ -473,11 +473,11 @@ def main():
    # and basis declared by the NSE disclosure metadata. Never infer basis from
    # row order or copy consolidated figures into standalone disclosures.
    declared_basis=str(raw.get("consolidated","") or "").strip().upper()
-   if symbol=="ADANIGREEN" and isin=="INE364U01010" and period=="2026-09-30" and disclosed_at and declared_basis=="STANDALONE" and "STANDALONE" in agel_pdf_metrics:
-    m=agel_pdf_metrics["STANDALONE"]
+   if symbol=="ADANIGREEN" and isin=="INE364U01010" and period=="2026-09-30" and disclosed_at and declared_basis in ("STANDALONE","CONSOLIDATED") and declared_basis in agel_pdf_metrics:
+    m=agel_pdf_metrics[declared_basis]
     pdf_blob=agel_pdf_path.read_bytes()
     digest=sha(pdf_blob)
-    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"STANDALONE",
+    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":declared_basis,
      "SOURCE_URL":"https://www.adanigreenenergy.com/-/media/project/greenenergy/investor-downloads/financial-statements-dynamic/agel_q2fy27_financial-statement_vf.pdf",
      "DISCLOSED_AT":disclosed_at,"REVENUE":m["revenue"],"PAT":m["pat"],"EPS":m["eps"],
      "REVENUE_FACT":m["revenue_fact"],"PAT_FACT":m["pat_fact"],"EPS_FACT":m["eps_fact"],
