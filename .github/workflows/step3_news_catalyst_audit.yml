@@ -13,6 +13,10 @@ on:
       - "pipeline/quarterly_pdf_xbrl_metrics.py"
       - "qa/test_quarterly_results_research.py"
       - "qa/test_quarterly_pdf_xbrl_metrics.py"
+      - "qa/test_stock_news_24h_fallback.py"
+      - "qa/step3_live_rss_smoke.py"
+      - ".github/workflows/step3_mocked_rss_fallback.yml"
+      - ".github/workflows/step3_live_rss_smoke.yml"
 
 permissions:
   contents: read
