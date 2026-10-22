@@ -24,8 +24,8 @@ API = "https://api.gdeltproject.org/api/v2/doc/doc"
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 TZ = "Asia/Kolkata"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES-Research/1.0; audit-only)", "Accept": "application/json"}
-MAX_RETRIES = 4
-BACKOFF_SECONDS = (8, 16, 24)
+MAX_RETRIES = 3
+BACKOFF_SECONDS = (2, 4, 6)
 
 
 def utc_stamp(ts):
