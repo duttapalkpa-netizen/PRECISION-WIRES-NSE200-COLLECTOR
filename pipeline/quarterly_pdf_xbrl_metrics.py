@@ -272,14 +272,14 @@ def parse_agel_q2fy27_pdf_metrics(pdf_path):
   if not re.search(heading,flat,re.I) or not re.search(r"30\.09\.2026",flat) or not re.search(r"\(?in Crores\)?|₹ in Crores|\(?₹ in Crores\)?|\(?f in Crores\)?",flat,re.I):
    raise ValueError(f"AGEL PDF table identity/period/unit check failed: {basis} page {page_no}")
   if basis=="STANDALONE":
-   power=row_values(page,r"i\.\s*Power Supply")
-   goods=row_values(page,r"ii\.\s*Sale of Goods/ Equipments and related Services")
+   power=row_values(page,r"i\.\s*Powe\s*r Supply")
+   goods=row_values(page,r"ii\.\s*Sale of Goods/ Equ\s*ipments and related\s*Services")
    other=row_values(page,r"iii\.\s*Others \(refer note 7\)")
    pat=row_values(page,r"7\s+Profit\s*/\s*\(Loss\) after tax\s*\(5-6\)")
    eps=row_values(page,r"Basic and Diluted EPS\s*\(Inf\)")
   else:
    power=row_values(page,r"i\.\s*Power Supply")
-   goods=row_values(page,r"ii\.\s*Sale of Goods/ Equipments and Related Services")
+   goods=row_values(page,r"ii\.\s*Sale of Goods/ Equ\s*ipments and Related\s*Services")
    other=row_values(page,r"iii\.\s*Others \(Refer note 14\)")
    pat=row_values(page,r"9\s+Profit for the period/ year\s*\(7\+8\)")
    eps=row_values(page,r"Basic EPS \(In r\)")
