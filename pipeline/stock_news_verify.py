@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 import json
 import re
-import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
 import requests
@@ -68,43 +68,56 @@ def main():
         REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(json.dumps(report, sort_keys=True))
         return 0
-    checked = verified = 0
+    pending = []
     failures = []
-    with requests.Session() as session:
-        session.headers.update({"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"})
-        for idx, row in df.iterrows():
-            if str(row["VERIFICATION_STATUS"]).upper() == "VERIFIED":
-                continue
-            url = str(row["CANONICAL_URL"]).strip()
-            if urlparse(url).scheme not in {"http", "https"} or not urlparse(url).netloc:
-                failures.append({"row": int(idx), "reason": "INVALID_URL"})
-                continue
+    for idx, row in df.iterrows():
+        if str(row["VERIFICATION_STATUS"]).upper() == "VERIFIED":
+            continue
+        url = str(row["CANONICAL_URL"]).strip()
+        if urlparse(url).scheme not in {"http", "https"} or not urlparse(url).netloc:
+            failures.append({"row": int(idx), "reason": "INVALID_URL"})
+            continue
+        pending.append((int(idx), url, str(row["HEADLINE"])))
+
+    def verify_one(item):
+        idx, url, headline = item
+        try:
+            response = requests.get(
+                url, timeout=(5, 8), allow_redirects=True,
+                headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml",
+                         "Range": "bytes=0-300000"}
+            )
+            response.raise_for_status()
+            final = urlparse(response.url)
+            if not final.hostname or final.hostname.lower() in {"news.google.com", "google.com", "www.google.com"}:
+                raise ValueError("URL_DID_NOT_RESOLVE_TO_PUBLISHER")
+            if "html" not in response.headers.get("Content-Type", "").lower():
+                raise ValueError("PUBLISHER_RESPONSE_NOT_HTML")
+            parser = PageMeta()
+            parser.feed(response.text[:300000])
+            page_title = parser.best_title()
+            headline_tokens = tokens(headline)
+            page_tokens = tokens(page_title)
+            if len(headline_tokens) < 3:
+                raise ValueError("HEADLINE_TOO_SHORT_FOR_VERIFICATION")
+            overlap = len(headline_tokens & page_tokens) / len(headline_tokens)
+            if not page_title or overlap < 0.50:
+                raise ValueError("PUBLISHER_TITLE_MISMATCH")
+            return idx, True, ""
+        except Exception as exc:
+            return idx, False, f"{type(exc).__name__}:{str(exc)[:180]}"
+
+    checked = verified = 0
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(verify_one, item) for item in pending]
+        for future in as_completed(futures):
+            idx, ok, reason = future.result()
             checked += 1
-            try:
-                response = session.get(url, timeout=(10, 18), allow_redirects=True,
-                                       headers={"Range": "bytes=0-400000"})
-                response.raise_for_status()
-                final = urlparse(response.url)
-                if not final.hostname or final.hostname.lower() in {"news.google.com", "google.com", "www.google.com"}:
-                    raise ValueError("URL_DID_NOT_RESOLVE_TO_PUBLISHER")
-                ctype = response.headers.get("Content-Type", "").lower()
-                if "html" not in ctype:
-                    raise ValueError("PUBLISHER_RESPONSE_NOT_HTML")
-                parser = PageMeta()
-                parser.feed(response.text[:400000])
-                page_title = parser.best_title()
-                headline_tokens = tokens(row["HEADLINE"])
-                page_tokens = tokens(page_title)
-                if len(headline_tokens) < 3:
-                    raise ValueError("HEADLINE_TOO_SHORT_FOR_VERIFICATION")
-                overlap = len(headline_tokens & page_tokens) / len(headline_tokens)
-                if not page_title or overlap < 0.50:
-                    raise ValueError("PUBLISHER_TITLE_MISMATCH")
+            if ok:
                 df.at[idx, "VERIFICATION_STATUS"] = "VERIFIED"
                 verified += 1
-            except Exception as exc:
-                failures.append({"row": int(idx), "reason": f"{type(exc).__name__}:{str(exc)[:180]}"})
-            time.sleep(0.25)
+            else:
+                failures.append({"row": idx, "reason": reason})
     df.to_csv(NEWS, index=False)
     remaining = int(df["VERIFICATION_STATUS"].astype(str).str.upper().ne("VERIFIED").sum())
     report = {
@@ -112,7 +125,7 @@ def main():
         "checked_rows": checked, "newly_verified_rows": verified,
         "verified_rows_total": int(df["VERIFICATION_STATUS"].astype(str).str.upper().eq("VERIFIED").sum()),
         "unverified_rows_remaining": remaining,
-        "verification_rule": "HTTP 200 publisher HTML after redirects, non-Google final host, page title token overlap >= 0.50",
+        "verification_rule": "HTTP 200 publisher HTML after redirects, non-Google final host, page title token overlap >= 0.50; max 8 concurrent requests",
         "failure_samples": failures[:20],
         "note": "Failed or ambiguous rows remain UNVERIFIED; verification never fabricates evidence."
     }
