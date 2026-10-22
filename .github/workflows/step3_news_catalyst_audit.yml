@@ -8,6 +8,7 @@ on:
       - ".github/workflows/step3_news_catalyst_audit.yml"
       - "pipeline/stock_news_24h_collect.py"
       - "pipeline/stock_news_24h_join.py"
+      - "pipeline/stock_news_verify.py"
       - "pipeline/quarterly_results_research.py"
       - "data/reference/historical_security_isin_evidence.csv"
       - "pipeline/quarterly_pdf_xbrl_metrics.py"
