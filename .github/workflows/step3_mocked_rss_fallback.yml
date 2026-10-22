@@ -1,0 +1,29 @@
+name: Step 3 Mocked RSS Fallback Unit Tests
+
+on:
+  push:
+    branches: [audit/step3-rss-diagnostics]
+    paths:
+      - "pipeline/stock_news_24h_collect.py"
+      - "qa/test_stock_news_24h_fallback.py"
+      - ".github/workflows/step3_mocked_rss_fallback.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mocked-fallback-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/step3-rss-diagnostics
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt pytest
+      - name: Run mocked GDELT-to-RSS fallback tests (no live news dependency)
+        run: python -m pytest -q qa/test_stock_news_24h_fallback.py
