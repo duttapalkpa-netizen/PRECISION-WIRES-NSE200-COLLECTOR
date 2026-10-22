@@ -278,7 +278,7 @@ def parse_agel_q2fy27_pdf_metrics(pdf_path):
    pat=row_values(page,r"7\s+Profit\s*/\s*\(Loss\) after tax\s*\(5-6\)")
    eps=row_values(page,r"Basic and Diluted EPS\s*\(Inf\)")
   else:
-   power=row_values(page,r"i\.\s*Power Supply")
+   power=row_values(page,r"i\.\s*Powe\s*r Supply")
    goods=row_values(page,r"ii\.\s*Sale of Goods/ Equ\s*ipments and Related")
    other=row_values(page,r"iii\.\s*Others \(Refer note 14\)")
    pat=row_values(page,r"9\s+Profit for the period/ year\s*\(7\+8\)")
