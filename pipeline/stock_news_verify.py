@@ -17,9 +17,9 @@ import pandas as pd
 import requests
 
 try:
-    from googlenewsdecoder import new_decoderv1
+    from googlenewsdecoder import gnewsdecoder
 except Exception:  # Keep non-Google publisher URLs verifiable if decoder import fails.
-    new_decoderv1 = None
+    gnewsdecoder = None
 
 NEWS = Path("data/raw/stock_news_events.csv")
 REPORT = Path("outputs/news_24h/stock_news_verification_report.json")
@@ -90,10 +90,10 @@ def main():
         try:
             host = (urlparse(url).hostname or "").lower()
             if host == "news.google.com" or host.endswith(".news.google.com"):
-                if new_decoderv1 is None:
+                if gnewsdecoder is None:
                     raise ValueError("GOOGLE_NEWS_DECODER_UNAVAILABLE")
-                decoded = new_decoderv1(url, interval=1)
-                if not isinstance(decoded, dict) or not decoded.get("status") or not decoded.get("decoded_url"):
+                decoded = gnewsdecoder(url, interval=1, timeout=15.0)
+                if not isinstance(decoded, dict) or not decoded.get("success") or not decoded.get("decoded_url"):
                     message = decoded.get("message", "GOOGLE_NEWS_URL_NOT_DECODED") if isinstance(decoded, dict) else "GOOGLE_NEWS_URL_NOT_DECODED"
                     raise ValueError("GOOGLE_NEWS_URL_NOT_DECODED:" + str(message)[:120])
                 resolved_url = str(decoded["decoded_url"]).strip()
