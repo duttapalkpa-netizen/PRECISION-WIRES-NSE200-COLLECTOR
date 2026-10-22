@@ -264,8 +264,8 @@ def parse_agel_q2fy27_pdf_metrics(pdf_path):
   return None
  result={}
  for basis, page_no, heading in [
-  ("STANDALONE",4,r"UNAUDITED STANDALONE FINANCIAL RESULTS.*30TH SEPTEMBER, 2026"),
-  ("CONSOLIDATED",18,r"UNAUDITED CONSOLIDATED FINANCIAL RESULTS.*30TH SEPTEMBER, 2026")]:
+  ("STANDALONE",4,r"UNAUDITED STANDALONE FINANCIAL RESULTS.*30TH SEPTEMBER\\s*,\\s*2026"),
+  ("CONSOLIDATED",18,r"UNAUDITED CONSOLIDATED FINANCIAL RESULTS.*30TH SEPTEMBER\\s*,\\s*2026")]:
   if page_no>len(pages): raise ValueError(f"AGEL PDF missing expected {basis} table page {page_no}")
   page=pages[page_no-1]
   flat=norm(page)
