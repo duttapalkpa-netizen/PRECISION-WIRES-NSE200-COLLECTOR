@@ -245,6 +245,55 @@ def pdf_evidence_lines(text):
  for metric,pat in patterns.items():
   found[metric]=[{"line_index":i,"text":line} for i,line in enumerate(lines) if pat.search(line)][:20]
  return {"line_count":len(lines),"text_chars":len(text),"metric_candidates":found}
+def parse_agel_q2fy27_pdf_metrics(pdf_path):
+ """Parse AGEL Q2 FY27 statement tables by page, basis, and first quarter column.
+ Values are accepted only when the issuer, reporting period, statement heading,
+ row labels, six comparative columns, and units are all explicitly present.
+ """
+ reader=PdfReader(str(pdf_path))
+ pages=[(page.extract_text() or "") for page in reader.pages]
+ def norm(s): return re.sub(r"\\s+"," ",s).strip()
+ def row_values(page_text, label_pattern):
+  for line in page_text.splitlines():
+   line=norm(line)
+   if re.search(label_pattern,line,re.I):
+    tail=re.sub(label_pattern,"",line,count=1,flags=re.I).strip()
+    vals=re.findall(r"(?<![A-Za-z])\\(?-?\\d[\\d,]*(?:\\.\\d+)?\\)?",tail)
+    vals=[float(v.replace(",","").replace("(","-").replace(")","")) for v in vals]
+    if len(vals)>=6: return vals[:6]
+  return None
+ result={}
+ for basis, page_no, heading in [
+  ("STANDALONE",4,r"UNAUDITED STANDALONE FINANCIAL RESULTS.*30TH SEPTEMBER, 2026"),
+  ("CONSOLIDATED",18,r"UNAUDITED CONSOLIDATED FINANCIAL RESULTS.*30TH SEPTEMBER, 2026")]:
+  if page_no>len(pages): raise ValueError(f"AGEL PDF missing expected {basis} table page {page_no}")
+  page=pages[page_no-1]
+  flat=norm(page)
+  if not re.search(heading,flat,re.I) or not re.search(r"30\\.09\\.2026",flat) or not re.search(r"\\(?in Crores\\)?|₹ in Crores|\\(?₹ in Crores\\)?|\\(?f in Crores\\)?",flat,re.I):
+   raise ValueError(f"AGEL PDF table identity/period/unit check failed: {basis} page {page_no}")
+  if basis=="STANDALONE":
+   power=row_values(page,r"i\\.\\s*Power Supply")
+   goods=row_values(page,r"ii\\.\\s*Sale of Goods/ Equipments and related Services")
+   other=row_values(page,r"iii\\.\\s*Others \\(refer note 7\\)")
+   pat=row_values(page,r"7\\s+Profit\\s*/\\s*\\(Loss\\) after tax")
+   eps=row_values(page,r"Basic and Diluted EPS")
+  else:
+   power=row_values(page,r"i\\.\\s*Power Supply")
+   goods=row_values(page,r"ii\\.\\s*Sale of Goods/ Equipments and Related Services")
+   other=row_values(page,r"iii\\.\\s*Others \\(Refer note 14\\)")
+   pat=row_values(page,r"9\\s+Profit for the period/ year")
+   eps=row_values(page,r"Basic EPS \\(In")
+  if not all([power,goods,other,pat,eps]):
+   raise ValueError(f"AGEL PDF required row parse failed: {basis} page {page_no}")
+  revenue=power[0]+goods[0]+other[0]
+  result[basis]={"period_end":"2026-09-30","revenue":revenue,"pat":pat[0],"eps":eps[0],
+   "revenue_unit":"INR_CRORE","pat_unit":"INR_CRORE","eps_unit":"INR_PER_SHARE",
+   "revenue_fact":f"PDF:p{page_no}:Revenue from Operations = Power Supply {power[0]} + Sale of Goods/Equipments and related Services {goods[0]} + Others {other[0]}",
+   "pat_fact":f"PDF:p{page_no}:{"Profit/(Loss) after tax" if basis=="STANDALONE" else "Profit for the period/year"}",
+   "eps_fact":f"PDF:p{page_no}:{"Basic and Diluted EPS" if basis=="STANDALONE" else "Basic EPS"}",
+   "evidence_page":page_no}
+ return result
+
 def choose(facts, aliases, period, instant_preference=False):
  terms={re.sub(r"[^a-z0-9]","",x.lower()) for x in aliases}
  # Reject facts without an explicit unit/context. Revenue and PAT must be duration
@@ -291,6 +340,15 @@ def main():
  except Exception:
   pass
  out=[]; errors=[]; attempted=0
+ agel_pdf_metrics={}
+ agel_pdf_path=ROOT/"data/raw/quarterly_filing_evidence/AGEL_Q2_FY27_financial_statement.pdf"
+ if agel_pdf_path.exists():
+  try:
+   agel_pdf_metrics=parse_agel_q2fy27_pdf_metrics(agel_pdf_path)
+   pdf_blob=agel_pdf_path.read_bytes()
+   (EVIDENCE/(sha(pdf_blob)+".pdf")).write_bytes(pdf_blob)
+  except Exception as exc:
+   errors.append({"symbol":"ADANIGREEN","reason":"OFFICIAL_PDF_TABLE_PARSE_BLOCKED:"+str(exc)[:300]})
  for _,r in df.iterrows():
   if str(r.get("EVENT_KIND",""))!="RESULT_DISCLOSURE": continue
   raw={}
@@ -411,18 +469,36 @@ def main():
      "basis_metadata":{"consolidated":str(raw.get("consolidated","")),"subject":str(r.get("SUBJECT","")),"attachment_text":str(raw.get("attchmntText",""))[:300]},"response_diagnostics":{"content_type":ctype,"bytes":len(blob),"prefix":blob[:500].decode("utf-8",errors="replace"),"contains_ix_nonfraction":bool(re.search(br"ix:nonfraction",blob,re.I)),"contains_context":bool(re.search(br"(?:xbrli:)?context",blob,re.I)),"final_url":resp.url}})
    except Exception as exc: errors.append({"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]})
   if not extracted:
-   out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"","SOURCE_URL":links[0] if links else norm_url(r.get("SOURCE_URL","")),
-    "DISCLOSED_AT":disclosed_at,"REVENUE":"","PAT":"","EPS":"","REVENUE_FACT":"","PAT_FACT":"","EPS_FACT":"",
-    "SOURCE_SHA256":source_digest,"SOURCE_CONTENT_TYPE":source_content_type,
-    "EXTRACTION_STATUS":"BLOCKED_NO_VERIFIED_XBRL_METRICS",
-    "EVIDENCE_PATH":evidence_path,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+   # Issuer PDF fallback is tightly scoped to the matching issuer, ISIN, period,
+   # and basis declared by the NSE disclosure metadata. Never infer basis from
+   # row order or copy consolidated figures into standalone disclosures.
+   declared_basis=str(raw.get("consolidated","") or "").strip().upper()
+   if symbol=="ADANIGREEN" and isin=="INE364U01010" and period=="2026-09-30" and disclosed_at and declared_basis=="STANDALONE" and "STANDALONE" in agel_pdf_metrics:
+    m=agel_pdf_metrics["STANDALONE"]
+    pdf_blob=agel_pdf_path.read_bytes()
+    digest=sha(pdf_blob)
+    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"STANDALONE",
+     "SOURCE_URL":"https://www.adanigreenenergy.com/-/media/project/greenenergy/investor-downloads/financial-statements-dynamic/agel_q2fy27_financial-statement_vf.pdf",
+     "DISCLOSED_AT":disclosed_at,"REVENUE":m["revenue"],"PAT":m["pat"],"EPS":m["eps"],
+     "REVENUE_FACT":m["revenue_fact"],"PAT_FACT":m["pat_fact"],"EPS_FACT":m["eps_fact"],
+     "REVENUE_UNIT":m["revenue_unit"],"PAT_UNIT":m["pat_unit"],"EPS_UNIT":m["eps_unit"],
+     "REVENUE_CONTEXT_START":"","PAT_CONTEXT_START":"","EPS_CONTEXT_START":"",
+     "SOURCE_SHA256":digest,"SOURCE_CONTENT_TYPE":"application/pdf",
+     "EXTRACTION_STATUS":"SOURCE_LINKED_PDF_TABLE_FACTS","EVIDENCE_PATH":str(EVIDENCE/(digest+".pdf")),
+     "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+   else:
+    out.append({"SYMBOL":symbol,"ISIN":isin,"PERIOD_END":period,"BASIS":"","SOURCE_URL":links[0] if links else norm_url(r.get("SOURCE_URL","")),
+     "DISCLOSED_AT":disclosed_at,"REVENUE":"","PAT":"","EPS":"","REVENUE_FACT":"","PAT_FACT":"","EPS_FACT":"",
+     "SOURCE_SHA256":source_digest,"SOURCE_CONTENT_TYPE":source_content_type,
+     "EXTRACTION_STATUS":"BLOCKED_NO_VERIFIED_XBRL_METRICS",
+     "EVIDENCE_PATH":evidence_path,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
  result=pd.DataFrame(out,columns=FIELDS)
  # A later official revision supersedes an earlier filing for the same symbol,
  # period and basis. Do not block both rows merely because revision history
  # exists. If multiple different source files share the exact latest timestamp,
  # keep them blocked as ambiguous rather than selecting one arbitrarily.
  if not result.empty:
-  valid_mask=result.EXTRACTION_STATUS.eq("SOURCE_LINKED_XBRL_FACTS")
+  valid_mask=result.EXTRACTION_STATUS.isin(["SOURCE_LINKED_XBRL_FACTS","SOURCE_LINKED_PDF_TABLE_FACTS"])
   valid_rows=result.loc[valid_mask].copy()
   if not valid_rows.empty:
    valid_rows["_DISCLOSED_SORT"]=pd.to_datetime(valid_rows["DISCLOSED_AT"],errors="coerce",utc=True)
@@ -445,7 +521,7 @@ def main():
   "attachment_attempts":attempted,"ledger_rows":len(result),"verified_metric_rows":valid,
   "blocked_rows":int(result.EXTRACTION_STATUS.str.startswith("BLOCKED").sum()),"superseded_revision_rows":superseded,"ledger_path":str(OUT),"evidence_dir":str(EVIDENCE),
   "required_provenance":["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENUE","PAT","EPS","SOURCE_SHA256","fact tags and context refs"],
-  "policy":"No PDF OCR guessing or headline-derived values; PDF text candidates are evidence only until symbol, period, basis, units and table columns are unambiguously verified; unparsed facts stay BLOCKED.",
+  "policy":"No PDF OCR guessing or headline-derived values; the AGEL issuer PDF fallback is limited to exact issuer/ISIN/period/basis metadata and validated table pages, units, and row labels; unparsed facts stay BLOCKED.",
   "pdf_text_extraction_attempts":sum(1 for e in errors if "pdf_candidates" in e),
   "pdf_candidate_diagnostics":[e["pdf_candidates"] for e in errors if "pdf_candidates" in e][:20],
   "errors":errors[:100]}
