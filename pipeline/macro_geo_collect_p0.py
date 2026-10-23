@@ -196,7 +196,7 @@ def fred_history(label,series_id,start,end):
     url="https://fred.stlouisfed.org/graph/fredgraph.csv"
     rows=[]; source_urls=[]; cursor=start
     while cursor<=end:
-        chunk_end=min(end,cursor+timedelta(days=365-1))
+        chunk_end=min(end,cursor+timedelta(days=90-1))
         resp=None; last_error=None
         for attempt,wait in enumerate((0,2,5),start=1):
             if wait: time.sleep(wait)
@@ -229,6 +229,31 @@ def fred_history(label,series_id,start,end):
     if df_rows.empty: raise RuntimeError("FRED returned no valid observations for "+series_id)
     df_rows=df_rows.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
     return df_rows.to_dict("records"),";".join(source_urls)
+
+def cboe_vix_history(start,end):
+    """Official Cboe daily VIX history CSV; separate from India's NSE India VIX."""
+    from io import StringIO
+    url="https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+    resp=session.get(url,timeout=(8,45),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://www.cboe.com/"})
+    resp.raise_for_status()
+    df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
+    df.columns=[str(x).strip().upper() for x in df.columns]
+    date_col=next((x for x in ("DATE","TRADE DATE") if x in df.columns),None)
+    close_col=next((x for x in ("CLOSE","CLOSING") if x in df.columns),None)
+    if not date_col or not close_col:
+        raise RuntimeError(f"Cboe VIX CSV schema mismatch: {list(df.columns)}")
+    out=[]
+    for _,row in df.iterrows():
+        dt=pd.to_datetime(row[date_col],errors="coerce")
+        close=pd.to_numeric(pd.Series([row[close_col]]),errors="coerce").iloc[0]
+        if pd.isna(dt) or pd.isna(close) or close<=0: continue
+        day=dt.date()
+        if start<=day<=end:
+            out.append({"DATE":day.isoformat(),"SERIES":"GLOBAL VIX","CLOSE":float(close),
+                "SOURCE":"Cboe VIX historical daily prices","SOURCE_URL":resp.url,
+                "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+    if not out: raise RuntimeError("Cboe VIX CSV had no valid rows in requested date range")
+    return out,resp.url
 
 def parse_gdelt_date(value):
     s=str(value or "").strip()
@@ -513,16 +538,22 @@ def main():
             # volatility branch skipped it before its FRED VIXCLS fallback could run.
             # Collect it independently; never substitute INDIA VIX for GLOBAL VIX.
             if label == "GLOBAL VIX":
-                try:
-                    rows,url=fred_history(label,spec["fred_id"],start,end)
-                    all_rows.extend(rows)
-                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
-                      "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
-                      "source":f"FRED series {spec['fred_id']}","source_url":url,"fred_series_id":spec["fred_id"]})
-                except Exception as exc:
+                failures=[]
+                for provider,fetcher in (("Cboe VIX historical daily prices",cboe_vix_history),
+                                         (f"FRED series {spec['fred_id']}",lambda a,b: fred_history(label,spec["fred_id"],a,b))):
+                    try:
+                        rows,url=fetcher(start,end)
+                        all_rows.extend(rows)
+                        manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
+                          "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
+                          "source":provider,"source_url":url,"fred_series_id":spec["fred_id"] if provider.startswith("FRED") else None})
+                        break
+                    except Exception as exc:
+                        failures.append(f"{provider}: {type(exc).__name__}: {exc}")
+                else:
                     manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
-                      "rows":0,"date_min":None,"date_max":None,"source":f"FRED series {spec['fred_id']}",
-                      "error":f"{type(exc).__name__}: {exc}; India VIX is not an acceptable substitute"})
+                      "rows":0,"date_min":None,"date_max":None,"source":"Cboe VIX historical daily prices; FRED VIXCLS",
+                      "error":"; ".join(failures)+"; India VIX is not an acceptable substitute"})
                 continue
             found=[x for x in all_rows if x["SERIES"]==label]
             sources=sorted(set(x["SOURCE"] for x in found))
