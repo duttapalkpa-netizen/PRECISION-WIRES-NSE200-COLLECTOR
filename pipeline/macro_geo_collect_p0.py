@@ -450,20 +450,28 @@ def fetch_gdelt_events(start,end):
     metrics["unique_events_after_deduplication"]=0
     return pd.DataFrame(columns=cols),failures,event_start,metrics
 def try_nse_json(endpoint,params,start,end):
-    """Attempt official NSE endpoint; return rows or explicit failure without hiding access denial."""
+    """Try official NSE JSON directly first: homepage can return 403 while data endpoint is accessible."""
     url=NSE+endpoint
-    try:
-        session.get(NSE,timeout=20,headers={"User-Agent":UA,"Accept":"text/html"}).raise_for_status()
-        r=session.get(url,params=params,timeout=30,headers={"User-Agent":UA,"Accept":"application/json","Referer":NSE+"/"})
-        r.raise_for_status()
-        payload=r.json()
-        if isinstance(payload,dict):
-            for k in ("data","records","result"):
-                if isinstance(payload.get(k),list): return payload[k],r.url
-        if isinstance(payload,list): return payload,r.url
-        return [],r.url
-    except Exception as exc:
-        return None,{"url":url,"error":f"{type(exc).__name__}: {exc}"}
+    headers={"User-Agent":UA,"Accept":"application/json,text/plain,*/*",
+             "Referer":"https://www.nseindia.com/reports/fii-dii" if "fiidii" in endpoint.lower() else "https://www.nseindia.com/companies-listing/corporate-filings-announcements"}
+    errors=[]
+    for attempt in range(2):
+        try:
+            r=session.get(url,params=params,timeout=(8,35),headers=headers)
+            r.raise_for_status()
+            payload=r.json()
+            if isinstance(payload,dict):
+                for k in ("data","records","result"):
+                    if isinstance(payload.get(k),list): return payload[k],r.url
+            if isinstance(payload,list): return payload,r.url
+            return [],r.url
+        except Exception as exc:
+            errors.append(f"{type(exc).__name__}: {exc}")
+            if attempt == 0:
+                # On retry only, seed cookies if the site permits; never bypass a denial.
+                try: session.get(NSE+"/reports/fii-dii",timeout=(5,10),headers={"User-Agent":UA,"Accept":"text/html"})
+                except Exception as seed_exc: errors.append(f"session_seed {type(seed_exc).__name__}: {seed_exc}")
+    return None,{"url":url,"error":"; ".join(errors)}
 
 def main():
     RAW.mkdir(parents=True,exist_ok=True); OUT.mkdir(parents=True,exist_ok=True)
