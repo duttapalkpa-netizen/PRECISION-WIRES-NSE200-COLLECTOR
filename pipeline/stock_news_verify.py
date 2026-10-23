@@ -84,7 +84,7 @@ def main():
         if urlparse(url).scheme not in {"http", "https"} or not urlparse(url).netloc:
             failures.append({"row": int(idx), "reason": "INVALID_URL"})
             continue
-        pending.append((int(idx), url, str(row["HEADLINE"]), str(row.get("SYMBOL", "")).upper().strip(), str(row.get("PUBLISHED_AT", "")))
+        pending.append((int(idx), url, str(row["HEADLINE"]), str(row.get("SYMBOL", "")).upper().strip(), str(row.get("PUBLISHED_AT", ""))))
 
     def verify_one(item):
         idx, url, headline, symbol, published_at = item
