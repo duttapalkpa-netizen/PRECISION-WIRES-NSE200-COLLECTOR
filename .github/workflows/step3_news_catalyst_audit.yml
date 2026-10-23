@@ -188,14 +188,46 @@ jobs:
           required_metrics = {"SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS", "EXTRACTION_STATUS"}
           if not required_metrics.issubset(ledger.columns):
               raise SystemExit("STEP3_BLOCKED_STEP2_METRIC_LEDGER_SCHEMA")
-          verified = ledger[ledger["EXTRACTION_STATUS"].isin(["SOURCE_LINKED_XBRL_FACTS", "SOURCE_LINKED_PDF_TABLE_FACTS"])].copy()
-          blocked_rows = int(ledger["EXTRACTION_STATUS"].astype(str).str.startswith("BLOCKED").sum())
+          verified_statuses = ["SOURCE_LINKED_XBRL_FACTS", "SOURCE_LINKED_PDF_TABLE_FACTS"]
+          superseded_status = "SUPERSEDED_BY_LATER_DISCLOSURE"
+          status = ledger["EXTRACTION_STATUS"].astype(str).str.strip()
+          verified = ledger[status.isin(verified_statuses)].copy()
+          superseded = ledger[status.eq(superseded_status)].copy()
+          blocked_rows = int(status.str.startswith("BLOCKED").sum())
+          unknown_status_rows = int((~status.isin(verified_statuses + [superseded_status])).sum())
           disclosure_rows = len(disclosures)
-          complete = disclosure_rows > 0 and len(ledger) == disclosure_rows and blocked_rows == 0 and len(verified) > 0
+          # Superseded rows are acceptable only when a later source-linked metric
+          # exists for the same symbol, period and basis. Never promote the stale row.
+          ledger["DISCLOSED_AT_PARSED"] = pd.to_datetime(ledger["DISCLOSED_AT"], errors="coerce", utc=True)
+          verified_keys = verified.assign(
+              DISCLOSED_AT_PARSED=pd.to_datetime(verified["DISCLOSED_AT"], errors="coerce", utc=True)
+          )
+          superseded_unmapped = []
+          for _, stale in superseded.iterrows():
+              later = verified_keys[
+                  verified_keys["SYMBOL"].astype(str).eq(str(stale["SYMBOL"]))
+                  & verified_keys["PERIOD_END"].astype(str).eq(str(stale["PERIOD_END"]))
+                  & verified_keys["BASIS"].astype(str).eq(str(stale["BASIS"]))
+                  & verified_keys["DISCLOSED_AT_PARSED"].gt(
+                      pd.to_datetime(stale["DISCLOSED_AT"], errors="coerce", utc=True)
+                  )
+              ]
+              if later.empty:
+                  superseded_unmapped.append({
+                      "SYMBOL": stale["SYMBOL"], "PERIOD_END": stale["PERIOD_END"],
+                      "BASIS": stale["BASIS"], "SOURCE_URL": stale["SOURCE_URL"]
+                  })
+          complete = (
+              disclosure_rows > 0 and len(ledger) == disclosure_rows
+              and blocked_rows == 0 and unknown_status_rows == 0
+              and len(verified) > 0 and not superseded_unmapped
+          )
           if not complete:
               raise SystemExit("STEP3_BLOCKED_STEP2_FINANCIAL_METRIC_COVERAGE:" + json.dumps({
                   "ledger_rows": len(ledger), "disclosure_rows": disclosure_rows,
-                  "blocked_rows": blocked_rows, "verified_rows": len(verified)}, sort_keys=True))
+                  "blocked_rows": blocked_rows, "unknown_status_rows": unknown_status_rows,
+                  "verified_rows": len(verified), "superseded_rows": len(superseded),
+                  "superseded_without_later_verified_row": superseded_unmapped[:20]}, sort_keys=True))
           normalized = Path("data/raw/quarterly_financial_metrics_verified.csv")
           verified[["SYMBOL", "PERIOD_END", "BASIS", "SOURCE_URL", "DISCLOSED_AT", "REVENUE", "PAT", "EPS"]].to_csv(normalized, index=False)
           from pipeline.quarterly_results_research import build_financial_features, OUT
@@ -209,18 +241,25 @@ jobs:
           }
           manifest["financial_metrics"] = {
               **feature_report,
-              "coverage": {"status": "PASS", "verified_metric_rows": int(len(verified)),
-                           "ledger_rows_evaluated": int(len(ledger)),
-                           "disclosure_rows_in_current_source": int(disclosure_rows),
-                           "blocked_rows": blocked_rows, "coverage_scope": "full current disclosure set", "accepted_evidence_statuses": ["SOURCE_LINKED_XBRL_FACTS", "SOURCE_LINKED_PDF_TABLE_FACTS"]},
+              "coverage": {
+                  "status": "PASS", "verified_metric_rows": int(len(verified)),
+                  "ledger_rows_evaluated": int(len(ledger)),
+                  "disclosure_rows_in_current_source": int(disclosure_rows),
+                  "superseded_rows_with_later_verified_replacement": int(len(superseded)),
+                  "blocked_rows": blocked_rows, "unknown_status_rows": unknown_status_rows,
+                  "coverage_scope": "all disclosure rows reconciled: source-linked current metrics plus superseded rows with a later verified replacement",
+                  "accepted_evidence_statuses": verified_statuses,
+                  "accepted_reconciliation_status": superseded_status
+              },
               "provenance_source": str(normalized)
           }
           manifest["step_2_status"] = "PASS"
           report_path.write_text(json.dumps(manifest, indent=2, allow_nan=False, default=str), encoding="utf-8")
           print("STEP2_SOURCE_VALIDATION_AND_METRIC_COVERAGE=PASS " + json.dumps({
-              "source_validation_rows": len(validation), "verified_metric_rows": len(verified),
+              "source_validation_rows": len(validation), "valid_result_rows": int(valid.sum()),
+              "verified_metric_rows": len(verified), "superseded_rows_with_later_verified_replacement": len(superseded),
               "ledger_rows": len(ledger), "disclosure_rows": disclosure_rows,
-              "blocked_rows": blocked_rows}, sort_keys=True))
+              "blocked_rows": blocked_rows, "unknown_status_rows": unknown_status_rows}, sort_keys=True))
           PY
       - name: Verify prerequisite candidate and quarterly evidence files
         run: |
