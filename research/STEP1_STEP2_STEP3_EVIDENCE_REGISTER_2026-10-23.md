@@ -110,3 +110,39 @@ The four groups requested in this run are validated at schema/provenance level. 
 **Decision:** four-group sub-validation PASS; Macro-Geo Step 4 overall BLOCKED. Do not proceed to Step 5/6 or release candidates until the remaining required sources are connected and a fresh artifact proves full coverage. Missing remains UNKNOWN, never negative.
 
 Invariants remain unchanged: production selector, `RANKING_SCORE`, frozen `+1 PRESSURE_FADE`, and Run #58. No fabricated rows; only matured H+1/H+3/H+5 outcomes may be scored.
+
+
+## Step 4 — Run #63 artifact inspection and follow-up repairs (2026-10-23)
+
+- Workflow: [Run #63](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/39997456904), run ID `39997456904`, conclusion `success`.
+- Commit SHA: `7e402d92f581f8f0f09b10cf490d055db9d1c3a1`.
+- Artifact: `macro-geo-p0-event-study`, ID `12521712230`, size 653,522 bytes, digest `sha256:c9562795ecbb72fc2953e9e87b94883004825394534f98e0f9790a3a14336335`.
+- Inspected files: `outputs/macro_geo/source_coverage.json`, `p0_collection_manifest.json`, `four_group_validation.json`, `factor_coverage_audit.json`, `event_study_report.json`, `data/external/market_panel.csv` and required group CSV paths.
+
+### Run #63 observed source results
+
+| Source | Rows | Date range | Schema / provenance | Blocker |
+|---|---:|---|---|---|
+| `crude_oil` | 0 | none | `data/external/brent_crude.csv` missing; expected DATE/CLOSE | FRED `DCOILBRENTEU` timed out on 2026-01-01..2026-12-31; Yahoo chart fallback HTTP 429 |
+| `usd_inr` | 0 | none | `data/external/usd_inr.csv` missing; expected DATE/CLOSE | FRED `DEXINUS` timed out on 2026-01-01..2026-12-31; Yahoo chart fallback HTTP 429 |
+| `corporate_events` | 0 | none | `data/external/corporate_events.csv` missing; expected DATE/SYMBOL/EVENT_TYPE/PUBLISHED_AT/SOURCE_URL | NSE home-page session bootstrap returned HTTP 403 before endpoint request |
+| `fpi_dii_flows` | 0 | none | `data/external/fpi_dii_flows.csv` missing; expected DATE/GROUP/NET_VALUE | NSE home-page session bootstrap returned HTTP 403 before endpoint request |
+| Global VIX | 0 | none | no Global VIX rows in market panel; India VIX must not be substituted | FRED `VIXCLS` timeout; Global VIX collection path was attempted but remained blocked |
+
+Other validated groups in the same artifact:
+- `benchmark_index`: 375 rows, 2025-04-21..2026-10-23; six-column DATE/SERIES/CLOSE/SOURCE/SOURCE_URL/OBSERVED_AT_UTC schema; 375 valid URLs and timestamps; zero invalid dates/closes/duplicates.
+- `sector_indices`: 3,375 rows, same date range and schema; 3,375 valid URLs and timestamps; zero invalid dates/closes/duplicates.
+- `volatility`: 375 rows, same date range and schema; this is India VIX only, not Global VIX.
+- `geopolitical_events`: 23 rows, 2026-10-22..2026-10-23; EVENT_DATE/PUBLISHED_AT/EVENT_TYPE/SOURCE/SOURCE_URL/CONFIDENCE; 23 valid URLs; source publishers Al Jazeera, BBC, Bloomberg. Media-publication timestamps are not independently verified event occurrence timestamps.
+- `market_panel.csv`: 4,125 rows, 11 series; 2025-04-21..2026-10-23.
+- Event study: `COMPUTED_EXPLORATORY`, 23 event rows, 88 event-window rows. Exploratory only.
+- Inventory: `INVENTORY_COMPLETE_WITH_GAPS`; P0 coverage `P0_INCOMPLETE`, only 4 of 8 required groups available. Factor audit: 35 groups, 0 fully available schema groups, 6 partial coverage, 29 not connected.
+
+### Follow-up repair commits / validation pending
+
+- Commit `5dcefd06a5437ede7cb6e9d41859de9d779a2bb9`: added official Cboe VIX-history CSV fallback for Global VIX, separate from India VIX, and shortened FRED query windows to 90 days.
+- Commit `3642756ff4faddb42d582061ab13343c4204acab`: changed NSE JSON collection to try the required data endpoint directly before a homepage bootstrap, because the homepage 403 was blocking both corporate-announcement and FPI/DII endpoint attempts.
+- Run #64 (ID `40003832070`, commit `5dcefd06a5437ede7cb6e9d41859de9d779a2bb9`) was still in progress at inspection time.
+- Run #65 (ID `40003869404`, commit `3642756ff4faddb42d582061ab13343c4204acab`) was pending at inspection time. No artifact evidence from these repair commits is claimed yet.
+
+**Decision: Step 4 remains BLOCKED.** Do not proceed to Step 5/6. Crude, USD/INR, corporate events, FPI/DII and Global VIX remain absent in the inspected Run #63 artifact. Re-open only after the latest repair run's artifact is inspected and proves actual non-empty rows, valid schemas, source URLs, date ranges and domain-level mapping. Missing data remains UNKNOWN, never negative; production selector, RANKING_SCORE, frozen +1 PRESSURE_FADE and Run #58 remain unchanged.
