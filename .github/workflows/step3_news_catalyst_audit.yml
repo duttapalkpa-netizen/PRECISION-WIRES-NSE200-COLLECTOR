@@ -139,7 +139,9 @@ jobs:
           python qa/validate_dataset.py
           python pipeline/quarterly_results_research.py
           python pipeline/quarterly_pdf_xbrl_metrics.py
-          python pipeline/quarterly_results_research.py
+          # Do not rerun the live NSE discovery collector here: a transient 403/empty
+          # response can overwrite a valid source-validation report with zero rows.
+          # Financial features are rebuilt from the source-linked ledger below.
           python pipeline/walk_forward_backtest.py
           python pipeline/target5_h1_selector_experiment.py
       - name: Rebuild and assert Step 2 source-validation coverage
