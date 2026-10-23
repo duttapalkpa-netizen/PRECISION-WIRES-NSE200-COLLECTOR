@@ -1,4 +1,4 @@
-name: Step 3 News and Catalyst Join Audit
+name: Step 3 News and Catalyst Join Audit # publisher-native RSS fast-path validation
 
 on:
   workflow_dispatch:
