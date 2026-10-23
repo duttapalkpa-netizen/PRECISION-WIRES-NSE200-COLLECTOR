@@ -47,7 +47,10 @@ def headline_relevant_to_symbol(symbol, headline):
             rf"\b{re.escape(symbol)}\s+(?:LTD|LIMITED|SHARES|STOCK)\b",
         )
         return any(re.search(pattern, headline, flags=re.IGNORECASE) for pattern in patterns)
-    return bool(re.search(r"(?<![A-Z0-9])" + re.escape(symbol) + r"(?![A-Z0-9])", headline, flags=re.I))
+    # For ordinary tickers, the query is already ticker-specific and headlines
+    # may use company names instead of symbols. Keep those discovery leads
+    # unverified; apply strict headline relevance only to ambiguous English words.
+    return True
 
 
 def utc_stamp(ts):
