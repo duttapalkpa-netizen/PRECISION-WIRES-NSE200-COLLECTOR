@@ -19,7 +19,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: fast-alternate-source-verification-${{ github.event.inputs.source_run_id || '39829905162' }}
+  group: fast-alternate-source-verification-${{ github.event.inputs.source_run_id || '39913649797' }}
   cancel-in-progress: false
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           INPUT_RUN_ID: ${{ github.event.inputs.source_run_id }}
         run: |
           set -euo pipefail
-          run_id="${INPUT_RUN_ID:-39829905162}"
+          run_id="${INPUT_RUN_ID:-39913649797}"
           if [[ ! "$run_id" =~ ^[0-9]+$ ]]; then
             echo "Invalid source run ID" >&2
             exit 2
@@ -60,6 +60,19 @@ jobs:
           name: step3-news-catalyst-join-audit
           path: artifact
           if_no_artifact_found: fail
+      - name: Restore ledger, coverage and frozen cutoff inputs from the selected Step 3 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s artifact/data/raw/stock_news_events.csv
+          test -s artifact/data/raw/stock_news_coverage.csv
+          test -s artifact/outputs/prospective/target5_h1_selector_experiment_picks.csv
+          mkdir -p data/raw outputs/prospective
+          cp artifact/data/raw/stock_news_events.csv data/raw/stock_news_events.csv
+          cp artifact/data/raw/stock_news_coverage.csv data/raw/stock_news_coverage.csv
+          cp artifact/outputs/prospective/target5_h1_selector_experiment_picks.csv outputs/prospective/target5_h1_selector_experiment_picks.csv
+          echo "RESTORED_SOURCE_LEDGER_ROWS=$(($(wc -l < data/raw/stock_news_events.csv)-1))"
+          echo "RESTORED_COVERAGE_ROWS=$(($(wc -l < data/raw/stock_news_coverage.csv)-1))"
       - name: Verify alternate publisher leads only
         run: python pipeline/stock_news_alternate_source_verify.py
       - name: Audit-join verified publisher resolutions to discovery snapshot
