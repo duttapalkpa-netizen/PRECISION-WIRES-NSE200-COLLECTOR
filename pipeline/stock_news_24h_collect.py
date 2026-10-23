@@ -32,7 +32,7 @@ BACKOFF_SECONDS = (2, 4, 6)
 # For these symbols, require explicit exchange/ticker notation before retaining
 # a headline as a stock-specific event. This is a relevance filter, not a
 # verification rule; surviving discovery rows remain UNVERIFIED.
-AMBIGUOUS_ENGLISH_SYMBOLS = {"FOCUS"}
+AMBIGUOUS_ENGLISH_SYMBOLS = {"FOCUS", "STANLEY"}
 
 
 def headline_relevant_to_symbol(symbol, headline):
@@ -41,11 +41,20 @@ def headline_relevant_to_symbol(symbol, headline):
     if not symbol or not headline.strip():
         return False
     if symbol in AMBIGUOUS_ENGLISH_SYMBOLS:
-        patterns = (
-            rf"\bNSE\s*[:\-]\s*{re.escape(symbol)}\b",
-            rf"\b{re.escape(symbol)}\.NS\b",
-            rf"\b{re.escape(symbol)}\s+(?:LTD|LIMITED|SHARES|STOCK)\b",
-        )
+        if symbol == "STANLEY":
+            # The ticker query can return unrelated stories because Stanley is
+            # also a common name. Require issuer name or explicit ticker notation.
+            patterns = (
+                r"\bNSE\s*[:\-]\s*STANLEY\b",
+                r"\bSTANLEY\.NS\b",
+                r"\bSTANLEY\s+LIFESTYLES\b",
+            )
+        else:
+            patterns = (
+                rf"\bNSE\s*[:\-]\s*{re.escape(symbol)}\b",
+                rf"\b{re.escape(symbol)}\.NS\b",
+                rf"\b{re.escape(symbol)}\s+(?:LTD|LIMITED|SHARES|STOCK)\b",
+            )
         return any(re.search(pattern, headline, flags=re.IGNORECASE) for pattern in patterns)
     # For ordinary tickers, the query is already ticker-specific and headlines
     # may use company names instead of symbols. Keep those discovery leads
