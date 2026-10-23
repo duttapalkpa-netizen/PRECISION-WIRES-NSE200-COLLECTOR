@@ -11,6 +11,8 @@ on:
     branches: [audit/prospective-selector-tracking]
     paths:
       - ".github/workflows/fast_alternate_source_verification.yml"
+      - "pipeline/stock_news_alternate_source_verify.py"
+      - "pipeline/stock_news_alternate_source_resolution_join.py"
 
 permissions:
   contents: read
@@ -60,7 +62,9 @@ jobs:
           if_no_artifact_found: fail
       - name: Verify alternate publisher leads only
         run: python pipeline/stock_news_alternate_source_verify.py
-      - name: Upload compact verification result
+      - name: Audit-join verified publisher resolutions to discovery snapshot
+        run: python pipeline/stock_news_alternate_source_resolution_join.py
+      - name: Upload compact verification and resolution audit
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -69,3 +73,5 @@ jobs:
           path: |
             outputs/news_24h/alternate_source_verification_report.json
             outputs/news_24h/alternate_source_verification_results.csv
+            outputs/news_24h/alternate_source_resolution_join.json
+            outputs/news_24h/alternate_source_resolution_join.csv
