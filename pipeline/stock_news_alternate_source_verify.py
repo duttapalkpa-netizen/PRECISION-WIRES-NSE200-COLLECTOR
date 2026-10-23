@@ -30,7 +30,7 @@ class Meta(HTMLParser):
         if tag.lower()=="title": self.in_title=False
     def handle_data(self, data):
         if self.in_title and data.strip(): self.title.append(data.strip())
-    def best(self): return (self.meta[0] if self.meta else " ".join(self.title)).strip()
+    def best(self): return (self.meta[0] if self.meta else " ".join(self.title)).strip()\n    def published_at(self): return self.published[0].strip() if self.published else ""
 
 def toks(s):
     return {x for x in re.findall(r"[a-z0-9]+",str(s or "").lower()) if len(x)>2 and x not in STOP}
@@ -59,12 +59,12 @@ def verify(row):
             raise ValueError("NOT_PUBLISHER_URL")
         if "html" not in response.headers.get("Content-Type","").lower():
             raise ValueError("PUBLISHER_RESPONSE_NOT_HTML")
-        parser=Meta(); parser.feed(response.text[:300000]); title=parser.best()
+        parser=Meta(); parser.feed(response.text[:300000]); title=parser.best(); publisher_published_at=parser.published_at()\n        # Also inspect JSON-LD datePublished/dateCreated when present.\n        if not publisher_published_at:\n            match=re.search(r'"datePublished"\\s*:\\s*"([^"]+)"', response.text[:500000], re.I)\n            if match: publisher_published_at=match.group(1)
         ht,pt=toks(headline),toks(title)
         overlap=(len(ht & pt)/len(ht)) if ht else 0.0
         if len(ht)<3 or not title or overlap<0.5:
             raise ValueError(f"TITLE_MISMATCH:overlap={overlap:.3f}")
-        return {**row.to_dict(),"VERIFICATION_STATUS":"VERIFIED","REASON":"","RESOLVED_URL":response.url,"PUBLISHER_PAGE_TITLE":title,"HEADLINE_TOKEN_OVERLAP":round(overlap,3)}
+        return {**row.to_dict(),"VERIFICATION_STATUS":"VERIFIED","REASON":"","RESOLVED_URL":response.url,"PUBLISHER_PAGE_TITLE":title,"PUBLISHER_PUBLISHED_AT":publisher_published_at,"HEADLINE_TOKEN_OVERLAP":round(overlap,3)}
     except Exception as exc:
         return {**row.to_dict(),"VERIFICATION_STATUS":"UNVERIFIED","REASON":f"{type(exc).__name__}:{str(exc)[:180]}","RESOLVED_URL":resolved}
 
@@ -85,7 +85,7 @@ def main():
     result=pd.DataFrame(rows)
     result.to_csv(CSV_OUT,index=False)
     verified=int(result.get("VERIFICATION_STATUS",pd.Series(dtype=str)).eq("VERIFIED").sum())
-    report={"status":"PASS_ALTERNATE_LEADS_VERIFIED" if verified else "NO_ALTERNATE_LEADS_VERIFIED","checked_rows":len(result),"verified_rows":verified,"unverified_rows":len(result)-verified,"results_csv":str(CSV_OUT),"verification_rule":"Decoded URL resolves to non-Google publisher HTML, HTTP success, page title overlap >= 0.50; max 4 concurrent requests.","policy":"This report verifies candidate leads only. It does not alter stock_news_events.csv or promote any original row to VERIFIED. Original row promotion requires a separate audited join to the matching symbol, cutoff, headline and publication timestamp.","results":result[[c for c in ["SYMBOL","CUT_OFF","ALTERNATE_PUBLISHER","ALTERNATE_ARTICLE_URL","VERIFICATION_STATUS","REASON","RESOLVED_URL","PUBLISHER_PAGE_TITLE","HEADLINE_TOKEN_OVERLAP"] if c in result.columns]].to_dict("records")}
+    report={"status":"PASS_ALTERNATE_LEADS_VERIFIED" if verified else "NO_ALTERNATE_LEADS_VERIFIED","checked_rows":len(result),"verified_rows":verified,"unverified_rows":len(result)-verified,"results_csv":str(CSV_OUT),"verification_rule":"Decoded URL resolves to non-Google publisher HTML, HTTP success, page title overlap >= 0.50; publication timestamp extracted from publisher meta/time/JSON-LD when exposed; max 4 concurrent requests.","policy":"This report verifies candidate leads only. It does not alter stock_news_events.csv or promote any original row to VERIFIED. Original row promotion requires a separate audited join to the matching symbol, cutoff, headline and publication timestamp.","results":result[[c for c in ["SYMBOL","CUT_OFF","ALTERNATE_PUBLISHER","ALTERNATE_ARTICLE_URL","VERIFICATION_STATUS","REASON","RESOLVED_URL","PUBLISHER_PAGE_TITLE","PUBLISHER_PUBLISHED_AT","HEADLINE_TOKEN_OVERLAP"] if c in result.columns]].to_dict("records")}
     OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding="utf-8")
     print("ALTERNATE_SOURCE_VERIFICATION="+json.dumps(report,sort_keys=True,ensure_ascii=False))
 if __name__=="__main__": main()
