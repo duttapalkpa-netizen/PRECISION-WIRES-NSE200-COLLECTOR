@@ -196,9 +196,9 @@ def fred_history(label,series_id,start,end):
     url="https://fred.stlouisfed.org/graph/fredgraph.csv"
     rows=[]; source_urls=[]; cursor=start
     while cursor<=end:
-        chunk_end=min(end,cursor+timedelta(days=365*5-1))
+        chunk_end=min(end,cursor+timedelta(days=365-1))
         resp=None; last_error=None
-        for attempt,wait in enumerate((0,2),start=1):
+        for attempt,wait in enumerate((0,2,5),start=1):
             if wait: time.sleep(wait)
             try:
                 resp=session.get(url,params={"id":series_id,"cosd":cursor.isoformat(),"coed":chunk_end.isoformat()},
@@ -207,7 +207,7 @@ def fred_history(label,series_id,start,end):
                 break
             except Exception as exc:
                 last_error=exc
-                if attempt==2: raise RuntimeError(
+                if attempt==3: raise RuntimeError(
                     f"FRED {series_id} failed for {cursor.isoformat()}..{chunk_end.isoformat()}: {type(last_error).__name__}: {last_error}"
                 ) from exc
         df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
@@ -509,6 +509,21 @@ def main():
       "api_failures":nse_report["failures"]}
     for label,spec in SERIES.items():
         if spec["group"] in ("benchmark_index","sector_indices","volatility"):
+            # GLOBAL VIX is not part of the NSE index archive. The old generic
+            # volatility branch skipped it before its FRED VIXCLS fallback could run.
+            # Collect it independently; never substitute INDIA VIX for GLOBAL VIX.
+            if label == "GLOBAL VIX":
+                try:
+                    rows,url=fred_history(label,spec["fred_id"],start,end)
+                    all_rows.extend(rows)
+                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE",
+                      "rows":len(rows),"date_min":min(x["DATE"] for x in rows),"date_max":max(x["DATE"] for x in rows),
+                      "source":f"FRED series {spec['fred_id']}","source_url":url,"fred_series_id":spec["fred_id"]})
+                except Exception as exc:
+                    manifest["market_series"].append({"series":label,"group":spec["group"],"status":"BLOCKED",
+                      "rows":0,"date_min":None,"date_max":None,"source":f"FRED series {spec['fred_id']}",
+                      "error":f"{type(exc).__name__}: {exc}; India VIX is not an acceptable substitute"})
+                continue
             found=[x for x in all_rows if x["SERIES"]==label]
             sources=sorted(set(x["SOURCE"] for x in found))
             manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE" if found else "BLOCKED",
