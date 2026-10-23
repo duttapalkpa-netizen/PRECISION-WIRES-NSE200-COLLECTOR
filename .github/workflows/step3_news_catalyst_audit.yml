@@ -12,6 +12,7 @@ on:
       - "pipeline/stock_news_alternate_source_discovery.py"
       - "pipeline/quarterly_results_research.py"
       - "data/reference/historical_security_isin_evidence.csv"
+      - "data/reference/verified_official_news_filing_overrides.csv"
       - "pipeline/quarterly_pdf_xbrl_metrics.py"
       - "qa/test_quarterly_results_research.py"
       - "qa/test_quarterly_pdf_xbrl_metrics.py"
