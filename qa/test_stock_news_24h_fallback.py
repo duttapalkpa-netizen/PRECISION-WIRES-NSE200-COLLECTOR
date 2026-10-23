@@ -130,3 +130,17 @@ def test_ambiguous_english_symbol_requires_explicit_ticker_not_prose():
     assert collector.headline_relevant_to_symbol(
         "FOCUS", "FOCUS.NS shares jump after results"
     )
+
+def test_stanley_ticker_rejects_unrelated_headlines_and_accepts_issuer_match():
+    assert not collector.headline_relevant_to_symbol(
+        "STANLEY", "Yes Bank Faces Capital Risk After AT-1 Verdict"
+    )
+    assert not collector.headline_relevant_to_symbol(
+        "STANLEY", "Nestle India shares crash nearly 8% after Q2 results"
+    )
+    assert collector.headline_relevant_to_symbol(
+        "STANLEY", "Stanley Lifestyles shares rise after results"
+    )
+    assert collector.headline_relevant_to_symbol(
+        "STANLEY", "NSE:STANLEY announces quarterly results"
+    )
