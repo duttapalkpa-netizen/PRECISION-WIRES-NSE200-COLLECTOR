@@ -8,6 +8,7 @@ empty query means no match in this source/query, never proof that no news exists
 from pathlib import Path
 from datetime import timedelta
 import json
+import re
 import time
 import requests
 import xml.etree.ElementTree as ET
@@ -196,8 +197,10 @@ def main():
     pair_symbols = sorted(set(str(x).upper().strip() for x in pairs["SYMBOL"] if str(x).strip()))
     pair_windows = {str(r.SYMBOL).upper().strip(): [] for r in pairs.itertuples(index=False)}
     for pair in pairs.itertuples(index=False):
+        cutoff = pd.Timestamp(pair.CUT_OFF).normalize().tz_localize(TZ) + pd.Timedelta(hours=15, minutes=30)
+        window_start = cutoff - pd.Timedelta(hours=24)
         pair_windows.setdefault(str(pair.SYMBOL).upper().strip(), []).append(
-            (pd.Timestamp(pair.WINDOW_START), pd.Timestamp(pair.CUT_OFF), str(pair.CUT_OFF.date()))
+            (window_start, cutoff, str(cutoff.date()))
         )
     for publisher, feed_url in publisher_feeds.items():
         try:
