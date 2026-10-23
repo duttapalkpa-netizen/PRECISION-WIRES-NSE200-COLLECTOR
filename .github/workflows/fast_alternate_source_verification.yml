@@ -64,6 +64,10 @@ jobs:
         run: python pipeline/stock_news_alternate_source_verify.py
       - name: Audit-join verified publisher resolutions to discovery snapshot
         run: python pipeline/stock_news_alternate_source_resolution_join.py
+      - name: Rebuild news readiness from the archived source ledger
+        run: python pipeline/stock_news_24h_join.py
+      - name: Reconcile RACE and RIIL provenance against the unchanged source ledger
+        run: python pipeline/stock_news_ledger_reconciliation_audit.py
       - name: Upload compact verification and resolution audit
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,3 +79,7 @@ jobs:
             outputs/news_24h/alternate_source_verification_results.csv
             outputs/news_24h/alternate_source_resolution_join.json
             outputs/news_24h/alternate_source_resolution_join.csv
+            outputs/news_24h/stock_news_24h_cutoff_join.csv
+            outputs/news_24h/stock_news_24h_readiness.json
+            outputs/news_24h/stock_news_ledger_reconciliation.csv
+            outputs/news_24h/stock_news_ledger_reconciliation.json
