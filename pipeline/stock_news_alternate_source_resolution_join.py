@@ -39,9 +39,9 @@ def main():
     j = c.merge(v, on=KEYS, how="left", suffixes=("_DISCOVERY", "_VERIFY"), validate="one_to_one", indicator=True)
     j["RESOLUTION_JOIN_STATUS"] = "UNRESOLVED"
     is_verified = j["_merge"].eq("both") & j["VERIFICATION_STATUS"].astype(str).str.upper().eq("VERIFIED")
-    orig = pd.to_datetime(j["ORIGINAL_PUBLISHED_AT"], utc=True, errors="coerce")
-    publisher = pd.to_datetime(j["PUBLISHER_PUBLISHED_AT"], utc=True, errors="coerce")
-    rss = pd.to_datetime(j.get("ALTERNATE_PUBLISHED_AT_DISCOVERY", pd.Series("", index=j.index)), utc=True, errors="coerce")
+    orig = pd.to_datetime(j["ORIGINAL_PUBLISHED_AT"], utc=True, errors="coerce", format="mixed")
+    publisher = pd.to_datetime(j["PUBLISHER_PUBLISHED_AT"], utc=True, errors="coerce", format="mixed")
+    rss = pd.to_datetime(j.get("ALTERNATE_PUBLISHED_AT_DISCOVERY", pd.Series("", index=j.index)), utc=True, errors="coerce", format="mixed")
     diff = (orig - publisher).abs().dt.total_seconds() / 3600
     rss_diff = (rss - publisher).abs().dt.total_seconds() / 3600
     time_ok = orig.notna() & publisher.notna() & (diff <= 24)
