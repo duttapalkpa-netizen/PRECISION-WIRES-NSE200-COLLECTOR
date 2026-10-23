@@ -178,6 +178,73 @@ def main():
                 print(f"PROGRESS={n}/{len(pairs)} queries_ok={ok} queries_failed={failed}", flush=True)
             time.sleep(3.0)
 
+    # Publisher-native RSS fast path: collect once per run, then map headlines
+    # to frozen cutoff/symbol pairs. Feed-origin status means source/time provenance
+    # was supplied by the publisher feed; it is not a claim that the story predicts price.
+    publisher_feeds = {
+        "BBC News": "https://feeds.bbci.co.uk/news/rss.xml",
+        "BBC World": "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "BBC Business": "https://feeds.bbci.co.uk/news/business/rss.xml",
+        "Sky News World": "https://feeds.skynews.com/feeds/rss/world.xml",
+        "Sky News Business": "https://feeds.skynews.com/feeds/rss/business.xml",
+        "Al Jazeera": "https://www.aljazeera.com/xml/rss/all.xml",
+        "DW News": "https://rss.dw.com/rdf/rss-en-all",
+        "France 24": "https://www.france24.com/en/rss",
+        "CNBC": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+    }
+    publisher_feed_status = {}
+    pair_symbols = sorted(set(str(x).upper().strip() for x in pairs["SYMBOL"] if str(x).strip()))
+    pair_windows = {str(r.SYMBOL).upper().strip(): [] for r in pairs.itertuples(index=False)}
+    for pair in pairs.itertuples(index=False):
+        pair_windows.setdefault(str(pair.SYMBOL).upper().strip(), []).append(
+            (pd.Timestamp(pair.WINDOW_START), pd.Timestamp(pair.CUT_OFF), str(pair.CUT_OFF.date()))
+        )
+    for publisher, feed_url in publisher_feeds.items():
+        try:
+            response = requests.get(feed_url, headers={"User-Agent": HEADERS["User-Agent"], "Accept": "application/rss+xml,application/xml,text/xml"}, timeout=(5, 12))
+            response.raise_for_status()
+            root = ET.fromstring(response.content)
+            items = root.findall(".//item")
+            if not items:
+                items = root.findall(".//{*}entry")
+            for item in items:
+                title = (item.findtext("title") or item.findtext("{*}title") or "").strip()
+                url = (item.findtext("link") or item.findtext("{*}link") or "").strip()
+                if not url:
+                    link_node = item.find("{*}link")
+                    if link_node is not None:
+                        url = (link_node.attrib.get("href") or "").strip()
+                raw_date = (item.findtext("pubDate") or item.findtext("{*}published") or item.findtext("{*}updated") or item.findtext("{*}date") or "").strip()
+                try:
+                    published = pd.Timestamp(parsedate_to_datetime(raw_date)).tz_convert("UTC")
+                except Exception:
+                    try:
+                        published = pd.to_datetime(raw_date, utc=True, errors="raise")
+                    except Exception:
+                        continue
+                if not title or not url.startswith(("https://", "http://")):
+                    continue
+                title_key = title.lower()
+                for symbol, windows in pair_windows.items():
+                    # Symbol token must be explicit in the title to avoid broad false matches.
+                    if not re.search(r"(?<![A-Z0-9])" + re.escape(symbol) + r"(?![A-Z0-9])", title, flags=re.I):
+                        continue
+                    for win_start, cutoff, cutoff_date in windows:
+                        pub_ist = published.tz_convert(TZ)
+                        if not (win_start < pub_ist < cutoff):
+                            continue
+                        news_rows.append({
+                            "EVENT_ID": f"{symbol}|{published.isoformat()}|{url}",
+                            "CUT_OFF": cutoff_date, "SYMBOL": symbol,
+                            "PUBLISHED_AT": published.isoformat(), "PUBLISHER": publisher,
+                            "HEADLINE": title, "CANONICAL_URL": url,
+                            "SOURCE_TYPE": "PUBLISHER_NATIVE_RSS",
+                            "VERIFICATION_STATUS": "VERIFIED",
+                        })
+            publisher_feed_status[publisher] = {"status": "AVAILABLE", "feed_url": feed_url, "items_seen": len(items)}
+        except Exception as exc:
+            publisher_feed_status[publisher] = {"status": "UNKNOWN", "feed_url": feed_url, "error": f"{type(exc).__name__}: {str(exc)[:160]}"}
+
     news_cols = ["EVENT_ID", "CUT_OFF", "SYMBOL", "PUBLISHED_AT", "PUBLISHER",
                  "HEADLINE", "CANONICAL_URL", "SOURCE_TYPE", "VERIFICATION_STATUS"]
     cov_cols = ["CUT_OFF", "SYMBOL", "WINDOW_START", "WINDOW_END", "COVERAGE_STATUS",
@@ -199,8 +266,8 @@ def main():
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "GDELT DOC API with Google News RSS fallback", "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
-        "verification": "All matches are UNVERIFIED_GDELT_MATCH; independent source/headline verification is required before paired news ablation.",
+        "source": "Publisher-native RSS first-class fast path plus GDELT DOC API and Google News RSS discovery fallback",\n        "publisher_native_feeds": publisher_feed_status, "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "verification": "Publisher-native RSS items carry VERIFIED source/time provenance from the official feed; GDELT and Google News RSS remain discovery-only until independently resolved. VERIFIED is not a prediction or guarantee of market impact.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
     REPORT_OUT.write_text(json.dumps(report, indent=2), encoding="utf-8")
