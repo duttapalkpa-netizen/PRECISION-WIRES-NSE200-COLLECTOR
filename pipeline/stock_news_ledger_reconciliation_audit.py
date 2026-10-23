@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Fail-closed, read-only provenance reconciliation for alternate-source leads.
 
-The source news ledger is never overwritten. A verified alternate publisher page
-is only linked to a ledger row when cutoff, symbol, original timestamp, headline,
-and original URL all match the ledger's own fields. Otherwise the row stays an
-unmatched discovery lead and research readiness remains blocked.
+The source news ledger is never overwritten. Match event identity using cutoff,
+symbol, original timestamp and headline; separately verify that the publisher-native
+resolved URL equals the ledger canonical URL. Preserve RSS discovery provenance.
 """
 from pathlib import Path
 import json
@@ -64,15 +63,36 @@ def main():
     c["_published"] = pd.to_datetime(c["ORIGINAL_PUBLISHED_AT"], utc=True, errors="coerce", format="mixed").astype("string")
     l["_headline"] = l["HEADLINE"].str.strip()
     c["_headline"] = c["ORIGINAL_HEADLINE"].str.strip()
-    l["_url"] = l["CANONICAL_URL"].str.strip()
-    c["_url"] = c["ORIGINAL_URL"].str.strip()
-    keys = ["_cut","_symbol","_published","_headline","_url"]
-    # Many ledger rows may be duplicate source observations; duplicates are reported, never silently selected.
-    counts = l.groupby(keys, dropna=False).size().rename("_ledger_match_count").reset_index()
-    j = c.merge(counts, on=keys, how="left", validate="many_to_one")
+    # RSS discovery URL and publisher canonical URL are different provenance fields.
+    # Match event identity first, then independently compare verified publisher URL.
+    keys = ["_cut","_symbol","_published","_headline"]
+    identity = l.groupby(keys, dropna=False).agg(
+        _ledger_match_count=("_headline", "size"),
+        _ledger_canonical_urls=("CANONICAL_URL", lambda x: " || ".join(sorted(set(v.strip() for v in x if v.strip())))),
+    ).reset_index()
+    j = c.merge(identity, on=keys, how="left", validate="many_to_one")
     j["_ledger_match_count"] = j["_ledger_match_count"].fillna(0).astype(int)
+    j["_ledger_canonical_urls"] = j["_ledger_canonical_urls"].fillna("")
     j["LEDGER_RECONCILIATION_STATUS"] = j["_ledger_match_count"].map(
-        lambda n: "EXACT_UNIQUE_LEDGER_MATCH" if n == 1 else ("AMBIGUOUS_DUPLICATE_LEDGER_MATCH" if n > 1 else "NO_EXACT_LEDGER_MATCH"))
+        lambda n: "UNIQUE_EVENT_IDENTITY_MATCH" if n == 1 else ("AMBIGUOUS_EVENT_IDENTITY_MATCH" if n > 1 else "NO_EVENT_IDENTITY_MATCH"))
+    resolved_url_map = {}
+    for _, rr in resolved.iterrows():
+        key = (str(rr.get("CUT_OFF", "")), str(rr.get("SYMBOL", "")).upper().strip(),
+               str(rr.get("ORIGINAL_PUBLISHED_AT", "")), str(rr.get("ORIGINAL_HEADLINE", "")).strip())
+        resolved_url_map[key] = str(rr.get("RESOLVED_URL", "")).strip()
+    def publisher_url_status(row):
+        if int(row["_ledger_match_count"]) != 1:
+            return "NOT_CHECKED_NO_UNIQUE_EVENT_MATCH"
+        key = (str(row["CUT_OFF"]), str(row["SYMBOL"]).upper().strip(),
+               str(row["ORIGINAL_PUBLISHED_AT"]), str(row["ORIGINAL_HEADLINE"]).strip())
+        resolved_url = resolved_url_map.get(key, "")
+        ledger_urls = [u.strip() for u in str(row["_ledger_canonical_urls"]).split(" || ") if u.strip()]
+        if not resolved_url:
+            return "BLOCKED_NO_VERIFIED_PUBLISHER_URL"
+        return "PUBLISHER_URL_MATCHES_LEDGER_CANONICAL" if resolved_url in ledger_urls else "PUBLISHER_URL_MISMATCH"
+    j["PUBLISHER_CANONICAL_URL_STATUS"] = j.apply(publisher_url_status, axis=1)
+    j["LEDGER_RECONCILIATION_STATUS"] = j.apply(
+        lambda r: "MATCHED_EVENT_AND_CANONICAL_URL" if r["_ledger_match_count"] == 1 and r["PUBLISHER_CANONICAL_URL_STATUS"] == "PUBLISHER_URL_MATCHES_LEDGER_CANONICAL" else r["LEDGER_RECONCILIATION_STATUS"], axis=1)
     # Explicitly report verified RACE/RIIL rows; no promotion or source-field mutation occurs here.
     focus = j[j["SYMBOL"].str.upper().isin(["RACE","RIIL"])].copy()
     focus["VERIFICATION_STATUS"] = ""
@@ -81,26 +101,29 @@ def main():
         if join_keys:
             v = verified[join_keys + ["VERIFICATION_STATUS"]].drop_duplicates()
             focus = focus.drop(columns=["VERIFICATION_STATUS"]).merge(v, on=join_keys, how="left", validate="many_to_one")
-    focus_cols = [x for x in ["SOURCE_ROW_INDEX","CUT_OFF","SYMBOL","ORIGINAL_PUBLISHED_AT","ORIGINAL_HEADLINE","ORIGINAL_URL","ALTERNATE_ARTICLE_URL","VERIFICATION_STATUS","_ledger_match_count","LEDGER_RECONCILIATION_STATUS"] if x in focus.columns]
+    focus_cols = [x for x in ["SOURCE_ROW_INDEX","CUT_OFF","SYMBOL","ORIGINAL_PUBLISHED_AT","ORIGINAL_HEADLINE","ORIGINAL_URL","ALTERNATE_ARTICLE_URL","VERIFICATION_STATUS","_ledger_match_count","_ledger_canonical_urls","PUBLISHER_CANONICAL_URL_STATUS","LEDGER_RECONCILIATION_STATUS"] if x in focus.columns]
     focus[focus_cols].to_csv(CSV, index=False)
     expected_pairs = int(len(pd.read_csv("outputs/news_24h/stock_news_24h_cutoff_join.csv", dtype=str).drop_duplicates(["CUT_OFF","SYMBOL"]))) if Path("outputs/news_24h/stock_news_24h_cutoff_join.csv").is_file() else None
     ready_pairs = readiness.get("unique_cutoff_symbol_pairs")
     join_rows = readiness.get("cutoff_symbol_rows")
-    count_consistent = (expected_pairs is None or ready_pairs == expected_pairs) and (join_rows is None or int(join_rows) >= 0)
+    count_consistent = expected_pairs is not None and ready_pairs == expected_pairs and join_rows == expected_pairs
     unmatched = int((j["_ledger_match_count"] == 0).sum())
     ambiguous = int((j["_ledger_match_count"] > 1).sum())
+    canonical_mismatches = int((j["PUBLISHER_CANONICAL_URL_STATUS"] != "PUBLISHER_URL_MATCHES_LEDGER_CANONICAL").sum())
     report = {
-        "status": "PASS_LEDGER_RECONCILIATION" if unmatched == 0 and ambiguous == 0 and count_consistent else "BLOCKED_LEDGER_RECONCILIATION",
+        "status": "PASS_LEDGER_RECONCILIATION" if unmatched == 0 and ambiguous == 0 and canonical_mismatches == 0 and count_consistent else "BLOCKED_LEDGER_RECONCILIATION",
         "ledger_rows": int(len(ledger)), "coverage_rows": int(len(coverage)),
         "candidate_rows": int(len(candidates)), "verified_rows": int(verified.get("VERIFICATION_STATUS", pd.Series(dtype=str)).astype(str).str.upper().eq("VERIFIED").sum()),
         "matched_ledger_rows": int((j["_ledger_match_count"] == 1).sum()),
         "unmatched_candidate_rows": unmatched, "ambiguous_candidate_rows": ambiguous,
+        "publisher_canonical_url_mismatches": canonical_mismatches,
         "race_riil_candidate_rows": int(len(focus)),
         "race_riil_exact_unique_matches": int(focus["LEDGER_RECONCILIATION_STATUS"].eq("EXACT_UNIQUE_LEDGER_MATCH").sum()),
         "readiness_cutoff_symbol_rows": join_rows, "readiness_unique_cutoff_symbol_pairs": ready_pairs,
         "recomputed_join_unique_pairs": expected_pairs, "readiness_pair_counts_consistent": bool(count_consistent),
         "readiness_status": readiness.get("status"), "research_status": "BLOCKED",
-        "join_keys": ["cutoff date","symbol","original published timestamp","original headline","original canonical URL"],
+        "event_identity_keys": ["cutoff date","symbol","original published timestamp","original headline"],
+        "publisher_canonical_url_validation": "Verified publisher-native RESOLVED_URL must equal ledger CANONICAL_URL; ORIGINAL_URL RSS link remains discovery provenance.",
         "source_ledger_modified": False,
         "policy": "Publisher verification is an audit overlay only. Original ledger provenance is not rewritten; unmatched or ambiguous leads cannot be promoted."
     }
