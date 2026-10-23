@@ -115,3 +115,18 @@ def test_malformed_rss_keeps_coverage_unknown(tmp_path, monkeypatch):
     assert coverage.iloc[0]["COVERAGE_STATUS"] == "UNKNOWN"
     assert report["coverage_unknown_rows"] == 1
     assert report["queries_failed"] == 1
+
+
+def test_ambiguous_english_symbol_requires_explicit_ticker_not_prose():
+    assert not collector.headline_relevant_to_symbol(
+        "FOCUS", "Mawana Sugars slides as counter tests lower end of range - comes into Focus"
+    )
+    assert not collector.headline_relevant_to_symbol(
+        "FOCUS", "Groww in Focus as Jefferies sees bigger gains"
+    )
+    assert collector.headline_relevant_to_symbol(
+        "FOCUS", "NSE:FOCUS announces quarterly results"
+    )
+    assert collector.headline_relevant_to_symbol(
+        "FOCUS", "FOCUS.NS shares jump after results"
+    )
