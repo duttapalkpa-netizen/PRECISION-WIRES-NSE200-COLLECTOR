@@ -118,7 +118,7 @@ def main():
         "unmatched_candidate_rows": unmatched, "ambiguous_candidate_rows": ambiguous,
         "publisher_canonical_url_mismatches": canonical_mismatches,
         "race_riil_candidate_rows": int(len(focus)),
-        "race_riil_exact_unique_matches": int(focus["LEDGER_RECONCILIATION_STATUS"].eq("EXACT_UNIQUE_LEDGER_MATCH").sum()),
+        "race_riil_exact_unique_matches": int(focus["LEDGER_RECONCILIATION_STATUS"].eq("MATCHED_EVENT_AND_CANONICAL_URL").sum()),
         "readiness_cutoff_symbol_rows": join_rows, "readiness_unique_cutoff_symbol_pairs": ready_pairs,
         "recomputed_join_unique_pairs": expected_pairs, "readiness_pair_counts_consistent": bool(count_consistent),
         "readiness_status": readiness.get("status"), "research_status": "BLOCKED",
