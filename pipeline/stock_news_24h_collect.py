@@ -28,6 +28,27 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES-Research/1.0;
 MAX_RETRIES = 3
 BACKOFF_SECONDS = (2, 4, 6)
 
+# English-word symbols can match ordinary prose (e.g. "comes into focus").
+# For these symbols, require explicit exchange/ticker notation before retaining
+# a headline as a stock-specific event. This is a relevance filter, not a
+# verification rule; surviving discovery rows remain UNVERIFIED.
+AMBIGUOUS_ENGLISH_SYMBOLS = {"FOCUS"}
+
+
+def headline_relevant_to_symbol(symbol, headline):
+    symbol = str(symbol or "").strip().upper()
+    headline = str(headline or "")
+    if not symbol or not headline.strip():
+        return False
+    if symbol in AMBIGUOUS_ENGLISH_SYMBOLS:
+        patterns = (
+            rf"\\bNSE\\s*[:\\-]\\s*{re.escape(symbol)}\\b",
+            rf"\\b{re.escape(symbol)}\\.NS\\b",
+            rf"\\b{re.escape(symbol)}\\s+(?:LTD|LIMITED|SHARES|STOCK)\\b",
+        )
+        return any(re.search(pattern, headline, flags=re.IGNORECASE) for pattern in patterns)
+    return bool(re.search(r"(?<![A-Z0-9])" + re.escape(symbol) + r"(?![A-Z0-9])", headline, flags=re.I))
+
 
 def utc_stamp(ts):
     return ts.tz_convert("UTC").strftime("%Y%m%d%H%M%S")
@@ -123,6 +144,8 @@ def main():
                     domain = str(article.get("domain", "")).strip()
                     if pd.isna(published) or not url.startswith(("http://", "https://")) or not title:
                         continue
+                    if not headline_relevant_to_symbol(pair.SYMBOL, title):
+                        continue
                     published_ist = published.tz_convert(TZ)
                     if not (start < published_ist < cutoff):
                         continue
@@ -161,6 +184,8 @@ def main():
                             continue
                         published_ist = published.tz_convert(TZ)
                         if not title or not url.startswith(("http://", "https://")) or not (start < published_ist < cutoff):
+                            continue
+                        if not headline_relevant_to_symbol(pair.SYMBOL, title):
                             continue
                         event_id = "{}|{}|{}".format(pair.SYMBOL, published.isoformat(), url)
                         news_rows.append({"EVENT_ID": event_id, "CUT_OFF": cutoff.date().isoformat(), "SYMBOL": pair.SYMBOL, "PUBLISHED_AT": published.isoformat(), "PUBLISHER": domain, "HEADLINE": title, "CANONICAL_URL": url, "SOURCE_TYPE": "GOOGLE_NEWS_RSS_DISCOVERY", "VERIFICATION_STATUS": "UNVERIFIED_GOOGLE_NEWS_RSS_MATCH"})
