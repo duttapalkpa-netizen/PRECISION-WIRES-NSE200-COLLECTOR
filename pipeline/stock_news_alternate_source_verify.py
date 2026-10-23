@@ -30,7 +30,8 @@ class Meta(HTMLParser):
         if tag.lower()=="title": self.in_title=False
     def handle_data(self, data):
         if self.in_title and data.strip(): self.title.append(data.strip())
-    def best(self): return (self.meta[0] if self.meta else " ".join(self.title)).strip()\n    def published_at(self): return self.published[0].strip() if self.published else ""
+    def best(self): return (self.meta[0] if self.meta else " ".join(self.title)).strip()
+    def published_at(self): return self.published[0].strip() if self.published else ""
 
 def toks(s):
     return {x for x in re.findall(r"[a-z0-9]+",str(s or "").lower()) if len(x)>2 and x not in STOP}
