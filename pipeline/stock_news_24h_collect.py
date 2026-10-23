@@ -42,9 +42,9 @@ def headline_relevant_to_symbol(symbol, headline):
         return False
     if symbol in AMBIGUOUS_ENGLISH_SYMBOLS:
         patterns = (
-            rf"\\bNSE\\s*[:\\-]\\s*{re.escape(symbol)}\\b",
-            rf"\\b{re.escape(symbol)}\\.NS\\b",
-            rf"\\b{re.escape(symbol)}\\s+(?:LTD|LIMITED|SHARES|STOCK)\\b",
+            rf"\bNSE\s*[:\-]\s*{re.escape(symbol)}\b",
+            rf"\b{re.escape(symbol)}\.NS\b",
+            rf"\b{re.escape(symbol)}\s+(?:LTD|LIMITED|SHARES|STOCK)\b",
         )
         return any(re.search(pattern, headline, flags=re.IGNORECASE) for pattern in patterns)
     return bool(re.search(r"(?<![A-Z0-9])" + re.escape(symbol) + r"(?![A-Z0-9])", headline, flags=re.I))
