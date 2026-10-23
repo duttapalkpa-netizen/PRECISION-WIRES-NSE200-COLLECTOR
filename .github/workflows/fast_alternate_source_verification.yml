@@ -13,6 +13,7 @@ on:
       - ".github/workflows/fast_alternate_source_verification.yml"
       - "pipeline/stock_news_alternate_source_verify.py"
       - "pipeline/stock_news_alternate_source_resolution_join.py"
+      - "pipeline/stock_news_ledger_reconciliation_audit.py"
 
 permissions:
   contents: read
@@ -96,3 +97,5 @@ jobs:
             outputs/news_24h/stock_news_24h_readiness.json
             outputs/news_24h/stock_news_ledger_reconciliation.csv
             outputs/news_24h/stock_news_ledger_reconciliation.json
+            data/raw/stock_news_events.csv
+            data/raw/stock_news_coverage.csv
