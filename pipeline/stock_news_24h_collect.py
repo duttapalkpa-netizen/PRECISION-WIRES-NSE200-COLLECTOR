@@ -266,7 +266,8 @@ def main():
         "coverage_rows": int(len(cov_df)), "coverage_complete_rows": int((cov_df["COVERAGE_STATUS"] == "COMPLETE").sum()),
         "coverage_unknown_rows": int((cov_df["COVERAGE_STATUS"] != "COMPLETE").sum()),
         "syndicated_duplicate_rows_removed": int(syndicated_duplicates_removed),
-        "source": "Publisher-native RSS first-class fast path plus GDELT DOC API and Google News RSS discovery fallback",\n        "publisher_native_feeds": publisher_feed_status, "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
+        "source": "Publisher-native RSS first-class fast path plus GDELT DOC API and Google News RSS discovery fallback",
+        "publisher_native_feeds": publisher_feed_status, "request_timeout_seconds": {"connect": 15, "read": 60}, "retry_policy": {"max_attempts": MAX_RETRIES, "backoff_seconds": list(BACKOFF_SECONDS), "retry_after_cap_seconds": 45, "inter_query_delay_seconds": 3}, "source_limit": "A successful query only establishes coverage of this source/query; it does not establish absence of all news.",
         "verification": "Publisher-native RSS items carry VERIFIED source/time provenance from the official feed; GDELT and Google News RSS remain discovery-only until independently resolved. VERIFIED is not a prediction or guarantee of market impact.",
         "news_output": str(NEWS_OUT), "coverage_output": str(COVERAGE_OUT),
     }
