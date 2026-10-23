@@ -334,3 +334,5 @@ jobs:
             data/raw/quarterly_financial_metrics.csv
             data/raw/quarterly_financial_metrics_verified.csv
             data/raw/quarterly_filing_evidence/
+            data/raw/stock_news_events.csv
+            data/raw/stock_news_coverage.csv
