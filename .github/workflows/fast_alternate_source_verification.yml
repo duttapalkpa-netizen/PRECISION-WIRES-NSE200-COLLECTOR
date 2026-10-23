@@ -1,0 +1,54 @@
+name: Fast Alternate-Source Verification (Artifact Only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Successful Step 3 workflow run ID containing the discovery artifact"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: fast-alternate-source-verification-${{ inputs.source_run_id }}
+  cancel-in-progress: false
+
+jobs:
+  verify-alternate-leads:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout audit branch only
+        uses: actions/checkout@v4
+        with:
+          ref: audit/prospective-selector-tracking
+          fetch-depth: 1
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install only verifier dependencies
+        run: python -m pip install pandas requests googlenewsdecoder
+      - name: Download prior Step 3 discovery artifact (no rebuild)
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          run_id: ${{ inputs.source_run_id }}
+          name: step3-news-catalyst-join-audit
+          path: artifact
+          if_no_artifact_found: fail
+      - name: Verify alternate publisher leads only
+        run: python pipeline/stock_news_alternate_source_verify.py
+      - name: Upload compact verification result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alternate-source-verification-${{ inputs.source_run_id }}
+          if-no-files-found: warn
+          path: |
+            outputs/news_24h/alternate_source_verification_report.json
+            outputs/news_24h/alternate_source_verification_results.csv
