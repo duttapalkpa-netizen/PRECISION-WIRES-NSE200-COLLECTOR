@@ -17,10 +17,10 @@ The current `pipeline/macro_geo_repair_p0.py` explicitly targets these four grou
 
 | P0 source group | Expected file | Required evidence / fields | Current status in this register |
 |---|---|---|---|
-| `crude_oil` | `data/external/brent_crude.csv` | FRED DCOILBRENTEU, explicitly labelled USD/barrel; DATE, CLOSE, source series/URL and observation provenance | NOT YET VERIFIED FROM LATEST COVERAGE ARTIFACT |
-| `usd_inr` | `data/external/usd_inr.csv` | FRED DEXINUS, explicitly labelled INR per USD; DATE, CLOSE, source series/URL and observation provenance | NOT YET VERIFIED FROM LATEST COVERAGE ARTIFACT |
-| `corporate_events` | `data/external/corporate_events.csv` | NSE filing-derived event rows with DATE, SYMBOL, EVENT_TYPE, PUBLISHED_AT, SOURCE_URL | NOT YET VERIFIED FROM LATEST COVERAGE ARTIFACT |
-| `fpi_dii_flows` | `data/external/fpi_dii_flows.csv` | Successful official NSE response with correctly mapped DATE, GROUP, NET_VALUE; otherwise remain BLOCKED | NOT YET VERIFIED FROM LATEST COVERAGE ARTIFACT |
+| `crude_oil` | `data/external/brent_crude.csv` | FRED DCOILBRENTEU, explicitly labelled USD/barrel; DATE, CLOSE, source series/URL and observation provenance | BLOCKED — latest artifact shows NOT_CONNECTED (0 rows) |
+| `usd_inr` | `data/external/usd_inr.csv` | FRED DEXINUS, explicitly labelled INR per USD; DATE, CLOSE, source series/URL and observation provenance | BLOCKED — latest artifact shows NOT_CONNECTED (0 rows) |
+| `corporate_events` | `data/external/corporate_events.csv` | NSE filing-derived event rows with DATE, SYMBOL, EVENT_TYPE, PUBLISHED_AT, SOURCE_URL | BLOCKED — latest artifact shows NOT_CONNECTED (0 rows) |
+| `fpi_dii_flows` | `data/external/fpi_dii_flows.csv` | Successful official NSE response with correctly mapped DATE, GROUP, NET_VALUE; otherwise remain BLOCKED | BLOCKED — latest artifact shows NOT_CONNECTED (0 rows) |
 
 ## Hard-gate boundary
 
@@ -37,3 +37,40 @@ Run 39977796193 → artifact `step3-news-catalyst-join-audit` (ID `12513903105`)
 Run 39946907057 → artifact `step3-news-catalyst-join-audit` (ID `12498149846`).
 
 This ledger records evidence observed in those artifacts and explicitly marks Step 4 source coverage as pending fresh artifact inspection.
+
+
+## Step 4 — latest real Macro–Geo artifact inspection (Run #61)
+
+- Workflow: [Run #39808222731](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/39808222731)
+- Workflow conclusion: SUCCESS (job steps completed).
+- Commit SHA: `83ea174ccf64f30ed42b45aadc65e93ca871c431`
+- Artifact: `macro-geo-p0-event-study`, ID `12440940735`, ZIP size 653,590 bytes.
+- Inspected reports: `outputs/macro_geo/source_coverage.json`, `outputs/macro_geo/p0_collection_manifest.json`, `outputs/macro_geo/event_study_report.json`, `outputs/macro_geo/factor_coverage_audit.json`, plus included CSVs.
+- Overall inventory: `INVENTORY_COMPLETE_WITH_GAPS`; P0 coverage `P0_INCOMPLETE`, 4 of 8 required groups available.
+- Event study: `COMPUTED_EXPLORATORY`; 4,114 panel rows, 11 series, 29 eligible event rows, 132 event-window rows. Exploratory status does not clear the P0 hard gate.
+
+### Four requested repair targets — artifact evidence
+
+| Source group | Actual status | Rows | Date range | Schema / provenance | Blocker |
+|---|---|---:|---|---|---|
+| `crude_oil` | `NOT_CONNECTED` | 0 | none | Expected `DATE,CLOSE`; no selected file or source URL. Manifest reports FRED `DCOILBRENTEU` timeout (2006-01-01..2010-12-30) and Yahoo Finance fallback HTTP 429. | No usable `data/external/brent_crude.csv`; source data absent. |
+| `usd_inr` | `NOT_CONNECTED` | 0 | none | Expected `DATE,CLOSE`; no selected file or source URL. Manifest reports FRED `DEXINUS` timeout (2006-01-01..2010-12-30) and Yahoo Finance fallback HTTP 429. | No usable `data/external/usd_inr.csv`; source data absent. |
+| `corporate_events` | `NOT_CONNECTED` | 0 | none | Expected `DATE,SYMBOL,EVENT_TYPE,PUBLISHED_AT,SOURCE_URL`; no selected file. | No usable normalized corporate-event file. Do not infer zero events. |
+| `fpi_dii_flows` | `NOT_CONNECTED` | 0 | none | Expected `DATE,GROUP,NET_VALUE`; no selected file. | Official NSE response/schema mapping did not yield usable normalized data. Do not substitute estimates. |
+
+### Other required P0 groups in the same artifact
+
+| Source group | Status | Rows | Date range | Schema / provenance | Qualification |
+|---|---|---:|---|---|---|
+| `benchmark_index` | `AVAILABLE` | 374 | 2025-04-21 to 2026-10-22 | `DATE,SERIES,CLOSE,SOURCE,SOURCE_URL,OBSERVED_AT_UTC`; NSE daily index archive URLs retained. | Generic QA passed; point-in-time and calendar checks remain. |
+| `sector_indices` | `AVAILABLE` | 3,366 | 2025-04-21 to 2026-10-22 | Same six columns; NSE archive URLs retained. | Generic QA passed; domain-level validation remains. |
+| `volatility` | `AVAILABLE` | 374 | 2025-04-21 to 2026-10-22 | Same six columns; India VIX from NSE archive. | Global VIX separately BLOCKED (0 rows) in collection manifest. |
+| `geopolitical_events` | `AVAILABLE` | 29 | 2026-10-21 to 2026-10-22 | `EVENT_DATE,PUBLISHED_AT,EVENT_TYPE,SOURCE,SOURCE_URL,CONFIDENCE`; RSS URLs and timestamps retained. | Generic QA only; manifest labels items `TRUSTED_PUBLISHER_RSS_MENTION_NOT_VERIFIED_EVENT`, so event occurrence is not independently confirmed. |
+
+### Step 4 verdict
+
+**BLOCKED — do not proceed to Step 5 or Step 6.** The four repair targets remain absent. `market_panel.csv` exists (4,114 rows, 11 series; 2025-04-21 to 2026-10-22) and `events.csv` exists (29 rows; event dates 2026-10-21 to 2026-10-22; publication timestamps 2026-10-21T03:58:16Z to 2026-10-22T15:56:36Z), permitting an exploratory event study only. The artifact's `event_study_report.json` says `COMPUTED_EXPLORATORY`; this does not override missing P0 sources. The strict `macro_geo_hard_gate.py` report must be separately inspected before any release decision.
+
+Artifact: [Run #61 — Macro Geo P0 Collection and Event Study](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/39808222731), artifact ID `12440940735`.
+
+All missing values remain UNKNOWN/BLOCKED, never negative. Production selector, `RANKING_SCORE`, frozen `+1 PRESSURE_FADE`, and Run #58 remain unchanged.
