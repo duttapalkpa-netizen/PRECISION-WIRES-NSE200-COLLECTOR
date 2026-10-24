@@ -645,7 +645,7 @@ def main():
       "quality_filter":"Only explicit market-relevant title keywords plus trusted publisher domain; broad-query false positives are excluded.",
       "warning":"PUBLISHED_AT/EVENT_DATE are publication-time proxies, not verified occurrence timestamps; this remains a media-publication event study, not causal identification."}
     for name,endpoint,params in [
-      ("corporate_events","/api/corporates-announcements",{"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
+      ("corporate_events","/api/corporate-announcements",{"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
       ("fpi_dii_flows","/api/fiidiiTradeReact",{}),
     ]:
         data,detail=try_nse_json(endpoint,params,start,end)
@@ -659,10 +659,10 @@ def main():
                 return next((row[c] for c in candidates if c in row and pd.notna(row[c]) and str(row[c]).strip()),"")
             normalized=[]
             for _,row in rawdf.iterrows():
-                day=first(row,["AN_DT","DATE","DT","SORT_DATE","ANNOUNCEMENT_DATE","BROADCAST_DATE"])
-                symbol=first(row,["SYMBOL","SM_SYMBOL","TCKRSYMB"]); desc=first(row,["DESC","SUBJECT","PURPOSE"])
-                pub=first(row,["AN_DT","PUBLISHED_AT","BROADCAST_DATE","DATE","SORT_DATE"])
-                link=first(row,["ATTCHMNTFILE","ATTACHMENTFILE","ATTACHMENT","URL","LINK"])
+                day=first(row,["BROADCASTDATETIME","BROADCAST_DATE_TIME","AN_DT","DATE","DT","SORT_DATE","ANNOUNCEMENT_DATE","BROADCAST_DATE"])
+                symbol=first(row,["SYMBOL","SM_SYMBOL","TCKRSYMB","SYMBOLNAME"]); desc=first(row,["DESC","SUBJECT","PURPOSE","ATTCHMNTTEXT","DESCRIPTION","DETAILS"])
+                pub=first(row,["BROADCASTDATETIME","BROADCAST_DATE_TIME","PUBLISHED_AT","AN_DT","BROADCAST_DATE","DATE","SORT_DATE","DISSEMINATIONDATETIME"])
+                link=first(row,["ATTCHMNTFILE","ATTACHMENTFILE","ATTACHMENT","ATTACHMENTURL","URL","LINK","DETAILSURL","XBRL"])
                 if day and symbol and desc:
                     normalized.append({"DATE":day,"SYMBOL":symbol,"EVENT_TYPE":desc,"PUBLISHED_AT":pub,
                       "SOURCE_URL":link if str(link).startswith("http") else (NSE+str(link) if link else ""),
