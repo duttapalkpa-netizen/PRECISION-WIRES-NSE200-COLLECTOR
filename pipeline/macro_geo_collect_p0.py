@@ -301,11 +301,11 @@ def is_trusted_news_url(url):
 def fetch_gdelt_events(start,end):
     """Collect timestamped trusted media mentions from GDELT plus public publisher RSS feeds."""
     event_start=max(start,end-timedelta(days=90))
-    # One broad but explicit query per 30-day slice avoids doubling GDELT calls
-    # and triggering repeated 429/timeout cycles. Titles are still independently
-    # filtered by classify() and trusted publisher domains before acceptance.
+    # Keep the query intentionally compact: an oversized OR expression over a
+    # 30-day window repeatedly timed out in the hosted runner. We still apply
+    # strict title classification and trusted-domain validation after retrieval.
     queries=[
-      ("GLOBAL_MACRO_GEO_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR missile OR invasion OR ceasefire OR crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)')
+      ("GLOBAL_MACRO_GEO_NEWS",'(war OR missile OR sanctions OR tariff OR crude OR tanker OR shipping OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)')
     ]
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
@@ -316,7 +316,9 @@ def fetch_gdelt_events(start,end):
     events=[]; failures=[]
     slices=[]; cursor=event_start
     while cursor<=end:
-        slice_end=min(end,cursor+timedelta(days=29))
+        # 14-day windows bound GDELT search cost and make failures diagnosable;
+        # a 90-day history still covers matured post-publication close windows.
+        slice_end=min(end,cursor+timedelta(days=13))
         slices.append((cursor,slice_end)); cursor=slice_end+timedelta(days=1)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE",
       "EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
@@ -344,14 +346,14 @@ def fetch_gdelt_events(start,end):
         m["accepted_articles"]+=1
     for slice_start,slice_end in slices:
       for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":100,"sort":"DateDesc",
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":50,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
           "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
         for attempt in range(3):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,18))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,35))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
                     try: wait=min(30,max(5,int(float(retry_after))))
@@ -390,6 +392,11 @@ def fetch_gdelt_events(start,end):
             metrics["gdelt"]["request_failures"]+=1
             failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
               "slice_end":slice_end.isoformat(),"error":last_error})
+            # Surface a bounded, exact failure sample in the manifest metrics
+            # so the next run can distinguish timeout, rate-limit, HTTP and schema errors.
+            metrics["gdelt"].setdefault("failure_details", []).append({
+              "slice_start":slice_start.isoformat(),"slice_end":slice_end.isoformat(),
+              "error":last_error[:500]})
         time.sleep(1.0)
 
     # Public RSS/Atom feeds are a fallback and are audited independently.
