@@ -47,9 +47,14 @@ def main():
             event = json.loads(EVENT_REPORT.read_text(encoding="utf-8"))
             status = event.get("research_status", event.get("status", "UNKNOWN"))
             checks["event_study_status"] = status
-            checks["event_study_event_rows"] = int(event.get("eligible_event_rows", event.get("event_rows", 0)) or 0)
+            # Keep total, panel-eligible and actually computed windows separate:
+            # eligibility by date alone is not evidence of a mature return window.
+            checks["event_study_total_event_rows"] = int(event.get("event_rows", 0) or 0)
+            checks["event_study_eligible_event_rows"] = int(event.get("eligible_event_rows", 0) or 0)
             checks["event_study_window_rows"] = int(event.get("window_rows", 0) or 0)
-            if status not in ALLOWED_EVENT_STATUSES or checks["event_study_event_rows"] < 1 or checks["event_study_window_rows"] < 1:
+            if (status not in ALLOWED_EVENT_STATUSES
+                    or checks["event_study_eligible_event_rows"] < 1
+                    or checks["event_study_window_rows"] < 1):
                 blockers.append("EVENT_STUDY_NOT_COMPUTED_WITH_MATURE_WINDOWS")
         except Exception as exc:
             blockers.append(f"INVALID_EVENT_STUDY_REPORT:{type(exc).__name__}:{exc}")
