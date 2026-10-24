@@ -155,7 +155,7 @@ def main():
    # Do not bypass access controls: an HTTP denial remains a source failure.
    sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"https://www.nseindia.com/companies-listing/corporate-filings-announcements"})
    home=sess.get("https://www.nseindia.com/",timeout=(8,20)); home.raise_for_status()
-   direct_url="https://www.nseindia.com/api/corporate-announcements"
+   direct_url="https://www.nseindia.com/api/corporates-announcements"
    resp=sess.get(direct_url,params={"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")},
       timeout=(8,35)); resp.raise_for_status()
    direct_payload=resp.json()
