@@ -90,6 +90,33 @@ def main():
     p0_rows={name:{"status":by_name.get(name,{}).get("status","NOT_CONNECTED"),
                    "rows":by_name.get(name,{}).get("rows",0),
                    "selected_path":by_name.get(name,{}).get("selected_path","")} for name in p0_required}
+    # Domain-specific P0 evidence gates: a two-row flow snapshot is not
+    # historical coverage, and macro series need explicit data-date freshness.
+    for name in ("crude_oil","usd_inr"):
+        info=p0_rows.get(name,{})
+        src=next((r for r in rows if r["source"]==name),{})
+        if src.get("date_max"):
+            try:
+                data_age=(now.tz_localize(None).normalize()-pd.Timestamp(src["date_max"])).days
+                info["data_age_days"]=int(data_age)
+                info["freshness_status"]="FRESH" if 0 <= data_age <= 3 else "STALE_OR_FUTURE"
+                if info["freshness_status"]!="FRESH": info["status"]="DATA_QUALITY_WARN"
+            except Exception:
+                info["freshness_status"]="UNKNOWN"; info["status"]="DATA_QUALITY_WARN"
+    flow_path=ROOT/"data/external/fpi_dii_flows.csv"
+    if flow_path.exists():
+        try:
+            flows=pd.read_csv(flow_path)
+            flows.columns=[str(c).strip().upper() for c in flows.columns]
+            dates=pd.to_datetime(flows["DATE"],errors="coerce",dayfirst=True).dropna() if "DATE" in flows else pd.Series(dtype="datetime64[ns]")
+            flow_info=p0_rows.get("fpi_dii_flows",{})
+            flow_info["unique_dates"]=int(dates.dt.date.nunique())
+            flow_info["date_span_days"]=int((dates.max()-dates.min()).days) if len(dates)>1 else 0
+            if flow_info["unique_dates"] < 60 or flow_info["date_span_days"] < 90:
+                flow_info["status"]="INSUFFICIENT_HISTORICAL_COVERAGE"
+        except Exception:
+            p0_rows["fpi_dii_flows"]["status"]="DATA_QUALITY_WARN"
+    # Refresh available groups only after the strict per-group rules above.
     p0_available=[name for name,info in p0_rows.items() if info["status"]=="AVAILABLE" and info["rows"]>0]
     report={"status":"INVENTORY_COMPLETE_WITH_GAPS" if (frame.status!="AVAILABLE").any() else "SCHEMA_AND_GENERIC_QA_AVAILABLE",
             "as_of_utc":now.isoformat(),"sources_total":len(rows),"available":int((frame.status=="AVAILABLE").sum()),
