@@ -41,6 +41,14 @@ SOURCES={
 "ipo_float_unlocks":{"paths":["data/external/ipo_float_unlocks.csv"],"required":["DATE","SYMBOL","EFFECTIVE_FLOAT","EVENT_TYPE"]},
 "research_house_actions":{"paths":["data/external/research_house_actions.csv"],"required":["PUBLISHED_AT","SYMBOL","HOUSE","ACTION","SOURCE_URL"]},
 }
+def macro_series_freshness(source_date, reference_date, max_age_days=3):
+    """Return freshness against an observed market-session date, never wall-clock time."""
+    source = pd.Timestamp(source_date).normalize()
+    reference = pd.Timestamp(reference_date).normalize()
+    age = int((reference - source).days)
+    return {"data_age_days": age, "freshness_status": "FRESH" if 0 <= age <= max_age_days else "STALE_OR_FUTURE"}
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True); rows=[]
     now=pd.Timestamp.now(tz="UTC")
@@ -112,10 +120,9 @@ def main():
             try:
                 source_date = pd.Timestamp(src["date_max"]).normalize()
                 reference = reference_date if reference_date is not None else now.tz_localize(None).normalize()
-                data_age=int((reference-source_date).days)
+                freshness = macro_series_freshness(source_date, reference, max_age_days=3)
                 info["freshness_reference_date"]=reference.date().isoformat()
-                info["data_age_days"]=data_age
-                info["freshness_status"]="FRESH" if 0 <= data_age <= 3 else "STALE_OR_FUTURE"
+                info.update(freshness)
                 if info["freshness_status"]!="FRESH": info["status"]="DATA_QUALITY_WARN"
             except Exception:
                 info["freshness_status"]="UNKNOWN"; info["status"]="DATA_QUALITY_WARN"
