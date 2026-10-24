@@ -359,7 +359,7 @@ def fetch_gdelt_events(start,end):
       for query_label,query in queries:
         params={"query":query,"mode":"ArtList","format":"json","maxrecords":25,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
-          "enddatetime":slice_end.strftime("%Y%m%d")+"235959","maxrecords":25}
+          "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
         for attempt in range(2):
