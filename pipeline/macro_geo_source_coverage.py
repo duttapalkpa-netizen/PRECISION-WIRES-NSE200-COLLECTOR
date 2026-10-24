@@ -74,7 +74,12 @@ def main():
                     if len(valid):
                         latest=valid.max()
                         row.update(date_min=str(valid.min().date()),date_max=str(latest.date()),age_days=max(0,int((now.tz_localize(None)-latest).days)))
-                key=next((k for k in [["DATE","SYMBOL"],["DATE","SERIES"],["DATE","COMMODITY"],["DATE","INDICATOR"],["EVENT_ID"],["EVENT_DATE","EVENT_TYPE","SOURCE_URL"]] if set(k).issubset(df.columns)),None)
+                # Corporate filings legitimately allow multiple event types per symbol/day.
+                # Deduplicate by the filing identity, not DATE+SYMBOL alone.
+                if name == "corporate_events" and {"DATE","SYMBOL","EVENT_TYPE","SOURCE_URL"}.issubset(df.columns):
+                    key=["DATE","SYMBOL","EVENT_TYPE","SOURCE_URL"]
+                else:
+                    key=next((k for k in [["DATE","SYMBOL"],["DATE","SERIES"],["DATE","COMMODITY"],["DATE","INDICATOR"],["EVENT_ID"],["EVENT_DATE","EVENT_TYPE","SOURCE_URL"]] if set(k).issubset(df.columns)),None)
                 if key: row["duplicate_key_rows"]=int(df.duplicated(key).sum())
                 if "PUBLISHED_AT" in df.columns:
                     ts=pd.to_datetime(df["PUBLISHED_AT"],errors="coerce",utc=True)
@@ -131,11 +136,24 @@ def main():
         try:
             flows=pd.read_csv(flow_path)
             flows.columns=[str(c).strip().upper() for c in flows.columns]
-            dates=pd.to_datetime(flows["DATE"],errors="coerce",dayfirst=True).dropna() if "DATE" in flows else pd.Series(dtype="datetime64[ns]")
+            # NSDL collector emits ISO YYYY-MM-DD. Parse ISO strictly first; dayfirst=True
+            # silently reinterprets dates such as 2026-06-01 as 6 January.
+            dates=pd.to_datetime(flows["DATE"],format="%Y-%m-%d",errors="coerce") if "DATE" in flows else pd.Series(dtype="datetime64[ns]")
+            if "DATE" in flows and dates.isna().any():
+                fallback_dates=pd.to_datetime(flows.loc[dates.isna(),"DATE"],errors="coerce",dayfirst=True)
+                dates.loc[dates.isna()]=fallback_dates
             flow_info=p0_rows.get("fpi_dii_flows",{})
             flow_info["unique_dates"]=int(dates.dt.date.nunique())
-            flow_info["date_span_days"]=int((dates.max()-dates.min()).days) if len(dates)>1 else 0
-            if flow_info["unique_dates"] < 60 or flow_info["date_span_days"] < 90:
+            flow_info["date_span_days"]=int((dates.max()-dates.min()).days) if len(dates.dropna())>1 else 0
+            group_coverage={}
+            if {"GROUP","DATE"}.issubset(flows.columns):
+                for group, subset in flows.assign(_PARSED_DATE=dates).groupby(flows["GROUP"].astype(str).str.upper()):
+                    gd=subset["_PARSED_DATE"].dropna()
+                    group_coverage[group]={"rows":int(len(subset)),"unique_dates":int(gd.dt.date.nunique()),
+                        "date_span_days":int((gd.max()-gd.min()).days) if len(gd)>1 else 0}
+            flow_info["group_coverage"]=group_coverage
+            if (flow_info["unique_dates"] < 60 or flow_info["date_span_days"] < 90 or
+                not group_coverage or any(v["unique_dates"] < 60 or v["date_span_days"] < 90 for v in group_coverage.values())):
                 flow_info["status"]="INSUFFICIENT_HISTORICAL_COVERAGE"
         except Exception:
             p0_rows["fpi_dii_flows"]["status"]="DATA_QUALITY_WARN"
