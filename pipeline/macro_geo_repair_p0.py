@@ -165,14 +165,19 @@ def main():
  normalized=[]
  for row in payload_rows:
   if not isinstance(row,dict): continue
+  # NSE disclosure keys vary in capitalization and often use underscore aliases
+  # such as broadcast_Date, attchmntText, attchmntFile and seq_Id. Normalize
+  # lookup once so valid official rows are not silently discarded.
+  row_by_lower={str(k).strip().lower():v for k,v in row.items()}
   def pick(*keys):
-   return next((row.get(k) for k in keys if row.get(k) not in (None,"")), "")
-  symbol=pick("symbol","SYMBOL","sm_symbol","SM_SYMBOL","ticker","symbolName","TckrSymb")
-  desc=pick("subject","SUBJECT","purpose","description","desc","attchmntText","attchmnt_text","announcementType","DETAILS")
-  stamp=pick("broadcastDateTime","BROADCAST_DATE_TIME","broadcastDate","broadcast_date","an_dt","sort_date","date","disseminationDateTime","dissemination_date_time","DATE")
+   return next((row_by_lower.get(str(k).strip().lower()) for k in keys
+                if row_by_lower.get(str(k).strip().lower()) not in (None,"")), "")
+  symbol=pick("symbol","sm_symbol","ticker","symbolName","TckrSymb","companySymbol")
+  desc=pick("subject","purpose","description","desc","attchmntText","attchmnt_text","announcementType","DETAILS","details","meetingpurpose","relatingTo")
+  stamp=pick("broadcastDateTime","broadcast_Date","broadcastDate","broadcast_date","an_dt","sort_date","date","disseminationDateTime","dissemination_date_time","DATE","broadcast_time")
   stamp_parsed=pd.to_datetime(stamp,errors="coerce",dayfirst=True,utc=True)
   if pd.isna(stamp_parsed) or not symbol or not desc: continue
-  link=pick("attchmntFile","ATTCHMNTFILE","attachment","attachmentUrl","detailsUrl","xbrl","pdfUrl","url","DETAILS_URL")
+  link=pick("attchmntFile","attachment","attachmentUrl","detailsUrl","xbrl","ixbrlfile","ixbrlfileurl","pdfUrl","url","DETAILS_URL")
   if str(link).startswith("/"): link="https://www.nseindia.com"+str(link)
   # The exact query URL is retained when an announcement has no attachment URL;
   # this identifies the official disclosure record without inventing an attachment.
@@ -180,7 +185,7 @@ def main():
   if not source_url: continue
   normalized.append({"DATE":stamp_parsed.date().isoformat(),"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),
    "PUBLISHED_AT":stamp_parsed.isoformat(),"SOURCE_URL":source_url,"SOURCE":"NSE corporate announcements",
-   "SOURCE_RECORD_ID":str(pick("seq_id","id","announcementId","broadcastId"))})
+   "SOURCE_RECORD_ID":str(pick("seq_Id","id","announcementId","broadcastId","sort_id"))})
  ev=pd.DataFrame(normalized)
  if not ev.empty:
   ev=ev.drop_duplicates(["DATE","SYMBOL","EVENT_TYPE","SOURCE_URL"]).sort_values(["PUBLISHED_AT","SYMBOL"])
