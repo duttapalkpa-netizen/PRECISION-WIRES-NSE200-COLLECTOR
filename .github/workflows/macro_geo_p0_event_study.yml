@@ -7,6 +7,8 @@ on:
     paths:
       - "pipeline/macro_geo_collect_p0.py"
       - "pipeline/macro_geo_repair_p0.py"
+      - "pipeline/quarterly_results_research.py"
+      - "qa/test_macro_geo_repair_p0.py"
       - "pipeline/macro_geo_source_coverage.py"
       - "pipeline/macro_geo_four_group_validation.py"
       - "pipeline/macro_geo_factor_coverage_audit.py"
@@ -49,6 +51,9 @@ jobs:
         run: python -m unittest qa.test_macro_geo_engine -v
       - name: Collect P0 market series and timestamped media evidence
         run: python pipeline/macro_geo_collect_p0.py
+      - name: Collect NSE corporate disclosures for P0 event normalization
+        if: always()
+        run: python pipeline/quarterly_results_research.py
       - name: Run bounded P0 source repair (FRED plus preserved NSE disclosures and official FPI/DII)
         if: always()
         run: python pipeline/macro_geo_repair_p0.py
