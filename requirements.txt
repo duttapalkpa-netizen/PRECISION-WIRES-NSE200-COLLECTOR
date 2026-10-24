@@ -5,3 +5,4 @@ pypdf>=5,<7
 googlenewsdecoder==0.2.2
 selectolax<1.0
 pytest>=8,<9
+xlrd>=2.0.1,<3
