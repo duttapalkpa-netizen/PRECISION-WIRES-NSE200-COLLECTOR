@@ -140,14 +140,29 @@ def main():
  # corporate-announcements endpoint directly with a bounded recent date range.
  source=Path("data/raw/quarterly_results_raw_responses/result_disclosure.json")
  payload_rows=[]
+ def find_record_list(obj, depth=0):
+  # NSE collectors have emitted both {payload:[...]} and nested data/result wrappers.
+  # Accept only lists of dictionaries; never synthesize a disclosure from metadata.
+  if depth > 5: return []
+  if isinstance(obj, list):
+   if obj and all(isinstance(x, dict) for x in obj): return obj
+   for item in obj:
+    found=find_record_list(item, depth+1)
+    if found: return found
+   return []
+  if isinstance(obj, dict):
+   for key in ("payload","data","rows","results","records","result","announcements"):
+    if key in obj:
+     found=find_record_list(obj[key], depth+1)
+     if found: return found
+  return []
  if source.exists():
   try:
-   payload=json.loads(source.read_text(encoding="utf-8")); payload_rows=payload.get("payload",[])
-   if isinstance(payload_rows,dict):
-    payload_rows=next((payload_rows[k] for k in ("data","rows","results") if isinstance(payload_rows.get(k),list)),[])
-   if not isinstance(payload_rows,list): payload_rows=[]
-  except Exception: payload_rows=[]
- direct_url=""
+   payload=json.loads(source.read_text(encoding="utf-8"))
+   payload_rows=find_record_list(payload)
+  except Exception as exc:
+   report["groups"]["preserved_nse_disclosure_payload"]={"status":"BLOCKED","error":type(exc).__name__+": "+str(exc)[:220],"path":str(source)}
+ direct_url="https://www.nseindia.com/api/corporate-announcements"
  if not payload_rows:
   try:
    start,end=p0_window()
@@ -155,11 +170,12 @@ def main():
    # Do not bypass access controls: an HTTP denial remains a source failure.
    sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"https://www.nseindia.com/companies-listing/corporate-filings-announcements"})
    home=sess.get("https://www.nseindia.com/",timeout=(8,20)); home.raise_for_status()
-   direct_url="https://www.nseindia.com/api/corporate-announcements"
    resp=sess.get(direct_url,params={"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")},
       timeout=(8,35)); resp.raise_for_status()
    direct_payload=resp.json()
-   payload_rows=direct_payload if isinstance(direct_payload,list) else next((direct_payload[k] for k in ("data","payload","results","records") if isinstance(direct_payload,dict) and isinstance(direct_payload.get(k),list)),[])
+   payload_rows=find_record_list(direct_payload)
+   if not payload_rows:
+    report["groups"]["corporate_events_api_attempt"]={"status":"BLOCKED","error":"HTTP response parsed but no list of disclosure records found","url":resp.url,"top_level_type":type(direct_payload).__name__,"top_level_keys":list(direct_payload)[:30] if isinstance(direct_payload,dict) else []}
   except Exception as exc:
    report["groups"]["corporate_events_api_attempt"]={"status":"BLOCKED","error":type(exc).__name__+": "+str(exc)[:220],"url":direct_url}
  normalized=[]
