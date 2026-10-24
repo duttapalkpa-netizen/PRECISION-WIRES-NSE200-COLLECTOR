@@ -202,11 +202,36 @@ def main():
   normalized.append({"DATE":stamp_parsed.date().isoformat(),"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),
    "PUBLISHED_AT":stamp_parsed.isoformat(),"SOURCE_URL":source_url,"SOURCE":"NSE corporate announcements",
    "SOURCE_RECORD_ID":str(pick("seq_Id","id","announcementId","broadcastId","sort_id"))})
+ # If the nested result-disclosure payload has an unfamiliar schema, normalize the
+ # already-collected official NSE announcements file instead of discarding 157k+
+ # valid rows. Keep only source-backed rows inside the bounded P0 date window.
  ev=pd.DataFrame(normalized)
+ existing_path=RAW/"corporate_events.csv"
+ if ev.empty and existing_path.exists():
+  try:
+   prior=pd.read_csv(existing_path)
+   prior.columns=[str(col).strip().upper() for col in prior.columns]
+   required={"SYMBOL","EVENT_TYPE","SOURCE_URL"}
+   if required.issubset(prior.columns) and ("PUBLISHED_AT" in prior.columns or "DATE" in prior.columns):
+    raw_stamp=prior["PUBLISHED_AT"] if "PUBLISHED_AT" in prior.columns else prior["DATE"]
+    stamps=pd.to_datetime(raw_stamp,format="mixed",errors="coerce",dayfirst=True,utc=True)
+    start,end=p0_window()
+    keep=stamps.notna() & prior["SYMBOL"].notna() & prior["EVENT_TYPE"].notna() & prior["SOURCE_URL"].notna()
+    keep &= prior["SYMBOL"].astype(str).str.strip().ne("") & prior["EVENT_TYPE"].astype(str).str.strip().ne("") & prior["SOURCE_URL"].astype(str).str.startswith(("http://","https://"))
+    keep &= stamps.dt.date.ge(start) & stamps.dt.date.le(end)
+    ev=pd.DataFrame({"DATE":stamps.loc[keep].dt.strftime("%Y-%m-%d"),
+      "SYMBOL":prior.loc[keep,"SYMBOL"].astype(str).str.strip().str.upper(),
+      "EVENT_TYPE":prior.loc[keep,"EVENT_TYPE"].astype(str).str.strip(),
+      "PUBLISHED_AT":stamps.loc[keep].map(lambda x:x.isoformat()),
+      "SOURCE_URL":prior.loc[keep,"SOURCE_URL"].astype(str).str.strip(),
+      "SOURCE":"NSE corporate announcements"})
+    ev=ev.drop_duplicates(["DATE","SYMBOL","EVENT_TYPE","SOURCE_URL"])
+  except Exception as exc:
+   report["groups"]["corporate_events_existing_file"]={"status":"BLOCKED","error":type(exc).__name__+": "+str(exc)[:220],"path":str(existing_path)}
  if not ev.empty:
   ev=ev.drop_duplicates(["DATE","SYMBOL","EVENT_TYPE","SOURCE_URL"]).sort_values(["PUBLISHED_AT","SYMBOL"])
   ev.to_csv(RAW/"corporate_events.csv",index=False)
-  report["groups"]["corporate_events"]={"status":"AVAILABLE","rows":len(ev),"unique_symbols":int(ev.SYMBOL.nunique()),"date_min":str(ev.DATE.min()),"date_max":str(ev.DATE.max()),"path":str(RAW/"corporate_events.csv"),"source":"NSE official corporate-announcements API","url":direct_url or "preserved NSE disclosure payload","note":"Original publication timestamps normalized to ISO-8601 UTC; exact attachment or official query URL retained."}
+  report["groups"]["corporate_events"]={"status":"AVAILABLE","rows":len(ev),"unique_symbols":int(ev.SYMBOL.nunique()),"date_min":str(ev.DATE.min()),"date_max":str(ev.DATE.max()),"path":str(RAW/"corporate_events.csv"),"source":"NSE official corporate-announcements API/archive","url":direct_url or "preserved official NSE corporate announcements","note":"Source-backed publication timestamps normalized to ISO-8601 UTC; filing identity deduplicated without collapsing distinct same-day events."}
  else:
   report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"reason":"No valid official NSE rows with symbol, subject, publication timestamp and source URL","attempted_url":direct_url}
  # Try official NSE FPI/DII API. Schema must map; failure is explicitly retained.
