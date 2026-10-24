@@ -645,7 +645,7 @@ def main():
       "quality_filter":"Only explicit market-relevant title keywords plus trusted publisher domain; broad-query false positives are excluded.",
       "warning":"PUBLISHED_AT/EVENT_DATE are publication-time proxies, not verified occurrence timestamps; this remains a media-publication event study, not causal identification."}
     for name,endpoint,params in [
-      ("corporate_events","/api/corporate-announcements",{"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
+      ("corporate_events","/api/corporate-announcements",{"index":"equities","from_date":max(start,end-timedelta(days=365)).strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")}),
       ("fpi_dii_flows","/api/fiidiiTradeReact",{}),
     ]:
         data,detail=try_nse_json(endpoint,params,start,end)
