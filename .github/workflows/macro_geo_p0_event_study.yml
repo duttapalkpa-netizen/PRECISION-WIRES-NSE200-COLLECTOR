@@ -3,7 +3,7 @@ name: Audit-only Macro Geo P0 Collection and Event Study
 on:
   workflow_dispatch:
   push:
-    branches: [audit/prospective-selector-tracking]
+    branches: [audit/prospective-selector-tracking, audit/run93-corrective-fixes]
     paths:
       - "pipeline/macro_geo_collect_p0.py"
       - "pipeline/macro_geo_repair_p0.py"
@@ -41,7 +41,7 @@ jobs:
       - name: Checkout audit branch only
         uses: actions/checkout@v4
         with:
-          ref: audit/prospective-selector-tracking
+          ref: ${{ github.ref }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -80,7 +80,7 @@ jobs:
               except Exception as exc:
                   print(f"cache validation failed: {type(exc).__name__}: {exc}")
           with open(__import__("os").environ["GITHUB_OUTPUT"],"a") as f:
-              f.write("reuse_panel="+("true" if ok else "false")+"\\n")
+              f.write("reuse_panel="+("true" if ok else "false")+"\n")
           PY
       - name: Acquire 200 NSE equity sessions from official archives
         if: steps.panel_cache_check.outputs.reuse_panel != 'true'
