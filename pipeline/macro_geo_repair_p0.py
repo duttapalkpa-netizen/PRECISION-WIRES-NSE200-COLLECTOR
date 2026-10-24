@@ -16,24 +16,31 @@ import requests
 RAW=Path("data/external"); RAW.mkdir(parents=True,exist_ok=True)
 REPORT=Path("outputs/macro_geo/p0_repair_report.json"); REPORT.parent.mkdir(parents=True,exist_ok=True)
 EQUITY_PANEL=Path("data/processed/nse_eq_200_sessions.csv")
+BENCHMARK_PANEL=Path("data/external/benchmark_indices.csv")
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/132 Safari/537.36"
 def p0_window():
- """Bound P0 macro retrieval to the available 200-session research backbone.
+ """Bound macro retrieval to a real observed research-panel date range.
 
- Historical regime studies must use their own separately bounded job; a P0
- coverage check should not repeatedly download two decades of observations.
+ Prefer the canonical NSE equity panel. In clean audit runners where that
+ dataset is not present, use observed dates from the NSE benchmark archive,
+ never wall-clock dates or fabricated market sessions. Historical regime
+ studies remain separate from this bounded P0 retrieval.
  """
- if not EQUITY_PANEL.exists():
-  raise RuntimeError("Cannot bound P0 series: 200-session NSE equity panel is missing")
- panel=pd.read_csv(EQUITY_PANEL,usecols=lambda c: str(c).strip().upper()=="DATE")
+ source=EQUITY_PANEL if EQUITY_PANEL.exists() else BENCHMARK_PANEL
+ if not source.exists():
+  raise RuntimeError("Cannot bound P0 series: neither NSE equity panel nor benchmark index archive exists")
+ panel=pd.read_csv(source,usecols=lambda c: str(c).strip().upper()=="DATE")
  if panel.empty or "DATE" not in panel.columns:
-  raise RuntimeError("Cannot bound P0 series: equity panel has no DATE rows")
+  raise RuntimeError("Cannot bound P0 series: selected panel has no DATE rows")
  dates=pd.to_datetime(panel["DATE"],errors="coerce").dropna()
- if dates.empty: raise RuntimeError("Cannot bound P0 series: equity panel DATE values are invalid")
- # Pad the panel's first date by 30 calendar days for macro context and its
- # last date by 3 days; do not use the wall clock to manufacture market rows.
- return (max(pd.Timestamp("1990-01-01").date(), (dates.min().date()-timedelta(days=30))),
-         min(datetime.now(timezone.utc).date(), dates.max().date()+timedelta(days=3)))
+ if dates.empty: raise RuntimeError("Cannot bound P0 series: selected panel DATE values are invalid")
+ # Use up to 200 distinct observed sessions, with a 30-calendar-day macro
+ # lookback and 3-day freshness pad. The fallback is explicitly benchmark-
+ # bounded and does not claim to be the NSE-200 stock universe.
+ sessions=sorted(dates.dt.date.unique())
+ recent=sessions[-200:]
+ return (max(pd.Timestamp("1990-01-01").date(), recent[0]-timedelta(days=30)),
+         min(datetime.now(timezone.utc).date(), recent[-1]+timedelta(days=3)))
 
 def fred(series_id,label,outfile):
  url="https://fred.stlouisfed.org/graph/fredgraph.csv"
