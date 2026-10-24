@@ -136,36 +136,58 @@ def main():
     report["groups"][name]=fallback
    except Exception as fallback_error:
     report["groups"][name]={"status":"BLOCKED","rows":0,"primary_error":primary_error,"fallback_error":type(fallback_error).__name__+": "+str(fallback_error)[:220]}
- # NSE announcement rows were fetched and preserved by the quarterly collector.
+ # Prefer preserved NSE result disclosures, then call the documented NSE
+ # corporate-announcements endpoint directly with a bounded recent date range.
  source=Path("data/raw/quarterly_results_raw_responses/result_disclosure.json")
+ payload_rows=[]
  if source.exists():
   try:
-   payload=json.loads(source.read_text(encoding="utf-8")); rows=payload.get("payload",[])
-   if isinstance(rows,dict):
-    for k in ("data","rows","results"):
-     if isinstance(rows.get(k),list): rows=rows[k]; break
-   normalized=[]
-   for row in rows if isinstance(rows,list) else []:
-    def pick(*keys):
-     return next((row.get(k) for k in keys if row.get(k) not in (None,"")), "")
-    symbol=pick("symbol","sm_symbol","ticker"); desc=pick("subject","purpose","description","desc","attchmntText")
-    stamp=pick("broadcastDateTime","broadcastDate","broadcast_date","an_dt","sort_date","date")
-    stamp_parsed=pd.to_datetime(stamp,errors="coerce",dayfirst=True,utc=True)
-    if pd.isna(stamp_parsed): continue
-    stamp=stamp_parsed.isoformat()
-    event_date=stamp_parsed.date().isoformat()
-    link=pick("attchmntFile","attachment","attachmentUrl","detailsUrl","xbrl","pdfUrl")
-    if symbol and desc and stamp and link:
-     if str(link).startswith("/"): link="https://www.nseindia.com"+str(link)
-     normalized.append({"DATE":event_date,"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),"PUBLISHED_AT":stamp,
-      "SOURCE_URL":str(link),"SOURCE":"NSE corporate announcements"})
-   ev=pd.DataFrame(normalized)
-   if not ev.empty:
-    ev.to_csv(RAW/"corporate_events.csv",index=False)
-    report["groups"]["corporate_events"]={"status":"AVAILABLE","rows":len(ev),"path":str(RAW/"corporate_events.csv"),"source":"NSE corporate announcements","note":"Publication timestamps normalized to ISO-8601 UTC; source URL retained. Event semantics still require downstream classification."}
-   else: report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"reason":"No rows with symbol, description, publication timestamp and attachment URL"}
-  except Exception as e: report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"error":type(e).__name__+": "+str(e)[:250]}
- else: report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"reason":"NSE raw disclosure response missing"}
+   payload=json.loads(source.read_text(encoding="utf-8")); payload_rows=payload.get("payload",[])
+   if isinstance(payload_rows,dict):
+    payload_rows=next((payload_rows[k] for k in ("data","rows","results") if isinstance(payload_rows.get(k),list)),[])
+   if not isinstance(payload_rows,list): payload_rows=[]
+  except Exception: payload_rows=[]
+ direct_url=""
+ if not payload_rows:
+  try:
+   start,end=p0_window()
+   # Corporate filing API returns broadcast time, symbol, subject and attachment metadata.
+   # Do not bypass access controls: an HTTP denial remains a source failure.
+   sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"https://www.nseindia.com/companies-listing/corporate-filings-announcements"})
+   home=sess.get("https://www.nseindia.com/",timeout=(8,20)); home.raise_for_status()
+   direct_url="https://www.nseindia.com/api/corporate-announcements"
+   resp=sess.get(direct_url,params={"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")},
+      timeout=(8,35)); resp.raise_for_status()
+   direct_payload=resp.json()
+   payload_rows=direct_payload if isinstance(direct_payload,list) else next((direct_payload[k] for k in ("data","payload","results") if isinstance(direct_payload,dict) and isinstance(direct_payload.get(k),list)),[])
+  except Exception as exc:
+   report["groups"]["corporate_events_api_attempt"]={"status":"BLOCKED","error":type(exc).__name__+": "+str(exc)[:220],"url":direct_url}
+ normalized=[]
+ for row in payload_rows:
+  if not isinstance(row,dict): continue
+  def pick(*keys):
+   return next((row.get(k) for k in keys if row.get(k) not in (None,"")), "")
+  symbol=pick("symbol","sm_symbol","ticker","symbolName")
+  desc=pick("subject","purpose","description","desc","attchmntText","announcementType")
+  stamp=pick("broadcastDateTime","broadcastDate","broadcast_date","an_dt","sort_date","date","disseminationDateTime")
+  stamp_parsed=pd.to_datetime(stamp,errors="coerce",dayfirst=True,utc=True)
+  if pd.isna(stamp_parsed) or not symbol or not desc: continue
+  link=pick("attchmntFile","attachment","attachmentUrl","detailsUrl","xbrl","pdfUrl","url")
+  if str(link).startswith("/"): link="https://www.nseindia.com"+str(link)
+  # The exact query URL is retained when an announcement has no attachment URL;
+  # this identifies the official disclosure record without inventing an attachment.
+  source_url=str(link) if link else direct_url
+  if not source_url: continue
+  normalized.append({"DATE":stamp_parsed.date().isoformat(),"SYMBOL":str(symbol).upper(),"EVENT_TYPE":str(desc),
+   "PUBLISHED_AT":stamp_parsed.isoformat(),"SOURCE_URL":source_url,"SOURCE":"NSE corporate announcements",
+   "SOURCE_RECORD_ID":str(pick("seq_id","id","announcementId","broadcastId"))})
+ ev=pd.DataFrame(normalized)
+ if not ev.empty:
+  ev=ev.drop_duplicates(["DATE","SYMBOL","EVENT_TYPE","SOURCE_URL"]).sort_values(["PUBLISHED_AT","SYMBOL"])
+  ev.to_csv(RAW/"corporate_events.csv",index=False)
+  report["groups"]["corporate_events"]={"status":"AVAILABLE","rows":len(ev),"unique_symbols":int(ev.SYMBOL.nunique()),"date_min":str(ev.DATE.min()),"date_max":str(ev.DATE.max()),"path":str(RAW/"corporate_events.csv"),"source":"NSE official corporate-announcements API","url":direct_url or "preserved NSE disclosure payload","note":"Original publication timestamps normalized to ISO-8601 UTC; exact attachment or official query URL retained."}
+ else:
+  report["groups"]["corporate_events"]={"status":"BLOCKED","rows":0,"reason":"No valid official NSE rows with symbol, subject, publication timestamp and source URL","attempted_url":direct_url}
  # Try official NSE FPI/DII API. Schema must map; failure is explicitly retained.
  endpoints=["/api/fiidiiTradeReact","/api/fiidiiTradeReact?"]
  sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"application/json,*/*","Referer":"https://www.nseindia.com/market-data/fii-dii"})
@@ -191,8 +213,15 @@ def main():
     else: errors.append("empty NSE response")
    except Exception as e: errors.append(type(e).__name__+": "+str(e)[:200])
   if flow is not None and not flow.empty:
+   flow["DATE"]=pd.to_datetime(flow["DATE"],errors="coerce",dayfirst=True).dt.date.astype("string")
+   flow=flow.dropna(subset=["DATE","GROUP","NET_VALUE"]).drop_duplicates(["DATE","GROUP"]).sort_values(["DATE","GROUP"])
    flow.to_csv(RAW/"fpi_dii_flows.csv",index=False)
-   flow_meta={"status":"AVAILABLE","rows":len(flow),"path":str(RAW/"fpi_dii_flows.csv"),"source":"NSE official API","url":flow.SOURCE_URL.iloc[0]}
+   unique_dates=int(flow["DATE"].nunique())
+   span_days=(pd.to_datetime(flow["DATE"],errors="coerce").max()-pd.to_datetime(flow["DATE"],errors="coerce").min()).days if unique_dates>1 else 0
+   if unique_dates>=60 and span_days>=90:
+    flow_meta={"status":"AVAILABLE","rows":len(flow),"unique_dates":unique_dates,"span_days":span_days,"path":str(RAW/"fpi_dii_flows.csv"),"source":"NSE official API","url":flow.SOURCE_URL.iloc[0]}
+   else:
+    flow_meta={"status":"BLOCKED_INSUFFICIENT_HISTORICAL_COVERAGE","rows":len(flow),"unique_dates":unique_dates,"span_days":span_days,"path":str(RAW/"fpi_dii_flows.csv"),"source":"NSE official API","url":flow.SOURCE_URL.iloc[0],"reason":"Requires >=60 distinct dated observations spanning >=90 calendar days; snapshot rows do not qualify"}
   else: flow_meta={"status":"BLOCKED","rows":0,"reason":"; ".join(errors)}
  except Exception as e: flow_meta={"status":"BLOCKED","rows":0,"error":type(e).__name__+": "+str(e)[:250]}
  report["groups"]["fpi_dii_flows"]=flow_meta
