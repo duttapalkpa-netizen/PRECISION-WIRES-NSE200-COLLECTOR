@@ -91,14 +91,30 @@ def main():
                    "rows":by_name.get(name,{}).get("rows",0),
                    "selected_path":by_name.get(name,{}).get("selected_path","")} for name in p0_required}
     # Domain-specific P0 evidence gates: a two-row flow snapshot is not
-    # historical coverage, and macro series need explicit data-date freshness.
+    # historical coverage. Compare macro-series freshness with the latest
+    # observed market session, not wall-clock "today" (weekends/holidays and
+    # source publication lags must not create false stale-data failures).
+    reference_date = None
+    for candidate in (ROOT/"data/external/market_panel.csv", ROOT/"data/processed/nse_eq_200_sessions.csv"):
+        if candidate.exists():
+            try:
+                ref_df = pd.read_csv(candidate, usecols=lambda c: str(c).strip().upper()=="DATE")
+                ref_dates = pd.to_datetime(ref_df.iloc[:, 0], errors="coerce").dropna() if not ref_df.empty else pd.Series(dtype="datetime64[ns]")
+                if not ref_dates.empty:
+                    reference_date = ref_dates.max().tz_localize(None).normalize() if ref_dates.max().tzinfo else ref_dates.max().normalize()
+                    break
+            except Exception:
+                pass
     for name in ("crude_oil","usd_inr"):
         info=p0_rows.get(name,{})
         src=next((r for r in rows if r["source"]==name),{})
         if src.get("date_max"):
             try:
-                data_age=(now.tz_localize(None).normalize()-pd.Timestamp(src["date_max"])).days
-                info["data_age_days"]=int(data_age)
+                source_date = pd.Timestamp(src["date_max"]).normalize()
+                reference = reference_date if reference_date is not None else now.tz_localize(None).normalize()
+                data_age=int((reference-source_date).days)
+                info["freshness_reference_date"]=reference.date().isoformat()
+                info["data_age_days"]=data_age
                 info["freshness_status"]="FRESH" if 0 <= data_age <= 3 else "STALE_OR_FUTURE"
                 if info["freshness_status"]!="FRESH": info["status"]="DATA_QUALITY_WARN"
             except Exception:
