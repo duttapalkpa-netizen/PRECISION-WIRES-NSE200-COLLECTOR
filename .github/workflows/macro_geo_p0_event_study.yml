@@ -89,7 +89,7 @@ jobs:
         if: steps.panel_cache_check.outputs.reuse_panel != 'true'
         run: python collector/build_200_sessions.py
       - name: Cache validated canonical panel for later runs
-        if: always() && steps.panel_cache_check.outputs.reuse_panel == 'false'
+        if: success() && steps.panel_cache_check.outputs.reuse_panel == 'false'
         uses: actions/cache/save@v4
         with:
           path: |
