@@ -38,6 +38,17 @@ class MacroGeoTests(unittest.TestCase):
         self.assertIsNone(collector.classify("I review smartwatches and my favorite Garmin is on sale", "ENERGY_SHIPPING_NEWS"))
         self.assertEqual(collector.classify("Oil tanker traffic disrupted near Strait of Hormuz", "ENERGY_SHIPPING_NEWS"), "ENERGY_SHIPPING_NEWS")
 
+    def test_gdelt_date_slices_are_bounded_and_cover_full_range(self):
+        from datetime import date, timedelta
+        slices=collector.build_date_slices(date(2026, 7, 1), date(2026, 9, 28), max_days=7)
+        self.assertEqual(slices[0][0], date(2026, 7, 1))
+        self.assertEqual(slices[-1][1], date(2026, 9, 28))
+        self.assertEqual(slices[0][1], date(2026, 7, 7))
+        self.assertTrue(all((end-start).days < 7 for start,end in slices))
+        self.assertTrue(all(slices[i][1]+timedelta(days=1)==slices[i+1][0] for i in range(len(slices)-1)))
+        with self.assertRaises(ValueError):
+            collector.build_date_slices(date(2026, 1, 1), date(2026, 1, 2), max_days=0)
+
     def test_only_trusted_publisher_domains_are_kept(self):
         self.assertTrue(collector.is_trusted_news_url("https://www.reuters.com/world/example"))
         self.assertTrue(collector.is_trusted_news_url("https://www.bbc.co.uk/news/example"))
