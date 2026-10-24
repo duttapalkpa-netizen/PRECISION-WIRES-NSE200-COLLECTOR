@@ -301,9 +301,11 @@ def is_trusted_news_url(url):
 def fetch_gdelt_events(start,end):
     """Collect timestamped trusted media mentions from GDELT plus public publisher RSS feeds."""
     event_start=max(start,end-timedelta(days=90))
+    # One broad but explicit query per 30-day slice avoids doubling GDELT calls
+    # and triggering repeated 429/timeout cycles. Titles are still independently
+    # filtered by classify() and trusted publisher domains before acceptance.
     queries=[
-      ("GEOPOLITICAL_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR missile OR invasion OR ceasefire)'),
-      ("ENERGY_SHIPPING_NEWS",'(crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)'),
+      ("GLOBAL_MACRO_GEO_NEWS",'(war OR conflict OR military OR sanctions OR tariff OR "trade war" OR "Iran Israel" OR "Russia Ukraine" OR "India Pakistan" OR missile OR invasion OR ceasefire OR crude OR tanker OR shipping OR freight OR "oil supply" OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)')
     ]
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
@@ -349,11 +351,11 @@ def fetch_gdelt_events(start,end):
         metrics["gdelt"]["requests_attempted"]+=1
         for attempt in range(3):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=30)
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,18))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
-                    try: wait=min(90,max(10,int(float(retry_after))))
-                    except (TypeError,ValueError): wait=15*(attempt+1)
+                    try: wait=min(30,max(5,int(float(retry_after))))
+                    except (TypeError,ValueError): wait=5*(attempt+1)
                     last_error=f"HTTP 429 rate limit; slice {slice_start}/{slice_end}; retry {attempt+1}/3 after {wait}s"
                     if attempt<2:
                         time.sleep(wait)
@@ -383,12 +385,12 @@ def fetch_gdelt_events(start,end):
                 break
             except Exception as exc:
                 last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
-                if attempt<2: time.sleep(8*(attempt+1))
+                if attempt<2: time.sleep(3*(attempt+1))
         if last_error:
             metrics["gdelt"]["request_failures"]+=1
             failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
               "slice_end":slice_end.isoformat(),"error":last_error})
-        time.sleep(8.0)
+        time.sleep(1.0)
 
     # Public RSS/Atom feeds are a fallback and are audited independently.
     # Publication times are feed publication timestamps, not verified event-occurrence times.
