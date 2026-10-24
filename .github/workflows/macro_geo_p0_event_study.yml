@@ -49,12 +49,54 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
+      - name: Restore prior raw NSE sessions and canonical panel
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
       - name: Test event-study timestamp and data-quality logic
         run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 -v
+      - name: Validate cached canonical panel before reuse
+        id: panel_cache_check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          p=Path("data/processed/nse_eq_200_sessions.csv")
+          ok=False
+          if p.exists():
+              try:
+                  d=pd.read_csv(p, usecols=lambda c: str(c).strip().upper()=="DATE")
+                  dates=pd.to_datetime(d.iloc[:,0], errors="coerce").dropna().dt.normalize()
+                  unique=sorted(dates.unique())
+                  age=(pd.Timestamp.now(tz="UTC").date()-pd.Timestamp(unique[-1]).date()).days if unique else 9999
+                  ok=len(unique)>=200 and -1<=age<=5
+                  print({"unique_sessions":len(unique),"latest_session":str(pd.Timestamp(unique[-1]).date()) if unique else None,"calendar_age_days":age,"reuse":ok})
+              except Exception as exc:
+                  print(f"cache validation failed: {type(exc).__name__}: {exc}")
+          with open(__import__("os").environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("reuse_panel="+("true" if ok else "false")+"\\n")
+          PY
       - name: Acquire 200 NSE equity sessions from official archives
+        if: steps.panel_cache_check.outputs.reuse_panel != 'true'
         run: python collector/nse_download.py --sessions 200 --lookback-days 500
       - name: Build canonical NSE 200-session equity panel
+        if: steps.panel_cache_check.outputs.reuse_panel != 'true'
         run: python collector/build_200_sessions.py
+      - name: Cache validated canonical panel for later runs
+        if: always() && steps.panel_cache_check.outputs.reuse_panel == 'false'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-${{ github.run_id }}
       - name: Collect P0 market series and timestamped media evidence
         run: python pipeline/macro_geo_collect_p0.py
       - name: Collect NSE corporate disclosures for P0 event normalization
