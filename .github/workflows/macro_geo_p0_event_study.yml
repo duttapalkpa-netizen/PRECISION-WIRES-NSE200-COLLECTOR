@@ -14,6 +14,7 @@ on:
       - "pipeline/macro_geo_four_group_validation.py"
       - "pipeline/macro_geo_factor_coverage_audit.py"
       - "pipeline/macro_geo_event_study.py"
+      - "pipeline/macro_geo_event_level_audit.py"
       - "pipeline/macro_geo_hard_gate.py"
       - "pipeline/historical_regime_event_study.py"
       - "pipeline/sector_rotation_features.py"
@@ -148,6 +149,8 @@ jobs:
             data/external/fpi_dii_flows.csv
             outputs/macro_geo/**
             outputs/macro_geo/hard_gate_report.json
+            outputs/macro_geo/event_level_window_audit.csv
+            outputs/macro_geo/event_level_window_audit.json
             outputs/macro_geo/nsdl_fpi_dii_collection.json
             config/macro_geo_historical_regimes.csv
             config/macro_geo_sector_transmission_map.csv
