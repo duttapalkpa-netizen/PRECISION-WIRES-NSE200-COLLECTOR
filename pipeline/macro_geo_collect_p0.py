@@ -298,6 +298,19 @@ def is_trusted_news_url(url):
     except Exception:
         return False
 
+def build_date_slices(start, end, max_days=7):
+    """Return bounded, inclusive date slices; smaller windows reduce slow GDELT query cost."""
+    if max_days < 1:
+        raise ValueError("max_days must be >= 1")
+    slices=[]
+    cursor=start
+    while cursor<=end:
+        slice_end=min(end,cursor+timedelta(days=max_days-1))
+        slices.append((cursor,slice_end))
+        cursor=slice_end+timedelta(days=1)
+    return slices
+
+
 def fetch_gdelt_events(start,end):
     """Collect timestamped trusted media mentions from GDELT plus public publisher RSS feeds."""
     event_start=max(start,end-timedelta(days=90))
@@ -309,17 +322,15 @@ def fetch_gdelt_events(start,end):
     ]
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
-      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0},
+      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0,
+      "slice_days":7,"connect_timeout_seconds":8,"read_timeout_seconds":45},
       "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
       "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
       "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
     events=[]; failures=[]
-    slices=[]; cursor=event_start
-    while cursor<=end:
-        # 14-day windows bound GDELT search cost and make failures diagnosable;
-        # a 90-day history still covers matured post-publication close windows.
-        slice_end=min(end,cursor+timedelta(days=13))
-        slices.append((cursor,slice_end)); cursor=slice_end+timedelta(days=1)
+    # Seven-day windows replace the 14-day requests that repeatedly timed out in Run #93.
+    # Keep the full 90-day lookback; do not replace missing history with recent headlines.
+    slices=build_date_slices(event_start,end,max_days=7)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE",
       "EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     def add_article(title,url,published,provider,group,evidence,basis,confidence,metric_group,source_country=""):
@@ -353,7 +364,7 @@ def fetch_gdelt_events(start,end):
         metrics["gdelt"]["requests_attempted"]+=1
         for attempt in range(3):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,35))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,45))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
                     try: wait=min(30,max(5,int(float(retry_after))))
