@@ -118,9 +118,11 @@ class MacroGeoTests(unittest.TestCase):
     def test_p0_freshness_uses_latest_market_session_not_wall_clock(self):
         # On Saturday 2026-10-24, a valid 2026-10-20 Brent observation is
         # three calendar days behind Friday's 2026-10-23 market close.
-        reference = pd.Timestamp("2026-10-23")
-        source = pd.Timestamp("2026-10-20")
-        self.assertEqual(int((reference - source).days), 3)
-        self.assertLessEqual(int((reference - source).days), 3)
+        result = coverage.macro_series_freshness("2026-10-20", "2026-10-23", max_age_days=3)
+        self.assertEqual(result, {"data_age_days": 3, "freshness_status": "FRESH"})
+        stale = coverage.macro_series_freshness("2026-10-19", "2026-10-23", max_age_days=3)
+        self.assertEqual(stale["freshness_status"], "STALE_OR_FUTURE")
+        future = coverage.macro_series_freshness("2026-10-24", "2026-10-23", max_age_days=3)
+        self.assertEqual(future["freshness_status"], "STALE_OR_FUTURE")
 
 if __name__=="__main__": unittest.main()
