@@ -298,6 +298,19 @@ def is_trusted_news_url(url):
     except Exception:
         return False
 
+def build_date_slices(start, end, max_days=7):
+    """Return bounded, inclusive date slices; smaller windows reduce slow GDELT query cost."""
+    if max_days < 1:
+        raise ValueError("max_days must be >= 1")
+    slices=[]
+    cursor=start
+    while cursor<=end:
+        slice_end=min(end,cursor+timedelta(days=max_days-1))
+        slices.append((cursor,slice_end))
+        cursor=slice_end+timedelta(days=1)
+    return slices
+
+
 def fetch_gdelt_events(start,end):
     """Collect timestamped trusted media mentions from GDELT plus public publisher RSS feeds."""
     event_start=max(start,end-timedelta(days=90))
@@ -309,17 +322,15 @@ def fetch_gdelt_events(start,end):
     ]
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
-      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0},
+      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0,
+      "slice_days":7,"connect_timeout_seconds":5,"read_timeout_seconds":15,"maxrecords_per_slice":25,"attempts_per_slice":2},
       "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
       "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
       "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
     events=[]; failures=[]
-    slices=[]; cursor=event_start
-    while cursor<=end:
-        # 14-day windows bound GDELT search cost and make failures diagnosable;
-        # a 90-day history still covers matured post-publication close windows.
-        slice_end=min(end,cursor+timedelta(days=13))
-        slices.append((cursor,slice_end)); cursor=slice_end+timedelta(days=1)
+    # Seven-day windows replace the 14-day requests that repeatedly timed out in Run #93.
+    # Keep the full 90-day lookback; do not replace missing history with recent headlines.
+    slices=build_date_slices(event_start,end,max_days=7)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE",
       "EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     def add_article(title,url,published,provider,group,evidence,basis,confidence,metric_group,source_country=""):
@@ -346,20 +357,20 @@ def fetch_gdelt_events(start,end):
         m["accepted_articles"]+=1
     for slice_start,slice_end in slices:
       for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":50,"sort":"DateDesc",
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":25,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
           "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
-        for attempt in range(3):
+        for attempt in range(2):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,35))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,15))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
                     try: wait=min(30,max(5,int(float(retry_after))))
                     except (TypeError,ValueError): wait=5*(attempt+1)
                     last_error=f"HTTP 429 rate limit; slice {slice_start}/{slice_end}; retry {attempt+1}/3 after {wait}s"
-                    if attempt<2:
+                    if attempt<1:
                         time.sleep(wait)
                         continue
                     break
@@ -387,7 +398,7 @@ def fetch_gdelt_events(start,end):
                 break
             except Exception as exc:
                 last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
-                if attempt<2: time.sleep(3*(attempt+1))
+                if attempt<1: time.sleep(2)
         if last_error:
             metrics["gdelt"]["request_failures"]+=1
             failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
