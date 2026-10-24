@@ -22,18 +22,18 @@ class MacroGeoP0WindowTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             benchmark = Path(tmp) / "benchmark.csv"
             pd.DataFrame({"DATE": ["2026-01-05", "2026-10-16", "2026-10-16"]}).to_csv(benchmark, index=False)
-            with patch.object(repair, "EQUITY_PANEL", Path(tmp) / "missing_equity.csv"), \\
-                 patch.object(repair, "BENCHMARK_PANEL", benchmark):
-                start, end = repair.p0_window()
+            with patch.object(repair, "EQUITY_PANEL", Path(tmp) / "missing_equity.csv"):
+                with patch.object(repair, "BENCHMARK_PANEL", benchmark):
+                    start, end = repair.p0_window()
             self.assertEqual(start.isoformat(), "2025-12-06")
             self.assertEqual(end, min(datetime.now(timezone.utc).date(), pd.Timestamp("2026-10-16").date() + timedelta(days=3)))
 
     def test_p0_window_blocks_if_both_backbones_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
-            with patch.object(repair, "EQUITY_PANEL", Path(tmp) / "missing_equity.csv"), \\
-                 patch.object(repair, "BENCHMARK_PANEL", Path(tmp) / "missing_benchmark.csv"):
-                with self.assertRaisesRegex(RuntimeError, "neither NSE equity panel nor benchmark index archive"):
-                    repair.p0_window()
+            with patch.object(repair, "EQUITY_PANEL", Path(tmp) / "missing_equity.csv"):
+                with patch.object(repair, "BENCHMARK_PANEL", Path(tmp) / "missing_benchmark.csv"):
+                    with self.assertRaisesRegex(RuntimeError, "neither NSE equity panel nor benchmark index archive"):
+                        repair.p0_window()
 
 
 if __name__ == "__main__":
