@@ -12,7 +12,7 @@ on:
       - "pipeline/macro_geo_source_coverage.py"
       - "pipeline/macro_geo_four_group_validation.py"
       - "pipeline/macro_geo_factor_coverage_audit.py"
-      - "pipeline/macro_geo_event_study.py"
+      - "pipeline/macro_geo_event_study.py"\n      - "pipeline/macro_geo_hard_gate.py"
       - "pipeline/historical_regime_event_study.py"
       - "pipeline/sector_rotation_features.py"
       - "config/macro_factor_registry.csv"
@@ -91,7 +91,7 @@ jobs:
             data/external/fx_carry.csv
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
-            outputs/macro_geo/**
+            outputs/macro_geo/**\n            outputs/macro_geo/hard_gate_report.json
             config/macro_geo_historical_regimes.csv
             config/macro_geo_sector_transmission_map.csv
           if-no-files-found: warn
