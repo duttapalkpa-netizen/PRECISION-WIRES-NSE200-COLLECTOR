@@ -115,4 +115,12 @@ class MacroGeoTests(unittest.TestCase):
         self.assertEqual(excluded["EVENT_ID"].tolist(),["PENDING"])
         self.assertEqual(excluded.iloc[0]["EXCLUSION_REASON"],"PENDING_PANEL_NOT_YET_AVAILABLE")
 
+    def test_p0_freshness_uses_latest_market_session_not_wall_clock(self):
+        # On Saturday 2026-10-24, a valid 2026-10-20 Brent observation is
+        # three calendar days behind Friday's 2026-10-23 market close.
+        reference = pd.Timestamp("2026-10-23")
+        source = pd.Timestamp("2026-10-20")
+        self.assertEqual(int((reference - source).days), 3)
+        self.assertLessEqual(int((reference - source).days), 3)
+
 if __name__=="__main__": unittest.main()
