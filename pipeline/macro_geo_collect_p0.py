@@ -53,10 +53,20 @@ HEADERS={"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"h
 session=requests.Session(); session.headers.update(HEADERS)
 
 def session_bounds():
-    # Macro/Geo research has its own long-history requirement; never inherit the
-    # 200-session equity file's short date range. Keep the equity cutoff separate.
+    # P0 coverage and the first event-study pass must be bounded to observed
+    # NSE sessions. Long historical regimes are computed by the separate
+    # historical_regime_event_study.py workflow; do not make every daily run
+    # issue hundreds of FRED chunks or thousands of archive requests.
     end=datetime.now(timezone.utc).date()
-    return datetime(2006,1,1).date(),end
+    if PROCESSED.exists():
+        panel=pd.read_csv(PROCESSED, usecols=lambda c: str(c).strip().upper()=="DATE")
+        dates=pd.to_datetime(panel.iloc[:,0], errors="coerce").dropna() if not panel.empty else pd.Series(dtype="datetime64[ns]")
+        if not dates.empty:
+            sessions=sorted(dates.dt.date.unique())
+            recent=sessions[-200:]
+            return (max(datetime(1990,1,1).date(), recent[0]-timedelta(days=30)),
+                    min(end, recent[-1]+timedelta(days=3)))
+    raise RuntimeError("P0 collection blocked: canonical NSE 200-session panel missing or has no valid dates")
 
 def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
