@@ -50,6 +50,10 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Test event-study timestamp and data-quality logic
         run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 -v
+      - name: Acquire 200 NSE equity sessions from official archives
+        run: python collector/nse_download.py --sessions 200 --lookback-days 500
+      - name: Build canonical NSE 200-session equity panel
+        run: python collector/build_200_sessions.py
       - name: Collect P0 market series and timestamped media evidence
         run: python pipeline/macro_geo_collect_p0.py
       - name: Collect NSE corporate disclosures for P0 event normalization
