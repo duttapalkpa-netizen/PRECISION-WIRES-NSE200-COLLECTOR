@@ -80,8 +80,7 @@ class MacroGeoTests(unittest.TestCase):
                 return FakeResponse(url, xml)
             return FakeResponse(url, b"blocked", status=403)
 
-        with patch.object(collector.session, "get", side_effect=fake_get), \\
-             patch.object(collector.time, "sleep", return_value=None):
+        with patch.object(collector.session, "get", side_effect=fake_get), patch.object(collector.time, "sleep", return_value=None):
             events, failures, start, metrics = collector.fetch_gdelt_events(
                 date(2026, 7, 1), date(2026, 10, 24))
 
