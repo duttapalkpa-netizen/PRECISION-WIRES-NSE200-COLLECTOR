@@ -155,11 +155,11 @@ def main():
    # Do not bypass access controls: an HTTP denial remains a source failure.
    sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"application/json,text/plain,*/*","Referer":"https://www.nseindia.com/companies-listing/corporate-filings-announcements"})
    home=sess.get("https://www.nseindia.com/",timeout=(8,20)); home.raise_for_status()
-   direct_url="https://www.nseindia.com/api/corporates-announcements"
+   direct_url="https://www.nseindia.com/api/corporate-announcements"
    resp=sess.get(direct_url,params={"index":"equities","from_date":start.strftime("%d-%m-%Y"),"to_date":end.strftime("%d-%m-%Y")},
       timeout=(8,35)); resp.raise_for_status()
    direct_payload=resp.json()
-   payload_rows=direct_payload if isinstance(direct_payload,list) else next((direct_payload[k] for k in ("data","payload","results") if isinstance(direct_payload,dict) and isinstance(direct_payload.get(k),list)),[])
+   payload_rows=direct_payload if isinstance(direct_payload,list) else next((direct_payload[k] for k in ("data","payload","results","records") if isinstance(direct_payload,dict) and isinstance(direct_payload.get(k),list)),[])
   except Exception as exc:
    report["groups"]["corporate_events_api_attempt"]={"status":"BLOCKED","error":type(exc).__name__+": "+str(exc)[:220],"url":direct_url}
  normalized=[]
@@ -167,12 +167,12 @@ def main():
   if not isinstance(row,dict): continue
   def pick(*keys):
    return next((row.get(k) for k in keys if row.get(k) not in (None,"")), "")
-  symbol=pick("symbol","sm_symbol","ticker","symbolName")
-  desc=pick("subject","purpose","description","desc","attchmntText","announcementType")
-  stamp=pick("broadcastDateTime","broadcastDate","broadcast_date","an_dt","sort_date","date","disseminationDateTime")
+  symbol=pick("symbol","SYMBOL","sm_symbol","SM_SYMBOL","ticker","symbolName","TckrSymb")
+  desc=pick("subject","SUBJECT","purpose","description","desc","attchmntText","attchmnt_text","announcementType","DETAILS")
+  stamp=pick("broadcastDateTime","BROADCAST_DATE_TIME","broadcastDate","broadcast_date","an_dt","sort_date","date","disseminationDateTime","dissemination_date_time","DATE")
   stamp_parsed=pd.to_datetime(stamp,errors="coerce",dayfirst=True,utc=True)
   if pd.isna(stamp_parsed) or not symbol or not desc: continue
-  link=pick("attchmntFile","attachment","attachmentUrl","detailsUrl","xbrl","pdfUrl","url")
+  link=pick("attchmntFile","ATTCHMNTFILE","attachment","attachmentUrl","detailsUrl","xbrl","pdfUrl","url","DETAILS_URL")
   if str(link).startswith("/"): link="https://www.nseindia.com"+str(link)
   # The exact query URL is retained when an announcement has no attachment URL;
   # this identifies the official disclosure record without inventing an attachment.
