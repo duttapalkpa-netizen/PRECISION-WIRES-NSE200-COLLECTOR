@@ -42,6 +42,49 @@ def p0_window():
  return (max(pd.Timestamp("1990-01-01").date(), recent[0]-timedelta(days=30)),
          min(datetime.now(timezone.utc).date(), recent[-1]+timedelta(days=3)))
 
+def fallback_public_series(series_id,label,outfile,start,end):
+ """Use explicitly labelled, auditable public mirrors only when FRED times out."""
+ rows=[]
+ if series_id=="DCOILBRENTEU":
+  url="https://www.eia.gov/dnav/pet/hist_xls/RBRTEd.xls"
+  response=requests.get(url,headers={"User-Agent":UA},timeout=(8,35)); response.raise_for_status()
+  book=pd.ExcelFile(StringIO("")) if False else None
+  from io import BytesIO
+  xls=pd.ExcelFile(BytesIO(response.content),engine="xlrd")
+  found=None
+  for sheet in xls.sheet_names:
+   raw=pd.read_excel(xls,sheet_name=sheet,header=None)
+   for i in range(min(12,len(raw))):
+    vals=[str(v).strip().lower() for v in raw.iloc[i].tolist()]
+    if any(v=="date" for v in vals) and any("brent spot price" in v for v in vals):
+     found=(raw,i); break
+   if found: break
+  if not found: raise RuntimeError("EIA RBRTE workbook schema not recognized")
+  raw,i=found; headers=[str(v).strip() for v in raw.iloc[i].tolist()]
+  df=raw.iloc[i+1:].copy(); df.columns=headers
+  datecol=next((x for x in df.columns if str(x).strip().lower()=="date"),None)
+  valcol=next((x for x in df.columns if "brent spot price" in str(x).lower()),None)
+  if not datecol or not valcol: raise RuntimeError("EIA RBRTE columns missing")
+  for _,r in df.iterrows():
+   dt=pd.to_datetime(r[datecol],errors="coerce"); val=pd.to_numeric(pd.Series([r[valcol]]),errors="coerce").iloc[0]
+   if pd.notna(dt) and pd.notna(val) and start<=dt.date()<=end:
+    rows.append({"DATE":dt.date().isoformat(),"CLOSE":float(val),"SERIES":label,"SOURCE":"US EIA RBRTE daily Brent spot (official XLS)","SOURCE_SERIES":"RBRTE","SOURCE_URL":url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+ elif series_id=="DEXINUS":
+  url="https://raw.githubusercontent.com/the-solipsist/rbi-forex-reference-rates/main/rbi_forex_reference_rates_long.csv"
+  response=requests.get(url,headers={"User-Agent":UA},timeout=(8,35)); response.raise_for_status()
+  df=pd.read_csv(StringIO(response.content.decode("utf-8-sig",errors="replace")))
+  df.columns=[str(x).strip().lower() for x in df.columns]
+  if not {"date","currency","rate"}.issubset(df.columns): raise RuntimeError("RBI/FBIL mirror schema mismatch")
+  df=df[df["currency"].astype(str).str.upper().eq("USD")].copy()
+  for _,r in df.iterrows():
+   dt=pd.to_datetime(r["date"],errors="coerce"); val=pd.to_numeric(pd.Series([r["rate"]]),errors="coerce").iloc[0]
+   if pd.notna(dt) and pd.notna(val) and start<=dt.date()<=end:
+    rows.append({"DATE":dt.date().isoformat(),"CLOSE":float(val),"SERIES":label,"SOURCE":"Community mirror of RBI/FBIL reference rates (secondary; not direct RBI feed)","SOURCE_SERIES":"USD_INR_REFERENCE","SOURCE_URL":url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+ if not rows: raise RuntimeError(f"No valid fallback rows for {series_id}")
+ out=pd.DataFrame(rows).drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+ out.to_csv(RAW/outfile,index=False)
+ return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),"source":str(out.SOURCE.iloc[0]),"url":str(out.SOURCE_URL.iloc[0]),"path":str(RAW/outfile)}
+
 def fred(series_id,label,outfile):
  url="https://fred.stlouisfed.org/graph/fredgraph.csv"
  rows=[]; urls=[]; cursor, end_date=p0_window()
@@ -82,8 +125,17 @@ def main():
  try: report["p0_window"]={"start":p0_window()[0].isoformat(),"end":p0_window()[1].isoformat(),"basis":"NSE 200-session panel +/- 30-day lookback and 3-day freshness pad"}
  except Exception as e: report["p0_window"]={"status":"BLOCKED","error":type(e).__name__+": "+str(e)[:250]}
  for name,series,label,file in [("crude_oil","DCOILBRENTEU","BRENT_CRUDE_USD_PER_BBL","brent_crude.csv"),("usd_inr","DEXINUS","USD_INR_INR_PER_USD","usd_inr.csv")]:
-  try: report["groups"][name]=fred(series,label,file)
-  except Exception as e: report["groups"][name]={"status":"BLOCKED","rows":0,"error":type(e).__name__+": "+str(e)[:300]}
+  try:
+   report["groups"][name]=fred(series,label,file)
+  except Exception as e:
+   primary_error=type(e).__name__+": "+str(e)[:220]
+   try:
+    start,end=p0_window()
+    fallback=fallback_public_series(series,label,file,start,end)
+    fallback["primary_error"]=primary_error
+    report["groups"][name]=fallback
+   except Exception as fallback_error:
+    report["groups"][name]={"status":"BLOCKED","rows":0,"primary_error":primary_error,"fallback_error":type(fallback_error).__name__+": "+str(fallback_error)[:220]}
  # NSE announcement rows were fetched and preserved by the quarterly collector.
  source=Path("data/raw/quarterly_results_raw_responses/result_disclosure.json")
  if source.exists():
