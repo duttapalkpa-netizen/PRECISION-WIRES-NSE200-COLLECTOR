@@ -49,6 +49,54 @@ class MacroGeoTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             collector.build_date_slices(date(2026, 1, 1), date(2026, 1, 2), max_days=0)
 
+    def test_gdelt_timeout_falls_back_to_rss_and_preserves_auditable_fields(self):
+        from datetime import date
+        from unittest.mock import patch
+        import requests
+
+        class FakeResponse:
+            def __init__(self, url, content=b"", status=200):
+                self.url=url; self.content=content; self.status_code=status
+                self.headers={}
+            def raise_for_status(self):
+                if self.status_code >= 400:
+                    raise requests.HTTPError(f"HTTP {self.status_code}")
+            def json(self):
+                return {"articles": []}
+            @property
+            def text(self):
+                return self.content.decode("utf-8", errors="replace")
+
+        xml=(b'<?xml version="1.0"?><rss><channel><item>'
+             b'<title>Oil tanker attack disrupts shipping near Strait of Hormuz</title>'
+             b'<link>https://www.bbc.com/news/world-123</link>'
+             b'<pubDate>Fri, 23 Oct 2026 12:30:00 GMT</pubDate>'
+             b'</item></channel></rss>')
+
+        def fake_get(url, *args, **kwargs):
+            if "api.gdeltproject.org" in url:
+                raise requests.Timeout("mock GDELT timeout")
+            if "feeds.bbci.co.uk" in url:
+                return FakeResponse(url, xml)
+            return FakeResponse(url, b"blocked", status=403)
+
+        with patch.object(collector.session, "get", side_effect=fake_get), \\
+             patch.object(collector.time, "sleep", return_value=None):
+            events, failures, start, metrics = collector.fetch_gdelt_events(
+                date(2026, 7, 1), date(2026, 10, 24))
+
+        self.assertGreater(metrics["gdelt"]["request_failures"], 0)
+        self.assertGreaterEqual(metrics["rss"]["successful_feeds"], 1)
+        self.assertEqual(len(events), 1)
+        row=events.iloc[0]
+        self.assertEqual(row["SOURCE_URL"], "https://www.bbc.com/news/world-123")
+        self.assertEqual(row["PUBLISHED_AT"], "2026-10-23T12:30:00+00:00")
+        self.assertEqual(row["EVENT_DATE_BASIS"], "PUBLISHER_FEED_PUBLICATION_TIMESTAMP")
+        self.assertTrue(str(row["EVENT_ID"]).strip())
+        self.assertIn("SOURCE_URL", events.columns)
+        self.assertIn("PUBLISHED_AT", events.columns)
+        self.assertTrue(any(x.get("provider") == "GDELT" for x in failures))
+
     def test_only_trusted_publisher_domains_are_kept(self):
         self.assertTrue(collector.is_trusted_news_url("https://www.reuters.com/world/example"))
         self.assertTrue(collector.is_trusted_news_url("https://www.bbc.co.uk/news/example"))
