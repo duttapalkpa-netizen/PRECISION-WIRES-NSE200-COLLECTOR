@@ -323,7 +323,7 @@ def fetch_gdelt_events(start,end):
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
       "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0,
-      "slice_days":7,"connect_timeout_seconds":8,"read_timeout_seconds":45},
+      "slice_days":7,"connect_timeout_seconds":5,"read_timeout_seconds":15,"maxrecords_per_slice":25,"attempts_per_slice":2},
       "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
       "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
       "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
@@ -357,20 +357,20 @@ def fetch_gdelt_events(start,end):
         m["accepted_articles"]+=1
     for slice_start,slice_end in slices:
       for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":50,"sort":"DateDesc",
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":25,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
-          "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
+          "enddatetime":slice_end.strftime("%Y%m%d")+"235959","maxrecords":25}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
-        for attempt in range(3):
+        for attempt in range(2):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,45))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,15))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
                     try: wait=min(30,max(5,int(float(retry_after))))
                     except (TypeError,ValueError): wait=5*(attempt+1)
                     last_error=f"HTTP 429 rate limit; slice {slice_start}/{slice_end}; retry {attempt+1}/3 after {wait}s"
-                    if attempt<2:
+                    if attempt<1:
                         time.sleep(wait)
                         continue
                     break
@@ -398,7 +398,7 @@ def fetch_gdelt_events(start,end):
                 break
             except Exception as exc:
                 last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
-                if attempt<2: time.sleep(3*(attempt+1))
+                if attempt<1: time.sleep(2)
         if last_error:
             metrics["gdelt"]["request_failures"]+=1
             failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
