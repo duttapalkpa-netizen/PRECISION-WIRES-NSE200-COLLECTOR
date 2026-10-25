@@ -12,6 +12,8 @@ on:
       - "pipeline/quarterly_results_research.py"
       - "qa/test_macro_geo_repair_p0.py"
       - "pipeline/macro_geo_source_coverage.py"
+      - "pipeline/macro_geo_finalize_manifest.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
       - "pipeline/macro_geo_four_group_validation.py"
       - "pipeline/macro_geo_factor_coverage_audit.py"
       - "pipeline/macro_geo_event_study.py"
@@ -63,7 +65,7 @@ jobs:
           restore-keys: |
             macro-geo-nse200-${{ github.ref_name }}-
       - name: Test event-study timestamp and data-quality logic
-        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest -v
       - name: Validate cached canonical panel before reuse
         id: panel_cache_check
         run: |
@@ -116,6 +118,9 @@ jobs:
         run: python pipeline/macro_geo_nsdl_flows.py
       - name: Audit source coverage and data quality
         run: python pipeline/macro_geo_source_coverage.py
+      - name: Reconcile final P0 manifest after repair and source audits
+        if: always()
+        run: python pipeline/macro_geo_finalize_manifest.py
       - name: Strictly validate benchmark, sector, volatility and geopolitical groups
         if: always()
         run: python pipeline/macro_geo_four_group_validation.py
