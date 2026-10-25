@@ -33,6 +33,41 @@ def group_is_available(groups, name):
     return item.get("status") == "AVAILABLE" and rows > 0
 
 
+def reconcile_fpi_dii_repair(repair, nsdl):
+    """Promote only when official NSDL FPI and DII each meet dated-history thresholds."""
+    if repair is None:
+        return None
+    result = dict(repair)
+    groups = dict(result.get("groups", {}))
+    details = (nsdl or {}).get("groups", {})
+    valid = (nsdl or {}).get("source") == "NSDL official public FPI/DII archives"
+    for name in ("FPI", "DII"):
+        item = details.get(name, {})
+        try:
+            valid = valid and int(item.get("unique_dates", 0) or 0) >= 60 and int(item.get("span_days", 0) or 0) >= 90
+        except (TypeError, ValueError):
+            valid = False
+    if valid and (nsdl or {}).get("status") == "AVAILABLE":
+        old = dict(groups.get("fpi_dii_flows", {}))
+        groups["fpi_dii_flows"] = {
+            **old,
+            "status": "AVAILABLE",
+            "rows": int(details["FPI"].get("rows", 0) or 0) + int(details["DII"].get("rows", 0) or 0),
+            "unique_dates": {"FPI": int(details["FPI"]["unique_dates"]), "DII": int(details["DII"]["unique_dates"])},
+            "span_days": {"FPI": int(details["FPI"]["span_days"]), "DII": int(details["DII"]["span_days"])},
+            "source": "NSDL official public FPI/DII archives",
+            "source_urls": [(nsdl or {}).get("fpi_url"), (nsdl or {}).get("dii_url")],
+            "fallback_reason": old.get("reason", "Primary NSE flow endpoint did not meet historical coverage threshold"),
+            "reconciliation_rule": "Accepted only because FPI and DII independently meet >=60 distinct dates and >=90 calendar days; no values synthesized."
+        }
+        result["groups"] = groups
+        result["status"] = "ALL_FOUR_AVAILABLE" if all(
+            groups.get(k, {}).get("status") in ("AVAILABLE", "AVAILABLE_SECONDARY")
+            and int(groups.get(k, {}).get("rows", 0) or 0) > 0
+            for k in ("crude_oil", "usd_inr", "corporate_events", "fpi_dii_flows")
+        ) else "REPAIR_WITH_GAPS"
+    return result
+
 def reconcile(manifest, coverage, repair=None, nsdl=None):
     """Return a refreshed manifest; missing or incomplete evidence stays blocked."""
     p0 = coverage.get("p0_coverage", {})
@@ -91,6 +126,9 @@ def main():
         print(json.dumps({"status": "BLOCKED", "reason": "manifest or final source coverage report missing"}))
         return 1
     try:
+        repair = reconcile_fpi_dii_repair(repair, nsdl)
+        if repair is not None:
+            REPAIR.write_text(json.dumps(repair, indent=2), encoding="utf-8")
         result = reconcile(manifest, coverage, repair, nsdl)
     except Exception as exc:
         print(json.dumps({"status": "BLOCKED", "reason": f"reconciliation error: {type(exc).__name__}: {exc}"}))
