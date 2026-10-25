@@ -94,27 +94,35 @@ def collect(start, end, session=None):
     client = session or requests.Session()
     client.headers.update({"User-Agent": UA, "Accept": "application/rss+xml, application/xml, text/xml"})
     events, failures = [], []
+    # Narrow date slices prevent search ranking from returning only the newest
+    # articles and make it more likely that older events have matured close windows.
     for query, _ in QUERIES:
-        q = f'{query} after:{start.isoformat()} before:{(end + timedelta(days=1)).isoformat()}'
-        try:
-            resp = client.get(BASE, params={"q": q, "hl": "en-US", "gl": "US", "ceid": "US:en"},
-                              timeout=TIMEOUT)
-            resp.raise_for_status()
-            root = ET.fromstring(resp.content)
-            items = root.findall(".//item")
-            for item in items:
-                title = (item.findtext("title") or "").strip()
-                link = (item.findtext("link") or "").strip()
-                pub = item.findtext("pubDate") or ""
-                source_el = item.find("source")
-                source_name = (source_el.text or "").strip() if source_el is not None else ""
-                source_host = source_el.attrib.get("url", "") if source_el is not None else ""
-                row = normalize_item(title, link, pub, source_name, source_host, client)
-                if row and start.isoformat() <= row["EVENT_DATE"] <= end.isoformat():
-                    events.append(row)
-        except Exception as exc:
-            failures.append({"query": query, "error": f"{type(exc).__name__}: {exc}"})
-        time.sleep(0.2)
+        cursor = start
+        while cursor <= end:
+            slice_end = min(end, cursor + timedelta(days=13))
+            q = f'{query} after:{cursor.isoformat()} before:{(slice_end + timedelta(days=1)).isoformat()}'
+            try:
+                resp = client.get(BASE, params={"q": q, "hl": "en-US", "gl": "US", "ceid": "US:en"},
+                                  timeout=TIMEOUT)
+                resp.raise_for_status()
+                root = ET.fromstring(resp.content)
+                items = root.findall(".//item")
+                for item in items:
+                    title = (item.findtext("title") or "").strip()
+                    link = (item.findtext("link") or "").strip()
+                    pub = item.findtext("pubDate") or ""
+                    source_el = item.find("source")
+                    source_name = (source_el.text or "").strip() if source_el is not None else ""
+                    source_host = source_el.attrib.get("url", "") if source_el is not None else ""
+                    row = normalize_item(title, link, pub, source_name, source_host, client)
+                    if row and cursor.isoformat() <= row["EVENT_DATE"] <= slice_end.isoformat():
+                        events.append(row)
+            except Exception as exc:
+                failures.append({"query": query, "slice_start": cursor.isoformat(),
+                                 "slice_end": slice_end.isoformat(),
+                                 "error": f"{type(exc).__name__}: {exc}"})
+            cursor = slice_end + timedelta(days=1)
+            time.sleep(0.2)
     df = pd.DataFrame(events, columns=REQUIRED)
     if not df.empty:
         df = df.drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT", "EVENT_ID"])
