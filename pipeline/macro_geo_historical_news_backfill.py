@@ -120,7 +120,7 @@ def extract_article_urls(google_url, body=""):
     # Google embeds destination URLs in escaped/HTML-encoded page metadata as well
     # as href attributes. Normalize those encodings before trusted-domain filtering.
     from html import unescape
-    normalized_body = unescape((body or "").replace(r"\\/", "/").replace(r"\\u0026", "&"))
+    normalized_body = unescape((body or "").replace(chr(92) + "/", "/").replace(chr(92) + "u0026", "&").replace(chr(92) + "u003d", "=").replace(chr(92) + "u003f", "?"))
     candidates.extend(re.findall(r"""href=["'](https?://[^"']+)["']""", normalized_body, flags=re.I))
     candidates.extend(re.findall(r"""https?://[^\s\\\"<>']+""", normalized_body, flags=re.I))
     clean = []
