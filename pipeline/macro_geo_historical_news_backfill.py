@@ -195,9 +195,60 @@ def collect(start, end, session=None):
                    "slice_item_counts": []}
     def reject(reason):
         diagnostics["rejections"][reason] = diagnostics["rejections"].get(reason, 0) + 1
+    # Prefer direct GDELT article URLs for historical discovery. Google News RSS
+    # repeatedly returned current wrapper URLs for old date slices in Runs #109/#110/#114.
+    # GDELT is discovery-only here: every candidate must still pass trusted publisher
+    # URL validation AND explicit publication metadata from the publisher page.
+    gdelt_queries = [
+        (QUERIES[0][1], '(oil OR crude OR tanker OR "Strait of Hormuz" OR "Red Sea" OR shipping)'),
+        (QUERIES[1][1], '(sanctions OR tariff OR embargo OR "export ban" OR "trade restriction")'),
+        (QUERIES[2][1], '(missile OR airstrike OR invasion OR ceasefire OR blockade OR "military attack)'),
+    ]
+    diagnostics["gdelt"] = {"requests": 0, "articles_seen": 0, "verified": 0, "failures": []}
+    gdelt_cursor = start
+    while gdelt_cursor <= end:
+        gdelt_end = min(end, gdelt_cursor + timedelta(days=29))
+        for label, query in gdelt_queries:
+            params = {"query": query, "mode": "ArtList", "format": "json", "maxrecords": 10,
+                      "sort": "DateDesc", "startdatetime": gdelt_cursor.strftime("%Y%m%d") + "000000",
+                      "enddatetime": gdelt_end.strftime("%Y%m%d") + "235959"}
+            diagnostics["gdelt"]["requests"] += 1
+            try:
+                resp = client.get("https://api.gdeltproject.org/api/v2/doc/doc", params=params,
+                                  headers={"User-Agent": UA, "Accept": "application/json"}, timeout=TIMEOUT)
+                resp.raise_for_status()
+                payload = resp.json()
+                articles = payload.get("articles", []) if isinstance(payload, dict) else []
+                diagnostics["gdelt"]["articles_seen"] += len(articles)
+                for article in articles:
+                    title = str(article.get("title") or "").strip()
+                    url = str(article.get("url") or "").strip()
+                    domain = str(article.get("domain") or "")
+                    if not url or not is_trusted_news_url(url):
+                        reject("gdelt_untrusted_or_missing_url")
+                        continue
+                    row, reason = normalize_item(title, url, str(article.get("seendate") or ""),
+                                                 domain, domain, client)
+                    if reason:
+                        reject("gdelt_" + reason)
+                        continue
+                    if gdelt_cursor.isoformat() <= row["EVENT_DATE"] <= gdelt_end.isoformat():
+                        events.append(row)
+                        diagnostics["gdelt"]["verified"] += 1
+                    else:
+                        diagnostics["outside_requested_slice"] += 1
+            except Exception as exc:
+                failure = {"provider": "GDELT", "query_group": label,
+                           "slice_start": gdelt_cursor.isoformat(), "slice_end": gdelt_end.isoformat(),
+                           "error": f"{type(exc).__name__}: {exc}"}
+                failures.append(failure)
+                diagnostics["gdelt"]["failures"].append(failure)
+        gdelt_cursor = gdelt_end + timedelta(days=1)
+    # Google News RSS remains a fallback only when direct GDELT discovery yielded
+    # no publisher-page-verified historical events; it must never relax timestamp checks.
     # Narrow date slices prevent search ranking from returning only the newest
     # articles and make it more likely that older events have matured close windows.
-    for query, _ in QUERIES:
+    for query, _ in (QUERIES if not events else []):
         cursor = start
         while cursor <= end:
             slice_end = min(end, cursor + timedelta(days=13))
