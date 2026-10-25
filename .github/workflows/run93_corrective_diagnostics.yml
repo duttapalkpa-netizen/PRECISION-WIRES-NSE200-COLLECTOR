@@ -6,7 +6,10 @@ on:
     paths:
       - "pipeline/macro_geo_collect_p0.py"
       - "pipeline/macro_geo_hard_gate.py"
+      - "pipeline/macro_geo_finalize_manifest.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
       - "qa/test_macro_geo_engine.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
       - ".github/workflows/run93_corrective_diagnostics.yml"
 
 permissions:
@@ -28,4 +31,4 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
       - name: Run Macro-Geo event-study and collector tests only
-        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_finalize_manifest -v
