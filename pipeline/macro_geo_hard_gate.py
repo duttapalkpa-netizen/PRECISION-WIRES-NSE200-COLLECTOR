@@ -15,6 +15,9 @@ EVENT_AUDIT = Path("outputs/macro_geo/event_level_window_audit.json")
 PANEL = Path("data/external/market_panel.csv")
 EQUITY = Path("data/processed/nse_eq_200_sessions.csv")
 MANIFEST = Path("outputs/macro_geo/p0_collection_manifest.json")
+REPAIR = Path("outputs/macro_geo/p0_repair_report.json")
+FACTOR_COVERAGE = Path("outputs/macro_geo/factor_coverage_audit.json")
+REGIME_REPORT = Path("outputs/macro_geo/historical_regime_study_report.json")
 OUT = Path("outputs/macro_geo/hard_gate_report.json")
 ALLOWED_EVENT_STATUSES = {"COMPUTED_EXPLORATORY", "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS"}
 
@@ -22,7 +25,7 @@ ALLOWED_EVENT_STATUSES = {"COMPUTED_EXPLORATORY", "COMPUTED_EXPLORATORY_WITH_PEN
 def main():
     checks = {}
     blockers = []
-    for path in (COVERAGE, EVENT_REPORT, EVENT_AUDIT, PANEL, EQUITY):
+    for path in (COVERAGE, EVENT_REPORT, EVENT_AUDIT, PANEL, EQUITY, REPAIR, FACTOR_COVERAGE, REGIME_REPORT):
         if not path.exists():
             blockers.append(f"MISSING_REQUIRED_INPUT:{path}")
 
@@ -95,6 +98,46 @@ def main():
         except Exception as exc:
             blockers.append(f"INVALID_EVENT_LEVEL_AUDIT:{type(exc).__name__}:{exc}")
 
+    if REPAIR.exists():
+        try:
+            repair = json.loads(REPAIR.read_text(encoding="utf-8"))
+            repair_groups = repair.get("groups", {})
+            for name in ("fpi_dii_flows", "corporate_events"):
+                info = repair_groups.get(name, {})
+                rstatus = str(info.get("status", "UNKNOWN"))
+                checks[f"repair_{name}_status"] = rstatus
+                if rstatus.startswith("BLOCKED") or rstatus in {"UNKNOWN", "INSUFFICIENT_HISTORICAL_COVERAGE"}:
+                    blockers.append(f"REPAIR_REPORT_BLOCKS_{name.upper()}")
+        except Exception as exc:
+            blockers.append(f"INVALID_P0_REPAIR_REPORT:{type(exc).__name__}:{exc}")
+    else:
+        blockers.append(f"MISSING_REQUIRED_INPUT:{REPAIR}")
+
+    if FACTOR_COVERAGE.exists():
+        try:
+            factors = json.loads(FACTOR_COVERAGE.read_text(encoding="utf-8"))
+            checks["factor_groups_total"] = int(factors.get("factor_groups", 0) or 0)
+            checks["factor_groups_fully_available"] = int(factors.get("fully_available_schema_groups", 0) or 0)
+            checks["factor_groups_not_connected"] = int(factors.get("not_connected", 0) or 0)
+            if checks["factor_groups_fully_available"] < checks["factor_groups_total"]:
+                blockers.append("FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE")
+        except Exception as exc:
+            blockers.append(f"INVALID_FACTOR_COVERAGE_REPORT:{type(exc).__name__}:{exc}")
+    else:
+        blockers.append(f"MISSING_REQUIRED_INPUT:{FACTOR_COVERAGE}")
+
+    if REGIME_REPORT.exists():
+        try:
+            regime = json.loads(REGIME_REPORT.read_text(encoding="utf-8"))
+            checks["historical_regime_study_status"] = regime.get("research_status", regime.get("status", "UNKNOWN"))
+            checks["historical_regime_windows"] = int(regime.get("window_rows", 0) or 0)
+            if checks["historical_regime_windows"] < 1 or checks["historical_regime_study_status"] == "BLOCKED":
+                blockers.append("HISTORICAL_REGIME_STUDY_NOT_VALIDATED")
+        except Exception as exc:
+            blockers.append(f"INVALID_HISTORICAL_REGIME_REPORT:{type(exc).__name__}:{exc}")
+    else:
+        blockers.append(f"MISSING_REQUIRED_INPUT:{REGIME_REPORT}")
+
     if PANEL.exists() and EQUITY.exists():
         try:
             panel = pd.read_csv(PANEL)
@@ -129,7 +172,7 @@ def main():
     report = {
         "status": status,
         "gate_type": "STRICT_MACRO_GEO_HARD_GATE_AUDIT_BRANCH_ONLY",
-        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(EVENT_AUDIT), str(PANEL), str(EQUITY), str(MANIFEST)],
+        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(EVENT_AUDIT), str(PANEL), str(EQUITY), str(MANIFEST), str(REPAIR), str(FACTOR_COVERAGE), str(REGIME_REPORT)],
         "checks": checks,
         "blockers": sorted(set(blockers)),
         "candidate_release_allowed": status == "PASS",
