@@ -41,8 +41,6 @@ def reconcile(manifest, coverage, repair=None, nsdl=None):
         name: group_is_available(groups, name)
         for name in REQUIRED_P0
     }
-    all_available = all(availability.values())
-
     repair_groups = (repair or {}).get("groups", {})
     corporate_source_verified = (
         group_is_available(groups, "corporate_events")
@@ -53,6 +51,11 @@ def reconcile(manifest, coverage, repair=None, nsdl=None):
     # NSDL's overall status alone is not enough if the downstream coverage audit
     # flags the combined file as insufficient.
     flow_source_verified = group_is_available(groups, "fpi_dii_flows")
+    # A file that exists is not enough for corporate disclosures: require the
+    # repair report's mapped official-source records as well.
+    availability["corporate_events"] = corporate_source_verified
+    availability["fpi_dii_flows"] = flow_source_verified
+    all_available = all(availability.values())
     manifest = dict(manifest)
     old_p0 = dict(manifest.get("p0_coverage", {}))
     old_p0.update({
