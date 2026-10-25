@@ -11,6 +11,7 @@ import pandas as pd
 
 COVERAGE = Path("outputs/macro_geo/source_coverage.json")
 EVENT_REPORT = Path("outputs/macro_geo/event_study_report.json")
+EVENT_AUDIT = Path("outputs/macro_geo/event_level_window_audit.json")
 PANEL = Path("data/external/market_panel.csv")
 EQUITY = Path("data/processed/nse_eq_200_sessions.csv")
 MANIFEST = Path("outputs/macro_geo/p0_collection_manifest.json")
@@ -21,7 +22,7 @@ ALLOWED_EVENT_STATUSES = {"COMPUTED_EXPLORATORY", "COMPUTED_EXPLORATORY_WITH_PEN
 def main():
     checks = {}
     blockers = []
-    for path in (COVERAGE, EVENT_REPORT, PANEL, EQUITY):
+    for path in (COVERAGE, EVENT_REPORT, EVENT_AUDIT, PANEL, EQUITY):
         if not path.exists():
             blockers.append(f"MISSING_REQUIRED_INPUT:{path}")
 
@@ -80,6 +81,20 @@ def main():
         except Exception as exc:
             blockers.append(f"INVALID_EVENT_STUDY_REPORT:{type(exc).__name__}:{exc}")
 
+    if EVENT_AUDIT.exists():
+        try:
+            audit = json.loads(EVENT_AUDIT.read_text(encoding="utf-8"))
+            h1 = int(audit.get("unique_events_with_mature_h1", 0) or 0)
+            h5 = int(audit.get("unique_events_with_mature_h5", 0) or 0)
+            checks["event_level_unique_events_with_mature_h1"] = h1
+            checks["event_level_unique_events_with_mature_h5"] = h5
+            if h1 < 1:
+                blockers.append("EVENT_LEVEL_AUDIT_HAS_NO_MATURE_H1_WINDOWS")
+            if h5 < 1:
+                blockers.append("EVENT_LEVEL_AUDIT_HAS_NO_MATURE_H5_WINDOWS")
+        except Exception as exc:
+            blockers.append(f"INVALID_EVENT_LEVEL_AUDIT:{type(exc).__name__}:{exc}")
+
     if PANEL.exists() and EQUITY.exists():
         try:
             panel = pd.read_csv(PANEL)
@@ -114,7 +129,7 @@ def main():
     report = {
         "status": status,
         "gate_type": "STRICT_MACRO_GEO_HARD_GATE_AUDIT_BRANCH_ONLY",
-        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(PANEL), str(EQUITY), str(MANIFEST)],
+        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(EVENT_AUDIT), str(PANEL), str(EQUITY), str(MANIFEST)],
         "checks": checks,
         "blockers": sorted(set(blockers)),
         "candidate_release_allowed": status == "PASS",
