@@ -195,6 +195,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.coverage_path = self.root / "source_coverage.json"
         self.event_path = self.root / "event_study_report.json"
+        self.audit_path = self.root / "event_level_window_audit.json"
         self.panel_path = self.root / "market_panel.csv"
         self.equity_path = self.root / "equity.csv"
         self.out_path = self.root / "hard_gate_report.json"
@@ -207,6 +208,9 @@ class MacroGeoHardGateTests(unittest.TestCase):
             "status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
             "research_status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
             "event_rows": 3, "eligible_event_rows": 2, "window_rows": 12
+        }), encoding="utf-8")
+        self.audit_path.write_text(json.dumps({
+            "unique_events_with_mature_h1": 2, "unique_events_with_mature_h5": 1
         }), encoding="utf-8")
         self.manifest_path.write_text(json.dumps({
             "status": "PASS_WITH_GAPS", "operational_status": "PASS_WITH_GAPS",
@@ -226,6 +230,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.patches = [
             patch.object(hard_gate, "COVERAGE", self.coverage_path),
             patch.object(hard_gate, "EVENT_REPORT", self.event_path),
+            patch.object(hard_gate, "EVENT_AUDIT", self.audit_path),
             patch.object(hard_gate, "PANEL", self.panel_path),
             patch.object(hard_gate, "EQUITY", self.equity_path),
             patch.object(hard_gate, "MANIFEST", self.manifest_path),
