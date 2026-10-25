@@ -293,6 +293,16 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.assertIn("EVENT_STUDY_NOT_COMPUTED_WITH_MATURE_WINDOWS", report["blockers"])
         self.assertFalse(report["candidate_release_allowed"])
 
+    def test_hard_gate_zero_mature_event_level_h1_h5_blocks_release(self):
+        self.audit_path.write_text(self.json.dumps({
+            "unique_events_with_mature_h1": 0, "unique_events_with_mature_h5": 0
+        }), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertIn("EVENT_LEVEL_AUDIT_HAS_NO_MATURE_H1_WINDOWS", report["blockers"])
+        self.assertIn("EVENT_LEVEL_AUDIT_HAS_NO_MATURE_H5_WINDOWS", report["blockers"])
+        self.assertFalse(report["candidate_release_allowed"])
+
     def test_hard_gate_stale_panel_blocks_release(self):
         pd.DataFrame({"DATE": ["2026-10-10", "2026-10-13"],
                       "SERIES": ["NIFTY 50", "NIFTY 50"],
