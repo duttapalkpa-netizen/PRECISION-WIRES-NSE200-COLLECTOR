@@ -198,6 +198,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.panel_path = self.root / "market_panel.csv"
         self.equity_path = self.root / "equity.csv"
         self.out_path = self.root / "hard_gate_report.json"
+        self.manifest_path = self.root / "p0_collection_manifest.json"
         groups = {f"group_{i}": {"status": "AVAILABLE", "rows": 1} for i in range(8)}
         self.coverage_path.write_text(json.dumps({"p0_coverage": {
             "status": "P0_COMPLETE", "available_count": 8, "required_count": 8, "groups": groups
@@ -206,6 +207,14 @@ class MacroGeoHardGateTests(unittest.TestCase):
             "status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
             "research_status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
             "event_rows": 3, "eligible_event_rows": 2, "window_rows": 12
+        }), encoding="utf-8")
+        self.manifest_path.write_text(json.dumps({
+            "status": "PASS_WITH_GAPS", "operational_status": "PASS_WITH_GAPS",
+            "p0_coverage": {
+                "required_series_available": True,
+                "fpi_dii_status": "AVAILABLE_FROM_NS​​DL_HISTORICAL_SOURCE",
+                "corporate_events_status": "AVAILABLE"
+            }
         }), encoding="utf-8")
         pd.DataFrame({"DATE": ["2026-10-22", "2026-10-23"],
                       "SERIES": ["NIFTY 50", "NIFTY 50"],
@@ -219,6 +228,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
             patch.object(hard_gate, "EVENT_REPORT", self.event_path),
             patch.object(hard_gate, "PANEL", self.panel_path),
             patch.object(hard_gate, "EQUITY", self.equity_path),
+            patch.object(hard_gate, "MANIFEST", self.manifest_path),
             patch.object(hard_gate, "OUT", self.out_path),
         ]
         for item in self.patches:
@@ -240,6 +250,24 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.assertFalse(report["production_selector_changed"])
         self.assertFalse(report["ranking_score_changed"])
         self.assertFalse(report["pressure_fade_changed"])
+
+    def test_hard_gate_manifest_critical_gaps_block_release(self):
+        self.manifest_path.write_text(self.json.dumps({
+            "status": "PASS_WITH_CRITICAL_DATA_GAPS",
+            "operational_status": "PASS_WITH_CRITICAL_DATA_GAPS",
+            "p0_coverage": {
+                "required_series_available": False,
+                "fpi_dii_status": "UNKNOWN/BLOCKED unless official source returns mapped rows",
+                "corporate_events_status": "UNKNOWN/BLOCKED unless official source returns mapped rows"
+            }
+        }), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertEqual(report["status"], "BLOCKED")
+        self.assertFalse(report["candidate_release_allowed"])
+        self.assertIn("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS", report["blockers"])
+        self.assertIn("COLLECTION_MANIFEST_FPI_DII_STATUS_UNRESOLVED", report["blockers"])
+        self.assertIn("COLLECTION_MANIFEST_CORPORATE_EVENTS_STATUS_UNRESOLVED", report["blockers"])
 
     def test_hard_gate_missing_input_blocks_release(self):
         self.panel_path.unlink()
