@@ -10,9 +10,10 @@ or causal impact. No dates or timestamps are inferred.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from html.parser import HTMLParser
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from urllib.parse import quote_plus
+from urllib.parse import urlparse
 import hashlib
 import json
 import time
@@ -52,34 +53,63 @@ def parse_pubdate(value):
         return None
 
 
-def normalize_item(title, google_url, pubdate, source_name, source_host, session=None):
-    """Return an auditable row or None; never accept Google URL as the publisher source."""
+class CanonicalURLParser(HTMLParser):
+    """Read canonical article URLs without treating publisher homepages as evidence."""
+    def __init__(self):
+        super().__init__()
+        self.urls = []
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() != "link":
+            return
+        a = {str(k).lower(): str(v or "") for k, v in attrs}
+        rel = {x.lower() for x in a.get("rel", "").split()}
+        if "canonical" in rel and a.get("href"):
+            self.urls.append(a["href"])
+
+
+def normalize_item(title, google_url, pubdate, source_name, source_host, session=None, diagnostics=None):
+    """Return (auditable row, rejection reason); never accept a Google URL as publisher evidence."""
     title = str(title or "").strip()
     published = parse_pubdate(pubdate)
-    if not title or published is None:
-        return None
-    group = "GOOGLE_NEWS_HISTORICAL_RSS"
+    if not title:
+        return None, "empty_title"
+    if published is None:
+        return None, "invalid_or_timezone_missing_pubdate"
+    group = str(source_name or "GOOGLE_NEWS_HISTORICAL_RSS")
     event_type = classify(title, group)
     if event_type is None:
-        return None
+        # The query's category is not proof of relevance; preserve strict classifier.
+        event_type = next((classify(title, label) for _, label in QUERIES if classify(title, label)), None)
+    if event_type is None:
+        return None, "irrelevant_headline"
     client = session or requests.Session()
     try:
         response = client.get(google_url, headers={"User-Agent": UA}, timeout=TIMEOUT,
-                              allow_redirects=True, stream=True)
+                              allow_redirects=True)
         final_url = str(response.url or "")
+        canonical = []
+        if is_trusted_news_url(final_url):
+            canonical = [final_url]
+        else:
+            parser = CanonicalURLParser()
+            # Bounded response parsing: only inspect a small prefix; never trust Google wrapper URLs.
+            parser.feed((response.text or "")[:500000])
+            canonical = parser.urls
+        trusted = next((u for u in canonical if is_trusted_news_url(u)), "")
         response.close()
-    except Exception:
-        return None
-    if not is_trusted_news_url(final_url):
-        return None
-    event_id = hashlib.sha256((published.isoformat() + "|" + final_url).encode()).hexdigest()[:20]
-    return {
+    except Exception as exc:
+        return None, "publisher_redirect_or_fetch_error:" + type(exc).__name__
+    if not trusted:
+        return None, "no_trusted_publisher_article_url"
+    host = (urlparse(trusted).hostname or "").lower()
+    event_id = hashlib.sha256((published.isoformat() + "|" + trusted).encode()).hexdigest()[:20]
+    return ({
         "EVENT_DATE": published.date().isoformat(),
         "EVENT_ID": event_id,
         "EVENT_TYPE": event_type,
         "PUBLISHED_AT": published.isoformat(),
-        "SOURCE": str(source_name or source_host or "trusted publisher via Google News RSS"),
-        "SOURCE_URL": final_url,
+        "SOURCE": str(source_name or host or "trusted publisher via Google News RSS"),
+        "SOURCE_URL": trusted,
         "TITLE": title,
         "CONFIDENCE": 0.80,
         "EVIDENCE_TYPE": "TRUSTED_PUBLISHER_ARTICLE_DISCOVERED_VIA_GOOGLE_NEWS_RSS",
@@ -87,13 +117,18 @@ def normalize_item(title, google_url, pubdate, source_name, source_host, session
         "QUERY_GROUP": group,
         "SOURCE_COUNTRY": "",
         "GDELT_API_URL": "",
-    }
+    }, None)
 
 
 def collect(start, end, session=None):
     client = session or requests.Session()
     client.headers.update({"User-Agent": UA, "Accept": "application/rss+xml, application/xml, text/xml"})
     events, failures = [], []
+    diagnostics = {"rss_requests": 0, "rss_items_seen": 0, "accepted_before_date_filter": 0,
+                   "accepted": 0, "outside_requested_slice": 0, "rejections": {},
+                   "slice_item_counts": []}
+    def reject(reason):
+        diagnostics["rejections"][reason] = diagnostics["rejections"].get(reason, 0) + 1
     # Narrow date slices prevent search ranking from returning only the newest
     # articles and make it more likely that older events have matured close windows.
     for query, _ in QUERIES:
@@ -104,9 +139,12 @@ def collect(start, end, session=None):
             try:
                 resp = client.get(BASE, params={"q": q, "hl": "en-US", "gl": "US", "ceid": "US:en"},
                                   timeout=TIMEOUT)
+                diagnostics["rss_requests"] += 1
                 resp.raise_for_status()
                 root = ET.fromstring(resp.content)
                 items = root.findall(".//item")
+                diagnostics["rss_items_seen"] += len(items)
+                diagnostics["slice_item_counts"].append({"start": cursor.isoformat(), "end": slice_end.isoformat(), "items": len(items)})
                 for item in items:
                     title = (item.findtext("title") or "").strip()
                     link = (item.findtext("link") or "").strip()
@@ -114,26 +152,34 @@ def collect(start, end, session=None):
                     source_el = item.find("source")
                     source_name = (source_el.text or "").strip() if source_el is not None else ""
                     source_host = source_el.attrib.get("url", "") if source_el is not None else ""
-                    row = normalize_item(title, link, pub, source_name, source_host, client)
-                    if row and cursor.isoformat() <= row["EVENT_DATE"] <= slice_end.isoformat():
+                    row, reason = normalize_item(title, link, pub, source_name, source_host, client)
+                    if reason:
+                        reject(reason)
+                        continue
+                    diagnostics["accepted_before_date_filter"] += 1
+                    if cursor.isoformat() <= row["EVENT_DATE"] <= slice_end.isoformat():
                         events.append(row)
+                        diagnostics["accepted"] += 1
+                    else:
+                        diagnostics["outside_requested_slice"] += 1
             except Exception as exc:
                 failures.append({"query": query, "slice_start": cursor.isoformat(),
                                  "slice_end": slice_end.isoformat(),
                                  "error": f"{type(exc).__name__}: {exc}"})
+                reject("rss_request_or_xml_error:" + type(exc).__name__)
             cursor = slice_end + timedelta(days=1)
             time.sleep(0.2)
     df = pd.DataFrame(events, columns=REQUIRED)
     if not df.empty:
         df = df.drop_duplicates(["EVENT_ID"]).sort_values(["PUBLISHED_AT", "EVENT_ID"])
-    return df, failures
+    return df, failures, diagnostics
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     end = datetime.now(timezone.utc).date() - timedelta(days=1)
     start = end - timedelta(days=LOOKBACK_DAYS - 1)
-    fresh, failures = collect(start, end)
+    fresh, failures, diagnostics = collect(start, end)
     existing = pd.read_csv(EVENTS) if EVENTS.exists() else pd.DataFrame(columns=REQUIRED)
     existing.columns = [str(c).strip().upper() for c in existing.columns]
     for col in REQUIRED:
@@ -153,6 +199,8 @@ def main():
         "total_deduplicated_event_rows": int(len(combined)),
         "new_events_with_source_urls": int(fresh["SOURCE_URL"].astype(str).str.startswith("https://").sum()) if not fresh.empty else 0,
         "failures": failures,
+        "collection_diagnostics": diagnostics,
+        "diagnostic_note": "A clean zero-row result is not a pass; inspect RSS item counts, rejection reasons, and slice counts. RSS pubDate is publication metadata from the discovery feed, not independently verified event-occurrence time.",
         "event_semantics": "Trusted publisher media mentions with explicit publisher publication timestamps; not verified event-occurrence times or causal evidence.",
         "no_synthetic_timestamps": True,
         "output": str(EVENTS),
