@@ -202,7 +202,7 @@ def collect(start, end, session=None):
     gdelt_queries = [
         (QUERIES[0][1], '(oil OR crude OR tanker OR "Strait of Hormuz" OR "Red Sea" OR shipping)'),
         (QUERIES[1][1], '(sanctions OR tariff OR embargo OR "export ban" OR "trade restriction")'),
-        (QUERIES[2][1], '(missile OR airstrike OR invasion OR ceasefire OR blockade OR "military attack)'),
+        (QUERIES[2][1], '(missile OR airstrike OR invasion OR ceasefire OR blockade OR "military attack")'),
     ]
     diagnostics["gdelt"] = {"requests": 0, "articles_seen": 0, "verified": 0, "failures": []}
     gdelt_cursor = start
