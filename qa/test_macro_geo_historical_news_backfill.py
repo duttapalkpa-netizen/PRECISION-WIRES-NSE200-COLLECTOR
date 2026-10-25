@@ -15,12 +15,14 @@ class HistoricalNewsBackfillTests(unittest.TestCase):
         self.assertIn("https://www.bbc.com/news/world-123456", found)
 
     def test_escaped_publisher_url_in_google_page_body_is_normalized(self):
-        body = r'''<script>const data = "https:\\/\\/www.bbc.com\\/news\\/world-123456?x=1\\u0026y=2";</script>'''
+        slash = chr(92)
+        body = '<script>const data = "https:' + slash + '/' + slash + '/www.bbc.com' + slash + '/news' + slash + '/world-123456?x=1' + slash + 'u0026y=2";</script>'
         found = backfill.extract_article_urls("https://news.google.com/rss/articles/CBMi", body)
         self.assertTrue(any(u.startswith("https://www.bbc.com/news/world-123456") for u in found), found)
 
     def test_html_encoded_href_publisher_url_is_extracted(self):
-        body = r'''<a href="https:\\/\\/www.bbc.com\\/news\\/world-123456">article</a>'''
+        slash = chr(92)
+        body = '<a href="https:' + slash + '/' + slash + '/www.bbc.com' + slash + '/news' + slash + '/world-123456">article</a>'
         found = backfill.extract_article_urls("https://news.google.com/rss/articles/CBMi", body)
         self.assertTrue(any(u.startswith("https://www.bbc.com/news/world-123456") for u in found), found)
 
