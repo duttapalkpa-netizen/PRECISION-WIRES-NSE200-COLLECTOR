@@ -13,6 +13,7 @@ COVERAGE = Path("outputs/macro_geo/source_coverage.json")
 EVENT_REPORT = Path("outputs/macro_geo/event_study_report.json")
 PANEL = Path("data/external/market_panel.csv")
 EQUITY = Path("data/processed/nse_eq_200_sessions.csv")
+MANIFEST = Path("outputs/macro_geo/p0_collection_manifest.json")
 OUT = Path("outputs/macro_geo/hard_gate_report.json")
 ALLOWED_EVENT_STATUSES = {"COMPUTED_EXPLORATORY", "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS"}
 
@@ -41,6 +42,26 @@ def main():
                 blockers.append("P0_SOURCE_COVERAGE_INCOMPLETE")
         except Exception as exc:
             blockers.append(f"INVALID_SOURCE_COVERAGE_REPORT:{type(exc).__name__}:{exc}")
+
+    # Collector manifest is written before later repair/NSDL steps. Never ignore its pre-repair critical-gap state.
+    if MANIFEST.exists():
+        try:
+            manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+            old_status = manifest.get("operational_status", manifest.get("status", "UNKNOWN"))
+            old_required = manifest.get("p0_coverage", {}).get("required_series_available")
+            checks["collector_manifest_pre_repair_status"] = old_status
+            checks["collector_manifest_pre_repair_required_series_available"] = old_required
+            if old_status == "PASS_WITH_CRITICAL_DATA_GAPS" or old_required is False:
+                blockers.append("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS")
+            p0_meta = manifest.get("p0_coverage", {})
+            if str(p0_meta.get("fpi_dii_status", "")).startswith("UNKNOWN/BLOCKED"):
+                blockers.append("COLLECTION_MANIFEST_FPI_DII_STATUS_UNRESOLVED")
+            if str(p0_meta.get("corporate_events_status", "")).startswith("UNKNOWN/BLOCKED"):
+                blockers.append("COLLECTION_MANIFEST_CORPORATE_EVENTS_STATUS_UNRESOLVED")
+        except Exception as exc:
+            blockers.append(f"INVALID_COLLECTION_MANIFEST:{type(exc).__name__}:{exc}")
+    else:
+        blockers.append(f"MISSING_REQUIRED_INPUT:{MANIFEST}")
 
     if EVENT_REPORT.exists():
         try:
@@ -93,7 +114,7 @@ def main():
     report = {
         "status": status,
         "gate_type": "STRICT_MACRO_GEO_HARD_GATE_AUDIT_BRANCH_ONLY",
-        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(PANEL), str(EQUITY)],
+        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(PANEL), str(EQUITY), str(MANIFEST)],
         "checks": checks,
         "blockers": sorted(set(blockers)),
         "candidate_release_allowed": status == "PASS",
