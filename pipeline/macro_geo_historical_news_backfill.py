@@ -13,7 +13,8 @@ from datetime import datetime, timedelta, timezone
 from html.parser import HTMLParser
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
+import base64
 import hashlib
 import json
 import re
@@ -95,6 +96,36 @@ def parse_publisher_timestamp(html):
     return None
 
 
+def extract_article_urls(google_url, body=""):
+    """Resolve modern Google News RSS links that do not redirect directly to publisher URLs."""
+    candidates = []
+    parsed = urlparse(google_url)
+    # Older Google News links sometimes carry the destination as a query parameter.
+    for part in parsed.query.split("&"):
+        if "=" in part:
+            k, v = part.split("=", 1)
+            if k.lower() in {"url", "u"}:
+                candidates.append(unquote(v))
+    # Modern /rss/articles/CBMi... IDs encode a protobuf-like payload. Search its
+    # decoded bytes for URL strings, but only accept a trusted publisher article URL.
+    token = parsed.path.rsplit("/", 1)[-1]
+    if token.startswith("CB") or token.startswith("CA"):
+        for padding in ("", "=", "==", "==="):
+            try:
+                raw = base64.urlsafe_b64decode(token + padding)
+                decoded = raw.decode("latin-1", errors="ignore")
+                candidates.extend(re.findall(r"https?://[^\\s\\x00\\\\"<>]+", decoded))
+            except Exception:
+                pass
+    candidates.extend(re.findall(r"""href=["'](https?://[^"']+)["']""", body, flags=re.I))
+    clean = []
+    for u in candidates:
+        u = unquote(u).rstrip(".,;)")
+        if is_trusted_news_url(u) and len(urlparse(u).path.strip("/")) > 5 and u not in clean:
+            clean.append(u)
+    return clean
+
+
 def normalize_item(title, google_url, pubdate, source_name, source_host, session=None, diagnostics=None):
     """Return (auditable row, rejection reason); accept only article URL + publisher page timestamp."""
     title = str(title or "").strip()
@@ -114,10 +145,7 @@ def normalize_item(title, google_url, pubdate, source_name, source_host, session
         parser = ArticleMetadataParser()
         parser.feed(body)
         candidates = ([final_url] if is_trusted_news_url(final_url) else []) + parser.urls
-        # Google wrapper pages sometimes expose the publisher article as an anchor.
-        for href in re.findall(r"""href=["'](https?://[^"']+)["']""", body, flags=re.I):
-            if is_trusted_news_url(href):
-                candidates.append(href)
+        candidates.extend(extract_article_urls(google_url, body))
         trusted = next((u for u in candidates if is_trusted_news_url(u) and len(urlparse(u).path.strip("/")) > 5), "")
         response.close()
         if not trusted:
