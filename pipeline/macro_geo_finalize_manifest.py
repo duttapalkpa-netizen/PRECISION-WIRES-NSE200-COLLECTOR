@@ -67,7 +67,7 @@ def reconcile(manifest, coverage, repair=None, nsdl=None):
     manifest["status"] = manifest["operational_status"]
     manifest["final_manifest_reconciliation"] = {
         "status": "RECONCILED",
-        "stage": "AFTER_REPAIR_NS​​DL_AND_SOURCE_COVERAGE_AUDITS",
+        "stage": "AFTER_REPAIR_NSDL_AND_SOURCE_COVERAGE_AUDITS",
         "source_coverage_status": p0.get("status", "UNKNOWN"),
         "required_p0_groups": list(REQUIRED_P0),
         "available_p0_groups": [k for k, v in availability.items() if v],
