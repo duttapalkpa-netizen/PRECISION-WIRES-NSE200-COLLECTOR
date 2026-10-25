@@ -78,7 +78,7 @@ def parse_publisher_timestamp(html):
     parser = ArticleMetadataParser()
     parser.feed(html[:1000000])
     # JSON-LD datePublished is commonly not exposed as a meta tag.
-    for match in re.findall(r'"datePublished"\\s*:\\s*"([^"]+)"', html[:1000000], flags=re.I):
+    for match in re.findall(r'"datePublished"\s*:\s*"([^"]+)"', html[:1000000], flags=re.I):
         parser.timestamps.append(match)
     for value in parser.timestamps:
         try:
@@ -115,7 +115,7 @@ def normalize_item(title, google_url, pubdate, source_name, source_host, session
         parser.feed(body)
         candidates = ([final_url] if is_trusted_news_url(final_url) else []) + parser.urls
         # Google wrapper pages sometimes expose the publisher article as an anchor.
-        for href in re.findall(r'href=["\\'](https?://[^"\\']+)["\\']', body, flags=re.I):
+        for href in re.findall(r"""href=["'](https?://[^"']+)["']""", body, flags=re.I):
             if is_trusted_news_url(href):
                 candidates.append(href)
         trusted = next((u for u in candidates if is_trusted_news_url(u) and len(urlparse(u).path.strip("/")) > 5), "")
