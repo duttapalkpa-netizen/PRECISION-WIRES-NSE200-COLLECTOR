@@ -24,6 +24,7 @@ on:
       - "config/macro_geo_historical_regimes.csv"
       - "config/macro_geo_sector_transmission_map.csv"
       - "qa/test_macro_geo_engine.py"
+      - "qa/test_macro_geo_historical_news_backfill.py"
       - "collector/**"
       - "requirements.txt"
       - ".github/workflows/macro_geo_p0_event_study.yml"
@@ -62,7 +63,7 @@ jobs:
           restore-keys: |
             macro-geo-nse200-${{ github.ref_name }}-
       - name: Test event-study timestamp and data-quality logic
-        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill -v
       - name: Validate cached canonical panel before reuse
         id: panel_cache_check
         run: |
