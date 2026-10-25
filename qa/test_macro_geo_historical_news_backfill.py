@@ -26,6 +26,27 @@ class HistoricalNewsBackfillTests(unittest.TestCase):
         found = backfill.extract_article_urls("https://news.google.com/rss/articles/CBMi", body)
         self.assertTrue(any(u.startswith("https://www.bbc.com/news/world-123456") for u in found), found)
 
+    def test_gdelt_direct_publisher_url_can_be_verified_without_google_wrapper(self):
+        from unittest.mock import Mock
+        published_html = '<html><head><meta property="article:published_time" content="2026-08-12T09:15:00+00:00"></head></html>'
+        client = Mock()
+        response = Mock()
+        response.url = "https://www.bbc.com/news/world-123456"
+        response.text = published_html
+        client.get.return_value = response
+        row, reason = backfill.normalize_item(
+            "Oil tanker shipping disruption in the Red Sea",
+            "https://www.bbc.com/news/world-123456",
+            "2026-08-12T09:15:00Z",
+            "bbc.com",
+            "bbc.com",
+            client,
+        )
+        self.assertIsNone(reason)
+        self.assertEqual(row["SOURCE_URL"], "https://www.bbc.com/news/world-123456")
+        self.assertEqual(row["PUBLISHED_AT"], "2026-08-12T09:15:00+00:00")
+        self.assertEqual(row["EVENT_DATE_BASIS"], "PUBLISHER_ARTICLE_PUBLICATION_TIMESTAMP")
+
     def test_untrusted_or_non_article_url_is_not_accepted(self):
         url = "https://news.google.com/rss/articles/CBMi?url=https%3A%2F%2Fexample.com%2Fshort"
         self.assertEqual(backfill.extract_article_urls(url), [])
