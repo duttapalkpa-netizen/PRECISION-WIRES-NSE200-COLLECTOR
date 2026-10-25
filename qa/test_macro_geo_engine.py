@@ -200,6 +200,15 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.equity_path = self.root / "equity.csv"
         self.out_path = self.root / "hard_gate_report.json"
         self.manifest_path = self.root / "p0_collection_manifest.json"
+        self.repair_path = self.root / "p0_repair_report.json"
+        self.factor_path = self.root / "factor_coverage_audit.json"
+        self.regime_path = self.root / "historical_regime_study_report.json"
+        self.repair_path.write_text(json.dumps({"groups": {
+            "fpi_dii_flows": {"status": "AVAILABLE"},
+            "corporate_events": {"status": "AVAILABLE"}
+        }}), encoding="utf-8")
+        self.factor_path.write_text(json.dumps({"factor_groups": 1, "fully_available_schema_groups": 1, "not_connected": 0}), encoding="utf-8")
+        self.regime_path.write_text(json.dumps({"research_status": "COMPUTED_EXPLORATORY", "window_rows": 1}), encoding="utf-8")
         groups = {f"group_{i}": {"status": "AVAILABLE", "rows": 1} for i in range(8)}
         self.coverage_path.write_text(json.dumps({"p0_coverage": {
             "status": "P0_COMPLETE", "available_count": 8, "required_count": 8, "groups": groups
@@ -234,6 +243,9 @@ class MacroGeoHardGateTests(unittest.TestCase):
             patch.object(hard_gate, "PANEL", self.panel_path),
             patch.object(hard_gate, "EQUITY", self.equity_path),
             patch.object(hard_gate, "MANIFEST", self.manifest_path),
+            patch.object(hard_gate, "REPAIR", self.repair_path),
+            patch.object(hard_gate, "FACTOR_COVERAGE", self.factor_path),
+            patch.object(hard_gate, "REGIME_REPORT", self.regime_path),
             patch.object(hard_gate, "OUT", self.out_path),
         ]
         for item in self.patches:
