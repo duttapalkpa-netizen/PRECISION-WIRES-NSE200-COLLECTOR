@@ -318,19 +318,19 @@ def fetch_gdelt_events(start,end):
     # 30-day window repeatedly timed out in the hosted runner. We still apply
     # strict title classification and trusted-domain validation after retrieval.
     queries=[
-      ("GLOBAL_MACRO_GEO_NEWS",'(war OR missile OR sanctions OR tariff OR crude OR tanker OR shipping OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)')
+      ("GLOBAL_MACRO_GEO_NEWS",'(missile OR "Strait of Hormuz" OR "Red Sea" OR sanctions OR tanker)')
     ]
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
       "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0,
-      "slice_days":7,"connect_timeout_seconds":5,"read_timeout_seconds":15,"maxrecords_per_slice":25,"attempts_per_slice":2},
+      "slice_days":30,"connect_timeout_seconds":8,"read_timeout_seconds":30,"maxrecords_per_slice":10,"attempts_per_slice":2},
       "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
       "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
       "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
     events=[]; failures=[]
-    # Seven-day windows replace the 14-day requests that repeatedly timed out in Run #93.
-    # Keep the full 90-day lookback; do not replace missing history with recent headlines.
-    slices=build_date_slices(event_start,end,max_days=7)
+    # Run #99 proved the broad 7-day GDELT query timed out in all 13 slices. Use a compact query,
+    # 30-day windows and fewer returned rows to reduce API query cost while preserving the 90-day lookback.
+    slices=build_date_slices(event_start,end,max_days=30)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE",
       "EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     def add_article(title,url,published,provider,group,evidence,basis,confidence,metric_group,source_country=""):
@@ -357,14 +357,14 @@ def fetch_gdelt_events(start,end):
         m["accepted_articles"]+=1
     for slice_start,slice_end in slices:
       for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":25,"sort":"DateDesc",
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":10,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
           "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
         for attempt in range(2):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(5,15))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,30))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
                     try: wait=min(30,max(5,int(float(retry_after))))
