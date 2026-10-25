@@ -183,4 +183,99 @@ class MacroGeoTests(unittest.TestCase):
         future = coverage.macro_series_freshness("2026-10-24", "2026-10-23", max_age_days=3)
         self.assertEqual(future["freshness_status"], "STALE_OR_FUTURE")
 
+
+class MacroGeoHardGateTests(unittest.TestCase):
+    def setUp(self):
+        import json
+        import tempfile
+        from unittest.mock import patch
+        self.json = json
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self.coverage_path = self.root / "source_coverage.json"
+        self.event_path = self.root / "event_study_report.json"
+        self.panel_path = self.root / "market_panel.csv"
+        self.equity_path = self.root / "equity.csv"
+        self.out_path = self.root / "hard_gate_report.json"
+        groups = {f"group_{i}": {"status": "AVAILABLE", "rows": 1} for i in range(8)}
+        self.coverage_path.write_text(json.dumps({"p0_coverage": {
+            "status": "P0_COMPLETE", "available_count": 8, "required_count": 8, "groups": groups
+        }}), encoding="utf-8")
+        self.event_path.write_text(json.dumps({
+            "status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
+            "research_status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
+            "event_rows": 3, "eligible_event_rows": 2, "window_rows": 12
+        }), encoding="utf-8")
+        pd.DataFrame({"DATE": ["2026-10-22", "2026-10-23"],
+                      "SERIES": ["NIFTY 50", "NIFTY 50"],
+                      "CLOSE": [25000.0, 25100.0]}).to_csv(self.panel_path, index=False)
+        pd.DataFrame({"DATE": ["2026-10-22", "2026-10-23"]}).to_csv(self.equity_path, index=False)
+        sys.path.insert(0, str(ROOT / "pipeline"))
+        import macro_geo_hard_gate as hard_gate
+        self.gate = hard_gate
+        self.patches = [
+            patch.object(hard_gate, "COVERAGE", self.coverage_path),
+            patch.object(hard_gate, "EVENT_REPORT", self.event_path),
+            patch.object(hard_gate, "PANEL", self.panel_path),
+            patch.object(hard_gate, "EQUITY", self.equity_path),
+            patch.object(hard_gate, "OUT", self.out_path),
+        ]
+        for item in self.patches:
+            item.start()
+
+    def tearDown(self):
+        for item in reversed(self.patches):
+            item.stop()
+        self.temp.cleanup()
+
+    def report(self):
+        return self.json.loads(self.out_path.read_text(encoding="utf-8"))
+
+    def test_hard_gate_valid_inputs_pass_without_changing_invariants(self):
+        self.assertEqual(self.gate.main(), 0)
+        report = self.report()
+        self.assertEqual(report["status"], "PASS")
+        self.assertTrue(report["candidate_release_allowed"])
+        self.assertFalse(report["production_selector_changed"])
+        self.assertFalse(report["ranking_score_changed"])
+        self.assertFalse(report["pressure_fade_changed"])
+
+    def test_hard_gate_missing_input_blocks_release(self):
+        self.panel_path.unlink()
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertEqual(report["status"], "BLOCKED")
+        self.assertFalse(report["candidate_release_allowed"])
+        self.assertTrue(any(x.startswith("MISSING_REQUIRED_INPUT:") for x in report["blockers"]))
+
+    def test_hard_gate_zero_mature_windows_blocks_release(self):
+        self.event_path.write_text(self.json.dumps({
+            "status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
+            "research_status": "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS",
+            "event_rows": 3, "eligible_event_rows": 0, "window_rows": 0
+        }), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertIn("EVENT_STUDY_NOT_COMPUTED_WITH_MATURE_WINDOWS", report["blockers"])
+        self.assertFalse(report["candidate_release_allowed"])
+
+    def test_hard_gate_stale_panel_blocks_release(self):
+        pd.DataFrame({"DATE": ["2026-10-10", "2026-10-13"],
+                      "SERIES": ["NIFTY 50", "NIFTY 50"],
+                      "CLOSE": [25000.0, 25100.0]}).to_csv(self.panel_path, index=False)
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertIn("MARKET_PANEL_STALE_OR_DATE_MISALIGNED", report["blockers"])
+        self.assertFalse(report["candidate_release_allowed"])
+
+    def test_hard_gate_invalid_close_blocks_release(self):
+        pd.DataFrame({"DATE": ["2026-10-22", "2026-10-23"],
+                      "SERIES": ["NIFTY 50", "NIFTY 50"],
+                      "CLOSE": [25000.0, 0]}).to_csv(self.panel_path, index=False)
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertIn("MARKET_PANEL_HAS_INVALID_CLOSES", report["blockers"])
+        self.assertFalse(report["candidate_release_allowed"])
+
+
 if __name__=="__main__": unittest.main()
