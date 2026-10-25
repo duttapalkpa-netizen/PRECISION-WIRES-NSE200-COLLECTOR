@@ -117,10 +117,15 @@ def extract_article_urls(google_url, body=""):
                 candidates.extend(re.findall(r'https?://[^\s\x00\\"<>]+', decoded))
             except Exception:
                 pass
-    candidates.extend(re.findall(r"""href=["'](https?://[^"']+)["']""", body, flags=re.I))
+    # Google embeds destination URLs in escaped/HTML-encoded page metadata as well
+    # as href attributes. Normalize those encodings before trusted-domain filtering.
+    from html import unescape
+    normalized_body = unescape((body or "").replace(r"\\/", "/").replace(r"\\u0026", "&"))
+    candidates.extend(re.findall(r"""href=["'](https?://[^"']+)["']""", normalized_body, flags=re.I))
+    candidates.extend(re.findall(r"""https?://[^\s\\\"<>']+""", normalized_body, flags=re.I))
     clean = []
     for u in candidates:
-        u = unquote(u).rstrip(".,;)")
+        u = unquote(unescape(u)).rstrip(".,;)")
         if is_trusted_news_url(u) and len(urlparse(u).path.strip("/")) > 5 and u not in clean:
             clean.append(u)
     return clean
