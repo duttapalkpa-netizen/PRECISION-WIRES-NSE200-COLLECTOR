@@ -44,7 +44,7 @@ jobs:
       - name: Checkout audit branch only
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.sha }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
