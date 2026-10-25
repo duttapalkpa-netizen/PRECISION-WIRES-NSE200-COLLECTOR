@@ -24,6 +24,11 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import requests
 
+try:
+    from googlenewsdecoder import gnewsdecoder
+except Exception:  # Decoder is optional; strict validation still applies without it.
+    gnewsdecoder = None
+
 from macro_geo_collect_p0 import classify, is_trusted_news_url
 
 ROOT = Path(".")
@@ -262,6 +267,10 @@ def collect(start, end, session=None):
                 items = root.findall(".//item")
                 diagnostics["rss_items_seen"] += len(items)
                 diagnostics["slice_item_counts"].append({"start": cursor.isoformat(), "end": slice_end.isoformat(), "items": len(items)})
+                # Google News RSS links are opaque article IDs, not publisher URLs.
+                # Decode a small, bounded batch per date slice (one decoder batch call),
+                # then verify each actual publisher page and its explicit timestamp.
+                candidates = []
                 for item in items:
                     title = (item.findtext("title") or "").strip()
                     link = (item.findtext("link") or "").strip()
@@ -269,7 +278,34 @@ def collect(start, end, session=None):
                     source_el = item.find("source")
                     source_name = (source_el.text or "").strip() if source_el is not None else ""
                     source_host = source_el.attrib.get("url", "") if source_el is not None else ""
-                    row, reason = normalize_item(title, link, pub, source_name, source_host, client)
+                    event_type = classify(title, source_name)
+                    if event_type is None:
+                        event_type = next((classify(title, label) for _, label in QUERIES if classify(title, label)), None)
+                    if not title or event_type is None:
+                        reject("irrelevant_headline")
+                        continue
+                    candidates.append((title, link, pub, source_name, source_host))
+                # Cap at eight per 14-day query slice: bounded work, still spans the full
+                # 90-day lookback. A later run can add more rows without relaxing QA.
+                candidates = candidates[:8]
+                decoded = []
+                if candidates and gnewsdecoder is not None:
+                    try:
+                        decoded = gnewsdecoder([x[1] for x in candidates], interval=0, timeout=10)
+                        if isinstance(decoded, dict):
+                            decoded = [decoded]
+                    except Exception as exc:
+                        reject("google_news_batch_decode_error:" + type(exc).__name__)
+                        decoded = []
+                for idx, (title, link, pub, source_name, source_host) in enumerate(candidates):
+                    direct_url = ""
+                    if idx < len(decoded) and isinstance(decoded[idx], dict) and decoded[idx].get("success"):
+                        direct_url = str(decoded[idx].get("decoded_url") or "").strip()
+                    if not direct_url:
+                        # Preserve legacy redirect resolution as a last attempt; do not
+                        # treat Google RSS pubDate as publisher publication evidence.
+                        direct_url = link
+                    row, reason = normalize_item(title, direct_url, pub, source_name, source_host, client)
                     if reason:
                         reject(reason)
                         continue
