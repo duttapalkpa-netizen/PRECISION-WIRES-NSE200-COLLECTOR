@@ -188,6 +188,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
     def setUp(self):
         import json
         import tempfile
+        import sys
         from unittest.mock import patch
         self.json = json
         self.temp = tempfile.TemporaryDirectory()
