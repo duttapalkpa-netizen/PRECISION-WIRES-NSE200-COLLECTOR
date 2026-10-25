@@ -114,7 +114,7 @@ def extract_article_urls(google_url, body=""):
             try:
                 raw = base64.urlsafe_b64decode(token + padding)
                 decoded = raw.decode("latin-1", errors="ignore")
-                candidates.extend(re.findall(r"https?://[^\\s\\x00\\\\"<>]+", decoded))
+                candidates.extend(re.findall(r'https?://[^\s\x00\\"<>]+', decoded))
             except Exception:
                 pass
     candidates.extend(re.findall(r"""href=["'](https?://[^"']+)["']""", body, flags=re.I))
