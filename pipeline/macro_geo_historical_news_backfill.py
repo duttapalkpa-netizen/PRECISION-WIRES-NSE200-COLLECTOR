@@ -16,6 +16,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 import hashlib
 import json
+import re
 import time
 import xml.etree.ElementTree as ET
 
@@ -53,67 +54,99 @@ def parse_pubdate(value):
         return None
 
 
-class CanonicalURLParser(HTMLParser):
-    """Read canonical article URLs without treating publisher homepages as evidence."""
+class ArticleMetadataParser(HTMLParser):
+    """Extract canonical article URLs and explicit publisher publication metadata."""
     def __init__(self):
         super().__init__()
-        self.urls = []
+        self.urls, self.timestamps = [], []
     def handle_starttag(self, tag, attrs):
-        if tag.lower() != "link":
-            return
         a = {str(k).lower(): str(v or "") for k, v in attrs}
-        rel = {x.lower() for x in a.get("rel", "").split()}
-        if "canonical" in rel and a.get("href"):
-            self.urls.append(a["href"])
+        if tag.lower() == "link":
+            rel = {x.lower() for x in a.get("rel", "").split()}
+            if "canonical" in rel and a.get("href"):
+                self.urls.append(a["href"])
+        if tag.lower() == "meta":
+            key = (a.get("property") or a.get("name") or a.get("itemprop") or "").lower()
+            if key in {"article:published_time", "datepublished", "datepublished", "date", "pubdate", "parsely-pub-date", "og:published_time"}:
+                if a.get("content"):
+                    self.timestamps.append(a["content"])
+        if tag.lower() == "time" and a.get("datetime"):
+            self.timestamps.append(a["datetime"])
+
+
+def parse_publisher_timestamp(html):
+    parser = ArticleMetadataParser()
+    parser.feed(html[:1000000])
+    # JSON-LD datePublished is commonly not exposed as a meta tag.
+    for match in re.findall(r'"datePublished"\\s*:\\s*"([^"]+)"', html[:1000000], flags=re.I):
+        parser.timestamps.append(match)
+    for value in parser.timestamps:
+        try:
+            stamp = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+            if stamp.tzinfo is not None:
+                return stamp.astimezone(timezone.utc)
+        except (TypeError, ValueError, OverflowError):
+            try:
+                stamp = parse_pubdate(value)
+                if stamp is not None:
+                    return stamp
+            except Exception:
+                pass
+    return None
 
 
 def normalize_item(title, google_url, pubdate, source_name, source_host, session=None, diagnostics=None):
-    """Return (auditable row, rejection reason); never accept a Google URL as publisher evidence."""
+    """Return (auditable row, rejection reason); accept only article URL + publisher page timestamp."""
     title = str(title or "").strip()
-    published = parse_pubdate(pubdate)
     if not title:
         return None, "empty_title"
-    if published is None:
-        return None, "invalid_or_timezone_missing_pubdate"
     group = str(source_name or "GOOGLE_NEWS_HISTORICAL_RSS")
     event_type = classify(title, group)
     if event_type is None:
-        # The query's category is not proof of relevance; preserve strict classifier.
         event_type = next((classify(title, label) for _, label in QUERIES if classify(title, label)), None)
     if event_type is None:
         return None, "irrelevant_headline"
     client = session or requests.Session()
     try:
-        response = client.get(google_url, headers={"User-Agent": UA}, timeout=TIMEOUT,
-                              allow_redirects=True)
+        response = client.get(google_url, headers={"User-Agent": UA}, timeout=TIMEOUT, allow_redirects=True)
         final_url = str(response.url or "")
-        canonical = []
-        if is_trusted_news_url(final_url):
-            canonical = [final_url]
-        else:
-            parser = CanonicalURLParser()
-            # Bounded response parsing: only inspect a small prefix; never trust Google wrapper URLs.
-            parser.feed((response.text or "")[:500000])
-            canonical = parser.urls
-        trusted = next((u for u in canonical if is_trusted_news_url(u)), "")
+        body = (response.text or "")[:1000000]
+        parser = ArticleMetadataParser()
+        parser.feed(body)
+        candidates = ([final_url] if is_trusted_news_url(final_url) else []) + parser.urls
+        # Google wrapper pages sometimes expose the publisher article as an anchor.
+        for href in re.findall(r'href=["\\'](https?://[^"\\']+)["\\']', body, flags=re.I):
+            if is_trusted_news_url(href):
+                candidates.append(href)
+        trusted = next((u for u in candidates if is_trusted_news_url(u) and len(urlparse(u).path.strip("/")) > 5), "")
         response.close()
+        if not trusted:
+            return None, "no_trusted_publisher_article_url"
+        # Fetch the actual publisher page and require explicit publication metadata.
+        article = client.get(trusted, headers={"User-Agent": UA}, timeout=TIMEOUT, allow_redirects=True)
+        article_url = str(article.url or trusted)
+        article_body = (article.text or "")[:1000000]
+        actual_published = parse_publisher_timestamp(article_body)
+        article.close()
     except Exception as exc:
         return None, "publisher_redirect_or_fetch_error:" + type(exc).__name__
-    if not trusted:
-        return None, "no_trusted_publisher_article_url"
-    host = (urlparse(trusted).hostname or "").lower()
-    event_id = hashlib.sha256((published.isoformat() + "|" + trusted).encode()).hexdigest()[:20]
+    if not is_trusted_news_url(article_url):
+        return None, "publisher_article_redirect_untrusted"
+    if actual_published is None:
+        return None, "publisher_publication_timestamp_missing"
+    host = (urlparse(article_url).hostname or "").lower()
+    event_id = hashlib.sha256((actual_published.isoformat() + "|" + article_url).encode()).hexdigest()[:20]
     return ({
-        "EVENT_DATE": published.date().isoformat(),
+        "EVENT_DATE": actual_published.date().isoformat(),
         "EVENT_ID": event_id,
         "EVENT_TYPE": event_type,
-        "PUBLISHED_AT": published.isoformat(),
-        "SOURCE": str(source_name or host or "trusted publisher via Google News RSS"),
-        "SOURCE_URL": trusted,
+        "PUBLISHED_AT": actual_published.isoformat(),
+        "SOURCE": str(source_name or host or "trusted publisher"),
+        "SOURCE_URL": article_url,
         "TITLE": title,
-        "CONFIDENCE": 0.80,
-        "EVIDENCE_TYPE": "TRUSTED_PUBLISHER_ARTICLE_DISCOVERED_VIA_GOOGLE_NEWS_RSS",
-        "EVENT_DATE_BASIS": "PUBLISHER_RSS_PUBLICATION_TIMESTAMP",
+        "CONFIDENCE": 0.90,
+        "EVIDENCE_TYPE": "TRUSTED_PUBLISHER_ARTICLE_WITH_PAGE_PUBLICATION_METADATA",
+        "EVENT_DATE_BASIS": "PUBLISHER_ARTICLE_PUBLICATION_TIMESTAMP",
         "QUERY_GROUP": group,
         "SOURCE_COUNTRY": "",
         "GDELT_API_URL": "",
@@ -200,8 +233,8 @@ def main():
         "new_events_with_source_urls": int(fresh["SOURCE_URL"].astype(str).str.startswith("https://").sum()) if not fresh.empty else 0,
         "failures": failures,
         "collection_diagnostics": diagnostics,
-        "diagnostic_note": "A clean zero-row result is not a pass; inspect RSS item counts, rejection reasons, and slice counts. RSS pubDate is publication metadata from the discovery feed, not independently verified event-occurrence time.",
-        "event_semantics": "Trusted publisher media mentions with explicit publisher publication timestamps; not verified event-occurrence times or causal evidence.",
+        "diagnostic_note": "Only publisher-page publication metadata is accepted for new rows; Google RSS pubDate is discovery metadata only. Inspect rejection reasons if no verified rows are found.",
+        "event_semantics": "Trusted publisher media mentions with explicit publication metadata extracted from publisher article pages; not verified event-occurrence times or causal evidence.",
         "no_synthetic_timestamps": True,
         "output": str(EVENTS),
     }
