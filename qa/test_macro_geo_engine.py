@@ -212,7 +212,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
             "status": "PASS_WITH_GAPS", "operational_status": "PASS_WITH_GAPS",
             "p0_coverage": {
                 "required_series_available": True,
-                "fpi_dii_status": "AVAILABLE_FROM_NS​​DL_HISTORICAL_SOURCE",
+                "fpi_dii_status": "AVAILABLE_FROM_NSDL_HISTORICAL_SOURCE",
                 "corporate_events_status": "AVAILABLE"
             }
         }), encoding="utf-8")
