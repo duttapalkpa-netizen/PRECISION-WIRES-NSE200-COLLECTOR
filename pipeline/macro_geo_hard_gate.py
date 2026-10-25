@@ -54,9 +54,9 @@ def main():
             if old_status == "PASS_WITH_CRITICAL_DATA_GAPS" or old_required is False:
                 blockers.append("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS")
             p0_meta = manifest.get("p0_coverage", {})
-            if str(p0_meta.get("fpi_dii_status", "")).startswith("UNKNOWN/BLOCKED"):
+            if p0_meta.get("fpi_dii_status") != "AVAILABLE":
                 blockers.append("COLLECTION_MANIFEST_FPI_DII_STATUS_UNRESOLVED")
-            if str(p0_meta.get("corporate_events_status", "")).startswith("UNKNOWN/BLOCKED"):
+            if p0_meta.get("corporate_events_status") != "AVAILABLE":
                 blockers.append("COLLECTION_MANIFEST_CORPORATE_EVENTS_STATUS_UNRESOLVED")
         except Exception as exc:
             blockers.append(f"INVALID_COLLECTION_MANIFEST:{type(exc).__name__}:{exc}")
