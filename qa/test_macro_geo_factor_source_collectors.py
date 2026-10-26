@@ -31,6 +31,29 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(rows[0][1], 4.01)
         self.assertIn("fred.stlouisfed.org", rows[0][2])
 
+    def test_dxy_collector_preserves_exchange_session_date_and_provider(self):
+        from datetime import datetime, timezone, date
+        class ChartResponse:
+            url = "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d"
+            def raise_for_status(self): pass
+            def json(self):
+                ts = [int(datetime(2026, 10, 20, 16, tzinfo=timezone.utc).timestamp()),
+                      int(datetime(2026, 10, 21, 16, tzinfo=timezone.utc).timestamp())]
+                return {"chart": {"result": [{
+                    "timestamp": ts,
+                    "meta": {"exchangeTimezoneName": "America/New_York"},
+                    "indicators": {"quote": [{"close": [98.4, 98.7]}]}
+                }], "error": None}}
+        session = type("Session", (), {"get": lambda self, *a, **kw: ChartResponse()})()
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(collector, "OUT", Path(tmp)):
+                report = collector.fetch_dxy_yahoo(session, date(2026, 10, 20), date(2026, 10, 21))
+                frame = pd.read_csv(Path(tmp) / "dxy.csv")
+        self.assertEqual(report["status"], "COLLECTED_NEEDS_DOMAIN_QA")
+        self.assertEqual(frame["DATE"].tolist(), ["2026-10-20", "2026-10-21"])
+        self.assertEqual(frame["SOURCE_SERIES"].unique().tolist(), ["DX-Y.NYB"])
+        self.assertTrue(frame["SOURCE_URL"].iloc[0].startswith("https://query1.finance.yahoo.com/"))
+
     def test_policy_rss_collector_preserves_url_and_publication_time_without_claiming_event_date(self):
         from datetime import date
         xml = (b'<?xml version="1.0"?><rss><channel><item>'
