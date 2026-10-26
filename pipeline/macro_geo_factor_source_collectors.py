@@ -127,8 +127,10 @@ def fetch_global_policy_events(session, start, end):
                 for child in list(entry):
                     key = child.tag.rsplit("}", 1)[-1].lower()
                     text = "".join(child.itertext()).strip()
-                    if key == "link" and child.attrib.get("href"):
-                        fields["link"] = child.attrib["href"].strip()
+                    if key == "link":
+                        link_value = child.attrib.get("href") or text
+                        if link_value:
+                            fields["link"] = link_value.strip()
                     elif key in ("title", "pubdate", "published", "updated", "date", "issued"):
                         fields[key] = text
                 title = fields.get("title", "")
