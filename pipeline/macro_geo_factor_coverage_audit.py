@@ -59,13 +59,14 @@ def main():
         for name in sources:
             item=observed.get(name,{})
             status=item.get("status","NOT_CONNECTED")
+            # A warning is not source availability for hard-gate purposes.
+            # Keep the observed warning visible, but never count it as a connected
+            # group. Missing or uncertain inputs remain UNKNOWN, not negative.
             if status=="AVAILABLE" and int(item.get("rows") or 0)>0:
                 source_status.append((name,"AVAILABLE"))
-            elif status=="DATA_QUALITY_WARN":
-                source_status.append((name,"AVAILABLE_WITH_WARNINGS"))
             else:
                 source_status.append((name,status))
-        available=sum(s in ("AVAILABLE","AVAILABLE_WITH_WARNINGS") for _,s in source_status)
+        available=sum(s=="AVAILABLE" for _,s in source_status)
         if not sources: state="UNMAPPED"
         elif available==len(sources): state="SOURCE_GROUPS_AVAILABLE_SCHEMA_ONLY"
         elif available>0: state="PARTIAL_SOURCE_COVERAGE"
@@ -73,7 +74,7 @@ def main():
         rows.append({"factor_id":fid,"factor":f["factor"],"provisional_priority":f["provisional_priority"],
           "mapped_source_groups":";".join(sources),"source_statuses":";".join(n+":"+s for n,s in source_status),
           "mapped_groups_total":len(sources),"mapped_groups_available":available,"coverage_status":state,
-          "evidence_boundary":"Coverage is schema/file availability only; not validated units, source authenticity, point-in-time history, empirical factor effect or live scoring."})
+          "evidence_boundary":"Only status AVAILABLE with nonzero rows counts as connected. DATA_QUALITY_WARN, missing provenance, stale data, schema failures and absent files do not count as available; absence remains UNKNOWN, never negative. Even AVAILABLE is schema/generic-QA coverage, not proof of factor effect or live scoring."})
     df=pd.DataFrame(rows)
     df.to_csv(OUT/"factor_coverage_audit.csv",index=False)
     missing=df[df.coverage_status!="SOURCE_GROUPS_AVAILABLE_SCHEMA_ONLY"]
