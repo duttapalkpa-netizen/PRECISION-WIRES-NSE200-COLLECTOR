@@ -43,6 +43,20 @@ class FactorSourceCollectorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "no valid observations"):
             collector.fetch_fred(session, "DGS10", date(2026, 10, 20), date(2026, 10, 22))
 
+    def test_collected_factor_files_remain_warning_until_domain_qa_passes(self):
+        import pipeline.macro_geo_source_coverage as coverage
+        rows = [
+            {"source": "us_yields", "rows": 25, "status": "AVAILABLE", "notes": "Generic QA passed."},
+            {"source": "global_commodity_prices", "rows": 40, "status": "AVAILABLE", "notes": "Generic QA passed."},
+        ]
+        report = {"groups": {
+            "us_yields": {"status": "COLLECTED_NEEDS_DOMAIN_QA", "rows": 25},
+            "global_commodity_prices": {"status": "AVAILABLE_WITH_SOURCE_FAILURES", "rows": 40},
+        }}
+        result = coverage.apply_factor_collector_report(rows, report)
+        self.assertTrue(all(row["status"] == "DATA_QUALITY_WARN" for row in result))
+        self.assertTrue(all("domain/source QA not cleared" in row["notes"] for row in result))
+
     def test_factor_audit_does_not_count_warnings_or_missing_rows_as_connected(self):
         import pipeline.macro_geo_factor_coverage_audit as audit
         self.assertTrue(audit.source_is_connected({"status": "AVAILABLE", "rows": 3}))
