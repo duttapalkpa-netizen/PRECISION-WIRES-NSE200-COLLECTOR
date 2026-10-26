@@ -203,11 +203,21 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.repair_path = self.root / "p0_repair_report.json"
         self.factor_path = self.root / "factor_coverage_audit.json"
         self.regime_path = self.root / "historical_regime_study_report.json"
+        self.nsdl_path = self.root / "nsdl_fpi_dii_collection.json"
+        self.factor_rows_path = self.root / "factor_coverage_audit.csv"
         self.repair_path.write_text(json.dumps({"groups": {
             "fpi_dii_flows": {"status": "AVAILABLE"},
             "corporate_events": {"status": "AVAILABLE"}
         }}), encoding="utf-8")
         self.factor_path.write_text(json.dumps({"factor_groups": 1, "fully_available_schema_groups": 1, "not_connected": 0}), encoding="utf-8")
+        pd.DataFrame([{"factor_id": "F01", "coverage_status": "SOURCE_GROUPS_AVAILABLE_SCHEMA_ONLY"}]).to_csv(self.factor_rows_path, index=False)
+        self.nsdl_path.write_text(json.dumps({
+            "status": "AVAILABLE",
+            "groups": {
+                "FPI": {"unique_dates": 60, "span_days": 90, "rows": 60},
+                "DII": {"unique_dates": 60, "span_days": 90, "rows": 60}
+            }
+        }), encoding="utf-8")
         self.regime_path.write_text(json.dumps({"research_status": "COMPUTED_EXPLORATORY", "window_rows": 1}), encoding="utf-8")
         groups = {f"group_{i}": {"status": "AVAILABLE", "rows": 1} for i in range(8)}
         self.coverage_path.write_text(json.dumps({"p0_coverage": {
@@ -225,9 +235,12 @@ class MacroGeoHardGateTests(unittest.TestCase):
             "status": "PASS_WITH_GAPS", "operational_status": "PASS_WITH_GAPS",
             "p0_coverage": {
                 "required_series_available": True,
+                "required_groups": ["benchmark_index", "sector_indices", "volatility", "crude_oil", "usd_inr", "fpi_dii_flows", "corporate_events", "geopolitical_events"],
+                "group_availability_after_repair": {name: True for name in ["benchmark_index", "sector_indices", "volatility", "crude_oil", "usd_inr", "fpi_dii_flows", "corporate_events", "geopolitical_events"]},
                 "fpi_dii_status": "AVAILABLE",
                 "corporate_events_status": "AVAILABLE"
-            }
+            },
+            "final_manifest_reconciliation": {"status": "RECONCILED"}
         }), encoding="utf-8")
         pd.DataFrame({"DATE": ["2026-10-22", "2026-10-23"],
                       "SERIES": ["NIFTY 50", "NIFTY 50"],
@@ -246,6 +259,8 @@ class MacroGeoHardGateTests(unittest.TestCase):
             patch.object(hard_gate, "REPAIR", self.repair_path),
             patch.object(hard_gate, "FACTOR_COVERAGE", self.factor_path),
             patch.object(hard_gate, "REGIME_REPORT", self.regime_path),
+            patch.object(hard_gate, "NSDL_REPORT", self.nsdl_path),
+            patch.object(hard_gate, "FACTOR_ROWS", self.factor_rows_path),
             patch.object(hard_gate, "OUT", self.out_path),
         ]
         for item in self.patches:
