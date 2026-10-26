@@ -97,6 +97,21 @@ class FactorSourceCollectorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "no valid observations"):
             collector.fetch_fred(session, "DGS10", date(2026, 10, 20), date(2026, 10, 22))
 
+    def test_all_18_run145_missing_groups_have_explicit_source_inventory_contracts(self):
+        import pipeline.macro_geo_source_coverage as coverage
+        required = {
+            "us_yields", "dxy", "global_policy_events", "fed_policy_surprises",
+            "macro_indicators", "sector_fundamentals", "government_capex",
+            "global_commodity_prices", "china_indicators", "india_bond_yields",
+            "inflation_components", "fx_carry_and_cross_currency", "weather_agriculture",
+            "global_freight_shipping", "ipo_float_unlocks", "market_microstructure",
+            "research_house_actions", "earnings_revisions",
+        }
+        self.assertEqual(required - set(coverage.SOURCES), set())
+        for name in required:
+            self.assertTrue(coverage.SOURCES[name]["paths"], name)
+            self.assertTrue(coverage.SOURCES[name]["required"], name)
+
     def test_collected_factor_files_remain_warning_until_domain_qa_passes(self):
         import pipeline.macro_geo_source_coverage as coverage
         rows = [
