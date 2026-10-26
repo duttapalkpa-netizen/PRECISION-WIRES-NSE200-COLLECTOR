@@ -9,6 +9,7 @@ are reported as BLOCKED; no synthetic rows are written.
 from __future__ import annotations
 
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 from io import StringIO
 from pathlib import Path
 import json
@@ -112,6 +113,49 @@ def fetch_treasury_yields(session, start, end):
     if not rows:
         raise ValueError(f"US Treasury returned no valid yield observations in {start}..{end}")
     return rows
+
+
+def fetch_dxy_yahoo(session, start, end):
+    """Fetch the ICE US Dollar Index ticker from Yahoo Finance; keep provider explicit."""
+    period1 = int(datetime.combine(start, datetime.min.time(), tzinfo=timezone.utc).timestamp())
+    period2 = int(datetime.combine(end + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc).timestamp())
+    base = "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB"
+    response = session.get(base, params={"period1": period1, "period2": period2, "interval": "1d",
+                                         "events": "history"}, timeout=(8, 20))
+    response.raise_for_status()
+    payload = response.json()
+    result = (((payload.get("chart") or {}).get("result") or [None])[0])
+    if not result:
+        error = (payload.get("chart") or {}).get("error")
+        raise ValueError(f"Yahoo chart returned no result: {error}")
+    timestamps = result.get("timestamp") or []
+    quotes = (((result.get("indicators") or {}).get("quote") or [{}])[0])
+    closes = quotes.get("close") or []
+    tz_name = (result.get("meta") or {}).get("exchangeTimezoneName") or "UTC"
+    tz = ZoneInfo(tz_name)
+    rows = []
+    for ts, value in zip(timestamps, closes):
+        if value is None:
+            continue
+        day = datetime.fromtimestamp(int(ts), tz=tz).date()
+        if start <= day <= end:
+            rows.append({"DATE": day.isoformat(), "CLOSE": float(value),
+                         "SOURCE": "Yahoo Finance chart API; ICE US Dollar Index ticker",
+                         "SOURCE_SERIES": "DX-Y.NYB", "SOURCE_URL": response.url,
+                         "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat()})
+    if not rows:
+        raise ValueError(f"Yahoo returned no valid DXY observations in {start}..{end}")
+    frame = pd.DataFrame(rows).drop_duplicates(["DATE"]).sort_values("DATE")
+    target = OUT / "dxy.csv"
+    OUT.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(target.suffix + ".tmp")
+    frame.to_csv(tmp, index=False)
+    os.replace(tmp, target)
+    return {"status": "COLLECTED_NEEDS_DOMAIN_QA", "rows": int(len(frame)),
+            "date_min": str(frame["DATE"].min()), "date_max": str(frame["DATE"].max()),
+            "path": str(target), "source": "Yahoo Finance chart API; ICE US Dollar Index ticker",
+            "observed_source_series": ["DX-Y.NYB"], "source_urls": sorted(set(frame["SOURCE_URL"])),
+            "notes": "Third-party market-data mirror; verify licensing, exact index definition, units and point-in-time suitability before use."}
 
 
 def fetch_global_policy_events(session, start, end):
@@ -227,10 +271,16 @@ def main():
         session.headers.update({"User-Agent": UA, "Accept": "text/csv,*/*"})
         report["groups"]["us_yields"] = collect_group("us_yields", YIELD_SERIES, start, end, session)
         report["groups"]["global_commodity_prices"] = collect_group("global_commodity_prices", COMMODITY_SERIES, start, end, session)
+        try:
+            report["groups"]["dxy"] = fetch_dxy_yahoo(session, start, end)
+        except Exception as exc:
+            report["groups"]["dxy"] = {"status": "BLOCKED", "rows": 0,
+                                       "error": f"{type(exc).__name__}: {str(exc)[:240]}",
+                                       "notes": "No validated DXY rows; missing data remains UNKNOWN."}
         report["groups"]["global_policy_events"] = fetch_global_policy_events(session, start, end)
     except Exception as exc:
         report["window"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:240]}"}
-        for name in ("us_yields", "global_commodity_prices", "global_policy_events"):
+        for name in ("us_yields", "global_commodity_prices", "global_policy_events", "dxy"):
             report["groups"][name] = {"status": "BLOCKED", "rows": 0,
                                       "notes": "No rows written; missing data remains UNKNOWN."}
     REPORT.parent.mkdir(parents=True, exist_ok=True)
