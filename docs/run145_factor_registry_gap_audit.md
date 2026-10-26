@@ -110,3 +110,20 @@ The expected required columns are defined in `pipeline/macro_geo_source_coverage
 ## Status of this change
 
 This file records a reproducible artifact audit and an actionable repair contract. It does **not** claim that the 18 datasets have already been collected. Run a new bounded collector workflow and inspect its artifacts before marking any source group repaired.
+
+
+## Bounded repair batch (in progress; not a release PASS)
+
+The first implementation batch adds real collectors for these source groups:
+- `us_yields`: FRED observations with an official US Treasury daily-yield CSV fallback; the observed source and URL are retained.
+- `global_commodity_prices`: public FRED commodity observations. If a requested series fails, the report preserves the failure; a partial set is not treated as clean coverage.
+- `global_policy_events`: official Federal Reserve and ECB feed items with publisher URL and publication timestamp. The publication date is explicitly marked as a proxy, not silently treated as the true policy-decision date.
+
+QA controls:
+- Mocked tests cover schema rejection, missing observations, source URLs, timestamps, UNKNOWN semantics, and warning-state handling.
+- A separate short live test checks the official Treasury yield feed over a 21-calendar-day window.
+- The full Macro-Geo workflow invokes the bounded collector before source coverage; collector failures are visible and do not relax the hard gate.
+- The factor audit counts only non-empty `AVAILABLE` source rows as connected. `DATA_QUALITY_WARN` is not counted as connected.
+- Collector output stays at `DATA_QUALITY_WARN` until a separate domain/source QA pass explicitly clears it.
+
+This batch does **not** repair the remaining 15 of 18 disconnected groups, and does not by itself establish point-in-time validity, complete historical coverage, causal effect, or permission to release candidates. The full workflow and hard gate must remain blocked until all required groups have genuine source evidence and their domain-specific QA passes.
