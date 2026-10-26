@@ -108,14 +108,37 @@ def niftyindices_history(start,end):
       "Content-Type":"application/json; charset=UTF-8","X-Requested-With":"XMLHttpRequest",
       "Referer":"https://www.niftyindices.com/reports/historical-data"}
     rows=[]; failures=[]
+    def parse_official_response(resp, endpoint):
+        # Some IIS responses are JSON, while others wrap the payload in a
+        # single-quoted .NET object. Parse both safely and retain diagnostics.
+        text_body=(resp.text or "").strip()
+        try:
+            body=resp.json()
+        except Exception:
+            try:
+                body=ast.literal_eval(text_body)
+            except Exception as exc:
+                raise ValueError(f"{endpoint}: invalid JSON/Python-literal response; status={resp.status_code}; content_type={resp.headers.get('Content-Type','')}; preview={text_body[:180]!r}; parse_error={type(exc).__name__}") from exc
+        if isinstance(body, dict):
+            raw=body.get("d", [])
+        else:
+            raw=body
+        if isinstance(raw, list):
+            return raw
+        if raw is None or str(raw).strip().lower() in ("", "false", "none", "null"):
+            return []
+        if isinstance(raw, str):
+            try:
+                value=json.loads(raw)
+            except Exception:
+                value=ast.literal_eval(raw)
+            return value if isinstance(value,list) else []
+        return []
     for label,api_name in index_map.items():
         payload={"cinfo":f"{{'name':'{api_name}','startDate':'{start_text}','endDate':'{end_text}','indexName':'{api_name}'}}"}
         try:
             resp=session.post(base+"getHistoricaldatatabletoString",json=payload,headers=headers,timeout=(5,20))
-            resp.raise_for_status(); body=resp.json(); raw_data=body.get("d","[]")
-            try: data=raw_data if isinstance(raw_data,list) else json.loads(raw_data) if str(raw_data).strip().lower() not in ("false","none","null","") else []
-            except Exception: data=ast.literal_eval(raw_data) if isinstance(raw_data,str) else []
-            if not isinstance(data,list): data=[]
+            resp.raise_for_status(); data=parse_official_response(resp,"getHistoricaldatatabletoString")
             for item in data:
                 raw_date=item.get("HistoricalDate") or item.get("DATE")
                 dt=pd.to_datetime(raw_date,errors="coerce",dayfirst=True)
@@ -132,10 +155,7 @@ def niftyindices_history(start,end):
     try:
         resp=session.post(base+"BindHistoricalIndiaVixData",data=vix_payload,
           headers=headers,timeout=(5,20))
-        resp.raise_for_status(); body=resp.json(); raw=body.get("d","false")
-        try: data=raw if isinstance(raw,list) else json.loads(raw) if str(raw).strip().lower() not in ("false","none","null","") else []
-        except Exception: data=ast.literal_eval(raw) if isinstance(raw,str) else []
-        if not isinstance(data,list): data=[]
+        resp.raise_for_status(); data=parse_official_response(resp,"BindHistoricalIndiaVixData")
         for item in data:
             dt=pd.to_datetime(item.get("date") or item.get("Date"),errors="coerce",dayfirst=True)
             close=pd.to_numeric(pd.Series([item.get("close") or item.get("CLOSE")]),errors="coerce").iloc[0]
