@@ -128,6 +128,9 @@ class FactorSourceCollectorTests(unittest.TestCase):
         result = coverage.apply_factor_collector_report(rows, report)
         self.assertTrue(all(row["status"] == "DATA_QUALITY_WARN" for row in result))
         self.assertTrue(all("domain/source QA not cleared" in row["notes"] for row in result))
+        failed_rows = [{"source": "us_yields", "rows": 3, "status": "SCHEMA_FAIL", "notes": "Missing SOURCE_URL"}]
+        coverage.apply_factor_collector_report(failed_rows, {"groups": {"us_yields": {"status": "COLLECTED_NEEDS_DOMAIN_QA"}}})
+        self.assertEqual(failed_rows[0]["status"], "SCHEMA_FAIL")
 
     def test_factor_audit_does_not_count_warnings_or_missing_rows_as_connected(self):
         import pipeline.macro_geo_factor_coverage_audit as audit
