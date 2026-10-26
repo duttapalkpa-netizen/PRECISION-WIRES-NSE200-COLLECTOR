@@ -31,6 +31,18 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(rows[0][1], 4.01)
         self.assertIn("fred.stlouisfed.org", rows[0][2])
 
+    def test_official_treasury_fallback_parses_three_maturities_with_provenance(self):
+        response = FakeResponse(
+            "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve",
+            b"Date,2 Yr,10 Yr,30 Yr\\n10/20/2026,3.51,4.01,4.62\\n10/21/2026,3.50,4.03,4.61\\n")
+        session = type("Session", (), {"get": lambda self, *a, **kw: response})()
+        rows = collector.fetch_treasury_yields(session, date(2026, 10, 20), date(2026, 10, 21))
+        self.assertEqual(len(rows), 6)
+        self.assertEqual({r["SERIES"] for r in rows},
+                         {"US_TREASURY_2Y", "US_TREASURY_10Y", "US_TREASURY_30Y"})
+        self.assertTrue(all(r["SOURCE"] == "US Department of the Treasury" for r in rows))
+        self.assertTrue(all(r["SOURCE_URL"].startswith("https://home.treasury.gov/") for r in rows))
+
     def test_schema_mismatch_fails_closed(self):
         response = FakeResponse("https://example.test", b"wrong,value\n2026-10-20,4.01\n")
         session = type("Session", (), {"get": lambda self, *a, **kw: response})()
