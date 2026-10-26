@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Bounded live smoke test of official US Treasury daily yield CSV (21-day window)."""
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
+import sys
 import json
 import requests
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pipeline.macro_geo_factor_source_collectors import fetch_treasury_yields
 
 end = datetime.now(timezone.utc).date()
