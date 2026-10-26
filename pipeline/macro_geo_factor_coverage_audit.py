@@ -46,6 +46,14 @@ MAP={
 "F34":["research_house_actions","earnings_revisions"],
 "F35":["volatility","dxy","fx_carry_and_cross_currency","fpi_dii_flows"],
 }
+def source_is_connected(item):
+    """Only a clean, nonempty source-coverage row counts as connected."""
+    try:
+        return item.get("status") == "AVAILABLE" and int(item.get("rows") or 0) > 0
+    except (TypeError, ValueError):
+        return False
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     registry=pd.read_csv(REGISTRY).fillna("")
@@ -62,7 +70,7 @@ def main():
             # A warning is not source availability for hard-gate purposes.
             # Keep the observed warning visible, but never count it as a connected
             # group. Missing or uncertain inputs remain UNKNOWN, not negative.
-            if status=="AVAILABLE" and int(item.get("rows") or 0)>0:
+            if source_is_connected(item):
                 source_status.append((name,"AVAILABLE"))
             else:
                 source_status.append((name,status))
