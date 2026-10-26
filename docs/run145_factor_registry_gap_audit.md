@@ -144,3 +144,42 @@ This batch does **not** repair the remaining 15 of 18 disconnected groups, and d
 ### Source contract tightening
 
 The source inventory now requires `SOURCE_URL` and `OBSERVED_AT_UTC` for each of the 18 disconnected groups, plus group-appropriate `PUBLISHED_AT` or `RELEASED_AT` fields where point-in-time event/indicator data needs them. A file with only the numerical value columns is insufficient for release readiness. Schema failures remain distinct from generic QA warnings and cannot be downgraded by collector-report reconciliation.
+
+
+## Status checkpoint — 2026-10-26 (do not interpret as release PASS)
+
+The latest bounded source smoke is [GitHub Actions #40362965982](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40362965982), SUCCESS. It validates the bounded unit suite and live Treasury feed test, not the full Factor Registry.
+
+### Collector implementation status for the 18 Run #145 missing groups
+
+| Source group | Implementation evidence | Release/coverage status |
+|---|---|---|
+| `us_yields` | Official US Treasury daily CSV collector; bounded live feed passed | Collected; domain QA / integration artifact still required |
+| `dxy` | Yahoo Finance `DX-Y.NYB` collector; live smoke passed | Third-party mirror; domain/licensing/definition QA required |
+| `global_commodity_prices` | FRED series collector for WTI and gold | Collector exists; full live series and unit/frequency QA pending |
+| `global_policy_events` | Federal Reserve and ECB RSS/Atom parser | Feed connectivity passed; item relevance and actual event-date QA pending |
+| `fed_policy_surprises` | No validated expected-rate consensus source | UNKNOWN / NOT REPAIRED |
+| `macro_indicators` | No complete collector with release-time provenance | UNKNOWN / NOT REPAIRED |
+| `sector_fundamentals` | No validated sector metric collector | UNKNOWN / NOT REPAIRED |
+| `government_capex` | No collector with official release timestamp and actual/budget spend schema | UNKNOWN / NOT REPAIRED |
+| `china_indicators` | No collector with verified official release-time provenance | UNKNOWN / NOT REPAIRED |
+| `india_bond_yields` | No validated official-source collector in this repair batch | UNKNOWN / NOT REPAIRED |
+| `inflation_components` | No collector with component-level release timestamps | UNKNOWN / NOT REPAIRED |
+| `fx_carry_and_cross_currency` | No validated paired rate/tenor source collector | UNKNOWN / NOT REPAIRED |
+| `weather_agriculture` | No validated IMD/agriculture collector | UNKNOWN / NOT REPAIRED |
+| `global_freight_shipping` | No validated freight index/route collector | UNKNOWN / NOT REPAIRED |
+| `ipo_float_unlocks` | No validated exchange filing/float-unlock collector | UNKNOWN / NOT REPAIRED |
+| `market_microstructure` | No complete per-symbol circuit/surveillance collector | UNKNOWN / NOT REPAIRED |
+| `research_house_actions` | No validated publisher action collector | UNKNOWN / NOT REPAIRED |
+| `earnings_revisions` | No point-in-time estimates/revisions collector | UNKNOWN / NOT REPAIRED |
+
+### Required next gate sequence
+
+1. Implement and unit-test each remaining collector against its real source response and required schema.
+2. Run small live checks per source group and preserve response URL, publication/release time, query window, retrieval time, and symbol/ISIN validation where relevant.
+3. Run the full source coverage audit; inspect `source_coverage.json`, `factor_coverage_audit.json`, and all collector manifests. Any missing or unvalidated group remains UNKNOWN and blocks release.
+4. Only after source coverage clears, rerun the event study and score only matured H+1/H+3/H+5 outcomes; inspect event-level rows, exclusions, and window counts.
+5. Run the hard gate and require explicit blocker-free report plus `candidate_release_allowed: true` before making a release claim.
+6. Complete the final research paper with methods, evidence, matured results, failed-run ledger, limitations, and the hard-gate decision.
+
+No full historical validation or new hard-gate PASS is claimed in this checkpoint. The Run #145 blocker remains unresolved until a new full-workflow artifact proves otherwise.
