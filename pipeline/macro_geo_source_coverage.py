@@ -57,8 +57,10 @@ def apply_factor_collector_report(rows, collector_report):
         observed = groups.get(name, {})
         state = observed.get("status")
         row = row_by_name.get(name)
-        if not row or not state:
+        if not row:
             continue
+        if not state:
+            state = "UNKNOWN_NO_COLLECTOR_EVIDENCE"
         if state != "COLLECTED_AND_DOMAIN_QA_PASSED":
             if int(row.get("rows") or 0) > 0:
                 row["status"] = "DATA_QUALITY_WARN"
