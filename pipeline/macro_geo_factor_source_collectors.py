@@ -73,6 +73,40 @@ def fetch_fred(session, series_id, start, end):
     return rows
 
 
+def fetch_treasury_yields(session, start, end):
+    """Use the official US Treasury CSV export as an exact-source fallback for yields."""
+    rows = []
+    url_template = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/"
+                    "daily-treasury-rates.csv/{year}/all")
+    tenor_map = {"2 YR": "US_TREASURY_2Y", "10 YR": "US_TREASURY_10Y", "30 YR": "US_TREASURY_30Y"}
+    for year in range(start.year, end.year + 1):
+        url = url_template.format(year=year)
+        response = session.get(url, params={"type": "daily_treasury_yield_curve",
+                              "field_tdr_date_value": str(year), "page": "", "_format": "csv"},
+                              timeout=(8, 25))
+        response.raise_for_status()
+        frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
+        frame.columns = [str(col).strip().upper() for col in frame.columns]
+        date_col = next((col for col in ("DATE", "RECORD DATE") if col in frame.columns), None)
+        if date_col is None or not set(tenor_map).issubset(frame.columns):
+            raise ValueError(f"US Treasury CSV schema mismatch for {year}: {list(frame.columns)}")
+        dates = pd.to_datetime(frame[date_col], errors="coerce")
+        for tenor, label in tenor_map.items():
+            values = pd.to_numeric(frame[tenor], errors="coerce")
+            for i in range(len(frame)):
+                if pd.isna(dates.iloc[i]) or pd.isna(values.iloc[i]):
+                    continue
+                day = dates.iloc[i].date()
+                if start <= day <= end:
+                    rows.append({"DATE": day.isoformat(), "SERIES": label, "CLOSE": float(values.iloc[i]),
+                                 "SOURCE": "US Department of the Treasury",
+                                 "SOURCE_SERIES": tenor, "SOURCE_URL": response.url,
+                                 "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat()})
+    if not rows:
+        raise ValueError(f"US Treasury returned no valid yield observations in {start}..{end}")
+    return rows
+
+
 def collect_group(name, series_map, start, end, session):
     rows, failures = [], {}
     for series_id, label in series_map.items():
@@ -87,6 +121,14 @@ def collect_group(name, series_map, start, end, session):
                     rows.append({**common, "COMMODITY": label, "CLOSE": value})
         except Exception as exc:
             failures[series_id] = f"{type(exc).__name__}: {str(exc)[:240]}"
+    if name == "us_yields" and failures:
+        # Do not mix partially fetched FRED rows with Treasury observations.
+        # If any FRED maturity failed, replace the whole group from one official source.
+        try:
+            rows = fetch_treasury_yields(session, start, end)
+            failures = {}
+        except Exception as exc:
+            failures["TREASURY_OFFICIAL_FALLBACK"] = f"{type(exc).__name__}: {str(exc)[:240]}"
     if not rows:
         return {"status": "BLOCKED", "rows": 0, "failures": failures,
                 "notes": "No valid source observations; missing data remains UNKNOWN."}
@@ -100,7 +142,7 @@ def collect_group(name, series_map, start, end, session):
     return {"status": "AVAILABLE_WITH_SOURCE_FAILURES" if failures else "COLLECTED_NEEDS_DOMAIN_QA",
             "rows": int(len(frame)), "date_min": str(frame["DATE"].min()),
             "date_max": str(frame["DATE"].max()), "path": str(target),
-            "source": "FRED public observation CSV", "series_ids": list(series_map),
+            "source": sorted(set(frame["SOURCE"].astype(str))), "series_ids": list(series_map),
             "failures": failures,
             "provenance_columns": ["SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"],
             "notes": "Collection is not proof of official-source authenticity, point-in-time release timing, or factor validity."}
