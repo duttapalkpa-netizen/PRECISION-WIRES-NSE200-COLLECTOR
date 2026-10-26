@@ -43,6 +43,13 @@ class FactorSourceCollectorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "no valid observations"):
             collector.fetch_fred(session, "DGS10", date(2026, 10, 20), date(2026, 10, 22))
 
+    def test_factor_audit_does_not_count_warnings_or_missing_rows_as_connected(self):
+        import pipeline.macro_geo_factor_coverage_audit as audit
+        self.assertTrue(audit.source_is_connected({"status": "AVAILABLE", "rows": 3}))
+        self.assertFalse(audit.source_is_connected({"status": "DATA_QUALITY_WARN", "rows": 3}))
+        self.assertFalse(audit.source_is_connected({"status": "AVAILABLE", "rows": 0}))
+        self.assertFalse(audit.source_is_connected({"status": "NOT_CONNECTED", "rows": 0}))
+
     def test_observed_window_blocks_without_real_panel(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch.object(collector, "PANEL_CANDIDATES", (Path(tmp) / "missing.csv",)):
