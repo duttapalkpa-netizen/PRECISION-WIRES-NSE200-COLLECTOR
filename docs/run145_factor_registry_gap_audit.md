@@ -197,3 +197,13 @@ No full historical validation or new hard-gate PASS is claimed in this checkpoin
 - No source-group coverage completion is claimed: 14 groups remain UNKNOWN / NOT REPAIRED, and the 4 implemented groups are still short of complete domain QA and full-registry integration.
 - Required next action: repair real collectors for all remaining 14 groups, run the full workflow against the observed production dataset, upload its artifact bundle, inspect matured H+1/H+3/H+5 event-level rows and exclusions, and only then evaluate the final hard gate. The production selector, `RANKING_SCORE`, and frozen `+1 PRESSURE_FADE` must remain unchanged.
 - Research paper status: NOT READY; do not finalize conclusions until the full historical artifact and blocker-free hard-gate report exist.
+
+
+## Full workflow rerun initiated — 2026-10-26
+
+- Full audit-only workflow was enabled on this repair branch without changing production selector logic.
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40375550111
+- Commit under test: `71c012646ac923e58f112410caedb3a85e0d0ec9`
+- Status at checkpoint: `in_progress`; no conclusion or artifact is claimed yet.
+- Purpose: obtain fresh full-pipeline evidence for source coverage, historical event study, event-level maturity, regime study, and strict hard gate after the initial collector integration.
+- This run is a diagnostic checkpoint only: the 14 remaining groups are not implemented by this commit. A blocked hard gate is expected unless the actual source inventory independently proves otherwise.
