@@ -34,11 +34,10 @@ except Exception as exc:
     report["failures"].append("us_yields")
 
 try:
-    rows = fetch_dxy_yahoo(session, start, end)
-    report["sources"]["dxy"] = {"status": "PASS", "rows": len(rows),
-                                "date_min": min(r["DATE"] for r in rows), "date_max": max(r["DATE"] for r in rows),
-                                "source": "Yahoo Finance chart API; DX-Y.NYB",
-                                "url": rows[0]["SOURCE_URL"]}
+    result = fetch_dxy_yahoo(session, start, end)
+    report["sources"]["dxy"] = {"status": "PASS", "rows": result["rows"],
+                                "date_min": result["date_min"], "date_max": result["date_max"],
+                                "source": result["source"], "urls": result["source_urls"][:2]}
 except Exception as exc:
     report["sources"]["dxy"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:220]}", "traceback": traceback.format_exc()[-1600:]}
     report["failures"].append("dxy")
