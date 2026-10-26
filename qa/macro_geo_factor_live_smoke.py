@@ -4,6 +4,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import sys
 import json
+import traceback
 import xml.etree.ElementTree as ET
 import requests
 
@@ -39,7 +40,7 @@ try:
                                 "source": "Yahoo Finance chart API; DX-Y.NYB",
                                 "url": rows[0]["SOURCE_URL"]}
 except Exception as exc:
-    report["sources"]["dxy"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:220]}"}
+    report["sources"]["dxy"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:220]}", "traceback": traceback.format_exc()[-1600:]}
     report["failures"].append("dxy")
 
 for feed_url, country, source_name in POLICY_FEEDS:
