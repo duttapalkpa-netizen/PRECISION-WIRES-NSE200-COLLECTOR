@@ -139,3 +139,8 @@ This batch does **not** repair the remaining 15 of 18 disconnected groups, and d
 - The live smoke validates feed reachability, schema, and source URL for the Treasury yield series only. It does not validate the full 18-group registry or release readiness.
 
 - Expanded live smoke for DXY and central-bank feed connectivity: [Run #40362378233](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40362378233), pending at documentation update time.
+
+
+### Source contract tightening
+
+The source inventory now requires `SOURCE_URL` and `OBSERVED_AT_UTC` for each of the 18 disconnected groups, plus group-appropriate `PUBLISHED_AT` or `RELEASED_AT` fields where point-in-time event/indicator data needs them. A file with only the numerical value columns is insufficient for release readiness. Schema failures remain distinct from generic QA warnings and cannot be downgraded by collector-report reconciliation.
