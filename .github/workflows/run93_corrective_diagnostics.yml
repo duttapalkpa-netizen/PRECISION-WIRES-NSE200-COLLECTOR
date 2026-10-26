@@ -1,0 +1,34 @@
+name: Run 93 Corrective Diagnostics
+
+on:
+  push:
+    branches: [audit/run93-corrective-fixes]
+    paths:
+      - "pipeline/macro_geo_collect_p0.py"
+      - "pipeline/macro_geo_hard_gate.py"
+      - "pipeline/macro_geo_finalize_manifest.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
+      - "qa/test_macro_geo_engine.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
+      - ".github/workflows/run93_corrective_diagnostics.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  corrective-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout corrective branch
+        uses: actions/checkout@v4
+        with:
+          ref: audit/run93-corrective-fixes
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run Macro-Geo event-study and collector tests only
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_finalize_manifest -v
