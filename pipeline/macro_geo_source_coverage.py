@@ -63,7 +63,9 @@ def apply_factor_collector_report(rows, collector_report):
             state = "UNKNOWN_NO_COLLECTOR_EVIDENCE"
         if state != "COLLECTED_AND_DOMAIN_QA_PASSED":
             if int(row.get("rows") or 0) > 0:
-                row["status"] = "DATA_QUALITY_WARN"
+                # Do not downgrade a more specific schema/read failure to a generic warning.
+                if row.get("status") == "AVAILABLE":
+                    row["status"] = "DATA_QUALITY_WARN"
                 note = f"Factor collector status={state}; domain/source QA not cleared."
                 existing = str(row.get("notes") or "")
                 row["notes"] = (existing + " " + note).strip()
