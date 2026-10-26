@@ -124,14 +124,28 @@ def fetch_dxy_yahoo(session, start, end):
                                          "events": "history"}, timeout=(8, 20))
     response.raise_for_status()
     payload = response.json()
-    result = (((payload.get("chart") or {}).get("result") or [None])[0])
-    if not result:
-        error = (payload.get("chart") or {}).get("error")
-        raise ValueError(f"Yahoo chart returned no result: {error}")
+    if not isinstance(payload, dict):
+        raise ValueError(f"Yahoo chart response must be a JSON object, got {type(payload).__name__}")
+    chart = payload.get("chart")
+    if not isinstance(chart, dict):
+        raise ValueError(f"Yahoo chart response missing chart object; keys={list(payload)[:20]}")
+    raw_results = chart.get("result")
+    if not isinstance(raw_results, list) or not raw_results:
+        raise ValueError(f"Yahoo chart returned no result: {chart.get('error')}")
+    result = raw_results[0]
+    if not isinstance(result, dict):
+        raise ValueError(f"Yahoo chart result must be an object, got {type(result).__name__}")
     timestamps = result.get("timestamp") or []
-    quotes = (((result.get("indicators") or {}).get("quote") or [{}])[0])
-    closes = quotes.get("close") or []
-    tz_name = (result.get("meta") or {}).get("exchangeTimezoneName") or "UTC"
+    indicators = result.get("indicators")
+    if not isinstance(indicators, dict):
+        raise ValueError("Yahoo chart result has no indicators object")
+    quote_list = indicators.get("quote")
+    if not isinstance(quote_list, list) or not quote_list or not isinstance(quote_list[0], dict):
+        raise ValueError("Yahoo chart result has no valid quote array")
+    closes = quote_list[0].get("close") or []
+    meta = result.get("meta") or {}
+    tz_name = meta.get("exchangeTimezoneName") if isinstance(meta, dict) else None
+    tz_name = tz_name or "UTC"
     tz = ZoneInfo(tz_name)
     rows = []
     for ts, value in zip(timestamps, closes):
