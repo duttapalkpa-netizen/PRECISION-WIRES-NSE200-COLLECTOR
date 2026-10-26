@@ -72,9 +72,29 @@ def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
     period1=int(datetime.combine(start,datetime.min.time(),tzinfo=timezone.utc).timestamp())
     period2=int(datetime.combine(end+timedelta(days=1),datetime.min.time(),tzinfo=timezone.utc).timestamp())
-    url=f"{YAHOO}{spec['symbol']}"
-    resp=session.get(url,params={"period1":period1,"period2":period2,"interval":"1d","events":"history"},timeout=30)
-    resp.raise_for_status()
+    # Try both Yahoo chart hosts and bounded retries for transient 429/5xx.
+    params={"period1":period1,"period2":period2,"interval":"1d","events":"history"}
+    last_error=None
+    resp=None
+    for host in ["https://query2.finance.yahoo.com/v8/finance/chart/","https://query1.finance.yahoo.com/v8/finance/chart/"]:
+        url=f"{host}{spec['symbol']}"
+        for attempt in range(3):
+            try:
+                resp=session.get(url,params=params,timeout=30)
+                if resp.status_code == 429 or resp.status_code >= 500:
+                    last_error=RuntimeError(f"Yahoo chart transient HTTP {resp.status_code} host={host} attempt={attempt+1}")
+                    time.sleep(1.5*(attempt+1))
+                    continue
+                resp.raise_for_status()
+                last_error=None
+                break
+            except Exception as exc:
+                last_error=exc
+                if attempt < 2: time.sleep(1.0*(attempt+1))
+        if last_error is None and resp is not None:
+            break
+    if last_error is not None or resp is None:
+        raise RuntimeError(f"Yahoo chart hosts exhausted: {last_error}")
     payload=resp.json()
     chart=payload.get("chart",{})
     if chart.get("error"): raise RuntimeError(str(chart["error"]))
