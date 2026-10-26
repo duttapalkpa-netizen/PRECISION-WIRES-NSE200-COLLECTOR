@@ -53,7 +53,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
     def test_official_treasury_fallback_parses_three_maturities_with_provenance(self):
         response = FakeResponse(
             "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve",
-            b"Date,2 Yr,10 Yr,30 Yr\\n10/20/2026,3.51,4.01,4.62\\n10/21/2026,3.50,4.03,4.61\\n")
+            b"Date,2 Yr,10 Yr,30 Yr\n10/20/2026,3.51,4.01,4.62\n10/21/2026,3.50,4.03,4.61\n")
         session = type("Session", (), {"get": lambda self, *a, **kw: response})()
         rows = collector.fetch_treasury_yields(session, date(2026, 10, 20), date(2026, 10, 21))
         self.assertEqual(len(rows), 6)
