@@ -31,6 +31,25 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(rows[0][1], 4.01)
         self.assertIn("fred.stlouisfed.org", rows[0][2])
 
+    def test_policy_rss_collector_preserves_url_and_publication_time_without_claiming_event_date(self):
+        from datetime import date
+        xml = (b'<?xml version="1.0"?><rss><channel><item>'
+               b'<title>Federal Reserve announces monetary policy decision</title>'
+               b'<link>https://www.federalreserve.gov/newsevents/pressreleases/monetary20261021a.htm</link>'
+               b'<pubDate>Wed, 21 Oct 2026 18:00:00 GMT</pubDate>'
+               b'</item></channel></rss>')
+        response = FakeResponse("https://www.federalreserve.gov/feeds/press_all.xml", xml)
+        session = type("Session", (), {"get": lambda self, *a, **kw: response})()
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(collector, "OUT", Path(tmp)):
+                report = collector.fetch_global_policy_events(session, date(2026, 10, 20), date(2026, 10, 22))
+                self.assertEqual(report["status"], "COLLECTED_NEEDS_DOMAIN_QA")
+                frame = pd.read_csv(Path(tmp) / "global_policy_events.csv")
+        self.assertEqual(len(frame), 1)
+        self.assertEqual(frame.iloc[0]["PUBLISHED_AT"], "2026-10-21T18:00:00+00:00")
+        self.assertEqual(frame.iloc[0]["EVENT_DATE_BASIS"], "PUBLICATION_DATE_PROXY_NOT_CONFIRMED_EVENT_DATE")
+        self.assertTrue(frame.iloc[0]["SOURCE_URL"].startswith("https://www.federalreserve.gov/"))
+
     def test_official_treasury_fallback_parses_three_maturities_with_provenance(self):
         response = FakeResponse(
             "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve",
@@ -60,10 +79,12 @@ class FactorSourceCollectorTests(unittest.TestCase):
         rows = [
             {"source": "us_yields", "rows": 25, "status": "AVAILABLE", "notes": "Generic QA passed."},
             {"source": "global_commodity_prices", "rows": 40, "status": "AVAILABLE", "notes": "Generic QA passed."},
+            {"source": "global_policy_events", "rows": 12, "status": "AVAILABLE", "notes": "Generic QA passed."},
         ]
         report = {"groups": {
             "us_yields": {"status": "COLLECTED_NEEDS_DOMAIN_QA", "rows": 25},
             "global_commodity_prices": {"status": "AVAILABLE_WITH_SOURCE_FAILURES", "rows": 40},
+            "global_policy_events": {"status": "COLLECTED_NEEDS_DOMAIN_QA", "rows": 12},
         }}
         result = coverage.apply_factor_collector_report(rows, report)
         self.assertTrue(all(row["status"] == "DATA_QUALITY_WARN" for row in result))
