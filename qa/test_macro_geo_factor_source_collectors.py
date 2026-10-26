@@ -111,6 +111,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
         for name in required:
             self.assertTrue(coverage.SOURCES[name]["paths"], name)
             self.assertTrue(coverage.SOURCES[name]["required"], name)
+            self.assertTrue({"SOURCE_URL", "OBSERVED_AT_UTC"}.issubset(set(coverage.SOURCES[name]["required"])), name)
 
     def test_collected_factor_files_remain_warning_until_domain_qa_passes(self):
         import pipeline.macro_geo_source_coverage as coverage
