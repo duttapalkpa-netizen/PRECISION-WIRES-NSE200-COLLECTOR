@@ -127,3 +127,11 @@ QA controls:
 - Collector output stays at `DATA_QUALITY_WARN` until a separate domain/source QA pass explicitly clears it.
 
 This batch does **not** repair the remaining 15 of 18 disconnected groups, and does not by itself establish point-in-time validity, complete historical coverage, causal effect, or permission to release candidates. The full workflow and hard gate must remain blocked until all required groups have genuine source evidence and their domain-specific QA passes.
+
+
+### First bounded smoke run evidence
+
+- GitHub Actions run: [#40362003941](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40362003941) — SUCCESS.
+- Mocked unit tests: 8 passed.
+- Official US Treasury live source smoke: 42 observations across 2Y, 10Y, and 30Y maturities, 2026-10-05 through 2026-10-26.
+- The live smoke validates feed reachability, schema, and source URL for the Treasury yield series only. It does not validate the full 18-group registry or release readiness.
