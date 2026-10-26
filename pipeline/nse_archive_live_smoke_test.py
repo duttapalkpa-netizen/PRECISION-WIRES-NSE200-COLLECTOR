@@ -15,7 +15,7 @@ ALIASES={
 }
 def main():
     # Two widely separated known sessions; bounded to two dates and two hosts.
-    test_dates=[date(2024,6,4),date(2026,10,23)]
+    test_dates=[date(2008,9,15),date(2013,5,22),date(2015,8,11),date(2016,11,8),date(2018,9,4),date(2020,2,24),date(2022,2,24),date(2023,3,10),date(2024,6,4),date(2025,1,2),date(2026,10,23)]
     rows=[]; diagnostics=[]
     session=requests.Session()
     headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://www.nseindia.com/all-reports"}
@@ -70,7 +70,7 @@ def main():
       "schema_contract":{"index_name_column":"present","date_column":"present","close_column":"present",
                          "positive_close":True,"requested_date_matches_observed_date":True},
       "rows":rows,"diagnostics":diagnostics,
-      "note":"Live smoke test only; does not imply full historical coverage or authorize hard-gate PASS."}
+      "note":"Live smoke test only; checks selected regime anchors and recent date, not every trading session or complete history."}
     from pathlib import Path
     Path("outputs/macro_geo").mkdir(parents=True,exist_ok=True)
     Path("outputs/macro_geo/nse_archive_live_smoke_test.json").write_text(json.dumps(report,indent=2))
