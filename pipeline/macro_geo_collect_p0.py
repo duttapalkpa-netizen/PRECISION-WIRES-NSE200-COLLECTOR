@@ -165,9 +165,30 @@ def niftyindices_history(start,end):
               "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
     except Exception as exc:
         failures.append({"series":"INDIA VIX","error":f"{type(exc).__name__}: {exc}"})
+    # Explicit, provenance-labelled fallback: if the official site serves an
+    # HTML/block page, retrieve genuine historical observations from the already
+    # configured Yahoo chart endpoint. Never label these rows as NSE-origin.
+    existing_labels={str(r.get("SERIES","")) for r in rows}
+    fallback_labels=[]
+    for label in [*index_map.keys(),"INDIA VIX"]:
+        if label in existing_labels:
+            continue
+        spec=SERIES.get(label)
+        if not spec:
+            failures.append({"series":label,"fallback":"Yahoo Finance chart API","error":"No configured source symbol"})
+            continue
+        try:
+            fallback_rows,source_url=yahoo_history(label,spec,start,end)
+            for row in fallback_rows:
+                row["SOURCE"]="Yahoo Finance chart API (explicit fallback; NSE Indices endpoint unavailable)"
+            rows.extend(fallback_rows)
+            fallback_labels.append(label)
+        except Exception as exc:
+            failures.append({"series":label,"fallback":"Yahoo Finance chart API","error":f"{type(exc).__name__}: {exc}"})
     df=pd.DataFrame(rows)
-    if not df.empty: df=df.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
-    return df.to_dict("records"),{"rows":len(df),"series":int(df.SERIES.nunique()) if not df.empty else 0,"failures":failures}
+    if not df.empty: df=df.drop_duplicates(["DATE","SERIES"],keep="last").sort_values(["DATE","SERIES"])
+    return df.to_dict("records"),{"rows":len(df),"series":int(df.SERIES.nunique()) if not df.empty else 0,
+      "fallback_series":fallback_labels,"failures":failures}
 
 def nse_index_history(start,end):
     """Download official NSE daily multi-index close CSVs; no main-site session required."""
