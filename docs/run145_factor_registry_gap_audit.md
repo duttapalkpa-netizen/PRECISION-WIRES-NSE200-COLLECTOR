@@ -116,11 +116,13 @@ This file records a reproducible artifact audit and an actionable repair contrac
 
 The first implementation batch adds real collectors for these source groups:
 - `us_yields`: FRED observations with an official US Treasury daily-yield CSV fallback; the observed source and URL are retained.
+- `dxy`: the ICE US Dollar Index ticker via the Yahoo Finance chart API, explicitly labelled as a third-party mirror and held for domain QA.
 - `global_commodity_prices`: public FRED commodity observations. If a requested series fails, the report preserves the failure; a partial set is not treated as clean coverage.
 - `global_policy_events`: official Federal Reserve and ECB feed items with publisher URL and publication timestamp. The publication date is explicitly marked as a proxy, not silently treated as the true policy-decision date.
 
 QA controls:
-- Mocked tests cover schema rejection, missing observations, source URLs, timestamps, UNKNOWN semantics, and warning-state handling.
+- Mocked tests cover schema rejection, missing observations, source URLs, timestamps, DXY session-date alignment, RSS link parsing, UNKNOWN semantics, and warning-state handling.
+- A source-inventory contract test checks that all 18 Run #145 missing groups have explicit path and required-column definitions.
 - A separate short live test checks the official Treasury yield feed over a 21-calendar-day window.
 - The full Macro-Geo workflow invokes the bounded collector before source coverage; collector failures are visible and do not relax the hard gate.
 - The factor audit counts only non-empty `AVAILABLE` source rows as connected. `DATA_QUALITY_WARN` is not counted as connected.
