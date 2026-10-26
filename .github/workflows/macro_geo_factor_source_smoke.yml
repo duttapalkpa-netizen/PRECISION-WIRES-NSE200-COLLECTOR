@@ -1,0 +1,32 @@
+name: Macro Geo factor-source bounded smoke tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_factor_source_collectors.py"
+      - "qa/test_macro_geo_factor_source_collectors.py"
+      - ".github/workflows/macro_geo_factor_source_smoke.yml"
+      - "requirements.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-factor-source-smoke
+  cancel-in-progress: false
+
+jobs:
+  bounded-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - name: Run mocked source, schema, provenance and UNKNOWN tests
+        run: python -m unittest qa.test_macro_geo_factor_source_collectors -v
