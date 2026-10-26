@@ -134,6 +134,8 @@ This batch does **not** repair the remaining 15 of 18 disconnected groups, and d
 ### First bounded smoke run evidence
 
 - GitHub Actions run: [#40362003941](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40362003941) — SUCCESS.
-- Mocked unit tests: 8 passed.
+- Mocked unit tests: 10 passed, including a contract check for all 18 missing source-group definitions.
 - Official US Treasury live source smoke: 42 observations across 2Y, 10Y, and 30Y maturities, 2026-10-05 through 2026-10-26.
 - The live smoke validates feed reachability, schema, and source URL for the Treasury yield series only. It does not validate the full 18-group registry or release readiness.
+
+- Expanded live smoke for DXY and central-bank feed connectivity: [Run #40362378233](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40362378233), pending at documentation update time.
