@@ -7,6 +7,7 @@ on:
     paths:
       - "pipeline/macro_geo_factor_source_collectors.py"
       - "qa/test_macro_geo_factor_source_collectors.py"
+      - "qa/macro_geo_factor_live_smoke.py"
       - ".github/workflows/macro_geo_factor_source_smoke.yml"
       - "requirements.txt"
 
