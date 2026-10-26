@@ -207,7 +207,9 @@ def collect_group(name, series_map, start, end, session):
     return {"status": "AVAILABLE_WITH_SOURCE_FAILURES" if failures else "COLLECTED_NEEDS_DOMAIN_QA",
             "rows": int(len(frame)), "date_min": str(frame["DATE"].min()),
             "date_max": str(frame["DATE"].max()), "path": str(target),
-            "source": sorted(set(frame["SOURCE"].astype(str))), "series_ids": list(series_map),
+            "source": sorted(set(frame["SOURCE"].astype(str))),
+            "observed_source_series": sorted(set(frame["SOURCE_SERIES"].astype(str))),
+            "requested_fred_series_ids": list(series_map),
             "failures": failures,
             "provenance_columns": ["SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"],
             "notes": "Collection is not proof of official-source authenticity, point-in-time release timing, or factor validity."}
