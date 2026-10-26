@@ -20,6 +20,7 @@ on:
       - "pipeline/macro_geo_event_level_audit.py"
       - "pipeline/macro_geo_hard_gate.py"
       - "pipeline/historical_regime_event_study.py"
+      - "pipeline/macro_geo_historical_index_backfill.py"
       - "pipeline/sector_rotation_features.py"
       - "config/macro_factor_registry.csv"
       - "config/macro_geo_data_gap_register.csv"
@@ -131,6 +132,9 @@ jobs:
       - name: Build event-level publication and close-window audit
         if: always()
         run: python pipeline/macro_geo_event_level_audit.py
+      - name: Backfill genuine historical index observations for registered regimes
+        if: always()
+        run: python pipeline/macro_geo_historical_index_backfill.py
       - name: Run historical regime and sector-relative study
         if: always()
         run: python pipeline/historical_regime_event_study.py
@@ -161,6 +165,7 @@ jobs:
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
             outputs/macro_geo/**
+            outputs/macro_geo/historical_index_backfill_report.json
             outputs/macro_geo/hard_gate_report.json
             outputs/macro_geo/event_level_window_audit.csv
             outputs/macro_geo/event_level_window_audit.json
