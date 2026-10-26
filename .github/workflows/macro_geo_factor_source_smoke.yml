@@ -31,5 +31,7 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - name: Run mocked source, schema, provenance and UNKNOWN tests
         run: python -m unittest qa.test_macro_geo_factor_source_collectors -v
+      - name: Run bounded historical event and manifest regression tests
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest -v
       - name: Run bounded live US Treasury smoke test (3 maturities, 21-day window)
         run: python qa/macro_geo_factor_live_smoke.py
