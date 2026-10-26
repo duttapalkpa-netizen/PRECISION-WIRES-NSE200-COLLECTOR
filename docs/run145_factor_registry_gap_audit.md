@@ -183,3 +183,17 @@ The latest bounded source smoke is [GitHub Actions #40362965982](https://github.
 6. Complete the final research paper with methods, evidence, matured results, failed-run ledger, limitations, and the hard-gate decision.
 
 No full historical validation or new hard-gate PASS is claimed in this checkpoint. The Run #145 blocker remains unresolved until a new full-workflow artifact proves otherwise.
+
+
+## Append-only checkpoint — 2026-10-26 — bounded run #40373908643
+
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40373908643
+- Conclusion: SUCCESS; job `bounded-smoke` completed.
+- Artifact check: the run returned no uploaded artifacts. Its console log is test evidence, not a substitute for a new full-workflow artifact bundle.
+- Mocked tests: 10 factor-source tests passed; the bounded historical/manifest regression suite ran 37 tests and passed.
+- Live-source smoke: Treasury yields 42 rows for 2Y/10Y/30Y (2026-10-05..2026-10-26); DXY 16 rows (2026-10-05..2026-10-26); Federal Reserve feed 20 entries; ECB feed 15 entries. This confirms bounded connectivity/schema only. DXY remains a third-party mirror; policy feed publication date remains explicitly a proxy, not a verified event date.
+- Crucial regression evidence printed by the hard-gate audit inside the unit suite: `event_study_status=COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS`, `event_study_total_event_rows=3`, `event_study_eligible_event_rows=0`, `event_study_window_rows=0`; blocker `EVENT_STUDY_NOT_COMPUTED_WITH_MATURE_WINDOWS`; `candidate_release_allowed=false`. The test suite passes because it tests the defined fail-closed behavior; this is not a research/hard-gate PASS.
+- The suite's temporary fixture showed one factor group and one regime window, so those figures must not be presented as full-history validation.
+- No source-group coverage completion is claimed: 14 groups remain UNKNOWN / NOT REPAIRED, and the 4 implemented groups are still short of complete domain QA and full-registry integration.
+- Required next action: repair real collectors for all remaining 14 groups, run the full workflow against the observed production dataset, upload its artifact bundle, inspect matured H+1/H+3/H+5 event-level rows and exclusions, and only then evaluate the final hard gate. The production selector, `RANKING_SCORE`, and frozen `+1 PRESSURE_FADE` must remain unchanged.
+- Research paper status: NOT READY; do not finalize conclusions until the full historical artifact and blocker-free hard-gate report exist.
