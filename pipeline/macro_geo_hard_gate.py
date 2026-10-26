@@ -18,6 +18,8 @@ MANIFEST = Path("outputs/macro_geo/p0_collection_manifest.json")
 REPAIR = Path("outputs/macro_geo/p0_repair_report.json")
 FACTOR_COVERAGE = Path("outputs/macro_geo/factor_coverage_audit.json")
 REGIME_REPORT = Path("outputs/macro_geo/historical_regime_study_report.json")
+NSDL_REPORT = Path("outputs/macro_geo/nsdl_fpi_dii_collection.json")
+FACTOR_ROWS = Path("outputs/macro_geo/factor_coverage_audit.csv")
 OUT = Path("outputs/macro_geo/hard_gate_report.json")
 ALLOWED_EVENT_STATUSES = {"COMPUTED_EXPLORATORY", "COMPUTED_EXPLORATORY_WITH_PENDING_EVENTS"}
 
@@ -113,6 +115,32 @@ def main():
     else:
         blockers.append(f"MISSING_REQUIRED_INPUT:{REPAIR}")
 
+    # Cross-report consistency: compare final manifest, official NSDL evidence,
+    # repair state, and factor CSV/JSON counts. A green individual report cannot
+    # override contradictory provenance or counts in another report.
+    if NSDL_REPORT.exists():
+        try:
+            nsdl = json.loads(NSDL_REPORT.read_text(encoding="utf-8"))
+            checks["nsdl_status"] = nsdl.get("status", "UNKNOWN")
+            nsdl_groups = nsdl.get("groups", {})
+            for group in ("FPI", "DII"):
+                item = nsdl_groups.get(group, {})
+                dates = int(item.get("unique_dates", 0) or 0)
+                span = int(item.get("span_days", 0) or 0)
+                checks[f"nsdl_{group.lower()}_unique_dates"] = dates
+                checks[f"nsdl_{group.lower()}_span_days"] = span
+                if nsdl.get("status") == "AVAILABLE" and (dates < 60 or span < 90):
+                    blockers.append(f"NSDL_{group}_HISTORY_BELOW_DECLARED_THRESHOLD")
+            if nsdl.get("status") == "AVAILABLE":
+                for group in ("FPI", "DII"):
+                    item = nsdl_groups.get(group, {})
+                    if int(item.get("unique_dates", 0) or 0) < 60 or int(item.get("span_days", 0) or 0) < 90:
+                        blockers.append("NSDL_AVAILABLE_STATUS_CONTRADICTS_GROUP_COVERAGE")
+        except Exception as exc:
+            blockers.append(f"INVALID_NS DL_REPORT:{type(exc).__name__}:{exc}".replace("NS DL","NSDL"))
+    else:
+        blockers.append(f"MISSING_REQUIRED_INPUT:{NSDL_REPORT}")
+
     if FACTOR_COVERAGE.exists():
         try:
             factors = json.loads(FACTOR_COVERAGE.read_text(encoding="utf-8"))
@@ -121,6 +149,31 @@ def main():
             checks["factor_groups_not_connected"] = int(factors.get("not_connected", 0) or 0)
             if checks["factor_groups_fully_available"] < checks["factor_groups_total"]:
                 blockers.append("FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE")
+            if FACTOR_ROWS.exists():
+                factor_rows = pd.read_csv(FACTOR_ROWS)
+                checks["factor_csv_rows"] = int(len(factor_rows))
+                if len(factor_rows) != checks["factor_groups_total"]:
+                    blockers.append("FACTOR_CSV_JSON_COUNT_MISMATCH")
+            else:
+                blockers.append(f"MISSING_REQUIRED_INPUT:{FACTOR_ROWS}")
+            if MANIFEST.exists():
+                final_manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+                reconciliation = final_manifest.get("final_manifest_reconciliation", {})
+                checks["final_manifest_reconciliation_status"] = reconciliation.get("status", "UNKNOWN")
+                if reconciliation.get("status") != "RECONCILED":
+                    blockers.append("FINAL_MANIFEST_NOT_RECONCILED")
+                final_p0 = final_manifest.get("p0_coverage", {})
+                available_groups = final_p0.get("group_availability_after_repair", {})
+                if final_p0.get("required_series_available") is True and any(v is not True for v in available_groups.values()):
+                    blockers.append("FINAL_MANIFEST_P0_BOOLEAN_CONTRADICTS_GROUP_STATUS")
+                repair_status = checks.get("repair_fpi_dii_flows_status", "UNKNOWN")
+                manifest_flow_status = final_p0.get("fpi_dii_status", "UNKNOWN")
+                if manifest_flow_status == "AVAILABLE" and repair_status != "AVAILABLE":
+                    blockers.append("MANIFEST_REPAIR_FPI_DII_STATUS_MISMATCH")
+                manifest_corp_status = final_p0.get("corporate_events_status", "UNKNOWN")
+                repair_corp_status = checks.get("repair_corporate_events_status", "UNKNOWN")
+                if manifest_corp_status == "AVAILABLE" and repair_corp_status != "AVAILABLE":
+                    blockers.append("MANIFEST_REPAIR_CORPORATE_EVENTS_STATUS_MISMATCH")
         except Exception as exc:
             blockers.append(f"INVALID_FACTOR_COVERAGE_REPORT:{type(exc).__name__}:{exc}")
     else:
@@ -172,7 +225,7 @@ def main():
     report = {
         "status": status,
         "gate_type": "STRICT_MACRO_GEO_HARD_GATE_AUDIT_BRANCH_ONLY",
-        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(EVENT_AUDIT), str(PANEL), str(EQUITY), str(MANIFEST), str(REPAIR), str(FACTOR_COVERAGE), str(REGIME_REPORT)],
+        "checked_inputs": [str(COVERAGE), str(EVENT_REPORT), str(EVENT_AUDIT), str(PANEL), str(EQUITY), str(MANIFEST), str(REPAIR), str(FACTOR_COVERAGE), str(REGIME_REPORT), str(NSDL_REPORT), str(FACTOR_ROWS)],
         "checks": checks,
         "blockers": sorted(set(blockers)),
         "candidate_release_allowed": status == "PASS",
