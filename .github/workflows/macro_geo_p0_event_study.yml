@@ -21,6 +21,7 @@ on:
       - "pipeline/macro_geo_hard_gate.py"
       - "pipeline/historical_regime_event_study.py"
       - "pipeline/macro_geo_historical_index_backfill.py"
+      - "pipeline/macro_geo_targeted_historical_backfill.py"
       - "pipeline/macro_geo_targeted_archive_backfill.py"
       - "pipeline/sector_rotation_features.py"
       - "config/macro_factor_registry.csv"
@@ -167,6 +168,9 @@ jobs:
             data/external/fpi_dii_flows.csv
             outputs/macro_geo/**
             outputs/macro_geo/historical_index_backfill_report.json
+            outputs/macro_geo/targeted_historical_backfill_report.json
+            outputs/macro_geo/targeted_historical_backfill_coverage.csv
+            outputs/macro_geo/nse_archive_live_smoke_test.json
             outputs/macro_geo/nse_archive_live_smoke_test.json
             outputs/macro_geo/hard_gate_report.json
             outputs/macro_geo/event_level_window_audit.csv
