@@ -207,3 +207,28 @@ No full historical validation or new hard-gate PASS is claimed in this checkpoin
 - Status at checkpoint: `in_progress`; no conclusion or artifact is claimed yet.
 - Purpose: obtain fresh full-pipeline evidence for source coverage, historical event study, event-level maturity, regime study, and strict hard gate after the initial collector integration.
 - This run is a diagnostic checkpoint only: the 14 remaining groups are not implemented by this commit. A blocked hard gate is expected unless the actual source inventory independently proves otherwise.
+
+
+## Run #146 evidence checkpoint — 2026-10-27
+
+- Workflow: [Run #40375550111](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40375550111)
+- Commit tested: `71c012646ac923e58f112410caedb3a85e0d0ec9`
+- Artifact: [macro-geo-p0-event-study.zip](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40375550111/artifacts/12679565428), artifact ID `12679565428`.
+- Outcome: **BLOCKED** at strict hard gate; no release PASS.
+- P0 coverage: 7/8; missing `crude_oil`.
+- Manifest: `PASS_WITH_CRITICAL_DATA_GAPS`; required series availability false.
+- Factor registry: 35 groups/rows audited, 0 fully available, 13 factor entries disconnected.
+- Event study: 44 event rows, 245 mature window rows; event-level audit reports 21 events with mature H+1 and 12 with mature H+5. Do not infer H+3 completeness from these figures.
+- Historical regime study: 89 windows, exploratory only.
+- Hard-gate blockers: `COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS`, `FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE`, `P0_SOURCE_COVERAGE_INCOMPLETE`.
+- Production selector, `RANKING_SCORE`, and `+1 PRESSURE_FADE` remain unchanged.
+
+## Corrective action batch — Brent P0 collector
+
+- Added `pipeline/macro_geo_crude_oil_collector.py`, using FRED series `DCOILBRENTEU` (Brent Europe, USD/barrel); it does not substitute WTI for Brent.
+- Writes `data/external/brent_crude.csv` with DATE, CLOSE, SOURCE, SOURCE_SERIES, SOURCE_URL, OBSERVED_AT_UTC, and UNIT; writes a bounded collection report.
+- HTTP/schema/empty-series errors are not converted into fabricated rows. Collection status remains `COLLECTED_NEEDS_DOMAIN_QA`; this is not by itself proof of release readiness.
+- Added `qa/test_macro_geo_crude_oil_collector.py` to test valid-row parsing, provenance, no WTI substitution, and timeout propagation.
+- Wired the bounded test and collector into the audit-only full workflow before source coverage is computed.
+- Workflow update commit: `ffc456475e28b80b647210929e31af4d470dc6fd`.
+- Next verification: the workflow triggered by this commit must show the Brent collector test passing and inspect the artifact's `source_coverage.json`, `factor_coverage_audit.json`, and `hard_gate_report.json`. The collector's existence alone must not change the release decision.
