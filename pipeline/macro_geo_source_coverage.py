@@ -49,6 +49,25 @@ def macro_series_freshness(source_date, reference_date, max_age_days=3):
     return {"data_age_days": age, "freshness_status": "FRESH" if 0 <= age <= max_age_days else "STALE_OR_FUTURE"}
 
 
+def apply_factor_collector_report(rows, collector_report):
+    """Keep collected-but-unvalidated factor files out of clean AVAILABLE status."""
+    groups = collector_report.get("groups", {}) if isinstance(collector_report, dict) else {}
+    row_by_name = {row.get("source"): row for row in rows}
+    for name in ("us_yields", "global_commodity_prices"):
+        observed = groups.get(name, {})
+        state = observed.get("status")
+        row = row_by_name.get(name)
+        if not row or not state:
+            continue
+        if state != "COLLECTED_AND_DOMAIN_QA_PASSED":
+            if int(row.get("rows") or 0) > 0:
+                row["status"] = "DATA_QUALITY_WARN"
+                note = f"Factor collector status={state}; domain/source QA not cleared."
+                existing = str(row.get("notes") or "")
+                row["notes"] = (existing + " " + note).strip()
+    return rows
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True); rows=[]
     now=pd.Timestamp.now(tz="UTC")
@@ -95,6 +114,19 @@ def main():
                 row.update(status=status,notes="; ".join(quality_issues) if quality_issues else "Generic QA passed; units, source authenticity, revisions, market-calendar alignment and point-in-time leakage still need domain-specific checks.")
             except Exception as e: row.update(status="READ_ERROR",notes=f"Could not read file: {type(e).__name__}: {e}")
         rows.append(row)
+    # A newly collected factor file is not automatically clean source coverage.
+    # Require a separate explicit domain-QA pass before factor audit may count it.
+    collector_report_path = OUT / "factor_source_collection_report.json"
+    if collector_report_path.exists():
+        try:
+            collector_report = json.loads(collector_report_path.read_text())
+            rows = apply_factor_collector_report(rows, collector_report)
+        except Exception:
+            # Unreadable collector evidence cannot upgrade a source to AVAILABLE.
+            for row in rows:
+                if row.get("source") in ("us_yields", "global_commodity_prices") and int(row.get("rows") or 0) > 0:
+                    row["status"] = "DATA_QUALITY_WARN"
+                    row["notes"] = (str(row.get("notes") or "") + " Factor collector report unreadable; source QA UNKNOWN.").strip()
     frame=pd.DataFrame(rows)
     # Explicitly distinguish the P0 decision-support backbone from the wider
     # optional context inventory. A file's presence is not proof of officialness.
