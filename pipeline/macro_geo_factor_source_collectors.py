@@ -13,6 +13,7 @@ from io import StringIO
 from pathlib import Path
 import json
 import os
+import xml.etree.ElementTree as ET
 
 import pandas as pd
 import requests
@@ -31,6 +32,12 @@ FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 # as Brent; the commodity name is preserved in the output.
 YIELD_SERIES = {"DGS2": "US_TREASURY_2Y", "DGS10": "US_TREASURY_10Y", "DGS30": "US_TREASURY_30Y"}
 COMMODITY_SERIES = {"DCOILWTICO": "WTI_CRUDE_USD_PER_BBL", "GOLDAMGBD228NLBM": "GOLD_USD_PER_TROY_OUNCE"}
+POLICY_FEEDS = [
+    ("https://www.federalreserve.gov/feeds/press_all.xml", "United States", "FEDERAL_RESERVE"),
+    ("https://www.ecb.europa.eu/rss/press.html", "Euro Area", "EUROPEAN_CENTRAL_BANK"),
+]
+POLICY_TERMS = ("monetary policy", "policy rate", "interest rate", "rate decision",
+                "fomc", "policy statement", "key interest rates", "monetary-policy")
 
 
 def observed_window():
@@ -107,6 +114,64 @@ def fetch_treasury_yields(session, start, end):
     return rows
 
 
+def fetch_global_policy_events(session, start, end):
+    """Collect official central-bank feed items; publication date is explicitly only a proxy."""
+    rows, failures = [], {}
+    for feed_url, country, source_name in POLICY_FEEDS:
+        try:
+            response = session.get(feed_url, timeout=(8, 20))
+            response.raise_for_status()
+            root = ET.fromstring(response.content)
+            for entry in root.iter():
+                fields = {}
+                for child in list(entry):
+                    key = child.tag.rsplit("}", 1)[-1].lower()
+                    text = "".join(child.itertext()).strip()
+                    if key == "link" and child.attrib.get("href"):
+                        fields["link"] = child.attrib["href"].strip()
+                    elif key in ("title", "pubdate", "published", "updated", "date", "issued"):
+                        fields[key] = text
+                title = fields.get("title", "")
+                if not title or not any(term in title.lower() for term in POLICY_TERMS):
+                    continue
+                published_raw = next((fields[k] for k in ("pubdate", "published", "updated", "date", "issued") if fields.get(k)), "")
+                published = pd.to_datetime(published_raw, errors="coerce", utc=True)
+                article_url = fields.get("link", "")
+                if pd.isna(published) or not (start <= published.date() <= end):
+                    continue
+                if not article_url.startswith("https://"):
+                    continue
+                rows.append({
+                    "EVENT_DATE": published.date().isoformat(),
+                    "PUBLISHED_AT": published.isoformat(),
+                    "COUNTRY": country,
+                    "EVENT_TYPE": source_name + "_POLICY_RELEASE_PUBLICATION_DATE_PROXY",
+                    "SOURCE_URL": article_url,
+                    "SOURCE": source_name,
+                    "TITLE": title,
+                    "FEED_URL": response.url,
+                    "EVENT_DATE_BASIS": "PUBLICATION_DATE_PROXY_NOT_CONFIRMED_EVENT_DATE",
+                    "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat(),
+                })
+        except Exception as exc:
+            failures[feed_url] = f"{type(exc).__name__}: {str(exc)[:220]}"
+    frame = pd.DataFrame(rows)
+    if not frame.empty:
+        frame = frame.drop_duplicates(["PUBLISHED_AT", "SOURCE_URL"]).sort_values("PUBLISHED_AT")
+        OUT.mkdir(parents=True, exist_ok=True)
+        target = OUT / "global_policy_events.csv"
+        tmp = target.with_suffix(target.suffix + ".tmp")
+        frame.to_csv(tmp, index=False)
+        os.replace(tmp, target)
+        return {"status": "COLLECTED_NEEDS_DOMAIN_QA", "rows": int(len(frame)),
+                "date_min": str(frame["EVENT_DATE"].min()), "date_max": str(frame["EVENT_DATE"].max()),
+                "path": str(target), "source": "Official Federal Reserve and ECB RSS feeds",
+                "failures": failures,
+                "notes": "Publication date is not assumed to be the actual policy decision date; event-study eligibility requires independent date validation."}
+    return {"status": "BLOCKED", "rows": 0, "failures": failures,
+            "notes": "No valid policy feed events found; missing event data remains UNKNOWN."}
+
+
 def collect_group(name, series_map, start, end, session):
     rows, failures = [], {}
     for series_id, label in series_map.items():
@@ -158,9 +223,10 @@ def main():
         session.headers.update({"User-Agent": UA, "Accept": "text/csv,*/*"})
         report["groups"]["us_yields"] = collect_group("us_yields", YIELD_SERIES, start, end, session)
         report["groups"]["global_commodity_prices"] = collect_group("global_commodity_prices", COMMODITY_SERIES, start, end, session)
+        report["groups"]["global_policy_events"] = fetch_global_policy_events(session, start, end)
     except Exception as exc:
         report["window"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:240]}"}
-        for name in ("us_yields", "global_commodity_prices"):
+        for name in ("us_yields", "global_commodity_prices", "global_policy_events"):
             report["groups"][name] = {"status": "BLOCKED", "rows": 0,
                                       "notes": "No rows written; missing data remains UNKNOWN."}
     REPORT.parent.mkdir(parents=True, exist_ok=True)
