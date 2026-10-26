@@ -53,7 +53,7 @@ def apply_factor_collector_report(rows, collector_report):
     """Keep collected-but-unvalidated factor files out of clean AVAILABLE status."""
     groups = collector_report.get("groups", {}) if isinstance(collector_report, dict) else {}
     row_by_name = {row.get("source"): row for row in rows}
-    for name in ("us_yields", "global_commodity_prices"):
+    for name in ("us_yields", "global_commodity_prices", "global_policy_events"):
         observed = groups.get(name, {})
         state = observed.get("status")
         row = row_by_name.get(name)
