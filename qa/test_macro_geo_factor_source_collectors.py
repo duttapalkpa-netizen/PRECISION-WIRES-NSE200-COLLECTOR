@@ -139,6 +139,24 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertFalse(audit.source_is_connected({"status": "AVAILABLE", "rows": 0}))
         self.assertFalse(audit.source_is_connected({"status": "NOT_CONNECTED", "rows": 0}))
 
+    def test_every_factor_registry_mapping_resolves_to_a_source_contract(self):
+        import pandas as pd
+        import pipeline.macro_geo_factor_coverage_audit as audit
+        import pipeline.macro_geo_source_coverage as coverage
+
+        registry = pd.read_csv("config/macro_factor_registry.csv", dtype=str)
+        factor_ids = set(registry["factor_id"].astype(str))
+        self.assertEqual(factor_ids - set(audit.MAP), set(),
+                         "Every registry factor must have an explicit source mapping")
+        self.assertEqual(set(audit.MAP) - factor_ids, set(),
+                         "Mapping must not reference a factor absent from the registry")
+        mapped_groups = {name for names in audit.MAP.values() for name in names}
+        self.assertEqual(mapped_groups - set(coverage.SOURCES), set(),
+                         "Every mapped source group must have an explicit path/schema contract")
+        for name in mapped_groups:
+            self.assertTrue(coverage.SOURCES[name]["paths"], name)
+            self.assertTrue(coverage.SOURCES[name]["required"], name)
+
     def test_observed_window_blocks_without_real_panel(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch.object(collector, "PANEL_CANDIDATES", (Path(tmp) / "missing.csv",)):
