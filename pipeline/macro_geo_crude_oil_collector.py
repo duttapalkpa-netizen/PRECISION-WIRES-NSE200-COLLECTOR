@@ -5,7 +5,7 @@ Uses FRED's DCOILBRENTEU observation series. The source is explicitly named;
 WTI is never substituted for Brent. Empty/malformed responses remain BLOCKED.
 """
 from __future__ import annotations
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from io import StringIO
 from pathlib import Path
 import json
@@ -23,17 +23,32 @@ UA = "PRECISION-WIRES-NSE200-COLLECTOR/1.0 (research audit; public data)"
 def collect(session=None, start=None, end=None):
     session = session or requests.Session()
     session.headers.update({"User-Agent": UA})
-    params = {"id": SERIES}
-    if start: params["cosd"] = str(start)
-    if end: params["coed"] = str(end)
+    # Bound requests to the canonical panel window; never download all FRED history in CI.
+    if start is None or end is None:
+        candidates = [Path("data/processed/nse_eq_200_sessions.csv"), Path("data/external/benchmark_indices.csv")]
+        panel = next((p for p in candidates if p.exists()), None)
+        if panel is None:
+            raise RuntimeError("No canonical market panel available to bound Brent collection window")
+        pf = pd.read_csv(panel)
+        date_col = next((c for c in pf.columns if str(c).strip().upper() == "DATE"), None)
+        if date_col is None:
+            raise ValueError("Panel missing DATE column; cannot bound Brent collection")
+        pdts = pd.to_datetime(pf[date_col], errors="coerce").dropna()
+        if pdts.empty:
+            raise ValueError("Panel contains no valid dates; cannot bound Brent collection")
+        unique = sorted(pdts.dt.date.unique())
+        start = start or (unique[-min(200, len(unique))] - timedelta(days=30))
+        end = end or min(datetime.now(timezone.utc).date(), unique[-1] + timedelta(days=3))
+    params = {"id": SERIES, "cosd": str(start), "coed": str(end)}
     observed = datetime.now(timezone.utc).isoformat()
     response = session.get(URL, params=params, timeout=(8, 25))
     response.raise_for_status()
     frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
     frame.columns = [str(c).strip().upper() for c in frame.columns]
-    if "DATE" not in frame.columns or SERIES not in frame.columns:
+    date_col = next((c for c in ("DATE", "OBSERVATION_DATE") if c in frame.columns), None)
+    if date_col is None or SERIES not in frame.columns:
         raise ValueError(f"FRED Brent schema mismatch: {list(frame.columns)}")
-    dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    dates = pd.to_datetime(frame[date_col], errors="coerce")
     values = pd.to_numeric(frame[SERIES], errors="coerce")
     out = pd.DataFrame({
         "DATE": dates.dt.strftime("%Y-%m-%d"),
