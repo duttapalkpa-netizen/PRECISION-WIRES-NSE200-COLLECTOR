@@ -32,4 +32,35 @@ class BrentCollectorTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Yahoo futures fallback failed"):
             collector.collect(session=Bad(), start="2026-10-20", end="2026-10-22")
 
+
+    def test_yahoo_brent_proxy_domain_qa_preserves_proxy_provenance(self):
+        import pandas as pd
+        frame = pd.DataFrame({
+            "DATE": ["2026-10-23", "2026-10-26"],
+            "CLOSE": [65.2, 66.1],
+            "SOURCE": ["Yahoo Finance chart API; Brent crude futures proxy"] * 2,
+            "SOURCE_SERIES": ["BZ=F"] * 2,
+            "SOURCE_URL": ["https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?period1=1"] * 2,
+            "OBSERVED_AT_UTC": ["2026-10-27T00:00:00+00:00"] * 2,
+            "UNIT": ["USD_PER_BARREL"] * 2,
+        })
+        result = collector.validate_brent_proxy(frame, "2026-10-26")
+        self.assertEqual(result["status"], "COLLECTED_AND_DOMAIN_QA_PASSED")
+        self.assertEqual(result["freshness_age_calendar_days"], 0)
+        self.assertTrue(result["proxy_only"])
+        self.assertIn("not equivalent to FRED Brent spot", result["domain_qa_boundary"])
+
+    def test_yahoo_brent_proxy_domain_qa_rejects_future_or_stale_dates(self):
+        import pandas as pd
+        frame = pd.DataFrame({
+            "DATE": ["2026-10-27"], "CLOSE": [66.1],
+            "SOURCE": ["Yahoo Finance chart API; Brent crude futures proxy"],
+            "SOURCE_SERIES": ["BZ=F"],
+            "SOURCE_URL": ["https://query1.finance.yahoo.com/v8/finance/chart/BZ=F"],
+            "OBSERVED_AT_UTC": ["2026-10-27T00:00:00+00:00"],
+            "UNIT": ["USD_PER_BARREL"],
+        })
+        with self.assertRaisesRegex(ValueError, "freshness failed"):
+            collector.validate_brent_proxy(frame, "2026-10-26")
+
 if __name__ == "__main__": unittest.main()
