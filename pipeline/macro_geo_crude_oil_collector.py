@@ -136,14 +136,14 @@ def collect(session=None, start=None, end=None):
     errors = []
     for attempt in range(3):
         try:
-            response = session.get(URL, params=params, timeout=(8, 12))
+            response = session.get(URL, params=params, timeout=(10, 25))
             response.raise_for_status()
             break
         except requests.RequestException as exc:
             errors.append(f"{type(exc).__name__}: {str(exc)[:180]}")
             response = None
             if attempt < 2:
-                time.sleep(1.5 * (attempt + 1))
+                time.sleep(2.0 * (attempt + 1))
     if response is None:
         # Explicit third-party Brent futures fallback; never label it as the FRED spot series.
         start_ts = int(pd.Timestamp(str(start), tz="UTC").timestamp())
@@ -173,12 +173,8 @@ def collect(session=None, start=None, end=None):
             out = pd.DataFrame(rows).drop_duplicates(["DATE"]).sort_values("DATE")
             if out.empty:
                 raise ValueError("Yahoo Brent futures proxy returned no valid observations")
-            OUT.mkdir(parents=True, exist_ok=True)
-            target = OUT / "brent_crude.csv"
-            tmp = target.with_suffix(".csv.tmp")
-            out.to_csv(tmp, index=False)
-            os.replace(tmp, target)
-            # Validate against the latest observed market session, not wall-clock today.
+            # Validate against the latest observed market session before replacing any prior file.
+            # Failed QA must not leave an apparently usable fresh CSV behind.
             reference_candidates = [Path("data/processed/nse_eq_200_sessions.csv"), Path("data/external/benchmark_indices.csv")]
             reference_panel = next((p for p in reference_candidates if p.exists()), None)
             if reference_panel is None:
@@ -191,6 +187,11 @@ def collect(session=None, start=None, end=None):
             if reference_dates.empty:
                 raise ValueError("Brent proxy QA blocked: reference panel has no valid dates")
             qa = validate_brent_proxy(out, reference_dates.max())
+            OUT.mkdir(parents=True, exist_ok=True)
+            target = OUT / "brent_crude.csv"
+            tmp = target.with_suffix(".csv.tmp")
+            out.to_csv(tmp, index=False)
+            os.replace(tmp, target)
             result = {"status":qa["status"],"series":"BZ=F","rows":int(len(out)),
                 "date_min":str(out["DATE"].min()),"date_max":str(out["DATE"].max()),"source_url":fb.url,
                 "path":str(target),"fallback_from":"FRED DCOILBRENTEU","fred_errors":errors,
@@ -227,12 +228,14 @@ def collect(session=None, start=None, end=None):
     out = out.drop_duplicates(["DATE"]).sort_values("DATE")
     if out.empty:
         raise ValueError("FRED Brent series returned zero valid observations; crude_oil remains UNKNOWN/BLOCKED")
+    # Domain QA before replacing any prior file: bad provenance/freshness must not
+    # leave a CSV that the generic source inventory could mistake for valid data.
+    qa = validate_fred_brent(out, observed_reference_date())
     OUT.mkdir(parents=True, exist_ok=True)
     target = OUT / "brent_crude.csv"
     tmp = target.with_suffix(".csv.tmp")
     out.to_csv(tmp, index=False)
     os.replace(tmp, target)
-    qa = validate_fred_brent(out, observed_reference_date())
     result = {"status":qa["status"], "series":SERIES, "rows":int(len(out)),
               "date_min":str(out["DATE"].min()), "date_max":str(out["DATE"].max()),
               "source_url":response.url, "path":str(target),
