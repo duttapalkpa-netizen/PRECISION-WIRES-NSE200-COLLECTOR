@@ -232,3 +232,13 @@ No full historical validation or new hard-gate PASS is claimed in this checkpoin
 - Wired the bounded test and collector into the audit-only full workflow before source coverage is computed.
 - Workflow update commit: `ffc456475e28b80b647210929e31af4d470dc6fd`.
 - Next verification: the workflow triggered by this commit must show the Brent collector test passing and inspect the artifact's `source_coverage.json`, `factor_coverage_audit.json`, and `hard_gate_report.json`. The collector's existence alone must not change the release decision.
+
+
+## Corrective checkpoint — Run #148 and next validation (2026-10-27)
+
+- Run #148: [workflow](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40448817539), artifact ID `12710114286`, commit `21bed0020eed5a0e4f501ab508cd7eec43c97dfb`.
+- Two mocked Brent collector tests passed, but the live FRED request timed out at 25 seconds. The hard gate still reported P0 coverage 7/8 with `crude_oil` missing; Factor Registry 35 rows, zero fully available and 13 disconnected factor entries; release false.
+- Run #148 exploratory results: 48 event rows, 41 eligible event rows, 348 event-study window rows; maturity summary reports 29 unique events with H+1 and 24 with H+5. H+3 was not previously reported, so it must not be inferred.
+- Commit `0a389af95a3df611b00fa6b5dc33a802b7d65d55`: added bounded FRED retries and a clearly labelled Yahoo Finance `BZ=F` Brent-futures fallback. Fallback is a third-party futures proxy, not equivalent to FRED's `DCOILBRENTEU`; it remains `COLLECTED_NEEDS_DOMAIN_QA` until verified.
+- Commit `a3ba3d4b6c264d9ca477e346d8ecdb911f44630e`: event-level audit now emits H+3 close date, close value, maturity flag and unique-event count alongside H+1/H+5/H+20.
+- Validation required on the next workflow: collector unit tests, live source output/coverage, event-level H+3 counts, and artifact hard-gate report. These code changes are not evidence of a successful live run; do not claim PASS before the workflow artifact confirms it.
