@@ -21,6 +21,44 @@ URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 SERIES = "DCOILBRENTEU"
 UA = "PRECISION-WIRES-NSE200-COLLECTOR/1.0 (research audit; public data)"
 
+def validate_brent_proxy(frame, reference_date):
+    """Domain QA for the explicitly labelled Yahoo Brent futures proxy.
+
+    This validates usable proxy data, not equivalence to FRED spot Brent.
+    """
+    required = {"DATE", "CLOSE", "SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC", "UNIT"}
+    missing = sorted(required - set(frame.columns))
+    if missing:
+        raise ValueError(f"Brent proxy domain QA missing columns: {missing}")
+    if frame.empty:
+        raise ValueError("Brent proxy domain QA has no rows")
+    dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    closes = pd.to_numeric(frame["CLOSE"], errors="coerce")
+    if dates.isna().any() or closes.isna().any():
+        raise ValueError("Brent proxy domain QA found invalid date/close values")
+    if dates.dt.strftime("%Y-%m-%d").duplicated().any():
+        raise ValueError("Brent proxy domain QA found duplicate dates")
+    if (closes <= 0).any() or ((closes < 20) | (closes > 200)).any():
+        raise ValueError("Brent proxy close outside conservative plausibility bounds (20..200 USD/barrel)")
+    if not (frame["SOURCE_SERIES"].astype(str) == "BZ=F").all():
+        raise ValueError("Brent proxy provenance must remain BZ=F")
+    if not frame["SOURCE_URL"].astype(str).str.contains("query1.finance.yahoo.com/v8/finance/chart/BZ=F", regex=False).all():
+        raise ValueError("Brent proxy source URL does not match Yahoo BZ=F endpoint")
+    if not (frame["UNIT"].astype(str) == "USD_PER_BARREL").all():
+        raise ValueError("Brent proxy unit must be USD_PER_BARREL")
+    reference = pd.Timestamp(reference_date).normalize()
+    latest = dates.max().normalize()
+    age = int((reference - latest).days)
+    if age < 0 or age > 3:
+        raise ValueError(f"Brent proxy freshness failed: age={age} calendar days")
+    return {"status": "COLLECTED_AND_DOMAIN_QA_PASSED", "freshness_age_calendar_days": age,
+            "freshness_status": "FRESH", "proxy_only": True,
+            "domain_qa_checks": ["required provenance/unit columns", "valid dates and closes",
+                "unique dates", "plausible USD/barrel closes", "BZ=F endpoint provenance",
+                "0..3 calendar-day freshness"],
+            "domain_qa_boundary": "Yahoo Brent futures proxy; not equivalent to FRED Brent spot."}
+
+
 def collect(session=None, start=None, end=None):
     session = session or requests.Session()
     session.headers.update({"User-Agent": UA})
@@ -90,10 +128,26 @@ def collect(session=None, start=None, end=None):
             tmp = target.with_suffix(".csv.tmp")
             out.to_csv(tmp, index=False)
             os.replace(tmp, target)
-            result = {"status":"COLLECTED_NEEDS_DOMAIN_QA","series":"BZ=F","rows":int(len(out)),
+            # Validate against the latest observed market session, not wall-clock today.
+            reference_candidates = [Path("data/processed/nse_eq_200_sessions.csv"), Path("data/external/benchmark_indices.csv")]
+            reference_panel = next((p for p in reference_candidates if p.exists()), None)
+            if reference_panel is None:
+                raise ValueError("Brent proxy QA blocked: no observed market-session reference panel")
+            reference_frame = pd.read_csv(reference_panel)
+            reference_col = next((c for c in reference_frame.columns if str(c).strip().upper() == "DATE"), None)
+            if reference_col is None:
+                raise ValueError("Brent proxy QA blocked: reference panel has no DATE column")
+            reference_dates = pd.to_datetime(reference_frame[reference_col], errors="coerce").dropna()
+            if reference_dates.empty:
+                raise ValueError("Brent proxy QA blocked: reference panel has no valid dates")
+            qa = validate_brent_proxy(out, reference_dates.max())
+            result = {"status":qa["status"],"series":"BZ=F","rows":int(len(out)),
                 "date_min":str(out["DATE"].min()),"date_max":str(out["DATE"].max()),"source_url":fb.url,
                 "path":str(target),"fallback_from":"FRED DCOILBRENTEU","fred_errors":errors,
-                "notes":"Third-party Brent futures proxy; not equivalent to FRED spot series. Domain QA and freshness required."}
+                "freshness_age_calendar_days":qa["freshness_age_calendar_days"],
+                "freshness_status":qa["freshness_status"],"domain_qa_checks":qa["domain_qa_checks"],
+                "proxy_only":True,"domain_qa_boundary":qa["domain_qa_boundary"],
+                "notes":"Yahoo Brent futures proxy passed bounded data-quality QA; it is not equivalent to FRED Brent spot."}
             REPORT.parent.mkdir(parents=True, exist_ok=True)
             REPORT.write_text(json.dumps(result, indent=2)+"\n", encoding="utf-8")
             print(json.dumps(result))
