@@ -30,6 +30,6 @@ class BrentCollectorTests(unittest.TestCase):
             headers={}
             def get(self,*a,**k): raise requests.Timeout("timeout")
         with self.assertRaisesRegex(RuntimeError, "Yahoo futures fallback failed"):
-            collector.collect(session=Bad())
+            collector.collect(session=Bad(), start="2026-10-20", end="2026-10-22")
 
 if __name__ == "__main__": unittest.main()
