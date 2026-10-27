@@ -59,6 +59,56 @@ def validate_brent_proxy(frame, reference_date):
             "domain_qa_boundary": "Yahoo Brent futures proxy; not equivalent to FRED Brent spot."}
 
 
+def validate_fred_brent(frame, reference_date):
+    """Domain QA for FRED Brent spot observations; does not imply 20-year completeness."""
+    required = {"DATE", "CLOSE", "SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC", "UNIT"}
+    missing = sorted(required - set(frame.columns))
+    if missing:
+        raise ValueError(f"FRED Brent domain QA missing columns: {missing}")
+    if frame.empty:
+        raise ValueError("FRED Brent domain QA has no rows")
+    dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    closes = pd.to_numeric(frame["CLOSE"], errors="coerce")
+    if dates.isna().any() or closes.isna().any():
+        raise ValueError("FRED Brent domain QA found invalid date/close values")
+    if dates.dt.strftime("%Y-%m-%d").duplicated().any():
+        raise ValueError("FRED Brent domain QA found duplicate dates")
+    if ((closes < 20) | (closes > 200)).any():
+        raise ValueError("FRED Brent close outside conservative plausibility bounds (20..200 USD/barrel)")
+    if not (frame["SOURCE_SERIES"].astype(str) == SERIES).all():
+        raise ValueError("FRED Brent provenance must remain DCOILBRENTEU")
+    if not frame["SOURCE"].astype(str).str.contains("FRED", case=False, regex=False).all():
+        raise ValueError("FRED Brent source label missing")
+    if not frame["SOURCE_URL"].astype(str).str.contains("fred.stlouisfed.org/graph/fredgraph.csv", regex=False).all():
+        raise ValueError("FRED Brent source URL does not match FRED endpoint")
+    if not (frame["UNIT"].astype(str) == "USD_PER_BARREL").all():
+        raise ValueError("FRED Brent unit must be USD_PER_BARREL")
+    reference = pd.Timestamp(reference_date).normalize()
+    age = int((reference - dates.max().normalize()).days)
+    if age < 0 or age > 3:
+        raise ValueError(f"FRED Brent freshness failed: age={age} calendar days")
+    return {"status":"COLLECTED_AND_DOMAIN_QA_PASSED","freshness_age_calendar_days":age,
+            "freshness_status":"FRESH","proxy_only":False,
+            "domain_qa_checks":["required provenance/unit columns","valid dates and closes","unique dates",
+                "plausible USD/barrel closes","DCOILBRENTEU FRED endpoint provenance","0..3 calendar-day freshness"],
+            "domain_qa_boundary":"FRED DCOILBRENTEU spot observations passed bounded domain QA; this does not establish full historical coverage."}
+
+
+def observed_reference_date():
+    candidates = [Path("data/processed/nse_eq_200_sessions.csv"), Path("data/external/benchmark_indices.csv")]
+    panel = next((p for p in candidates if p.exists()), None)
+    if panel is None:
+        raise ValueError("Brent domain QA blocked: no observed market-session reference panel")
+    pf = pd.read_csv(panel)
+    col = next((c for c in pf.columns if str(c).strip().upper()=="DATE"), None)
+    if col is None:
+        raise ValueError("Brent domain QA blocked: reference panel has no DATE column")
+    dates = pd.to_datetime(pf[col], errors="coerce").dropna()
+    if dates.empty:
+        raise ValueError("Brent domain QA blocked: reference panel has no valid dates")
+    return dates.max()
+
+
 def collect(session=None, start=None, end=None):
     session = session or requests.Session()
     session.headers.update({"User-Agent": UA})
@@ -182,10 +232,14 @@ def collect(session=None, start=None, end=None):
     tmp = target.with_suffix(".csv.tmp")
     out.to_csv(tmp, index=False)
     os.replace(tmp, target)
-    result = {"status":"COLLECTED_NEEDS_DOMAIN_QA", "series":SERIES, "rows":int(len(out)),
+    qa = validate_fred_brent(out, observed_reference_date())
+    result = {"status":qa["status"], "series":SERIES, "rows":int(len(out)),
               "date_min":str(out["DATE"].min()), "date_max":str(out["DATE"].max()),
               "source_url":response.url, "path":str(target),
-              "notes":"Connectivity and schema only; freshness, units, historical coverage and point-in-time suitability must pass downstream QA."}
+              "freshness_age_calendar_days":qa["freshness_age_calendar_days"],
+              "freshness_status":qa["freshness_status"],"domain_qa_checks":qa["domain_qa_checks"],
+              "proxy_only":False,"domain_qa_boundary":qa["domain_qa_boundary"],
+              "notes":"FRED Brent spot passed bounded domain QA; full historical coverage and point-in-time suitability remain separate checks."}
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text(json.dumps(result, indent=2)+"\n", encoding="utf-8")
     print(json.dumps(result))
