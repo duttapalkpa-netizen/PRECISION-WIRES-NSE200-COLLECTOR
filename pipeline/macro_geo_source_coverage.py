@@ -141,7 +141,7 @@ def main():
             except Exception as e: row.update(status="READ_ERROR",notes=f"Could not read file: {type(e).__name__}: {e}")
         rows.append(row)
     # Brent has its own collector report and stricter source-equivalence boundary.
-    crude_report_path = OUT / "crude_oil_collection_report.json"
+    crude_report_path = ROOT / "outputs/macro_geo/crude_oil_collection_report.json"
     if crude_report_path.exists():
         try:
             crude_report = json.loads(crude_report_path.read_text())
