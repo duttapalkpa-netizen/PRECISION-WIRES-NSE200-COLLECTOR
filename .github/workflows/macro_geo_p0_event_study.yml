@@ -15,6 +15,7 @@ on:
       - "qa/test_macro_geo_repair_p0.py"
       - "qa/test_macro_geo_factor_source_collectors.py"
       - "pipeline/macro_geo_source_coverage.py"
+      - "pipeline/macro_geo_crude_oil_collector.py"
       - "pipeline/macro_geo_finalize_manifest.py"
       - "qa/test_macro_geo_finalize_manifest.py"
       - "pipeline/macro_geo_four_group_validation.py"
