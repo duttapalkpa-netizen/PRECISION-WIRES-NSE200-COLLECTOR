@@ -1,0 +1,43 @@
+name: Macro Geo Fast QA (under 10 minutes)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_crude_oil_collector.py"
+      - "pipeline/macro_geo_event_level_audit.py"
+      - "qa/test_macro_geo_crude_oil_collector.py"
+      - "qa/test_macro_geo_engine.py"
+      - "qa/test_macro_geo_repair_p0.py"
+      - "qa/test_macro_geo_historical_news_backfill.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
+      - ".github/workflows/macro_geo_fast_qa.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-fast-qa
+  cancel-in-progress: true
+
+jobs:
+  fast-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run bounded offline regression tests
+        run: |
+          python -m unittest qa.test_macro_geo_crude_oil_collector qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest -v
+      - name: Compile modified Python modules
+        run: |
+          python -m py_compile pipeline/macro_geo_crude_oil_collector.py pipeline/macro_geo_event_level_audit.py
