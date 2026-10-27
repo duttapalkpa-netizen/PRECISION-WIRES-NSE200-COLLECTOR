@@ -10,6 +10,7 @@ from io import StringIO
 from pathlib import Path
 import json
 import os
+import time
 import pandas as pd
 import requests
 
@@ -41,8 +42,62 @@ def collect(session=None, start=None, end=None):
         end = end or min(datetime.now(timezone.utc).date(), unique[-1] + timedelta(days=3))
     params = {"id": SERIES, "cosd": str(start), "coed": str(end)}
     observed = datetime.now(timezone.utc).isoformat()
-    response = session.get(URL, params=params, timeout=(8, 25))
-    response.raise_for_status()
+    response = None
+    errors = []
+    for attempt in range(3):
+        try:
+            response = session.get(URL, params=params, timeout=(8, 12))
+            response.raise_for_status()
+            break
+        except requests.RequestException as exc:
+            errors.append(f"{type(exc).__name__}: {str(exc)[:180]}")
+            response = None
+            if attempt < 2:
+                time.sleep(1.5 * (attempt + 1))
+    if response is None:
+        # Explicit third-party Brent futures fallback; never label it as the FRED spot series.
+        start_ts = int(pd.Timestamp(str(start), tz="UTC").timestamp())
+        end_ts = int((pd.Timestamp(str(end), tz="UTC") + pd.Timedelta(days=1)).timestamp())
+        fallback_url = "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F"
+        try:
+            fb = session.get(fallback_url, params={"period1":start_ts,"period2":end_ts,"interval":"1d"}, timeout=(8, 15))
+            fb.raise_for_status()
+            payload = fb.json()
+            result_list = payload.get("chart",{}).get("result") or []
+            if not result_list:
+                raise ValueError("Yahoo Brent futures chart has no result")
+            item = result_list[0]
+            timestamps = item.get("timestamp") or []
+            quote = (item.get("indicators",{}).get("quote") or [{}])[0]
+            closes = quote.get("close") or []
+            from zoneinfo import ZoneInfo
+            tz = ZoneInfo((item.get("meta") or {}).get("exchangeTimezoneName") or "UTC")
+            rows = []
+            for stamp, val in zip(timestamps, closes):
+                if val is None:
+                    continue
+                day = pd.Timestamp(int(stamp), unit="s", tz="UTC").tz_convert(tz).date().isoformat()
+                if str(start) <= day <= str(end):
+                    rows.append({"DATE":day,"CLOSE":float(val),"SOURCE":"Yahoo Finance chart API; Brent crude futures proxy",
+                        "SOURCE_SERIES":"BZ=F","SOURCE_URL":fb.url,"OBSERVED_AT_UTC":observed,"UNIT":"USD_PER_BARREL"})
+            out = pd.DataFrame(rows).drop_duplicates(["DATE"]).sort_values("DATE")
+            if out.empty:
+                raise ValueError("Yahoo Brent futures proxy returned no valid observations")
+            OUT.mkdir(parents=True, exist_ok=True)
+            target = OUT / "brent_crude.csv"
+            tmp = target.with_suffix(".csv.tmp")
+            out.to_csv(tmp, index=False)
+            os.replace(tmp, target)
+            result = {"status":"COLLECTED_NEEDS_DOMAIN_QA","series":"BZ=F","rows":int(len(out)),
+                "date_min":str(out["DATE"].min()),"date_max":str(out["DATE"].max()),"source_url":fb.url,
+                "path":str(target),"fallback_from":"FRED DCOILBRENTEU","fred_errors":errors,
+                "notes":"Third-party Brent futures proxy; not equivalent to FRED spot series. Domain QA and freshness required."}
+            REPORT.parent.mkdir(parents=True, exist_ok=True)
+            REPORT.write_text(json.dumps(result, indent=2)+"\\n", encoding="utf-8")
+            print(json.dumps(result))
+            return result
+        except Exception as fallback_exc:
+            raise RuntimeError(f"FRED Brent failed {errors}; Yahoo futures fallback failed: {type(fallback_exc).__name__}: {fallback_exc}") from fallback_exc
     frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
     frame.columns = [str(c).strip().upper() for c in frame.columns]
     date_col = next((c for c in ("DATE", "OBSERVATION_DATE") if c in frame.columns), None)
