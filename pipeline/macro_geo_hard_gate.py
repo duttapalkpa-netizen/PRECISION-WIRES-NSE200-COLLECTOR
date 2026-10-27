@@ -57,7 +57,22 @@ def main():
             old_required = manifest.get("p0_coverage", {}).get("required_series_available")
             checks["collector_manifest_pre_repair_status"] = old_status
             checks["collector_manifest_pre_repair_required_series_available"] = old_required
-            if old_status == "PASS_WITH_CRITICAL_DATA_GAPS" or old_required is False:
+            # The collector manifest is a pre-repair snapshot. Preserve its
+            # original state as audit evidence, but do not let a stale pre-repair
+            # status override a reconciled final manifest. Release remains blocked
+            # by observed final source coverage below if any required group is absent.
+            final_reconciliation = manifest.get("final_manifest_reconciliation", {})
+            final_p0_meta = manifest.get("p0_coverage", {})
+            final_groups = final_p0_meta.get("group_availability_after_repair", {})
+            required_names = final_p0_meta.get("required_groups", [])
+            final_snapshot_verified = (
+                final_reconciliation.get("status") == "RECONCILED"
+                and final_p0_meta.get("required_series_available") is True
+                and bool(required_names)
+                and all(final_groups.get(name) is True for name in required_names)
+            )
+            checks["collector_manifest_final_snapshot_verified"] = final_snapshot_verified
+            if (old_status == "PASS_WITH_CRITICAL_DATA_GAPS" or old_required is False) and not final_snapshot_verified:
                 blockers.append("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS")
             p0_meta = manifest.get("p0_coverage", {})
             if p0_meta.get("fpi_dii_status") != "AVAILABLE":
