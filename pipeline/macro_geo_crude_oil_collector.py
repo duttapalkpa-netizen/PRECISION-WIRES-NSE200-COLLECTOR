@@ -95,7 +95,7 @@ def collect(session=None, start=None, end=None):
                 "path":str(target),"fallback_from":"FRED DCOILBRENTEU","fred_errors":errors,
                 "notes":"Third-party Brent futures proxy; not equivalent to FRED spot series. Domain QA and freshness required."}
             REPORT.parent.mkdir(parents=True, exist_ok=True)
-            REPORT.write_text(json.dumps(result, indent=2)+"\\n", encoding="utf-8")
+            REPORT.write_text(json.dumps(result, indent=2)+"\n", encoding="utf-8")
             print(json.dumps(result))
             return result
         except Exception as fallback_exc:
