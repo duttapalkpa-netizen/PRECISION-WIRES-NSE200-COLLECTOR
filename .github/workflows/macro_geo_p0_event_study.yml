@@ -1,3 +1,4 @@
+# Re-run P0 audit on the latest validated collector and coverage fixes; hard gate remains strict.
 name: Audit-only Macro Geo P0 Collection and Event Study
 
 on:
