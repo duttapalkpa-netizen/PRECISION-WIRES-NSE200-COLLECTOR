@@ -242,3 +242,15 @@ No full historical validation or new hard-gate PASS is claimed in this checkpoin
 - Commit `0a389af95a3df611b00fa6b5dc33a802b7d65d55`: added bounded FRED retries and a clearly labelled Yahoo Finance `BZ=F` Brent-futures fallback. Fallback is a third-party futures proxy, not equivalent to FRED's `DCOILBRENTEU`; it remains `COLLECTED_NEEDS_DOMAIN_QA` until verified.
 - Commit `a3ba3d4b6c264d9ca477e346d8ecdb911f44630e`: event-level audit now emits H+3 close date, close value, maturity flag and unique-event count alongside H+1/H+5/H+20.
 - Validation required on the next workflow: collector unit tests, live source output/coverage, event-level H+3 counts, and artifact hard-gate report. These code changes are not evidence of a successful live run; do not claim PASS before the workflow artifact confirms it.
+
+
+## Append-only checkpoint — 2026-10-27 — Fast QA #40480501865
+
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/40480501865
+- Commit tested: `14c852ac06e328e2467558782fca3df6198e59bf`.
+- Result: **SUCCESS**. The 8-minute bounded workflow passed the offline regression tests and Python compilation checks, including `qa.test_macro_geo_factor_source_collectors` and source-coverage modules.
+- This is code/test regression evidence only. It is **not** a live-source collection run, not proof that any disconnected factor group became available, and not a hard-gate PASS.
+- The latest full-workflow evidence remains Run #152, whose strict hard gate blocked release: 13 factor entries disconnected and `candidate_release_allowed=false`.
+- Next work item: implement and validate missing source groups in bounded batches, beginning with sources where the publisher, schema, units and publication timestamp can be verified. For each group, require a source-specific adapter, deterministic tests, bounded live smoke, provenance-preserving raw/normalized output, and artifact-based coverage verification before marking it available.
+- Preserve `UNKNOWN/BLOCKED` semantics. Do not promote warning-state or third-party proxy data to clean `AVAILABLE` merely to reduce the disconnected count. Do not rerun the 40-minute full study until source repair has meaningful evidence.
+- Production selector, `RANKING_SCORE`, and frozen `+1 PRESSURE_FADE` remain unchanged.
