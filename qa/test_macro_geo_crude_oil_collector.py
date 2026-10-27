@@ -65,6 +65,36 @@ class BrentCollectorTests(unittest.TestCase):
 
 
 
+
+    def test_fred_brent_domain_qa_accepts_provenance_and_freshness(self):
+        import pandas as pd
+        frame = pd.DataFrame({
+            "DATE":["2026-10-26","2026-10-27"], "CLOSE":[65.2,66.0],
+            "SOURCE":["Federal Reserve Bank of St. Louis FRED"]*2,
+            "SOURCE_SERIES":["DCOILBRENTEU"]*2,
+            "SOURCE_URL":["https://fred.stlouisfed.org/graph/fredgraph.csv?id=DCOILBRENTEU"]*2,
+            "OBSERVED_AT_UTC":["2026-10-27T00:00:00+00:00"]*2,
+            "UNIT":["USD_PER_BARREL"]*2,
+        })
+        result = collector.validate_fred_brent(frame, "2026-10-27")
+        self.assertEqual(result["status"], "COLLECTED_AND_DOMAIN_QA_PASSED")
+        self.assertFalse(result["proxy_only"])
+        self.assertEqual(result["freshness_age_calendar_days"], 0)
+
+    def test_fred_brent_domain_qa_rejects_wrong_series(self):
+        import pandas as pd
+        frame = pd.DataFrame({
+            "DATE":["2026-10-27"], "CLOSE":[66.0],
+            "SOURCE":["Federal Reserve Bank of St. Louis FRED"],
+            "SOURCE_SERIES":["DCOILWTICO"],
+            "SOURCE_URL":["https://fred.stlouisfed.org/graph/fredgraph.csv?id=DCOILWTICO"],
+            "OBSERVED_AT_UTC":["2026-10-27T00:00:00+00:00"],
+            "UNIT":["USD_PER_BARREL"],
+        })
+        with self.assertRaisesRegex(ValueError, "provenance must remain DCOILBRENTEU"):
+            collector.validate_fred_brent(frame, "2026-10-27")
+
+
 class BrentCoverageBoundaryTests(unittest.TestCase):
     def test_proxy_domain_qa_does_not_unblock_p0_as_fred_spot(self):
         from pipeline.macro_geo_source_coverage import apply_crude_oil_collector_report
