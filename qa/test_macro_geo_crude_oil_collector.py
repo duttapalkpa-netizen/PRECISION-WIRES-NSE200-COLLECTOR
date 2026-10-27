@@ -14,7 +14,7 @@ class FakeResponse:
 class BrentCollectorTests(unittest.TestCase):
     def test_brent_schema_provenance_and_no_wti_substitution(self):
         with tempfile.TemporaryDirectory() as tmp:
-            with patch.object(collector, "OUT", Path(tmp)), patch.object(collector, "REPORT", Path(tmp)/"report.json"):
+            with patch.object(collector, "OUT", Path(tmp)), patch.object(collector, "REPORT", Path(tmp)/"report.json"), patch.object(collector, "observed_reference_date", return_value=pd.Timestamp("2026-10-22")):
                 result = collector.collect(session=type("S", (), {"headers":{}, "get":lambda self,*a,**k:FakeResponse()})(),
                                            start=date(2026,10,20), end=date(2026,10,22))
                 import pandas as pd
