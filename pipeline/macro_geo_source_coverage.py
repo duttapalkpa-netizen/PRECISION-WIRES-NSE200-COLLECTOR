@@ -72,6 +72,28 @@ def apply_factor_collector_report(rows, collector_report):
     return rows
 
 
+def apply_crude_oil_collector_report(rows, collector_report):
+    """Require explicit Brent domain QA; a Yahoo futures proxy never silently equals FRED spot."""
+    row = next((item for item in rows if item.get("source") == "crude_oil"), None)
+    if row is None:
+        return rows
+    report = collector_report if isinstance(collector_report, dict) else {}
+    state = report.get("status") or "UNKNOWN_NO_COLLECTOR_EVIDENCE"
+    proxy_only = report.get("proxy_only") is True
+    if state != "COLLECTED_AND_DOMAIN_QA_PASSED":
+        if int(row.get("rows") or 0) > 0 and row.get("status") == "AVAILABLE":
+            row["status"] = "DATA_QUALITY_WARN"
+        row["notes"] = (str(row.get("notes") or "") +
+            f" Brent collector status={state}; domain QA not cleared.").strip()
+    elif proxy_only:
+        # Bounded proxy QA establishes usability only, not source equivalence.
+        if int(row.get("rows") or 0) > 0:
+            row["status"] = "DATA_QUALITY_WARN"
+        row["notes"] = (str(row.get("notes") or "") +
+            " Yahoo BZ=F is a futures proxy, not FRED DCOILBRENTEU spot; P0 remains blocked pending explicit secondary-source contract approval.").strip()
+    return rows
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True); rows=[]
     now=pd.Timestamp.now(tz="UTC")
@@ -118,6 +140,23 @@ def main():
                 row.update(status=status,notes="; ".join(quality_issues) if quality_issues else "Generic QA passed; units, source authenticity, revisions, market-calendar alignment and point-in-time leakage still need domain-specific checks.")
             except Exception as e: row.update(status="READ_ERROR",notes=f"Could not read file: {type(e).__name__}: {e}")
         rows.append(row)
+    # Brent has its own collector report and stricter source-equivalence boundary.
+    crude_report_path = OUT / "crude_oil_collection_report.json"
+    if crude_report_path.exists():
+        try:
+            crude_report = json.loads(crude_report_path.read_text())
+            rows = apply_crude_oil_collector_report(rows, crude_report)
+        except Exception:
+            for row in rows:
+                if row.get("source") == "crude_oil" and int(row.get("rows") or 0) > 0:
+                    row["status"] = "DATA_QUALITY_WARN"
+                    row["notes"] = (str(row.get("notes") or "") + " Brent collector report unreadable; source QA UNKNOWN.").strip()
+    else:
+        for row in rows:
+            if row.get("source") == "crude_oil" and int(row.get("rows") or 0) > 0:
+                row["status"] = "DATA_QUALITY_WARN"
+                row["notes"] = (str(row.get("notes") or "") + " Brent collector report missing; source QA UNKNOWN.").strip()
+
     # A newly collected factor file is not automatically clean source coverage.
     # Require a separate explicit domain-QA pass before factor audit may count it.
     collector_report_path = OUT / "factor_source_collection_report.json"
