@@ -283,6 +283,22 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.assertFalse(report["ranking_score_changed"])
         self.assertFalse(report["pressure_fade_changed"])
 
+    def test_hard_gate_allows_verified_repair_over_pre_repair_manifest_gap(self):
+        manifest = self.json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        manifest["status"] = "PASS_WITH_CRITICAL_DATA_GAPS"
+        manifest["operational_status"] = "PASS_WITH_CRITICAL_DATA_GAPS"
+        manifest["p0_coverage"]["required_series_available"] = True
+        manifest["p0_coverage"]["group_availability_after_repair"] = {
+            name: True for name in manifest["p0_coverage"]["required_groups"]
+        }
+        manifest["final_manifest_reconciliation"] = {"status": "RECONCILED"}
+        self.manifest_path.write_text(self.json.dumps(manifest), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 0)
+        report = self.report()
+        self.assertTrue(report["checks"]["collector_manifest_final_snapshot_verified"])
+        self.assertNotIn("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS", report["blockers"])
+        self.assertTrue(report["candidate_release_allowed"])
+
     def test_hard_gate_manifest_critical_gaps_block_release(self):
         self.manifest_path.write_text(self.json.dumps({
             "status": "PASS_WITH_CRITICAL_DATA_GAPS",
