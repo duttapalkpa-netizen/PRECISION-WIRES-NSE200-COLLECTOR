@@ -63,4 +63,22 @@ class BrentCollectorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "freshness failed"):
             collector.validate_brent_proxy(frame, "2026-10-26")
 
+
+
+class BrentCoverageBoundaryTests(unittest.TestCase):
+    def test_proxy_domain_qa_does_not_unblock_p0_as_fred_spot(self):
+        from pipeline.macro_geo_source_coverage import apply_crude_oil_collector_report
+        rows = [{"source":"crude_oil","rows":21,"status":"AVAILABLE","notes":"Generic QA passed."}]
+        report = {"status":"COLLECTED_AND_DOMAIN_QA_PASSED","proxy_only":True,"series":"BZ=F"}
+        out = apply_crude_oil_collector_report(rows, report)
+        self.assertEqual(out[0]["status"], "DATA_QUALITY_WARN")
+        self.assertIn("not FRED DCOILBRENTEU spot", out[0]["notes"])
+
+    def test_missing_domain_qa_keeps_brent_warned(self):
+        from pipeline.macro_geo_source_coverage import apply_crude_oil_collector_report
+        rows = [{"source":"crude_oil","rows":21,"status":"AVAILABLE","notes":"Generic QA passed."}]
+        out = apply_crude_oil_collector_report(rows, {"status":"COLLECTED_NEEDS_DOMAIN_QA"})
+        self.assertEqual(out[0]["status"], "DATA_QUALITY_WARN")
+        self.assertIn("domain QA not cleared", out[0]["notes"])
+
 if __name__ == "__main__": unittest.main()
