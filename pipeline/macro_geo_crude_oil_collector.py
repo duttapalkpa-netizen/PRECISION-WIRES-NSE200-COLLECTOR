@@ -39,7 +39,9 @@ def collect(session=None, start=None, end=None):
             raise ValueError("Panel contains no valid dates; cannot bound Brent collection")
         unique = sorted(pdts.dt.date.unique())
         start = start or (unique[-min(200, len(unique))] - timedelta(days=30))
-        end = end or min(datetime.now(timezone.utc).date(), unique[-1] + timedelta(days=3))
+        # Decision-time safety: exclude commodity bars beyond the latest observed market session.
+        # Future-dated bars can fail freshness checks and risk point-in-time leakage.
+        end = end or unique[-1]
     params = {"id": SERIES, "cosd": str(start), "coed": str(end)}
     observed = datetime.now(timezone.utc).isoformat()
     response = None
