@@ -59,27 +59,72 @@ def observed_window():
 
 
 def fetch_fred(session, series_id, start, end):
-    params = {"id": series_id, "cosd": start.isoformat(), "coed": end.isoformat()}
-    response = session.get(FRED_URL, params=params, timeout=(8, 25))
-    response.raise_for_status()
-    frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
-    frame.columns = [str(c).strip().upper() for c in frame.columns]
-    date_col = next((c for c in ("DATE", "OBSERVATION_DATE") if c in frame.columns), None)
-    if date_col is None or series_id.upper() not in frame.columns:
-        raise ValueError(f"FRED schema mismatch for {series_id}: {list(frame.columns)}")
-    dates = pd.to_datetime(frame[date_col], errors="coerce")
-    values = pd.to_numeric(frame[series_id.upper()], errors="coerce")
-    rows = []
-    for i in range(len(frame)):
-        if pd.isna(dates.iloc[i]) or pd.isna(values.iloc[i]):
-            continue
-        day = dates.iloc[i].date()
-        if start <= day <= end:
-            rows.append((day.isoformat(), float(values.iloc[i]), response.url))
+    """Fetch a FRED series in bounded quarterly chunks with retries.
+
+    Smaller date windows reduce intermittent long-response timeouts. Failed
+    chunks remain failures; only observed non-missing values are returned.
+    """
+    from calendar import monthrange
+    chunks = []
+    cursor = start.replace(day=1)
+    while cursor <= end:
+        last_day = monthrange(cursor.year, cursor.month)[1]
+        chunk_end = min(end, cursor.replace(day=last_day))
+        # Three-month windows, bounded independently for resilient retries.
+        chunks.append((max(start, cursor), chunk_end))
+        if cursor.month >= 10:
+            cursor = cursor.replace(year=cursor.year + 1, month=1)
+        else:
+            cursor = cursor.replace(month=cursor.month + 1)
+        # group monthly windows below into quarters
+    quarterly = []
+    for a, b in chunks:
+        if quarterly and a <= quarterly[-1][1] + timedelta(days=1) and (b - quarterly[-1][0]).days < 95:
+            quarterly[-1] = (quarterly[-1][0], b)
+        else:
+            quarterly.append((a, b))
+    rows, failures = [], []
+    for chunk_start, chunk_end in quarterly:
+        last_error = None
+        for attempt in range(3):
+            try:
+                response = session.get(
+                    FRED_URL,
+                    params={"id": series_id, "cosd": chunk_start.isoformat(), "coed": chunk_end.isoformat()},
+                    timeout=(10, 20),
+                )
+                response.raise_for_status()
+                frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
+                frame.columns = [str(c).strip().upper() for c in frame.columns]
+                date_col = next((c for c in ("DATE", "OBSERVATION_DATE") if c in frame.columns), None)
+                if date_col is None or series_id.upper() not in frame.columns:
+                    raise ValueError(f"FRED schema mismatch for {series_id}: {list(frame.columns)}")
+                dates = pd.to_datetime(frame[date_col], errors="coerce")
+                values = pd.to_numeric(frame[series_id.upper()], errors="coerce")
+                got = []
+                for i in range(len(frame)):
+                    if pd.isna(dates.iloc[i]) or pd.isna(values.iloc[i]):
+                        continue
+                    day = dates.iloc[i].date()
+                    if chunk_start <= day <= chunk_end:
+                        got.append((day.isoformat(), float(values.iloc[i]), response.url))
+                if not got:
+                    raise ValueError(f"No valid observations for {series_id} in {chunk_start}..{chunk_end}")
+                rows.extend(got)
+                last_error = None
+                break
+            except Exception as exc:
+                last_error = f"{type(exc).__name__}: {str(exc)[:180]}"
+                if attempt < 2:
+                    import time
+                    time.sleep(1.5 * (attempt + 1))
+        if last_error:
+            failures.append(f"{chunk_start}..{chunk_end}: {last_error}")
+    if failures:
+        raise RuntimeError(f"FRED {series_id} failed {len(failures)}/{len(quarterly)} chunks: " + " | ".join(failures[:3]))
     if not rows:
         raise ValueError(f"FRED returned no valid observations for {series_id} in {start}..{end}")
-    return rows
-
+    return sorted({row[0]: row for row in rows}.values(), key=lambda row: row[0])
 
 def fetch_treasury_yields(session, start, end):
     """Use the official US Treasury CSV export as an exact-source fallback for yields."""
