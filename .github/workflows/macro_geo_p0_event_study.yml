@@ -42,8 +42,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: macro-geo-p0-audit-v5
-  cancel-in-progress: false
+  # Only the latest audit on this branch should consume runner time; a newer
+  # commit supersedes stale queued/running audits and must not wait behind them.
+  group: macro-geo-p0-audit-v5-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   macro-geo-p0:
