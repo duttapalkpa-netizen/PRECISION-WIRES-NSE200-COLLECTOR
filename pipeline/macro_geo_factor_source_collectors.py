@@ -211,11 +211,30 @@ def fetch_dxy_yahoo(session, start, end):
     tmp = target.with_suffix(target.suffix + ".tmp")
     frame.to_csv(tmp, index=False)
     os.replace(tmp, target)
-    return {"status": "COLLECTED_NEEDS_DOMAIN_QA", "rows": int(len(frame)),
+    # Bounded data-domain QA: this clears observed-series integrity only, not
+    # licensing review or suitability as a point-in-time trading signal.
+    parsed_dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    numeric = pd.to_numeric(frame["CLOSE"], errors="coerce")
+    if parsed_dates.isna().any() or numeric.isna().any() or ((numeric < 50) | (numeric > 180)).any():
+        raise ValueError("DXY domain QA failed: invalid date/value or close outside conservative 50..180 index bounds")
+    if frame["SOURCE_SERIES"].astype(str).ne("DX-Y.NYB").any():
+        raise ValueError("DXY domain QA failed: source-series identity changed")
+    if frame["SOURCE_URL"].astype(str).str.strip().eq("").any() or frame["OBSERVED_AT_UTC"].astype(str).str.strip().eq("").any():
+        raise ValueError("DXY domain QA failed: missing provenance")
+    if frame.duplicated(["DATE"]).any():
+        raise ValueError("DXY domain QA failed: duplicate dates")
+    age = (end - parsed_dates.max().date()).days
+    if age < 0 or age > 5 or parsed_dates.min().date() < start or parsed_dates.max().date() > end:
+        raise ValueError(f"DXY domain QA failed: date bounds/freshness age={age}")
+    return {"status": "COLLECTED_AND_DOMAIN_QA_PASSED", "rows": int(len(frame)),
             "date_min": str(frame["DATE"].min()), "date_max": str(frame["DATE"].max()),
+            "freshness_age_calendar_days": age,
+            "domain_qa_checks": ["DX-Y.NYB identity", "valid dates and 50..180 index bounds",
+                "non-empty source URL and observed timestamp", "unique date keys",
+                "requested-window bounds", "latest observation age <= 5 calendar days"],
             "path": str(target), "source": "Yahoo Finance chart API; ICE US Dollar Index ticker",
             "observed_source_series": ["DX-Y.NYB"], "source_urls": sorted(set(frame["SOURCE_URL"])),
-            "notes": "Third-party market-data mirror; verify licensing, exact index definition, units and point-in-time suitability before use."}
+            "notes": "Observed-series integrity passed. Third-party market-data mirror; licensing review, exact index definition and point-in-time suitability remain separate."}
 
 
 def fetch_global_policy_events(session, start, end):
