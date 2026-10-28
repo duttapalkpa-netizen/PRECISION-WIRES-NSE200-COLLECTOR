@@ -147,19 +147,19 @@ def collect(session=None, start=None, end=None):
     fred_frames = []
     for chunk_start, chunk_end in chunks:
         chunk_response = None
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 chunk_response = session.get(
                     URL, params={"id": SERIES, "cosd": str(chunk_start), "coed": str(chunk_end)},
-                    timeout=(10, 25),
+                    timeout=(4, 8),
                 )
                 chunk_response.raise_for_status()
                 break
             except requests.RequestException as exc:
                 errors.append(f"{chunk_start}..{chunk_end} attempt {attempt+1}: {type(exc).__name__}: {str(exc)[:160]}")
                 chunk_response = None
-                if attempt < 2:
-                    time.sleep(2.0 * (attempt + 1))
+                if attempt < 1:
+                    time.sleep(0.5)
         if chunk_response is None:
             response = None
             break
