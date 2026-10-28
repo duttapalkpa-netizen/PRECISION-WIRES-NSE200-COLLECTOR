@@ -130,20 +130,62 @@ def collect(session=None, start=None, end=None):
         # Decision-time safety: exclude commodity bars beyond the latest observed market session.
         # Future-dated bars can fail freshness checks and risk point-in-time leakage.
         end = end or unique[-1]
-    params = {"id": SERIES, "cosd": str(start), "coed": str(end)}
     observed = datetime.now(timezone.utc).isoformat()
     response = None
     errors = []
-    for attempt in range(3):
-        try:
-            response = session.get(URL, params=params, timeout=(10, 25))
-            response.raise_for_status()
-            break
-        except requests.RequestException as exc:
-            errors.append(f"{type(exc).__name__}: {str(exc)[:180]}")
+    # FRED intermittently times out on a full ~200-session request. Split longer
+    # windows into bounded monthly chunks; preserve exact series provenance per row.
+    start_day = pd.Timestamp(str(start)).date()
+    end_day = pd.Timestamp(str(end)).date()
+    chunks = []
+    cursor = start_day
+    while cursor <= end_day:
+        next_month = (cursor.replace(day=28) + timedelta(days=4)).replace(day=1)
+        chunk_end = min(end_day, next_month - timedelta(days=1))
+        chunks.append((cursor, chunk_end))
+        cursor = chunk_end + timedelta(days=1)
+    fred_frames = []
+    for chunk_start, chunk_end in chunks:
+        chunk_response = None
+        for attempt in range(3):
+            try:
+                chunk_response = session.get(
+                    URL, params={"id": SERIES, "cosd": str(chunk_start), "coed": str(chunk_end)},
+                    timeout=(10, 25),
+                )
+                chunk_response.raise_for_status()
+                break
+            except requests.RequestException as exc:
+                errors.append(f"{chunk_start}..{chunk_end} attempt {attempt+1}: {type(exc).__name__}: {str(exc)[:160]}")
+                chunk_response = None
+                if attempt < 2:
+                    time.sleep(2.0 * (attempt + 1))
+        if chunk_response is None:
             response = None
-            if attempt < 2:
-                time.sleep(2.0 * (attempt + 1))
+            break
+        chunk_frame = pd.read_csv(StringIO(chunk_response.content.decode("utf-8-sig", errors="replace")))
+        chunk_frame.columns = [str(c).strip().upper() for c in chunk_frame.columns]
+        date_col = next((c for c in ("DATE", "OBSERVATION_DATE") if c in chunk_frame.columns), None)
+        if date_col is None or SERIES not in chunk_frame.columns:
+            raise ValueError(f"FRED Brent schema mismatch: {list(chunk_frame.columns)}")
+        chunk_dates = pd.to_datetime(chunk_frame[date_col], errors="coerce")
+        chunk_values = pd.to_numeric(chunk_frame[SERIES], errors="coerce")
+        valid = pd.DataFrame({
+            "DATE": chunk_dates.dt.strftime("%Y-%m-%d"),
+            "CLOSE": chunk_values,
+            "SOURCE": "Federal Reserve Bank of St. Louis FRED",
+            "SOURCE_SERIES": SERIES,
+            "SOURCE_URL": chunk_response.url,
+            "OBSERVED_AT_UTC": observed,
+            "UNIT": "USD_PER_BARREL",
+        }).dropna(subset=["DATE", "CLOSE"])
+        fred_frames.append(valid)
+        response = chunk_response
+    if fred_frames and response is not None:
+        fred_out = pd.concat(fred_frames, ignore_index=True).drop_duplicates(["DATE"]).sort_values("DATE")
+        response = type("FREDCombinedResponse", (), {"url": response.url, "content": b""})()
+    else:
+        response = None
     if response is None:
         # Explicit third-party Brent futures fallback; never label it as the FRED spot series.
         start_ts = int(pd.Timestamp(str(start), tz="UTC").timestamp())
@@ -205,22 +247,7 @@ def collect(session=None, start=None, end=None):
             return result
         except Exception as fallback_exc:
             raise RuntimeError(f"FRED Brent failed {errors}; Yahoo futures fallback failed: {type(fallback_exc).__name__}: {fallback_exc}") from fallback_exc
-    frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
-    frame.columns = [str(c).strip().upper() for c in frame.columns]
-    date_col = next((c for c in ("DATE", "OBSERVATION_DATE") if c in frame.columns), None)
-    if date_col is None or SERIES not in frame.columns:
-        raise ValueError(f"FRED Brent schema mismatch: {list(frame.columns)}")
-    dates = pd.to_datetime(frame[date_col], errors="coerce")
-    values = pd.to_numeric(frame[SERIES], errors="coerce")
-    out = pd.DataFrame({
-        "DATE": dates.dt.strftime("%Y-%m-%d"),
-        "CLOSE": values,
-        "SOURCE": "Federal Reserve Bank of St. Louis FRED",
-        "SOURCE_SERIES": SERIES,
-        "SOURCE_URL": response.url,
-        "OBSERVED_AT_UTC": observed,
-        "UNIT": "USD_PER_BARREL",
-    }).dropna(subset=["DATE", "CLOSE"])
+    out = fred_out.copy()
     if start:
         out = out[out["DATE"] >= str(start)]
     if end:
