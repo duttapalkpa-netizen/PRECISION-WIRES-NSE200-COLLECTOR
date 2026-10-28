@@ -64,8 +64,11 @@ def session_bounds():
         if not dates.empty:
             sessions=sorted(dates.dt.date.unique())
             recent=sessions[-200:]
+            # Point-in-time invariant: external market series must not extend
+            # beyond the latest observed equity-panel session. The previous +3
+            # calendar-day allowance produced market_panel dates newer than equity.
             return (max(datetime(1990,1,1).date(), recent[0]-timedelta(days=30)),
-                    min(end, recent[-1]+timedelta(days=3)))
+                    min(end, recent[-1]))
     raise RuntimeError("P0 collection blocked: canonical NSE 200-session panel missing or has no valid dates")
 
 def yahoo_history(label,spec,start,end):
