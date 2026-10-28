@@ -206,6 +206,36 @@ def main():
                 if info["freshness_status"]!="FRESH": info["status"]="DATA_QUALITY_WARN"
             except Exception:
                 info["freshness_status"]="UNKNOWN"; info["status"]="DATA_QUALITY_WARN"
+    # A repair-layer secondary source may override a generic/proxy warning only
+    # when its own explicit provenance, value, window, duplicate and freshness
+    # contract passed. This is especially important when the collector's Yahoo
+    # Brent proxy is replaced by the EIA official Brent spot series.
+    repair_path=OUT/"p0_repair_report.json"
+    if repair_path.exists():
+        try:
+            repair=json.loads(repair_path.read_text(encoding="utf-8"))
+            for name in ("crude_oil","usd_inr"):
+                evidence=repair.get("groups",{}).get(name,{})
+                checks=set(evidence.get("domain_qa_checks",[]))
+                required_checks={"source identity","valid positive values","unique date keys",
+                                 "requested-window bounds","freshness <= 3 calendar days",
+                                 "source URL provenance"}
+                source=str(evidence.get("source",""))
+                approved_source=(name=="crude_oil" and "EIA" in source and "Brent spot" in source) or (
+                    name=="usd_inr" and "USD/FBIL reference rates" in source
+                    or name=="usd_inr" and "RBI/FBIL reference rates" in source)
+                if (evidence.get("status")=="AVAILABLE_SECONDARY" and int(evidence.get("rows",0) or 0)>0
+                    and required_checks.issubset(checks) and evidence.get("freshness_status")=="FRESH"
+                    and evidence.get("url") and approved_source):
+                    p0_rows[name].update(status="AVAILABLE_SECONDARY",rows=int(evidence["rows"]),
+                        selected_path=evidence.get("path",""),date_max=evidence.get("date_max"),
+                        domain_qa_checks=sorted(checks),freshness_status="FRESH",
+                        freshness_age_calendar_days=evidence.get("freshness_age_calendar_days"),
+                        source=evidence.get("source"),source_url=evidence.get("url"),
+                        notes="Secondary source accepted only under explicit domain-QA contract; source identity remains labelled.")
+        except Exception:
+            # Malformed repair evidence must not promote any P0 group.
+            pass
     flow_path=ROOT/"data/external/fpi_dii_flows.csv"
     if flow_path.exists():
         try:
@@ -233,7 +263,7 @@ def main():
         except Exception:
             p0_rows["fpi_dii_flows"]["status"]="DATA_QUALITY_WARN"
     # Refresh available groups only after the strict per-group rules above.
-    p0_available=[name for name,info in p0_rows.items() if info["status"]=="AVAILABLE" and info["rows"]>0]
+    p0_available=[name for name,info in p0_rows.items() if info["status"] in ("AVAILABLE","AVAILABLE_SECONDARY") and info["rows"]>0]
     report={"status":"INVENTORY_COMPLETE_WITH_GAPS" if (frame.status!="AVAILABLE").any() else "SCHEMA_AND_GENERIC_QA_AVAILABLE",
             "as_of_utc":now.isoformat(),"sources_total":len(rows),"available":int((frame.status=="AVAILABLE").sum()),
             "not_connected":int((frame.status=="NOT_CONNECTED").sum()),"schema_fail":int((frame.status=="SCHEMA_FAIL").sum()),
