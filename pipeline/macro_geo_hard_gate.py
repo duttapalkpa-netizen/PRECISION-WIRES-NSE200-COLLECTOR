@@ -39,9 +39,23 @@ def main():
             checks["p0_coverage_status"] = p0.get("status", "UNKNOWN")
             checks["p0_available_groups"] = p0.get("available_count", 0)
             checks["p0_required_groups"] = p0.get("required_count", 8)
+            def p0_group_is_valid(info):
+                if int(info.get("rows", 0) or 0) <= 0:
+                    return False
+                if info.get("status") == "AVAILABLE":
+                    return True
+                # Explicitly QA-verified secondary sources are allowed only for
+                # groups carrying the complete provenance/window/freshness contract.
+                if info.get("status") != "AVAILABLE_SECONDARY":
+                    return False
+                checks=set(info.get("domain_qa_checks", []))
+                required={"source identity", "valid positive values", "unique date keys",
+                          "requested-window bounds", "freshness <= 3 calendar days",
+                          "source URL provenance"}
+                return required.issubset(checks) and info.get("freshness_status")=="FRESH" and bool(info.get("source_url"))
             missing_groups = [
                 name for name, info in p0.get("groups", {}).items()
-                if info.get("status") != "AVAILABLE" or int(info.get("rows", 0) or 0) <= 0
+                if not p0_group_is_valid(info)
             ]
             checks["missing_or_unavailable_p0_groups"] = missing_groups
             if p0.get("status") != "P0_COMPLETE" or missing_groups:
