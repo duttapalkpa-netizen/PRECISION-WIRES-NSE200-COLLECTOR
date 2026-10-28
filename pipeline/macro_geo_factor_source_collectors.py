@@ -77,21 +77,18 @@ def fetch_fred(session, series_id, start, end):
         else:
             cursor = cursor.replace(month=cursor.month + 1)
         # group monthly windows below into quarters
-    quarterly = []
-    for a, b in chunks:
-        if quarterly and a <= quarterly[-1][1] + timedelta(days=1) and (b - quarterly[-1][0]).days < 95:
-            quarterly[-1] = (quarterly[-1][0], b)
-        else:
-            quarterly.append((a, b))
+    # Keep each request to one calendar month. Quarterly aggregation caused
+    # repeated commodity-series read timeouts; monthly bounds reduce payload size
+    # without changing series identity or treating missing observations as zero.
     rows, failures = [], []
-    for chunk_start, chunk_end in quarterly:
+    for chunk_start, chunk_end in chunks:
         last_error = None
         for attempt in range(3):
             try:
                 response = session.get(
                     FRED_URL,
                     params={"id": series_id, "cosd": chunk_start.isoformat(), "coed": chunk_end.isoformat()},
-                    timeout=(10, 20),
+                    timeout=(10, 25),
                 )
                 response.raise_for_status()
                 frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
@@ -125,7 +122,7 @@ def fetch_fred(session, series_id, start, end):
         if last_error:
             failures.append(f"{chunk_start}..{chunk_end}: {last_error}")
     if failures:
-        raise RuntimeError(f"FRED {series_id} failed {len(failures)}/{len(quarterly)} chunks: " + " | ".join(failures[:3]))
+        raise RuntimeError(f"FRED {series_id} failed {len(failures)}/{len(chunks)} monthly chunks: " + " | ".join(failures[:3]))
     if not rows:
         raise ValueError(f"FRED returned no valid observations for {series_id} in {start}..{end}")
     return sorted({row[0]: row for row in rows}.values(), key=lambda row: row[0])
