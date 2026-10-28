@@ -39,8 +39,9 @@ def p0_window():
  # bounded and does not claim to be the NSE-200 stock universe.
  sessions=sorted(dates.dt.date.unique())
  recent=sessions[-200:]
+ # Never collect future macro observations relative to the observed equity cutoff.
  return (max(pd.Timestamp("1990-01-01").date(), recent[0]-timedelta(days=30)),
-         min(datetime.now(timezone.utc).date(), recent[-1]+timedelta(days=3)))
+         min(datetime.now(timezone.utc).date(), recent[-1]))
 
 def fallback_public_series(series_id,label,outfile,start,end):
  """Use explicitly labelled, auditable public mirrors only when FRED times out."""
