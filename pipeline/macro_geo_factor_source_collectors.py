@@ -278,6 +278,59 @@ def fetch_global_policy_events(session, start, end):
             "notes": "No valid policy feed events found; missing event data remains UNKNOWN."}
 
 
+def validate_observed_series_group(name, frame, start, end, series_map):
+    """Domain QA for exact, observed source series; never fills missing dates or values."""
+    if frame.empty:
+        raise ValueError(f"{name} domain QA failed: no observed rows")
+    required = {"DATE", "CLOSE", "SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"}
+    if name == "us_yields":
+        required.add("SERIES")
+    else:
+        required.add("COMMODITY")
+    missing = sorted(required - set(frame.columns))
+    if missing:
+        raise ValueError(f"{name} domain QA failed: missing columns {missing}")
+    dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    values = pd.to_numeric(frame["CLOSE"], errors="coerce")
+    if dates.isna().any() or values.isna().any() or (values <= 0).any():
+        raise ValueError(f"{name} domain QA failed: invalid dates or non-positive/non-numeric values")
+    if frame["SOURCE_URL"].astype(str).str.strip().eq("").any():
+        raise ValueError(f"{name} domain QA failed: missing source URL")
+    if frame["SOURCE_SERIES"].astype(str).str.strip().eq("").any():
+        raise ValueError(f"{name} domain QA failed: missing source series identity")
+    if frame["OBSERVED_AT_UTC"].astype(str).str.strip().eq("").any():
+        raise ValueError(f"{name} domain QA failed: missing observation timestamp")
+    key = ["DATE", "SERIES"] if name == "us_yields" else ["DATE", "COMMODITY"]
+    if frame.duplicated(key).any():
+        raise ValueError(f"{name} domain QA failed: duplicate date/series keys")
+    if name == "us_yields":
+        expected = set(series_map.values())
+        actual = set(frame["SERIES"].astype(str))
+        if actual != expected:
+            raise ValueError(f"us_yields domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
+        if not frame["SOURCE"].astype(str).str.contains("FRED|Treasury", case=False, regex=True).all():
+            raise ValueError("us_yields domain QA failed: source is neither FRED nor US Treasury")
+    else:
+        expected = set(series_map.values())
+        actual = set(frame["COMMODITY"].astype(str))
+        if actual != expected:
+            raise ValueError(f"global_commodity_prices domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
+        if not frame["SOURCE"].astype(str).str.contains("FRED", case=False).all():
+            raise ValueError("global_commodity_prices domain QA failed: non-FRED rows mixed into official-series group")
+    observed_days = sorted(dates.dt.date.unique())
+    if observed_days[0] < start or observed_days[-1] > end:
+        raise ValueError(f"{name} domain QA failed: dates outside requested window")
+    age = (end - observed_days[-1]).days
+    if age < 0 or age > 5:
+        raise ValueError(f"{name} domain QA failed: latest observed value age {age} days exceeds 5-day bound")
+    return {"status": "COLLECTED_AND_DOMAIN_QA_PASSED", "rows": int(len(frame)),
+            "date_min": str(observed_days[0]), "date_max": str(observed_days[-1]),
+            "freshness_age_calendar_days": age,
+            "domain_qa_checks": ["exact source-series identity", "required schema", "non-empty provenance",
+                                 "valid positive numeric values", "unique date/series keys",
+                                 "requested-window bounds", "latest observation age <= 5 calendar days"]}
+
+
 def collect_group(name, series_map, start, end, session):
     rows, failures = [], {}
     for series_id, label in series_map.items():
@@ -310,15 +363,24 @@ def collect_group(name, series_map, start, end, session):
     tmp = target.with_suffix(target.suffix + ".tmp")
     frame.to_csv(tmp, index=False)
     os.replace(tmp, target)
-    return {"status": "AVAILABLE_WITH_SOURCE_FAILURES" if failures else "COLLECTED_NEEDS_DOMAIN_QA",
+    qa = None
+    if not failures:
+        try:
+            qa = validate_observed_series_group(name, frame, start, end, series_map)
+        except Exception as exc:
+            failures["DOMAIN_QA"] = f"{type(exc).__name__}: {str(exc)[:240]}"
+    return {"status": ("AVAILABLE_WITH_SOURCE_FAILURES" if failures else qa["status"]),
             "rows": int(len(frame)), "date_min": str(frame["DATE"].min()),
             "date_max": str(frame["DATE"].max()), "path": str(target),
             "source": sorted(set(frame["SOURCE"].astype(str))),
             "observed_source_series": sorted(set(frame["SOURCE_SERIES"].astype(str))),
             "requested_fred_series_ids": list(series_map),
-            "failures": failures,
+            "failures": failures, "domain_qa_checks": qa["domain_qa_checks"] if qa else [],
+            "freshness_age_calendar_days": qa["freshness_age_calendar_days"] if qa else None,
             "provenance_columns": ["SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"],
-            "notes": "Collection is not proof of official-source authenticity, point-in-time release timing, or factor validity."}
+            "notes": ("Exact source identity, schema, provenance, value, duplicate and freshness checks passed; "
+                      "factor-specific economic interpretation and point-in-time release timing remain separate.") if qa else
+                     "Collection did not pass domain QA; missing or invalid data remains UNKNOWN."}
 
 
 def main():
