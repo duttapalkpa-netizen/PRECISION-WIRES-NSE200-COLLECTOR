@@ -83,12 +83,12 @@ def fetch_fred(session, series_id, start, end):
     rows, failures = [], []
     for chunk_start, chunk_end in chunks:
         last_error = None
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 response = session.get(
                     FRED_URL,
                     params={"id": series_id, "cosd": chunk_start.isoformat(), "coed": chunk_end.isoformat()},
-                    timeout=(10, 25),
+                    timeout=(4, 8),
                 )
                 response.raise_for_status()
                 frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
@@ -116,9 +116,9 @@ def fetch_fred(session, series_id, start, end):
                 raise
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {str(exc)[:180]}"
-                if attempt < 2:
+                if attempt < 1:
                     import time
-                    time.sleep(1.5 * (attempt + 1))
+                    time.sleep(0.5)
         if last_error:
             failures.append(f"{chunk_start}..{chunk_end}: {last_error}")
     if failures:
