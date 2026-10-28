@@ -49,7 +49,9 @@ class FactorSourceCollectorTests(unittest.TestCase):
             with patch.object(collector, "OUT", Path(tmp)):
                 report = collector.fetch_dxy_yahoo(session, date(2026, 10, 20), date(2026, 10, 21))
                 frame = pd.read_csv(Path(tmp) / "dxy.csv")
-        self.assertEqual(report["status"], "COLLECTED_NEEDS_DOMAIN_QA")
+        self.assertEqual(report["status"], "COLLECTED_AND_DOMAIN_QA_PASSED")
+        self.assertIn("unique date keys", report["domain_qa_checks"])
+        self.assertEqual(report["freshness_age_calendar_days"], 0)
         self.assertEqual(frame["DATE"].tolist(), ["2026-10-20", "2026-10-21"])
         self.assertEqual(frame["SOURCE_SERIES"].unique().tolist(), ["DX-Y.NYB"])
         self.assertTrue(frame["SOURCE_URL"].iloc[0].startswith("https://query1.finance.yahoo.com/"))
