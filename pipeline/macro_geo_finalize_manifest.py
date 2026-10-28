@@ -44,7 +44,7 @@ def group_is_available(groups, name):
                        "source URL provenance"}
     return (required_checks.issubset(set(checks))
             and bool(item.get("source"))
-            and bool(item.get("url") or item.get("source_urls"))
+            and bool(item.get("url") or item.get("source_url") or item.get("source_urls"))
             and item.get("freshness_status") == "FRESH")
 
 
