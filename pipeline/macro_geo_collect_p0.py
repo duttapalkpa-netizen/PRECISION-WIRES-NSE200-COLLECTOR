@@ -72,25 +72,27 @@ def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
     period1=int(datetime.combine(start,datetime.min.time(),tzinfo=timezone.utc).timestamp())
     period2=int(datetime.combine(end+timedelta(days=1),datetime.min.time(),tzinfo=timezone.utc).timestamp())
-    # Try both Yahoo chart hosts and bounded retries for transient 429/5xx.
+    # Hard bound each symbol request: two independent hosts, one attempt each.
+    # The previous 2-host x 3-retry x 30-second loop could consume minutes per
+    # symbol and made the nominal P0 audit run for nearly an hour. Transient
+    # failures remain explicit; the collector does not invent substitute data.
     params={"period1":period1,"period2":period2,"interval":"1d","events":"history"}
     last_error=None
     resp=None
     for host in ["https://query2.finance.yahoo.com/v8/finance/chart/","https://query1.finance.yahoo.com/v8/finance/chart/"]:
         url=f"{host}{spec['symbol']}"
-        for attempt in range(3):
-            try:
-                resp=session.get(url,params=params,timeout=30)
-                if resp.status_code == 429 or resp.status_code >= 500:
-                    last_error=RuntimeError(f"Yahoo chart transient HTTP {resp.status_code} host={host} attempt={attempt+1}")
-                    time.sleep(1.5*(attempt+1))
-                    continue
-                resp.raise_for_status()
-                last_error=None
-                break
-            except Exception as exc:
-                last_error=exc
-                if attempt < 2: time.sleep(1.0*(attempt+1))
+        try:
+            resp=session.get(url,params=params,timeout=(4,8))
+            if resp.status_code == 429 or resp.status_code >= 500:
+                last_error=RuntimeError(f"Yahoo chart transient HTTP {resp.status_code} host={host}")
+                resp=None
+                continue
+            resp.raise_for_status()
+            last_error=None
+            break
+        except Exception as exc:
+            last_error=exc
+            resp=None
         if last_error is None and resp is not None:
             break
     if last_error is not None or resp is None:
