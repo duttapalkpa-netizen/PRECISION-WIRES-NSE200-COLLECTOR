@@ -50,7 +50,7 @@ concurrency:
 jobs:
   macro-geo-p0:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     steps:
       - name: Checkout audit branch only
         uses: actions/checkout@v4
