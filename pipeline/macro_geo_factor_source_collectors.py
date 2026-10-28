@@ -113,6 +113,10 @@ def fetch_fred(session, series_id, start, end):
                 rows.extend(got)
                 last_error = None
                 break
+            except ValueError:
+                # Schema/data-contract failures are deterministic and must fail
+                # closed immediately; retry only transport/server exceptions.
+                raise
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {str(exc)[:180]}"
                 if attempt < 2:
