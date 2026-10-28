@@ -109,7 +109,7 @@ def fetch_fred(session, series_id, start, end):
                     if chunk_start <= day <= chunk_end:
                         got.append((day.isoformat(), float(values.iloc[i]), response.url))
                 if not got:
-                    raise ValueError(f"No valid observations for {series_id} in {chunk_start}..{chunk_end}")
+                    raise ValueError(f"no valid observations for {series_id} in {chunk_start}..{chunk_end}")
                 rows.extend(got)
                 last_error = None
                 break
