@@ -4,6 +4,11 @@ on:
     workflows: ["Bounded Factor Source Repair (separate from P0)"]
     types: [completed]
     branches: [audit/run145-factor-registry-gap-audit]
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - ".github/workflows/macro_geo_factor_coverage_reconciliation.yml"
 permissions:
   contents: read
   actions: read
@@ -12,28 +17,29 @@ concurrency:
   cancel-in-progress: false
 jobs:
   reconcile:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Checkout audit branch at factor repair commit
+      - name: Checkout audit branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: audit/run145-factor-registry-gap-audit
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
-      - name: Download successful factor-source and P0 evidence
+      - name: Download latest successful factor-source and P0 evidence
         env:
           GH_TOKEN: ${{ github.token }}
-          FACTOR_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           P0_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_p0_event_study.yml/runs?branch=audit/run145-factor-registry-gap-audit&status=success&per_page=20" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
+          FACTOR_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_factor_source_repair.yml/runs?branch=audit/run145-factor-registry-gap-audit&status=success&per_page=20" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
           test -n "$P0_RUN_ID" && test "$P0_RUN_ID" != "null"
+          test -n "$FACTOR_RUN_ID" && test "$FACTOR_RUN_ID" != "null"
           mkdir -p /tmp/p0 /tmp/factor outputs/macro_geo data/external
           gh run download "$P0_RUN_ID" -n macro-geo-p0-event-study -D /tmp/p0
           gh run download "$FACTOR_RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor
