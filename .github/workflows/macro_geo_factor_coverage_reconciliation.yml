@@ -32,7 +32,7 @@ jobs:
           FACTOR_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          P0_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_p0_event_study.yml/runs?branch=${GITHUB_REF_NAME}&status=success&per_page=20" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
+          P0_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_p0_event_study.yml/runs?branch=audit/run145-factor-registry-gap-audit&status=success&per_page=20" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
           test -n "$P0_RUN_ID" && test "$P0_RUN_ID" != "null"
           mkdir -p /tmp/p0 /tmp/factor outputs/macro_geo data/external
           gh run download "$P0_RUN_ID" -n macro-geo-p0-event-study -D /tmp/p0
