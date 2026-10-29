@@ -21,6 +21,10 @@ ALIASES={"nifty50":"NIFTY 50","niftyit":"NIFTY IT","niftybank":"NIFTY BANK","nif
  "niftymetal":"NIFTY METAL","niftypharma":"NIFTY PHARMA","niftyenergy":"NIFTY ENERGY","niftyfmcg":"NIFTY FMCG",
  "niftyrealty":"NIFTY REALTY","niftyinfrastructure":"NIFTY INFRA","indiavix":"INDIA VIX"}
 REQUIRED=set(ALIASES.values())
+# Keep this network collector bounded; incomplete history is recorded and blocks release.
+MAX_ARCHIVE_DATES=24
+CONNECT_TIMEOUT_SECONDS=2
+READ_TIMEOUT_SECONDS=3
 
 def target_dates(regimes):
     dates=set()
@@ -46,7 +50,21 @@ def main():
     existing.columns=[str(c).strip().upper() for c in existing.columns]
     if not {"DATE","SERIES","CLOSE"}.issubset(existing.columns): raise SystemExit("Market panel schema invalid.")
     sess=requests.Session(); headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://www.nseindia.com/all-reports"}
-    new=[]; diagnostics=[]; attempted=target_dates(regimes)
+    new=[]; diagnostics=[]; all_target_dates=target_dates(regimes)
+    # Bounded deterministic sample: prioritize dates closest to registered anchors,
+    # then spread remaining budget across the requested windows. Never imply full coverage.
+    if len(all_target_dates)>MAX_ARCHIVE_DATES:
+        anchor_dates=sorted({pd.to_datetime(v,errors="coerce").date() for v in regimes["start_date"] if pd.notna(pd.to_datetime(v,errors="coerce"))})
+        prioritized=[]
+        for anchor in anchor_dates:
+            candidates=sorted(all_target_dates,key=lambda d:abs((d-anchor).days))
+            for day in candidates:
+                if day not in prioritized: prioritized.append(day)
+                if len(prioritized)>=MAX_ARCHIVE_DATES: break
+            if len(prioritized)>=MAX_ARCHIVE_DATES: break
+        attempted=sorted(prioritized[:MAX_ARCHIVE_DATES])
+    else:
+        attempted=all_target_dates
     for n,day in enumerate(attempted,1):
         stamp=day.strftime("%d%m%Y")
         urls=[f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
@@ -54,7 +72,7 @@ def main():
         accepted=False
         for url in urls:
             try:
-                resp=sess.get(url,headers=headers,timeout=(4,10))
+                resp=sess.get(url,headers=headers,timeout=(CONNECT_TIMEOUT_SECONDS,READ_TIMEOUT_SECONDS))
                 if resp.status_code==404:
                     diagnostics.append({"date":day.isoformat(),"url":url,"http_status":404,"result":"NOT_FOUND"}); continue
                 resp.raise_for_status()
@@ -118,7 +136,7 @@ def main():
     missing_anchors=[x["regime_id"] for x in windows if x["status"]!="COMPLETE"]
     report={"status":"TARGETED_BACKFILL_COMPLETE" if not missing_anchors else "TARGETED_BACKFILL_WITH_GAPS",
       "method":"NSE official daily archive CSV; compact weekday windows around registered regime anchors; no interpolation",
-      "requested_dates":len(attempted),"fetched_rows":int(len(fetched)) if not fetched.empty else 0,
+      "requested_dates":len(attempted),"all_candidate_dates":len(all_target_dates),"request_budget_limited":len(attempted)<len(all_target_dates),"max_archive_dates":MAX_ARCHIVE_DATES,"fetched_rows":int(len(fetched)) if not fetched.empty else 0,
       "fetched_series":int(fetched["SERIES"].nunique()) if not fetched.empty else 0,
       "panel_date_min":str(pd.to_datetime(merged["DATE"],errors="coerce").min().date()),
       "panel_date_max":str(pd.to_datetime(merged["DATE"],errors="coerce").max().date()),
