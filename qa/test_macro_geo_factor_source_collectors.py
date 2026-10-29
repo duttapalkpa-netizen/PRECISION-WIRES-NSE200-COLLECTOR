@@ -52,6 +52,30 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(session.last_timeout, (5, 12))
         self.assertEqual(rows[0][1], 4.01)
 
+    def test_lbma_gold_fallback_preserves_exact_series_identity_and_provenance(self):
+        payload = [
+            {"d": "2026-10-20", "v": [4012.5, 3010.2, 3450.1]},
+            {"d": "2026-10-21", "v": [4020.0, 3014.0, 3455.0]},
+        ]
+        class LBMAResponse:
+            url = "https://prices.lbma.org.uk/json/gold_am.json"
+            def raise_for_status(self): pass
+            def json(self): return payload
+        session = type("Session", (), {"get": lambda self, *a, **kw: LBMAResponse()})()
+        rows, report = collector.fetch_commodity_fallback(
+            session, "GOLDAMGBD228NLBM", "GOLD_USD_PER_TROY_OUNCE",
+            date(2026, 10, 20), date(2026, 10, 21))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]["SOURCE_SERIES"], "LBMA_GOLD_AM_USD")
+        self.assertIn("London Bullion Market Association", rows[0]["SOURCE"])
+        self.assertEqual(rows[0]["CLOSE"], 4012.5)
+        self.assertEqual(report["freshness_age_calendar_days"], 0)
+        frame = pd.DataFrame(rows)
+        qa = collector.validate_observed_series_group(
+            "global_commodity_prices", frame, date(2026, 10, 20), date(2026, 10, 21),
+            {"GOLDAMGBD228NLBM": "GOLD_USD_PER_TROY_OUNCE"})
+        self.assertEqual(qa["status"], "COLLECTED_AND_DOMAIN_QA_PASSED")
+
     def test_dxy_collector_preserves_exchange_session_date_and_provider(self):
         from datetime import datetime, timezone, date
         class ChartResponse:
