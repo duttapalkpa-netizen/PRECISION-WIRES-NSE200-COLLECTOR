@@ -21,6 +21,10 @@ URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 SERIES = "DCOILBRENTEU"
 UA = "PRECISION-WIRES-NSE200-COLLECTOR/1.0 (research audit; public data)"
 
+def output_path(proxy_only=False):
+    """Return distinct canonical spot and explicitly labelled futures-proxy paths."""
+    return OUT / ("brent_crude_futures_proxy.csv" if proxy_only else "brent_crude.csv")
+
 def validate_brent_proxy(frame, reference_date):
     """Domain QA for the explicitly labelled Yahoo Brent futures proxy.
 
@@ -230,7 +234,7 @@ def collect(session=None, start=None, end=None):
                 raise ValueError("Brent proxy QA blocked: reference panel has no valid dates")
             qa = validate_brent_proxy(out, reference_dates.max())
             OUT.mkdir(parents=True, exist_ok=True)
-            target = OUT / "brent_crude_futures_proxy.csv"
+            target = output_path(proxy_only=True)
             # Keep the third-party futures proxy separate from canonical brent_crude.csv.
             # The repair layer may have populated that canonical path with official EIA Brent spot;
             # a later Yahoo fallback must never overwrite it or create a mixed-provenance report.
@@ -262,7 +266,7 @@ def collect(session=None, start=None, end=None):
     # leave a CSV that the generic source inventory could mistake for valid data.
     qa = validate_fred_brent(out, observed_reference_date())
     OUT.mkdir(parents=True, exist_ok=True)
-    target = OUT / "brent_crude.csv"
+    target = output_path()
     tmp = target.with_suffix(".csv.tmp")
     out.to_csv(tmp, index=False)
     os.replace(tmp, target)
