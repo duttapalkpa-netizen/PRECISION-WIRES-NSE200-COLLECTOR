@@ -42,6 +42,58 @@ def target_dates(regimes):
             d+=timedelta(days=1)
     return sorted(dates)
 
+def fetch_historical_nifty50_secondary(start_date, end_date):
+    """Fetch a real daily NIFTY 50 history series as an explicitly labelled secondary source.
+
+    This is used only to cover historical anchors older than the NSE CSV archive
+    collector's supported window. Missing observations remain missing; no values
+    are interpolated and the source is never represented as an official NSE feed.
+    """
+    import math
+    import urllib.parse
+    import requests
+    start = pd.Timestamp(start_date).date()
+    end = pd.Timestamp(end_date).date()
+    period1 = int(datetime.combine(start, datetime.min.time(), tzinfo=timezone.utc).timestamp())
+    period2 = int(datetime.combine(end + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc).timestamp())
+    base = "https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI"
+    params = {"period1": period1, "period2": period2, "interval": "1d", "events": "history"}
+    response = requests.get(base, params=params, headers={"User-Agent": UA, "Accept": "application/json"}, timeout=(3, 8))
+    response.raise_for_status()
+    payload = response.json()
+    result = (payload.get("chart", {}).get("result") or [None])[0]
+    if not isinstance(result, dict):
+        raise RuntimeError("Yahoo chart returned no NIFTY 50 result object")
+    meta = result.get("meta", {})
+    if meta.get("symbol") != "^NSEI":
+        raise RuntimeError(f"Unexpected historical index identity: {meta.get('symbol')!r}")
+    timestamps = result.get("timestamp") or []
+    quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
+    closes = quote.get("close") or []
+    if len(timestamps) != len(closes) or not timestamps:
+        raise RuntimeError("Historical NIFTY 50 response has mismatched/empty timestamp and close arrays")
+    url = response.url
+    rows = []
+    for ts, value in zip(timestamps, closes):
+        if value is None:
+            continue
+        day = datetime.fromtimestamp(int(ts), tz=timezone.utc).date()
+        close = float(value)
+        if start <= day <= end and math.isfinite(close) and close > 0:
+            rows.append({"DATE": day.isoformat(), "SERIES": "NIFTY 50", "CLOSE": close,
+                "SOURCE": "Yahoo Finance historical chart (secondary NIFTY 50 index history)",
+                "SOURCE_URL": url, "SOURCE_SYMBOL": "^NSEI",
+                "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat()})
+    frame = pd.DataFrame(rows)
+    if frame.empty:
+        raise RuntimeError("No valid historical NIFTY 50 observations returned")
+    if frame.duplicated(["DATE", "SERIES"]).any():
+        raise RuntimeError("Historical NIFTY 50 secondary source has duplicate date/series keys")
+    if not frame["SOURCE_URL"].astype(str).str.startswith("https://query1.finance.yahoo.com/").all():
+        raise RuntimeError("Historical NIFTY 50 source URL provenance failed")
+    return frame
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     if not REGIMES.exists() or not PANEL.exists(): raise SystemExit("Required regime registry or market panel missing.")
@@ -100,6 +152,28 @@ def main():
         if n%25==0: print(json.dumps({"attempted":n,"total_dates":len(attempted),"valid_rows":len(new)}),flush=True)
         time.sleep(0.06)
     fetched=pd.DataFrame(new)
+    # The NSE daily archive path has no confirmed coverage before 2015. Fill
+    # historical NIFTY 50 anchor gaps from a separately labelled real secondary
+    # history series so old regimes are tested against observations, not today's
+    # panel. Do not overwrite existing NSE observations for the same date.
+    secondary_status={"status":"NOT_ATTEMPTED"}
+    try:
+        min_anchor=pd.to_datetime(regimes["start_date"],errors="coerce").min()
+        max_anchor=pd.to_datetime(regimes["end_date"],errors="coerce").max()
+        if pd.notna(min_anchor) and pd.notna(max_anchor):
+            secondary=fetch_historical_nifty50_secondary(min_anchor.date()-timedelta(days=10),
+                                                         max_anchor.date()+timedelta(days=45))
+            existing["DATE"]=pd.to_datetime(existing["DATE"],errors="coerce").dt.strftime("%Y-%m-%d")
+            existing_keys=set(zip(existing["DATE"].astype(str),existing["SERIES"].astype(str).str.upper()))
+            secondary=secondary[~secondary.apply(lambda r:(r["DATE"],r["SERIES"].upper()) in existing_keys,axis=1)]
+            fetched=pd.concat([fetched,secondary],ignore_index=True,sort=False) if not fetched.empty else secondary
+            secondary_status={"status":"COLLECTED_SECONDARY","rows":len(secondary),
+                "source":"Yahoo Finance historical chart (secondary NIFTY 50 index history)",
+                "source_url":"https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI",
+                "note":"Only missing NIFTY 50 date keys filled; existing observations preserved; no interpolation."}
+    except Exception as exc:
+        secondary_status={"status":"BLOCKED","error":f"{type(exc).__name__}: {str(exc)[:220]}",
+            "source_url":"https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI"}
     if not fetched.empty:
         fetched=fetched.drop_duplicates(["DATE","SERIES"],keep="last")
         existing["DATE"]=pd.to_datetime(existing["DATE"],errors="coerce").dt.strftime("%Y-%m-%d")
@@ -144,7 +218,7 @@ def main():
       "old_archive_anchors_skipped":[str(x) for x in regimes.loc[pd.to_datetime(regimes["start_date"],errors="coerce").dt.date < date(2015,1,1),"regime_id"].tolist()],
       "diagnostics_summary":{"requests":len(diagnostics),"http_404":sum(x.get("http_status")==404 for x in diagnostics),
        "schema_fail":sum(x.get("result")=="SCHEMA_FAIL" for x in diagnostics),"valid_rows":len(new)},
-      "diagnostics":diagnostics,
+      "diagnostics":diagnostics,"historical_nifty50_secondary":secondary_status,
       "limitations":["A successful live smoke test does not guarantee every historical weekday archive exists.",
        "H+ horizons use actual returned close observations on/after anchor; missing series/windows remain incomplete.",
        "Historical anchor source verification and full Factor Registry validation remain separate hard-gate requirements."]}
