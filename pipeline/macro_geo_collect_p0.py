@@ -274,16 +274,17 @@ def fred_history(label,series_id,start,end):
     while cursor<=end:
         chunk_end=min(end,cursor+timedelta(days=90-1))
         resp=None; last_error=None
-        for attempt,wait in enumerate((0,2,5),start=1):
-            if wait: time.sleep(wait)
+        # One bounded attempt per 90-day chunk; repair/fallback layers handle
+        # transient failures. Avoid multi-minute retries inside the 10-minute audit.
+        for attempt,wait in enumerate((0,),start=1):
             try:
                 resp=session.get(url,params={"id":series_id,"cosd":cursor.isoformat(),"coed":chunk_end.isoformat()},
-                    timeout=(5,20),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
+                    timeout=(3,6),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
                 resp.raise_for_status()
                 break
             except Exception as exc:
                 last_error=exc
-                if attempt==3: raise RuntimeError(
+                raise RuntimeError(
                     f"FRED {series_id} failed for {cursor.isoformat()}..{chunk_end.isoformat()}: {type(last_error).__name__}: {last_error}"
                 ) from exc
         df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
@@ -664,6 +665,14 @@ def main():
             manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE" if found else "BLOCKED",
               "rows":len(found),"date_min":min((x["DATE"] for x in found),default=None),
               "date_max":max((x["DATE"] for x in found),default=None),"sources":sources})
+            continue
+        # Keep this bounded P0 collector focused on the eight required groups.
+        # Non-P0 factor series are collected by macro_geo_factor_source_collectors.py;
+        # do not fetch them again here and risk timing out the complete P0 audit.
+        if spec["group"] not in ("crude_oil","usd_inr"):
+            manifest["market_series"].append({"series":label,"group":spec["group"],
+              "status":"DEFERRED_TO_FACTOR_COLLECTOR","rows":0,
+              "note":"Optional factor series are handled by the dedicated factor collector; no coverage is claimed here."})
             continue
         series_id=spec.get("fred_id")
         fred_exc=None
