@@ -80,17 +80,43 @@ def apply_crude_oil_collector_report(rows, collector_report):
     report = collector_report if isinstance(collector_report, dict) else {}
     state = report.get("status") or "UNKNOWN_NO_COLLECTOR_EVIDENCE"
     proxy_only = report.get("proxy_only") is True
-    if state != "COLLECTED_AND_DOMAIN_QA_PASSED":
-        if int(row.get("rows") or 0) > 0 and row.get("status") == "AVAILABLE":
-            row["status"] = "DATA_QUALITY_WARN"
+    # Reconcile the final file against the separate P0 repair evidence. The repair
+    # report may have replaced a Yahoo futures proxy with official EIA Brent spot.
+    # Promote only when the report and on-disk file provenance agree exactly.
+    repair_path = OUT / "p0_repair_report.json"
+    approved_secondary = False
+    try:
+        repair = json.loads(repair_path.read_text(encoding="utf-8"))
+        evidence = repair.get("groups", {}).get("crude_oil", {})
+        required = {"source identity", "valid positive values", "unique date keys",
+                    "requested-window bounds", "freshness <= 3 calendar days", "source URL provenance"}
+        actual_path = ROOT / str(row.get("selected_path") or "")
+        if actual_path.exists() and evidence.get("status") == "AVAILABLE_SECONDARY":
+            df = pd.read_csv(actual_path)
+            df.columns = [str(c).strip().upper() for c in df.columns]
+            actual_sources = set(df.get("SOURCE", pd.Series(dtype=str)).dropna().astype(str))
+            actual_urls = set(df.get("SOURCE_URL", pd.Series(dtype=str)).dropna().astype(str))
+            actual_rows = len(df)
+            approved_secondary = (
+                required.issubset(set(evidence.get("domain_qa_checks", [])))
+                and evidence.get("freshness_status") == "FRESH"
+                and int(evidence.get("rows", 0) or 0) == actual_rows
+                and str(evidence.get("source", "")) in actual_sources
+                and str(evidence.get("url", "")) in actual_urls
+                and "EIA" in str(evidence.get("source", ""))
+                and "Brent spot" in str(evidence.get("source", ""))
+            )
+    except Exception:
+        approved_secondary = False
+    if approved_secondary:
+        row["status"] = "AVAILABLE"
         row["notes"] = (str(row.get("notes") or "") +
-            f" Brent collector status={state}; domain QA not cleared.").strip()
-    elif proxy_only:
-        # Bounded proxy QA establishes usability only, not source equivalence.
+            " Approved secondary-source contract verified against p0_repair_report.json and the exact on-disk file; official EIA Brent spot, not Yahoo futures proxy.").strip()
+    elif state != "COLLECTED_AND_DOMAIN_QA_PASSED" or proxy_only:
         if int(row.get("rows") or 0) > 0:
             row["status"] = "DATA_QUALITY_WARN"
         row["notes"] = (str(row.get("notes") or "") +
-            " Yahoo BZ=F is a futures proxy, not FRED DCOILBRENTEU spot; P0 remains blocked pending explicit secondary-source contract approval.").strip()
+            f" Brent collector status={state}; no matching approved repair provenance found; domain QA not cleared.").strip()
     return rows
 
 
