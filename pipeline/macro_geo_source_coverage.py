@@ -260,6 +260,15 @@ def main():
             if (flow_info["unique_dates"] < 60 or flow_info["date_span_days"] < 90 or
                 not group_coverage or any(v["unique_dates"] < 60 or v["date_span_days"] < 90 for v in group_coverage.values())):
                 flow_info["status"]="INSUFFICIENT_HISTORICAL_COVERAGE"
+                # Do not let generic schema QA or Factor Registry mistake a
+                # one-day NSE FPI/DII snapshot for historical source coverage.
+                for source_row in rows:
+                    if source_row.get("source") == "fpi_dii_flows":
+                        source_row["status"] = "DATA_QUALITY_WARN"
+                        source_row["notes"] = (
+                            str(source_row.get("notes") or "") +
+                            " Historical coverage gate failed: requires >=60 distinct dates spanning >=90 calendar days for each investor group."
+                        ).strip()
         except Exception:
             p0_rows["fpi_dii_flows"]["status"]="DATA_QUALITY_WARN"
     # Refresh available groups only after the strict per-group rules above.
