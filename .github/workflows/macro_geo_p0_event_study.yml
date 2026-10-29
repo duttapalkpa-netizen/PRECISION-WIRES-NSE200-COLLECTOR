@@ -44,7 +44,7 @@ permissions:
 concurrency:
   # Do not cancel a running evidence audit when a follow-up fix is committed.
   # Runtime is bounded by the 10-minute job timeout and per-source request budgets.
-  group: macro-geo-p0-audit-v5
+  group: macro-geo-p0-audit-v6
   cancel-in-progress: false
 
 jobs:
