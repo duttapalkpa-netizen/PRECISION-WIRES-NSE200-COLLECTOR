@@ -34,7 +34,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
     def test_fred_collector_recovers_from_two_transient_timeouts(self):
         response = FakeResponse(
             "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-            b"observation_date,DGS10\\n2026-10-20,4.01\\n")
+            b"observation_date,DGS10\n2026-10-20,4.01\n")
         class FlakySession:
             def __init__(self):
                 self.calls = 0
