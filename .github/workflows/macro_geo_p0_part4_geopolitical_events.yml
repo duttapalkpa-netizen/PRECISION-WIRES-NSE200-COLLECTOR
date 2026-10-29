@@ -1,0 +1,147 @@
+name: P0 Collection Audit - Part 4 Geopolitical Events RSS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part4_geopolitical_events.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-p0-part4-geopolitical-events
+  cancel-in-progress: false
+
+jobs:
+  geopolitical-rss-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Restore validated NSE panel cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-part1-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - name: Bounded geopolitical news RSS source and schema smoke test
+        id: collect
+        env:
+          PYTHONUNBUFFERED: "1"
+        shell: bash
+        run: |
+          mkdir -p data/external outputs/macro_geo
+          python - <<'PY'
+          import csv, json, urllib.request, xml.etree.ElementTree as ET
+          from datetime import datetime, timezone
+          from email.utils import parsedate_to_datetime
+          from pathlib import Path
+
+          feed_url = "https://feeds.bbci.co.uk/news/world/rss.xml"
+          report = {
+              "part": "P0-4",
+              "task": "bounded geopolitical-events RSS fallback/source schema smoke test",
+              "checked_at_utc": datetime.now(timezone.utc).isoformat(),
+              "status": "BLOCKED",
+              "source_group": "geopolitical_events",
+              "request_budget": 1,
+              "source_url": feed_url,
+              "source_policy": "RSS fallback smoke only; feed accessibility does not prove historical event coverage or market-impact join completeness",
+              "schema_checks": {
+                  "title_present": False,
+                  "url_present": False,
+                  "publication_timestamp_present": False,
+                  "source_present": True,
+                  "valid_xml": False
+              },
+              "rows_written": 0,
+              "invariants": {
+                  "production_selector_modified": False,
+                  "RANKING_SCORE_modified": False,
+                  "PRESSURE_FADE_modified": False,
+                  "UNKNOWN_treated_as_negative": False
+              }
+          }
+          rows = []
+          try:
+              req = urllib.request.Request(feed_url, headers={"User-Agent": "Mozilla/5.0 (compatible; P0Audit/1.0)", "Accept": "application/rss+xml, application/xml, text/xml"})
+              with urllib.request.urlopen(req, timeout=8) as response:
+                  status_code = response.status
+                  body = response.read(2_000_000)
+              report["http_status"] = status_code
+              root = ET.fromstring(body)
+              report["schema_checks"]["valid_xml"] = True
+              channel = root.find("channel")
+              if channel is None:
+                  raise ValueError("RSS channel element missing")
+              items = channel.findall("item")
+              report["feed_item_count"] = len(items)
+              for item in items[:100]:
+                  title = (item.findtext("title") or "").strip()
+                  link = (item.findtext("link") or "").strip()
+                  pub = (item.findtext("pubDate") or "").strip()
+                  if not title or not link or not pub:
+                      continue
+                  try:
+                      published = parsedate_to_datetime(pub)
+                      if published.tzinfo is None:
+                          published = published.replace(tzinfo=timezone.utc)
+                      published_utc = published.astimezone(timezone.utc).isoformat()
+                  except Exception:
+                      continue
+                  rows.append({
+                      "source_group": "geopolitical_events",
+                      "source": "BBC World RSS",
+                      "title": title,
+                      "url": link,
+                      "published_at_utc": published_utc,
+                      "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                      "event_classification": "UNCLASSIFIED",
+                      "market_impact": "UNKNOWN"
+                  })
+              report["schema_checks"]["title_present"] = bool(rows)
+              report["schema_checks"]["url_present"] = bool(rows)
+              report["schema_checks"]["publication_timestamp_present"] = bool(rows)
+              report["valid_dated_rows"] = len(rows)
+              report["status"] = "PASS" if rows else "BLOCKED"
+              if not rows:
+                  report["reason"] = "RSS response parsed but no items had all required title, URL and parseable publication timestamp fields"
+              else:
+                  report["note"] = "Items are preserved as UNCLASSIFIED; this smoke test does not assert they are all geopolitical events or infer market impact."
+          except Exception as exc:
+              report["reason"] = type(exc).__name__ + ": " + str(exc)[:400]
+
+          csv_path = Path("data/external/p0_part4_geopolitical_events_smoke.csv")
+          with csv_path.open("w", encoding="utf-8", newline="") as f:
+              fields = ["source_group", "source", "title", "url", "published_at_utc", "retrieved_at_utc", "event_classification", "market_impact"]
+              writer = csv.DictWriter(f, fieldnames=fields)
+              writer.writeheader()
+              writer.writerows(rows)
+          report["output_csv"] = str(csv_path)
+          report["report_json"] = "outputs/macro_geo/p0_part4_geopolitical_events_report.json"
+          Path(report["report_json"]).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(report, indent=2))
+          import os
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("status=" + report["status"] + "\n")
+          if report["status"] != "PASS":
+              raise SystemExit(1)
+          PY
+      - name: Upload Part 4 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part4-geopolitical-events
+          path: |
+            data/external/p0_part4_geopolitical_events_smoke.csv
+            outputs/macro_geo/p0_part4_geopolitical_events_report.json
+          if-no-files-found: error
