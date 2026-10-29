@@ -11,6 +11,9 @@ on:
       - "pipeline/macro_geo_factor_coverage_audit.py"
       - "qa/test_macro_geo_factor_source_collectors.py"
       - "pipeline/macro_geo_event_level_audit.py"
+      - "pipeline/macro_geo_targeted_archive_backfill.py"
+      - "pipeline/historical_regime_event_study.py"
+      - "pipeline/macro_geo_hard_gate.py"
       - "qa/test_macro_geo_crude_oil_collector.py"
       - "qa/test_macro_geo_engine.py"
       - "qa/test_macro_geo_repair_p0.py"
@@ -44,4 +47,4 @@ jobs:
           python -m unittest qa.test_macro_geo_crude_oil_collector qa.test_macro_geo_factor_source_collectors qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest -v
       - name: Compile modified Python modules
         run: |
-          python -m py_compile pipeline/macro_geo_crude_oil_collector.py pipeline/macro_geo_factor_source_collectors.py pipeline/macro_geo_source_coverage.py pipeline/macro_geo_factor_coverage_audit.py pipeline/macro_geo_event_level_audit.py
+          python -m py_compile pipeline/macro_geo_crude_oil_collector.py pipeline/macro_geo_factor_source_collectors.py pipeline/macro_geo_source_coverage.py pipeline/macro_geo_factor_coverage_audit.py pipeline/macro_geo_event_level_audit.py pipeline/macro_geo_targeted_archive_backfill.py pipeline/historical_regime_event_study.py pipeline/macro_geo_hard_gate.py
