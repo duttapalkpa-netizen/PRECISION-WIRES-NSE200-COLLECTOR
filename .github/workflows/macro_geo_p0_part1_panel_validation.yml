@@ -1,0 +1,101 @@
+name: P0 Collection Audit - Part 1 Panel Validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part1_panel_validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-p0-part1-panel-validation
+  cancel-in-progress: false
+
+jobs:
+  panel-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Validate canonical 200-session panel without network calls
+        id: validate
+        shell: bash
+        run: |
+          mkdir -p outputs/macro_geo
+          python - <<'PY'
+          import csv, json, os
+          from datetime import date, datetime, timezone
+          from pathlib import Path
+
+          path = Path("data/processed/nse_eq_200_sessions.csv")
+          report = {
+              "part": "P0-1",
+              "task": "canonical NSE 200-session panel validation",
+              "checked_at_utc": datetime.now(timezone.utc).isoformat(),
+              "network_calls": 0,
+              "panel_path": str(path),
+              "status": "BLOCKED",
+              "reason": None,
+              "unique_sessions": 0,
+              "latest_session": None,
+              "required_columns_present": False,
+              "invariants": {
+                  "production_selector_modified": False,
+                  "RANKING_SCORE_modified": False,
+                  "PRESSURE_FADE_modified": False,
+                  "UNKNOWN_treated_as_negative": False
+              }
+          }
+          try:
+              if not path.is_file():
+                  report["reason"] = "canonical panel is not present in the checked-out repository; no network backfill is attempted in this bounded validation stage"
+              else:
+                  with path.open("r", encoding="utf-8-sig", newline="") as f:
+                      reader = csv.DictReader(f)
+                      headers = [str(h).strip().upper() for h in (reader.fieldnames or [])]
+                      if "DATE" not in headers:
+                          report["reason"] = "DATE column missing"
+                      else:
+                          date_key = reader.fieldnames[headers.index("DATE")]
+                          dates = set()
+                          bad_dates = 0
+                          for row in reader:
+                              raw = (row.get(date_key) or "").strip()
+                              try:
+                                  dates.add(date.fromisoformat(raw[:10]).isoformat())
+                              except Exception:
+                                  bad_dates += 1
+                          ordered = sorted(dates)
+                          report["unique_sessions"] = len(ordered)
+                          report["latest_session"] = ordered[-1] if ordered else None
+                          report["required_columns_present"] = True
+                          report["invalid_date_rows"] = bad_dates
+                          if len(ordered) >= 200 and bad_dates == 0:
+                              report["status"] = "PASS"
+                              report["reason"] = "at least 200 unique parseable sessions found; no network calls made"
+                          else:
+                              report["reason"] = f"panel validation failed: unique_sessions={len(ordered)}, invalid_date_rows={bad_dates}; requires >=200 unique sessions and zero invalid dates"
+          except Exception as e:
+              report["reason"] = f"validation error: {type(e).__name__}: {e}"
+
+          out = Path("outputs/macro_geo/p0_part1_panel_validation.json")
+          out.write_text(json.dumps(report, indent=2) + "\\n", encoding="utf-8")
+          print(json.dumps(report, indent=2))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("status=" + report["status"] + "\\n")
+          if report["status"] != "PASS":
+              raise SystemExit(1)
+          PY
+      - name: Upload Part 1 validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part1-panel-validation
+          path: outputs/macro_geo/p0_part1_panel_validation.json
+          if-no-files-found: error
