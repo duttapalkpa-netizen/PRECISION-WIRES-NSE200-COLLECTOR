@@ -134,6 +134,45 @@ jobs:
             report["outputs"].append({"group":"crude_oil","path":item["path"],"rows_in_window":received,"merged_rows":merged})
           except Exception as e: item["reason"]=type(e).__name__+": "+str(e)[:220]
           report["sources"].append(item)
+          # Emit the exact domain-QA evidence contract consumed by source_coverage.py.
+          # This report is generated only from the same-run official FRED spot rows;
+          # no futures proxy or publication-date inference can satisfy the gate.
+          crude_report={
+            "status":"BLOCKED", "proxy_only":False,
+            "checked_at_utc":now, "source":"FRED", "series_id":"DCOILBRENTEU",
+            "identity":"Daily Europe Brent spot price; not Brent futures",
+            "path":"data/external/brent_crude.csv",
+            "domain_qa_checks":[]
+          }
+          if item.get("status")=="PASS":
+            try:
+              with open("data/external/brent_crude.csv",encoding="utf-8",newline="") as f:
+                brent_rows=list(csv.DictReader(f))
+              valid=[]
+              for row in brent_rows:
+                day=(row.get("DATE") or "").strip()
+                value=float(row.get("CLOSE") or "nan")
+                if not day or not start.isoformat()<=day<=end.isoformat() or not (value>0):
+                  raise ValueError("Brent row invalid or outside observed panel window")
+                if row.get("SOURCE")!="FRED" or row.get("SOURCE_SERIES")!="DCOILBRENTEU":
+                  raise ValueError("Brent source identity mismatch")
+                if not (row.get("SOURCE_URL") or "").startswith("https://fred.stlouisfed.org/graph/fredgraph.csv"):
+                  raise ValueError("Brent source URL missing or unexpected")
+                valid.append((day,row.get("SOURCE_SERIES")))
+              if not valid or len(valid)!=len(set(valid)):
+                raise ValueError("Brent rows empty or duplicate date/series keys")
+              crude_report.update({
+                "status":"COLLECTED_AND_DOMAIN_QA_PASSED",
+                "rows":len(valid),"first_date":min(x[0] for x in valid),
+                "last_date":max(x[0] for x in valid),
+                "source_url":fred_url,
+                "domain_qa_checks":["official FRED series identity","Brent spot distinguished from futures",
+                  "positive numeric prices","unique date/series keys","observations bounded by canonical panel cutoff",
+                  "source URL provenance"]
+              })
+            except Exception as e:
+              crude_report["reason"]=type(e).__name__+": "+str(e)[:220]
+          Path("outputs/macro_geo/crude_oil_collection_report.json").write_text(json.dumps(crude_report,indent=2)+"\\n",encoding="utf-8")
 
           # Candidate-only RSS: never write data/external/geopolitical_events.csv from a headline feed.
           feed_url="https://feeds.bbci.co.uk/news/world/rss.xml"
@@ -209,6 +248,7 @@ jobs:
             data/external/brent_crude.csv
             data/external/geopolitical_events_candidate.csv
             outputs/macro_geo/p0_part8_reproducible_backbone_report.json
+            outputs/macro_geo/crude_oil_collection_report.json
             outputs/macro_geo/source_coverage.json
             outputs/macro_geo/source_coverage.csv
             outputs/macro_geo/factor_coverage_audit.csv
