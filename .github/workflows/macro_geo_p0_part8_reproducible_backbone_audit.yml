@@ -172,7 +172,7 @@ jobs:
               })
             except Exception as e:
               crude_report["reason"]=type(e).__name__+": "+str(e)[:220]
-          Path("outputs/macro_geo/crude_oil_collection_report.json").write_text(json.dumps(crude_report,indent=2)+"\\n",encoding="utf-8")
+          Path("outputs/macro_geo/crude_oil_collection_report.json").write_text(json.dumps(crude_report,indent=2)+"\n",encoding="utf-8")
 
           # Candidate-only RSS: never write data/external/geopolitical_events.csv from a headline feed.
           feed_url="https://feeds.bbci.co.uk/news/world/rss.xml"
