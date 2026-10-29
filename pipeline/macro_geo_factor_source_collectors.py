@@ -130,6 +130,96 @@ def fetch_fred(session, series_id, start, end):
         raise ValueError(f"FRED returned no valid observations for {series_id} in {start}..{end}")
     return sorted({row[0]: row for row in rows}.values(), key=lambda row: row[0])
 
+
+def fetch_commodity_fallback(session, series_id, label, start, end):
+    """Use exact-identity public source fallbacks for WTI spot and LBMA gold AM.
+
+    WTI: US EIA official daily XLS (RWTCd.xls). Gold: LBMA published AM-price
+    JSON (USD/troy ounce). Neither series is substituted with a futures proxy.
+    """
+    observed = datetime.now(timezone.utc).isoformat()
+    rows = []
+    if series_id == "DCOILWTICO":
+        url = "https://www.eia.gov/dnav/pet/hist_xls/RWTCd.xls"
+        response = session.get(url, timeout=(8, 35))
+        response.raise_for_status()
+        from io import BytesIO
+        book = pd.ExcelFile(BytesIO(response.content), engine="xlrd")
+        found = None
+        for sheet in book.sheet_names:
+            raw = pd.read_excel(book, sheet_name=sheet, header=None)
+            for i in range(min(15, len(raw))):
+                vals = [str(v).strip().lower() for v in raw.iloc[i].tolist()]
+                if any(v == "date" for v in vals) and any("cushing" in v and "spot price" in v for v in vals):
+                    found = (raw, i)
+                    break
+            if found:
+                break
+        if not found:
+            raise ValueError("EIA RWTC workbook schema not recognized for WTI Cushing spot")
+        raw, header_row = found
+        headers = [str(v).strip() for v in raw.iloc[header_row].tolist()]
+        frame = raw.iloc[header_row + 1:].copy()
+        frame.columns = headers
+        date_col = next((x for x in frame.columns if str(x).strip().lower() == "date"), None)
+        value_col = next((x for x in frame.columns if "cushing" in str(x).lower() and "spot price" in str(x).lower()), None)
+        if date_col is None or value_col is None:
+            raise ValueError("EIA RWTC workbook missing Date or WTI Cushing spot-price column")
+        for _, row in frame.iterrows():
+            day = pd.to_datetime(row[date_col], errors="coerce")
+            value = pd.to_numeric(pd.Series([row[value_col]]), errors="coerce").iloc[0]
+            if pd.notna(day) and pd.notna(value) and start <= day.date() <= end:
+                rows.append({"DATE": day.date().isoformat(), "CLOSE": float(value),
+                    "SOURCE": "US Energy Information Administration (official daily XLS)",
+                    "SOURCE_SERIES": "RWTC", "SOURCE_URL": url,
+                    "OBSERVED_AT_UTC": observed, "COMMODITY": label})
+    elif series_id == "GOLDAMGBD228NLBM":
+        url = "https://prices.lbma.org.uk/json/gold_am.json"
+        response = session.get(url, timeout=(8, 25))
+        response.raise_for_status()
+        payload = response.json()
+        if not isinstance(payload, list):
+            raise ValueError("LBMA gold AM response must be a JSON list")
+        for item in payload:
+            if not isinstance(item, dict) or "d" not in item or "v" not in item:
+                raise ValueError("LBMA gold AM schema mismatch: expected d/v records")
+            day = pd.to_datetime(item["d"], errors="coerce")
+            values = item["v"]
+            if pd.isna(day) or not isinstance(values, list) or len(values) < 1:
+                continue
+            value = pd.to_numeric(pd.Series([values[0]]), errors="coerce").iloc[0]
+            if pd.notna(value) and start <= day.date() <= end:
+                rows.append({"DATE": day.date().isoformat(), "CLOSE": float(value),
+                    "SOURCE": "London Bullion Market Association (LBMA) gold AM price",
+                    "SOURCE_SERIES": "LBMA_GOLD_AM_USD", "SOURCE_URL": url,
+                    "OBSERVED_AT_UTC": observed, "COMMODITY": label})
+    else:
+        raise ValueError(f"No approved exact-identity fallback for {series_id}")
+    if not rows:
+        raise ValueError(f"Approved fallback returned no valid observations for {series_id} in {start}..{end}")
+    frame = pd.DataFrame(rows).drop_duplicates(["DATE", "COMMODITY"]).sort_values(["DATE", "COMMODITY"])
+    dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    values = pd.to_numeric(frame["CLOSE"], errors="coerce")
+    if dates.isna().any() or values.isna().any() or (values <= 0).any():
+        raise ValueError(f"Fallback domain QA failed for {series_id}: invalid date/value")
+    if frame["SOURCE_URL"].astype(str).str.strip().eq("").any() or frame["OBSERVED_AT_UTC"].astype(str).str.strip().eq("").any():
+        raise ValueError(f"Fallback domain QA failed for {series_id}: missing provenance")
+    if frame.duplicated(["DATE", "COMMODITY"]).any() or dates.min().date() < start or dates.max().date() > end:
+        raise ValueError(f"Fallback domain QA failed for {series_id}: duplicate keys or out-of-window dates")
+    age = (end - dates.max().date()).days
+    if age < 0 or age > 5:
+        raise ValueError(f"Fallback domain QA failed for {series_id}: latest observation age {age} exceeds 5 days")
+    expected_source = "US Energy Information Administration" if series_id == "DCOILWTICO" else "London Bullion Market Association"
+    if not frame["SOURCE"].astype(str).str.contains(expected_source, regex=False).all():
+        raise ValueError(f"Fallback domain QA failed for {series_id}: source identity mismatch")
+    return frame.to_dict("records"), {"source": expected_source, "source_series": str(frame["SOURCE_SERIES"].iloc[0]),
+        "url": url, "rows": int(len(frame)), "date_min": str(frame["DATE"].min()),
+        "date_max": str(frame["DATE"].max()), "freshness_age_calendar_days": age,
+        "domain_qa_checks": ["exact source identity", "schema validation", "positive numeric values",
+            "unique date/commodity keys", "requested-window bounds", "source URL and observed timestamp",
+            "freshness <= 5 calendar days"]}
+
+
 def fetch_treasury_yields(session, start, end):
     """Use the official US Treasury CSV export as an exact-source fallback for yields."""
     rows = []
@@ -337,8 +427,13 @@ def validate_observed_series_group(name, frame, start, end, series_map):
         actual = set(frame["COMMODITY"].astype(str))
         if actual != expected:
             raise ValueError(f"global_commodity_prices domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
-        if not frame["SOURCE"].astype(str).str.contains("FRED", case=False).all():
-            raise ValueError("global_commodity_prices domain QA failed: non-FRED rows mixed into official-series group")
+        allowed_sources = (
+            frame["SOURCE"].astype(str).str.contains("FRED", case=False)
+            | frame["SOURCE"].astype(str).str.contains("US Energy Information Administration", case=False, regex=False)
+            | frame["SOURCE"].astype(str).str.contains("London Bullion Market Association", case=False, regex=False)
+        )
+        if not allowed_sources.all():
+            raise ValueError("global_commodity_prices domain QA failed: unapproved source identity")
     observed_days = sorted(dates.dt.date.unique())
     if observed_days[0] < start or observed_days[-1] > end:
         raise ValueError(f"{name} domain QA failed: dates outside requested window")
@@ -367,6 +462,14 @@ def collect_group(name, series_map, start, end, session):
                     rows.append({**common, "COMMODITY": label, "CLOSE": value})
         except Exception as exc:
             failures[series_id] = f"{type(exc).__name__}: {str(exc)[:240]}"
+            if name == "global_commodity_prices":
+                try:
+                    fallback_rows, fallback_report = fetch_commodity_fallback(session, series_id, label, start, end)
+                    rows.extend(fallback_rows)
+                    failures.pop(series_id, None)
+                    failures["FALLBACK_EVIDENCE_" + series_id] = json.dumps(fallback_report, sort_keys=True)
+                except Exception as fallback_exc:
+                    failures[series_id] += f"; exact-source fallback failed: {type(fallback_exc).__name__}: {str(fallback_exc)[:200]}"
     if name == "us_yields" and failures:
         # Do not mix partially fetched FRED rows with Treasury observations.
         # If any FRED maturity failed, replace the whole group from one official source.
