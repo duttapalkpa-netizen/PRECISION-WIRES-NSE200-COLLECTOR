@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install audit dependency
+        run: python -m pip install --disable-pip-version-check pandas
       - name: Bounded official Brent request and conservative RSS normalization
         id: validate
         shell: bash
