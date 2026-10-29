@@ -59,7 +59,20 @@ def main():
     registry=pd.read_csv(REGISTRY).fillna("")
     gaps=pd.read_csv(GAPS).fillna("")
     cov=json.loads(COVERAGE.read_text()) if COVERAGE.exists() else {}
-    observed={x["source"]:x for x in cov.get("sources",[])}
+    # Older P0 manifests can store source identifiers as lists (multiple providers).
+    # Normalize them safely; never use a list as a dictionary key.
+    observed={}
+    for item in cov.get("sources",[]):
+        if not isinstance(item,dict):
+            continue
+        source=item.get("source")
+        names=source if isinstance(source,list) else [source]
+        for name in names:
+            if isinstance(name,str) and name.strip():
+                observed[name.strip()]=item
+        # Reconciliation rows use canonical factor-group names as source identifiers.
+        if isinstance(source,str) and source.strip():
+            observed[source.strip()]=item
     rows=[]
     for _,f in registry.iterrows():
         fid=str(f["factor_id"]); sources=MAP.get(fid,[])
