@@ -1,0 +1,68 @@
+name: Bounded Factor Source Repair (separate from P0)
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_factor_source_collectors.py"
+      - ".github/workflows/macro_geo_factor_source_repair.yml"
+permissions:
+  contents: read
+concurrency:
+  group: macro-geo-factor-source-repair
+  cancel-in-progress: false
+jobs:
+  factor-source-repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Restore canonical NSE panel
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/processed/nse_eq_200_sessions.csv
+            data/external/benchmark_indices.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - name: Validate required observed panel exists
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          candidates=[Path("data/processed/nse_eq_200_sessions.csv"),Path("data/external/benchmark_indices.csv")]
+          for p in candidates:
+              if p.exists():
+                  df=pd.read_csv(p)
+                  cols={str(c).strip().upper() for c in df.columns}
+                  if "DATE" in cols and len(df):
+                      print({"panel":str(p),"rows":len(df),"status":"OK"})
+                      raise SystemExit(0)
+          raise SystemExit("No observed DATE panel; refusing wall-clock-only factor collection")
+          PY
+      - name: Run bounded factor source collector (maximum 7 minutes)
+        timeout-minutes: 7
+        run: python pipeline/macro_geo_factor_source_collectors.py
+      - name: Upload factor-source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-factor-source-repair
+          path: |
+            data/external/us_yields.csv
+            data/external/commodity_prices.csv
+            data/external/dxy.csv
+            data/external/global_policy_events.csv
+            outputs/macro_geo/factor_source_collection_report.json
+          if-no-files-found: warn
