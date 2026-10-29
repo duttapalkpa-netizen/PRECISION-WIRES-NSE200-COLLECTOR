@@ -85,7 +85,7 @@ def yahoo_history(label,spec,start,end):
     for host in ["https://query2.finance.yahoo.com/v8/finance/chart/","https://query1.finance.yahoo.com/v8/finance/chart/"]:
         url=f"{host}{spec['symbol']}"
         try:
-            resp=session.get(url,params=params,timeout=(4,8))
+            resp=session.get(url,params=params,timeout=(3,5))
             if resp.status_code == 429 or resp.status_code >= 500:
                 last_error=RuntimeError(f"Yahoo chart transient HTTP {resp.status_code} host={host}")
                 resp=None
@@ -162,7 +162,7 @@ def niftyindices_history(start,end):
     for label,api_name in index_map.items():
         payload={"cinfo":f"{{'name':'{api_name}','startDate':'{start_text}','endDate':'{end_text}','indexName':'{api_name}'}}"}
         try:
-            resp=session.post(base+"getHistoricaldatatabletoString",json=payload,headers=headers,timeout=(5,20))
+            resp=session.post(base+"getHistoricaldatatabletoString",json=payload,headers=headers,timeout=(3,6))
             resp.raise_for_status(); data=parse_official_response(resp,"getHistoricaldatatabletoString")
             for item in data:
                 raw_date=item.get("HistoricalDate") or item.get("DATE")
@@ -310,7 +310,7 @@ def cboe_vix_history(start,end):
     """Official Cboe daily VIX history CSV; separate from India's NSE India VIX."""
     from io import StringIO
     url="https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
-    resp=session.get(url,timeout=(8,45),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://www.cboe.com/"})
+    resp=session.get(url,timeout=(3,6),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://www.cboe.com/"})
     resp.raise_for_status()
     df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
     df.columns=[str(x).strip().upper() for x in df.columns]
@@ -389,7 +389,7 @@ def fetch_gdelt_events(start,end):
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
       "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0,
-      "slice_days":30,"connect_timeout_seconds":8,"read_timeout_seconds":30,"maxrecords_per_slice":10,"attempts_per_slice":2},
+      "slice_days":30,"connect_timeout_seconds":3,"read_timeout_seconds":6,"maxrecords_per_slice":10,"attempts_per_slice":1},
       "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
       "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
       "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
@@ -428,13 +428,13 @@ def fetch_gdelt_events(start,end):
           "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
-        for attempt in range(2):
+        for attempt in range(1):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,30))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(3,6))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
-                    try: wait=min(30,max(5,int(float(retry_after))))
-                    except (TypeError,ValueError): wait=5*(attempt+1)
+                    try: wait=min(3,max(1,int(float(retry_after))))
+                    except (TypeError,ValueError): wait=1
                     last_error=f"HTTP 429 rate limit; slice {slice_start}/{slice_end}; retry {attempt+1}/3 after {wait}s"
                     if attempt<1:
                         time.sleep(wait)
@@ -464,7 +464,7 @@ def fetch_gdelt_events(start,end):
                 break
             except Exception as exc:
                 last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
-                if attempt<1: time.sleep(2)
+                if attempt<1: time.sleep(0.25)
         if last_error:
             metrics["gdelt"]["request_failures"]+=1
             failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
@@ -474,7 +474,7 @@ def fetch_gdelt_events(start,end):
             metrics["gdelt"].setdefault("failure_details", []).append({
               "slice_start":slice_start.isoformat(),"slice_end":slice_end.isoformat(),
               "error":last_error[:500]})
-        time.sleep(1.0)
+        time.sleep(0.15)
 
     # Public RSS/Atom feeds are a fallback and are audited independently.
     # Publication times are feed publication timestamps, not verified event-occurrence times.
@@ -501,7 +501,7 @@ def fetch_gdelt_events(start,end):
     for publisher,feed_url in feeds:
         rm=metrics["rss"]; rm["feeds_attempted"]+=1
         try:
-            response=session.get(feed_url,headers={"User-Agent":UA,"Accept":"application/rss+xml, application/atom+xml, application/xml, text/xml, */*"},timeout=(5,15))
+            response=session.get(feed_url,headers={"User-Agent":UA,"Accept":"application/rss+xml, application/atom+xml, application/xml, text/xml, */*"},timeout=(3,6))
             response.raise_for_status()
             root=ET.fromstring(response.content)
             items=root.findall(".//item")
@@ -551,9 +551,9 @@ def try_nse_json(endpoint,params,start,end):
     headers={"User-Agent":UA,"Accept":"application/json,text/plain,*/*",
              "Referer":"https://www.nseindia.com/reports/fii-dii" if "fiidii" in endpoint.lower() else "https://www.nseindia.com/companies-listing/corporate-filings-announcements"}
     errors=[]
-    for attempt in range(2):
+    for attempt in range(1):
         try:
-            r=session.get(url,params=params,timeout=(8,35),headers=headers)
+            r=session.get(url,params=params,timeout=(3,6),headers=headers)
             r.raise_for_status()
             payload=r.json()
             if isinstance(payload,dict):
@@ -565,7 +565,7 @@ def try_nse_json(endpoint,params,start,end):
             errors.append(f"{type(exc).__name__}: {exc}")
             if attempt == 0:
                 # On retry only, seed cookies if the site permits; never bypass a denial.
-                try: session.get(NSE+"/reports/fii-dii",timeout=(5,10),headers={"User-Agent":UA,"Accept":"text/html"})
+                try: session.get(NSE+"/reports/fii-dii",timeout=(3,5),headers={"User-Agent":UA,"Accept":"text/html"})
                 except Exception as seed_exc: errors.append(f"session_seed {type(seed_exc).__name__}: {seed_exc}")
     return None,{"url":url,"error":"; ".join(errors)}
 
@@ -580,7 +580,7 @@ def main():
     bootstrap_headers={"User-Agent":UA,"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language":"en-US,en;q=0.9","Referer":"https://www.nseindia.com/","Connection":"keep-alive"}
     for home in ("https://www.niftyindices.com/reports/historical-data","https://www.nseindia.com/","https://www.nseindia.com/all-reports"):
-        try: session.get(home,headers=bootstrap_headers,timeout=8)
+        try: session.get(home,headers=bootstrap_headers,timeout=3)
         except Exception: pass
     # Prefer NSE Indices API; fall back to daily official index archive if the API
     # returns an empty/blocked payload. Never create placeholder market values.
@@ -591,10 +591,10 @@ def main():
     # fills only missing date+series keys and remains explicitly labelled secondary.
     if len(nse_rows)<100:
         # The index API may return a WAF/HTML response instead of JSON.
-        # Bound the official day-by-day fallback to the recent ~18 months;
-        # a 2006-to-present loop can make thousands of requests and stall CI.
+        # Bound the official day-by-day fallback to the latest two weeks;
+        # a long archive loop can stall CI. Yahoo history fills older dates with explicit provenance.
         # Longer history is filled separately from labelled Yahoo/FRED sources.
-        archive_start=max(start,end-timedelta(days=550))
+        archive_start=max(start,end-timedelta(days=14))
         archive_rows,archive_report=nse_index_history(archive_start,end)
         existing={(x["DATE"],x["SERIES"]) for x in nse_rows}
         nse_rows.extend(x for x in archive_rows if (x["DATE"],x["SERIES"]) not in existing)
