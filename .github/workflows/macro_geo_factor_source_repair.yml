@@ -8,6 +8,7 @@ on:
       - ".github/workflows/macro_geo_factor_source_repair.yml"
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: macro-geo-factor-source-repair
   cancel-in-progress: false
@@ -27,17 +28,22 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
-      - name: Restore canonical NSE panel
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            data/processed/nse_eq_200_sessions.csv
-            data/external/benchmark_indices.csv
-          key: macro-geo-nse200-${{ github.ref_name }}-${{ github.run_id }}
-          restore-keys: |
-            macro-geo-nse200-${{ github.ref_name }}-
-      - name: Validate required observed panel exists
+      - name: Download latest successful P0 evidence panel
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+          RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_p0_event_study.yml/runs?branch=${GITHUB_REF_NAME}&status=success&per_page=10" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
+          test -n "$RUN_ID" && test "$RUN_ID" != "null"
+          echo "Using latest successful P0 evidence run: $RUN_ID"
+          mkdir -p /tmp/p0-evidence data/external
+          gh run download "$RUN_ID" -n macro-geo-p0-event-study -D /tmp/p0-evidence
+          find /tmp/p0-evidence -type f -maxdepth 5 -print
+          if [ -f /tmp/p0-evidence/data/external/benchmark_indices.csv ]; then
+            cp /tmp/p0-evidence/data/external/benchmark_indices.csv data/external/benchmark_indices.csv
+          elif [ -f /tmp/p0-evidence/benchmark_indices.csv ]; then
+            cp /tmp/p0-evidence/benchmark_indices.csv data/external/benchmark_indices.csv
+          fi
           python - <<'PY'
           from pathlib import Path
           import pandas as pd
@@ -47,9 +53,11 @@ jobs:
                   df=pd.read_csv(p)
                   cols={str(c).strip().upper() for c in df.columns}
                   if "DATE" in cols and len(df):
-                      print({"panel":str(p),"rows":len(df),"status":"OK"})
-                      raise SystemExit(0)
-          raise SystemExit("No observed DATE panel; refusing wall-clock-only factor collection")
+                      dates=pd.to_datetime(df[[c for c in df.columns if str(c).strip().upper()=="DATE"][0]],errors="coerce").dropna()
+                      if not dates.empty:
+                          print({"panel":str(p),"rows":len(df),"valid_dates":len(dates),"status":"OK"})
+                          raise SystemExit(0)
+          raise SystemExit("Latest successful P0 artifact did not contain a valid observed DATE panel; refusing wall-clock-only collection")
           PY
       - name: Run bounded factor source collector (maximum 7 minutes)
         timeout-minutes: 7
