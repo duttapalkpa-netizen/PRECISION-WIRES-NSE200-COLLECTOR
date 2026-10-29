@@ -115,8 +115,12 @@ def apply_crude_oil_collector_report(rows, collector_report):
     elif state != "COLLECTED_AND_DOMAIN_QA_PASSED" or proxy_only:
         if int(row.get("rows") or 0) > 0:
             row["status"] = "DATA_QUALITY_WARN"
-        row["notes"] = (str(row.get("notes") or "") +
-            f" Brent collector status={state}; no matching approved repair provenance found; domain QA not cleared.").strip()
+        if proxy_only:
+            detail = (" Yahoo BZ=F is a futures proxy, not FRED DCOILBRENTEU spot; "
+                      "no matching approved repair provenance found, so P0 remains blocked.")
+        else:
+            detail = f" Brent collector status={state}; no matching approved repair provenance found; domain QA not cleared."
+        row["notes"] = (str(row.get("notes") or "") + detail).strip()
     return rows
 
 
