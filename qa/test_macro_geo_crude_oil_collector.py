@@ -12,6 +12,11 @@ class FakeResponse:
     def raise_for_status(self): pass
 
 class BrentCollectorTests(unittest.TestCase):
+    def test_canonical_spot_and_futures_proxy_use_separate_paths(self):
+        self.assertEqual(collector.output_path().name, "brent_crude.csv")
+        self.assertEqual(collector.output_path(proxy_only=True).name, "brent_crude_futures_proxy.csv")
+        self.assertNotEqual(collector.output_path(), collector.output_path(proxy_only=True))
+
     def test_brent_schema_provenance_and_no_wti_substitution(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch.object(collector, "OUT", Path(tmp)), patch.object(collector, "REPORT", Path(tmp)/"report.json"), patch.object(collector, "observed_reference_date", return_value=date(2026,10,22)):
