@@ -13,7 +13,7 @@ concurrency:
 jobs:
   integrated-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install audit dependency
-        run: python -m pip install --disable-pip-version-check pandas
+        run: python -m pip install --disable-pip-version-check pandas requests xlrd
       - name: Rebuild bounded canonical macro series and event candidates in one run
         shell: bash
         run: |
@@ -216,6 +216,9 @@ jobs:
           print(json.dumps(report,indent=2))
           if report["collection_status"]!="PASS": raise SystemExit(1)
           PY
+      - name: Repair official NSE FPI/DII and corporate-event source coverage
+        run: |
+          python pipeline/macro_geo_repair_p0.py
       - name: Audit coverage and factor registry on this exact integrated dataset
         run: |
           python pipeline/macro_geo_source_coverage.py
@@ -247,6 +250,9 @@ jobs:
             data/external/usd_inr.csv
             data/external/brent_crude.csv
             data/external/geopolitical_events_candidate.csv
+            data/external/fpi_dii_flows.csv
+            data/external/corporate_events.csv
+            outputs/macro_geo/p0_repair_report.json
             outputs/macro_geo/p0_part8_reproducible_backbone_report.json
             outputs/macro_geo/crude_oil_collection_report.json
             outputs/macro_geo/source_coverage.json
