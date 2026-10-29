@@ -120,6 +120,7 @@ jobs:
           except Exception as exc:
               report["reason"] = type(exc).__name__ + ": " + str(exc)[:400]
 
+          report["rows_written"] = len(rows)
           csv_path = Path("data/external/p0_part4_geopolitical_events_smoke.csv")
           with csv_path.open("w", encoding="utf-8", newline="") as f:
               fields = ["source_group", "source", "title", "url", "published_at_utc", "retrieved_at_utc", "event_classification", "market_impact"]
