@@ -43,14 +43,23 @@ jobs:
           import pandas as pd
           panel = pd.read_csv("data/processed/nse_eq_200_sessions.csv")
           ref = pd.to_datetime(panel["DATE"], errors="raise").max().normalize()
-          data = pd.read_csv("data/external/brent_crude.csv")
+          report = json.loads(Path("outputs/macro_geo/crude_oil_collection_report.json").read_text())
+          # The collector reports the exact output path. FRED/EIA spot remains
+          # canonical; Yahoo BZ=F futures proxy is deliberately stored separately.
+          reported_path = Path(report.get("path", ""))
+          allowed_paths = {
+              Path("data/external/brent_crude.csv"),
+              Path("data/external/brent_crude_futures_proxy.csv"),
+          }
+          if reported_path not in allowed_paths or not reported_path.exists():
+              raise SystemExit(f"BLOCKED: collector output path missing or unexpected: {reported_path}")
+          data = pd.read_csv(reported_path)
           dates = pd.to_datetime(data["DATE"], errors="coerce").dropna()
           if data.empty or dates.empty:
               raise SystemExit("BLOCKED: Brent collector produced no usable rows")
           latest = dates.max().normalize()
           age = int((ref - latest).days)
           freshness = "FRESH" if 0 <= age <= 3 else "STALE_OR_FUTURE"
-          report = json.loads(Path("outputs/macro_geo/crude_oil_collection_report.json").read_text())
           evidence = {
               "reference_market_session": ref.date().isoformat(),
               "date_min": dates.min().date().isoformat(),
@@ -78,5 +87,6 @@ jobs:
           name: brent-live-smoke-evidence
           path: |
             data/external/brent_crude.csv
+            data/external/brent_crude_futures_proxy.csv
             outputs/macro_geo/crude_oil_collection_report.json
             outputs/macro_geo/brent_live_smoke_evidence.json
