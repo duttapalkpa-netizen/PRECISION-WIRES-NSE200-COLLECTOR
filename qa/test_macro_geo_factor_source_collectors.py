@@ -52,6 +52,32 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(session.last_timeout, (5, 12))
         self.assertEqual(rows[0][1], 4.01)
 
+    def test_eia_wti_fallback_preserves_official_spot_identity_and_provenance(self):
+        raw = pd.DataFrame([
+            ["Series Description", "Cushing, OK WTI Spot Price FOB (Dollars per Barrel)"],
+            ["Date", "Cushing, OK WTI Spot Price FOB (Dollars per Barrel)"],
+            ["2026-10-20", 60.25],
+            ["2026-10-21", 61.10],
+        ])
+        class FakeBook:
+            sheet_names = ["Data 1"]
+        response = FakeResponse("https://www.eia.gov/dnav/pet/hist_xls/RWTCd.xls", b"mock-xls")
+        session = type("Session", (), {"get": lambda self, *a, **kw: response})()
+        with patch.object(collector.pd, "ExcelFile", return_value=FakeBook()), \
+             patch.object(collector.pd, "read_excel", return_value=raw):
+            rows, report = collector.fetch_commodity_fallback(
+                session, "DCOILWTICO", "WTI_CRUDE_USD_PER_BBL",
+                date(2026, 10, 20), date(2026, 10, 21))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]["SOURCE_SERIES"], "RWTC")
+        self.assertIn("US Energy Information Administration", rows[0]["SOURCE"])
+        self.assertEqual(rows[0]["CLOSE"], 60.25)
+        self.assertEqual(report["freshness_age_calendar_days"], 0)
+        qa = collector.validate_observed_series_group(
+            "global_commodity_prices", pd.DataFrame(rows), date(2026, 10, 20), date(2026, 10, 21),
+            {"DCOILWTICO": "WTI_CRUDE_USD_PER_BBL"})
+        self.assertEqual(qa["status"], "COLLECTED_AND_DOMAIN_QA_PASSED")
+
     def test_lbma_gold_fallback_preserves_exact_series_identity_and_provenance(self):
         payload = [
             {"d": "2026-10-20", "v": [4012.5, 3010.2, 3450.1]},
