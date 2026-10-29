@@ -317,6 +317,16 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.assertIn("COLLECTION_MANIFEST_FPI_DII_STATUS_UNRESOLVED", report["blockers"])
         self.assertIn("COLLECTION_MANIFEST_CORPORATE_EVENTS_STATUS_UNRESOLVED", report["blockers"])
 
+    def test_hard_gate_incomplete_historical_anchor_coverage_blocks_release(self):
+        regime = self.json.loads(self.regime_path.read_text(encoding="utf-8"))
+        regime["anchor_coverage_complete"] = False
+        regime["regimes_with_windows"] = 0
+        self.regime_path.write_text(self.json.dumps(regime), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertIn("HISTORICAL_REGIME_ANCHOR_COVERAGE_INCOMPLETE", report["blockers"])
+        self.assertFalse(report["candidate_release_allowed"])
+
     def test_hard_gate_missing_input_blocks_release(self):
         self.panel_path.unlink()
         self.assertEqual(self.gate.main(), 1)
