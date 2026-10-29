@@ -152,7 +152,7 @@ jobs:
               for row in brent_rows:
                 day=(row.get("DATE") or "").strip()
                 value=float(row.get("CLOSE") or "nan")
-                if not day or not start.isoformat()<=day<=end.isoformat() or not (value>0):
+                if not day or not start<=day<=end or not (value>0):
                   raise ValueError("Brent row invalid or outside observed panel window")
                 if row.get("SOURCE")!="FRED" or row.get("SOURCE_SERIES")!="DCOILBRENTEU":
                   raise ValueError("Brent source identity mismatch")
