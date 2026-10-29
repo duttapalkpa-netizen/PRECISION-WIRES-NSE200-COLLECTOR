@@ -141,9 +141,7 @@ jobs:
         run: python pipeline/macro_geo_finalize_manifest.py
       - name: Strictly validate benchmark, sector, volatility and geopolitical groups
         run: python pipeline/macro_geo_four_group_validation.py
-      - name: Collect bounded FRED/Treasury/commodity/policy factor sources
-        continue-on-error: true
-        run: python pipeline/macro_geo_factor_source_collectors.py
+      # Optional factor enrichment runs in its own bounded workflow so slow public-source retries cannot hold up the P0 evidence audit.
       - name: Audit all registered factors against observed source coverage
         run: python pipeline/macro_geo_factor_coverage_audit.py
       - name: Run sourced publication-time event study
