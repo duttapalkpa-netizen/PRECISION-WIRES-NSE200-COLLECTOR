@@ -5,6 +5,7 @@ on:
     branches: [audit/run145-factor-registry-gap-audit]
     paths:
       - ".github/workflows/macro_geo_p0_part8_reproducible_backbone_audit.yml"
+      - "pipeline/macro_geo_source_coverage.py"
 permissions:
   contents: read
 concurrency:
