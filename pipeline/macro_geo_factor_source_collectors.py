@@ -449,7 +449,7 @@ def validate_observed_series_group(name, frame, start, end, series_map):
 
 
 def collect_group(name, series_map, start, end, session):
-    rows, failures = [], {}
+    rows, failures, fallback_evidence = [], {}, {}
     for series_id, label in series_map.items():
         try:
             for day, value, url in fetch_fred(session, series_id, start, end):
@@ -467,7 +467,7 @@ def collect_group(name, series_map, start, end, session):
                     fallback_rows, fallback_report = fetch_commodity_fallback(session, series_id, label, start, end)
                     rows.extend(fallback_rows)
                     failures.pop(series_id, None)
-                    failures["FALLBACK_EVIDENCE_" + series_id] = json.dumps(fallback_report, sort_keys=True)
+                    fallback_evidence[series_id] = fallback_report
                 except Exception as fallback_exc:
                     failures[series_id] += f"; exact-source fallback failed: {type(fallback_exc).__name__}: {str(fallback_exc)[:200]}"
     if name == "us_yields" and failures:
@@ -500,7 +500,7 @@ def collect_group(name, series_map, start, end, session):
             "source": sorted(set(frame["SOURCE"].astype(str))),
             "observed_source_series": sorted(set(frame["SOURCE_SERIES"].astype(str))),
             "requested_fred_series_ids": list(series_map),
-            "failures": failures, "domain_qa_checks": qa["domain_qa_checks"] if qa else [],
+            "failures": failures, "fallback_evidence": fallback_evidence, "domain_qa_checks": qa["domain_qa_checks"] if qa else [],
             "freshness_age_calendar_days": qa["freshness_age_calendar_days"] if qa else None,
             "provenance_columns": ["SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"],
             "notes": ("Exact source identity, schema, provenance, value, duplicate and freshness checks passed; "
