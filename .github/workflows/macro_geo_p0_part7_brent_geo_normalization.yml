@@ -1,0 +1,174 @@
+name: P0 Part 7 Brent Identity and Geopolitical Candidate Normalization
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part7_brent_geo_normalization.yml"
+permissions:
+  contents: read
+concurrency:
+  group: macro-geo-p0-part7-brent-geo-normalization
+  cancel-in-progress: false
+jobs:
+  bounded-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-part1-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bounded official Brent request and conservative RSS normalization
+        id: validate
+        shell: bash
+        run: |
+          mkdir -p data/external outputs/macro_geo
+          python - <<'PY'
+          import csv, json, re, urllib.request, urllib.parse
+          from datetime import datetime, timezone
+          from email.utils import parsedate_to_datetime
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          now = datetime.now(timezone.utc).isoformat()
+          report = {
+            "part": "P0-7",
+            "checked_at_utc": now,
+            "status": "BLOCKED",
+            "network_request_budget": 2,
+            "brent": {"status": "UNKNOWN", "series_id": "DCOILBRENTEU", "source": "FRED", "identity": "Daily Europe Brent spot price; not Brent futures"},
+            "geopolitical_candidate": {"status": "UNKNOWN", "source": "BBC World RSS", "canonical_promotion": False},
+            "invariants": {"production_selector_modified": False, "RANKING_SCORE_modified": False, "PRESSURE_FADE_modified": False, "UNKNOWN_treated_as_negative": False},
+            "policy": "Only FRED DCOILBRENTEU may populate the official-identity Brent file. RSS items remain candidate events; no market impact is inferred and no canonical geopolitical file is overwritten."
+          }
+          # Request 1: bounded FRED CSV request, no retry.
+          fred_url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DCOILBRENTEU"
+          try:
+            req = urllib.request.Request(fred_url, headers={"User-Agent":"P0Audit/1.0","Accept":"text/csv"})
+            with urllib.request.urlopen(req, timeout=8) as resp:
+              body = resp.read(2_000_000).decode("utf-8-sig")
+              if resp.status != 200: raise RuntimeError("HTTP " + str(resp.status))
+            parsed = list(csv.DictReader(body.splitlines()))
+            if not parsed or not {"observation_date","DCOILBRENTEU"}.issubset(parsed[0].keys()):
+              raise ValueError("FRED CSV schema mismatch")
+            valid = []
+            for r in parsed:
+              day = (r.get("observation_date") or "").strip()
+              val = (r.get("DCOILBRENTEU") or "").strip()
+              if not day or not val or val in (".","NA","N/A"): continue
+              try:
+                d = datetime.strptime(day, "%Y-%m-%d").date().isoformat()
+                v = float(val)
+                if v > 0: valid.append({"DATE":d,"CLOSE":v,"SOURCE":"FRED","SOURCE_SERIES":"DCOILBRENTEU","SOURCE_URL":fred_url,"OBSERVED_AT_UTC":now})
+              except Exception: continue
+            # Limit to recent observations; retain actual dates and source identity.
+            valid = valid[-400:]
+            if not valid: raise ValueError("no valid positive FRED observations")
+            if len({x["DATE"] for x in valid}) != len(valid): raise ValueError("duplicate observation dates")
+            # Write canonical Brent file only when source identity and schema passed.
+            target = Path("data/external/brent_crude.csv")
+            old = {}
+            if target.exists():
+              with target.open(encoding="utf-8-sig", newline="") as f:
+                for r in csv.DictReader(f):
+                  if r.get("DATE") and r.get("CLOSE"): old[r["DATE"]] = r
+            for r in valid: old[r["DATE"]] = r
+            fields = ["DATE","CLOSE","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC"]
+            with target.open("w", encoding="utf-8", newline="") as f:
+              w=csv.DictWriter(f, fieldnames=fields, extrasaction="ignore"); w.writeheader()
+              w.writerows(old[k] for k in sorted(old))
+            report["brent"].update({"status":"PASS","rows_received":len(valid),"rows_merged":len(old),"first_date":valid[0]["DATE"],"last_date":valid[-1]["DATE"],"canonical_path":str(target),"source_url":fred_url})
+          except Exception as e:
+            report["brent"]["reason"] = type(e).__name__ + ": " + str(e)[:250]
+
+          # Request 2: bounded BBC RSS; normalization is candidate-only, never canonical promotion.
+          feed_url = "https://feeds.bbci.co.uk/news/world/rss.xml"
+          rows=[]
+          keywords = {
+            "armed_conflict": r"\b(war|airstrike|missile|military|troops|invasion|attack|ceasefire|battle|bombing)\b",
+            "sanctions": r"\b(sanction|embargo|asset freeze)\b",
+            "trade_policy": r"\b(tariff|trade ban|export control|import duty|trade restriction)\b",
+            "elections": r"\b(election|vote|polling|president-elect|parliamentary vote)\b",
+            "diplomacy": r"\b(summit|diplomatic|foreign minister|peace talks|treaty)\b"
+          }
+          try:
+            req=urllib.request.Request(feed_url,headers={"User-Agent":"Mozilla/5.0 (compatible; P0Audit/1.0)","Accept":"application/rss+xml, application/xml, text/xml"})
+            with urllib.request.urlopen(req,timeout=8) as resp:
+              body=resp.read(2_000_000)
+              if resp.status != 200: raise RuntimeError("HTTP " + str(resp.status))
+            root=ET.fromstring(body)
+            channel=root.find("channel")
+            if channel is None: raise ValueError("RSS channel missing")
+            for item in channel.findall("item")[:100]:
+              title=(item.findtext("title") or "").strip()
+              url=(item.findtext("link") or "").strip()
+              pub=(item.findtext("pubDate") or "").strip()
+              if not title or not url or not pub: continue
+              try:
+                dt=parsedate_to_datetime(pub)
+                if dt.tzinfo is None: dt=dt.replace(tzinfo=timezone.utc)
+                published=dt.astimezone(timezone.utc).isoformat()
+              except Exception: continue
+              classification="UNCLASSIFIED"
+              for label,pattern in keywords.items():
+                if re.search(pattern,title,re.I):
+                  classification=label.upper()
+                  break
+              rows.append({
+                "EVENT_DATE":published[:10],
+                "PUBLISHED_AT":published,
+                "EVENT_TYPE":classification,
+                "SOURCE":"BBC World RSS",
+                "SOURCE_URL":url,
+                "CONFIDENCE":"LOW_KEYWORD_ONLY" if classification!="UNCLASSIFIED" else "UNKNOWN",
+                "TITLE":title,
+                "FEED_URL":feed_url,
+                "EVENT_DATE_BASIS":"PUBLICATION_DATE_PROXY_NOT_VERIFIED_EVENT_DATE",
+                "OBSERVED_AT_UTC":now,
+                "MARKET_IMPACT":"UNKNOWN"
+              })
+            if not rows: raise ValueError("no RSS items with title, URL and parseable publication time")
+            candidate=Path("data/external/geopolitical_events_candidate.csv")
+            fields=["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE","TITLE","FEED_URL","EVENT_DATE_BASIS","OBSERVED_AT_UTC","MARKET_IMPACT"]
+            with candidate.open("w",encoding="utf-8",newline="") as f:
+              w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+            report["geopolitical_candidate"].update({"status":"PASS","rows":len(rows),"classified_by_title_keyword":sum(x["EVENT_TYPE"]!="UNCLASSIFIED" for x in rows),"unclassified":sum(x["EVENT_TYPE"]=="UNCLASSIFIED" for x in rows),"candidate_path":str(candidate),"canonical_promotion":False,"event_date_warning":"EVENT_DATE is publication-date proxy only, not verified event occurrence date."})
+          except Exception as e:
+            report["geopolitical_candidate"]["reason"] = type(e).__name__ + ": " + str(e)[:250]
+
+          # PASS means bounded task and at least one usable output; not full P0 coverage.
+          report["status"] = "PASS" if report["brent"]["status"]=="PASS" or report["geopolitical_candidate"]["status"]=="PASS" else "BLOCKED"
+          report["release_gate"] = "BLOCKED_PENDING_REAL_SOURCE_COVERAGE_AND_MATURED_EVENT_WINDOWS"
+          Path("outputs/macro_geo/p0_part7_brent_geo_normalization_report.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
+          print(json.dumps(report,indent=2))
+          if report["status"] != "PASS": raise SystemExit(1)
+          PY
+      - name: Run source coverage inventory without relaxing gates
+        if: always()
+        run: |
+          python pipeline/macro_geo_source_coverage.py || true
+          python pipeline/macro_geo_factor_coverage_audit.py || true
+      - name: Upload Part 7 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part7-brent-geo-normalization
+          path: |
+            data/external/brent_crude.csv
+            data/external/geopolitical_events_candidate.csv
+            outputs/macro_geo/p0_part7_brent_geo_normalization_report.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.json
+          if-no-files-found: warn
