@@ -22,7 +22,7 @@ ALIASES={"nifty50":"NIFTY 50","niftyit":"NIFTY IT","niftybank":"NIFTY BANK","nif
  "niftyrealty":"NIFTY REALTY","niftyinfrastructure":"NIFTY INFRA","indiavix":"INDIA VIX"}
 REQUIRED=set(ALIASES.values())
 # Keep this network collector bounded; incomplete history is recorded and blocks release.
-MAX_ARCHIVE_DATES=24
+MAX_ARCHIVE_DATES=18
 CONNECT_TIMEOUT_SECONDS=2
 READ_TIMEOUT_SECONDS=3
 
