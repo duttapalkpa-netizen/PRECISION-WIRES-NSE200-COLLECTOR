@@ -59,10 +59,11 @@ def observed_window():
 
 
 def fetch_fred(session, series_id, start, end):
-    """Fetch a FRED series in bounded quarterly chunks with retries.
+    """Fetch a FRED series in bounded monthly chunks with resilient retries.
 
-    Smaller date windows reduce intermittent long-response timeouts. Failed
-    chunks remain failures; only observed non-missing values are returned.
+    Transport failures receive three bounded attempts with backoff. Schema and
+    data-contract failures fail closed immediately. Failed chunks are never
+    silently omitted and only observed non-missing values are returned.
     """
     from calendar import monthrange
     chunks = []
@@ -83,12 +84,12 @@ def fetch_fred(session, series_id, start, end):
     rows, failures = [], []
     for chunk_start, chunk_end in chunks:
         last_error = None
-        for attempt in range(2):
+        for attempt in range(3):
             try:
                 response = session.get(
                     FRED_URL,
                     params={"id": series_id, "cosd": chunk_start.isoformat(), "coed": chunk_end.isoformat()},
-                    timeout=(4, 8),
+                    timeout=(5, 12),
                 )
                 response.raise_for_status()
                 frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
@@ -116,9 +117,11 @@ def fetch_fred(session, series_id, start, end):
                 raise
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {str(exc)[:180]}"
-                if attempt < 1:
+                if attempt < 2:
                     import time
-                    time.sleep(0.5)
+                    # Small bounded backoff: enough to clear transient upstream
+                    # throttling without allowing a retry storm or unbounded run.
+                    time.sleep(0.5 * (attempt + 1))
         if last_error:
             failures.append(f"{chunk_start}..{chunk_end}: {last_error}")
     if failures:
