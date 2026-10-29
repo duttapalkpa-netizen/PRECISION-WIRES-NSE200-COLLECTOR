@@ -218,7 +218,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
                 "DII": {"unique_dates": 60, "span_days": 90, "rows": 60}
             }
         }), encoding="utf-8")
-        self.regime_path.write_text(json.dumps({"research_status": "COMPUTED_EXPLORATORY", "window_rows": 1}), encoding="utf-8")
+        self.regime_path.write_text(json.dumps({"research_status": "COMPUTED_EXPLORATORY", "window_rows": 1, "regime_anchors": 1, "regimes_with_windows": 1, "anchor_coverage_complete": True}), encoding="utf-8")
         groups = {f"group_{i}": {"status": "AVAILABLE", "rows": 1} for i in range(8)}
         self.coverage_path.write_text(json.dumps({"p0_coverage": {
             "status": "P0_COMPLETE", "available_count": 8, "required_count": 8, "groups": groups
