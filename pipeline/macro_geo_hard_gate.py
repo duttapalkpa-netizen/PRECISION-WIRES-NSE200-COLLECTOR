@@ -213,8 +213,13 @@ def main():
             regime = json.loads(REGIME_REPORT.read_text(encoding="utf-8"))
             checks["historical_regime_study_status"] = regime.get("research_status", regime.get("status", "UNKNOWN"))
             checks["historical_regime_windows"] = int(regime.get("window_rows", 0) or 0)
+            checks["historical_regime_anchors"] = int(regime.get("regime_anchors", 0) or 0)
+            checks["historical_regimes_with_windows"] = int(regime.get("regimes_with_windows", 0) or 0)
+            checks["historical_regime_anchor_coverage_complete"] = regime.get("anchor_coverage_complete") is True
             if checks["historical_regime_windows"] < 1 or checks["historical_regime_study_status"] == "BLOCKED":
                 blockers.append("HISTORICAL_REGIME_STUDY_NOT_VALIDATED")
+            if regime.get("anchor_coverage_complete") is not True:
+                blockers.append("HISTORICAL_REGIME_ANCHOR_COVERAGE_INCOMPLETE")
         except Exception as exc:
             blockers.append(f"INVALID_HISTORICAL_REGIME_REPORT:{type(exc).__name__}:{exc}")
     else:
