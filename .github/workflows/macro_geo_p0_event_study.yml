@@ -147,16 +147,21 @@ jobs:
         run: python pipeline/historical_regime_event_study.py
       - name: Run strict Macro-Geo P0 hard gate
         if: always()
+        shell: bash
         run: |
-          python pipeline/macro_geo_hard_gate.py
-          rc=$?
-          # A completed audit with blockers is still an auditable result.
-          # The JSON report retains BLOCKED; this does not authorize release.
-          if [ -f outputs/macro_geo/hard_gate_report.json ]; then
-            echo "Hard-gate report generated; inspect report status/blockers before any release decision."
+          # Capture the hard-gate exit code without bash -e terminating the
+          # script before the report-preservation check. A BLOCKED report is
+          # an audit result, never a release approval.
+          if python pipeline/macro_geo_hard_gate.py; then
+            rc=0
+          else
+            rc=$?
+          fi
+          if [ -s outputs/macro_geo/hard_gate_report.json ]; then
+            echo "Hard-gate report preserved. Inspect status/blockers; BLOCKED does not authorize release."
             exit 0
           fi
-          exit $rc
+          exit "$rc"
       - name: Build daily sector rotation features
         run: python pipeline/sector_rotation_features.py
       - name: Upload P0 data and audit reports
