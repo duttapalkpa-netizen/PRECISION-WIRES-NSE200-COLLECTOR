@@ -31,6 +31,27 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(rows[0][1], 4.01)
         self.assertIn("fred.stlouisfed.org", rows[0][2])
 
+    def test_fred_collector_recovers_from_two_transient_timeouts(self):
+        response = FakeResponse(
+            "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+            b"observation_date,DGS10\\n2026-10-20,4.01\\n")
+        class FlakySession:
+            def __init__(self):
+                self.calls = 0
+            def get(self, *args, **kwargs):
+                self.calls += 1
+                self.last_timeout = kwargs.get("timeout")
+                if self.calls < 3:
+                    raise requests.Timeout("transient upstream timeout")
+                return response
+        session = FlakySession()
+        with patch("time.sleep", return_value=None):
+            rows = collector.fetch_fred(session, "DGS10", date(2026, 10, 20), date(2026, 10, 20))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(session.calls, 3)
+        self.assertEqual(session.last_timeout, (5, 12))
+        self.assertEqual(rows[0][1], 4.01)
+
     def test_dxy_collector_preserves_exchange_session_date_and_provider(self):
         from datetime import datetime, timezone, date
         class ChartResponse:
