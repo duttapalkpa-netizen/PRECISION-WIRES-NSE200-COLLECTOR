@@ -230,7 +230,10 @@ def collect(session=None, start=None, end=None):
                 raise ValueError("Brent proxy QA blocked: reference panel has no valid dates")
             qa = validate_brent_proxy(out, reference_dates.max())
             OUT.mkdir(parents=True, exist_ok=True)
-            target = OUT / "brent_crude.csv"
+            target = OUT / "brent_crude_futures_proxy.csv"
+            # Keep the third-party futures proxy separate from canonical brent_crude.csv.
+            # The repair layer may have populated that canonical path with official EIA Brent spot;
+            # a later Yahoo fallback must never overwrite it or create a mixed-provenance report.
             tmp = target.with_suffix(".csv.tmp")
             out.to_csv(tmp, index=False)
             os.replace(tmp, target)
