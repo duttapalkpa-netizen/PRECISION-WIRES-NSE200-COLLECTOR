@@ -33,6 +33,7 @@ SOURCES={
 "geopolitical_events":{"paths":["data/external/geopolitical_events.csv"],"required":["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE"]},
 "sector_fundamentals":{"paths":["data/external/sector_fundamentals.csv"],"required":["DATE","SECTOR","METRIC","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]},
 "global_commodity_prices":{"paths":["data/external/commodity_prices.csv"],"required":["DATE","COMMODITY","CLOSE","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC"]},
+"gold_prices_monthly":{"paths":["data/external/gold_prices_monthly.csv"],"required":["DATE","CLOSE","UNIT","FREQUENCY","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC","REVISION_POLICY"]},
 "market_microstructure":{"paths":["data/external/market_microstructure.csv"],"required":["DATE","SYMBOL","CIRCUIT_STATUS","SURVEILLANCE_STATUS","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]},
 "fx_carry_and_cross_currency":{"paths":["data/external/fx_carry.csv"],"required":["DATE","PAIR","VALUE","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC"]},
 "weather_agriculture":{"paths":["data/external/weather_agriculture.csv"],"required":["DATE","REGION","INDICATOR","VALUE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]},
