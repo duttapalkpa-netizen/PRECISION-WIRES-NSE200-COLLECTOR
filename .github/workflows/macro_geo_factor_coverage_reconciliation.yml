@@ -1,15 +1,9 @@
 name: Factor Coverage Reconciliation
 on:
   workflow_run:
-    workflows: ["Bounded Factor Source Repair (separate from P0)"]
+    workflows: ["Bounded Factor Source Repair (separate from P0; evidence-only)"]
     types: [completed]
     branches: [audit/run145-factor-registry-gap-audit]
-  push:
-    branches: [audit/run145-factor-registry-gap-audit]
-    paths:
-      - "pipeline/macro_geo_factor_coverage_reconcile.py"
-      - "pipeline/macro_geo_factor_coverage_audit.py"
-      - ".github/workflows/macro_geo_factor_coverage_reconciliation.yml"
 permissions:
   contents: read
   actions: read
@@ -18,41 +12,56 @@ concurrency:
   cancel-in-progress: false
 jobs:
   reconcile:
-    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'audit/run145-factor-registry-gap-audit' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Checkout audit branch
+      - name: Checkout the exact triggering commit
         uses: actions/checkout@v4
         with:
-          ref: audit/run145-factor-registry-gap-audit
+          ref: ${{ github.event.workflow_run.head_sha }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
-      - name: Download latest successful factor-source and P0 evidence
+      - name: Download evidence from the exact successful source-repair run
         env:
           GH_TOKEN: ${{ github.token }}
+          TRIGGER_RUN_ID: ${{ github.event.workflow_run.id }}
+          TRIGGER_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          TRIGGER_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           set -euo pipefail
-          P0_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_p0_event_study.yml/runs?branch=audit/run145-factor-registry-gap-audit&status=success&per_page=20" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
-          FACTOR_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_factor_source_repair.yml/runs?branch=audit/run145-factor-registry-gap-audit&status=success&per_page=20" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
-          test -n "$P0_RUN_ID" && test "$P0_RUN_ID" != "null"
-          test -n "$FACTOR_RUN_ID" && test "$FACTOR_RUN_ID" != "null"
-          mkdir -p /tmp/p0 /tmp/factor outputs/macro_geo data/external
-          gh run download "$P0_RUN_ID" -n macro-geo-p0-event-study -D /tmp/p0
-          gh run download "$FACTOR_RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor
-          find /tmp/p0 /tmp/factor -type f -print
-          cp -a /tmp/p0/. .
-          cp -a /tmp/factor/. .
+          test "$TRIGGER_BRANCH" = "audit/run145-factor-registry-gap-audit"
+          test -n "$TRIGGER_RUN_ID"
+          test -n "$TRIGGER_HEAD_SHA"
+          mkdir -p outputs/macro_geo data/external
+          gh run download "$TRIGGER_RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor-evidence
+          cp -a /tmp/factor-evidence/. .
           test -s outputs/macro_geo/source_coverage.json
           test -s outputs/macro_geo/factor_source_collection_report.json
-      - name: Reconcile observed factor-source evidence
+          test -s data/external/us_yields.csv || true
+          echo "Reconciliation input is bound to triggering run $TRIGGER_RUN_ID at $TRIGGER_HEAD_SHA"
+      - name: Reconcile one immutable evidence snapshot
         run: python pipeline/macro_geo_factor_coverage_reconcile.py
-      - name: Audit all registered factors
+      - name: Audit all registered factors from the reconciled snapshot
         run: python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Assert snapshot timestamp consistency
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("outputs/macro_geo")
+          coverage=json.loads((root/"source_coverage.json").read_text())
+          audit=json.loads((root/"factor_coverage_audit.json").read_text())
+          assert coverage.get("as_of_utc"), "source coverage missing as_of_utc"
+          assert audit.get("source_coverage_as_of") == coverage["as_of_utc"], "factor audit is not tied to source coverage snapshot"
+          assert audit.get("factor_groups") == 35, f"expected 35 factor groups, got {audit.get('factor_groups')}"
+          print({"status":audit.get("status"),"factor_groups":audit.get("factor_groups"),
+                 "source_coverage_as_of":coverage["as_of_utc"],"snapshot_consistency":"PASS"})
+          PY
       - name: Upload reconciled coverage and factor audit
         if: always()
         uses: actions/upload-artifact@v4
