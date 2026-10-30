@@ -314,8 +314,16 @@ class FactorSourceCollectorTests(unittest.TestCase):
             def get(self, url, **kwargs):
                 self.calls += 1
                 return FakeResponse(url, html if self.calls == 1 else workbook)
-        monthly = pd.DataFrame({"Period": ["2026M08", "2026M09", "2026M10"],
-                                "Gold ($/troy oz)": [3400.0, 3450.0, 3500.0]})
+        monthly = pd.DataFrame([
+            ["UPDATED ON OCTOBER 02, 2026", None, None],
+            ["Commodity Prices", None, None],
+            [None, None, None],
+            ["Period", "Gold ($/troy oz)", "Crude oil ($/bbl)"],
+            ["Units", "USD/troy oz", "USD/bbl"],
+            ["2026M08", 3400.0, 70.0],
+            ["2026M09", 3450.0, 72.0],
+            ["2026M10", 3500.0, 74.0],
+        ])
         with tempfile.TemporaryDirectory() as tmp:
             with patch.object(collector, "OUT", Path(tmp)), patch.object(pd, "read_excel", return_value=monthly) as read:
                 result = collector.fetch_world_bank_monthly_gold(
@@ -328,7 +336,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertTrue(saved["FREQUENCY"].eq("MONTHLY").all())
         self.assertTrue(saved["SOURCE"].str.contains("World Bank").all())
         self.assertEqual(read.call_args.kwargs["sheet_name"], "Monthly Prices")
-        self.assertEqual(read.call_args.kwargs["header"], 3)
+        self.assertEqual(read.call_args.kwargs["header"], null)
 
 
 
