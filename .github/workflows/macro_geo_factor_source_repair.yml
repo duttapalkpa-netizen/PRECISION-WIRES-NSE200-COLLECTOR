@@ -44,6 +44,14 @@ jobs:
           elif [ -f /tmp/p0-evidence/benchmark_indices.csv ]; then
             cp /tmp/p0-evidence/benchmark_indices.csv data/external/benchmark_indices.csv
           fi
+          # Preserve the exact P0 source-coverage baseline for reconciliation.
+          if [ -f /tmp/p0-evidence/outputs/macro_geo/source_coverage.json ]; then
+            mkdir -p outputs/macro_geo
+            cp /tmp/p0-evidence/outputs/macro_geo/source_coverage.json outputs/macro_geo/source_coverage.json
+          else
+            echo "Missing source_coverage.json in P0 artifact; refusing ungrounded reconciliation"
+            exit 1
+          fi
           python - <<'PY'
           from pathlib import Path
           import pandas as pd
@@ -62,6 +70,11 @@ jobs:
       - name: Run bounded factor source collector (maximum 7 minutes)
         timeout-minutes: 7
         run: python pipeline/macro_geo_factor_source_collectors.py
+      - name: Reconcile observed factor-source evidence against P0 baseline
+        if: success()
+        run: |
+          python pipeline/macro_geo_factor_coverage_reconcile.py
+          python pipeline/macro_geo_factor_coverage_audit.py
       - name: Upload factor-source evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -73,4 +86,7 @@ jobs:
             data/external/dxy.csv
             data/external/global_policy_events.csv
             outputs/macro_geo/factor_source_collection_report.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.json
+            outputs/macro_geo/factor_coverage_audit.csv
           if-no-files-found: warn
