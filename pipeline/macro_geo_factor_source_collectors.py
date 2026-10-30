@@ -288,6 +288,10 @@ def fetch_world_bank_monthly_gold(session, start, end):
         if not 1 <= month <= 12:
             continue
         period = datetime(year, month, 1).date()
+        period_end = (pd.Timestamp(period) + pd.offsets.MonthEnd(0)).date()
+        # Do not accept a partial current-month average as a completed monthly observation.
+        if period_end > end:
+            continue
         value = pd.to_numeric(pd.Series([row.get("GOLD")]), errors="coerce").iloc[0]
         if pd.notna(value) and start <= period <= end:
             rows.append({"DATE": period.isoformat(), "CLOSE": float(value),
