@@ -1,5 +1,11 @@
 name: Factor Registry Same-Snapshot Tests
 on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - "qa/test_factor_registry_same_snapshot.py"
+      - ".github/workflows/factor_registry_same_snapshot_tests.yml"
   pull_request:
     branches: [audit/run145-factor-registry-gap-audit]
     paths:
