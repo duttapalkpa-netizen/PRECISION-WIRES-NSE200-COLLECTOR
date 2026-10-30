@@ -336,7 +336,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertTrue(saved["FREQUENCY"].eq("MONTHLY").all())
         self.assertTrue(saved["SOURCE"].str.contains("World Bank").all())
         self.assertEqual(read.call_args.kwargs["sheet_name"], "Monthly Prices")
-        self.assertEqual(read.call_args.kwargs["header"], null)
+        self.assertIsNone(read.call_args.kwargs["header"])
 
 
 
