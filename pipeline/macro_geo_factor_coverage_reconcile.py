@@ -82,19 +82,31 @@ def main():
   if existing is None:
    existing={"source":canonical}; sources.append(existing); by_name[canonical]=existing
   existing.update(row)
- # Policy feed publication timestamps are not event dates. Explicitly record
- # the independent event-date validation as pending rather than promoting rows.
- policy_item=report.get("groups",{}).get("global_policy_events",{})
+ # Re-check claimed validations against exact reviewed official URLs and dates.
  policy_path=ROOT/"data/external/global_policy_events.csv"
  policy_frame=pd.read_csv(policy_path) if policy_path.exists() else pd.DataFrame()
- policy_date_qa={"status":"PENDING_INDEPENDENT_EVENT_DATE_VALIDATION",
-                 "observed_rows":int(len(policy_frame)),
-                 "rows_eligible_for_event_study":0,
-                 "reason":"Publication date proxy is not accepted as the actual policy decision/event date"}
- if not policy_frame.empty and "EVENT_DATE_BASIS" in policy_frame.columns:
-  if policy_frame["EVENT_DATE_BASIS"].astype(str).eq("INDEPENDENTLY_VALIDATED_EVENT_DATE").all():
-   policy_date_qa.update({"status":"VALIDATED","rows_eligible_for_event_study":int(len(policy_frame)),
-                          "reason":"Every row explicitly carries independently validated event-date basis"})
+ policy_checks=[]
+ if not policy_frame.empty:
+  from pipeline.macro_geo_factor_source_collectors import validate_official_policy_event_date
+  for _, row in policy_frame.iterrows():
+   reviewed=validate_official_policy_event_date(row.get("SOURCE_URL",""))
+   valid=bool(reviewed) and str(row.get("EVENT_DATE_BASIS",""))=="INDEPENDENTLY_VALIDATED_EVENT_DATE"
+   valid=valid and str(row.get("EVENT_DATE",""))==str(reviewed.get("event_date") if reviewed else "")
+   valid=valid and str(row.get("EVENT_TYPE",""))==str(reviewed.get("event_type") if reviewed else "")
+   policy_checks.append({"source_url":str(row.get("SOURCE_URL","")),
+                         "event_date":str(row.get("EVENT_DATE","")),
+                         "event_type":str(row.get("EVENT_TYPE","")),
+                         "validated":bool(valid)})
+ eligible=sum(1 for item in policy_checks if item["validated"])
+ observed=int(len(policy_frame))
+ policy_date_qa={
+  "status":"VALIDATED" if observed>0 and eligible==observed else ("PARTIALLY_VALIDATED" if eligible>0 else "PENDING_INDEPENDENT_EVENT_DATE_VALIDATION"),
+  "observed_rows":observed,
+  "rows_eligible_for_event_study":eligible,
+  "rows_not_eligible":observed-eligible,
+  "checks":policy_checks,
+  "reason":"Only exact official URLs with independently reviewed event date and event type are eligible; publication-date proxies remain excluded."
+ }
  coverage["policy_event_date_qa"]=policy_date_qa
  coverage["factor_source_repair_reconciled_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
  coverage["factor_source_repair_evidence"]=evidence
