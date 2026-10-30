@@ -14,6 +14,39 @@ MAP={
  "global_commodity_prices":("commodity_prices.csv","global_commodity_prices"),
  "global_policy_events":("global_policy_events.csv","global_policy_events"),
 }
+def validate_policy_event_frame(policy_frame):
+ """Validate each policy row against reviewed official URL/date/type and schema."""
+ import sys
+ sys.path.insert(0, str(ROOT.resolve()))
+ from pipeline.macro_geo_factor_source_collectors import validate_official_policy_event_date
+ required={"EVENT_DATE","PUBLISHED_AT","COUNTRY","EVENT_TYPE","SOURCE_URL","SOURCE","TITLE","FEED_URL","EVENT_DATE_BASIS","OBSERVED_AT_UTC"}
+ cols={str(x).strip().upper() for x in policy_frame.columns}
+ checks=[]
+ schema_ok=required.issubset(cols) and not policy_frame.empty
+ if schema_ok:
+  for _, row in policy_frame.iterrows():
+   reviewed=validate_official_policy_event_date(row.get("SOURCE_URL",""))
+   published=pd.to_datetime(row.get("PUBLISHED_AT"),errors="coerce",utc=True)
+   observed=pd.to_datetime(row.get("OBSERVED_AT_UTC"),errors="coerce",utc=True)
+   event_date=pd.to_datetime(row.get("EVENT_DATE"),errors="coerce")
+   valid=bool(reviewed) and str(row.get("EVENT_DATE_BASIS",""))=="INDEPENDENTLY_VALIDATED_EVENT_DATE"
+   valid=valid and str(row.get("EVENT_DATE",""))==str(reviewed.get("event_date") if reviewed else "")
+   valid=valid and str(row.get("EVENT_TYPE",""))==str(reviewed.get("event_type") if reviewed else "")
+   valid=valid and pd.notna(published) and pd.notna(observed) and pd.notna(event_date)
+   valid=valid and str(row.get("SOURCE","")).strip() in {"FEDERAL_RESERVE","EUROPEAN_CENTRAL_BANK"}
+   checks.append({"source_url":str(row.get("SOURCE_URL","")),
+                  "event_date":str(row.get("EVENT_DATE","")),
+                  "event_type":str(row.get("EVENT_TYPE","")),
+                  "validated":bool(valid)})
+ observed_rows=int(len(policy_frame))
+ eligible=sum(1 for item in checks if item["validated"])
+ return {"status":"VALIDATED" if schema_ok and observed_rows>0 and eligible==observed_rows else ("PARTIALLY_VALIDATED" if eligible>0 else "PENDING_INDEPENDENT_EVENT_DATE_VALIDATION"),
+         "observed_rows":observed_rows,"rows_eligible_for_event_study":eligible,
+         "rows_not_eligible":observed_rows-eligible,"checks":checks,
+         "schema_valid":bool(schema_ok),
+         "reason":"Only rows with complete provenance/timestamps and exact reviewed official URL, event date and event type are eligible; publication-date proxies remain excluded."}
+
+
 def main():
  if not REPORT.exists() or not COVERAGE.exists():
   raise SystemExit("Missing factor-source report or baseline source_coverage.json; refusing to invent coverage")
@@ -82,34 +115,27 @@ def main():
   if existing is None:
    existing={"source":canonical}; sources.append(existing); by_name[canonical]=existing
   existing.update(row)
- # Re-check claimed validations against exact reviewed official URLs and dates.
+ # Independently validate policy events and promote only complete, fully checked rows.
  policy_path=ROOT/"data/external/global_policy_events.csv"
  policy_frame=pd.read_csv(policy_path) if policy_path.exists() else pd.DataFrame()
- policy_checks=[]
- if not policy_frame.empty:
-  import sys
-  sys.path.insert(0, str(ROOT.resolve()))
-  from pipeline.macro_geo_factor_source_collectors import validate_official_policy_event_date
-  for _, row in policy_frame.iterrows():
-   reviewed=validate_official_policy_event_date(row.get("SOURCE_URL",""))
-   valid=bool(reviewed) and str(row.get("EVENT_DATE_BASIS",""))=="INDEPENDENTLY_VALIDATED_EVENT_DATE"
-   valid=valid and str(row.get("EVENT_DATE",""))==str(reviewed.get("event_date") if reviewed else "")
-   valid=valid and str(row.get("EVENT_TYPE",""))==str(reviewed.get("event_type") if reviewed else "")
-   policy_checks.append({"source_url":str(row.get("SOURCE_URL","")),
-                         "event_date":str(row.get("EVENT_DATE","")),
-                         "event_type":str(row.get("EVENT_TYPE","")),
-                         "validated":bool(valid)})
- eligible=sum(1 for item in policy_checks if item["validated"])
- observed=int(len(policy_frame))
- policy_date_qa={
-  "status":"VALIDATED" if observed>0 and eligible==observed else ("PARTIALLY_VALIDATED" if eligible>0 else "PENDING_INDEPENDENT_EVENT_DATE_VALIDATION"),
-  "observed_rows":observed,
-  "rows_eligible_for_event_study":eligible,
-  "rows_not_eligible":observed-eligible,
-  "checks":policy_checks,
-  "reason":"Only exact official URLs with independently reviewed event date and event type are eligible; publication-date proxies remain excluded."
- }
+ policy_date_qa=validate_policy_event_frame(policy_frame)
  coverage["policy_event_date_qa"]=policy_date_qa
+ policy_valid=(policy_date_qa["status"]=="VALIDATED" and policy_date_qa["rows_eligible_for_event_study"]>0)
+ policy_group={"source":"global_policy_events",
+               "status":"AVAILABLE" if policy_valid else ("DATA_QUALITY_WARN" if policy_date_qa["observed_rows"] else "BLOCKED"),
+               "rows":policy_date_qa["rows_eligible_for_event_study"] if policy_valid else 0,
+               "observed_rows":policy_date_qa["observed_rows"],
+               "date_min":str(policy_frame["EVENT_DATE"].min()) if not policy_frame.empty and "EVENT_DATE" in policy_frame else None,
+               "date_max":str(policy_frame["EVENT_DATE"].max()) if not policy_frame.empty and "EVENT_DATE" in policy_frame else None,
+               "selected_path":str(policy_path) if policy_valid else "",
+               "evidence_path":str(policy_path) if not policy_frame.empty else None,
+               "provider":"Official Federal Reserve and ECB pages, independently URL/date/type validated",
+               "reason":policy_date_qa["reason"]}
+ existing=by_name.get("global_policy_events")
+ if existing is None:
+  existing={"source":"global_policy_events"}; sources.append(existing); by_name["global_policy_events"]=existing
+ existing.update(policy_group)
+ evidence["global_policy_events"]={**policy_group,"provider":"Official Federal Reserve and ECB RSS feeds"}
  coverage["factor_source_repair_reconciled_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
  coverage["factor_source_repair_evidence"]=evidence
  COVERAGE.write_text(json.dumps(coverage,indent=2))
