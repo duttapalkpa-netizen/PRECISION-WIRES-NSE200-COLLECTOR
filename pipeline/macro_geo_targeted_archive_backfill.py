@@ -196,7 +196,12 @@ def main():
             # Never let a modern panel observation stand in for an old regime horizon.
             # H+1/H+5/H+20 must fall inside the anchor's bounded forward window;
             # otherwise the series remains explicitly incomplete.
-            before=g[g["_D"]<anchor]
+            # Baseline must also be local to the event. An old panel row (for
+            # example, 2015-08-27 used as the baseline for a 2024 regime) is not
+            # a valid pre-event close. Keep the same bounded 40-calendar-day
+            # contract on both sides of the anchor; missing local history stays
+            # UNKNOWN/INCOMPLETE rather than borrowing a distant observation.
+            before=g[(g["_D"]<anchor) & (g["_D"]>=anchor-pd.Timedelta(days=40))]
             after=g[(g["_D"]>=anchor) & (g["_D"]<=anchor+pd.Timedelta(days=40))]
             h={}
             h["baseline"]=None if before.empty else {"date":before.iloc[-1]["_D"].date().isoformat(),"close":float(before.iloc[-1]["CLOSE"])}
