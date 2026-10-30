@@ -39,9 +39,10 @@ def main():
    required={"DATE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"}
    if not required.issubset({str(c).strip().upper() for c in frame.columns}) or frame.empty:
     valid=False
-  evidence[group]={"status":"AVAILABLE" if valid else ("DATA_QUALITY_WARN" if rows else "BLOCKED"),
+  evidence[group]={"source":source_name,
+    "status":"AVAILABLE" if valid else ("DATA_QUALITY_WARN" if rows else "BLOCKED"),
     "rows":rows if valid else 0,"observed_rows":rows,"date_min":item.get("date_min"),"date_max":item.get("date_max"),
-    "source":item.get("source"),"source_series":item.get("observed_source_series"),
+    "provider":item.get("source"),"source_series":item.get("observed_source_series"),
     "freshness_age_calendar_days":item.get("freshness_age_calendar_days"),
     "evidence_path":str(src) if src.exists() else None,
     "reason":"Complete collector domain QA passed" if valid else "Not counted as available: source failure, incomplete domain QA, or missing evidence"}
