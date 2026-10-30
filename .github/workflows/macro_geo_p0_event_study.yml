@@ -16,6 +16,7 @@ on:
       - "qa/test_macro_geo_corporate_events_bridge.py"
       - "qa/test_macro_geo_repair_p0.py"
       - "qa/test_macro_geo_factor_source_collectors.py"
+      - "qa/test_macro_geo_nsdl_flows.py"
       - "pipeline/macro_geo_source_coverage.py"
       - "pipeline/macro_geo_crude_oil_collector.py"
       - "pipeline/macro_geo_finalize_manifest.py"
@@ -76,7 +77,7 @@ jobs:
           restore-keys: |
             macro-geo-nse200-${{ github.ref_name }}-
       - name: Test event-study timestamp and data-quality logic
-        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest qa.test_macro_geo_factor_source_collectors -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest qa.test_macro_geo_factor_source_collectors qa.test_macro_geo_nsdl_flows -v
       - name: Validate cached canonical panel before reuse
         id: panel_cache_check
         run: |
