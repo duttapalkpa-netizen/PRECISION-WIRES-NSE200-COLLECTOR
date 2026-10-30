@@ -87,6 +87,8 @@ def main():
  policy_frame=pd.read_csv(policy_path) if policy_path.exists() else pd.DataFrame()
  policy_checks=[]
  if not policy_frame.empty:
+  import sys
+  sys.path.insert(0, str(ROOT.resolve()))
   from pipeline.macro_geo_factor_source_collectors import validate_official_policy_event_date
   for _, row in policy_frame.iterrows():
    reviewed=validate_official_policy_event_date(row.get("SOURCE_URL",""))
