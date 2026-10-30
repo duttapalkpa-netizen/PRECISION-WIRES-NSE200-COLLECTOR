@@ -193,15 +193,18 @@ def main():
             g=g[g["_D"].notna()].sort_values("_D")
             if pd.isna(anchor):
                 item["horizons"][series]={"status":"UNKNOWN_INVALID_ANCHOR"}; continue
+            # Never let a modern panel observation stand in for an old regime horizon.
+            # H+1/H+5/H+20 must fall inside the anchor's bounded forward window;
+            # otherwise the series remains explicitly incomplete.
             before=g[g["_D"]<anchor]
-            after=g[g["_D"]>=anchor]
+            after=g[(g["_D"]>=anchor) & (g["_D"]<=anchor+pd.Timedelta(days=40))]
             h={}
             h["baseline"]=None if before.empty else {"date":before.iloc[-1]["_D"].date().isoformat(),"close":float(before.iloc[-1]["CLOSE"])}
             for horizon in (1,5,20):
                 if len(after)>=horizon:
                     z=after.iloc[horizon-1]
-                    h[f"H+{horizon}"]={"date":z["_D"].date().isoformat(),"close":float(z["CLOSE"])}
-                else: h[f"H+{horizon}"]=None
+                    h["H+%s"%horizon]={"date":z["_D"].date().isoformat(),"close":float(z["CLOSE"])}
+                else: h["H+%s"%horizon]=None
             h["status"]="COMPLETE" if h["baseline"] and all(h[f"H+{x}"] for x in (1,5,20)) else "INCOMPLETE"
             item["horizons"][series]=h
         item["complete_series_count"]=sum(v.get("status")=="COMPLETE" for v in item["horizons"].values())
