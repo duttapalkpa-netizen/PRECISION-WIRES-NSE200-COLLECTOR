@@ -28,6 +28,14 @@ class SameSnapshotTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,"No valid UTC evidence timestamp"):
                 latest_evidence_timestamp({}, {}, root=Path(tmp))
 
+    def test_policy_event_row_validation_cannot_override_incomplete_collector_domain_qa(self):
+        from pipeline.macro_geo_factor_coverage_reconcile import policy_events_promotable
+        row_qa={"status":"VALIDATED","rows_eligible_for_event_study":4}
+        self.assertFalse(policy_events_promotable(row_qa,"COLLECTED_NEEDS_DOMAIN_QA"))
+        self.assertFalse(policy_events_promotable(row_qa,"AVAILABLE_WITH_SOURCE_FAILURES"))
+        self.assertFalse(policy_events_promotable(row_qa,"BLOCKED"))
+        self.assertTrue(policy_events_promotable(row_qa,"COLLECTED_AND_DOMAIN_QA_PASSED"))
+
     def test_workflow_uses_exact_triggering_run_not_latest_independent_runs(self):
         workflow=Path(".github/workflows/macro_geo_factor_coverage_reconciliation.yml").read_text()
         self.assertIn("github.event.workflow_run.id",workflow)
