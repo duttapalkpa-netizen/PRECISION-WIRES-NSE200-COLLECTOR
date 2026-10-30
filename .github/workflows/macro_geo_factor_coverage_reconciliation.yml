@@ -1,5 +1,11 @@
 name: Factor Coverage Reconciliation
 on:
+  workflow_dispatch:
+    inputs:
+      factor_source_run_id:
+        description: "Exact successful Bounded Factor Source Repair run ID"
+        required: true
+        type: string
   workflow_run:
     workflows: ["Bounded Factor Source Repair (separate from P0; evidence-only)"]
     types: [completed]
@@ -12,14 +18,14 @@ concurrency:
   cancel-in-progress: false
 jobs:
   reconcile:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'audit/run145-factor-registry-gap-audit' }}
+    if: ${{ (github.event_name == 'workflow_dispatch') || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'audit/run145-factor-registry-gap-audit') }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Checkout the exact triggering commit
+      - name: Checkout reconciliation code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_sha }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -28,23 +34,32 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Run bounded same-snapshot regression tests
         run: python -m unittest qa.test_factor_registry_same_snapshot -v
-      - name: Download evidence from the exact successful source-repair run
+      - name: Validate and download the exact successful source-repair run
         env:
           GH_TOKEN: ${{ github.token }}
-          TRIGGER_RUN_ID: ${{ github.event.workflow_run.id }}
-          TRIGGER_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          TRIGGER_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          GH_REPO: ${{ github.repository }}
+          DISPATCH_RUN_ID: ${{ inputs.factor_source_run_id }}
+          EVENT_RUN_ID: ${{ github.event.workflow_run.id }}
+          EVENT_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          EVENT_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           set -euo pipefail
-          test "$TRIGGER_BRANCH" = "audit/run145-factor-registry-gap-audit"
-          test -n "$TRIGGER_RUN_ID"
-          test -n "$TRIGGER_HEAD_SHA"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            RUN_ID="$DISPATCH_RUN_ID"
+          else
+            test "$EVENT_BRANCH" = "audit/run145-factor-registry-gap-audit"
+            test "$EVENT_CONCLUSION" = "success"
+            RUN_ID="$EVENT_RUN_ID"
+          fi
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          META=$(gh api "repos/$GH_REPO/actions/runs/$RUN_ID")
+          echo "$META" | python -c 'import json,sys; d=json.load(sys.stdin); assert d.get("conclusion")=="success", "source-repair run not successful"; assert d.get("path")==".github/workflows/macro_geo_factor_source_repair.yml", "wrong workflow"; assert d.get("head_branch")=="audit/run145-factor-registry-gap-audit", "wrong source branch"; print({"run_id":d["id"],"head_sha":d["head_sha"],"branch":d["head_branch"],"conclusion":d["conclusion"]})'
           mkdir -p outputs/macro_geo data/external
-          gh run download "$TRIGGER_RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor-evidence
+          gh run download "$RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor-evidence
           cp -a /tmp/factor-evidence/. .
           test -s outputs/macro_geo/source_coverage.json
           test -s outputs/macro_geo/factor_source_collection_report.json
-          echo "Reconciliation input is bound to triggering run $TRIGGER_RUN_ID at $TRIGGER_HEAD_SHA"
+          echo "Reconciliation input is bound to exact successful source-repair run $RUN_ID"
       - name: Reconcile one immutable evidence snapshot
         run: python pipeline/macro_geo_factor_coverage_reconcile.py
       - name: Audit all registered factors from the reconciled snapshot
