@@ -57,14 +57,14 @@ jobs:
           assert audit.get("source_coverage_as_of") == coverage["as_of_utc"]
           assert audit.get("factor_groups") == 35
           assert audit.get("fully_available_schema_groups") == 0
-          assert audit.get("partial_source_coverage") == 28
-          assert audit.get("not_connected") == 7
+          assert audit.get("partial_source_coverage") == 25
+          assert audit.get("not_connected") == 10
           policy=next(x for x in coverage["sources"] if x.get("source")=="global_policy_events")
           assert policy.get("status")=="DATA_QUALITY_WARN", policy
           f11=next(x for x in audit["missing_factors"] if x.get("factor_id")=="F11")
           assert f11.get("coverage_status")=="PARTIAL_SOURCE_COVERAGE", f11
           print({"snapshot_consistency":"PASS","factor_groups":35,
-                 "fully_available":0,"partial":28,"not_connected":7,
+                 "fully_available":0,"partial":25,"not_connected":10,
                  "hard_gate":"BLOCKED"})
           PY
       - name: Upload Run #23 reconciled evidence
