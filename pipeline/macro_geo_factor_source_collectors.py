@@ -56,15 +56,22 @@ OFFICIAL_POLICY_EVENT_DATES = {
 
 
 def validate_official_policy_event_date(article_url):
-    """Return reviewed event-date evidence for an exact official page URL only."""
-    item = OFFICIAL_POLICY_EVENT_DATES.get(str(article_url).strip())
+    """Return reviewed evidence for an exact official page after safe URL normalization."""
+    from urllib.parse import urlsplit, urlunsplit
+    raw = str(article_url).strip()
+    parts = urlsplit(raw)
+    # Normalize repeated path separators only; scheme, host, path and query
+    # remain constrained by the exact reviewed allowlist below.
+    normalized_path = "/" + "/".join(part for part in parts.path.split("/") if part)
+    canonical = urlunsplit((parts.scheme.lower(), parts.netloc.lower(), normalized_path, parts.query, ""))
+    item = OFFICIAL_POLICY_EVENT_DATES.get(canonical)
     if not item:
         return None
     return {
         "event_date": item["event_date"],
         "event_type": item["event_type"],
         "validation_method": "EXACT_MATCH_TO_INDEPENDENTLY_REVIEWED_OFFICIAL_EVENT_PAGE",
-        "validation_source_url": str(article_url).strip(),
+        "validation_source_url": canonical,
     }
 
 
