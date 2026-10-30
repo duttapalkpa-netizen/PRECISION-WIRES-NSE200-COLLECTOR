@@ -310,7 +310,7 @@ def fetch_world_bank_monthly_gold(session, start, end):
         if period_end > end:
             continue
         value = pd.to_numeric(pd.Series([row.iloc[gold_idx]]), errors="coerce").iloc[0]
-        if pd.notna(value) and start <= period <= end:
+        if pd.notna(value) and period_end >= start and period <= end:
             rows.append({"DATE": period.isoformat(), "CLOSE": float(value),
                          "UNIT": "USD_PER_TROY_OUNCE", "FREQUENCY": "MONTHLY",
                          "SOURCE": "World Bank Prospects Group Pink Sheet",
