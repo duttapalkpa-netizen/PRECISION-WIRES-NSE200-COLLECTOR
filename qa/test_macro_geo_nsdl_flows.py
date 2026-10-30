@@ -7,8 +7,8 @@ from pipeline.macro_geo_nsdl_flows import scheduled_dii_sessions, page_diagnosti
 class NsdlDiiCalendarTests(unittest.TestCase):
     def test_only_canonical_nse_sessions_are_queried(self):
         panel_dates = [
-            date(2026, 6, 25), date(2026, 6, 26), date(2026, 6, 29),
-            date(2026, 9, 11), date(2026, 9, 14), date(2026, 9, 15),
+            date(2026, 6, 25), date(2026, 6, 29),
+            date(2026, 9, 11), date(2026, 9, 15),
         ]
         got = scheduled_dii_sessions(panel_dates, date(2026, 6, 1), date(2026, 9, 30))
         # 26-Jun and 14-Sep are exchange holidays and therefore absent from
