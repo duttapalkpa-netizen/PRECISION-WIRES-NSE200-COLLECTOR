@@ -272,10 +272,14 @@ def fetch_world_bank_monthly_gold(session, start, end):
         raise ValueError("World Bank landing page did not expose an approved monthly Pink Sheet workbook URL")
     response = session.get(url, timeout=(8, 45))
     response.raise_for_status()
-    frame = pd.read_excel(BytesIO(response.content), sheet_name="Monthly Prices", skiprows=4)
+    # World Bank workbook uses a human-readable commodity heading such as
+    # "Gold ($/troy oz)" rather than a literal GOLD column identifier.
+    frame = pd.read_excel(BytesIO(response.content), sheet_name="Monthly Prices", header=3)
     frame.columns = [str(col).strip().upper() for col in frame.columns]
-    if frame.empty or "GOLD" not in frame.columns:
-        raise ValueError(f"World Bank monthly workbook schema mismatch: {list(frame.columns)[:20]}")
+    gold_col = next((col for col in frame.columns
+                     if col == "GOLD" or col.startswith("GOLD ") or col.startswith("GOLD(")), None)
+    if frame.empty or gold_col is None:
+        raise ValueError(f"World Bank monthly workbook schema mismatch: {list(frame.columns)[:24]}")
     period_col = frame.columns[0]
     rows = []
     observed = datetime.now(timezone.utc).isoformat()
@@ -292,7 +296,7 @@ def fetch_world_bank_monthly_gold(session, start, end):
         # Do not accept a partial current-month average as a completed monthly observation.
         if period_end > end:
             continue
-        value = pd.to_numeric(pd.Series([row.get("GOLD")]), errors="coerce").iloc[0]
+        value = pd.to_numeric(pd.Series([row.get(gold_col)]), errors="coerce").iloc[0]
         if pd.notna(value) and start <= period <= end:
             rows.append({"DATE": period.isoformat(), "CLOSE": float(value),
                          "UNIT": "USD_PER_TROY_OUNCE", "FREQUENCY": "MONTHLY",
