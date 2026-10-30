@@ -97,14 +97,22 @@ def scheduled_dii_sessions(panel_dates,start,end):
 
 def page_diagnostic(page):
     """Capture bounded schema evidence without storing full HTML responses."""
-    plain=re.sub(r"<[^>]+>"," ",str(page or ""))
+    raw=str(page or "")
+    plain=re.sub(r"<[^>]+>"," ",raw)
     plain=re.sub(r"\s+"," ",html.unescape(plain)).strip()
-    try:
-        headers=[]
-        for table in table_records(page)[:8]:
-            headers.append([str(x)[:120] for x in list(table.columns)[:12]])
-    except Exception as exc:
-        headers=[{"table_parse_error":f"{type(exc).__name__}: {str(exc)[:160]}"}]
+    headers=[]
+    for table in re.findall(r"<table\b.*?</table>",raw,re.I|re.S)[:8]:
+        first_row=re.search(r"<tr\b.*?</tr>",table,re.I|re.S)
+        if not first_row:
+            continue
+        cells=re.findall(r"<(?:th|td)\b[^>]*>(.*?)</(?:th|td)>",first_row.group(0),re.I|re.S)
+        labels=[]
+        for cell in cells[:12]:
+            label=re.sub(r"<[^>]+>"," ",cell)
+            label=re.sub(r"\s+"," ",html.unescape(label)).strip()
+            labels.append(label[:120])
+        if labels:
+            headers.append(labels)
     return {
         "explicit_no_data_found":bool(re.search(r"\bno\s+data\s+found\b",plain,re.I)),
         "page_text_preview":plain[:320],
