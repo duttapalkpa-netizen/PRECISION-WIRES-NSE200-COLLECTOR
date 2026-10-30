@@ -304,7 +304,7 @@ def fetch_world_bank_monthly_gold(session, start, end):
     if dates.isna().any() or values.isna().any() or (values <= 0).any() or out["SOURCE_URL"].eq("").any():
         raise ValueError("World Bank monthly gold domain QA failed: invalid date/value/provenance")
     last_period_end = dates.max() + pd.offsets.MonthEnd(0)
-    freshness_days = int((pd.Timestamp(end) - last_period_end.date()).days)
+    freshness_days = int((pd.Timestamp(end) - last_period_end).days)
     if freshness_days < 0 or freshness_days > 45:
         raise ValueError(f"World Bank monthly gold freshness failed: {freshness_days} days since month-end")
     target = OUT / "gold_prices_monthly.csv"
