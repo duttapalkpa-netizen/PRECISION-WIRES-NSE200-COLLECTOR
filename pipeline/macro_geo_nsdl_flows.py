@@ -98,7 +98,7 @@ def scheduled_dii_sessions(panel_dates,start,end):
 def page_diagnostic(page):
     """Capture bounded schema evidence without storing full HTML responses."""
     plain=re.sub(r"<[^>]+>"," ",str(page or ""))
-    plain=re.sub(r"\\s+"," ",html.unescape(plain)).strip()
+    plain=re.sub(r"\s+"," ",html.unescape(plain)).strip()
     try:
         headers=[]
         for table in table_records(page)[:8]:
@@ -106,7 +106,7 @@ def page_diagnostic(page):
     except Exception as exc:
         headers=[{"table_parse_error":f"{type(exc).__name__}: {str(exc)[:160]}"}]
     return {
-        "explicit_no_data_found":bool(re.search(r"\\bno\\s+data\\s+found\\b",plain,re.I)),
+        "explicit_no_data_found":bool(re.search(r"\bno\s+data\s+found\b",plain,re.I)),
         "page_text_preview":plain[:320],
         "table_headers":headers,
     }
