@@ -87,6 +87,7 @@ jobs:
             data/external/commodity_prices.csv
             data/external/dxy.csv
             data/external/global_policy_events.csv
+            data/external/gold_prices_monthly.csv
             outputs/macro_geo/factor_source_collection_report.json
             outputs/macro_geo/source_coverage.json
             outputs/macro_geo/factor_coverage_audit.json
