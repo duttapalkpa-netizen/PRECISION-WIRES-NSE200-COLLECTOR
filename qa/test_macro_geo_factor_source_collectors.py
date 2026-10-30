@@ -336,6 +336,17 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertTrue(saved["FREQUENCY"].eq("MONTHLY").all())
         self.assertTrue(saved["SOURCE"].str.contains("World Bank").all())
         self.assertEqual(read.call_args.kwargs["sheet_name"], "Monthly Prices")
+
+        # The collection window starts mid-month: retain the complete
+        # monthly observation whose period overlaps the window.
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(collector, "OUT", Path(tmp)), patch.object(pd, "read_excel", return_value=monthly):
+                overlap = collector.fetch_world_bank_monthly_gold(
+                    Session(), date(2026, 9, 12), date(2026, 10, 29))
+                overlap_saved = pd.read_csv(Path(tmp) / "gold_prices_monthly.csv")
+        self.assertEqual(overlap["status"], "COLLECTED_MONTHLY_DOMAIN_QA_PASSED")
+        self.assertEqual(list(overlap_saved["DATE"]), ["2026-09-01"])
+
         self.assertIsNone(read.call_args.kwargs["header"])
 
 
