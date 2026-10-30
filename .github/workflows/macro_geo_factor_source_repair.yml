@@ -1,4 +1,4 @@
-name: Bounded Factor Source Repair (separate from P0)
+name: Bounded Factor Source Repair (separate from P0; evidence-only)
 on:
   workflow_dispatch:
   push:
