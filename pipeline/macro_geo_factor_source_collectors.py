@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
-from io import StringIO
+from io import StringIO, BytesIO
 from pathlib import Path
 import json
 import os
@@ -640,7 +640,7 @@ def main():
                 "notes": "Monthly gold is separate from daily LBMA; missing data remains UNKNOWN."}
     except Exception as exc:
         report["window"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:240]}"}
-        for name in ("us_yields", "global_commodity_prices", "global_policy_events", "dxy"):
+        for name in ("us_yields", "global_commodity_prices", "global_policy_events", "dxy", "gold_prices_monthly"):
             report["groups"][name] = {"status": "BLOCKED", "rows": 0,
                                       "notes": "No rows written; missing data remains UNKNOWN."}
     REPORT.parent.mkdir(parents=True, exist_ok=True)
