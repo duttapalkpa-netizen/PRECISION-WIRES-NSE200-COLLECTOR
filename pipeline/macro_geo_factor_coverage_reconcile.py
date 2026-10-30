@@ -13,6 +13,7 @@ MAP={
  "dxy":("dxy.csv","dxy"),
  "global_commodity_prices":("commodity_prices.csv","global_commodity_prices"),
  "global_policy_events":("global_policy_events.csv","global_policy_events"),
+ "gold_prices_monthly":("gold_prices_monthly.csv","gold_prices_monthly"),
 }
 def validate_policy_event_frame(policy_frame):
  """Validate each policy row against reviewed official URL/date/type and schema."""
@@ -66,12 +67,24 @@ def main():
   status=str(item.get("status","BLOCKED"))
   rows=int(item.get("rows") or 0)
   # Only collector's explicit complete domain-QA status can improve coverage.
-  valid=status=="COLLECTED_AND_DOMAIN_QA_PASSED" and rows>0 and src.exists()
+  valid=status in {"COLLECTED_AND_DOMAIN_QA_PASSED","COLLECTED_MONTHLY_DOMAIN_QA_PASSED"} and rows>0 and src.exists()
   if valid:
    frame=pd.read_csv(src)
    required={"DATE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"}
    if not required.issubset({str(c).strip().upper() for c in frame.columns}) or frame.empty:
     valid=False
+   if valid and group=="gold_prices_monthly":
+    cols={str(x).strip().upper() for x in frame.columns}
+    dates=pd.to_datetime(frame["DATE"],errors="coerce")
+    values=pd.to_numeric(frame["CLOSE"],errors="coerce")
+    valid=( {"UNIT","FREQUENCY","REVISION_POLICY","SOURCE_SERIES"}.issubset(cols)
+            and frame["FREQUENCY"].astype(str).eq("MONTHLY").all()
+            and frame["UNIT"].astype(str).eq("USD_PER_TROY_OUNCE").all()
+            and frame["SOURCE"].astype(str).str.contains("World Bank Prospects Group Pink Sheet",case=False,regex=False).all()
+            and frame["SOURCE_SERIES"].astype(str).eq("GOLD").all()
+            and dates.notna().all() and values.notna().all() and (values>0).all()
+            and not frame.duplicated(["DATE"]).any()
+            and frame["REVISION_POLICY"].astype(str).str.contains("MONTHLY_SOURCE_REVISIONS_POSSIBLE",regex=False).all())
   evidence[group]={"source":source_name,
     "status":"AVAILABLE" if valid else ("DATA_QUALITY_WARN" if rows else "BLOCKED"),
     "rows":rows if valid else 0,"observed_rows":rows,"date_min":item.get("date_min"),"date_max":item.get("date_max"),
