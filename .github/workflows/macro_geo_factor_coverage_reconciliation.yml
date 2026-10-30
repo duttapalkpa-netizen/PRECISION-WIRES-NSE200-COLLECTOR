@@ -26,6 +26,8 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
+      - name: Run bounded same-snapshot regression tests
+        run: python -m unittest qa.test_factor_registry_same_snapshot -v
       - name: Download evidence from the exact successful source-repair run
         env:
           GH_TOKEN: ${{ github.token }}
@@ -42,7 +44,6 @@ jobs:
           cp -a /tmp/factor-evidence/. .
           test -s outputs/macro_geo/source_coverage.json
           test -s outputs/macro_geo/factor_source_collection_report.json
-          test -s data/external/us_yields.csv || true
           echo "Reconciliation input is bound to triggering run $TRIGGER_RUN_ID at $TRIGGER_HEAD_SHA"
       - name: Reconcile one immutable evidence snapshot
         run: python pipeline/macro_geo_factor_coverage_reconcile.py
