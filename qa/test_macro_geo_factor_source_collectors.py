@@ -275,5 +275,33 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertNotEqual(decision["event_type"], conference["event_type"])
 
 
+    def test_policy_event_reconciliation_promotes_only_complete_exactly_validated_rows(self):
+        from pipeline.macro_geo_factor_coverage_reconcile import validate_policy_event_frame
+        rows = [
+            ("2026-09-16", "2026-09-16T18:00:00Z", "United States", "FED_FOMC_POLICY_STATEMENT",
+             "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm", "FEDERAL_RESERVE"),
+            ("2026-10-28", "2026-10-28T18:00:00Z", "United States", "FED_FOMC_POLICY_STATEMENT",
+             "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm", "FEDERAL_RESERVE"),
+            ("2026-10-29", "2026-10-29T12:15:00Z", "Euro Area", "ECB_MONETARY_POLICY_DECISION",
+             "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html", "EUROPEAN_CENTRAL_BANK"),
+            ("2026-10-29", "2026-10-29T13:45:00Z", "Euro Area", "ECB_POLICY_PRESS_CONFERENCE",
+             "https://www.ecb.europa.eu//press/press_conference/monetary-policy-statement/2026/html/ecb.is261029~5c5ffe99e5.en.html", "EUROPEAN_CENTRAL_BANK"),
+        ]
+        frame = pd.DataFrame(rows, columns=["EVENT_DATE", "PUBLISHED_AT", "COUNTRY", "EVENT_TYPE", "SOURCE_URL", "SOURCE"])
+        frame["TITLE"] = "Official policy release"
+        frame["FEED_URL"] = "https://official.example/rss"
+        frame["EVENT_DATE_BASIS"] = "INDEPENDENTLY_VALIDATED_EVENT_DATE"
+        frame["OBSERVED_AT_UTC"] = "2026-10-30T06:00:00Z"
+        result = validate_policy_event_frame(frame)
+        self.assertEqual(result["status"], "VALIDATED")
+        self.assertEqual(result["rows_eligible_for_event_study"], 4)
+        self.assertTrue(result["schema_valid"])
+        frame.loc[3, "EVENT_DATE"] = "2026-10-28"
+        failed = validate_policy_event_frame(frame)
+        self.assertEqual(failed["status"], "PARTIALLY_VALIDATED")
+        self.assertEqual(failed["rows_eligible_for_event_study"], 3)
+        self.assertEqual(failed["rows_not_eligible"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()
