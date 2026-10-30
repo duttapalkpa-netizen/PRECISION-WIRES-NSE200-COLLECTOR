@@ -272,20 +272,33 @@ def fetch_world_bank_monthly_gold(session, start, end):
         raise ValueError("World Bank landing page did not expose an approved monthly Pink Sheet workbook URL")
     response = session.get(url, timeout=(8, 45))
     response.raise_for_status()
-    # World Bank workbook uses a human-readable commodity heading such as
-    # "Gold ($/troy oz)" rather than a literal GOLD column identifier.
-    frame = pd.read_excel(BytesIO(response.content), sheet_name="Monthly Prices", header=3)
-    frame.columns = [str(col).strip().upper() for col in frame.columns]
-    gold_col = next((col for col in frame.columns
-                     if col == "GOLD" or col.startswith("GOLD ") or col.startswith("GOLD(")), None)
-    if frame.empty or gold_col is None:
-        raise ValueError(f"World Bank monthly workbook schema mismatch: {list(frame.columns)[:24]}")
-    period_col = frame.columns[0]
+    # The World Bank workbook's title/update banner shifts between releases.
+    # Read raw rows, locate the actual commodity-header row by its human-readable
+    # Gold heading, then parse YYYY Mmm periods below it. Never assume a fixed
+    # header row number: a banner row was previously misread as the header.
+    raw = pd.read_excel(BytesIO(response.content), sheet_name="Monthly Prices", header=None)
+    if raw.empty:
+        raise ValueError("World Bank monthly workbook has an empty Monthly Prices sheet")
+    header_idx = None
+    gold_idx = None
+    for idx in range(min(30, len(raw))):
+        for col_idx, cell in enumerate(raw.iloc[idx].tolist()):
+            name = str(cell).strip().upper()
+            if name == "GOLD" or name.startswith("GOLD ") or name.startswith("GOLD("):
+                header_idx, gold_idx = idx, col_idx
+                break
+        if gold_idx is not None:
+            break
+    if header_idx is None or gold_idx is None:
+        preview = [[str(v) for v in raw.iloc[i].tolist()[:12]] for i in range(min(12, len(raw)))]
+        raise ValueError(f"World Bank monthly workbook schema mismatch: Gold header not found in first 30 rows; preview={preview}")
+    period_idx = 0
     rows = []
     observed = datetime.now(timezone.utc).isoformat()
-    for _, row in frame.iterrows():
-        raw_period = str(row.get(period_col, "")).strip()
-        match = re.fullmatch(r"(\d{4})M(\d{1,2})", raw_period, flags=re.I)
+    for row_idx in range(header_idx + 1, len(raw)):
+        row = raw.iloc[row_idx]
+        raw_period = str(row.iloc[period_idx]).strip()
+        match = re.fullmatch(r"(\\d{4})M(\\d{1,2})", raw_period, flags=re.I)
         if not match:
             continue
         year, month = int(match.group(1)), int(match.group(2))
@@ -296,7 +309,7 @@ def fetch_world_bank_monthly_gold(session, start, end):
         # Do not accept a partial current-month average as a completed monthly observation.
         if period_end > end:
             continue
-        value = pd.to_numeric(pd.Series([row.get(gold_col)]), errors="coerce").iloc[0]
+        value = pd.to_numeric(pd.Series([row.iloc[gold_idx]]), errors="coerce").iloc[0]
         if pd.notna(value) and start <= period <= end:
             rows.append({"DATE": period.isoformat(), "CLOSE": float(value),
                          "UNIT": "USD_PER_TROY_OUNCE", "FREQUENCY": "MONTHLY",
