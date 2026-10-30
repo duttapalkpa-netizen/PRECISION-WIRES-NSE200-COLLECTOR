@@ -255,6 +255,75 @@ def fetch_commodity_fallback(session, series_id, label, start, end):
             "freshness <= 5 calendar days"]}
 
 
+
+def fetch_world_bank_monthly_gold(session, start, end):
+    """Collect monthly World Bank Pink Sheet gold; never present it as daily LBMA spot."""
+    import re
+    from urllib.parse import urljoin
+    landing = "https://www.worldbank.org/en/research/commodity-markets"
+    page = session.get(landing, timeout=(8, 25))
+    page.raise_for_status()
+    html = page.text
+    matches = re.findall(r"""href=["']([^"']*CMO-Historical-Data-Monthly\.xlsx[^"']*)["']""", html, flags=re.I)
+    urls = [urljoin(landing, item.replace("&amp;", "&")) for item in matches]
+    url = next((u for u in urls if u.startswith("https://thedocs.worldbank.org/") and
+                "/related/CMO-Historical-Data-Monthly.xlsx" in u), None)
+    if not url:
+        raise ValueError("World Bank landing page did not expose an approved monthly Pink Sheet workbook URL")
+    response = session.get(url, timeout=(8, 45))
+    response.raise_for_status()
+    frame = pd.read_excel(BytesIO(response.content), sheet_name="Monthly Prices", skiprows=4)
+    frame.columns = [str(col).strip().upper() for col in frame.columns]
+    if frame.empty or "GOLD" not in frame.columns:
+        raise ValueError(f"World Bank monthly workbook schema mismatch: {list(frame.columns)[:20]}")
+    period_col = frame.columns[0]
+    rows = []
+    observed = datetime.now(timezone.utc).isoformat()
+    for _, row in frame.iterrows():
+        raw_period = str(row.get(period_col, "")).strip()
+        match = re.fullmatch(r"(\\d{4})M(\\d{1,2})", raw_period, flags=re.I)
+        if not match:
+            continue
+        year, month = int(match.group(1)), int(match.group(2))
+        if not 1 <= month <= 12:
+            continue
+        period = datetime(year, month, 1).date()
+        value = pd.to_numeric(pd.Series([row.get("GOLD")]), errors="coerce").iloc[0]
+        if pd.notna(value) and start <= period <= end:
+            rows.append({"DATE": period.isoformat(), "CLOSE": float(value),
+                         "UNIT": "USD_PER_TROY_OUNCE", "FREQUENCY": "MONTHLY",
+                         "SOURCE": "World Bank Prospects Group Pink Sheet",
+                         "SOURCE_SERIES": "GOLD", "SOURCE_URL": url,
+                         "OBSERVED_AT_UTC": observed,
+                         "REVISION_POLICY": "MONTHLY_SOURCE_REVISIONS_POSSIBLE"})
+    if not rows:
+        raise ValueError("World Bank monthly Pink Sheet returned no valid GOLD observations in requested window")
+    out = pd.DataFrame(rows).drop_duplicates(["DATE"]).sort_values("DATE")
+    dates = pd.to_datetime(out["DATE"], errors="coerce")
+    values = pd.to_numeric(out["CLOSE"], errors="coerce")
+    if dates.isna().any() or values.isna().any() or (values <= 0).any() or out["SOURCE_URL"].eq("").any():
+        raise ValueError("World Bank monthly gold domain QA failed: invalid date/value/provenance")
+    last_period_end = dates.max() + pd.offsets.MonthEnd(0)
+    freshness_days = int((pd.Timestamp(end) - last_period_end.date()).days)
+    if freshness_days < 0 or freshness_days > 45:
+        raise ValueError(f"World Bank monthly gold freshness failed: {freshness_days} days since month-end")
+    target = OUT / "gold_prices_monthly.csv"
+    OUT.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(target.suffix + ".tmp")
+    out.to_csv(tmp, index=False)
+    os.replace(tmp, target)
+    return {"status": "COLLECTED_MONTHLY_DOMAIN_QA_PASSED", "rows": int(len(out)),
+            "date_min": str(out["DATE"].min()), "date_max": str(out["DATE"].max()),
+            "freshness_age_calendar_days": freshness_days, "path": str(target),
+            "source": "World Bank Prospects Group Pink Sheet", "observed_source_series": ["GOLD"],
+            "frequency": "MONTHLY", "unit": "USD_PER_TROY_OUNCE", "url": url,
+            "revision_policy": "MONTHLY_SOURCE_REVISIONS_POSSIBLE",
+            "domain_qa_checks": ["official World Bank landing-page link", "exact GOLD column",
+                "monthly period parsing", "positive numeric values", "unique monthly keys",
+                "source URL and observation timestamp", "month-end freshness <= 45 days"]}
+
+
+
 def fetch_treasury_yields(session, start, end):
     """Use the official US Treasury CSV export as an exact-source fallback for yields."""
     rows = []
@@ -563,6 +632,12 @@ def main():
                                        "error": f"{type(exc).__name__}: {str(exc)[:240]}",
                                        "notes": "No validated DXY rows; missing data remains UNKNOWN."}
         report["groups"]["global_policy_events"] = fetch_global_policy_events(session, start, end)
+        try:
+            report["groups"]["gold_prices_monthly"] = fetch_world_bank_monthly_gold(session, start, end)
+        except Exception as exc:
+            report["groups"]["gold_prices_monthly"] = {"status": "BLOCKED", "rows": 0,
+                "error": f"{type(exc).__name__}: {str(exc)[:240]}",
+                "notes": "Monthly gold is separate from daily LBMA; missing data remains UNKNOWN."}
     except Exception as exc:
         report["window"] = {"status": "BLOCKED", "error": f"{type(exc).__name__}: {str(exc)[:240]}"}
         for name in ("us_yields", "global_commodity_prices", "global_policy_events", "dxy"):
