@@ -148,7 +148,10 @@ jobs:
         run: python pipeline/macro_geo_event_study.py
       - name: Build event-level publication and close-window audit
         run: python pipeline/macro_geo_event_level_audit.py
-      - name: Backfill genuine historical index observations for registered regimes
+      - name: Backfill long-range official NSE Indices history for registered regimes
+        continue-on-error: true
+        run: python pipeline/macro_geo_historical_index_backfill.py
+      - name: Backfill genuine daily NSE archive observations around registered regimes
         run: python pipeline/macro_geo_targeted_archive_backfill.py
       - name: Run historical regime and sector-relative study
         run: python pipeline/historical_regime_event_study.py
