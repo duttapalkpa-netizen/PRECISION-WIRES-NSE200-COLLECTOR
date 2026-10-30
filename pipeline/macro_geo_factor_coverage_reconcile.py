@@ -37,6 +37,13 @@ def latest_evidence_timestamp(coverage, report, root=ROOT):
  return max(candidates).isoformat().replace("+00:00","Z")
 
 
+def policy_events_promotable(policy_date_qa, collector_status):
+ """Promote policy events only when row-level checks AND collector domain QA pass."""
+ return (collector_status == "COLLECTED_AND_DOMAIN_QA_PASSED"
+         and policy_date_qa.get("status") == "VALIDATED"
+         and int(policy_date_qa.get("rows_eligible_for_event_study") or 0) > 0)
+
+
 def validate_policy_event_frame(policy_frame):
  """Validate each policy row against reviewed official URL/date/type and schema."""
  import sys
@@ -158,7 +165,8 @@ def main():
  policy_frame=pd.read_csv(policy_path) if policy_path.exists() else pd.DataFrame()
  policy_date_qa=validate_policy_event_frame(policy_frame)
  coverage["policy_event_date_qa"]=policy_date_qa
- policy_valid=(policy_date_qa["status"]=="VALIDATED" and policy_date_qa["rows_eligible_for_event_study"]>0)
+ policy_collector_status=report.get("groups",{}).get("global_policy_events",{}).get("status","BLOCKED")
+ policy_valid=policy_events_promotable(policy_date_qa,policy_collector_status)
  policy_group={"source":"global_policy_events",
                "status":"AVAILABLE" if policy_valid else ("DATA_QUALITY_WARN" if policy_date_qa["observed_rows"] else "BLOCKED"),
                "rows":policy_date_qa["rows_eligible_for_event_study"] if policy_valid else 0,
@@ -170,7 +178,7 @@ def main():
                "missing_columns":[] if policy_valid else ["complete event-date/provenance validation"],
                "notes":("All observed policy events have complete provenance and exact official URL/date/type validation." if policy_valid else "Policy events remain excluded until exact official URL/date/type validation passes."),
                "provider":"Official Federal Reserve and ECB pages, independently URL/date/type validated",
-               "reason":policy_date_qa["reason"]}
+               "reason":policy_date_qa["reason"] + (" Collector domain QA passed." if policy_valid else f" Collector domain QA status is {policy_collector_status}; event rows remain warning/unknown.")}
  existing=by_name.get("global_policy_events")
  if existing is None:
   existing={"source":"global_policy_events"}; sources.append(existing); by_name["global_policy_events"]=existing
