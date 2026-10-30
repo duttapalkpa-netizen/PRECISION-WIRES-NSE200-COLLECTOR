@@ -5,6 +5,8 @@ on:
     branches: [audit/run145-factor-registry-gap-audit]
     paths:
       - "pipeline/macro_geo_factor_source_collectors.py"
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - "pipeline/macro_geo_factor_coverage_audit.py"
       - ".github/workflows/macro_geo_factor_source_repair.yml"
 permissions:
   contents: read
