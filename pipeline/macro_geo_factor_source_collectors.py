@@ -40,6 +40,34 @@ POLICY_FEEDS = [
 POLICY_TERMS = ("monetary policy", "policy rate", "interest rate", "rate decision",
                 "fomc", "policy statement", "key interest rates", "monetary-policy")
 
+# Independently reviewed official decision/communication pages. Exact URL matching
+# prevents RSS publication dates from being silently promoted to event dates.
+# Unknown/new pages remain publication-date proxies until separately reviewed.
+OFFICIAL_POLICY_EVENT_DATES = {
+    "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm":
+        {"event_date": "2026-09-16", "event_type": "FED_FOMC_POLICY_STATEMENT"},
+    "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm":
+        {"event_date": "2026-10-28", "event_type": "FED_FOMC_POLICY_STATEMENT"},
+    "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html":
+        {"event_date": "2026-10-29", "event_type": "ECB_MONETARY_POLICY_DECISION"},
+    "https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2026/html/ecb.is261029~5c5ffe99e5.en.html":
+        {"event_date": "2026-10-29", "event_type": "ECB_POLICY_PRESS_CONFERENCE"},
+}
+
+
+def validate_official_policy_event_date(article_url):
+    """Return reviewed event-date evidence for an exact official page URL only."""
+    item = OFFICIAL_POLICY_EVENT_DATES.get(str(article_url).strip())
+    if not item:
+        return None
+    return {
+        "event_date": item["event_date"],
+        "event_type": item["event_type"],
+        "validation_method": "EXACT_MATCH_TO_INDEPENDENTLY_REVIEWED_OFFICIAL_EVENT_PAGE",
+        "validation_source_url": str(article_url).strip(),
+    }
+
+
 
 def observed_window():
     panel = next((p for p in PANEL_CANDIDATES if p.exists()), None)
@@ -359,16 +387,19 @@ def fetch_global_policy_events(session, start, end):
                     continue
                 if not article_url.startswith("https://"):
                     continue
+                reviewed = validate_official_policy_event_date(article_url)
                 rows.append({
-                    "EVENT_DATE": published.date().isoformat(),
+                    "EVENT_DATE": reviewed["event_date"] if reviewed else published.date().isoformat(),
                     "PUBLISHED_AT": published.isoformat(),
                     "COUNTRY": country,
-                    "EVENT_TYPE": source_name + "_POLICY_RELEASE_PUBLICATION_DATE_PROXY",
+                    "EVENT_TYPE": reviewed["event_type"] if reviewed else source_name + "_POLICY_RELEASE_PUBLICATION_DATE_PROXY",
                     "SOURCE_URL": article_url,
                     "SOURCE": source_name,
                     "TITLE": title,
                     "FEED_URL": response.url,
-                    "EVENT_DATE_BASIS": "PUBLICATION_DATE_PROXY_NOT_CONFIRMED_EVENT_DATE",
+                    "EVENT_DATE_BASIS": "INDEPENDENTLY_VALIDATED_EVENT_DATE" if reviewed else "PUBLICATION_DATE_PROXY_NOT_CONFIRMED_EVENT_DATE",
+                    "EVENT_DATE_VALIDATION_METHOD": reviewed["validation_method"] if reviewed else "UNVALIDATED_PUBLICATION_DATE_PROXY",
+                    "EVENT_DATE_VALIDATION_SOURCE_URL": reviewed["validation_source_url"] if reviewed else "",
                     "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat(),
                 })
         except Exception as exc:
