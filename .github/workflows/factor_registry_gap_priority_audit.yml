@@ -1,0 +1,53 @@
+name: Factor Registry Gap Priority Audit
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/factor_registry_gap_priority_audit.py"
+      - "qa/test_factor_registry_gap_priority_audit.py"
+      - ".github/workflows/factor_registry_gap_priority_audit.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: factor-registry-gap-priority-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download exact validated Run #23 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/macro_geo
+          gh run download 41085324151 -n factor-registry-run23-same-snapshot-validation -D /tmp/run23
+          test -s /tmp/run23/factor_coverage_audit.csv
+          cp /tmp/run23/factor_coverage_audit.csv outputs/macro_geo/
+      - name: Run unit tests
+        run: python -m unittest qa.test_factor_registry_gap_priority_audit -v
+      - name: Build source-group remediation priority
+        run: python pipeline/factor_registry_gap_priority_audit.py
+      - name: Assert deterministic top shared gaps
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open("outputs/macro_geo/factor_gap_priority_audit.json"))
+          assert p["factor_groups"] == 35
+          assert p["not_connected_factors"] == 10
+          assert p["partial_factors"] == 25
+          assert p["recommended_first_source_group"] == "macro_indicators"
+          print({"status":p["status"],"first":p["recommended_first_source_group"],"ranked":len(p["source_groups_ranked"])})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: factor-registry-gap-priority-audit
+          path: outputs/macro_geo/factor_gap_priority_audit.*
+          if-no-files-found: warn
