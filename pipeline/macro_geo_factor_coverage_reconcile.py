@@ -15,6 +15,28 @@ MAP={
  "global_policy_events":("global_policy_events.csv","global_policy_events"),
  "gold_prices_monthly":("gold_prices_monthly.csv","gold_prices_monthly"),
 }
+def latest_evidence_timestamp(coverage, report, root=ROOT):
+ """Return the latest real evidence timestamp represented in this reconciliation snapshot."""
+ candidates=[]
+ for raw in (coverage.get("as_of_utc"), report.get("observed_at_utc")):
+  parsed=pd.to_datetime(raw,errors="coerce",utc=True)
+  if pd.notna(parsed): candidates.append(parsed)
+ for filename,_ in MAP.values():
+  path=root/"data/external"/filename
+  if not path.exists(): continue
+  try:
+   frame=pd.read_csv(path)
+  except Exception:
+   continue
+  col=next((c for c in frame.columns if str(c).strip().upper()=="OBSERVED_AT_UTC"),None)
+  if col is None: continue
+  parsed=pd.to_datetime(frame[col],errors="coerce",utc=True).dropna()
+  if not parsed.empty: candidates.append(parsed.max())
+ if not candidates:
+  raise RuntimeError("No valid UTC evidence timestamp; refusing to emit an undated factor snapshot")
+ return max(candidates).isoformat().replace("+00:00","Z")
+
+
 def validate_policy_event_frame(policy_frame):
  """Validate each policy row against reviewed official URL/date/type and schema."""
  import sys
@@ -154,6 +176,7 @@ def main():
   existing={"source":"global_policy_events"}; sources.append(existing); by_name["global_policy_events"]=existing
  existing.update(policy_group)
  evidence["global_policy_events"]={**policy_group,"provider":"Official Federal Reserve and ECB RSS feeds"}
+ coverage["as_of_utc"]=latest_evidence_timestamp(coverage,report)
  coverage["factor_source_repair_reconciled_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
  coverage["factor_source_repair_evidence"]=evidence
  COVERAGE.write_text(json.dumps(coverage,indent=2))
