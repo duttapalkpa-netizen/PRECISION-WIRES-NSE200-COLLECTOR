@@ -78,6 +78,9 @@ def main():
     "provider":item.get("source"),"source_series":item.get("observed_source_series"),
     "freshness_age_calendar_days":item.get("freshness_age_calendar_days"),
     "evidence_path":str(src) if src.exists() else None,
+    "selected_path":str(src) if valid else "",
+    "missing_columns":[] if valid else ["domain/source QA incomplete"],
+    "notes":("Collector domain QA passed; provider provenance and observed-series identity retained in evidence fields." if valid else "No clean domain-QA promotion; missing data remains UNKNOWN."),
     "reason":"Complete collector domain QA passed" if valid else "Not counted as available: source failure, incomplete domain QA, or missing evidence"}
   existing=by_name.get(source_name)
   if existing is None:
@@ -129,6 +132,8 @@ def main():
                "date_max":str(policy_frame["EVENT_DATE"].max()) if not policy_frame.empty and "EVENT_DATE" in policy_frame else None,
                "selected_path":str(policy_path) if policy_valid else "",
                "evidence_path":str(policy_path) if not policy_frame.empty else None,
+               "missing_columns":[] if policy_valid else ["complete event-date/provenance validation"],
+               "notes":("All observed policy events have complete provenance and exact official URL/date/type validation." if policy_valid else "Policy events remain excluded until exact official URL/date/type validation passes."),
                "provider":"Official Federal Reserve and ECB pages, independently URL/date/type validated",
                "reason":policy_date_qa["reason"]}
  existing=by_name.get("global_policy_events")
