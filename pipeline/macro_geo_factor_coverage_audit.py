@@ -33,7 +33,7 @@ MAP={
 "F21":["global_freight_shipping","global_commodity_prices","sector_fundamentals"],
 "F22":["sector_fundamentals","corporate_events","global_policy_events"],
 "F23":["geopolitical_events","macro_indicators","global_policy_events"],
-"F24":["global_commodity_prices","us_yields","usd_inr"],
+"F24":["global_commodity_prices","gold_prices_monthly","us_yields","usd_inr"],
 "F25":["benchmark_index","sector_indices","volatility","market_microstructure","valuation_snapshot"],
 "F26":["corporate_events","market_microstructure"],
 "F27":["market_microstructure","nse_daily_equity"],
