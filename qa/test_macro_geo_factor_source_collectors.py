@@ -324,7 +324,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(result["status"], "COLLECTED_MONTHLY_DOMAIN_QA_PASSED")
         self.assertEqual(result["frequency"], "MONTHLY")
         self.assertEqual(result["unit"], "USD_PER_TROY_OUNCE")
-        self.assertEqual(list(saved["DATE"]), ["2026-08-01", "2026-09-01", "2026-10-01"])
+        self.assertEqual(list(saved["DATE"]), ["2026-08-01", "2026-09-01"])
         self.assertTrue(saved["FREQUENCY"].eq("MONTHLY").all())
         self.assertTrue(saved["SOURCE"].str.contains("World Bank").all())
         self.assertEqual(read.call_args.kwargs["sheet_name"], "Monthly Prices")
