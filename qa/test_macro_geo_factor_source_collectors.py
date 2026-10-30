@@ -13,6 +13,7 @@ class FakeResponse:
     def __init__(self, url, content, status=200):
         self.url = url
         self.content = content
+        self.text = content.decode("utf-8", errors="replace") if isinstance(content, bytes) else str(content)
         self.status_code = status
 
     def raise_for_status(self):
@@ -301,6 +302,34 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(failed["status"], "PARTIALLY_VALIDATED")
         self.assertEqual(failed["rows_eligible_for_event_study"], 3)
         self.assertEqual(failed["rows_not_eligible"], 1)
+
+
+    def test_world_bank_gold_is_collected_as_monthly_not_daily_series(self):
+        from datetime import date
+        html = b'<a href="https://thedocs.worldbank.org/en/doc/example/related/CMO-Historical-Data-Monthly.xlsx">Monthly</a>'
+        workbook = b"fake-xlsx"
+        class Session:
+            def __init__(self):
+                self.calls = 0
+            def get(self, url, **kwargs):
+                self.calls += 1
+                return FakeResponse(url, html if self.calls == 1 else workbook)
+        monthly = pd.DataFrame({"Period": ["2026M08", "2026M09", "2026M10"],
+                                "GOLD": [3400.0, 3450.0, 3500.0]})
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(collector, "OUT", Path(tmp)), patch.object(pd, "read_excel", return_value=monthly) as read:
+                result = collector.fetch_world_bank_monthly_gold(
+                    Session(), date(2026, 8, 1), date(2026, 10, 30))
+                saved = pd.read_csv(Path(tmp) / "gold_prices_monthly.csv")
+        self.assertEqual(result["status"], "COLLECTED_MONTHLY_DOMAIN_QA_PASSED")
+        self.assertEqual(result["frequency"], "MONTHLY")
+        self.assertEqual(result["unit"], "USD_PER_TROY_OUNCE")
+        self.assertEqual(list(saved["DATE"]), ["2026-08-01", "2026-09-01", "2026-10-01"])
+        self.assertTrue(saved["FREQUENCY"].eq("MONTHLY").all())
+        self.assertTrue(saved["SOURCE"].str.contains("World Bank").all())
+        self.assertEqual(read.call_args.kwargs["sheet_name"], "Monthly Prices")
+        self.assertEqual(read.call_args.kwargs["skiprows"], 4)
+
 
 
 if __name__ == "__main__":
