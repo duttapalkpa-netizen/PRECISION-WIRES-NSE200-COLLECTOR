@@ -298,7 +298,7 @@ def fetch_world_bank_monthly_gold(session, start, end):
     for row_idx in range(header_idx + 1, len(raw)):
         row = raw.iloc[row_idx]
         raw_period = str(row.iloc[period_idx]).strip()
-        match = re.fullmatch(r"(\\d{4})M(\\d{1,2})", raw_period, flags=re.I)
+        match = re.fullmatch(r"(\d{4})M(\d{1,2})", raw_period, flags=re.I)
         if not match:
             continue
         year, month = int(match.group(1)), int(match.group(2))
