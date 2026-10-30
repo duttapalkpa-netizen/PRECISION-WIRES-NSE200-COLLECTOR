@@ -237,5 +237,37 @@ class FactorSourceCollectorTests(unittest.TestCase):
                     collector.observed_window()
 
 
+    def test_only_exact_reviewed_official_policy_pages_promote_event_dates(self):
+        expected = {
+            "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm":
+                ("2026-09-16", "FED_FOMC_POLICY_STATEMENT"),
+            "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm":
+                ("2026-10-28", "FED_FOMC_POLICY_STATEMENT"),
+            "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html":
+                ("2026-10-29", "ECB_MONETARY_POLICY_DECISION"),
+            "https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2026/html/ecb.is261029~5c5ffe99e5.en.html":
+                ("2026-10-29", "ECB_POLICY_PRESS_CONFERENCE"),
+        }
+        for url, (event_date, event_type) in expected.items():
+            with self.subTest(url=url):
+                result = collector.validate_official_policy_event_date(url)
+                self.assertEqual(result["event_date"], event_date)
+                self.assertEqual(result["event_type"], event_type)
+                self.assertEqual(result["validation_method"],
+                                 "EXACT_MATCH_TO_INDEPENDENTLY_REVIEWED_OFFICIAL_EVENT_PAGE")
+        self.assertIsNone(collector.validate_official_policy_event_date(
+            "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261101a.htm"))
+        self.assertIsNone(collector.validate_official_policy_event_date(
+            "https://example.com/monetary20261028a.htm"))
+
+    def test_ecb_decision_and_press_conference_are_distinct_event_types_same_day(self):
+        decision = collector.validate_official_policy_event_date(
+            "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html")
+        conference = collector.validate_official_policy_event_date(
+            "https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2026/html/ecb.is261029~5c5ffe99e5.en.html")
+        self.assertEqual(decision["event_date"], conference["event_date"])
+        self.assertNotEqual(decision["event_type"], conference["event_type"])
+
+
 if __name__ == "__main__":
     unittest.main()
