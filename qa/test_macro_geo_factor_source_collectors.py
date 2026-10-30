@@ -259,6 +259,12 @@ class FactorSourceCollectorTests(unittest.TestCase):
             "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261101a.htm"))
         self.assertIsNone(collector.validate_official_policy_event_date(
             "https://example.com/monetary20261028a.htm"))
+        # RSS provider emits duplicate separators in some ECB href values;
+        # canonicalization must still match only the same official host/path.
+        normalized = collector.validate_official_policy_event_date(
+            "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html")
+        self.assertEqual(normalized["event_date"], "2026-10-29")
+        self.assertEqual(normalized["event_type"], "ECB_MONETARY_POLICY_DECISION")
 
     def test_ecb_decision_and_press_conference_are_distinct_event_types_same_day(self):
         decision = collector.validate_official_policy_event_date(
