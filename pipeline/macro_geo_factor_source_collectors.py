@@ -281,7 +281,7 @@ def fetch_world_bank_monthly_gold(session, start, end):
     observed = datetime.now(timezone.utc).isoformat()
     for _, row in frame.iterrows():
         raw_period = str(row.get(period_col, "")).strip()
-        match = re.fullmatch(r"(\\d{4})M(\\d{1,2})", raw_period, flags=re.I)
+        match = re.fullmatch(r"(\d{4})M(\d{1,2})", raw_period, flags=re.I)
         if not match:
             continue
         year, month = int(match.group(1)), int(match.group(2))
