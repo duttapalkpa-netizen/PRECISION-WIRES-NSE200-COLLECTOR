@@ -1,0 +1,114 @@
+name: P0 Part 6 Canonical Integration QA
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part6_canonical_integration.yml"
+permissions:
+  contents: read
+concurrency:
+  group: macro-geo-p0-part6-canonical-integration
+  cancel-in-progress: false
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-part1-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install audit dependency
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Collect, validate and merge four canonical secondary-source series
+        run: |
+          mkdir -p data/external outputs/macro_geo
+          python - <<'PY'
+          import csv,json,urllib.parse,urllib.request
+          from datetime import datetime,timezone
+          from pathlib import Path
+          report={"part":"P0-6","status":"BLOCKED","checked_at_utc":datetime.now(timezone.utc).isoformat(),"invariants":{"production_selector_modified":False,"RANKING_SCORE_modified":False,"PRESSURE_FADE_modified":False,"UNKNOWN_treated_as_negative":False},"sources":[],"outputs":[],"policy":"Yahoo data is secondary-source evidence. Brent futures proxy and unclassified RSS headlines are not promoted to canonical Brent/geopolitical files."}
+          try:
+              panel=Path("data/processed/nse_eq_200_sessions.csv")
+              if not panel.exists(): raise ValueError("validated 200-session panel cache missing")
+              with panel.open(encoding="utf-8-sig",newline="") as f:
+                  rd=csv.DictReader(f); cols={str(c).strip().upper():c for c in (rd.fieldnames or [])}
+                  if "DATE" not in cols: raise ValueError("panel DATE column missing")
+                  dates=sorted({(r.get(cols["DATE"]) or "").strip()[:10] for r in rd if (r.get(cols["DATE"]) or "").strip()})
+              if len(dates)<200: raise ValueError("fewer than 200 unique panel sessions")
+              start,end=dates[-200],dates[-1]
+              p1=int(datetime.fromisoformat(start).replace(tzinfo=timezone.utc).timestamp());p2=int(datetime.fromisoformat(end).replace(tzinfo=timezone.utc).timestamp())+86400
+              specs=[("benchmark_index","NIFTY 50","%5ENSEI","data/external/benchmark_indices.csv"),("sector_indices","NIFTY IT","%5ECNXIT","data/external/sector_indices.csv"),("volatility","INDIA VIX","%5EINDIAVIX","data/external/volatility.csv"),("usd_inr","USD/INR","USDINR%3DX","data/external/usd_inr.csv")]
+              for group,series,symbol,target_name in specs:
+                  item={"group":group,"series":series,"status":"UNKNOWN","rows":0}
+                  try:
+                      q=urllib.parse.urlencode({"period1":p1,"period2":p2,"interval":"1d"});url="https://query1.finance.yahoo.com/v8/finance/chart/"+symbol+"?"+q
+                      req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
+                      with urllib.request.urlopen(req,timeout=7) as response:
+                          payload=json.loads(response.read().decode("utf-8"))
+                          if response.status!=200: raise RuntimeError("HTTP "+str(response.status))
+                      chart=payload.get("chart",{})
+                      if chart.get("error") or not chart.get("result"): raise ValueError("empty/error chart response")
+                      res=chart["result"][0];ts=res.get("timestamp") or [];cl=(((res.get("indicators") or {}).get("quote") or [{}])[0]).get("close") or []
+                      rows=[]
+                      for t,v in zip(ts,cl):
+                          if v is None: continue
+                          day=datetime.fromtimestamp(t,timezone.utc).date().isoformat()
+                          if start<=day<=end and float(v)>0: rows.append({"DATE":day,"SERIES":series,"CLOSE":float(v),"SOURCE":"Yahoo Finance chart API (secondary source)","SOURCE_SERIES":symbol.replace("%5E","^").replace("%3D","="),"SOURCE_URL":url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+                      if not rows: raise ValueError("no valid dated positive close observations")
+                      if len({x["DATE"] for x in rows})!=len(rows): raise ValueError("duplicate date keys")
+                      target=Path(target_name);old=[]
+                      if target.exists():
+                          with target.open(encoding="utf-8-sig",newline="") as f:
+                              for r in csv.DictReader(f): old.append({str(k).upper():v for k,v in r.items()})
+                      merged={(r.get("DATE",""),r.get("SERIES","")):r for r in old}
+                      for r in rows: merged[(r["DATE"],r["SERIES"])]=r
+                      all_rows=sorted(merged.values(),key=lambda r:(r.get("DATE",""),r.get("SERIES","")))
+                      fields=["DATE","SERIES","CLOSE","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC"]
+                      with target.open("w",encoding="utf-8",newline="") as f:
+                          w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore");w.writeheader();w.writerows(all_rows)
+                      item.update({"status":"PASS","rows":len(rows),"first_date":min(x["DATE"] for x in rows),"last_date":max(x["DATE"] for x in rows),"canonical_path":target_name,"merged_rows":len(all_rows)})
+                      report["outputs"].append({"group":group,"path":target_name,"rows":len(all_rows)})
+                  except Exception as e: item["reason"]=type(e).__name__+": "+str(e)[:200]
+                  report["sources"].append(item)
+              report["panel_window"]={"start":start,"end":end,"unique_sessions":len(dates)}
+              report["status"]="PASS" if len(report["sources"])==4 and all(x["status"]=="PASS" for x in report["sources"]) else "BLOCKED"
+              report["evidence_boundary"]="PASS indicates canonical files merged after bounded secondary-source schema/domain QA; it does not establish official-source equivalence or complete P0 coverage."
+          except Exception as e: report["reason"]=type(e).__name__+": "+str(e)[:300]
+          Path("outputs/macro_geo/p0_part6_canonical_integration_report.json").write_text(json.dumps(report,indent=2)+"\n")
+          print(json.dumps(report,indent=2))
+          if report["status"]!="PASS": raise SystemExit(1)
+          PY
+      - name: Re-run source and factor coverage audits
+        if: always()
+        run: |
+          python pipeline/macro_geo_source_coverage.py
+          python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Upload Part 6 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part6-canonical-integration
+          path: |
+            data/external/benchmark_indices.csv
+            data/external/sector_indices.csv
+            data/external/volatility.csv
+            data/external/usd_inr.csv
+            outputs/macro_geo/p0_part6_canonical_integration_report.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+          if-no-files-found: warn

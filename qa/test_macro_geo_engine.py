@@ -218,7 +218,7 @@ class MacroGeoHardGateTests(unittest.TestCase):
                 "DII": {"unique_dates": 60, "span_days": 90, "rows": 60}
             }
         }), encoding="utf-8")
-        self.regime_path.write_text(json.dumps({"research_status": "COMPUTED_EXPLORATORY", "window_rows": 1}), encoding="utf-8")
+        self.regime_path.write_text(json.dumps({"research_status": "COMPUTED_EXPLORATORY", "window_rows": 1, "regime_anchors": 1, "regimes_with_windows": 1, "anchor_coverage_complete": True}), encoding="utf-8")
         groups = {f"group_{i}": {"status": "AVAILABLE", "rows": 1} for i in range(8)}
         self.coverage_path.write_text(json.dumps({"p0_coverage": {
             "status": "P0_COMPLETE", "available_count": 8, "required_count": 8, "groups": groups
@@ -283,6 +283,22 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.assertFalse(report["ranking_score_changed"])
         self.assertFalse(report["pressure_fade_changed"])
 
+    def test_hard_gate_allows_verified_repair_over_pre_repair_manifest_gap(self):
+        manifest = self.json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        manifest["status"] = "PASS_WITH_CRITICAL_DATA_GAPS"
+        manifest["operational_status"] = "PASS_WITH_CRITICAL_DATA_GAPS"
+        manifest["p0_coverage"]["required_series_available"] = True
+        manifest["p0_coverage"]["group_availability_after_repair"] = {
+            name: True for name in manifest["p0_coverage"]["required_groups"]
+        }
+        manifest["final_manifest_reconciliation"] = {"status": "RECONCILED"}
+        self.manifest_path.write_text(self.json.dumps(manifest), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 0)
+        report = self.report()
+        self.assertTrue(report["checks"]["collector_manifest_final_snapshot_verified"])
+        self.assertNotIn("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS", report["blockers"])
+        self.assertTrue(report["candidate_release_allowed"])
+
     def test_hard_gate_manifest_critical_gaps_block_release(self):
         self.manifest_path.write_text(self.json.dumps({
             "status": "PASS_WITH_CRITICAL_DATA_GAPS",
@@ -300,6 +316,16 @@ class MacroGeoHardGateTests(unittest.TestCase):
         self.assertIn("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS", report["blockers"])
         self.assertIn("COLLECTION_MANIFEST_FPI_DII_STATUS_UNRESOLVED", report["blockers"])
         self.assertIn("COLLECTION_MANIFEST_CORPORATE_EVENTS_STATUS_UNRESOLVED", report["blockers"])
+
+    def test_hard_gate_incomplete_historical_anchor_coverage_blocks_release(self):
+        regime = self.json.loads(self.regime_path.read_text(encoding="utf-8"))
+        regime["anchor_coverage_complete"] = False
+        regime["regimes_with_windows"] = 0
+        self.regime_path.write_text(self.json.dumps(regime), encoding="utf-8")
+        self.assertEqual(self.gate.main(), 1)
+        report = self.report()
+        self.assertIn("HISTORICAL_REGIME_ANCHOR_COVERAGE_INCOMPLETE", report["blockers"])
+        self.assertFalse(report["candidate_release_allowed"])
 
     def test_hard_gate_missing_input_blocks_release(self):
         self.panel_path.unlink()

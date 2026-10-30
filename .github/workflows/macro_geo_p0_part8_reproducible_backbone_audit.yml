@@ -1,0 +1,263 @@
+name: P0 Part 8 Reproducible Backbone and Coverage Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part8_reproducible_backbone_audit.yml"
+      - "pipeline/macro_geo_source_coverage.py"
+permissions:
+  contents: read
+concurrency:
+  group: macro-geo-p0-part8-reproducible-backbone-audit
+  cancel-in-progress: false
+jobs:
+  integrated-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-part1-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install audit dependency
+        run: python -m pip install --disable-pip-version-check pandas requests xlrd
+      - name: Rebuild bounded canonical macro series and event candidates in one run
+        shell: bash
+        run: |
+          mkdir -p data/external outputs/macro_geo
+          python - <<'PY'
+          import csv,json,re,urllib.parse,urllib.request
+          from datetime import datetime,timezone
+          from email.utils import parsedate_to_datetime
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          now=datetime.now(timezone.utc).isoformat()
+          report={"part":"P0-8","status":"BLOCKED","checked_at_utc":now,"requests_budget":6,
+            "invariants":{"production_selector_modified":False,"RANKING_SCORE_modified":False,"PRESSURE_FADE_modified":False,"UNKNOWN_treated_as_negative":False},
+            "sources":[],"outputs":[],"policy":"All collected series are generated and audited within the same run to avoid cross-run ephemeral-file gaps. Yahoo values remain secondary-source proxies. RSS output remains candidate-only; canonical geopolitical events are not overwritten."}
+          panel=Path("data/processed/nse_eq_200_sessions.csv")
+          try:
+            if not panel.is_file(): raise ValueError("validated 200-session panel cache unavailable")
+            with panel.open(encoding="utf-8-sig",newline="") as f:
+              rd=csv.DictReader(f); cols={str(c).strip().upper():c for c in (rd.fieldnames or [])}
+              if "DATE" not in cols: raise ValueError("panel DATE column missing")
+              dates=sorted({(r.get(cols["DATE"]) or "").strip()[:10] for r in rd if (r.get(cols["DATE"]) or "").strip()})
+            if len(dates)<200: raise ValueError("fewer than 200 unique panel sessions")
+            start,end=dates[-200],dates[-1]
+            p1=int(datetime.fromisoformat(start).replace(tzinfo=timezone.utc).timestamp())
+            p2=int(datetime.fromisoformat(end).replace(tzinfo=timezone.utc).timestamp())+86400
+            report["panel_window"]={"start":start,"end":end,"unique_sessions_in_cache":len(dates)}
+          except Exception as e:
+            report["panel_error"]=type(e).__name__+": "+str(e)[:250]
+            Path("outputs/macro_geo/p0_part8_reproducible_backbone_report.json").write_text(json.dumps(report,indent=2)+"\n")
+            raise SystemExit(1)
+
+          def write_merge(path, rows, fields, keys):
+            target=Path(path); merged={}
+            if target.exists():
+              with target.open(encoding="utf-8-sig",newline="") as f:
+                for row in csv.DictReader(f):
+                  k=tuple((row.get(x) or "") for x in keys)
+                  if all(k): merged[k]=row
+            for row in rows: merged[tuple(str(row.get(k,"")) for k in keys)]=row
+            with target.open("w",encoding="utf-8",newline="") as f:
+              w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore");w.writeheader()
+              for k in sorted(merged): w.writerow(merged[k])
+            return len(rows),len(merged)
+
+          specs=[
+            ("benchmark_index","NIFTY 50","%5ENSEI","data/external/benchmark_indices.csv"),
+            ("sector_indices","NIFTY IT","%5ECNXIT","data/external/sector_indices.csv"),
+            ("volatility","INDIA VIX","%5EINDIAVIX","data/external/volatility.csv"),
+            ("usd_inr","USD/INR","USDINR%3DX","data/external/usd_inr.csv")
+          ]
+          for group,series,symbol,path in specs:
+            item={"group":group,"series":series,"status":"UNKNOWN","source":"Yahoo Finance chart API (secondary source)"}
+            try:
+              url="https://query1.finance.yahoo.com/v8/finance/chart/"+symbol+"?"+urllib.parse.urlencode({"period1":p1,"period2":p2,"interval":"1d"})
+              req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
+              with urllib.request.urlopen(req,timeout=7) as resp:
+                payload=json.loads(resp.read().decode("utf-8"))
+                if resp.status!=200: raise RuntimeError("HTTP "+str(resp.status))
+              result=((payload.get("chart") or {}).get("result") or [None])[0]
+              if not result: raise ValueError("empty chart response: "+str((payload.get("chart") or {}).get("error")))
+              timestamps=result.get("timestamp") or []
+              closes=((((result.get("indicators") or {}).get("quote") or [{}])[0]).get("close") or [])
+              rows=[]
+              for ts,val in zip(timestamps,closes):
+                if val is None or float(val)<=0: continue
+                day=datetime.fromtimestamp(ts,timezone.utc).date().isoformat()
+                if start<=day<=end:
+                  rows.append({"DATE":day,"SERIES":series,"CLOSE":float(val),"SOURCE":"Yahoo Finance chart API (secondary source)","SOURCE_SERIES":symbol.replace("%5E","^").replace("%3D","="),"SOURCE_URL":url,"OBSERVED_AT_UTC":now})
+              if not rows: raise ValueError("no valid observations within panel window")
+              if len({r["DATE"] for r in rows})!=len(rows): raise ValueError("duplicate date keys")
+              received,merged=write_merge(path,rows,["DATE","SERIES","CLOSE","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC"],["DATE","SERIES"])
+              item.update({"status":"PASS","rows_in_window":received,"merged_rows":merged,"first_date":min(r["DATE"] for r in rows),"last_date":max(r["DATE"] for r in rows),"path":path,"source_url":url})
+              report["outputs"].append({"group":group,"path":path,"rows_in_window":received,"merged_rows":merged})
+            except Exception as e: item["reason"]=type(e).__name__+": "+str(e)[:220]
+            report["sources"].append(item)
+
+          # Official-identity Brent spot series from FRED; cap at the panel cutoff to prevent look-ahead.
+          fred_url="https://fred.stlouisfed.org/graph/fredgraph.csv?id=DCOILBRENTEU"
+          item={"group":"crude_oil","status":"UNKNOWN","source":"FRED DCOILBRENTEU","identity":"Brent spot, not futures"}
+          try:
+            req=urllib.request.Request(fred_url,headers={"User-Agent":"P0Audit/1.0","Accept":"text/csv"})
+            with urllib.request.urlopen(req,timeout=8) as resp:
+              body=resp.read(2_000_000).decode("utf-8-sig")
+              if resp.status!=200: raise RuntimeError("HTTP "+str(resp.status))
+            parsed=list(csv.DictReader(body.splitlines()))
+            if not parsed or not {"observation_date","DCOILBRENTEU"}.issubset(parsed[0].keys()): raise ValueError("FRED schema mismatch")
+            rows=[]
+            for r in parsed:
+              day=(r.get("observation_date") or "").strip(); val=(r.get("DCOILBRENTEU") or "").strip()
+              if not day or not val or val in (".","NA","N/A"): continue
+              try:
+                d=datetime.strptime(day,"%Y-%m-%d").date().isoformat(); v=float(val)
+                if start<=d<=end and v>0: rows.append({"DATE":d,"CLOSE":v,"SOURCE":"FRED","SOURCE_SERIES":"DCOILBRENTEU","SOURCE_URL":fred_url,"OBSERVED_AT_UTC":now})
+              except Exception: continue
+            if not rows: raise ValueError("no valid Brent observations in panel window")
+            if len({r["DATE"] for r in rows})!=len(rows): raise ValueError("duplicate Brent date keys")
+            received,merged=write_merge("data/external/brent_crude.csv",rows,["DATE","CLOSE","SOURCE","SOURCE_SERIES","SOURCE_URL","OBSERVED_AT_UTC"],["DATE"])
+            item.update({"status":"PASS","rows_in_window":received,"merged_rows":merged,"first_date":min(r["DATE"] for r in rows),"last_date":max(r["DATE"] for r in rows),"path":"data/external/brent_crude.csv","source_url":fred_url,"lookahead_control":"observations after panel cutoff excluded"})
+            report["outputs"].append({"group":"crude_oil","path":item["path"],"rows_in_window":received,"merged_rows":merged})
+          except Exception as e: item["reason"]=type(e).__name__+": "+str(e)[:220]
+          report["sources"].append(item)
+          # Emit the exact domain-QA evidence contract consumed by source_coverage.py.
+          # This report is generated only from the same-run official FRED spot rows;
+          # no futures proxy or publication-date inference can satisfy the gate.
+          crude_report={
+            "status":"BLOCKED", "proxy_only":False,
+            "checked_at_utc":now, "source":"FRED", "series_id":"DCOILBRENTEU",
+            "identity":"Daily Europe Brent spot price; not Brent futures",
+            "path":"data/external/brent_crude.csv",
+            "domain_qa_checks":[]
+          }
+          if item.get("status")=="PASS":
+            try:
+              with open("data/external/brent_crude.csv",encoding="utf-8",newline="") as f:
+                brent_rows=list(csv.DictReader(f))
+              valid=[]
+              for row in brent_rows:
+                day=(row.get("DATE") or "").strip()
+                value=float(row.get("CLOSE") or "nan")
+                if not day or not start<=day<=end or not (value>0):
+                  raise ValueError("Brent row invalid or outside observed panel window")
+                if row.get("SOURCE")!="FRED" or row.get("SOURCE_SERIES")!="DCOILBRENTEU":
+                  raise ValueError("Brent source identity mismatch")
+                if not (row.get("SOURCE_URL") or "").startswith("https://fred.stlouisfed.org/graph/fredgraph.csv"):
+                  raise ValueError("Brent source URL missing or unexpected")
+                valid.append((day,row.get("SOURCE_SERIES")))
+              if not valid or len(valid)!=len(set(valid)):
+                raise ValueError("Brent rows empty or duplicate date/series keys")
+              crude_report.update({
+                "status":"COLLECTED_AND_DOMAIN_QA_PASSED",
+                "rows":len(valid),"first_date":min(x[0] for x in valid),
+                "last_date":max(x[0] for x in valid),
+                "source_url":fred_url,
+                "domain_qa_checks":["official FRED series identity","Brent spot distinguished from futures",
+                  "positive numeric prices","unique date/series keys","observations bounded by canonical panel cutoff",
+                  "source URL provenance"]
+              })
+            except Exception as e:
+              crude_report["reason"]=type(e).__name__+": "+str(e)[:220]
+          Path("outputs/macro_geo/crude_oil_collection_report.json").write_text(json.dumps(crude_report,indent=2)+"\n",encoding="utf-8")
+
+          # Candidate-only RSS: never write data/external/geopolitical_events.csv from a headline feed.
+          feed_url="https://feeds.bbci.co.uk/news/world/rss.xml"
+          geo={"group":"geopolitical_events_candidate","status":"UNKNOWN","source":"BBC World RSS","canonical_promotion":False}
+          rows=[]
+          patterns={
+            "ARMED_CONFLICT":r"\b(war|airstrike|missile|military|troops|invasion|attack|ceasefire|battle|bombing)\b",
+            "SANCTIONS":r"\b(sanction|embargo|asset freeze)\b",
+            "TRADE_POLICY":r"\b(tariff|trade ban|export control|import duty|trade restriction)\b",
+            "ELECTIONS":r"\b(election|vote|polling|president-elect|parliamentary vote)\b",
+            "DIPLOMACY":r"\b(summit|diplomatic|foreign minister|peace talks|treaty)\b"}
+          try:
+            req=urllib.request.Request(feed_url,headers={"User-Agent":"Mozilla/5.0 (compatible; P0Audit/1.0)","Accept":"application/rss+xml, application/xml, text/xml"})
+            with urllib.request.urlopen(req,timeout=8) as resp:
+              body=resp.read(2_000_000)
+              if resp.status!=200: raise RuntimeError("HTTP "+str(resp.status))
+            root=ET.fromstring(body); channel=root.find("channel")
+            if channel is None: raise ValueError("RSS channel missing")
+            for node in channel.findall("item")[:100]:
+              title=(node.findtext("title") or "").strip(); url=(node.findtext("link") or "").strip(); pub=(node.findtext("pubDate") or "").strip()
+              if not title or not url or not pub: continue
+              try:
+                dt=parsedate_to_datetime(pub)
+                if dt.tzinfo is None: dt=dt.replace(tzinfo=timezone.utc)
+                published=dt.astimezone(timezone.utc).isoformat()
+              except Exception: continue
+              typ="UNCLASSIFIED"
+              for label,pattern in patterns.items():
+                if re.search(pattern,title,re.I): typ=label; break
+              rows.append({"EVENT_DATE":published[:10],"PUBLISHED_AT":published,"EVENT_TYPE":typ,"SOURCE":"BBC World RSS","SOURCE_URL":url,"CONFIDENCE":"LOW_KEYWORD_ONLY" if typ!="UNCLASSIFIED" else "UNKNOWN","TITLE":title,"FEED_URL":feed_url,"EVENT_DATE_BASIS":"PUBLICATION_DATE_PROXY_NOT_VERIFIED_EVENT_DATE","OBSERVED_AT_UTC":now,"MARKET_IMPACT":"UNKNOWN"})
+            if not rows: raise ValueError("no valid RSS items")
+            fields=["EVENT_DATE","PUBLISHED_AT","EVENT_TYPE","SOURCE","SOURCE_URL","CONFIDENCE","TITLE","FEED_URL","EVENT_DATE_BASIS","OBSERVED_AT_UTC","MARKET_IMPACT"]
+            with Path("data/external/geopolitical_events_candidate.csv").open("w",encoding="utf-8",newline="") as f:
+              w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+            geo.update({"status":"PASS","rows":len(rows),"keyword_classified":sum(r["EVENT_TYPE"]!="UNCLASSIFIED" for r in rows),"unclassified":sum(r["EVENT_TYPE"]=="UNCLASSIFIED" for r in rows),"path":"data/external/geopolitical_events_candidate.csv","event_date_caveat":"Publication date proxy only; not verified event occurrence date."})
+          except Exception as e: geo["reason"]=type(e).__name__+": "+str(e)[:220]
+          report["sources"].append(geo)
+
+          report["collection_status"]="PASS" if all(x["status"]=="PASS" for x in report["sources"] if x["group"]!="geopolitical_events_candidate") and geo["status"]=="PASS" else "BLOCKED"
+          Path("outputs/macro_geo/p0_part8_reproducible_backbone_report.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
+          print(json.dumps(report,indent=2))
+          if report["collection_status"]!="PASS": raise SystemExit(1)
+          PY
+      - name: Repair official NSE FPI/DII and corporate-event source coverage
+        run: |
+          python pipeline/macro_geo_repair_p0.py
+      - name: Audit coverage and factor registry on this exact integrated dataset
+        run: |
+          python pipeline/macro_geo_source_coverage.py
+          python pipeline/macro_geo_factor_coverage_audit.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("outputs/macro_geo/p0_part8_reproducible_backbone_report.json")
+          report=json.loads(p.read_text())
+          cov=json.loads(Path("outputs/macro_geo/source_coverage.json").read_text())
+          fac=json.loads(Path("outputs/macro_geo/factor_coverage_audit.json").read_text())
+          report["source_coverage_summary"]={k:cov.get(k) for k in ["status","sources_total","available","not_connected","schema_fail","quality_warn","read_error"]}
+          report["p0_coverage"]=cov.get("p0_coverage",{})
+          report["factor_coverage_summary"]={k:fac.get(k) for k in ["status","factor_groups","fully_available_schema_groups","partial_source_coverage","not_connected","unmapped"]}
+          report["hard_gate"]="BLOCKED_PENDING_REAL_SOURCE_COVERAGE_AND_MATURED_EVENT_WINDOWS"
+          report["release_boundary"]="This run proves bounded collection and same-run audit reproducibility only. It does not certify all P0 groups, event-to-market causal joins, mature H+1/H+3/H+5 windows, or release readiness."
+          Path("outputs/macro_geo/p0_part8_reproducible_backbone_report.json").write_text(json.dumps(report,indent=2)+"\n")
+          print(json.dumps({"collection_status":report.get("collection_status"),"source_coverage_summary":report["source_coverage_summary"],"p0_coverage_status":report.get("p0_coverage",{}).get("status"),"factor_coverage_summary":report["factor_coverage_summary"],"hard_gate":report["hard_gate"]},indent=2))
+          PY
+      - name: Upload reproducible Part 8 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part8-reproducible-backbone-audit
+          path: |
+            data/external/benchmark_indices.csv
+            data/external/sector_indices.csv
+            data/external/volatility.csv
+            data/external/usd_inr.csv
+            data/external/brent_crude.csv
+            data/external/geopolitical_events_candidate.csv
+            data/external/fpi_dii_flows.csv
+            data/external/corporate_events.csv
+            outputs/macro_geo/p0_repair_report.json
+            outputs/macro_geo/p0_part8_reproducible_backbone_report.json
+            outputs/macro_geo/crude_oil_collection_report.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/source_coverage.csv
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+          if-no-files-found: warn

@@ -1,0 +1,95 @@
+name: Bounded Factor Source Repair (separate from P0; evidence-only)
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_factor_source_collectors.py"
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - "pipeline/macro_geo_factor_coverage_audit.py"
+      - ".github/workflows/macro_geo_factor_source_repair.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: macro-geo-factor-source-repair
+  cancel-in-progress: false
+jobs:
+  factor-source-repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Download latest successful P0 evidence panel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/macro_geo_p0_event_study.yml/runs?branch=${GITHUB_REF_NAME}&status=success&per_page=10" --jq '[.workflow_runs[] | select(.conclusion=="success")] | sort_by(.created_at) | last | .id')
+          test -n "$RUN_ID" && test "$RUN_ID" != "null"
+          echo "Using latest successful P0 evidence run: $RUN_ID"
+          mkdir -p /tmp/p0-evidence data/external
+          gh run download "$RUN_ID" -n macro-geo-p0-event-study -D /tmp/p0-evidence
+          find /tmp/p0-evidence -type f -maxdepth 5 -print
+          if [ -f /tmp/p0-evidence/data/external/benchmark_indices.csv ]; then
+            cp /tmp/p0-evidence/data/external/benchmark_indices.csv data/external/benchmark_indices.csv
+          elif [ -f /tmp/p0-evidence/benchmark_indices.csv ]; then
+            cp /tmp/p0-evidence/benchmark_indices.csv data/external/benchmark_indices.csv
+          fi
+          # Preserve the exact P0 source-coverage baseline for reconciliation.
+          if [ -f /tmp/p0-evidence/outputs/macro_geo/source_coverage.json ]; then
+            mkdir -p outputs/macro_geo
+            cp /tmp/p0-evidence/outputs/macro_geo/source_coverage.json outputs/macro_geo/source_coverage.json
+          else
+            echo "Missing source_coverage.json in P0 artifact; refusing ungrounded reconciliation"
+            exit 1
+          fi
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          candidates=[Path("data/processed/nse_eq_200_sessions.csv"),Path("data/external/benchmark_indices.csv")]
+          for p in candidates:
+              if p.exists():
+                  df=pd.read_csv(p)
+                  cols={str(c).strip().upper() for c in df.columns}
+                  if "DATE" in cols and len(df):
+                      dates=pd.to_datetime(df[[c for c in df.columns if str(c).strip().upper()=="DATE"][0]],errors="coerce").dropna()
+                      if not dates.empty:
+                          print({"panel":str(p),"rows":len(df),"valid_dates":len(dates),"status":"OK"})
+                          raise SystemExit(0)
+          raise SystemExit("Latest successful P0 artifact did not contain a valid observed DATE panel; refusing wall-clock-only collection")
+          PY
+      - name: Run bounded factor source collector (maximum 7 minutes)
+        timeout-minutes: 7
+        run: python pipeline/macro_geo_factor_source_collectors.py
+      - name: Reconcile observed factor-source evidence against P0 baseline
+        if: success()
+        run: |
+          python pipeline/macro_geo_factor_coverage_reconcile.py
+          python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Upload factor-source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-factor-source-repair
+          path: |
+            data/external/us_yields.csv
+            data/external/commodity_prices.csv
+            data/external/dxy.csv
+            data/external/global_policy_events.csv
+            data/external/gold_prices_monthly.csv
+            outputs/macro_geo/factor_source_collection_report.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.json
+            outputs/macro_geo/factor_coverage_audit.csv
+          if-no-files-found: warn
