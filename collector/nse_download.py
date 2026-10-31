@@ -424,7 +424,7 @@ def main():
                 if r is None:
                     raise requests.RequestException("request failed after bounded retries")
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
-                if r.status_code == 200 and validate_legacy(r.content):
+                if r.status_code == 200 and validate_legacy(r.content, datetime.strptime(stamp, "%d%m%Y").date()):
                     atomic_write_bytes(target, r.content)
                     got = True
                 elif target.exists():
