@@ -129,6 +129,47 @@ def normalize_statement_iv(tables):
                 return table_id, output
     return None, []
 
+def reconcile_statement_ii_a(tables, panel):
+    """Cross-check all NIC-2 Sep-25 and Sep-26 values against Statement II-A."""
+    statement_rows = None
+    for rows in tables:
+        if any("STATEMENT II A" in str(cell).upper() for row in rows for cell in row):
+            statement_rows = rows
+            break
+    if statement_rows is None:
+        raise ValueError("Official Statement II-A table not found for cross-statement reconciliation")
+    official = {}
+    for row in statement_rows:
+        if len(row) >= 5:
+            nic = str(row[0]).strip()
+            if len(nic) == 2 and nic.isdigit():
+                try:
+                    official[nic] = {"2025-09": float(str(row[3]).replace(",", "")),
+                                     "2026-09": float(str(row[4]).replace(",", ""))}
+                except ValueError:
+                    continue
+    panel_values = {}
+    for item in panel:
+        if item["period"] in ("2025-09", "2026-09"):
+            panel_values.setdefault(item["nic_2025"], {})[item["period"]] = float(item["index"])
+    if len(official) != 23:
+        raise ValueError(f"Statement II-A expected 23 NIC-2 rows, found {len(official)}")
+    checks = []
+    for nic in sorted(official):
+        if nic not in panel_values or set(panel_values[nic]) != {"2025-09", "2026-09"}:
+            raise ValueError(f"Statement IV panel missing reconciliation periods for NIC {nic}")
+        for period in ("2025-09", "2026-09"):
+            expected = official[nic][period]
+            observed = panel_values[nic][period]
+            delta = round(observed - expected, 6)
+            checks.append({"nic_2025":nic,"period":period,"statement_ii_a_index":expected,
+                           "statement_iv_index":observed,"difference":delta,
+                           "status":"PASS" if abs(delta) < 0.000001 else "BLOCKED"})
+            if abs(delta) >= 0.000001:
+                raise ValueError(f"Statement II-A/IV mismatch NIC {nic} {period}: {observed} vs {expected}")
+    return checks
+
+
 def collect(out: Path, opener=urllib.request.urlopen):
     req=urllib.request.Request(URL, headers={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Language":"en-IN,en;q=0.9","Cache-Control":"no-cache"})
     with opener(req, timeout=30) as response:
@@ -178,6 +219,10 @@ def collect(out: Path, opener=urllib.request.urlopen):
             raise RuntimeError(f"NIC {nic} coverage failure; missing={missing}, extra={extra}")
     if len(normalized)!=299:
         raise RuntimeError(f"Expected 299 NIC-period observations; found {len(normalized)}")
+    reconciliation = reconcile_statement_ii_a(tables, normalized)
+    with (out/"statement_ii_a_reconciliation.csv").open("w",encoding="utf-8-sig",newline="") as handle:
+        writer=csv.DictWriter(handle,fieldnames=list(reconciliation[0].keys()))
+        writer.writeheader(); writer.writerows(reconciliation)
     with (out/"iip_nic2_monthly_panel.csv").open("w",encoding="utf-8-sig",newline="") as handle:
         writer=csv.DictWriter(handle,fieldnames=list(normalized[0].keys()))
         writer.writeheader(); writer.writerows(normalized)
