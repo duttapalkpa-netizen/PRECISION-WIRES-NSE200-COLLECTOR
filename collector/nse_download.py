@@ -236,12 +236,13 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
         print(f"UDIFF_PARSE_ERROR {type(e).__name__}: {e}", flush=True)
         return False
 
-def validate_legacy(content: bytes) -> bool:
+def validate_legacy(content: bytes, expected_date: date | None = None) -> bool:
+    """Validate legacy CSV schema and, when requested, exact EQ trade date."""
     if looks_blocked(content) or len(content) < 1000:
         return False
     try:
         import pandas as pd
-        df = pd.read_csv(io.BytesIO(content), nrows=50, dtype=str)
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
         normalized = {_clean_key(c): c for c in df.columns}
         series_col = normalized.get("SERIES")
         symbol_col = normalized.get("SYMBOL")
@@ -249,8 +250,18 @@ def validate_legacy(content: bytes) -> bool:
         if not (series_col and symbol_col and close_col):
             return False
         series = df[series_col].astype(str).str.strip().str.upper()
-        close = pd.to_numeric(df[close_col], errors="coerce")
-        return series.eq("EQ").any() and close.notna().any() and (close.dropna() > 0).all()
+        eq = df[series.eq("EQ")]
+        close = pd.to_numeric(eq[close_col], errors="coerce")
+        if eq.empty or close.notna().empty or not (close.dropna() > 0).all():
+            return False
+        if expected_date is not None:
+            date_col = next((normalized[k] for k in ("DATE1", "TRADDT", "TRADGDATE", "DATE") if k in normalized), None)
+            if date_col is None:
+                return False
+            parsed = eq[date_col].map(_parse_date)
+            if parsed.isna().any() or set(parsed.tolist()) != {expected_date}:
+                return False
+        return True
     except Exception as e:
         print(f"LEGACY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
         return False
