@@ -174,6 +174,30 @@ def validate_legacy(content: bytes) -> bool:
         print(f"LEGACY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
         return False
 
+def validate_cached_file(path: Path, expected_date: date) -> bool:
+    """A cache hit is valid only when its full payload belongs to the filename date."""
+    try:
+        import pandas as pd
+        content = path.read_bytes()
+        if not validate_legacy(content):
+            return False
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
+        cols = {_clean_key(c): c for c in df.columns}
+        date_col = next((cols[k] for k in ("DATE1", "TRADDT", "TRADGDATE", "DATE") if k in cols), None)
+        series_col = cols.get("SERIES") or cols.get("SCTYSRS")
+        if not date_col or not series_col or df.empty:
+            return False
+        eq = df[df[series_col].astype(str).str.strip().str.upper().eq("EQ")]
+        if eq.empty:
+            return False
+        parsed = eq[date_col].map(_parse_date)
+        if parsed.isna().any():
+            return False
+        return set(parsed.tolist()) == {expected_date}
+    except Exception as e:
+        print(f"CACHE_VALIDATE_ERROR {path.name}: {type(e).__name__}: {e}", flush=True)
+        return False
+
 def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
     """Validate NSE Full Bhavcopy and Security Deliverable CSV."""
     if looks_blocked(content) or len(content) < 1000:
@@ -254,7 +278,7 @@ def main():
         ymd = d.strftime("%Y%m%d")
         target = out / f"sec_bhavdata_full_{stamp}.csv"
 
-        if target.exists() and validate_legacy(target.read_bytes()):
+        if target.exists() and validate_cached_file(target, d):
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
             print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
