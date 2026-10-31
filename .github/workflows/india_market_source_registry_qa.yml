@@ -1,0 +1,34 @@
+name: India Market Source Registry QA
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "config/india_market_data_source_registry.csv"
+      - "pipeline/validate_india_market_source_registry.py"
+      - "qa/test_india_market_source_registry.py"
+      - ".github/workflows/india_market_source_registry_qa.yml"
+  pull_request:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "config/india_market_data_source_registry.csv"
+      - "pipeline/validate_india_market_source_registry.py"
+      - "qa/test_india_market_source_registry.py"
+      - ".github/workflows/india_market_source_registry_qa.yml"
+permissions:
+  contents: read
+concurrency:
+  group: india-market-source-registry
+  cancel-in-progress: true
+jobs:
+  registry-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate source registry schema
+        run: python pipeline/validate_india_market_source_registry.py
+      - name: Run focused registry tests
+        run: python -m unittest qa.test_india_market_source_registry -v
