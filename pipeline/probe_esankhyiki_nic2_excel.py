@@ -24,7 +24,7 @@ def main():
  required=["unique_id","table_name","release_date","ref_period","file_path","file_name","data_source"]
  missing=[k for k in required if not row.get(k)]
  if missing:raise RuntimeError("Metadata missing required fields: "+",".join(missing))
- rel=BASE+"file/download/"+row["file_path"].lstrip("/")+row["file_name"]
+ rel=BASE+"file/download/"+urllib.parse.quote(row["file_path"].lstrip("/")+row["file_name"],safe="/")
  ds,dct,dfu,db=get(rel,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream")
  if ds!=200 or not db.startswith(b"PK"):raise RuntimeError(f"Workbook download not verified: status={ds}, type={dct}, bytes={len(db)}")
  xlsx=out/"IIPMFY26018AUG.xlsx";xlsx.write_bytes(db)
