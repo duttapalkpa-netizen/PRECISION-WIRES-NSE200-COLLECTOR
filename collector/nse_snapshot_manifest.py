@@ -79,7 +79,8 @@ def build_snapshot(raw_dir: Path, expected_sessions: int) -> dict:
     }
     output = raw_dir / f'nse_snapshot_manifest_{snapshot_id[:16]}.json'
     if output.exists():
-        if json.loads(output.read_text()) != manifest:
+        existing = json.loads(output.read_text())
+        if existing.get('snapshot_id') != snapshot_id or existing.get('records') != records:
             raise RuntimeError(f'content-addressed manifest path collision: {output.name}')
     else:
         atomic_write(output, (json.dumps(manifest, indent=2, sort_keys=True) + '\n').encode())
