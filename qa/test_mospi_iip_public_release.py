@@ -23,9 +23,9 @@ class TestMospiIipParser(unittest.TestCase):
         self.assertEqual(data[0]["nic_2025"],"10")
 
     def test_duplicate_nic_period_keys_are_rejected(self):
-        months=["Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26","Jun-26","Jul-26","Aug-26"]
+        months=["Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26","Jun-26","Jul-26","Aug-26","Sep-26"]
         header=["NIC 2025","Description","Weight"]+months
-        row=["10","Food","5.0"]+["100"]*12
+        row=["10","Food","5.0"]+["100"]*13
         with self.assertRaises(ValueError):
             normalize_statement_iv([[header,row,row]])
 
