@@ -52,6 +52,21 @@ class AcquisitionIntegrityTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(), b"known-good")
             self.assertFalse((Path(tmp) / "session.csv.part").exists())
 
+    def test_legacy_rejects_previous_session_date_for_requested_holiday(self):
+        header = "SYMBOL,SERIES,DATE1,CLOSE_PRICE\\n"
+        rows = "".join(f"SYM{i},EQ,23-Jan-2026,100\\n" for i in range(40))
+        self.assertFalse(validate_legacy((header + rows).encode(), date(2026, 1, 26)))
+
+    def test_legacy_accepts_exact_requested_trade_date(self):
+        header = "SYMBOL,SERIES,DATE1,CLOSE_PRICE\\n"
+        rows = "".join(f"SYM{i},EQ,27-Jan-2026,100\\n" for i in range(40))
+        self.assertTrue(validate_legacy((header + rows).encode(), date(2026, 1, 27)))
+
+    def test_legacy_requires_date_column_when_expected_date_supplied(self):
+        header = "SYMBOL,SERIES,CLOSE_PRICE\\n"
+        rows = "".join(f"SYM{i},EQ,100\\n" for i in range(40))
+        self.assertFalse(validate_legacy((header + rows).encode(), date(2026, 1, 27)))
+
     def test_full_delivery_rejects_wrong_trade_date(self):
         header = "SYMBOL,SERIES,DATE1,CLOSE_PRICE,DELIV_QTY,DELIV_PER\n"
         rows = "".join(
