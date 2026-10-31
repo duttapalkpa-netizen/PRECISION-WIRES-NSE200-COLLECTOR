@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - fix/factor-registry-same-snapshot-reconcile
-    paths:
-      - '.github/workflows/nse-200-session-benchmark.yml'
-      - 'collector/nse_download.py'
-      - 'collector/nse_snapshot_manifest.py'
-      - 'collector/nse_warm_cache_benchmark.py'
   workflow_dispatch:
 
 permissions:
