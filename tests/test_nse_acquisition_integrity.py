@@ -55,14 +55,14 @@ class AcquisitionIntegrityTests(unittest.TestCase):
     def test_full_delivery_rejects_wrong_trade_date(self):
         header = "SYMBOL,SERIES,DATE1,CLOSE_PRICE,DELIV_QTY,DELIV_PER\n"
         rows = "".join(
-            f"SYM{i},EQ,30-Oct-2026,100,1000,50\n" for i in range(20)
+            f"SYM{i},EQ,30-Oct-2026,100,1000,50\n" for i in range(40)
         )
         self.assertFalse(validate_full_delivery((header + rows).encode(), "29102026"))
 
     def test_full_delivery_accepts_matching_trade_date(self):
         header = "SYMBOL,SERIES,DATE1,CLOSE_PRICE,DELIV_QTY,DELIV_PER\n"
         rows = "".join(
-            f"SYM{i},EQ,29-Oct-2026,100,1000,50\n" for i in range(20)
+            f"SYM{i},EQ,29-Oct-2026,100,1000,50\n" for i in range(40)
         )
         self.assertTrue(validate_full_delivery((header + rows).encode(), "29102026"))
 
