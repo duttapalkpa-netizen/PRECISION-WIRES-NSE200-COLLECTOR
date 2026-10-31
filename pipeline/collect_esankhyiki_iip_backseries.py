@@ -89,6 +89,12 @@ def parse_latest_workbook(path, record):
             if period: periods.append((col_i,period))
         rows=[]
         for _,row in frame.iloc[header_i+1:].iterrows():
+            section_label=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
+            # Workbook repeats the same 41-month columns in a second section for
+            # year-on-year growth rates. Stop before that section: this panel is
+            # the index-level series only, not index plus growth-rate duplicates.
+            if "growth rates" in section_label and "previous year" in section_label:
+                break
             nic=str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
             if not NIC_RE.fullmatch(nic): continue
             desc=str(row.iloc[1]).strip() if pd.notna(row.iloc[1]) else ""
