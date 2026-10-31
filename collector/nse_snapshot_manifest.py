@@ -78,14 +78,24 @@ def build_snapshot(raw_dir: Path, expected_sessions: int) -> dict:
     if len(sessions) != expected_sessions or len(set(sessions)) != len(sessions):
         raise RuntimeError(f'expected {expected_sessions} unique sessions, got {len(sessions)}')
     diagnostics = json.loads(diagnostics_path.read_text())
-    status_by_date = {x['date']:x['status'] for x in diagnostics.get('diagnostics',[])}
+    diagnostic_by_date = {x['date']:x for x in diagnostics.get('diagnostics',[])}
+    status_by_date = {k:v.get('status','UNKNOWN') for k,v in diagnostic_by_date.items()}
     records = []
     for session in sorted(sessions):
         d = date.fromisoformat(session); filename=f"sec_bhavdata_full_{d.strftime('%d%m%Y')}.csv"; path=raw_dir/filename
         if not path.is_file() or path.stat().st_size < 1000: raise RuntimeError(f'missing or undersized session file: {filename}')
         validation = validate_session_csv(path,d)
+        acquisition = diagnostic_by_date.get(session, {})
         status = status_by_date.get(session,'UNKNOWN')
         if status in ('MISS','UNKNOWN'): raise RuntimeError(f'no successful acquisition provenance for {session}: {status}')
+        attempts = acquisition.get('attempts', [])
+        source_url = acquisition.get('source_url')
+        if status != 'CACHED' and not source_url:
+            raise RuntimeError(f'missing successful source URL for network-acquired session {session}')
+        successful_attempt = next((x for x in reversed(attempts)
+            if x.get('url') == source_url and x.get('http_status') == 200), {})
+        if status != 'CACHED' and not successful_attempt:
+            raise RuntimeError(f'missing HTTP 200 provenance record for {session}')
         source_map = {
             'CACHED':'validated-existing-cache (original network source not recoverable from legacy cache)',
             'OK_FULL_BHAVCOPY_DELIVERY':'NSE CM Full Bhavcopy + Security Deliverable report',
@@ -94,14 +104,17 @@ def build_snapshot(raw_dir: Path, expected_sessions: int) -> dict:
         records.append({'trade_date':session,'file':filename,'bytes':path.stat().st_size,'sha256':sha256_file(path),
             'eq_rows':validation['eq_rows'],'schema_validation':validation['schema_validation'],
             'acquisition_status':status,'source_provenance':source_map.get(status,'unresolved'),
-            'source_url':None,'retrieved_at_utc':datetime.fromtimestamp(path.stat().st_mtime,timezone.utc).isoformat()})
+            'source_url':source_url,'cache_origin':acquisition.get('cache_origin'),
+            'successful_response':successful_attempt or None,'attempts':attempts,
+            'retrieved_at_utc':(successful_attempt.get('retrieved_at_utc') if successful_attempt else None)
+                or datetime.fromtimestamp(path.stat().st_mtime,timezone.utc).isoformat()})
     canonical=''.join(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n' for r in records).encode()
     snapshot_id=hashlib.sha256(canonical).hexdigest()
     manifest={'schema_version':2,'snapshot_id':snapshot_id,'created_at_utc':datetime.now(timezone.utc).isoformat(),
         'expected_sessions':expected_sessions,'actual_sessions':len(records),'first_session':records[0]['trade_date'],
         'last_session':records[-1]['trade_date'],'records':records,'provenance_limitations':[
         'For pre-existing legacy cache files, the original network source and retrieval time are unavailable.',
-        'The current collector does not persist the exact URL chosen for UDiFF versus legacy fallback; source_url is null for those records.',
+        'Pre-existing legacy cache records have no original URL or authoritative network retrieval timestamp.',
         'File mtime is recorded as a local retrieval proxy, not as an authoritative server publication timestamp.']}
     output=raw_dir/f'nse_snapshot_manifest_{snapshot_id[:16]}.json'
     if output.exists():
