@@ -55,7 +55,7 @@ class AcquisitionIntegrityTests(unittest.TestCase):
 
     def test_legacy_rejects_previous_session_date_for_requested_holiday(self):
         header = "SYMBOL,SERIES,DATE1,CLOSE_PRICE\\n"
-        rows = "".join(f"SYM{i},EQ,23-Jan-2026,100\\n" for i in range(40))
+        rows = "".join(f"SYM{i},EQ,23-Jan-2026,100\\n" for i in range(100))
         self.assertFalse(validate_legacy((header + rows).encode(), date(2026, 1, 26)))
 
     def test_legacy_accepts_exact_requested_trade_date(self):
