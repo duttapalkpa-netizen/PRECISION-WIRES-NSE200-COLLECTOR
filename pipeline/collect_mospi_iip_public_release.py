@@ -36,49 +36,78 @@ def parse_html(raw: bytes):
 
 
 def normalize_statement_iv(tables):
-    """Normalize NIC-2 monthly index panel only when the release headers identify it."""
-    month_re = re.compile(r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-']([0-9]{2})$", re.I)
+    """Normalize a 13-month NIC-2 index table, independent of table header wrapping."""
+    month_names = {"jan":"01","feb":"02","mar":"03","apr":"04","may":"05","jun":"06",
+                   "jul":"07","aug":"08","sep":"09","oct":"10","nov":"11","dec":"12"}
+
+    def parse_month(label):
+        token = " ".join(label.split()).strip().replace("’", "'")
+        for separator in ("-", "'", " "):
+            parts = token.split(separator)
+            if len(parts) == 2 and parts[0][:3].lower() in month_names and parts[1].isdigit():
+                year = int(parts[1])
+                year += 2000 if year < 80 else 1900
+                return f"{year:04d}-{month_names[parts[0][:3].lower()]}"
+        return None
+
     for table_id, rows in enumerate(tables, start=1):
         for header_i, row in enumerate(rows):
-            cells=[" ".join(x.split()).strip() for x in row]
-            joined=" | ".join(cells).lower()
-            if "nic 2025" not in joined or "description" not in joined or "weight" not in joined:
+            cells = [" ".join(str(x).split()).strip() for x in row]
+            lowered = [x.lower() for x in cells]
+            if not any("nic 2025" in x for x in lowered):
                 continue
-            month_cols=[]
-            for i,cell in enumerate(cells):
-                m=month_re.match(cell)
-                if m:
-                    year=int(m.group(2)); year += 2000 if year < 80 else 1900
-                    month_cols.append((i,f"{year:04d}-{ {'jan':'01','feb':'02','mar':'03','apr':'04','may':'05','jun':'06','jul':'07','aug':'08','sep':'09','oct':'10','nov':'11','dec':'12'}[m.group(1).lower()] }"))
-            if len(month_cols)<12:
+            if not any("description" in x for x in lowered):
                 continue
-            weight_i=next(i for i,x in enumerate(cells) if x.lower()=="weight")
-            nic_i=next(i for i,x in enumerate(cells) if x.lower()=="nic 2025")
-            desc_i=next(i for i,x in enumerate(cells) if x.lower()=="description")
-            output=[]
-            seen=set()
-            for data_row in rows[header_i+1:]:
-                if len(data_row)<=max([weight_i,nic_i,desc_i]+[i for i,_ in month_cols]):
+            if not any(x == "weight" or x.startswith("weight ") for x in lowered):
+                continue
+
+            month_cols = []
+            for i, cell in enumerate(cells):
+                period = parse_month(cell)
+                if period:
+                    month_cols.append((i, period))
+            # The requested September 2026 Statement IV is a 13-month window.
+            if len(month_cols) != 13:
+                continue
+
+            nic_i = next(i for i, x in enumerate(lowered) if "nic 2025" in x)
+            desc_i = next(i for i, x in enumerate(lowered) if "description" in x)
+            weight_i = next(i for i, x in enumerate(lowered) if x == "weight" or x.startswith("weight "))
+            required_i = max([nic_i, desc_i, weight_i] + [i for i, _ in month_cols])
+            output = []
+            seen = set()
+            for data_row in rows[header_i + 1:]:
+                if len(data_row) <= required_i:
                     continue
-                nic=data_row[nic_i].strip()
-                if len(nic)!=2 or not nic.isdigit(): continue
+                nic = " ".join(str(data_row[nic_i]).split()).strip()
+                if len(nic) != 2 or not nic.isdigit():
                     continue
-                desc=data_row[desc_i].strip()
-                try: weight=float(data_row[weight_i].replace(",","").strip())
-                except ValueError: continue
-                for col,period in month_cols:
-                    raw_value=data_row[col].replace(",","").strip()
-                    if not raw_value: continue
-                    value=float(raw_value)
-                    key=(nic,period)
-                    if key in seen: raise ValueError(f"Duplicate NIC-period key: {key}")
+                desc = " ".join(str(data_row[desc_i]).split()).strip()
+                try:
+                    weight = float(str(data_row[weight_i]).replace(",", "").strip())
+                except ValueError:
+                    continue
+                for col, period in month_cols:
+                    raw_value = str(data_row[col]).replace(",", "").strip()
+                    if not raw_value:
+                        raise ValueError(f"Missing index for NIC {nic}, period {period}")
+                    try:
+                        value = float(raw_value)
+                    except ValueError as exc:
+                        raise ValueError(f"Invalid index for NIC {nic}, period {period}: {raw_value}") from exc
+                    key = (nic, period)
+                    if key in seen:
+                        raise ValueError(f"Duplicate NIC-period key: {key}")
                     seen.add(key)
-                    output.append({"period":period,"nic_2025":nic,"description":desc,
-                      "weight":weight,"index":value,"base_year":"2022-23",
-                      "frequency":"M","unit":"index","source_table_id":table_id})
+                    output.append({
+                        "period": period, "nic_2025": nic, "description": desc,
+                        "weight": weight, "index": value, "base_year": "2022-23",
+                        "frequency": "M", "unit": "index", "source_table_id": table_id,
+                        "vintage": "2026-09_quick_estimate_release"
+                    })
             if output:
-                return table_id,output
-    return None,[]
+                return table_id, output
+    return None, []
 
 def collect(out: Path, opener=urllib.request.urlopen):
     req=urllib.request.Request(URL, headers={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Language":"en-IN,en;q=0.9","Cache-Control":"no-cache"})
