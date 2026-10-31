@@ -126,7 +126,9 @@ def collect(out: Path, opener=urllib.request.urlopen):
       "table_count":len(tables),"release_reference_period":"2026-09",
       "release_posted_ist":"2026-10-28 16:00",
       "base_year":"2022-23","series_deflator":"Output PPI",
-      "verification":"PUBLIC_HTML_CAPTURE_TABLE_INVENTORY_AND_NIC2_MONTHLY_PANEL_QA",\n      "normalized_rows":len(normalized),\n      "normalized_table_id":normalized_table_id,
+"verification":"PUBLIC_HTML_CAPTURE_TABLE_INVENTORY_AND_NIC2_MONTHLY_PANEL_QA",
+"normalized_rows":len(normalized),
+"normalized_table_id":normalized_table_id,
       "limitations":["No e-Sankhyiki CSV/API response captured in this run.",
         "HTML table extraction is archival diagnostic; numeric schema/domain normalization remains pending.",
         "Quick estimates are revisable; preserve each release vintage."]
