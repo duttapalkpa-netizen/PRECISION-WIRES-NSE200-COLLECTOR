@@ -5,7 +5,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from collector.nse_download import atomic_write_bytes, response_provenance, validate_full_delivery
+from datetime import date\nfrom collector.nse_download import atomic_write_bytes, response_provenance, validate_full_delivery, validate_legacy
 
 
 class AcquisitionIntegrityTests(unittest.TestCase):
