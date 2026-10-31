@@ -196,7 +196,7 @@ def collect(out: Path, opener=urllib.request.urlopen):
             for row in rows: writer.writerow(row+[""]*(width-len(row)))
         inventory.append({"table_id":table_id,"rows":len(rows),"columns":width,
           "nonempty_cells":sum(bool(c.strip()) for r in rows for c in r),"file":csv_path.name})
-    (out/"table_inventory.json").write_text(json.dumps(inventory,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+    (out/"table_inventory.json").write_text(json.dumps(inventory,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     normalized_table_id, normalized=normalize_statement_iv(tables)
     if not normalized: raise RuntimeError("Could not identify a NIC-2025 monthly index table with 13 month columns")
     expected_periods=[]
@@ -254,7 +254,7 @@ def collect(out: Path, opener=urllib.request.urlopen):
         "2026-09_quick_estimate":sum(x["estimate_status"]=="quick_estimate" for x in normalized)},
       "base_year":"2022-23","frequency":"M",
       "period_min":min(x["period"] for x in normalized),"period_max":max(x["period"] for x in normalized)}
-    (out/"domain_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+    (out/"domain_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     manifest={
       "source":"MoSPI release via Press Information Bureau",
       "url":URL,"final_url":final_url,"http_status":status,"content_type":content_type,
