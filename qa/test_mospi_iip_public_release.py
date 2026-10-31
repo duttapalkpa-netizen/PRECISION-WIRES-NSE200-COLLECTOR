@@ -1,4 +1,4 @@
-import unittest
+import unittest, csv, tempfile, json
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "pipeline"))
@@ -10,7 +10,7 @@ class TestMospiIipParser(unittest.TestCase):
         _, tables=parse_html(html)
         self.assertEqual(tables, [[["NIC","Index"],["24","130.7"]]])
 
-    def test_empty_html_is_empty(self):
+    def test_ragged_table_rows_can_be_padded_for_csv(self):\n        rows=[["NIC","Index"],["24","130.7"],["25"]]\n        width=max(map(len,rows))\n        normalized=[row+[""]*(width-len(row)) for row in rows]\n        self.assertEqual(normalized[-1],["25",""])\n\n    def test_empty_html_is_empty(self):
         _, tables=parse_html(b"<html><body>No table</body></html>")
         self.assertEqual(tables, [])
 
