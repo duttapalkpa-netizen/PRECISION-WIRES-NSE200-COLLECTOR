@@ -22,11 +22,16 @@ HEADERS = {
 def atomic_write_bytes(path: Path, content: bytes) -> None:
     """Write downloads atomically so interrupted responses never poison the cache."""
     tmp = path.with_name(path.name + ".part")
-    with tmp.open("wb") as handle:
-        handle.write(content)
-        handle.flush()
-        os.fsync(handle.fileno())
-    os.replace(tmp, path)
+    try:
+        with tmp.open("wb") as handle:
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, path)
+    finally:
+        # A failed write/replace must not leave a partial file that looks like a cache artifact.
+        if tmp.exists():
+            tmp.unlink()
 
 def response_provenance(url: str, response=None, error=None, attempt: int = 1) -> dict:
     content = response.content if response is not None else b""
@@ -240,9 +245,14 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
         close = col("CLOSE_PRICE", "CLOSEPRICE", "CLSPRIC")
         dq = col("DELIV_QTY", "DELIVERY_QTY", "DELIVQTY")
         dp = col("DELIV_PER", "DELIVERY_PER", "DELIVPER")
-        if not all((symbol, series, close, dq, dp)):
+        trade_date = col("DATE1", "TRADDT", "TRADG_DATE", "DATE")
+        if not all((symbol, series, close, dq, dp, trade_date)):
             return False
         eq = df[df[series].astype(str).str.strip().str.upper().eq("EQ")]
+        expected = _parse_date(expected_stamp)
+        observed = eq[trade_date].map(_parse_date)
+        if expected is None or observed.empty or observed.isna().any() or set(observed.tolist()) != {expected}:
+            return False
         q = pd.to_numeric(eq[dq], errors="coerce")
         p = pd.to_numeric(eq[dp], errors="coerce")
         cl = pd.to_numeric(eq[close], errors="coerce")
