@@ -250,6 +250,11 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
             return False
         eq = df[df[series].astype(str).str.strip().str.upper().eq("EQ")]
         expected = _parse_date(expected_stamp)
+        if expected is None:
+            try:
+                expected = datetime.strptime(expected_stamp, "%d%m%Y").date()
+            except ValueError:
+                return False
         observed = eq[trade_date].map(_parse_date)
         if expected is None or observed.empty or observed.isna().any() or set(observed.tolist()) != {expected}:
             return False
