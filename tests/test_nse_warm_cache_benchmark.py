@@ -15,7 +15,7 @@ def seed_sessions(root, count):
             dates.append(day.isoformat())
             (root / f"sec_bhavdata_full_{day.strftime('%d%m%Y')}.csv").write_text("fixture")
         day -= timedelta(days=1)
-    (root / "sessions.txt").write_text("\\n".join(dates) + "\\n")
+    (root / "sessions.txt").write_text(chr(10).join(dates) + chr(10))
 
 
 class WarmCacheBenchmarkTests(unittest.TestCase):
