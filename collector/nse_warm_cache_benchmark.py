@@ -49,7 +49,7 @@ def main():
     result = audit_cache(Path(args.raw_dir), args.sessions)
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, indent=2) + "\\n")
+    output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))
     if result["valid_cache_hits"] != args.sessions:
         raise SystemExit(f"warm cache incomplete: {result['valid_cache_hits']}/{args.sessions} valid sessions")
