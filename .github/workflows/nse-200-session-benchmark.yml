@@ -42,7 +42,7 @@ jobs:
           python -c "import time; print(time.time_ns())" > data/qa/benchmark_started_epoch_ns.txt
           echo "CACHE_HIT=${{ steps.raw_cache.outputs.cache-hit }}" | tee data/qa/cache_restore_status.txt\n          echo "CACHE_RESTORED_KEY=${{ steps.raw_cache.outputs.cache-matched-key }}" | tee -a data/qa/cache_restore_status.txt
       - name: Require a restored cache and exactly 200 indexed sessions
-        if: steps.raw_cache.outputs.cache-hit == ''
+        if: steps.raw_cache.outputs.cache-matched-key == ''
         run: |
           echo "BLOCKED: no exact cache hit; refusing to redownload 200 sessions." | tee data/qa/cache_gate.txt
           exit 78
@@ -56,7 +56,8 @@ jobs:
           dates = [x.strip() for x in p.read_text().splitlines() if x.strip()]
           unique = sorted(set(dates))
           csvs = list(Path("data/raw").glob("*.csv"))
-          matched = [d for d in unique if (Path("data/raw") / f"{d}.csv").is_file()]
+          from datetime import date
+          matched = [d for d in unique if (Path("data/raw") / ("sec_bhavdata_full_" + date.fromisoformat(d).strftime("%d%m%Y") + ".csv")).is_file()]
           print(f"INDEXED_SESSIONS={len(dates)}")
           print(f"UNIQUE_SESSIONS={len(unique)}")
           print(f"MATCHING_SESSION_CSVS={len(matched)}")
