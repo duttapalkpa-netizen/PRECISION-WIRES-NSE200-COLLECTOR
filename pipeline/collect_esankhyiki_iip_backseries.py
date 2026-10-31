@@ -123,22 +123,25 @@ def main():
     selected=[r for r in records if is_monthly_nic_record(r)]
     selected.sort(key=lambda r:(month_key(r["ref_period"]),str(r.get("release_date",""))))
     if not selected: raise RuntimeError("No monthly NIC-2 catalogue records from Apr-2023 found")
+    # The latest official NIC-2 workbook is a cumulative monthly panel (Apr-2023 onward).
+    # Do not fetch every catalogue row: older catalogue entries can point to retired files (HTTP 404),
+    # while the latest workbook already contains the complete historical series.
+    latest=max(selected,key=lambda r:(month_key(r["ref_period"]),str(r.get("release_date",""))))
     download_manifest=[]
-    for i,r in enumerate(selected,1):
-        name=r["file_name"];target=rawdir/name
-        meta={k:r.get(k) for k in ("catalogue_code","unique_id","product","table_name","ref_period","release_date","frequency","data_source","file_path","file_name","created_at","updated_at","status")}
-        if target.exists() and target.stat().st_size>1000 and target.read_bytes()[:2]==b"PK":
-            body=target.read_bytes();status="CACHED_VERIFIED_ZIP"
-        else:
-            url=DOWNLOAD+urllib.parse.quote(r["file_path"].lstrip("/")+name,safe="/")
-            code,ct,final,body=request(url,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream")
-            if code!=200 or not body.startswith(b"PK"):
-                raise RuntimeError(f"Excel download invalid {r['unique_id']}: HTTP {code}, type={ct}, bytes={len(body)}")
-            target.write_bytes(body);status="DOWNLOADED"
-            meta.update({"download_url":url,"download_final_url":final,"content_type":ct})
-        meta.update({"bytes":len(body),"sha256":sha(body),"local_file":str(target.relative_to(out)),"download_status":status})
-        download_manifest.append(meta)
-        time.sleep(0.12)
+    r=latest
+    name=r["file_name"];target=rawdir/name
+    meta={k:r.get(k) for k in ("catalogue_code","unique_id","product","table_name","ref_period","release_date","frequency","data_source","file_path","file_name","created_at","updated_at","status")}
+    if target.exists() and target.stat().st_size>1000 and target.read_bytes()[:2]==b"PK":
+        body=target.read_bytes();status="CACHED_VERIFIED_ZIP"
+    else:
+        url=DOWNLOAD+urllib.parse.quote(r["file_path"].lstrip("/")+name,safe="/")
+        code,ct,final,body=request(url,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream")
+        if code!=200 or not body.startswith(b"PK"):
+            raise RuntimeError(f"Latest official NIC-2 Excel download invalid {r['unique_id']}: HTTP {code}, type={ct}, bytes={len(body)}")
+        target.write_bytes(body);status="DOWNLOADED"
+        meta.update({"download_url":url,"download_final_url":final,"content_type":ct})
+    meta.update({"bytes":len(body),"sha256":sha(body),"local_file":str(target.relative_to(out)),"download_status":status})
+    download_manifest.append(meta)
     # Choose the most recent release vintage from the actual catalogue metadata.
     latest=max(selected,key=lambda r:(month_key(r["ref_period"]),str(r.get("release_date",""))))
     latest_path=rawdir/latest["file_name"]
