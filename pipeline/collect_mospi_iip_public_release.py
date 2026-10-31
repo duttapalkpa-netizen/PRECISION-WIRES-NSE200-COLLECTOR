@@ -37,10 +37,10 @@ def parse_html(raw: bytes):
 
 def normalize_statement_iv(tables):
     """Normalize NIC-2 monthly index panel only when the release headers identify it."""
-    month_re = re.compile(r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-'](\\d{2})$", re.I)
+    month_re = re.compile(r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-']([0-9]{2})$", re.I)
     for table_id, rows in enumerate(tables, start=1):
         for header_i, row in enumerate(rows):
-            cells=[re.sub(r"\\s+"," ",x).strip() for x in row]
+            cells=[" ".join(x.split()).strip() for x in row]
             joined=" | ".join(cells).lower()
             if "nic 2025" not in joined or "description" not in joined or "weight" not in joined:
                 continue
@@ -61,7 +61,7 @@ def normalize_statement_iv(tables):
                 if len(data_row)<=max([weight_i,nic_i,desc_i]+[i for i,_ in month_cols]):
                     continue
                 nic=data_row[nic_i].strip()
-                if not re.fullmatch(r"\\d{2}",nic):
+                if len(nic)!=2 or not nic.isdigit(): continue
                     continue
                 desc=data_row[desc_i].strip()
                 try: weight=float(data_row[weight_i].replace(",","").strip())
