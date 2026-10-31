@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, csv, io, json, time, zipfile
-from datetime import date, timedelta
+import argparse, csv, hashlib, io, json, os, time, zipfile
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import requests
 
@@ -18,6 +18,28 @@ HEADERS = {
     "Referer": "https://www.nseindia.com/",
     "Connection": "keep-alive",
 }
+
+def atomic_write_bytes(path: Path, content: bytes) -> None:
+    """Write downloads atomically so interrupted responses never poison the cache."""
+    tmp = path.with_name(path.name + ".part")
+    with tmp.open("wb") as handle:
+        handle.write(content)
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(tmp, path)
+
+def response_provenance(url: str, response=None, error=None, attempt: int = 1) -> dict:
+    content = response.content if response is not None else b""
+    return {
+        "url": url,
+        "attempt": attempt,
+        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "http_status": response.status_code if response is not None else None,
+        "content_type": response.headers.get("Content-Type", "") if response is not None else None,
+        "bytes": len(content),
+        "response_sha256": hashlib.sha256(content).hexdigest() if content else None,
+        "error": error,
+    }
 
 def looks_blocked(content: bytes) -> bool:
     head = content[:1000].lstrip().lower()
@@ -148,7 +170,10 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
                 print(f"UDIFF_PARSE invalid numeric field {col}", flush=True)
                 return False
 
-        df.to_csv(target, index=False)
+        payload = df.to_csv(index=False).encode("utf-8")
+        if len(payload) <= 1000:
+            return False
+        atomic_write_bytes(target, payload)
         return target.exists() and target.stat().st_size > 1000
 
     except Exception as e:
@@ -225,7 +250,7 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
         return False
 
 
-def download_full_delivery(session, stamp: str, out: Path) -> bool:
+def download_full_delivery(session, stamp: str, out: Path, attempts=None) -> bool:
     """Prefer NSE's combined Full Bhavcopy + Security Deliverable report."""
     urls = [
         f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
@@ -235,11 +260,13 @@ def download_full_delivery(session, stamp: str, out: Path) -> bool:
     for url in urls:
         try:
             r = session.get(url, timeout=(10, 25))
+            if attempts is not None: attempts.append(response_provenance(url, r, attempt=1))
             print(f"FULL_DELIVERY {stamp} status={r.status_code} bytes={len(r.content)}", flush=True)
             if r.status_code == 200 and validate_full_delivery(r.content, stamp):
-                target.write_bytes(r.content)
+                atomic_write_bytes(target, r.content)
                 return True
         except requests.RequestException as e:
+            if attempts is not None: attempts.append(response_provenance(url, error=f"{type(e).__name__}: {e}", attempt=1))
             print(f"FULL_DELIVERY_WARN {stamp}: {type(e).__name__}", flush=True)
     return False
 
@@ -280,14 +307,18 @@ def main():
 
         if target.exists() and validate_cached_file(target, d):
             valid.append(d)
-            diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
+            diagnostics.append({"date": d.isoformat(), "status": "CACHED", "source_url": None,
+                "cache_origin": "pre-existing-cache", "attempts": []})
             print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
             continue
 
-        got = download_full_delivery(s, stamp, out)
+        attempts = []
+        got = download_full_delivery(s, stamp, out, attempts)
         if got:
             valid.append(d)
-            diagnostics.append({"date": d.isoformat(), "status": "OK_FULL_BHAVCOPY_DELIVERY"})
+            successful = next((x for x in reversed(attempts) if x.get("http_status") == 200), {})
+            diagnostics.append({"date": d.isoformat(), "status": "OK_FULL_BHAVCOPY_DELIVERY",
+                "source_url": successful.get("url"), "cache_origin": "network", "attempts": attempts})
             print(f"OK_FULL_BHAVCOPY_DELIVERY {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
             time.sleep(0.3)
             continue
@@ -297,6 +328,7 @@ def main():
             try:
                 url = UDIFF.format(yyyymmdd=ymd)
                 r = s.get(url, timeout=(10, 30))
+                attempts.append(response_provenance(url, r, attempt=attempt + 1))
                 ctype = r.headers.get("Content-Type", "")
                 print(f"UDIFF {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={ctype}", flush=True)
                 if r.status_code == 200 and not looks_blocked(r.content) and r.content[:2] == b"PK":
@@ -306,6 +338,7 @@ def main():
                 if r.status_code in (403, 404):
                     break
             except requests.RequestException as e:
+                attempts.append(response_provenance(url, error=f"{type(e).__name__}: {e}", attempt=attempt + 1))
                 print(f"UDIFF_WARN {d.isoformat()} attempt={attempt+1}: {type(e).__name__}", flush=True)
             time.sleep(1.0 + attempt)
 
@@ -313,21 +346,26 @@ def main():
             try:
                 url = LEGACY.format(ddmmyyyy=stamp)
                 r = s.get(url, timeout=(10, 25))
+                attempts.append(response_provenance(url, r, attempt=1))
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
                 if r.status_code == 200 and validate_legacy(r.content):
-                    target.write_bytes(r.content)
+                    atomic_write_bytes(target, r.content)
                     got = True
                 elif target.exists():
                     target.unlink()
             except requests.RequestException as e:
+                attempts.append(response_provenance(url, error=f"{type(e).__name__}: {e}", attempt=1))
                 print(f"LEGACY_WARN {d.isoformat()}: {type(e).__name__}", flush=True)
 
         if got:
             valid.append(d)
-            diagnostics.append({"date": d.isoformat(), "status": "OK"})
+            successful = next((x for x in reversed(attempts) if x.get("http_status") == 200), {})
+            diagnostics.append({"date": d.isoformat(), "status": "OK",
+                "source_url": successful.get("url"), "cache_origin": "network", "attempts": attempts})
             print(f"OK {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
         else:
-            diagnostics.append({"date": d.isoformat(), "status": "MISS"})
+            diagnostics.append({"date": d.isoformat(), "status": "MISS", "source_url": None,
+                "cache_origin": "network", "attempts": attempts})
             print(f"MISS {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
 
         time.sleep(0.6)
