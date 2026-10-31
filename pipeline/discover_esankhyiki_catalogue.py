@@ -31,6 +31,15 @@ def main():
   report["script_urls"].append(u)
   try:
    s,typ,fu,b=get(u); txt=b.decode("utf-8","replace")
+   (out/"catalogue_app_bundle.js").write_bytes(b)
+   for marker in ("/API/IIP","IIPMFY","catalogue-main","download"):
+    start=0
+    while True:
+     pos=txt.lower().find(marker.lower(),start)
+     if pos<0: break
+     report.setdefault("bundle_context",[]).append({"marker":marker,"offset":pos,"context":txt[max(0,pos-1200):pos+2400]})
+     start=pos+len(marker)
+     if len(report.get("bundle_context",[]))>=40: break
    for m in re.finditer(r'(?i)(?:/api/[A-Za-z0-9_./?=&-]+|[A-Za-z0-9_./-]+\.xlsx(?:\?[A-Za-z0-9_=&-]+)?)',txt):
     v=m.group(0)
     if any(k in v.lower() for k in ("catalog","download","table","excel","iip","dataset","file")):
