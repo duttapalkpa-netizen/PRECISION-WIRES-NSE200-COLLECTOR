@@ -16,7 +16,7 @@ concurrency:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,26 +28,42 @@ jobs:
       - name: Install collector dependencies
         run: python -m pip install -r requirements.txt
       - name: Restore incremental NSE raw-session cache
+        id: raw_cache
         uses: actions/cache@v4
         with:
           path: data/raw
           key: nse-raw-benchmark-v1-${{ github.ref_name }}-${{ github.run_id }}
           restore-keys: |
             nse-raw-benchmark-v1-${{ github.ref_name }}-
-      - name: Record benchmark start
+      - name: Record cache verification start
         run: |
           mkdir -p data/qa
           date -u +%Y-%m-%dT%H:%M:%SZ | tee data/qa/benchmark_started_at_utc.txt
           python -c "import time; print(time.time_ns())" > data/qa/benchmark_started_epoch_ns.txt
-      - name: Acquire and validate 200 NSE sessions
+          echo "CACHE_HIT=${{ steps.raw_cache.outputs.cache-hit }}" | tee data/qa/cache_restore_status.txt
+      - name: Require a restored cache and exactly 200 indexed sessions
+        if: steps.raw_cache.outputs.cache-hit != 'true'
         run: |
-          /usr/bin/time -v -o data/qa/collector_time.txt python collector/nse_download.py --sessions 200 --lookback-days 500 --out data/raw 2>&1 | tee data/qa/collector_console.log
-      - name: Persist acquired NSE cache even if a later QA step fails
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: data/raw
-          key: nse-raw-benchmark-v1-${{ github.ref_name }}-${{ github.run_id }}
+          echo "BLOCKED: no exact cache hit; refusing to redownload 200 sessions." | tee data/qa/cache_gate.txt
+          exit 78
+      - name: Verify restored cache contains exactly 200 sessions
+        run: |
+          test -f data/raw/sessions.txt
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          p = Path("data/raw/sessions.txt")
+          dates = [x.strip() for x in p.read_text().splitlines() if x.strip()]
+          unique = sorted(set(dates))
+          csvs = list(Path("data/raw").glob("*.csv"))
+          matched = [d for d in unique if (Path("data/raw") / f"{d}.csv").is_file()]
+          print(f"INDEXED_SESSIONS={len(dates)}")
+          print(f"UNIQUE_SESSIONS={len(unique)}")
+          print(f"MATCHING_SESSION_CSVS={len(matched)}")
+          if len(dates) != 200 or len(unique) != 200 or len(matched) != 200:
+              print("BLOCKED: restored cache is incomplete or inconsistent.")
+              sys.exit(1)
+          PY
       - name: Run exact 200-session warm-cache benchmark
         run: |
           PYTHONPATH=. /usr/bin/time -v -o data/qa/warm_cache_time.txt python -m collector.nse_warm_cache_benchmark --raw-dir data/raw --sessions 200 --output data/qa/nse_warm_cache_benchmark.json
@@ -62,7 +78,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nse-200-session-benchmark-${{ github.run_number }}
+          name: nse-200-session-cache-verification-${{ github.run_number }}
           path: |
             data/raw/sessions.txt
             data/raw/acquisition_diagnostics.json
