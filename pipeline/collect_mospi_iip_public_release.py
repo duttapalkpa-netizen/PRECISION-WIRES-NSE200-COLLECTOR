@@ -99,13 +99,39 @@ def normalize_statement_iv(tables):
                     if key in seen:
                         raise ValueError(f"Duplicate NIC-period key: {key}")
                     seen.add(key)
+                    estimate_status = (
+                        "quick_estimate" if period == "2026-09" else
+                        "final_revision" if period == "2026-08" else
+                        "historical_value_as_published_in_2026-09_release"
+                    )
                     output.append({
                         "period": period, "nic_2025": nic, "description": desc,
                         "weight": weight, "index": value, "base_year": "2022-23",
                         "frequency": "M", "unit": "index", "source_table_id": table_id,
-                        "vintage": "2026-09_quick_estimate_release"
+                        "release_vintage": "2026-09_release",
+                        "estimate_status": estimate_status
                     })
             if output:
+                expected_periods = []
+                year, month = 2025, 9
+                for _ in range(13):
+                    expected_periods.append(f"{year:04d}-{month:02d}")
+                    month += 1
+                    if month == 13:
+                        year += 1
+                        month = 1
+                by_nic = {}
+                for item in output:
+                    by_nic.setdefault(item["nic_2025"], []).append(item["period"])
+                if len(by_nic) != 23:
+                    raise ValueError(f"Expected 23 NIC-2 groups, found {len(by_nic)}")
+                for nic, periods in sorted(by_nic.items()):
+                    if sorted(periods) != expected_periods:
+                        missing = sorted(set(expected_periods) - set(periods))
+                        extra = sorted(set(periods) - set(expected_periods))
+                        raise ValueError(f"NIC {nic} coverage failure; missing={missing}, extra={extra}")
+                if len(output) != 299:
+                    raise ValueError(f"Expected 299 NIC-period rows, found {len(output)}")
                 return table_id, output
     return None, []
 
@@ -141,10 +167,33 @@ def collect(out: Path, opener=urllib.request.urlopen):
     with (out/"iip_nic2_monthly_panel.csv").open("w",encoding="utf-8-sig",newline="") as handle:
         writer=csv.DictWriter(handle,fieldnames=list(normalized[0].keys()))
         writer.writeheader(); writer.writerows(normalized)
-    qa={"status":"PASS","table_count":len(tables),"normalized_table_id":normalized_table_id,
-      "normalized_rows":len(normalized),"unique_nic_codes":len(set(x["nic_2025"] for x in normalized)),
+    nic_coverage = {}
+    for item in normalized:
+        nic_coverage.setdefault(item["nic_2025"], set()).add(item["period"])
+    expected_periods = sorted({x["period"] for x in normalized})
+    coverage_rows = []
+    for nic in sorted(nic_coverage):
+        missing = sorted(set(expected_periods) - nic_coverage[nic])
+        coverage_rows.append({"nic_2025":nic,"months_present":len(nic_coverage[nic]),
+          "expected_months":13,"missing_periods":missing,"status":"PASS" if not missing and len(nic_coverage[nic]) == 13 else "BLOCKED"})
+    with (out/"nic_coverage.csv").open("w",encoding="utf-8-sig",newline="") as handle:
+        writer=csv.DictWriter(handle,fieldnames=["nic_2025","months_present","expected_months","missing_periods","status"])
+        writer.writeheader()
+        for row in coverage_rows:
+            writer.writerow({**row,"missing_periods":";".join(row["missing_periods"])})
+    vintage_rows=[x for x in normalized if x["period"] in ("2026-08","2026-09")]
+    with (out/"iip_nic2_vintage_observations.csv").open("w",encoding="utf-8-sig",newline="") as handle:
+        writer=csv.DictWriter(handle,fieldnames=list(vintage_rows[0].keys()))
+        writer.writeheader(); writer.writerows(vintage_rows)
+    qa={"status":"PASS" if len(coverage_rows)==23 and all(x["status"]=="PASS" for x in coverage_rows) else "BLOCKED",
+      "table_count":len(tables),"normalized_table_id":normalized_table_id,
+      "normalized_rows":len(normalized),"unique_nic_codes":len(nic_coverage),
       "unique_periods":len(set(x["period"] for x in normalized)),
-      "duplicate_nic_period_keys":0,"base_year":"2022-23","frequency":"M",
+      "duplicate_nic_period_keys":0,"nic_coverage_pass_count":sum(x["status"]=="PASS" for x in coverage_rows),
+      "nic_coverage_blocked_count":sum(x["status"]!="PASS" for x in coverage_rows),
+      "vintage_counts":{"2026-08_final_revision":sum(x["estimate_status"]=="final_revision" for x in normalized),
+        "2026-09_quick_estimate":sum(x["estimate_status"]=="quick_estimate" for x in normalized)},
+      "base_year":"2022-23","frequency":"M",
       "period_min":min(x["period"] for x in normalized),"period_max":max(x["period"] for x in normalized)}
     (out/"domain_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
     manifest={
@@ -155,7 +204,7 @@ def collect(out: Path, opener=urllib.request.urlopen):
       "table_count":len(tables),"release_reference_period":"2026-09",
       "release_posted_ist":"2026-10-28 16:00",
       "base_year":"2022-23","series_deflator":"Output PPI",
-"verification":"PUBLIC_HTML_CAPTURE_TABLE_INVENTORY_AND_NIC2_MONTHLY_PANEL_QA",
+"verification":"PUBLIC_HTML_CAPTURE_TABLE_INVENTORY_NIC2_13_MONTH_COVERAGE_AND_VINTAGE_TAGGING",
 "normalized_rows":len(normalized),
 "normalized_table_id":normalized_table_id,
       "limitations":["No e-Sankhyiki CSV/API response captured in this run.",
