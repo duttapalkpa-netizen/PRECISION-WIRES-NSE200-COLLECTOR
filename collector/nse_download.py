@@ -46,6 +46,54 @@ def response_provenance(url: str, response=None, error=None, attempt: int = 1) -
         "error": error,
     }
 
+def _retry_delay(response, retry_index: int, max_delay: float = 5.0) -> float:
+    """Honor Retry-After when valid; otherwise use capped exponential backoff."""
+    retry_after = response.headers.get("Retry-After", "") if response is not None else ""
+    try:
+        delay = float(retry_after)
+        if delay >= 0:
+            return min(delay, max_delay)
+    except (TypeError, ValueError):
+        pass
+    if retry_after:
+        try:
+            from email.utils import parsedate_to_datetime
+            when = parsedate_to_datetime(retry_after)
+            delay = max(0.0, (when - datetime.now(timezone.utc)).total_seconds())
+            return min(delay, max_delay)
+        except (TypeError, ValueError, OverflowError):
+            pass
+    return min(0.5 * (2 ** max(0, retry_index - 1)), max_delay)
+
+
+def get_with_bounded_retry(session, url: str, timeout, attempts=None,
+                           max_attempts: int = 3, max_delay: float = 5.0):
+    """Retry only transient HTTP failures/timeouts; never retry permanent 4xx."""
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be >= 1")
+    for attempt in range(1, max_attempts + 1):
+        response = None
+        error = None
+        try:
+            response = session.get(url, timeout=timeout)
+        except requests.RequestException as exc:
+            error = f"{type(exc).__name__}: {exc}"
+        if attempts is not None:
+            attempts.append(response_provenance(url, response, error=error, attempt=attempt))
+        if response is not None:
+            status = response.status_code
+            if status not in (429, 500, 502, 503, 504):
+                return response
+            if attempt >= max_attempts:
+                return response
+        elif attempt >= max_attempts:
+            return None
+        delay = _retry_delay(response, attempt, max_delay=max_delay)
+        print(f"RETRY url={url} attempt={attempt}/{max_attempts} delay={delay:.2f}s", flush=True)
+        time.sleep(delay)
+    return None
+
+
 def looks_blocked(content: bytes) -> bool:
     head = content[:1000].lstrip().lower()
     return head.startswith(b"<") or b"access denied" in head or b"akamai" in head or b"request rejected" in head
@@ -277,8 +325,7 @@ def download_full_delivery(session, stamp: str, out: Path, attempts=None) -> boo
     target = out / f"sec_bhavdata_full_{stamp}.csv"
     for url in urls:
         try:
-            r = session.get(url, timeout=(10, 25))
-            if attempts is not None: attempts.append(response_provenance(url, r, attempt=1))
+            r = get_with_bounded_retry(session, url, timeout=(10, 25), attempts=attempts)
             print(f"FULL_DELIVERY {stamp} status={r.status_code} bytes={len(r.content)}", flush=True)
             if r.status_code == 200 and validate_full_delivery(r.content, stamp):
                 atomic_write_bytes(target, r.content)
@@ -345,8 +392,9 @@ def main():
         for attempt in range(2):
             try:
                 url = UDIFF.format(yyyymmdd=ymd)
-                r = s.get(url, timeout=(10, 30))
-                attempts.append(response_provenance(url, r, attempt=attempt + 1))
+                r = get_with_bounded_retry(s, url, timeout=(10, 30), attempts=attempts)
+                if r is None:
+                    continue
                 ctype = r.headers.get("Content-Type", "")
                 print(f"UDIFF {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={ctype}", flush=True)
                 if r.status_code == 200 and not looks_blocked(r.content) and r.content[:2] == b"PK":
@@ -356,15 +404,14 @@ def main():
                 if r.status_code in (403, 404):
                     break
             except requests.RequestException as e:
-                attempts.append(response_provenance(url, error=f"{type(e).__name__}: {e}", attempt=attempt + 1))
                 print(f"UDIFF_WARN {d.isoformat()} attempt={attempt+1}: {type(e).__name__}", flush=True)
-            time.sleep(1.0 + attempt)
 
         if not got:
             try:
                 url = LEGACY.format(ddmmyyyy=stamp)
-                r = s.get(url, timeout=(10, 25))
-                attempts.append(response_provenance(url, r, attempt=1))
+                r = get_with_bounded_retry(s, url, timeout=(10, 25), attempts=attempts)
+                if r is None:
+                    raise requests.RequestException("request failed after bounded retries")
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
                 if r.status_code == 200 and validate_legacy(r.content):
                     atomic_write_bytes(target, r.content)
@@ -372,7 +419,6 @@ def main():
                 elif target.exists():
                     target.unlink()
             except requests.RequestException as e:
-                attempts.append(response_provenance(url, error=f"{type(e).__name__}: {e}", attempt=1))
                 print(f"LEGACY_WARN {d.isoformat()}: {type(e).__name__}", flush=True)
 
         if got:
