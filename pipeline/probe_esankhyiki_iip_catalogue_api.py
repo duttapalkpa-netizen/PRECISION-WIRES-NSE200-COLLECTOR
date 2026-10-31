@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """Call observed public e-Sankhyiki catalogue endpoints and inspect IIP metadata."""
-import hashlib,json,urllib.parse,urllib.request
+import hashlib,json,urllib.parse,urllib.request,ssl
 from datetime import datetime,timezone
 from pathlib import Path
 BASE="https://api.mospi.gov.in/api/esankhyiki/cms/golden-sheet/"
 UA="Mozilla/5.0 (compatible; PRECISION-WIRES-research/1.0)"
 def get(url):
  req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"application/json, */*","Content-Type":"application/json","Origin":"https://esankhyiki.mospi.gov.in","Referer":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue"})
- with urllib.request.urlopen(req,timeout=30) as r:
+ # Retain certificate and hostname verification while allowing the legacy TLS
+ # renegotiation profile required by the official API host.
+ context=ssl.create_default_context()
+ context.set_ciphers("DEFAULT:@SECLEVEL=1")
+ opener=urllib.request.build_opener(urllib.request.HTTPSHandler(context=context))
+ with opener.open(req,timeout=30) as r:
   b=r.read(8000000);return r.status,r.headers.get("Content-Type",""),b
 def main():
  out=Path("artifacts/esankhyiki_iip_catalogue_api");out.mkdir(parents=True,exist_ok=True)
