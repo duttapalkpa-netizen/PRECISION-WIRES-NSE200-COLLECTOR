@@ -9,8 +9,19 @@ from collector.nse_warm_cache_benchmark import audit_cache
 class WarmCacheBenchmarkTests(unittest.TestCase):
     def test_reports_requested_hits_without_network(self):
         with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            from datetime import date, timedelta
+            created = 0
+            for offset in range(20):
+                day = date.today() - timedelta(days=offset)
+                if day.weekday() >= 5:
+                    continue
+                (root / f"sec_bhavdata_full_{day.strftime('%d%m%Y')}.csv").write_text("fixture")
+                created += 1
+                if created == 3:
+                    break
             with patch("collector.nse_warm_cache_benchmark.validate_cached_file", return_value=True) as validate:
-                result = audit_cache(Path(tmp), 3)
+                result = audit_cache(root, 3)
         self.assertEqual(result["valid_cache_hits"], 3)
         self.assertEqual(result["cache_misses"], 0)
         self.assertEqual(result["network_requests"], 0)
