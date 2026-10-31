@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fetch and preserve a public MoSPI IIP aggregate release page; no credentials."""
 from __future__ import annotations
-import argparse, csv, hashlib, json, os, urllib.request
+import argparse, hashlib, json, os, urllib.request
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -58,9 +58,9 @@ def collect(out: Path, opener=urllib.request.urlopen):
       "table_count":len(tables),"release_reference_period":"2026-09",
       "release_posted_ist":"2026-10-28 16:00",
       "base_year":"2022-23","series_deflator":"Output PPI",
-      "verification":"PUBLIC_HTML_CAPTURE_AND_TABLE_STRUCTURE_QA_ONLY",\n      "table_inventory_count":len(table_inventory),\n      "nontrivial_table_count":sum(x["row_count"] >= 2 and x["max_columns"] >= 2 for x in table_inventory),
+      "verification":"PUBLIC_HTML_CAPTURE_AND_MARKER_QA_ONLY",
       "limitations":["No e-Sankhyiki CSV/API response captured in this run.",
-        "Extracted HTML tables are saved as per-table CSVs with a structural inventory; semantic column mapping, numeric normalization and domain QA remain pending.",
+        "HTML table extraction is archival diagnostic; numeric schema/domain normalization remains pending.",
         "Quick estimates are revisable; preserve each release vintage."]
     }
     (out/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
