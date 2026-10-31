@@ -11,6 +11,7 @@ def get(url):
  # renegotiation profile required by the official API host.
  context=ssl.create_default_context()
  context.set_ciphers("DEFAULT:@SECLEVEL=1")
+ context.options |= 0x4  # OP_LEGACY_SERVER_CONNECT; certificate verification remains enabled
  opener=urllib.request.build_opener(urllib.request.HTTPSHandler(context=context))
  with opener.open(req,timeout=30) as r:
   b=r.read(8000000);return r.status,r.headers.get("Content-Type",""),b
