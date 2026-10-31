@@ -110,7 +110,7 @@ def build_snapshot(raw_dir: Path, expected_sessions: int) -> dict:
                 or datetime.fromtimestamp(path.stat().st_mtime,timezone.utc).isoformat()})
     canonical=''.join(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n' for r in records).encode()
     snapshot_id=hashlib.sha256(canonical).hexdigest()
-    manifest={'schema_version':2,'snapshot_id':snapshot_id,'created_at_utc':datetime.now(timezone.utc).isoformat(),
+    manifest={'schema_version':2,'snapshot_id':snapshot_id,
         'expected_sessions':expected_sessions,'actual_sessions':len(records),'first_session':records[0]['trade_date'],
         'last_session':records[-1]['trade_date'],'records':records,'provenance_limitations':[
         'For pre-existing legacy cache files, the original network source and retrieval time are unavailable.',
