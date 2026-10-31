@@ -41,6 +41,7 @@ class SnapshotManifestTests(unittest.TestCase):
             first = build_snapshot(raw, 2)
             second = build_snapshot(raw, 2)
             self.assertEqual(first['snapshot_id'], second['snapshot_id'])
+            self.assertEqual(first['sha256'], second['sha256'])
 
     def test_rejects_duplicate_sessions(self):
         with tempfile.TemporaryDirectory() as tmp:
