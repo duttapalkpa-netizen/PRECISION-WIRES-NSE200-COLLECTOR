@@ -1,0 +1,29 @@
+name: e-Sankhyiki IIP Catalogue Route Probe
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/probe_esankhyiki_iip_catalogue_route.py"
+      - ".github/workflows/esankhyiki_iip_catalogue_route.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: esankhyiki-iip-catalogue-route
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python pipeline/probe_esankhyiki_iip_catalogue_route.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esankhyiki-iip-catalogue-route
+          path: artifacts/esankhyiki_iip_catalogue_route/
+          if-no-files-found: error

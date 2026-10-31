@@ -1,0 +1,30 @@
+name: e-Sankhyiki NIC-2 Excel Download Smoke
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/probe_esankhyiki_nic2_excel.py"
+      - ".github/workflows/esankhyiki_nic2_excel_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: esankhyiki-nic2-excel-smoke
+  cancel-in-progress: false
+jobs:
+  workbook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pandas openpyxl
+      - run: python pipeline/probe_esankhyiki_nic2_excel.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esankhyiki-nic2-excel-download-smoke
+          path: artifacts/esankhyiki_iip_workbook_probe/
+          if-no-files-found: error

@@ -24,8 +24,19 @@ jobs:
           cache: pip
       - name: Install
         run: python -m pip install -r requirements.txt
+      - name: Restore incremental NSE raw-session cache
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: nse-raw-v1-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            nse-raw-v1-${{ github.ref_name }}-
       - name: Acquire 200 NSE market sessions
         run: python collector/nse_download.py --sessions 200
+      - name: Measure 200-session warm-cache validation (network-free)
+        run: python collector/nse_warm_cache_benchmark.py --raw-dir data/raw --sessions 200
+      - name: Freeze immutable NSE raw snapshot and verify SHA-256 manifest
+        run: python collector/nse_snapshot_manifest.py --raw-dir data/raw --sessions 200
       - name: Acquire NSE Security Master
         continue-on-error: true
         run: python collector/security_master.py

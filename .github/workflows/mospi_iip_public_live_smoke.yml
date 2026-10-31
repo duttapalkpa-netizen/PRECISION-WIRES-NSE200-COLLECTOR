@@ -1,0 +1,31 @@
+name: MoSPI IIP Public Aggregate Live Smoke
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_mospi_iip_public_release.py"
+      - "qa/test_mospi_iip_public_release.py"
+      - ".github/workflows/mospi_iip_public_live_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  public-live-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Offline parser tests
+        run: python -m unittest qa/test_mospi_iip_public_release.py -v
+      - name: Unauthenticated official public release fetch
+        run: python pipeline/collect_mospi_iip_public_release.py --out artifacts/mospi_iip_public_smoke
+      - name: Upload immutable diagnostic evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: mospi-iip-public-live-smoke
+          path: artifacts/mospi_iip_public_smoke/
+          if-no-files-found: error

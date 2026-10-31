@@ -1,0 +1,32 @@
+name: Factor Registry Same-Snapshot Tests
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - "qa/test_factor_registry_same_snapshot.py"
+      - ".github/workflows/factor_registry_same_snapshot_tests.yml"
+  pull_request:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - "qa/test_factor_registry_same_snapshot.py"
+      - ".github/workflows/factor_registry_same_snapshot_tests.yml"
+permissions:
+  contents: read
+concurrency:
+  group: factor-registry-snapshot-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  focused-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: python -m pip install pandas
+      - name: Run focused same-snapshot regression tests
+        run: python -m unittest qa.test_factor_registry_same_snapshot -v

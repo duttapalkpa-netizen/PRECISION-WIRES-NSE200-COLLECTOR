@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, csv, io, json, time, zipfile
-from datetime import date, timedelta
+import argparse, csv, hashlib, io, json, os, time, zipfile
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import requests
 
@@ -18,6 +18,81 @@ HEADERS = {
     "Referer": "https://www.nseindia.com/",
     "Connection": "keep-alive",
 }
+
+def atomic_write_bytes(path: Path, content: bytes) -> None:
+    """Write downloads atomically so interrupted responses never poison the cache."""
+    tmp = path.with_name(path.name + ".part")
+    try:
+        with tmp.open("wb") as handle:
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, path)
+    finally:
+        # A failed write/replace must not leave a partial file that looks like a cache artifact.
+        if tmp.exists():
+            tmp.unlink()
+
+def response_provenance(url: str, response=None, error=None, attempt: int = 1) -> dict:
+    content = response.content if response is not None else b""
+    return {
+        "url": url,
+        "attempt": attempt,
+        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "http_status": response.status_code if response is not None else None,
+        "content_type": response.headers.get("Content-Type", "") if response is not None else None,
+        "bytes": len(content),
+        "response_sha256": hashlib.sha256(content).hexdigest() if content else None,
+        "error": error,
+    }
+
+def _retry_delay(response, retry_index: int, max_delay: float = 5.0) -> float:
+    """Honor Retry-After when valid; otherwise use capped exponential backoff."""
+    retry_after = response.headers.get("Retry-After", "") if response is not None else ""
+    try:
+        delay = float(retry_after)
+        if delay >= 0:
+            return min(delay, max_delay)
+    except (TypeError, ValueError):
+        pass
+    if retry_after:
+        try:
+            from email.utils import parsedate_to_datetime
+            when = parsedate_to_datetime(retry_after)
+            delay = max(0.0, (when - datetime.now(timezone.utc)).total_seconds())
+            return min(delay, max_delay)
+        except (TypeError, ValueError, OverflowError):
+            pass
+    return min(0.5 * (2 ** max(0, retry_index - 1)), max_delay)
+
+
+def get_with_bounded_retry(session, url: str, timeout, attempts=None,
+                           max_attempts: int = 3, max_delay: float = 5.0):
+    """Retry only transient HTTP failures/timeouts; never retry permanent 4xx."""
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be >= 1")
+    for attempt in range(1, max_attempts + 1):
+        response = None
+        error = None
+        try:
+            response = session.get(url, timeout=timeout)
+        except requests.RequestException as exc:
+            error = f"{type(exc).__name__}: {exc}"
+        if attempts is not None:
+            attempts.append(response_provenance(url, response, error=error, attempt=attempt))
+        if response is not None:
+            status = response.status_code
+            if status not in (429, 500, 502, 503, 504):
+                return response
+            if attempt >= max_attempts:
+                return response
+        elif attempt >= max_attempts:
+            return None
+        delay = _retry_delay(response, attempt, max_delay=max_delay)
+        print(f"RETRY url={url} attempt={attempt}/{max_attempts} delay={delay:.2f}s", flush=True)
+        time.sleep(delay)
+    return None
+
 
 def looks_blocked(content: bytes) -> bool:
     head = content[:1000].lstrip().lower()
@@ -133,8 +208,11 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
 
         # A valid daily file must identify the requested trade date when the
         # source exposes a date field. Never accept an unrelated cached date.
-        if expected_date and source_dates and expected_date not in source_dates:
+        if expected_date and source_dates != {expected_date}:
             print(f"UDIFF_PARSE date mismatch expected={expected_date} source={sorted(source_dates)[:3]}", flush=True)
+            return False
+        if expected_date and not source_dates:
+            print("UDIFF_PARSE missing parseable source trade date", flush=True)
             return False
 
         target = out / f"sec_bhavdata_full_{stamp}.csv"
@@ -148,7 +226,10 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
                 print(f"UDIFF_PARSE invalid numeric field {col}", flush=True)
                 return False
 
-        df.to_csv(target, index=False)
+        payload = df.to_csv(index=False).encode("utf-8")
+        if len(payload) <= 1000:
+            return False
+        atomic_write_bytes(target, payload)
         return target.exists() and target.stat().st_size > 1000
 
     except Exception as e:
@@ -174,6 +255,30 @@ def validate_legacy(content: bytes) -> bool:
         print(f"LEGACY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
         return False
 
+def validate_cached_file(path: Path, expected_date: date) -> bool:
+    """A cache hit is valid only when its full payload belongs to the filename date."""
+    try:
+        import pandas as pd
+        content = path.read_bytes()
+        if not validate_legacy(content):
+            return False
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
+        cols = {_clean_key(c): c for c in df.columns}
+        date_col = next((cols[k] for k in ("DATE1", "TRADDT", "TRADGDATE", "DATE") if k in cols), None)
+        series_col = cols.get("SERIES") or cols.get("SCTYSRS")
+        if not date_col or not series_col or df.empty:
+            return False
+        eq = df[df[series_col].astype(str).str.strip().str.upper().eq("EQ")]
+        if eq.empty:
+            return False
+        parsed = eq[date_col].map(_parse_date)
+        if parsed.isna().any():
+            return False
+        return set(parsed.tolist()) == {expected_date}
+    except Exception as e:
+        print(f"CACHE_VALIDATE_ERROR {path.name}: {type(e).__name__}: {e}", flush=True)
+        return False
+
 def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
     """Validate NSE Full Bhavcopy and Security Deliverable CSV."""
     if looks_blocked(content) or len(content) < 1000:
@@ -188,9 +293,19 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
         close = col("CLOSE_PRICE", "CLOSEPRICE", "CLSPRIC")
         dq = col("DELIV_QTY", "DELIVERY_QTY", "DELIVQTY")
         dp = col("DELIV_PER", "DELIVERY_PER", "DELIVPER")
-        if not all((symbol, series, close, dq, dp)):
+        trade_date = col("DATE1", "TRADDT", "TRADG_DATE", "DATE")
+        if not all((symbol, series, close, dq, dp, trade_date)):
             return False
         eq = df[df[series].astype(str).str.strip().str.upper().eq("EQ")]
+        expected = _parse_date(expected_stamp)
+        if expected is None:
+            try:
+                expected = datetime.strptime(expected_stamp, "%d%m%Y").date()
+            except ValueError:
+                return False
+        observed = eq[trade_date].map(_parse_date)
+        if expected is None or observed.empty or observed.isna().any() or set(observed.tolist()) != {expected}:
+            return False
         q = pd.to_numeric(eq[dq], errors="coerce")
         p = pd.to_numeric(eq[dp], errors="coerce")
         cl = pd.to_numeric(eq[close], errors="coerce")
@@ -201,7 +316,7 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
         return False
 
 
-def download_full_delivery(session, stamp: str, out: Path) -> bool:
+def download_full_delivery(session, stamp: str, out: Path, attempts=None) -> bool:
     """Prefer NSE's combined Full Bhavcopy + Security Deliverable report."""
     urls = [
         f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
@@ -210,12 +325,13 @@ def download_full_delivery(session, stamp: str, out: Path) -> bool:
     target = out / f"sec_bhavdata_full_{stamp}.csv"
     for url in urls:
         try:
-            r = session.get(url, timeout=(10, 25))
+            r = get_with_bounded_retry(session, url, timeout=(10, 25), attempts=attempts)
             print(f"FULL_DELIVERY {stamp} status={r.status_code} bytes={len(r.content)}", flush=True)
             if r.status_code == 200 and validate_full_delivery(r.content, stamp):
-                target.write_bytes(r.content)
+                atomic_write_bytes(target, r.content)
                 return True
         except requests.RequestException as e:
+            if attempts is not None: attempts.append(response_provenance(url, error=f"{type(e).__name__}: {e}", attempt=1))
             print(f"FULL_DELIVERY_WARN {stamp}: {type(e).__name__}", flush=True)
     return False
 
@@ -254,25 +370,31 @@ def main():
         ymd = d.strftime("%Y%m%d")
         target = out / f"sec_bhavdata_full_{stamp}.csv"
 
-        if target.exists() and validate_legacy(target.read_bytes()):
+        if target.exists() and validate_cached_file(target, d):
             valid.append(d)
-            diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
+            diagnostics.append({"date": d.isoformat(), "status": "CACHED", "source_url": None,
+                "cache_origin": "pre-existing-cache", "attempts": []})
             print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
             continue
 
-        got = download_full_delivery(s, stamp, out)
+        attempts = []
+        got = download_full_delivery(s, stamp, out, attempts)
         if got:
             valid.append(d)
-            diagnostics.append({"date": d.isoformat(), "status": "OK_FULL_BHAVCOPY_DELIVERY"})
+            successful = next((x for x in reversed(attempts) if x.get("http_status") == 200), {})
+            diagnostics.append({"date": d.isoformat(), "status": "OK_FULL_BHAVCOPY_DELIVERY",
+                "source_url": successful.get("url"), "cache_origin": "network", "attempts": attempts})
             print(f"OK_FULL_BHAVCOPY_DELIVERY {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
             time.sleep(0.3)
             continue
 
         got = False
-        for attempt in range(2):
+        for attempt in range(1):
             try:
                 url = UDIFF.format(yyyymmdd=ymd)
-                r = s.get(url, timeout=(10, 30))
+                r = get_with_bounded_retry(s, url, timeout=(10, 30), attempts=attempts)
+                if r is None:
+                    continue
                 ctype = r.headers.get("Content-Type", "")
                 print(f"UDIFF {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={ctype}", flush=True)
                 if r.status_code == 200 and not looks_blocked(r.content) and r.content[:2] == b"PK":
@@ -283,15 +405,16 @@ def main():
                     break
             except requests.RequestException as e:
                 print(f"UDIFF_WARN {d.isoformat()} attempt={attempt+1}: {type(e).__name__}", flush=True)
-            time.sleep(1.0 + attempt)
 
         if not got:
             try:
                 url = LEGACY.format(ddmmyyyy=stamp)
-                r = s.get(url, timeout=(10, 25))
+                r = get_with_bounded_retry(s, url, timeout=(10, 25), attempts=attempts)
+                if r is None:
+                    raise requests.RequestException("request failed after bounded retries")
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
                 if r.status_code == 200 and validate_legacy(r.content):
-                    target.write_bytes(r.content)
+                    atomic_write_bytes(target, r.content)
                     got = True
                 elif target.exists():
                     target.unlink()
@@ -300,10 +423,13 @@ def main():
 
         if got:
             valid.append(d)
-            diagnostics.append({"date": d.isoformat(), "status": "OK"})
+            successful = next((x for x in reversed(attempts) if x.get("http_status") == 200), {})
+            diagnostics.append({"date": d.isoformat(), "status": "OK",
+                "source_url": successful.get("url"), "cache_origin": "network", "attempts": attempts})
             print(f"OK {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
         else:
-            diagnostics.append({"date": d.isoformat(), "status": "MISS"})
+            diagnostics.append({"date": d.isoformat(), "status": "MISS", "source_url": None,
+                "cache_origin": "network", "attempts": attempts})
             print(f"MISS {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
 
         time.sleep(0.6)
