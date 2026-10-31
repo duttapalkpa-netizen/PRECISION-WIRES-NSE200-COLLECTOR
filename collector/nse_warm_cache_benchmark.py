@@ -2,7 +2,7 @@
 """Measure warm-cache validation without making network requests."""
 from __future__ import annotations
 import argparse, json, time
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 from collector.nse_download import validate_cached_file
 
@@ -10,35 +10,34 @@ from collector.nse_download import validate_cached_file
 def audit_cache(raw_dir: Path, sessions: int) -> dict:
     if sessions < 1:
         raise ValueError("sessions must be >= 1")
+    session_file = raw_dir / "sessions.txt"
+    if not session_file.is_file():
+        raise RuntimeError("sessions.txt missing; run the collector before benchmarking")
+    dates = [line.strip() for line in session_file.read_text().splitlines() if line.strip()]
+    if len(dates) != sessions or len(set(dates)) != sessions:
+        raise RuntimeError(f"expected {sessions} unique manifest sessions, got {len(dates)}")
     started = time.perf_counter()
-    today = date.today()
-    hits, misses, scanned = [], [], 0
-    for offset in range(1000):
-        if len(hits) + len(misses) >= sessions:
-            break
-        day = today - timedelta(days=offset)
-        if day.weekday() >= 5:
-            continue
-        scanned += 1
+    hits, misses = [], []
+    for value in dates:
+        day = date.fromisoformat(value)
         path = raw_dir / f"sec_bhavdata_full_{day.strftime('%d%m%Y')}.csv"
         if path.is_file() and validate_cached_file(path, day):
-            hits.append(day.isoformat())
+            hits.append(value)
         else:
-            misses.append(day.isoformat())
+            misses.append(value)
     elapsed = time.perf_counter() - started
     return {
         "requested_sessions": sessions,
-        "scanned_trading_dates": scanned,
+        "sessions_checked": len(dates),
         "valid_cache_hits": len(hits),
         "cache_misses": len(misses),
         "hit_dates": hits,
         "miss_dates": misses,
         "elapsed_seconds": round(elapsed, 6),
-        "dates_per_second": round(scanned / elapsed, 3) if elapsed else None,
+        "sessions_per_second": round(len(dates) / elapsed, 3) if elapsed else None,
         "network_requests": 0,
         "benchmark_type": "local_warm_cache_validation_only",
     }
-
 
 def main():
     parser = argparse.ArgumentParser()
