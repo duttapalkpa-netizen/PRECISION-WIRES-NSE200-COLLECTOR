@@ -389,7 +389,7 @@ def main():
             continue
 
         got = False
-        for attempt in range(2):
+        for attempt in range(1):
             try:
                 url = UDIFF.format(yyyymmdd=ymd)
                 r = get_with_bounded_retry(s, url, timeout=(10, 30), attempts=attempts)
