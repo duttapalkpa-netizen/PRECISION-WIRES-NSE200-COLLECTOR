@@ -123,15 +123,9 @@ def normalize_statement_iv(tables):
                 by_nic = {}
                 for item in output:
                     by_nic.setdefault(item["nic_2025"], []).append(item["period"])
-                if len(by_nic) != 23:
-                    raise ValueError(f"Expected 23 NIC-2 groups, found {len(by_nic)}")
                 for nic, periods in sorted(by_nic.items()):
-                    if sorted(periods) != expected_periods:
-                        missing = sorted(set(expected_periods) - set(periods))
-                        extra = sorted(set(periods) - set(expected_periods))
-                        raise ValueError(f"NIC {nic} coverage failure; missing={missing}, extra={extra}")
-                if len(output) != 299:
-                    raise ValueError(f"Expected 299 NIC-period rows, found {len(output)}")
+                    if len(periods) != len(set(periods)):
+                        raise ValueError(f"Duplicate periods for NIC {nic}")
                 return table_id, output
     return None, []
 
@@ -163,7 +157,27 @@ def collect(out: Path, opener=urllib.request.urlopen):
           "nonempty_cells":sum(bool(c.strip()) for r in rows for c in r),"file":csv_path.name})
     (out/"table_inventory.json").write_text(json.dumps(inventory,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
     normalized_table_id, normalized=normalize_statement_iv(tables)
-    if not normalized: raise RuntimeError("Could not identify a NIC-2025 monthly index table with >=12 month columns")
+    if not normalized: raise RuntimeError("Could not identify a NIC-2025 monthly index table with 13 month columns")
+    expected_periods=[]
+    year,month=2025,9
+    for _ in range(13):
+        expected_periods.append(f"{year:04d}-{month:02d}")
+        month+=1
+        if month==13:
+            year+=1
+            month=1
+    by_nic={}
+    for item in normalized:
+        by_nic.setdefault(item["nic_2025"],[]).append(item["period"])
+    if len(by_nic)!=23:
+        raise RuntimeError(f"Expected 23 NIC-2 groups in official Statement IV; found {len(by_nic)}")
+    for nic,periods in sorted(by_nic.items()):
+        if sorted(periods)!=expected_periods:
+            missing=sorted(set(expected_periods)-set(periods))
+            extra=sorted(set(periods)-set(expected_periods))
+            raise RuntimeError(f"NIC {nic} coverage failure; missing={missing}, extra={extra}")
+    if len(normalized)!=299:
+        raise RuntimeError(f"Expected 299 NIC-period observations; found {len(normalized)}")
     with (out/"iip_nic2_monthly_panel.csv").open("w",encoding="utf-8-sig",newline="") as handle:
         writer=csv.DictWriter(handle,fieldnames=list(normalized[0].keys()))
         writer.writeheader(); writer.writerows(normalized)
