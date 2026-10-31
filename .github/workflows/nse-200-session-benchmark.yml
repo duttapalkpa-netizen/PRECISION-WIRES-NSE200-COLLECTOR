@@ -44,7 +44,7 @@ jobs:
           /usr/bin/time -v -o data/qa/collector_time.txt python collector/nse_download.py --sessions 200 --lookback-days 500 --out data/raw 2>&1 | tee data/qa/collector_console.log
       - name: Run exact 200-session warm-cache benchmark
         run: |
-          /usr/bin/time -v -o data/qa/warm_cache_time.txt python collector/nse_warm_cache_benchmark.py --raw-dir data/raw --sessions 200 --output data/qa/nse_warm_cache_benchmark.json
+          /usr/bin/time -v -o data/qa/warm_cache_time.txt PYTHONPATH=. python collector/nse_warm_cache_benchmark.py --raw-dir data/raw --sessions 200 --output data/qa/nse_warm_cache_benchmark.json
       - name: Freeze and validate immutable 200-session snapshot
         run: python collector/nse_snapshot_manifest.py --raw-dir data/raw --sessions 200 | tee data/qa/snapshot_manifest_result.json
       - name: Record benchmark finish
