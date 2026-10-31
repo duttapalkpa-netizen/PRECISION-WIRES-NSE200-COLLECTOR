@@ -155,8 +155,11 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
 
         # A valid daily file must identify the requested trade date when the
         # source exposes a date field. Never accept an unrelated cached date.
-        if expected_date and source_dates and expected_date not in source_dates:
+        if expected_date and source_dates != {expected_date}:
             print(f"UDIFF_PARSE date mismatch expected={expected_date} source={sorted(source_dates)[:3]}", flush=True)
+            return False
+        if expected_date and not source_dates:
+            print("UDIFF_PARSE missing parseable source trade date", flush=True)
             return False
 
         target = out / f"sec_bhavdata_full_{stamp}.csv"
