@@ -266,9 +266,9 @@ def collect(out: Path, opener=urllib.request.urlopen):
 "verification":"PUBLIC_HTML_CAPTURE_TABLE_INVENTORY_NIC2_13_MONTH_COVERAGE_AND_VINTAGE_TAGGING",
 "normalized_rows":len(normalized),
 "normalized_table_id":normalized_table_id,
-      "limitations":["No e-Sankhyiki CSV/API response captured in this run.",
-        "HTML table extraction is archival diagnostic; numeric schema/domain normalization remains pending.",
-        "Quick estimates are revisable; preserve each release vintage."]
+      "limitations":["e-Sankhyiki April 2023 onward detailed back-series has not yet been ingested.",
+        "The September release contains a 13-month NIC-2 panel only; it is not a substitute for the full historical series.",
+        "Historical monthly vintages before August 2026 are represented as published-in-release observations, not independently reconstructed revision histories."]
     }
     (out/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     return manifest
