@@ -8,7 +8,7 @@ I=Path("inputs"); O=Path("outputs/macro_geo")
 PINS={
 "macro_series":(41283471652,13073712835),"gdp":(41285765677,13074739522),
 "cpi":(41286559713,13074709251),"wpi":(41287256251,13075163044),
-"cga":(41287828206,13076111188),"pmi":(41287685168,13076305289),
+"cga":(41287828206,13076111188),"cga_history":(41297911412,13079668798),"discovery":(41297835998,13079758673),"pmi":(41287685168,13076305289),
 "factor_source":(41282726166,13074122025)}
 def j(p):
  p=Path(p)
@@ -33,6 +33,15 @@ def main():
  cap=I/"cga"; capq=j(cap/"domain_qa.json"); capm=j(cap/"manifest.json")
  require(capq["status"]=="PASS" and all(capq["domain_checks"].values()),"CGA QA mismatch")
  require(h(cap/"CGA_Monthly_Accounts_September_2026.html")==capm["cga_sha256"] and h(cap/"PIB_Monthly_Accounts_Review_September_2026.html")==capm["pib_sha256"],"CGA/PIB hash mismatch")
+ ch=I/"cga_history"; chq=j(ch/"domain_qa.json"); chm=j(ch/"manifest.json")
+ require(chq["status"]=="PASS_BOUNDED_HISTORICAL_EXTRACTION" and chq["vintage_status"]=="VINTAGE_UNVERIFIED_SINGLE_LATEST_SNAPSHOT","CGA historical QA/vintage status mismatch")
+ require(h(ch/chm["raw_file"])==chm["workbook_sha256"],"CGA historical workbook hash mismatch")
+ for sheet,summary in chq["sheets"].items():
+  require(summary["unique_months"]==143 and summary["first_period"]=="2014-04" and summary["last_period"]=="2026-02" and not summary["missing_periods"],"CGA monthly coverage mismatch "+sheet)
+  require(h(ch/chm["exports"][sheet])==summary["csv_sha256"],"CGA derived series hash mismatch "+sheet)
+ ds=I/"discovery"; di=j(ds/"source_inventory.json")
+ require(di["sources"]["oea_wpi"]["status"]=="SOURCE_TRANSPORT_BLOCKED","WPI transport status must be explicit")
+ require(di["sources"]["mospi_nas"]["catalogue_records"]==1724 and di["sources"]["mospi_cpi"]["catalogue_records"]==495,"MoSPI catalogue inventory changed")
  p=I/"pmi"; pq=j(p/"access_assessment.json"); pm=j(p/"manifest.json")
  require(pq["status"]=="ACCESS_ASSESSMENT_PASS" and pq["underlying_dataset_status"]=="NOT_CONNECTED" and pq["promotable_rows"]==0,"PMI must remain NOT_CONNECTED")
  for k,v in pm["sources"].items(): require(h(p/v["raw_file"])==v["sha256"],"PMI hash mismatch "+k)
@@ -51,10 +60,10 @@ def main():
  gd={"run_id":PINS["gdp"][0],"artifact_id":PINS["gdp"][1],"status":"PASS_BOUNDED_SMOKE_ONLY","table_id":gq["table_id"],"period":"Q1 FY2026-27","raw_sha256":gm["sha256"],"retrieved_at_utc":gm["retrieved_at_utc"]}
  ci={"run_id":PINS["cpi"][0],"artifact_id":PINS["cpi"][1],"status":"PASS_BOUNDED_SMOKE_ONLY","period":"September 2026","headline":cq["workbook"]["headline_observation"],"raw_sha256":cm["sha256"],"retrieved_at_utc":cm["retrieved_at_utc"],"scope":"Other dimensional tabs primarily August; no full history."}
  wi={"run_id":PINS["wpi"][0],"artifact_id":PINS["wpi"][1],"status":"PASS_BOUNDED_RELEASE_SMOKE_ONLY","period":wq["reference_period"],"base_year":wq["base_year"],"provisional":wq["provisional"],"observations":wq["observations"],"raw_sha256":wm["sha256"],"retrieved_at_utc":wm["retrieved_at_utc"]}
- cg={"run_id":PINS["cga"][0],"artifact_id":PINS["cga"][1],"status":"PASS_BOUNDED_YTD_SMOKE_ONLY","period":capq["reference_period"],"observed":capq["observed"],"raw_sha256":{"cga":capm["cga_sha256"],"pib":capm["pib_sha256"]},"retrieved_at_utc":capm["retrieved_at_utc"],"scope":"Cumulative Apr-Sep YTD, provisional; not standalone September flow."}
+ cg={"run_id":PINS["cga"][0],"artifact_id":PINS["cga"][1],"status":"PASS_BOUNDED_YTD_SMOKE_ONLY","period":capq["reference_period"],"observed":capq["observed"],"raw_sha256":{"cga":capm["cga_sha256"],"pib":capm["pib_sha256"]},"retrieved_at_utc":capm["retrieved_at_utc"],"historical_extraction":{"run_id":PINS["cga_history"][0],"artifact_id":PINS["cga_history"][1],"status":chq["status"],"series":chq["sheets"],"workbook_sha256":chm["workbook_sha256"],"vintage_status":chq["vintage_status"],"source_page_last_updated_date":chq["source_page_last_updated_date"]},"scope":"143 months Apr-2014 to Feb-2026 cumulative actuals; standalone monthly values derived by within-FY differencing. One latest snapshot only; publication vintages unverified."}
  pi={"run_id":PINS["pmi"][0],"artifact_id":PINS["pmi"][1],"status":"ACCESS_ASSESSMENT_PASS_DATA_NOT_CONNECTED","classification":pq["access_classification"],"http_statuses":{k:v["http_status"] for k,v in pm["sources"].items()},"retrieved_at_utc":pm["retrieved_at_utc"]}
- setrow("macro_indicators","DATA_QUALITY_WARN",mq["total_observations"],"GDP/CPI/WPI evidence is bounded or partial; no complete point-in-time historical macro series.",{"gdp":gd,"cpi":ci,"wpi":wi,"normalized_panel":macro})
- setrow("inflation_components","DATA_QUALITY_WARN",mq["inflation_component_rows"],"CPI/WPI components remain partial; complete monthly dimensions and release-vintage alignment pending.",{"cpi":ci,"wpi":wi})
+ setrow("macro_indicators","DATA_QUALITY_WARN",mq["total_observations"],"GDP/CPI/WPI evidence is bounded or partial; no complete point-in-time historical macro series.",{"gdp":gd,"cpi":ci,"wpi":wi,"normalized_panel":macro,"full_history_discovery":{"run_id":PINS["discovery"][0],"artifact_id":PINS["discovery"][1],"nas_catalogue_records":di["sources"]["mospi_nas"]["catalogue_records"],"nas_gdp_related_tables":len(di["sources"]["mospi_nas"]["filtered_records"]),"cpi_catalogue_records":di["sources"]["mospi_cpi"]["catalogue_records"],"gdp_cpi_historical_files_downloaded":False}})
+ setrow("inflation_components","DATA_QUALITY_WARN",mq["inflation_component_rows"],"CPI/WPI components remain partial; complete monthly dimensions and release-vintage alignment pending.",{"cpi":ci,"wpi":wi,"wpi_itemwise_status":"NOT_CONNECTED_SOURCE_TRANSPORT_BLOCKED","cpi_history_status":"CATALOGUE_DISCOVERED_NOT_DOWNLOADED"})
  setrow("government_capex","DATA_QUALITY_WARN",capq["observed"]["actual_ytd_crore"] and mq["sources"]["government_capex"]["rows"],"CGA September YTD smoke passes but complete historical monthly vintages are not available.",cg)
  setrow("pmi","NOT_CONNECTED",0,"Underlying PMI history is licensed; no license/feed credentials supplied.",pi)
  # Recompute inventory counters after conservative overrides; BLOCKED remains separate.
@@ -76,5 +85,5 @@ def main():
  O.mkdir(parents=True,exist_ok=True)
  (O/"source_coverage.json").write_text(json.dumps(cov,indent=2)+chr(10))
  (O/"macro_indicators_snapshot_ledger.json").write_text(json.dumps(cov["macro_indicators_snapshot_ledger"],indent=2)+chr(10))
- print(json.dumps({"snapshot_id":sid,"snapshot_as_of_utc":asof,"evidence_inputs_verified":7,"macro_indicators":"DATA_QUALITY_WARN","inflation_components":"DATA_QUALITY_WARN","government_capex":"DATA_QUALITY_WARN","pmi":"NOT_CONNECTED"},indent=2))
+ print(json.dumps({"snapshot_id":sid,"snapshot_as_of_utc":asof,"evidence_inputs_verified":7,"macro_indicators":"DATA_QUALITY_WARN","inflation_components":"DATA_QUALITY_WARN","government_capex":"DATA_QUALITY_WARN","cga_historical_months":143,"cga_vintage":"UNVERIFIED_SINGLE_SNAPSHOT","wpi_itemwise":"NOT_CONNECTED","gdp_cpi_full_history":"NOT_CONNECTED_PENDING_DOWNLOAD","pmi":"NOT_CONNECTED"},indent=2))
 if __name__=="__main__": main()
