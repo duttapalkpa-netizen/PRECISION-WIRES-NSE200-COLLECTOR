@@ -5,13 +5,13 @@ import json,hashlib,ssl,urllib.request,urllib.parse,re
 from pathlib import Path
 from datetime import datetime,timezone
 from html.parser import HTMLParser
-from openpyxl import load_workbook
+from openpyxl import load_workbook\nimport certifi
 OUT=Path("artifacts/macro_full_history_discovery")
 UA="Mozilla/5.0 (compatible; PRECISION-WIRES-Macro-History-Discovery/1.0)"
 def get(url,limit=60000000):
  # Preserve TLS certificate and hostname verification. MoSPI public API needs the
  # same legacy TLS cipher compatibility already validated in the GDP collector.
- ctx=ssl.create_default_context()
+ ctx=ssl.create_default_context(cafile=certifi.where())
  if "api.mospi.gov.in" in url:
   ctx.set_ciphers("DEFAULT:@SECLEVEL=1");ctx.options |= 0x4
  req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"*/*","Origin":"https://esankhyiki.mospi.gov.in","Referer":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue"})
