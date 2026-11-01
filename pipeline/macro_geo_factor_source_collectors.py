@@ -522,11 +522,9 @@ def validate_observed_series_group(name, frame, start, end, series_map):
     """Domain QA for exact, observed source series; never fills missing dates or values."""
     if frame.empty:
         raise ValueError(f"{name} domain QA failed: no observed rows")
+    is_yield = name in {"us_yields", "us_real_yields"}
     required = {"DATE", "CLOSE", "SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"}
-    if name == "us_yields":
-        required.add("SERIES")
-    else:
-        required.add("COMMODITY")
+    required.add("SERIES" if is_yield else "COMMODITY")
     missing = sorted(required - set(frame.columns))
     if missing:
         raise ValueError(f"{name} domain QA failed: missing columns {missing}")
@@ -534,34 +532,33 @@ def validate_observed_series_group(name, frame, start, end, series_map):
     values = pd.to_numeric(frame["CLOSE"], errors="coerce")
     if dates.isna().any() or values.isna().any() or (values <= 0).any():
         raise ValueError(f"{name} domain QA failed: invalid dates or non-positive/non-numeric values")
-    if frame["SOURCE_URL"].astype(str).str.strip().eq("").any():
-        raise ValueError(f"{name} domain QA failed: missing source URL")
-    if frame["SOURCE_SERIES"].astype(str).str.strip().eq("").any():
-        raise ValueError(f"{name} domain QA failed: missing source series identity")
-    if frame["OBSERVED_AT_UTC"].astype(str).str.strip().eq("").any():
-        raise ValueError(f"{name} domain QA failed: missing observation timestamp")
-    key = ["DATE", "SERIES"] if name in {"us_yields","us_real_yields"} else ["DATE", "COMMODITY"]
+    for column in ("SOURCE_URL", "SOURCE_SERIES", "OBSERVED_AT_UTC"):
+        if frame[column].astype(str).str.strip().eq("").any():
+            raise ValueError(f"{name} domain QA failed: missing {column}")
+    key = ["DATE", "SERIES"] if is_yield else ["DATE", "COMMODITY"]
     if frame.duplicated(key).any():
         raise ValueError(f"{name} domain QA failed: duplicate date/series keys")
-    if name == "us_yields":
+    if is_yield:
         expected = set(series_map.values())
         actual = set(frame["SERIES"].astype(str))
         if actual != expected:
-            raise ValueError(f"us_yields domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
+            raise ValueError(f"{name} domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
         if not frame["SOURCE"].astype(str).str.contains("FRED|Treasury", case=False, regex=True).all():
-            raise ValueError("us_yields domain QA failed: source is neither FRED nor US Treasury")
+            raise ValueError(f"{name} domain QA failed: source is neither FRED nor US Treasury")
+        if name == "us_real_yields" and set(frame["SOURCE_SERIES"].astype(str)) != {"DFII10"}:
+            raise ValueError("us_real_yields domain QA failed: exact DFII10 series required")
     else:
         expected = set(series_map.values())
         actual = set(frame["COMMODITY"].astype(str))
         if actual != expected:
-            raise ValueError(f"global_commodity_prices domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
+            raise ValueError(f"{name} domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
         allowed_sources = (
             frame["SOURCE"].astype(str).str.contains("FRED", case=False)
             | frame["SOURCE"].astype(str).str.contains("US Energy Information Administration", case=False, regex=False)
             | frame["SOURCE"].astype(str).str.contains("London Bullion Market Association", case=False, regex=False)
         )
         if not allowed_sources.all():
-            raise ValueError("global_commodity_prices domain QA failed: unapproved source identity")
+            raise ValueError(f"{name} domain QA failed: unapproved source identity")
     observed_days = sorted(dates.dt.date.unique())
     if observed_days[0] < start or observed_days[-1] > end:
         raise ValueError(f"{name} domain QA failed: dates outside requested window")
