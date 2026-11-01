@@ -96,7 +96,8 @@ jobs:
           assert hashlib.sha256(wraw.read_bytes()).hexdigest()==w["source"]["raw_sha256"]
           assert hashlib.sha256(wcsv.read_bytes()).hexdigest()==w["normalized_csv"]["sha256"]
           assert w["workbook"]["observation_count"]==w["normalized_csv"]["rows"]>0
-          assert w["workbook"]["item_key_count"]>0\n          x=d["sources"]["cga_dashboard"]
+          assert w["workbook"]["item_key_count"]>0
+          x=d["sources"]["cga_dashboard"]
           raw=p/"CGA_Monthly_Accounts_Dashboard_February_2026.xlsm"
           assert hashlib.sha256(raw.read_bytes()).hexdigest()==x["sha256"]
           assert d["sources"]["cga_dashboard"]["sheet_count"]>0
