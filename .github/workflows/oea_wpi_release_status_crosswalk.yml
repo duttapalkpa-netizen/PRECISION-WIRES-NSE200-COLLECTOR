@@ -6,7 +6,7 @@ on:
       - "pipeline/collect_oea_wpi_itemwise.py"
       - "pipeline/verify_oea_tls_chain.py"
       - "pipeline/build_oea_wpi_release_status_crosswalk.py"
-      - "pipeline/audit_oea_wpi_factor_registry_eligibility.py"
+      - "pipeline/audit_oea_wpi_factor_registry_eligibility.py"\n      - "pipeline/build_oea_wpi_inflation_components_adapter.py"\n      - "pipeline/audit_factor_registry_same_snapshot.py"\n      - "pipeline/recheck_f14_eligibility_after_coverage.py"\n      - "qa/test_oea_wpi_inflation_components_adapter.py"
       - "data/reference/oea_wpi_release_status_evidence.json"
       - "qa/test_oea_wpi_release_status_crosswalk.py"
       - "qa/test_oea_wpi_factor_registry_eligibility.py"
@@ -29,7 +29,7 @@ jobs:
       - name: Install workbook reader
         run: python -m pip install openpyxl certifi
       - name: Run crosswalk guardrail tests
-        run: python -m unittest qa.test_oea_wpi_itemwise qa.test_oea_wpi_release_status_crosswalk qa.test_oea_wpi_factor_registry_eligibility -v
+        run: python -m unittest qa.test_oea_wpi_itemwise qa.test_oea_wpi_release_status_crosswalk qa.test_oea_wpi_factor_registry_eligibility qa.test_oea_wpi_inflation_components_adapter -v
       - name: Verify official OEA TLS chain and retrieve WPI workbook
         run: |
           python pipeline/verify_oea_tls_chain.py
@@ -46,7 +46,7 @@ jobs:
           p=Path("artifacts/macro_full_history_discovery")
           m=json.loads((p/"oea_wpi_itemwise_manifest.json").read_text())
           r=json.loads((p/"oea_wpi_release_status_crosswalk.json").read_text())
-          e=json.loads((p/"oea_wpi_factor_registry_eligibility_audit.json").read_text())
+          e=json.loads((p/"oea_wpi_factor_registry_eligibility_audit.json").read_text())\n          a=json.loads((p/"oea_wpi_inflation_components_adapter.json").read_text())\n          c=json.loads((p/"factor_registry_same_snapshot_coverage_audit.json").read_text())\n          f=json.loads((p/"f14_eligibility_recheck.json").read_text())
           for file,digest in [
             (p/m["source"]["raw_file"],m["source"]["raw_sha256"]),
             (p/m["normalized_csv"]["file"],m["normalized_csv"]["sha256"]),
@@ -61,8 +61,8 @@ jobs:
           assert r["promotion"]=="SOURCE_EVIDENCE_ONLY_NOT_PROMOTED_TO_FACTOR_REGISTRY"
           assert e["status"]=="WPI_FACTOR_REGISTRY_ELIGIBILITY_AUDIT_PASS"
           assert e["promotion_decision"]=="NOT_ELIGIBLE"
-          assert e["factor_registry_impact"]=="NO_CHANGE_F14_REMAINS_UNPROMOTED"
-          print({"status":r["status"],"crosswalk_rows":r["crosswalk_rows"],"status_counts":r["status_counts"],"october":r["october_2026"]})
+          assert e["factor_registry_impact"]=="NO_CHANGE_F14_REMAINS_UNPROMOTED"\n          assert a["status"]=="INFLATION_COMPONENTS_ADAPTER_PASS_SCHEMA_COMPLETE"\n          assert set(["DATE","COUNTRY","COMPONENT","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]).issubset(set(a["fields"]))\n          assert c["status"] in ["SAME_SNAPSHOT_FACTOR_COVERAGE_AUDIT_EXECUTED","BLOCKED_MISSING_SOURCE_COVERAGE_SNAPSHOT"]\n          assert f["promotion_decision"]=="NOT_ELIGIBLE"\n          assert f["factor_registry_change"]=="NONE; F14 mapping and registry remain unchanged"
+          print({"status":r["status"],"crosswalk_rows":r["crosswalk_rows"],"status_counts":r["status_counts"],"october":r["october_2026"],"adapter":a["status"],"coverage":c["status"],"F14":f["promotion_decision"]})
           PY
       - uses: actions/upload-artifact@v4
         if: always()
