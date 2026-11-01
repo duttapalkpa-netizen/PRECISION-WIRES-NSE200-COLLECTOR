@@ -6,7 +6,8 @@ import pandas as pd
 
 OUT=Path("outputs/macro_geo")
 FILES={
- "coverage_json":"outputs/macro_geo/source_coverage.json",\n "nse_200_session_panel":"data/processed/nse_eq_200_sessions.csv",
+ "coverage_json":"outputs/macro_geo/source_coverage.json",
+ "nse_200_session_panel":"data/processed/nse_eq_200_sessions.csv",
  "coverage_csv":"outputs/macro_geo/source_coverage.csv",
  "macro_indicators":"data/external/macro_indicators.csv",
  "government_capex":"data/external/government_capex.csv",
