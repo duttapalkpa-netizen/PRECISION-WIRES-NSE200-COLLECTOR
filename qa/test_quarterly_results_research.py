@@ -10,6 +10,42 @@ import pipeline.quarterly_results_research as stage
 
 
 class QuarterlyResultsResearchTests(unittest.TestCase):
+    def test_integrated_filing_fetches_next_page_using_one_based_request(self):
+        from datetime import date
+        from unittest.mock import MagicMock
+
+        first_rows = [{"seq_Id": str(i), "symbol": "ABC", "xbrl": f"https://nsearchives.nseindia.com/{i}.xml"}
+                      for i in range(500)]
+        second_rows = [{"seq_Id": str(i), "symbol": "ABC", "xbrl": f"https://nsearchives.nseindia.com/{i}.xml"}
+                       for i in range(500, 1000)]
+
+        def response(payload, url):
+            r = MagicMock()
+            r.status_code = 200
+            r.url = url
+            r.json.return_value = payload
+            r.raise_for_status.return_value = None
+            return r
+
+        session = MagicMock()
+        session.get.side_effect = [
+            response({}, stage.NSE_HOME),
+            response({"data": first_rows, "page": 0, "size": 500, "totalCount": 1000},
+                     stage.INTEGRATED_RESULTS_URL + "?page=1"),
+            response({"data": second_rows, "page": 1, "size": 500, "totalCount": 1000},
+                     stage.INTEGRATED_RESULTS_URL + "?page=2"),
+        ]
+        with patch.object(stage.requests, "Session", return_value=session):
+            rows, source_url, payload = stage.fetch_nse(
+                stage.RESULTS_URL, date(2026, 9, 17), date(2026, 11, 1)
+            )
+        self.assertEqual(len(rows), 1000)
+        self.assertEqual(len({r["seq_Id"] for r in rows}), 1000)
+        self.assertTrue(stage.FETCH_DIAGNOSTICS[-1]["pagination"]["complete"])
+        self.assertEqual(stage.FETCH_DIAGNOSTICS[-1]["pagination"]["additional_page_requests"][0]["requested_page"], 2)
+        self.assertEqual(len(payload["data"]), 1000)
+        self.assertEqual(payload["_audit_pagination"]["reported_total_count"], 1000)
+
     def test_step1_integrated_filing_is_not_mislabelled_announcement_fallback(self):
         sources = {
             "RESULT_DISCLOSURE": {"status": "AVAILABLE",
