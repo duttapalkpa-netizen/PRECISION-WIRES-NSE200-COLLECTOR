@@ -15,7 +15,8 @@ def main():
     blockers=[]
     if missing: blockers.append("Adapter schema missing required fields: "+",".join(missing))
     if adapter.get("status")!="INFLATION_COMPONENTS_ADAPTER_PASS_SCHEMA_COMPLETE": blockers.append("Adapter did not pass")
-    if "ITEM_LEVEL_REVISION_HISTORY_NOT_PUBLISHED" in adapter.get("revision_history_boundary",""):
+    boundary=adapter.get("revision_history_boundary","").lower()
+    if "not published" in boundary or "item-level revision" in boundary:
         blockers.append("Official source evidence does not provide item-wise revision history; month-level status cannot be promoted as item-level history.")
     if coverage.get("status")!="SAME_SNAPSHOT_FACTOR_COVERAGE_AUDIT_EXECUTED":
         blockers.append("Same-snapshot Factor Registry coverage is not executable/complete: "+str(coverage.get("status")))
