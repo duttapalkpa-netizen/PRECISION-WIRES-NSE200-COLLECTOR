@@ -10,7 +10,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: mospi-nas-gdp-bounded-smoke
+  group: mospi-nas-gdp-bounded-smoke-v2
   cancel-in-progress: true
 jobs:
   gdp-smoke:
