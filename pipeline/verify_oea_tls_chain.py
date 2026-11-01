@@ -82,7 +82,10 @@ def main():
     # This compensates for the remote server omitting the intermediate; it does not disable
     # certificate validation or hostname checking.
     ctx = ssl.create_default_context(cafile=certifi.where())
-    ctx.load_verify_locations(cafile=str(yr1))
+    # Trust the exact cross-signed Root YR certificate only after the preceding
+    # OpenSSL check proves its path to the runner trusted ISRG Root X1. Include
+    # YR1 as the required issuing intermediate for the OEA leaf.
+    ctx.load_verify_locations(cafile=str(untrusted))
     req = urllib.request.Request("https://eaindustry.nic.in/download_data_2223.asp",
         headers={"User-Agent": UA, "Accept": "text/html,*/*"})
     with urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx)).open(req, timeout=35) as r:
