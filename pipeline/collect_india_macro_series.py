@@ -95,14 +95,18 @@ GDP_PERIODS=[f"FY{fy}-Q{q}" for fy in ("2022-23","2023-24","2024-25") for q in r
 GDP_GROWTH_PERIODS=[f"FY{fy}-Q{q}" for fy in ("2023-24","2024-25") for q in range(1,5)]+[f"FY2025-26-Q{q}" for q in range(1,4)]
 
 def extract_gdp_row(page_text,count,decimal=False):
- marker=page_text.rfind("GDP")
- if marker<0: raise ValueError("GDP row label not found in official quarterly statement page")
- tail=page_text[marker+3:]
+ # PDF text extraction can contain several GDP labels (table headings and
+ # totals). Parse only a line whose first field is the GDP row label.
  pattern=r"\d+(?:\.\d+)?" if decimal else r"\d[\d,]*"
- tokens=re.findall(pattern,tail)
- if len(tokens)<count:
-  raise ValueError("GDP row has "+str(len(tokens))+" numeric values; expected "+str(count))
- vals=[float(x.replace(",","")) for x in tokens[:count]]
+ candidates=[]
+ for line in str(page_text).splitlines():
+  match=re.match(r"^\s*GDP\s+(.*)$",line,re.I)
+  if not match: continue
+  tokens=re.findall(pattern,match.group(1))
+  if len(tokens)>=count: candidates.append(tokens[:count])
+ if not candidates:
+  raise ValueError("GDP value row with "+str(count)+" numeric values not found in official quarterly statement page")
+ vals=[float(x.replace(",","")) for x in candidates[-1]]
  if any(not pd.notna(v) for v in vals): raise ValueError("GDP row contains non-numeric values")
  return vals
 
@@ -112,8 +116,8 @@ def capture_gdp_quarterly_backseries(session,folder):
  path=folder/"gdp_quarterly_backseries_base_2022_23_2026_02_27.pdf"
  path.write_bytes(response.content)
  reader=PdfReader(BytesIO(response.content))
- if len(reader.pages)<19: raise ValueError("MoSPI GDP PDF has fewer than 19 pages")
- pages={k:reader.pages[i].extract_text() or "" for k,i in {"constant":15,"constant_growth":16,"current":17,"current_growth":18}.items()}
+ if len(reader.pages)<20: raise ValueError("MoSPI GDP PDF has fewer than 20 pages")
+ pages={k:reader.pages[i].extract_text() or "" for k,i in {"constant":16,"constant_growth":17,"current":18,"current_growth":19}.items()}
  parsed={
   "real_gdp_constant":extract_gdp_row(pages["constant"],15),
   "real_gdp_yoy_growth":extract_gdp_row(pages["constant_growth"],11,decimal=True),

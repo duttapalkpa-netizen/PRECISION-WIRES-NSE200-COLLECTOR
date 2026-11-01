@@ -93,7 +93,7 @@ def observed_window():
     ), str(panel)
 
 
-def fetch_fred(session, series_id, start, end):
+def fetch_fred(session, series_id, start, end, read_timeout=8, attempts=2):
     """Fetch a FRED series in bounded monthly chunks with resilient retries.
 
     Transport failures receive two bounded attempts with backoff. Schema and
@@ -119,12 +119,12 @@ def fetch_fred(session, series_id, start, end):
     rows, failures = [], []
     for chunk_start, chunk_end in chunks:
         last_error = None
-        for attempt in range(2):
+        for attempt in range(attempts):
             try:
                 response = session.get(
                     FRED_URL,
                     params={"id": series_id, "cosd": chunk_start.isoformat(), "coed": chunk_end.isoformat()},
-                    timeout=(5, 8),
+                    timeout=(5, read_timeout),
                 )
                 response.raise_for_status()
                 frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
@@ -152,7 +152,7 @@ def fetch_fred(session, series_id, start, end):
                 raise
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {str(exc)[:180]}"
-                if attempt < 2:
+                if attempt < attempts - 1:
                     import time
                     # Small bounded backoff: enough to clear transient upstream
                     # throttling without allowing a retry storm or unbounded run.
@@ -611,7 +611,7 @@ def collect_group(name, series_map, start, end, session):
         try:
             label = "US_TREASURY_10Y_REAL"
             rows = []
-            for day, value, url in fetch_fred(session, "DFII10", start, end):
+            for day, value, url in fetch_fred(session, "DFII10", start, end, read_timeout=25, attempts=3):
                 rows.append({"DATE": day, "SERIES": label, "CLOSE": value,
                     "SOURCE": "Federal Reserve Bank of St. Louis FRED",
                     "SOURCE_SERIES": "DFII10", "SOURCE_URL": url,
