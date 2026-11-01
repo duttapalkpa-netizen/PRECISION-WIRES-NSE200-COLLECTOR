@@ -36,6 +36,8 @@ jobs:
           name: india-macro-series-source-audit
           path: |
             data/external/macro_series_raw/**
+            data/external/macro_series_observations.csv
+            outputs/macro_geo/macro_series_observation_qa.json
             outputs/macro_geo/india_macro_series_source_audit.json
             outputs/macro_geo/india_macro_series_source_audit.sha256
           if-no-files-found: warn
