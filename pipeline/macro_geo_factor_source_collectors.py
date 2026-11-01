@@ -576,8 +576,8 @@ def validate_observed_series_group(name, frame, start, end, series_map):
             raise ValueError(f"{name} domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
         if not frame["SOURCE"].astype(str).str.contains("FRED|Treasury", case=False, regex=True).all():
             raise ValueError(f"{name} domain QA failed: source is neither FRED nor US Treasury")
-        if name == "us_real_yields" and set(frame["SOURCE_SERIES"].astype(str)) != {"10 YR REAL"}:
-            raise ValueError("us_real_yields domain QA failed: exact DFII10 series required")
+        if name == "us_real_yields" and set(frame["SOURCE_SERIES"].astype(str)) != {"DFII10"}:
+            raise ValueError("us_real_yields domain QA failed: exact FRED DFII10 series required")
     else:
         expected = set(series_map.values())
         actual = set(frame["COMMODITY"].astype(str))
@@ -607,17 +607,27 @@ def validate_observed_series_group(name, frame, start, end, series_map):
 def collect_group(name, series_map, start, end, session):
     rows, failures, fallback_evidence = [], {}, {}
     if name == "us_real_yields":
+        # Official FRED DFII10; never infer real yields from nominal yields.
         try:
-            rows=fetch_treasury_real_yields(session,start,end)
-            frame=pd.DataFrame(rows).drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
-            qa=validate_observed_series_group(name,frame,start,end,{"10 YR REAL":"US_TREASURY_10Y_REAL"})
-            target=OUT/"us_real_yields.csv";OUT.mkdir(parents=True,exist_ok=True)
-            frame.to_csv(target,index=False)
-            return {**qa,"path":str(target),"source":"US Department of the Treasury",
-                    "requested_series":["10 YR REAL"],"official_source_url":str(frame["SOURCE_URL"].iloc[0])}
+            label = "US_TREASURY_10Y_REAL"
+            rows = []
+            for day, value, url in fetch_fred(session, "DFII10", start, end):
+                rows.append({"DATE": day, "SERIES": label, "CLOSE": value,
+                    "SOURCE": "Federal Reserve Bank of St. Louis FRED",
+                    "SOURCE_SERIES": "DFII10", "SOURCE_URL": url,
+                    "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat()})
+            frame = pd.DataFrame(rows).drop_duplicates(["DATE", "SERIES"]).sort_values(["DATE", "SERIES"])
+            qa = validate_observed_series_group(name, frame, start, end, {"DFII10": label})
+            target = OUT / "us_real_yields.csv"
+            OUT.mkdir(parents=True, exist_ok=True)
+            frame.to_csv(target, index=False)
+            return {**qa, "path": str(target), "source": "Federal Reserve Bank of St. Louis FRED",
+                    "observed_source_series": ["DFII10"], "requested_fred_series_ids": ["DFII10"],
+                    "provenance_columns": ["SOURCE", "SOURCE_SERIES", "SOURCE_URL", "OBSERVED_AT_UTC"]}
         except Exception as exc:
-            return {"status":"BLOCKED","rows":0,"failures":{"US_TREASURY_REAL_YIELD":type(exc).__name__+": "+str(exc)[:240]},
-                    "notes":"Official Treasury real-yield series unavailable; remains UNKNOWN."}
+            return {"status": "BLOCKED", "rows": 0,
+                    "failures": {"DFII10": f"{type(exc).__name__}: {str(exc)[:240]}"},
+                    "notes": "Official FRED DFII10 unavailable; remains UNKNOWN."}
 
     for series_id, label in series_map.items():
         try:

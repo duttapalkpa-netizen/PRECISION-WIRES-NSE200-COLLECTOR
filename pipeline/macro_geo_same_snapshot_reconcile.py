@@ -3,6 +3,7 @@
 import hashlib,json,os
 from pathlib import Path
 import pandas as pd
+import numpy as np
 
 OUT=Path("outputs/macro_geo")
 FILES={
@@ -62,7 +63,7 @@ def main():
   report["status"]="INCOMPLETE_REQUIRED_EVIDENCE_MISSING"
  report["created_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
  p=OUT/"same_snapshot_reconciliation.json"
- p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
+ p.write_text(json.dumps(report,ensure_ascii=False,indent=2,default=lambda value: value.item() if isinstance(value,np.generic) else str(value))+"\n")
  Path(str(p)+".sha256").write_text(digest(p)+"  "+p.name+"\n")
- print(json.dumps(report,ensure_ascii=False,indent=2))
+ print(json.dumps(report,ensure_ascii=False,indent=2,default=lambda value: value.item() if isinstance(value,np.generic) else str(value)))
 if __name__=="__main__": main()
