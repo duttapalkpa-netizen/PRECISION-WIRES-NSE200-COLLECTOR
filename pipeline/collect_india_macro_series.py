@@ -169,6 +169,7 @@ def normalize_release_observations(report):
  if not frame.empty:
   key=["source_group","series","period","dimension","unit"]
   frame=frame.drop_duplicates(subset=key+["value","vintage","source_sha256"],keep="first")
+  if frame.duplicated(key).any(): raise ValueError("Conflicting normalized macro observation keys detected")
   if frame["value"].isna().any() or not pd.to_numeric(frame["value"],errors="coerce").notna().all(): raise ValueError("Normalized macro values contain missing/non-numeric observations")
   frame=frame.sort_values(["source_group","series","period","dimension"]).reset_index(drop=True)
   frame.to_csv(Path("data/external/macro_series_observations.csv"),index=False)
