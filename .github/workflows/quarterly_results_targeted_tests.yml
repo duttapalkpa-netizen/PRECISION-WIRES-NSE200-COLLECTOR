@@ -60,8 +60,8 @@ jobs:
           PY
       - name: Run bounded source-linked XBRL metric extraction
         env:
-          QUARTERLY_METRIC_MAX_DISCLOSURES: "500"
-          QUARTERLY_METRIC_MAX_ATTACHMENT_ATTEMPTS: "1000"
+          QUARTERLY_METRIC_MAX_DISCLOSURES: "1000"
+          QUARTERLY_METRIC_MAX_ATTACHMENT_ATTEMPTS: "1500"
         run: |
           python pipeline/quarterly_pdf_xbrl_metrics.py
           python - <<'PY'
