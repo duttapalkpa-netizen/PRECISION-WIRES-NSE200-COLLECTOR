@@ -6,7 +6,8 @@ on:
       - "pipeline/collect_rbi_dbie_bond_yields.py"
       - "qa/test_rbi_dbie_bond_yield_adapter.py"
       - ".github/workflows/rbi_dbie_bond_yield_adapter.yml"
-  workflow_dispatch:\n# Evidence-only monthly RBI curve; does not claim daily FBIL benchmark coverage.
+  workflow_dispatch:
+# Evidence-only monthly RBI curve; does not claim daily FBIL benchmark coverage.
 permissions:
   contents: read
 concurrency:
@@ -48,4 +49,4 @@ jobs:
           name: rbi-dbie-month-end-gsec-yield-source
           path: artifacts/india_bond_yields/
           if-no-files-found: warn
-\n# Re-run after DBIE source-coordinate schema inspection patch.\n
+
