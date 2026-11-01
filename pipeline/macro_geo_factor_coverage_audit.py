@@ -10,11 +10,11 @@ GAPS=ROOT/"config/macro_geo_data_gap_register.csv"
 COVERAGE=ROOT/"outputs/macro_geo/source_coverage.json"
 OUT=ROOT/"outputs/macro_geo"
 MAP={
-"F01":["fpi_dii_flows","dxy","us_yields","volatility","fx_carry_and_cross_currency"],
+"F01":["fpi_dii_flows","dxy","us_yields","us_real_yields","volatility","fx_carry_and_cross_currency"],
 "F02":["crude_oil","global_commodity_prices","global_freight_shipping"],
 "F03":["earnings_revisions","corporate_events","valuation_snapshot"],
 "F04":["usd_inr","india_bond_yields","macro_indicators","india_current_account","inflation_components"],
-"F05":["us_yields","dxy","global_policy_events","fed_policy_surprises"],
+"F05":["us_yields","us_real_yields","dxy","global_policy_events","fed_policy_surprises"],
 "F06":["rbi_policy_liquidity","india_bond_yields","fpi_dii_flows"],
 "F07":["macro_indicators","global_policy_events","sector_fundamentals","government_capex"],
 "F08":["corporate_events","sector_fundamentals","sector_catalysts"],
@@ -23,8 +23,8 @@ MAP={
 "F11":["geopolitical_events","global_policy_events"],
 "F12":["global_policy_events","geopolitical_events","global_commodity_prices"],
 "F13":["global_freight_shipping","crude_oil","global_commodity_prices","shipping_route_risk"],
-"F14":["macro_indicators","us_yields","india_bond_yields","inflation_components"],
-"F15":["global_policy_events","fx_carry_and_cross_currency","us_yields"],
+"F14":["macro_indicators","us_yields","us_real_yields","india_bond_yields","inflation_components"],
+"F15":["global_policy_events","fx_carry_and_cross_currency","us_yields","us_real_yields"],
 "F16":["global_commodity_prices","macro_indicators"],
 "F17":["weather_agriculture","macro_indicators"],
 "F18":["macro_indicators","sector_fundamentals"],
@@ -44,7 +44,7 @@ MAP={
 "F32":["global_policy_events","corporate_events","global_freight_shipping"],
 "F33":["ipo_float_unlocks","market_microstructure"],
 "F34":["research_house_actions","earnings_revisions"],
-"F35":["volatility","dxy","fx_carry_and_cross_currency","fpi_dii_flows"],
+"F35":["volatility","dxy","fx_carry_and_cross_currency","fpi_dii_flows","us_real_yields"],
 }
 def source_is_connected(item):
     """Only a clean, nonempty source-coverage row counts as connected."""
