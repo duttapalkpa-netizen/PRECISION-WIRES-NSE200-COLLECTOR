@@ -97,11 +97,11 @@ def workbook_inventory(path: Path):
         nonempty = 0
         max_row = 0
         max_col = 0
-        for row in ws.iter_rows():
+        for row_index, row in enumerate(ws.iter_rows(), start=1):
             values = [cell.value for cell in row]
             if any(v is not None for v in values):
                 nonempty += sum(v is not None for v in values)
-                max_row = max(max_row, row[0].row if row else 0)
+                max_row = max(max_row, row_index)
                 max_col = max(max_col, len(values))
             for value in values:
                 if isinstance(value, (int, float)) and not isinstance(value, bool):
