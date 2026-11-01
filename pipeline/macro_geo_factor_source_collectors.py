@@ -673,3 +673,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Evidence repair batch trigger: preserve collector behavior; rerun bounded source diagnostics.
