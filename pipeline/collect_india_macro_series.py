@@ -140,13 +140,7 @@ def capture_gdp_quarterly_backseries(session,folder):
   "coverage_limit":"Q1 FY2022-23 through Q3 FY2025-26; pre-2022-23 new-base backseries is not present in this release."}
 
 
-def try:
-  back=capture_gdp_quarterly_backseries(s,RAW/"gdp")
-  report["sources"]["gdp"]["quarterly_backseries"]={k:v for k,v in back.items() if k!="observations"}
-  report["sources"]["gdp"]["backseries_observations"]=back["observations"]
- except Exception as e:
-  report["sources"]["gdp"]["quarterly_backseries"]={"status":"BLOCKED","error":type(e).__name__+": "+str(e)[:300]}
- normalize_release_observations(report):
+def normalize_release_observations(report):
  rows=[]; qa={"sources":{}}
  # GDP: two directly stated quarterly headline measures and their comparator/growth.
  g=report["sources"].get("gdp",{})
@@ -323,6 +317,12 @@ def main():
   report["sources"][key]=x
   print(json.dumps({"source":key,"status":x["status"],"vintages":len(x.get("vintages",[])),"files":len(x.get("captured_files",[]))}))
  report["status"]="SOURCE_ACQUISITION_AUDITED_WITH_NORMALIZATION_GAPS";report["as_of_utc"]=datetime.now(timezone.utc).isoformat()
+ try:
+  back=capture_gdp_quarterly_backseries(s,RAW/"gdp")
+  report["sources"]["gdp"]["quarterly_backseries"]={k:v for k,v in back.items() if k!="observations"}
+  report["sources"]["gdp"]["backseries_observations"]=back["observations"]
+ except Exception as e:
+  report["sources"]["gdp"]["quarterly_backseries"]={"status":"BLOCKED","error":type(e).__name__+": "+str(e)[:300]}
  normalize_release_observations(report)
  qa=report.get("normalized_observation_qa",{})
  covpath=OUT/"source_coverage.json"
