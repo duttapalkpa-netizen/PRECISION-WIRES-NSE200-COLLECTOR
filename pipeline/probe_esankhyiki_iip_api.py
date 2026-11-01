@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Unauthenticated, read-only discovery probe for the official MoSPI IIP API.
 
+2026-11-01: re-run bounded contract discovery after 200-session cache verification.
+
 This probe never sends credentials or changes data. It records the live OpenAPI
 contract and a bounded response sample so the historical collector can be
 implemented against observed official schema rather than guessed parameters.
