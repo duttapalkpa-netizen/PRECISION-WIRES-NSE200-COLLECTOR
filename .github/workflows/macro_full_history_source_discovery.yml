@@ -1,0 +1,55 @@
+name: Official Macro Full History Source Discovery
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/macro_full_history_source_discovery.py"
+      - "qa/test_macro_full_history_source_discovery.py"
+      - ".github/workflows/macro_full_history_source_discovery.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: macro-full-history-source-discovery
+  cancel-in-progress: false
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install workbook reader
+        run: python -m pip install openpyxl
+      - name: Run discovery guardrail tests
+        run: python -m unittest qa.test_macro_full_history_source_discovery -v
+      - name: Discover official WPI, CGA, GDP and CPI historical source inventory
+        run: python pipeline/macro_full_history_source_discovery.py
+      - name: Verify raw-source hashes and discovery manifest
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/macro_full_history_discovery")
+          d=json.loads((p/"source_inventory.json").read_text())
+          for source in ["oea_wpi","cga_dashboard"]:
+           x=d["sources"][source]
+           raw=p/("oea_download_data_2223.html" if source=="oea_wpi" else "CGA_Monthly_Accounts_Dashboard_February_2026.xlsm")
+           assert hashlib.sha256(raw.read_bytes()).hexdigest()==x["sha256"]
+          assert d["sources"]["oea_wpi"]["link_count"]>0
+          assert d["sources"]["cga_dashboard"]["sheet_count"]>0
+          assert d["sources"]["mospi_nas"]["catalogue_records"]>0
+          assert d["sources"]["mospi_cpi"]["catalogue_records"]>0
+          print({"status":"DISCOVERY_PASS","WPI_links":d["sources"]["oea_wpi"]["link_count"],
+           "CGA_sheets":d["sources"]["cga_dashboard"]["sheet_count"],
+           "NAS_records":d["sources"]["mospi_nas"]["catalogue_records"],
+           "CPI_records":d["sources"]["mospi_cpi"]["catalogue_records"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: official-macro-full-history-source-discovery
+          path: artifacts/macro_full_history_discovery/
+          if-no-files-found: warn
