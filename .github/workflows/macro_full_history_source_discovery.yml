@@ -5,6 +5,8 @@ on:
     paths:
       - "pipeline/macro_full_history_source_discovery.py"
       - "pipeline/verify_oea_tls_chain.py"
+      - "pipeline/collect_oea_wpi_itemwise.py"
+      - "qa/test_oea_wpi_itemwise.py"
       - "qa/test_macro_full_history_source_discovery.py"
       - ".github/workflows/macro_full_history_source_discovery.yml"
   workflow_dispatch:
@@ -25,7 +27,7 @@ jobs:
       - name: Install workbook reader
         run: python -m pip install openpyxl certifi
       - name: Run discovery guardrail tests
-        run: python -m unittest qa.test_macro_full_history_source_discovery -v
+        run: python -m unittest qa.test_macro_full_history_source_discovery qa.test_oea_wpi_itemwise -v
       - name: Diagnose OEA TLS chain, hostname, DNS and HTTP redirect without bypass
         shell: bash
         run: |
@@ -72,7 +74,7 @@ jobs:
         run: python pipeline/verify_oea_tls_chain.py
       - name: Discover official WPI, CGA, GDP and CPI historical source inventory
         run: python pipeline/macro_full_history_source_discovery.py
-      - name: Verify raw-source hashes and discovery manifest
+      - name: Download and extract official WPI item-wise monthly observations\n        run: python pipeline/collect_oea_wpi_itemwise.py\n      - name: Verify raw-source hashes and discovery manifest
         run: |
           python - <<'PY'
           import json,hashlib
@@ -85,7 +87,7 @@ jobs:
            assert hashlib.sha256(raw.read_bytes()).hexdigest()==x["sha256"]
           else:
            assert x["status"]=="SOURCE_TRANSPORT_BLOCKED" and x["link_count"]==0
-          x=d["sources"]["cga_dashboard"]
+          w=json.loads((p/"oea_wpi_itemwise_manifest.json").read_text())\n          wraw=p/w["source"]["raw_file"]\n          wcsv=p/w["normalized_csv"]["file"]\n          assert w["status"]=="ITEMWISE_INGESTION_PASS"\n          assert hashlib.sha256(wraw.read_bytes()).hexdigest()==w["source"]["raw_sha256"]\n          assert hashlib.sha256(wcsv.read_bytes()).hexdigest()==w["normalized_csv"]["sha256"]\n          assert w["workbook"]["observation_count"]==w["normalized_csv"]["rows"]>0\n          assert w["workbook"]["item_key_count"]>0\n          x=d["sources"]["cga_dashboard"]
           raw=p/"CGA_Monthly_Accounts_Dashboard_February_2026.xlsm"
           assert hashlib.sha256(raw.read_bytes()).hexdigest()==x["sha256"]
           assert d["sources"]["cga_dashboard"]["sheet_count"]>0
