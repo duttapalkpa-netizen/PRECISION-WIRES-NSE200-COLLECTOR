@@ -1,0 +1,50 @@
+name: MoSPI CPI 2024 Bounded Live Smoke
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_mospi_cpi_2024_smoke.py"
+      - "qa/test_mospi_cpi_2024_smoke.py"
+      - ".github/workflows/mospi_cpi_2024_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mospi-cpi-2024-bounded-smoke
+  cancel-in-progress: true
+jobs:
+  cpi-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install workbook dependency
+        run: python -m pip install openpyxl
+      - name: Run focused CPI domain QA tests
+        run: python -m unittest qa.test_mospi_cpi_2024_smoke -v
+      - name: Collect official MoSPI CPI 2024 workbook
+        run: python pipeline/collect_mospi_cpi_2024_smoke.py
+      - name: Verify evidence, domain QA and raw hash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/mospi_cpi_2024_smoke")
+          q=json.loads((p/"domain_qa.json").read_text()); m=json.loads((p/"manifest.json").read_text())
+          assert q["status"]=="PASS" and q["base_year"]=="2024=100"
+          assert q["reference_period"]=="September 2026" and q["provisional"] is True
+          assert all(q["domain_checks"].values())
+          assert hashlib.sha256((p/m["raw_file"]).read_bytes()).hexdigest()==m["sha256"]
+          assert m["http_status"]==200
+          print({"evidence":"PASS","sha256":m["sha256"],"numeric_cells":q["workbook"]["numeric_cells"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mospi-cpi-2024-bounded-live-smoke
+          path: artifacts/mospi_cpi_2024_smoke/
+          if-no-files-found: warn
