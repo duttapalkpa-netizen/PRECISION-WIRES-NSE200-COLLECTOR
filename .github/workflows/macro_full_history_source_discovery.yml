@@ -25,6 +25,48 @@ jobs:
         run: python -m pip install openpyxl certifi
       - name: Run discovery guardrail tests
         run: python -m unittest qa.test_macro_full_history_source_discovery -v
+      - name: Diagnose OEA TLS chain, hostname, DNS and HTTP redirect without bypass
+        shell: bash
+        run: |
+          set +e
+          mkdir -p artifacts/macro_full_history_discovery/tls_diagnostics
+          OUT=artifacts/macro_full_history_discovery/tls_diagnostics
+          CA="$(python -c 'import certifi; print(certifi.where())')"
+          for HOST in eaindustry.nic.in www.eaindustry.nic.in; do
+            {
+              echo "HOST=$HOST"
+              date -u +%Y-%m-%dT%H:%M:%SZ
+              echo "--- DNS ---"
+              getent ahosts "$HOST" || true
+              echo "--- OpenSSL verified chain and SAN ---"
+              timeout 25 openssl s_client -connect "$HOST:443" -servername "$HOST" -showcerts -verify_return_error -CAfile "$CA" </dev/null 2>&1
+              echo "--- Leaf certificate ---"
+              timeout 25 openssl s_client -connect "$HOST:443" -servername "$HOST" -showcerts </dev/null 2>/dev/null | openssl x509 -noout -subject -issuer -serial -dates -fingerprint -sha256 -ext subjectAltName 2>&1
+              echo "--- curl strict CA + hostname + redirects ---"
+              timeout 35 curl --verbose --location --max-redirs 5 --cacert "$CA" --connect-timeout 10 --max-time 30 --output /dev/null --write-out 'HTTP=%{http_code} FINAL=%{url_effective} VERIFY=%{ssl_verify_result} REMOTE=%{remote_ip}\n' "https://$HOST/download_data_2223.asp" 2>&1
+              echo "--- end host ---"
+            } > "$OUT/$HOST.txt"
+          done
+          python - <<'PY'
+          import json,ssl,socket,certifi,subprocess
+          from pathlib import Path
+          out=Path("artifacts/macro_full_history_discovery/tls_diagnostics")
+          result={"ca_bundle":certifi.where(),"default_verify_paths":ssl.get_default_verify_paths()._asdict(),"hosts":{}}
+          for host in ("eaindustry.nic.in","www.eaindustry.nic.in"):
+              item={"dns":[]}
+              try:item["dns"]=sorted({x[4][0] for x in socket.getaddrinfo(host,443,type=socket.SOCK_STREAM)})
+              except Exception as e:item["dns_error"]=repr(e)
+              try:
+                  ctx=ssl.create_default_context(cafile=certifi.where())
+                  with socket.create_connection((host,443),timeout=10) as raw:
+                      with ctx.wrap_socket(raw,server_hostname=host) as s:
+                          cert=s.getpeercert()
+                          item.update({"python_tls":"PASS","tls_version":s.version(),"cipher":s.cipher()[0],"subject":cert.get("subject"),"issuer":cert.get("issuer"),"san":cert.get("subjectAltName"),"notBefore":cert.get("notBefore"),"notAfter":cert.get("notAfter")})
+              except Exception as e:item.update({"python_tls":"FAIL","python_tls_error":repr(e)})
+              result["hosts"][host]=item
+          (out/"tls_diagnostics.json").write_text(json.dumps(result,indent=2,default=str)+"\\n")
+          print(json.dumps(result,indent=2,default=str))
+          PY
       - name: Discover official WPI, CGA, GDP and CPI historical source inventory
         run: python pipeline/macro_full_history_source_discovery.py
       - name: Verify raw-source hashes and discovery manifest
