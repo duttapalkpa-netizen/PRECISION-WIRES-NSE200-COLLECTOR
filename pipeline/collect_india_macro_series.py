@@ -176,6 +176,39 @@ def normalize_release_observations(report):
   qa["total_observations"]=len(frame);qa["duplicate_keys"]=int(frame.duplicated(key).sum());qa["sha256"]=sha(Path("data/external/macro_series_observations.csv").read_bytes())
  else:
   qa["total_observations"]=0;qa["duplicate_keys"]=0
+ # Canonical macro registry adapter: only observations with a genuine
+ # source publication timestamp are promoted. Period date is never RELEASED_AT.
+ macro=frame[frame["source_group"].eq("macro_indicators")].copy() if not frame.empty else pd.DataFrame()
+ if not macro.empty:
+  def period_date(value):
+   value=str(value)
+   m=re.fullmatch(r"(\\d{4})-Q([1-4])",value)
+   if m:
+    return (pd.Timestamp(year=int(m.group(1)),month=1,day=1)+pd.DateOffset(months=(int(m.group(2))-1)*3)).strftime("%Y-%m-%d")
+   return pd.to_datetime(value+"-01" if re.fullmatch(r"\\d{4}-\\d{2}",value) else value,errors="coerce").strftime("%Y-%m-%d")
+  macro["DATE"]=macro["period"].map(period_date)
+  macro["INDICATOR"]=macro["series"].astype(str)+"|"+macro["dimension"].astype(str)
+  macro["VALUE"]=pd.to_numeric(macro["value"],errors="coerce")
+  macro["RELEASED_AT"]=pd.to_datetime(macro["published_at_utc"],errors="coerce",utc=True)
+  macro["SOURCE"]=macro["source_url"].map(lambda u:"MoSPI/PIB official release" if "pib.gov.in" in str(u) else "Official statistical source")
+  macro["SOURCE_URL"]=macro["source_url"];macro["OBSERVED_AT_UTC"]=report.get("observed_at_utc")
+  macro["UNIT"]=macro["unit"];macro["PERIOD"]=macro["period"];macro["VINTAGE"]=macro["vintage"]
+  macro["SOURCE_SHA256"]=macro["source_sha256"];macro["RELEASE_STATUS"]=macro["release_status"]
+  macro=macro.dropna(subset=["DATE","VALUE","RELEASED_AT","SOURCE_URL"])
+  macro_path=Path("data/external/macro_indicators.csv")
+  macro[["DATE","INDICATOR","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC","UNIT","PERIOD","VINTAGE","SOURCE_SHA256","RELEASE_STATUS"]].to_csv(macro_path,index=False)
+  qa["registry_macro_rows"]=int(len(macro));qa["registry_macro_sha256"]=sha(macro_path.read_bytes())
+ else: qa["registry_macro_rows"]=0
+ # Capex is normalized separately, but release time remains unknown and is
+ # intentionally not inferred from retrieval time or HTTP metadata.
+ capex=frame[frame["source_group"].eq("government_capex")].copy() if not frame.empty else pd.DataFrame()
+ if not capex.empty:
+  capex["DATE"]=capex["period"].astype(str)+"-01";capex["DEPARTMENT"]="UNION_GOVERNMENT"
+  capex["ACTUAL_SPEND"]=pd.to_numeric(capex["value"],errors="coerce");capex["BUDGET_SPEND"]=pd.NA
+  capex["RELEASED_AT"]=pd.NA;capex["SOURCE_URL"]=capex["source_url"]
+  capex["SOURCE"]="Controller General of Accounts";capex["OBSERVED_AT_UTC"]=report.get("observed_at_utc")
+  Path("data/external/government_capex.csv").parent.mkdir(parents=True,exist_ok=True)
+  capex[["DATE","DEPARTMENT","ACTUAL_SPEND","BUDGET_SPEND","RELEASED_AT","SOURCE_URL","SOURCE","OBSERVED_AT_UTC","unit","vintage","source_sha256"]].to_csv("data/external/government_capex.csv",index=False)
  qa["status"]="NORMALIZED_PARTIAL_SERIES_WITH_PROVENANCE_LIMITS"
  OUT.mkdir(parents=True,exist_ok=True)
  (OUT/"macro_series_observation_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n")
@@ -220,13 +253,33 @@ def main():
  covpath=OUT/"source_coverage.json"
  if covpath.exists():
   cov=json.loads(covpath.read_text()); srcs=cov.setdefault("sources",[])
-  for name in ("macro_indicators","government_capex"):
+  for name,path,rows,status,reason in [
+   ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Only source-published GDP/CPI/WPI observations with publication timestamps are promoted; historical completeness remains partial."),
+   ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified.")
+  ]:
    row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
    if row is None: row={"source":name};srcs.append(row)
-   row.update({"status":"DATA_QUALITY_WARN","rows":0,"observed_rows":0,"evidence_path":"outputs/macro_geo/india_macro_series_source_audit.json","reason":"Official source releases captured in this exact run, but normalized observations/release-vintage schema QA is not yet complete; remain UNKNOWN."})
+   row.update({"status":status,"rows":rows,"observed_rows":rows,"selected_path":path if rows else "","evidence_path":"outputs/macro_geo/macro_series_observation_qa.json","reason":reason})
+  cov["sources_total"]=len(srcs)
+  cov["available"]=sum(1 for x in srcs if x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") and int(x.get("rows",0) or 0)>0)
+  cov["not_connected"]=sum(1 for x in srcs if x.get("status")=="NOT_CONNECTED")
+  cov["quality_warn"]=sum(1 for x in srcs if x.get("status")=="DATA_QUALITY_WARN")
   cov["p0_source_coverage_as_of_utc"]=cov.get("as_of_utc")
   cov["as_of_utc"]=report["as_of_utc"]
   cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
+  csvpath=OUT/"source_coverage.csv"
+  if csvpath.exists():
+   cdf=pd.read_csv(csvpath)
+   for name,path,rows,status,reason in [
+    ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Published GDP/CPI/WPI observations; historical completeness partial."),
+    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA publication timestamp unverified; remains UNKNOWN.")
+   ]:
+    if name in set(cdf["source"].astype(str)):
+     cdf.loc[cdf["source"].astype(str).eq(name),"status"]=status
+     cdf.loc[cdf["source"].astype(str).eq(name),"selected_path"]=path if rows else ""
+     cdf.loc[cdf["source"].astype(str).eq(name),"rows"]=rows
+     cdf.loc[cdf["source"].astype(str).eq(name),"notes"]=reason
+   cdf.to_csv(csvpath,index=False)
   covpath.write_text(json.dumps(cov,ensure_ascii=False,indent=2)+"\n")
  p=OUT/"india_macro_series_source_audit.json";p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
  (OUT/"india_macro_series_source_audit.sha256").write_text(sha(p.read_bytes())+"  "+p.name+"\n")
