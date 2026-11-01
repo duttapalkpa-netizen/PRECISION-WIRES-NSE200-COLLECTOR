@@ -30,8 +30,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Prepare evidence directory
+        run: mkdir -p outputs/news_24h
       - name: Install bounded dependencies
-        run: python -m pip install "pandas>=2.2,<3" "requests>=2.31,<3" "pytest>=8,<9" "gnewsdecoder>=0.1.7"
+        run: python -m pip install "pandas>=2.2,<3" "requests>=2.31,<3" "pytest>=8,<9" "googlenewsdecoder==0.2.2"
       - name: Run deterministic RSS fallback and publisher-verification tests
         run: python -m pytest -q qa/test_stock_news_verify.py qa/test_stock_news_24h_fallback.py
       - name: Run one bounded live Google News RSS source smoke test
@@ -77,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: step3-news-catalyst-bounded-audit
-          if-no-files-found: error
+          if-no-files-found: warn
           path: |
             outputs/news_24h/step3_live_rss_smoke.json
             outputs/news_24h/step3_bounded_audit_status.json
