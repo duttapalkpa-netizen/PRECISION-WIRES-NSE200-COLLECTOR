@@ -1,6 +1,10 @@
 name: Bounded Factor Source Repair (separate from P0; evidence-only)
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Audit-only Macro Geo P0 Collection and Event Study"]
+    types: [completed]
+    branches: [audit/run145-factor-registry-gap-audit]
   push:
     branches: [audit/run145-factor-registry-gap-audit]
     paths:
@@ -16,13 +20,14 @@ concurrency:
   cancel-in-progress: false
 jobs:
   factor-source-repair:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout audit branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: audit/run145-factor-registry-gap-audit
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
