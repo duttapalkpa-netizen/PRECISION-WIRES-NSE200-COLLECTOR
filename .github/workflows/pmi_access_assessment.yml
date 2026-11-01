@@ -1,0 +1,49 @@
+name: S&P Global PMI Access Rights Assessment
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/assess_pmi_data_access.py"
+      - "qa/test_pmi_access_assessment.py"
+      - ".github/workflows/pmi_access_assessment.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pmi-access-assessment
+  cancel-in-progress: true
+jobs:
+  pmi-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run access guardrail tests
+        run: python -m unittest qa.test_pmi_access_assessment -v
+      - name: Assess official S&P PMI access and licensing routes
+        run: python pipeline/assess_pmi_data_access.py
+      - name: Verify access classification and hashes
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/pmi_access_assessment")
+          q=json.loads((p/"access_assessment.json").read_text());m=json.loads((p/"manifest.json").read_text())
+          assert q["status"]=="ACCESS_ASSESSMENT_PASS"
+          assert q["underlying_dataset_status"]=="NOT_CONNECTED"
+          assert q["observed_rows"]==0 and q["promotable_rows"]==0
+          for s in m["sources"].values():
+            assert hashlib.sha256((p/s["raw_file"]).read_bytes()).hexdigest()==s["sha256"]
+          assert all(q["domain_checks"].values())
+          print({"assessment":"PASS","data_status":"NOT_CONNECTED","sources":len(m["sources"])})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pmi-source-access-assessment
+          path: artifacts/pmi_access_assessment/
+          if-no-files-found: warn
