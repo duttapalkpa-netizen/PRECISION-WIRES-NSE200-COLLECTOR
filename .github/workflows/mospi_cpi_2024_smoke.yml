@@ -1,0 +1,55 @@
+name: MoSPI CPI 2024 Bounded Live Smoke
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_mospi_cpi_2024_smoke.py"
+      - "qa/test_mospi_cpi_2024_smoke.py"
+      - ".github/workflows/mospi_cpi_2024_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mospi-cpi-2024-bounded-smoke
+  cancel-in-progress: true
+jobs:
+  cpi-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded workbook dependency
+        run: python -m pip install openpyxl
+      - name: Run focused CPI workbook QA tests
+        run: python -m unittest qa.test_mospi_cpi_2024_smoke -v
+      - name: Collect exact official MoSPI CPI 2024 table
+        run: python pipeline/collect_mospi_cpi_2024_smoke.py
+      - name: Assert evidence and provenance
+        run: |
+          set -euo pipefail
+          test -s artifacts/mospi_cpi_2024_smoke/domain_qa.json
+          test -s artifacts/mospi_cpi_2024_smoke/manifest.json
+          test -s artifacts/mospi_cpi_2024_smoke/workbook_inventory.json
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/mospi_cpi_2024_smoke")
+          qa=json.loads((p/"domain_qa.json").read_text())
+          m=json.loads((p/"manifest.json").read_text())
+          assert qa["status"]=="PASS" and qa["base_year"]=="2024=100"
+          assert qa["table_id"]=="CPIMCY26004SEP"
+          assert m["http_status"]==200 and len(m["sha256"])==64
+          raw=(p/m["raw_file"]).read_bytes()
+          assert hashlib.sha256(raw).hexdigest()==m["sha256"]
+          assert all(qa["domain_checks"].values())
+          print({"qa":"PASS","table_id":qa["table_id"],"sha256":m["sha256"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mospi-cpi-2024-bounded-live-smoke
+          path: artifacts/mospi_cpi_2024_smoke/
+          if-no-files-found: warn
