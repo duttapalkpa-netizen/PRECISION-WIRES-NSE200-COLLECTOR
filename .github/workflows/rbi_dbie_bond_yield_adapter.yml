@@ -48,3 +48,4 @@ jobs:
           name: rbi-dbie-month-end-gsec-yield-source
           path: artifacts/india_bond_yields/
           if-no-files-found: warn
+\n# Re-run after DBIE source-coordinate schema inspection patch.\n
