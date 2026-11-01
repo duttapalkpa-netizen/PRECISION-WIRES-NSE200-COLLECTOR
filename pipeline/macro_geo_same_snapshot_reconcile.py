@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
-"""Reconcile P0, macro-series, Factor Registry and Event Study from one workflow snapshot."""
+"""Strictly reconcile P0, canonical macro, Factor Registry, Event Study and Hard Gate."""
 import hashlib,json,os
 from pathlib import Path
 import pandas as pd
 
-ROOT=Path(".")
-OUT=ROOT/"outputs/macro_geo"
-REQUIRED=[
- "outputs/macro_geo/source_coverage.json",\n "outputs/macro_geo/source_coverage.csv",\n "data/external/macro_indicators.csv",\n "data/external/government_capex.csv",
- "outputs/macro_geo/india_macro_series_source_audit.json",
- "outputs/macro_geo/macro_series_observation_qa.json",
- "data/external/macro_series_observations.csv",
- "outputs/macro_geo/factor_coverage_audit.json",
- "outputs/macro_geo/event_study_report.json",
- "outputs/macro_geo/event_level_window_audit.json",
- "outputs/macro_geo/historical_regime_study_report.json",
- "outputs/macro_geo/hard_gate_report.json",
-]
+OUT=Path("outputs/macro_geo")
+FILES={
+ "coverage_json":"outputs/macro_geo/source_coverage.json",
+ "coverage_csv":"outputs/macro_geo/source_coverage.csv",
+ "macro_indicators":"data/external/macro_indicators.csv",
+ "government_capex":"data/external/government_capex.csv",
+ "macro_source_audit":"outputs/macro_geo/india_macro_series_source_audit.json",
+ "macro_qa":"outputs/macro_geo/macro_series_observation_qa.json",
+ "macro_observations":"data/external/macro_series_observations.csv",
+ "factor":"outputs/macro_geo/factor_coverage_audit.json",
+ "event":"outputs/macro_geo/event_study_report.json",
+ "event_windows":"outputs/macro_geo/event_level_window_audit.json",
+ "regime":"outputs/macro_geo/historical_regime_study_report.json",
+ "hard_gate":"outputs/macro_geo/hard_gate_report.json",
+}
 def digest(path):
  h=hashlib.sha256()
  with Path(path).open("rb") as f:
@@ -24,27 +26,34 @@ def digest(path):
  return h.hexdigest()
 def main():
  OUT.mkdir(parents=True,exist_ok=True)
- missing=[p for p in REQUIRED if not Path(p).exists()]
- items={p:{"sha256":digest(p),"bytes":Path(p).stat().st_size} for p in REQUIRED if Path(p).exists()}
- report={"schema_version":"1.0","workflow_run_id":os.environ.get("GITHUB_RUN_ID"),"workflow_head_sha":os.environ.get("GITHUB_SHA"),"files":items,"missing_required_files":missing,"checks":{}}
+ missing=[p for p in FILES.values() if not Path(p).exists()]
+ items={k:{"path":p,"sha256":digest(p),"bytes":Path(p).stat().st_size} for k,p in FILES.items() if Path(p).exists()}
+ report={"schema_version":"2.0","workflow_run_id":os.environ.get("GITHUB_RUN_ID"),"workflow_head_sha":os.environ.get("GITHUB_SHA"),"files":items,"missing_required_files":missing,"checks":{}}
  if not missing:
-  coverage=json.loads(Path(REQUIRED[0]).read_text())
-  source=json.loads(Path(REQUIRED[1]).read_text())
-  macroqa=json.loads(Path(REQUIRED[2]).read_text())
-  factor=json.loads(Path(REQUIRED[4]).read_text())
-  hard=json.loads(Path(REQUIRED[8]).read_text())
-  cov_asof=coverage.get("as_of_utc")
-  report["checks"]["macro_source_timestamp_matches_snapshot"]=coverage.get("macro_series_source_audit_as_of_utc")==cov_asof\n  source_csv=pd.read_csv(REQUIRED[1])\n  source_rows={str(r["source"]):str(r["status"]) for _,r in source_csv.iterrows()}\n  source_json={str(r["source"]):str(r["status"]) for r in coverage.get("sources",[])}\n  report["checks"]["source_coverage_csv_json_statuses_match"]=all(source_rows.get(k)==v for k,v in source_json.items() if k in source_rows)\n  report["checks"]["macro_indicators_canonical_file_present"]=Path(REQUIRED[2]).exists() and Path(REQUIRED[2]).stat().st_size>0
-  report["checks"]["factor_audit_uses_same_source_snapshot"]=factor.get("source_coverage_as_of")==cov_asof
-  report["checks"]["normalized_observation_hash_matches"]=macroqa.get("sha256")==items[REQUIRED[5]]["sha256"]
-  report["checks"]["normalized_duplicate_keys_zero"]=int(macroqa.get("duplicate_keys",-1))==0\n  report["macro_indicators_rows"]=int(len(pd.read_csv(REQUIRED[2])))\n  report["government_capex_rows"]=int(len(pd.read_csv(REQUIRED[3])))
+  coverage=json.loads(Path(FILES["coverage_json"]).read_text())
+  macroqa=json.loads(Path(FILES["macro_qa"]).read_text())
+  factor=json.loads(Path(FILES["factor"]).read_text())
+  hard=json.loads(Path(FILES["hard_gate"]).read_text())
+  csv=pd.read_csv(FILES["coverage_csv"])
+  csv_status={str(r["source"]):str(r["status"]) for _,r in csv.iterrows()}
+  json_status={str(r["source"]):str(r["status"]) for r in coverage.get("sources",[])}
+  report["checks"]["macro_source_timestamp_matches_snapshot"]=coverage.get("macro_series_source_audit_as_of_utc")==coverage.get("as_of_utc")
+  report["checks"]["factor_audit_uses_same_source_snapshot"]=factor.get("source_coverage_as_of")==coverage.get("as_of_utc")
+  report["checks"]["source_coverage_csv_json_statuses_match"]=all(csv_status.get(k)==v for k,v in json_status.items() if k in csv_status)
+  macro=pd.read_csv(FILES["macro_indicators"])
+  capex=pd.read_csv(FILES["government_capex"])
+  obs_hash=digest(FILES["macro_observations"])
+  report["checks"]["normalized_observation_hash_matches"]=macroqa.get("sha256")==obs_hash
+  report["checks"]["normalized_duplicate_keys_zero"]=int(macroqa.get("duplicate_keys",-1))==0
+  report["checks"]["macro_indicator_release_timestamps_present"]=bool(len(macro)) and macro["RELEASED_AT"].notna().all()
+  report["checks"]["capex_unverified_release_times_not_promoted"]=("RELEASED_AT" in capex.columns and capex["RELEASED_AT"].isna().all())
   report["checks"]["factor_group_count_35"]=int(factor.get("factor_groups",0))==35
   report["checks"]["hard_gate_report_present"]=bool(hard.get("status"))
-  report["source_snapshot_as_of_utc"]=cov_asof
+  report["macro_rows"]={"canonical_macro_indicators":int(len(macro)),"government_capex":int(len(capex)),"raw_normalized_observations":int(len(pd.read_csv(FILES["macro_observations"])))}
   report["factor_coverage"]={k:factor.get(k) for k in ("factor_groups","fully_available_schema_groups","partial_source_coverage","not_connected")}
   report["hard_gate"]={"status":hard.get("status"),"blockers":hard.get("blockers",[])}
-  passed=all(report["checks"].values())
-  report["status"]="RECONCILED_SAME_WORKFLOW_SNAPSHOT" if passed else "SAME_WORKFLOW_SNAPSHOT_WITH_RECONCILIATION_GAPS"
+  report["source_snapshot_as_of_utc"]=coverage.get("as_of_utc")
+  report["status"]="RECONCILED_SAME_WORKFLOW_SNAPSHOT" if all(report["checks"].values()) else "SAME_WORKFLOW_SNAPSHOT_WITH_RECONCILIATION_GAPS"
  else:
   report["status"]="INCOMPLETE_REQUIRED_EVIDENCE_MISSING"
  report["created_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
