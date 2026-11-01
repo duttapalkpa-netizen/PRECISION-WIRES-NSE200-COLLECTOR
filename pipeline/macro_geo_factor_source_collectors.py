@@ -88,7 +88,7 @@ def observed_window():
     if dates.empty:
         raise RuntimeError(f"Panel has no valid observed dates: {panel}")
     sessions = sorted(dates.dt.date.unique())
-    return max(datetime(1990, 1, 1).date(), sessions[-min(200, len(sessions))] - timedelta(days=30)), min(
+    return max(datetime(1990, 1, 1).date(), sessions[-min(30, len(sessions))] - timedelta(days=15)), min(
         datetime.now(timezone.utc).date(), sessions[-1] + timedelta(days=3)
     ), str(panel)
 
@@ -96,7 +96,7 @@ def observed_window():
 def fetch_fred(session, series_id, start, end):
     """Fetch a FRED series in bounded monthly chunks with resilient retries.
 
-    Transport failures receive three bounded attempts with backoff. Schema and
+    Transport failures receive two bounded attempts with backoff. Schema and
     data-contract failures fail closed immediately. Failed chunks are never
     silently omitted and only observed non-missing values are returned.
     """
@@ -119,12 +119,12 @@ def fetch_fred(session, series_id, start, end):
     rows, failures = [], []
     for chunk_start, chunk_end in chunks:
         last_error = None
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 response = session.get(
                     FRED_URL,
                     params={"id": series_id, "cosd": chunk_start.isoformat(), "coed": chunk_end.isoformat()},
-                    timeout=(5, 12),
+                    timeout=(5, 8),
                 )
                 response.raise_for_status()
                 frame = pd.read_csv(StringIO(response.content.decode("utf-8-sig", errors="replace")))
