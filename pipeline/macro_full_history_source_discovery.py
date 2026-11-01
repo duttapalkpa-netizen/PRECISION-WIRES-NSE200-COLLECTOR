@@ -9,8 +9,13 @@ from openpyxl import load_workbook
 OUT=Path("artifacts/macro_full_history_discovery")
 UA="Mozilla/5.0 (compatible; PRECISION-WIRES-Macro-History-Discovery/1.0)"
 def get(url,limit=60000000):
+ # Preserve TLS certificate and hostname verification. MoSPI public API needs the
+ # same legacy TLS cipher compatibility already validated in the GDP collector.
+ ctx=ssl.create_default_context()
+ if "api.mospi.gov.in" in url:
+  ctx.set_ciphers("DEFAULT:@SECLEVEL=1");ctx.options |= 0x4
  req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"*/*","Origin":"https://esankhyiki.mospi.gov.in","Referer":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue"})
- with urllib.request.build_opener(urllib.request.HTTPSHandler(context=ssl.create_default_context())).open(req,timeout=45) as r:
+ with urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx)).open(req,timeout=45) as r:
   b=r.read(limit);return b,{"status":r.status,"content_type":r.headers.get("Content-Type",""),"final_url":r.geturl(),"bytes":len(b)}
 def sha(b):return hashlib.sha256(b).hexdigest()
 class Links(HTMLParser):
@@ -24,7 +29,15 @@ class Links(HTMLParser):
   if t=="a" and self.href is not None:
    self.links.append({"href":self.href,"text":" ".join(x for x in self.text if x)});self.href=None;self.text=[]
 def wpi():
- url="https://eaindustry.nic.in/download_data_2223.asp";b,m=get(url,20000000)
+ url="https://eaindustry.nic.in/download_data_2223.asp"
+ try:
+  b,m=get(url,20000000)
+ except Exception as first:
+  fallback="https://www.eaindustry.nic.in/download_data_2223.asp"
+  try:b,m=get(fallback,20000000);url=fallback
+  except Exception as second:
+   return {"status":"SOURCE_TRANSPORT_BLOCKED","url":url,"fallback_url":fallback,
+    "error":str(second),"primary_error":str(first),"links":[],"link_count":0}
  (OUT/"oea_download_data_2223.html").write_bytes(b)
  p=Links();p.feed(b.decode("utf-8-sig",errors="replace"))
  links=[]
@@ -84,7 +97,7 @@ def main():
  result["sources"]["mospi_cpi"]=mospi("CPI")
  (OUT/"source_inventory.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+chr(10))
  print(json.dumps({"status":"DISCOVERY_COMPLETE","retrieved_at_utc":retrieved,
-  "oea_download_links":result["sources"]["oea_wpi"]["link_count"],
+  "oea_download_links":result["sources"]["oea_wpi"]["link_count"],\n  "oea_status":result["sources"]["oea_wpi"]["status"],
   "cga_sheets":result["sources"]["cga_dashboard"]["sheet_count"],
   "cga_numeric_cells":result["sources"]["cga_dashboard"]["numeric_cells"],
   "nas_catalogue_records":result["sources"]["mospi_nas"]["catalogue_records"],
