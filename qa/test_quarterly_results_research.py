@@ -10,6 +10,38 @@ import pipeline.quarterly_results_research as stage
 
 
 class QuarterlyResultsResearchTests(unittest.TestCase):
+    def test_step1_integrated_filing_is_not_mislabelled_announcement_fallback(self):
+        sources = {
+            "RESULT_DISCLOSURE": {"status": "AVAILABLE",
+                "request_url": "https://www.nseindia.com/api/integrated-filing-results",
+                "pagination": {"complete": True}},
+            "BOARD_MEETING": {"status": "AVAILABLE",
+                "request_url": "https://www.nseindia.com/api/corporate-announcements"},
+        }
+        result_rows = [{"SYMBOL":"ABC","ISIN":"INE123A01011","BROADCAST_AT":"2026-10-15T10:00:00Z",
+                        "ATTACHMENT_URL":"https://nsearchives.nseindia.com/a.xbrl","RAW_RECORD_JSON":"{}"}]
+        calendar_rows = [{"SYMBOL":"ABC","BROADCAST_AT":"2026-10-15T10:00:00Z","RAW_RECORD_JSON":"{}"}]
+        report = stage.evaluate_endpoint_schema(sources, result_rows, calendar_rows)
+        self.assertEqual(report["source_mode"], "INTEGRATED_FILING_FINANCIALS")
+        self.assertFalse(report["fallback_used"])
+        self.assertTrue(report["checks"]["result_pagination_complete"])
+        self.assertEqual(report["status"], "PASS")
+
+    def test_step1_blocks_incomplete_integrated_filing_pagination(self):
+        sources = {
+            "RESULT_DISCLOSURE": {"status": "AVAILABLE",
+                "request_url": "https://www.nseindia.com/api/integrated-filing-results",
+                "pagination": {"complete": False}},
+            "BOARD_MEETING": {"status": "AVAILABLE",
+                "request_url": "https://www.nseindia.com/api/corporate-announcements"},
+        }
+        result_rows = [{"SYMBOL":"ABC","ISIN":"INE123A01011","BROADCAST_AT":"2026-10-15T10:00:00Z",
+                        "ATTACHMENT_URL":"https://nsearchives.nseindia.com/a.xbrl","RAW_RECORD_JSON":"{}"}]
+        calendar_rows = [{"SYMBOL":"ABC","BROADCAST_AT":"2026-10-15T10:00:00Z","RAW_RECORD_JSON":"{}"}]
+        report = stage.evaluate_endpoint_schema(sources, result_rows, calendar_rows)
+        self.assertEqual(report["status"], "BLOCKED")
+        self.assertFalse(report["checks"]["result_pagination_complete"])
+
     def test_step1_endpoint_schema_pass_is_separate_from_step2_period_validation(self):
         sources = {
             "RESULT_DISCLOSURE": {"status": "AVAILABLE",
