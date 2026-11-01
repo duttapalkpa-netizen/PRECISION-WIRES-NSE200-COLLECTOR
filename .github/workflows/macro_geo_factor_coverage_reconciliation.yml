@@ -4,12 +4,6 @@ on:
     workflows: ["Bounded Factor Source Repair (separate from P0)"]
     types: [completed]
     branches: [audit/run145-factor-registry-gap-audit]
-  push:
-    branches: [audit/run145-factor-registry-gap-audit]
-    paths:
-      - "pipeline/macro_geo_factor_coverage_reconcile.py"
-      - "pipeline/macro_geo_factor_coverage_audit.py"
-      - ".github/workflows/macro_geo_factor_coverage_reconciliation.yml"
 permissions:
   contents: read
   actions: read
@@ -18,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   reconcile:
-    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
