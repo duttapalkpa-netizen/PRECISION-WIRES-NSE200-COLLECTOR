@@ -80,7 +80,8 @@ jobs:
             (p/m["source"]["raw_file"],m["source"]["raw_sha256"]),
             (p/m["normalized_csv"]["file"],m["normalized_csv"]["sha256"]),
             (p/"oea_wpi_release_status_crosswalk.csv",r["crosswalk_csv_sha256"]),
-            (p/"inflation_components.csv",a["rows_sha256"])
+            (p/"inflation_components.csv",a["rows_sha256"]),
+            (Path("data/external/inflation_components.csv"),a["canonical_sha256"])
           ]:
             assert hashlib.sha256(file.read_bytes()).hexdigest()==digest
           assert r["status"]=="WPI_RELEASE_STATUS_CROSSWALK_PASS"
@@ -104,5 +105,7 @@ jobs:
         if: always()
         with:
           name: oea-wpi-release-status-crosswalk
-          path: artifacts/macro_full_history_discovery/
+          path: |
+            artifacts/macro_full_history_discovery/
+            data/external/inflation_components.csv
           if-no-files-found: warn
