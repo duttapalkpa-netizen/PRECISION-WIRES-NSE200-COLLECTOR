@@ -29,13 +29,13 @@ def wpi():
  links=[]
  for x in p.links:
   href=urllib.parse.urljoin(url,x["href"])
-  if re.search(r"\\.(xlsx?|csv|zip|xlsm)(?:[?#]|$)",href,re.I) or any(k in (x["text"]+" "+href).lower() for k in ["download","item","wpi","index"]):
+  if re.search(r"\.(xlsx?|csv|zip|xlsm)(?:[?#]|$)",href,re.I) or any(k in (x["text"]+" "+href).lower() for k in ["download","item","wpi","index"]):
    if href.startswith("https://eaindustry.nic.in/"):links.append({**x,"absolute_url":href})
  return {"status":m["status"],"url":m["final_url"],"bytes":m["bytes"],"sha256":sha(b),"links":links,"link_count":len(links)}
 def cga():
  url="https://cga.gov.in/writereaddata/MonthAccount/MonthAccountDashboard/DAMA%20dashboard%20February%202026%20Data%20file22026.xlsm"
  b,m=get(url,80000000);raw=OUT/"CGA_Monthly_Accounts_Dashboard_February_2026.xlsm";raw.write_bytes(b)
- if not b.startswith(bytes.fromhex("D0CF11E0A1B11AE1")):raise RuntimeError("CGA dashboard is not an OLE XLSM file")
+ if not b.startswith(b"PK"):raise RuntimeError("CGA dashboard is not a valid OOXML XLSM ZIP file")
  wb=load_workbook(raw,read_only=True,data_only=True,keep_vba=False)
  sheets=[];fy=[];months=set();numeric=0
  for ws in wb.worksheets:
@@ -48,7 +48,7 @@ def cga():
     if isinstance(v,(int,float)) and not isinstance(v,bool):nn+=1
     if isinstance(v,str):
      s=v.strip()
-     if re.search(r"20\\d{2}[-–]20\\d{2}",s):fy.append(s)
+     if re.search(r"20\d{2}[-–]20\d{2}",s):fy.append(s)
      if re.search(r"^(April|May|June|July|August|September|October|November|December|January|February|March)$",s,re.I):months.add(s.title())
    if len(sample)<16 and any(v is not None for v in vals):sample.append([str(v) if v is not None else None for v in vals[:16]])
   numeric+=nn;sheets.append({"sheet":ws.title,"max_row":maxrow,"max_col":maxcol,"nonempty_cells":nonempty,"numeric_cells":nn,"sample_rows":sample})
@@ -81,7 +81,7 @@ def main():
  result["sources"]["cga_dashboard"]=cga()
  result["sources"]["mospi_nas"]=mospi("NAS")
  result["sources"]["mospi_cpi"]=mospi("CPI")
- (OUT/"source_inventory.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\\n")
+ (OUT/"source_inventory.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+chr(10))
  print(json.dumps({"status":"DISCOVERY_COMPLETE","retrieved_at_utc":retrieved,
   "oea_download_links":result["sources"]["oea_wpi"]["link_count"],
   "cga_sheets":result["sources"]["cga_dashboard"]["sheet_count"],
