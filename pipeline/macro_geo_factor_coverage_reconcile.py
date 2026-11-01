@@ -9,7 +9,7 @@ REPORT=ROOT/"outputs/macro_geo/factor_source_collection_report.json"
 COVERAGE=ROOT/"outputs/macro_geo/source_coverage.json"
 OUT=ROOT/"outputs/macro_geo"
 MAP={
- "us_yields":("us_yields.csv","us_yields"),
+ "us_yields":("us_yields.csv","us_yields"),\n "us_real_yields":("us_real_yields.csv","us_real_yields"),
  "dxy":("dxy.csv","dxy"),
  "global_commodity_prices":("commodity_prices.csv","global_commodity_prices"),
  "global_policy_events":("global_policy_events.csv","global_policy_events"),
