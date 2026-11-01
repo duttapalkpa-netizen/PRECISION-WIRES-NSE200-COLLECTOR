@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Fetch and preserve a public MoSPI IIP aggregate release page; no credentials."""
+"""Fetch and preserve a public MoSPI IIP aggregate release page; no credentials.
+
+2026-11-01: re-run bounded official public-release smoke after cache verification."""
 from __future__ import annotations
 import argparse, csv, hashlib, json, os, re, urllib.request
 from datetime import datetime, timezone
