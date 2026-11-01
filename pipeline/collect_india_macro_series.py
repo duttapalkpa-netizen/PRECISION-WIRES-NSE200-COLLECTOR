@@ -8,6 +8,7 @@ Raw-file capture is never promoted to AVAILABLE without a reviewed normalized
 schema adapter, valid periods/units/release timestamps, unique keys and QA.
 """
 import hashlib,json,re,time
+from io import StringIO
 from datetime import datetime,timezone
 from pathlib import Path
 from urllib.parse import urlencode,urljoin,quote
