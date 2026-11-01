@@ -7,7 +7,7 @@ import pandas as pd
 ROOT=Path(".")
 OUT=ROOT/"outputs/macro_geo"
 REQUIRED=[
- "outputs/macro_geo/source_coverage.json",
+ "outputs/macro_geo/source_coverage.json",\n "outputs/macro_geo/source_coverage.csv",\n "data/external/macro_indicators.csv",\n "data/external/government_capex.csv",
  "outputs/macro_geo/india_macro_series_source_audit.json",
  "outputs/macro_geo/macro_series_observation_qa.json",
  "data/external/macro_series_observations.csv",
@@ -34,10 +34,10 @@ def main():
   factor=json.loads(Path(REQUIRED[4]).read_text())
   hard=json.loads(Path(REQUIRED[8]).read_text())
   cov_asof=coverage.get("as_of_utc")
-  report["checks"]["macro_source_timestamp_matches_snapshot"]=coverage.get("macro_series_source_audit_as_of_utc")==cov_asof
+  report["checks"]["macro_source_timestamp_matches_snapshot"]=coverage.get("macro_series_source_audit_as_of_utc")==cov_asof\n  source_csv=pd.read_csv(REQUIRED[1])\n  source_rows={str(r["source"]):str(r["status"]) for _,r in source_csv.iterrows()}\n  source_json={str(r["source"]):str(r["status"]) for r in coverage.get("sources",[])}\n  report["checks"]["source_coverage_csv_json_statuses_match"]=all(source_rows.get(k)==v for k,v in source_json.items() if k in source_rows)\n  report["checks"]["macro_indicators_canonical_file_present"]=Path(REQUIRED[2]).exists() and Path(REQUIRED[2]).stat().st_size>0
   report["checks"]["factor_audit_uses_same_source_snapshot"]=factor.get("source_coverage_as_of")==cov_asof
-  report["checks"]["normalized_observation_hash_matches"]=macroqa.get("sha256")==items[REQUIRED[3]]["sha256"]
-  report["checks"]["normalized_duplicate_keys_zero"]=int(macroqa.get("duplicate_keys",-1))==0
+  report["checks"]["normalized_observation_hash_matches"]=macroqa.get("sha256")==items[REQUIRED[5]]["sha256"]
+  report["checks"]["normalized_duplicate_keys_zero"]=int(macroqa.get("duplicate_keys",-1))==0\n  report["macro_indicators_rows"]=int(len(pd.read_csv(REQUIRED[2])))\n  report["government_capex_rows"]=int(len(pd.read_csv(REQUIRED[3])))
   report["checks"]["factor_group_count_35"]=int(factor.get("factor_groups",0))==35
   report["checks"]["hard_gate_report_present"]=bool(hard.get("status"))
   report["source_snapshot_as_of_utc"]=cov_asof
