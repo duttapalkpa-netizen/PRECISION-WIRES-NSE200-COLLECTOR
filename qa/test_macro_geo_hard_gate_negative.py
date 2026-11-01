@@ -1,6 +1,7 @@
 import contextlib
 import json
 import tempfile
+from io import StringIO
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -65,7 +66,7 @@ class HardGateNegativeContractTests(unittest.TestCase):
         stack = contextlib.ExitStack()
         for name, path in paths.items():
             stack.enter_context(patch.object(gate, name, path))
-        with stack, contextlib.redirect_stdout(open(Path(paths["OUT"]).parent / "stdout.txt", "w")):
+        with stack, contextlib.redirect_stdout(StringIO()):
             rc = gate.main()
         return rc, json.loads(paths["OUT"].read_text())
 
@@ -79,6 +80,9 @@ class HardGateNegativeContractTests(unittest.TestCase):
             self.assertEqual(report["status"], "BLOCKED")
             self.assertFalse(report["candidate_release_allowed"])
             self.assertEqual(report["missing_data_semantics"], "UNKNOWN/BLOCKED; never interpreted as negative evidence")
+            self.assertFalse(report["production_selector_changed"])
+            self.assertFalse(report["ranking_score_changed"])
+            self.assertFalse(report["pressure_fade_changed"])
             self.assertTrue(any(x.startswith("MISSING_REQUIRED_INPUT:") for x in report["blockers"]))
 
     def test_stale_or_misaligned_market_panel_fails_closed(self):
@@ -90,6 +94,9 @@ class HardGateNegativeContractTests(unittest.TestCase):
             self.assertEqual(report["status"], "BLOCKED")
             self.assertFalse(report["candidate_release_allowed"])
             self.assertIn("MARKET_PANEL_STALE_OR_DATE_MISALIGNED", report["blockers"])
+            self.assertFalse(report["production_selector_changed"])
+            self.assertFalse(report["ranking_score_changed"])
+            self.assertFalse(report["pressure_fade_changed"])
 
     def test_aligned_complete_fixture_passes(self):
         with tempfile.TemporaryDirectory() as tmp:
