@@ -58,12 +58,12 @@ def capture_page(s,key,sp,folder):
  for a in tree.css("a[href]"):
   h=a.attributes.get("href",""); label=" ".join(a.text().split())
   candidate=urljoin(r.url,h) if h else ""
-  is_sheet=bool(re.search(r"\\.(xlsx?|xlsm)(?:$|\\?)",candidate,re.I))
+  is_sheet=bool(re.search(r"\.(xlsx?|xlsm)(?:$|\?)",candidate,re.I))
   relevant=any(t in (label+" "+h).lower() for t in sp["terms"]) or (key=="government_capex" and is_sheet)
   if h and relevant: links.append({"label":label,"url":candidate})
  files=[]
  for a in links[:8]:
-  if not re.search(r"\.xlsx?(?:$|\?)",a["url"],re.I): continue
+  if not re.search(r"\.(?:xlsx?|xlsm)(?:$|\?)",a["url"],re.I): continue
   try:
    f=get(s,a["url"])
    if not (f.content.startswith(b"PK") or f.content.startswith(b"\xd0\xcf\x11\xe0")): continue
@@ -78,7 +78,7 @@ def capture_page(s,key,sp,folder):
    tables.append({"file":name,"rows":len(frame),"columns":len(frame.columns),"sha256":sha(target.read_bytes()),"headers":[str(c) for c in frame.columns]})
  except ValueError:
   pass
- posted=re.search(r"(?:Posted On|Dated)\\s*:\\s*([^<\\n]+)",r.text,re.I)
+ posted=re.search(r"(?:Posted On|Dated)\s*:\s*([^<\n]+)",r.text,re.I)
  return {"http_status":r.status_code,"landing_url":r.url,"landing_sha256":sha(r.content),"release_timestamp_text":posted.group(1).strip() if posted else None,"catalogue_url":sp.get("catalogue_url"),"candidate_links":links[:30],"captured_files":files,"release_tables":tables}
 def main():
  RAW.mkdir(parents=True,exist_ok=True);OUT.mkdir(parents=True,exist_ok=True);s=requests.Session()
