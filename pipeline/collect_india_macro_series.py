@@ -8,7 +8,8 @@ Raw-file capture is never promoted to AVAILABLE without a reviewed normalized
 schema adapter, valid periods/units/release timestamps, unique keys and QA.
 """
 import hashlib,json,re,time,os
-from io import StringIO
+from io import StringIO,BytesIO
+from pypdf import PdfReader
 from datetime import datetime,timezone
 from pathlib import Path
 from urllib.parse import urlencode,urljoin,quote
@@ -89,7 +90,63 @@ def published_utc(text):
  if pd.isna(value): return None
  return value.tz_localize("Asia/Kolkata").tz_convert("UTC").isoformat()
 
-def normalize_release_observations(report):
+GDP_BACKSERIES_PDF="https://mospi.gov.in/uploads/release_calendar/1772190058170_Press_Note_on_New_Series_of_GDP_Estimates_with_Base_Year_2022-23_27022026.pdf"
+GDP_PERIODS=[f"FY{fy}-Q{q}" for fy in ("2022-23","2023-24","2024-25") for q in range(1,5)]+[f"FY2025-26-Q{q}" for q in range(1,4)]
+GDP_GROWTH_PERIODS=[f"FY{fy}-Q{q}" for fy in ("2023-24","2024-25") for q in range(1,5)]+[f"FY2025-26-Q{q}" for q in range(1,4)]
+
+def extract_gdp_row(page_text,count,decimal=False):
+ marker=page_text.rfind("GDP")
+ if marker<0: raise ValueError("GDP row label not found in official quarterly statement page")
+ tail=page_text[marker+3:]
+ pattern=r"\d+(?:\.\d+)?" if decimal else r"\d[\d,]*"
+ tokens=re.findall(pattern,tail)
+ if len(tokens)<count:
+  raise ValueError("GDP row has "+str(len(tokens))+" numeric values; expected "+str(count))
+ vals=[float(x.replace(",","")) for x in tokens[:count]]
+ if any(not pd.notna(v) for v in vals): raise ValueError("GDP row contains non-numeric values")
+ return vals
+
+def capture_gdp_quarterly_backseries(session,folder):
+ response=get(session,GDP_BACKSERIES_PDF)
+ if not response.content.startswith(b"%PDF"): raise ValueError("MoSPI GDP backseries release is not a PDF")
+ path=folder/"gdp_quarterly_backseries_base_2022_23_2026_02_27.pdf"
+ path.write_bytes(response.content)
+ reader=PdfReader(BytesIO(response.content))
+ if len(reader.pages)<19: raise ValueError("MoSPI GDP PDF has fewer than 19 pages")
+ pages={k:reader.pages[i].extract_text() or "" for k,i in {"constant":15,"constant_growth":16,"current":17,"current_growth":18}.items()}
+ parsed={
+  "real_gdp_constant":extract_gdp_row(pages["constant"],15),
+  "real_gdp_yoy_growth":extract_gdp_row(pages["constant_growth"],11,decimal=True),
+  "nominal_gdp_current":extract_gdp_row(pages["current"],15),
+  "nominal_gdp_yoy_growth":extract_gdp_row(pages["current_growth"],11,decimal=True)
+ }
+ pub="2026-02-27T10:30:00+00:00"
+ observations=[]
+ for series,periods,unit,key in [
+  ("REAL_GDP_CONSTANT_2022_23",GDP_PERIODS,"INR_CRORE","real_gdp_constant"),
+  ("NOMINAL_GDP_CURRENT_2022_23",GDP_PERIODS,"INR_CRORE","nominal_gdp_current"),
+  ("REAL_GDP_YOY_GROWTH",GDP_GROWTH_PERIODS,"PERCENT","real_gdp_yoy_growth"),
+  ("NOMINAL_GDP_YOY_GROWTH",GDP_GROWTH_PERIODS,"PERCENT","nominal_gdp_yoy_growth")
+ ]:
+  for period,value in zip(periods,parsed[key]):
+   observations.append({"source_group":"macro_indicators","series":series,"period":period,
+    "dimension":"ALL_INDIA","value":float(value),"unit":unit,"vintage":"MOSPI_SECOND_ADVANCE_ESTIMATES_2025_26",
+    "published_at_utc":pub,"source_url":response.url,"source_sha256":sha(response.content),
+    "release_status":"PUBLISHED","source_page":"Statement 5A/6A/7A/8A"})
+ return {"status":"OFFICIAL_QUARTERLY_BACKSERIES_CAPTURED_AND_PARSED","url":response.url,
+  "file":path.name,"bytes":len(response.content),"sha256":sha(response.content),
+  "pdf_pages":len(reader.pages),"periods":15,"growth_periods":11,
+  "observations":observations,"publication_timestamp_utc":pub,
+  "coverage_limit":"Q1 FY2022-23 through Q3 FY2025-26; pre-2022-23 new-base backseries is not present in this release."}
+
+
+def try:
+  back=capture_gdp_quarterly_backseries(s,RAW/"gdp")
+  report["sources"]["gdp"]["quarterly_backseries"]={k:v for k,v in back.items() if k!="observations"}
+  report["sources"]["gdp"]["backseries_observations"]=back["observations"]
+ except Exception as e:
+  report["sources"]["gdp"]["quarterly_backseries"]={"status":"BLOCKED","error":type(e).__name__+": "+str(e)[:300]}
+ normalize_release_observations(report):
  rows=[]; qa={"sources":{}}
  # GDP: two directly stated quarterly headline measures and their comparator/growth.
  g=report["sources"].get("gdp",{})
@@ -109,6 +166,8 @@ def normalize_release_observations(report):
      rows.append({"source_group":"macro_indicators","series":label,"period":period,"dimension":"ALL_INDIA","value":val,"unit":"INR_LAKH_CRORE","vintage":"OFFICIAL_RELEASE","published_at_utc":pub,"source_url":g["landing_url"],"source_sha256":g.get("landing_sha256"),"release_status":"PUBLISHED"})
     rows.append({"source_group":"macro_indicators","series":label+"_YOY_GROWTH","period":"2026-Q1","dimension":"ALL_INDIA","value":growth,"unit":"PERCENT","vintage":"OFFICIAL_RELEASE","published_at_utc":pub,"source_url":g["landing_url"],"source_sha256":g.get("landing_sha256"),"release_status":"PUBLISHED"})
   qa["sources"]["gdp"]={"status":"PARTIAL_NORMALIZED_RELEASE_WINDOW" if any(x["series"].startswith(("REAL_GDP","NOMINAL_GDP")) for x in rows) else "SCHEMA_PENDING","rows":sum(x["series"].startswith(("REAL_GDP","NOMINAL_GDP")) for x in rows),"coverage_limit":"Latest Q1 headline only; complete quarterly NAS time series not yet ingested"}
+ # Add the independently parsed official quarterly GDP statements from MoSPI
+ rows.extend(report.get("sources",{}).get("gdp",{}).get("backseries_observations",[]))
  # CPI: normalize the national table by month, rural/urban/combined and CPI/CFPI measure.
  c=report["sources"].get("cpi",{}); cpi_rows=[]
  for item in c.get("release_tables",[]):
@@ -183,9 +242,11 @@ def normalize_release_observations(report):
  if not macro.empty:
   def period_date(value):
    value=str(value)
-   m=re.fullmatch(r"(\\d{4})-Q([1-4])",value)
+   m=re.fullmatch(r"FY(\\d{4})-(\\d{2})-Q([1-4])",value)
    if m:
-    return (pd.Timestamp(year=int(m.group(1)),month=1,day=1)+pd.DateOffset(months=(int(m.group(2))-1)*3)).strftime("%Y-%m-%d")
+    year=int(m.group(1));quarter=int(m.group(3));month=4+(quarter-1)*3
+    if month>12: year+=1;month-=12
+    return pd.Timestamp(year=year,month=month,day=1).strftime("%Y-%m-%d")
    return pd.to_datetime(value+"-01" if re.fullmatch(r"\\d{4}-\\d{2}",value) else value,errors="coerce").strftime("%Y-%m-%d")
   macro["DATE"]=macro["period"].map(period_date)
   macro["INDICATOR"]=macro["series"].astype(str)+"|"+macro["dimension"].astype(str)
