@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Official macro full-history source discovery; inventory only, no registry promotion."""
+# PRODUCTION_SELECTOR, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics and UNKNOWN/NOT_CONNECTED classifications remain immutable.
 import json,hashlib,ssl,urllib.request,urllib.parse,re
 from pathlib import Path
 from datetime import datetime,timezone
