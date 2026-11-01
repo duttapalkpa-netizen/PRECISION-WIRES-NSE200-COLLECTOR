@@ -92,6 +92,8 @@ jobs:
           assert e["status"]=="WPI_FACTOR_REGISTRY_ELIGIBILITY_AUDIT_PASS"
           assert e["promotion_decision"]=="NOT_ELIGIBLE"
           assert a["status"]=="INFLATION_COMPONENTS_ADAPTER_PASS_SCHEMA_COMPLETE"
+          assert a["month_level_release_timestamp_rows"]==a["rows"]
+          assert a["item_level_timestamp_claimed"] is False
           assert set(["DATE","COUNTRY","COMPONENT","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]).issubset(set(a["fields"]))
           assert c["status"]=="SAME_SNAPSHOT_FACTOR_COVERAGE_AUDIT_EXECUTED"
           assert c["coverage_snapshot_sha256"] is not None
