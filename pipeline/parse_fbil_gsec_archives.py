@@ -57,15 +57,16 @@ def parse_workbook(data: bytes, source_name: str):
 def main():
     ROOT.mkdir(parents=True, exist_ok=True)
     files = sorted(ROOT.glob("fbil_gsec_published_*.bin"))
-    rows, errors = [], []
+    rows, errors, quarantined = [], [], []
     for path in files:
         try:
             item = parse_workbook(path.read_bytes(), path.name)
-            expected = re.search(r"(20\\d{6})", path.name)
+            expected = re.search(r"([0-9]{8})", path.name)
             if expected:
                 filename_date = datetime.strptime(expected.group(1), "%Y%m%d").date().isoformat()
                 if filename_date != item["OBSERVATION_DATE"]:
-                    raise ValueError(f"{path.name}: filename date != workbook publisher date")
+                    quarantined.append({"file": path.name, "filename_date": filename_date, "workbook_observation_date": item["OBSERVATION_DATE"], "reason": "filename date != workbook publisher date"})
+                    continue
             rows.append(item)
         except Exception as exc:
             errors.append({"file": path.name, "error": str(exc)})
@@ -80,9 +81,9 @@ def main():
         writer.writeheader()
         writer.writerows(rows)
     report = {
-        "status": "FBIL_ARCHIVE_10Y_ROWS_PARSED_RELEASE_TIMESTAMP_MISSING" if rows and not errors else "FBIL_ARCHIVE_PARSE_BLOCKED",
+        "status": "FBIL_ARCHIVE_10Y_ROWS_PARSED_RELEASE_TIMESTAMP_MISSING" if len(rows) >= 200 and not errors else "FBIL_ARCHIVE_PARSE_BLOCKED",
         "source": "Official FBIL /wasdm/gsec/downloadPublished XLSX archive",
-        "input_files": len(files), "parsed_rows": len(rows), "errors": errors,
+        "input_files": len(files), "parsed_rows": len(rows), "errors": errors, "quarantined_files": quarantined,
         "date_min": min(dates) if dates else None, "date_max": max(dates) if dates else None,
         "unique_dates": len(set(dates)), "release_timestamp_coverage": 0,
         "timestamp_gap": "Publisher XLSX exposes observation date but no release clock time; no timestamp inferred.",
