@@ -80,7 +80,8 @@ def capture_page(s,key,sp,folder):
   pass
  page_text=tree.text(separator=" ")
  posted=re.search(r"(?:Posted On|Dated)\s*:\s*(.{1,100}?)(?:\s+by\s+PIB|$)",page_text,re.I)
- return {"http_status":r.status_code,"landing_url":r.url,"landing_sha256":sha(r.content),"release_timestamp_text":posted.group(1).strip() if posted else None,"catalogue_url":sp.get("catalogue_url"),"candidate_links":links[:30],"captured_files":files,"release_tables":tables}
+ page_updated=re.search(r"Last Updated Date\s*:\s*(\d{1,2}\s+[A-Za-z]+\s+\d{4})",page_text,re.I)
+ return {"http_status":r.status_code,"landing_url":r.url,"landing_sha256":sha(r.content),"release_timestamp_text":posted.group(1).strip() if posted else None,"page_last_updated_text":page_updated.group(1).strip() if page_updated else None,"catalogue_url":sp.get("catalogue_url"),"candidate_links":links[:30],"captured_files":files,"release_tables":tables}
 
 def published_utc(text):
  if not text: return None
