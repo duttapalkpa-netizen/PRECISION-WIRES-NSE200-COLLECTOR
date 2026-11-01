@@ -6,6 +6,9 @@ on:
   push:
     branches: [audit/prospective-selector-tracking, audit/run93-corrective-fixes, audit/run145-factor-registry-gap-audit]
     paths:
+      - "pipeline/collect_india_macro_series.py"
+      - "qa/test_india_macro_series.py"
+      - ".github/workflows/india_macro_series_source_audit.yml"
       - "pipeline/macro_geo_collect_p0.py"
       - "pipeline/macro_geo_historical_news_backfill.py"
       - "pipeline/macro_geo_repair_p0.py"
@@ -143,7 +146,12 @@ jobs:
       - name: Strictly validate benchmark, sector, volatility and geopolitical groups
         run: python pipeline/macro_geo_four_group_validation.py
       # Optional factor enrichment runs in its own bounded workflow so slow public-source retries cannot hold up the P0 evidence audit.
-      - name: Audit all registered factors against observed source coverage
+      - name: Test official India macro-series source contracts
+        run: python -m unittest qa.test_india_macro_series -v
+      - name: Acquire official GDP CPI WPI and CGA source releases with provenance
+        timeout-minutes: 7
+        run: python pipeline/collect_india_macro_series.py
+      - name: Audit all registered factors against the same P0 and macro-series snapshot
         run: python pipeline/macro_geo_factor_coverage_audit.py
       - name: Run sourced publication-time event study
         run: python pipeline/macro_geo_event_study.py
@@ -197,6 +205,9 @@ jobs:
             data/external/fx_carry.csv
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
+            data/external/macro_series_raw/**
+            outputs/macro_geo/india_macro_series_source_audit.json
+            outputs/macro_geo/india_macro_series_source_audit.sha256
             outputs/macro_geo/**
             outputs/macro_geo/historical_index_backfill_report.json
             outputs/macro_geo/targeted_historical_backfill_report.json
