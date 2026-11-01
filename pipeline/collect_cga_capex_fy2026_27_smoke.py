@@ -25,7 +25,7 @@ def get(url):
   b=r.read(10_000_000);m={"http_status":r.status,"content_type":r.headers.get("Content-Type",""),"final_url":r.geturl(),"bytes":len(b)}
  if m["http_status"]!=200 or not b:raise RuntimeError(f"CGA official source HTTP failure {m}")
  p=Text();p.feed(b.decode("utf-8-sig",errors="replace"));return b,p.text(),m
-def main():
+def capex_row_matches(text):\n pattern=r"Capital Expenditure.{0,180}?1221821.{0,60}?654547.{0,30}?53\\.6%.{0,30}?51\\.8%"\n return bool(re.search(pattern,text,re.I|re.S))\n\ndef main():
  OUT.mkdir(parents=True,exist_ok=True);retrieved=datetime.now(timezone.utc).isoformat()
  cga_raw,cga_text,cga_meta=get(CGA_URL);pib_raw,pib_text,pib_meta=get(PIB_URL)
  if not cga_meta["final_url"].startswith("https://cga.nic.in/") or not pib_meta["final_url"].startswith("https://www.pib.gov.in/"):raise RuntimeError("CGA/PIB final host mismatch")
@@ -35,7 +35,7 @@ def main():
   "CGA_official_host":True,"PIB_official_host":True,
   "CGA_report_as_at_end_September_2026":"AS AT THE END OF SEPTEMBER 2026" in norm.upper(),
   "FY_2026_27_present":"2026-2027" in norm,
-  "capex_BE_actual_percent_row_matches":bool(re.search(pattern,norm,re.I)),
+  "capex_BE_actual_percent_row_matches":bool(re.search(pattern,norm,re.I|re.S)),
   "PIB_release_30_Oct_2026":"30 OCT 2026 5:02PM" in pib_text.upper(),
   "PIB_capital_account_actual_654547":"6,54,547 crore" in pib_text,
   "PIB_capital_account_share_47_7":"47.7%" in pib_text,
