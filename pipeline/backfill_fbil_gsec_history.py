@@ -43,7 +43,7 @@ def download_one(day):
     body=r.content
     cd=r.headers.get("Content-Disposition","")
     if r.status_code!=200: return {"date":day,"status":r.status_code,"error":"non-200","bytes":len(body)}
-    if not body.startswith(b"PK\\x03\\x04"):
+    if not body.startswith(bytes([80,75,3,4])):
         return {"date":day,"status":r.status_code,"error":"response is not XLSX/ZIP","content_type":r.headers.get("Content-Type"),"bytes":len(body),"preview":body[:160].decode("utf-8","replace")}
     path=OUT/f"fbil_gsec_published_{day.replace('-','')}.bin"
     path.write_bytes(body)
@@ -60,7 +60,7 @@ def main():
         time.sleep(0.15)
     all_records=[x for m in month_results for x in m.get("records",[]) if isinstance(x,dict)]
     dates=sorted({str(x.get("processRunDate","")) for x in all_records
-                  if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",str(x.get("processRunDate","")))})
+                  if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}",str(x.get("processRunDate","")))})
     results=[]
     with ThreadPoolExecutor(max_workers=4) as pool:
         futures={pool.submit(download_one,d):d for d in dates}
@@ -96,7 +96,7 @@ def main():
             "timestamp_policy":"Archive workbooks expose observation date but not a publisher clock time. No time is inferred. Live endpoint fields are retained for exact-schema review only.",
             "commercial_permission":"NOT_OBTAINED; written permission required before production use",
             "minimum_200_sessions_met":len(successful)>=200}
-    (OUT/"fbil_historical_backfill_report.json").write_text(json.dumps(report,indent=2)+"\\n",encoding="utf-8")
+    (OUT/"fbil_historical_backfill_report.json").write_text(json.dumps(report,indent=2)+chr(10),encoding="utf-8")
     print(json.dumps(report,indent=2))
     if len(successful)<200:
         raise RuntimeError(f"Historical archive backfill has only {len(successful)} files; minimum 200 not met")
