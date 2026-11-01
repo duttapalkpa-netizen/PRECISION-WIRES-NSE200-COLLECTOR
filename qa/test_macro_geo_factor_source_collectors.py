@@ -147,21 +147,33 @@ class FactorSourceCollectorTests(unittest.TestCase):
         self.assertEqual(frame.iloc[0]["EVENT_DATE_BASIS"], "PUBLICATION_DATE_PROXY_NOT_CONFIRMED_EVENT_DATE")
         self.assertTrue(frame.iloc[0]["SOURCE_URL"].startswith("https://www.federalreserve.gov/"))
 
-    def test_real_yield_group_requires_exact_dfii10_series(self):
+    def test_real_yield_group_requires_exact_treasury_10y_real_series(self):
         frame = pd.DataFrame([{
             "DATE":"2026-10-20","SERIES":"US_TREASURY_10Y_REAL","CLOSE":1.82,
-            "SOURCE":"Federal Reserve Bank of St. Louis FRED","SOURCE_SERIES":"DFII10",
-            "SOURCE_URL":"https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
+            "SOURCE":"US Department of the Treasury","SOURCE_SERIES":"10 YR REAL",
+            "SOURCE_URL":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-real-yield-curve-rates.csv/2026/all",
             "OBSERVED_AT_UTC":"2026-10-21T00:00:00+00:00"}])
         qa = collector.validate_observed_series_group(
             "us_real_yields",frame,date(2026,10,20),date(2026,10,21),
-            {"DFII10":"US_TREASURY_10Y_REAL"})
+            {"10 YR REAL":"US_TREASURY_10Y_REAL"})
         self.assertEqual(qa["status"],"COLLECTED_AND_DOMAIN_QA_PASSED")
         bad=frame.copy();bad["SOURCE_SERIES"]="DGS10"
         with self.assertRaises(ValueError):
             collector.validate_observed_series_group(
                 "us_real_yields",bad,date(2026,10,20),date(2026,10,21),
-                {"DFII10":"US_TREASURY_10Y_REAL"})
+                {"10 YR REAL":"US_TREASURY_10Y_REAL"})
+
+    def test_treasury_real_yield_csv_parser_uses_official_10y_real_series(self):
+        response=FakeResponse(
+            "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-real-yield-curve-rates.csv/2026/all",
+            b"Date,5 Yr,7 Yr,10 Yr,20 Yr,30 Yr\n10/20/2026,1.70,1.75,1.82,2.01,2.05\n")
+        session=type("Session",(),{"get":lambda self,*a,**kw:response})()
+        rows=collector.fetch_treasury_real_yields(session,date(2026,10,20),date(2026,10,20))
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["SOURCE_SERIES"],"10 YR REAL")
+        self.assertEqual(rows[0]["SERIES"],"US_TREASURY_10Y_REAL")
+        self.assertEqual(rows[0]["CLOSE"],1.82)
+        self.assertIn("home.treasury.gov",rows[0]["SOURCE_URL"])
 
     def test_official_treasury_fallback_parses_three_maturities_with_provenance(self):
         response = FakeResponse(
