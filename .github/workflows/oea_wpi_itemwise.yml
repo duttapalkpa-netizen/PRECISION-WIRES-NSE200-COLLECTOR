@@ -1,0 +1,74 @@
+name: OEA WPI Itemwise Ingestion QA
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_oea_wpi_itemwise.py"
+      - "pipeline/verify_oea_tls_chain.py"
+      - "qa/test_oea_wpi_itemwise.py"
+      - ".github/workflows/oea_wpi_itemwise.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oea-wpi-itemwise-ingestion
+  cancel-in-progress: false
+jobs:
+  wpi-itemwise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install workbook reader
+        run: python -m pip install openpyxl certifi
+      - name: Run WPI parser regression tests
+        run: python -m unittest qa.test_oea_wpi_itemwise -v
+      - name: Verify official OEA TLS chain and retrieve official source page
+        run: python pipeline/verify_oea_tls_chain.py
+      - name: Download and parse official WPI itemwise workbook
+        run: python pipeline/collect_oea_wpi_itemwise.py
+      - name: Verify WPI provenance, coverage and SHA-256
+        run: |
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          p=Path("artifacts/macro_full_history_discovery")
+          m=json.loads((p/"oea_wpi_itemwise_manifest.json").read_text())
+          raw=p/m["source"]["raw_file"]
+          csv=p/m["normalized_csv"]["file"]
+          assert m["status"] == "ITEMWISE_INGESTION_PASS"
+          assert hashlib.sha256(raw.read_bytes()).hexdigest() == m["source"]["raw_sha256"]
+          assert hashlib.sha256(csv.read_bytes()).hexdigest() == m["normalized_csv"]["sha256"]
+          w=m["workbook"]
+          assert w["observation_count"] == m["normalized_csv"]["rows"] > 0
+          assert w["distinct_item_code_count"] > 0
+          assert w["latest_observation_period"] == max(w["periods"])
+          assert w["requested_period"] == "2026-10"
+          # October 2026 is not yet present in the official workbook; preserve it as missing.
+          assert w["requested_period_included"] is False
+          assert w["latest_observation_period"] == "2026-09"
+          assert m["classification"] == "SOURCE_EVIDENCE_ONLY_NOT_PROMOTED_TO_FACTOR_REGISTRY"
+          print(json.dumps({
+            "status":"WPI_ITEMWISE_QA_PASS",
+            "source_url":m["source"]["url"],
+            "raw_bytes":m["source"]["bytes"],
+            "raw_sha256":m["source"]["raw_sha256"],
+            "sheet_count":w["sheet_count"],
+            "distinct_item_codes":w["distinct_item_code_count"],
+            "item_keys":w["item_key_count"],
+            "observations":w["observation_count"],
+            "periods":[w["periods"][0],w["periods"][-1]],
+            "requested_october_2026_present":w["requested_period_included"],
+            "missing_code_observations":w["missing_item_code_observations"],
+            "revision_status":w["revision_status"]
+          },indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: oea-wpi-itemwise-ingestion-qa
+          path: artifacts/macro_full_history_discovery/
+          if-no-files-found: warn
