@@ -65,7 +65,7 @@ def main():
  cov["snapshot_semantics"]="Composite immutable artifact set; source retrieval timestamps are retained individually and are not claimed to be simultaneous."
  cov["macro_indicators_snapshot_ledger"]={"snapshot_id":sid,"snapshot_as_of_utc":asof,"pinned_artifacts":PINS,"evidence":{"macro_series":macro,"gdp":gd,"cpi":ci,"wpi":wi,"cga":cg,"pmi":pi},"factor_source_baseline":{"run_id":PINS["factor_source"][0],"artifact_id":PINS["factor_source"][1],"observed_at_utc":report["observed_at_utc"],"baseline_as_of_utc":report["observed_at_utc"]}}
  O.mkdir(parents=True,exist_ok=True)
- (O/"source_coverage.json").write_text(json.dumps(cov,indent=2)+"\\n")
- (O/"macro_indicators_snapshot_ledger.json").write_text(json.dumps(cov["macro_indicators_snapshot_ledger"],indent=2)+"\\n")
+ (O/"source_coverage.json").write_text(json.dumps(cov,indent=2)+chr(10))
+ (O/"macro_indicators_snapshot_ledger.json").write_text(json.dumps(cov["macro_indicators_snapshot_ledger"],indent=2)+chr(10))
  print(json.dumps({"snapshot_id":sid,"snapshot_as_of_utc":asof,"evidence_inputs_verified":7,"macro_indicators":"DATA_QUALITY_WARN","inflation_components":"DATA_QUALITY_WARN","government_capex":"DATA_QUALITY_WARN","pmi":"NOT_CONNECTED"},indent=2))
 if __name__=="__main__": main()
