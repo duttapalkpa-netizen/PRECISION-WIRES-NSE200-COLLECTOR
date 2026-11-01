@@ -21,8 +21,8 @@ DOWNLOAD=API+"file/download/"
 RAW=Path("data/external/macro_series_raw"); OUT=Path("outputs/macro_geo")
 UA="PRECISION-WIRES-NSE200-COLLECTOR/1.0 (official macro source audit)"
 SOURCES={
-"gdp":{"provider":"MoSPI e-Sankhyiki / National Accounts Statistics","url":"https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2304949&lang=1&reg=3","catalogue_url":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue?product=NAS","terms":["quarterly estimates of gdp","gross domestic product"],"frequency":"QUARTERLY","unit":"INR crore; current/constant price basis mandatory"},
-"cpi":{"provider":"MoSPI e-Sankhyiki / Consumer Price Index","url":"https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2322244&lang=1&reg=3","catalogue_url":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue?product=CPI","terms":["all india combined","general index and inflation"],"frequency":"MONTHLY","unit":"2024=100 index; geography and rural/urban mandatory"},
+"gdp":{"provider":"MoSPI e-Sankhyiki / National Accounts Statistics","url":"https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2304949&lang=1&reg=3","catalogue_url":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue?product=NAS","terms":["quarterly estimates of gdp","gross domestic product"],"product":"NAS","frequency":"QUARTERLY","unit":"INR crore; current/constant price basis mandatory"},
+"cpi":{"provider":"MoSPI e-Sankhyiki / Consumer Price Index","url":"https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2322244&lang=1&reg=3","catalogue_url":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue?product=CPI","terms":["all india combined","general index and inflation"],"product":"CPI","frequency":"MONTHLY","unit":"2024=100 index; geography and rural/urban mandatory"},
 "wpi":{"provider":"Office of Economic Adviser, DPIIT","url":"https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2323098&lang=1&reg=1","catalogue_url":"https://eaindustry.nic.in/download_data_2223.asp","terms":["wholesale price index","wpi"],"frequency":"MONTHLY","unit":"2022-23=100 index; commodity class and vintage mandatory"},
 "government_capex":{"provider":"Controller General of Accounts, Ministry of Finance","url":"https://cga.gov.in/MonthDashboardReport/Published/list.aspx","terms":["monthly accounts dashboard","capital expenditure"],"frequency":"MONTHLY_CUMULATIVE_FY","unit":"INR crore; actual vs budget and FY/month mandatory"},
 "pmi":{"provider":"S&P Global PMI (publisher primary source; not Government of India)","url":"https://www.pmi.spglobal.com/Public/Release/PressReleases?language=en","terms":["india manufacturing pmi","india services pmi"],"frequency":"MONTHLY","unit":"Diffusion index; underlying historical series licensed"}
@@ -300,10 +300,10 @@ def main():
   x={"provider":sp["provider"],"landing_url":sp["url"],"expected_frequency":sp["frequency"],"unit_contract":sp["unit"],"observed_at_utc":datetime.now(timezone.utc).isoformat(),"rows":0,"status":"BLOCKED"}
   try:
    if sp.get("product"):
-    rows,pag=catalogue(s,sp["product"]); matches=select(rows,sp["terms"])
+    x.update(capture_page(s,key,sp,folder))\n   rows,pag=catalogue(s,sp["product"]); matches=select(rows,sp["terms"])
     if not matches: raise ValueError("no matching catalogue dataset with official file identity")
     x["pagination"]=pag;x["vintages"]=[]
-    for rec in matches[:3]:
+    for rec in matches[:40]:
      url=DOWNLOAD+quote(str(rec["file_path"]).lstrip("/") + str(rec["file_name"]),safe="/");r=get(s,url)
      if not (r.content.startswith(b"PK") or r.content.startswith(b"\xd0\xcf\x11\xe0")): raise ValueError("download is not an Excel container")
      p=folder/str(rec["file_name"]);p.write_bytes(r.content)
@@ -333,9 +333,9 @@ def main():
  if covpath.exists():
   cov=json.loads(covpath.read_text()); srcs=cov.setdefault("sources",[])
   for name,path,rows,status,reason in [
-   ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Only source-published GDP/CPI/WPI observations with publication timestamps are promoted; historical completeness remains partial."),
+   ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"DATA_QUALITY_WARN","Source-published GDP/CPI/WPI observations are present, but CPI/WPI history remains incomplete; group stays DATA_QUALITY_WARN."),
    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified."),
-   ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.")
+   ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"DATA_QUALITY_WARN","Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.")
   ]:
    row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
    if row is None: row={"source":name};srcs.append(row)

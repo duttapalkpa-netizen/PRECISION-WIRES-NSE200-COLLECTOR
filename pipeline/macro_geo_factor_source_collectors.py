@@ -34,7 +34,7 @@ FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 YIELD_SERIES = {"DGS2": "US_TREASURY_2Y", "DGS10": "US_TREASURY_10Y", "DGS30": "US_TREASURY_30Y"}
 COMMODITY_SERIES = {"DCOILWTICO": "WTI_CRUDE_USD_PER_BBL", "GOLDAMGBD228NLBM": "GOLD_USD_PER_TROY_OUNCE"}
 POLICY_FEEDS = [
-    ("https://www.federalreserve.gov/feeds/press_all.xml", "United States", "FEDERAL_RESERVE"),
+    ("https://www.federalreserve.gov/feeds/press_monetary.xml", "United States", "FEDERAL_RESERVE"),
     ("https://www.ecb.europa.eu/rss/press.html", "Euro Area", "EUROPEAN_CENTRAL_BANK"),
 ]
 POLICY_TERMS = ("monetary policy", "policy rate", "interest rate", "rate decision",

@@ -135,7 +135,7 @@ class FactorSourceCollectorTests(unittest.TestCase):
                b'<link>https://www.federalreserve.gov/newsevents/pressreleases/monetary20261021a.htm</link>'
                b'<pubDate>Wed, 21 Oct 2026 18:00:00 GMT</pubDate>'
                b'</item></channel></rss>')
-        response = FakeResponse("https://www.federalreserve.gov/feeds/press_all.xml", xml)
+        response = FakeResponse("https://www.federalreserve.gov/feeds/press_monetary.xml", xml)
         session = type("Session", (), {"get": lambda self, *a, **kw: response})()
         with tempfile.TemporaryDirectory() as tmp:
             with patch.object(collector, "OUT", Path(tmp)):

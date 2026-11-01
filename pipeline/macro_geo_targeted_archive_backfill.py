@@ -8,7 +8,7 @@ explicit and blocks research; no synthetic values are created.
 from datetime import date, timedelta, datetime, timezone
 from io import StringIO
 from pathlib import Path
-import json, time
+import json, time, re
 import pandas as pd
 import requests
 
@@ -96,6 +96,100 @@ def fetch_historical_nifty50_secondary(start_date, end_date):
     return frame
 
 
+
+def normalize_index_name(value):
+    return re.sub(r"[^A-Z0-9]", "", str(value or "").upper())
+
+def parse_nse_history_data(data, index_type, series_label, start, end, source_url):
+    if not isinstance(data, list):
+        raise ValueError("NSE historical indices response data is not a list")
+    rows=[]
+    expected=normalize_index_name(index_type)
+    for item in data:
+        if not isinstance(item,dict):
+            raise ValueError("NSE historical indices row is not an object")
+        name=str(item.get("EOD_INDEX_NAME","")).strip()
+        if normalize_index_name(name)!=expected:
+            raise ValueError(f"NSE index identity mismatch: expected {index_type!r}, got {name!r}")
+        stamp=pd.to_datetime(item.get("EOD_TIMESTAMP"),errors="coerce",dayfirst=True)
+        close=pd.to_numeric(pd.Series([item.get("EOD_CLOSE_INDEX_VAL")]),errors="coerce").iloc[0]
+        if pd.isna(stamp) or pd.isna(close) or float(close)<=0:
+            raise ValueError("NSE historical index row has invalid date/close")
+        day=stamp.date()
+        if day<start or day>end:
+            raise ValueError("NSE historical index row falls outside requested date window")
+        rows.append({"DATE":day.isoformat(),"SERIES":series_label,"CLOSE":float(close),
+            "SOURCE":"NSE India official historicalOR indicesHistory API",
+            "SOURCE_URL":source_url,"SOURCE_SYMBOL":name,
+            "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+    frame=pd.DataFrame(rows)
+    if not frame.empty and frame.duplicated(["DATE","SERIES"]).any():
+        raise ValueError("NSE historical index response contains duplicate date/series keys")
+    return frame
+
+def fetch_nse_official_old_anchor_history(regimes):
+    """Fetch two pre-2015 regime windows from the official NSE index-history API."""
+    old=[]
+    for _,row in regimes.iterrows():
+        anchor=pd.to_datetime(row.get("start_date"),errors="coerce")
+        if pd.notna(anchor) and anchor.date()<date(2015,1,1):
+            old.append((str(row.get("regime_id")),anchor.date()))
+    if not old:
+        return pd.DataFrame(),{"status":"NOT_REQUIRED","rows":0,"regimes":[],"diagnostics":[]}
+    sess=requests.Session()
+    headers={"User-Agent":UA,"Accept":"application/json,text/html,*/*","Referer":"https://www.nseindia.com/all-reports"}
+    diagnostics=[];all_rows=[]
+    try:
+        boot=sess.get("https://www.nseindia.com/report-detail/eq_security",headers=headers,timeout=(5,15))
+        boot.raise_for_status()
+        catalog_resp=sess.get("https://www.nseindia.com/api/allIndices",headers=headers,timeout=(5,15))
+        catalog_resp.raise_for_status()
+        catalog_payload=catalog_resp.json()
+        catalog_items=catalog_payload.get("data",[]) if isinstance(catalog_payload,dict) else catalog_payload
+        if not isinstance(catalog_items,list): raise ValueError("NSE /api/allIndices catalogue schema invalid")
+        catalog={}
+        for item in catalog_items:
+            if not isinstance(item,dict): continue
+            name=next((item.get(k) for k in ("index","indexName","name","EOD_INDEX_NAME") if item.get(k)),None)
+            if name: catalog[normalize_index_name(name)]=str(name).strip()
+        aliases={"NIFTY INFRA":"NIFTY INFRASTRUCTURE"}
+        series_targets=[(label,aliases.get(label,label)) for label in sorted(REQUIRED) if label!="INDIA VIX"]
+        for regime_id,anchor in old:
+            win_start=anchor-timedelta(days=10);win_end=anchor+timedelta(days=40)
+            for series_label,catalog_name in series_targets:
+                index_type=catalog.get(normalize_index_name(catalog_name))
+                if not index_type:
+                    diagnostics.append({"regime_id":regime_id,"series":series_label,"result":"CATALOGUE_NAME_NOT_FOUND","requested_name":catalog_name})
+                    continue
+                chunk_start=win_start
+                while chunk_start<=win_end:
+                    chunk_end=min(chunk_start+timedelta(days=29),win_end)
+                    params={"indexType":index_type,"from":chunk_start.strftime("%d-%m-%Y"),"to":chunk_end.strftime("%d-%m-%Y")}
+                    url="https://www.nseindia.com/api/historicalOR/indicesHistory"
+                    try:
+                        resp=sess.get(url,params=params,headers=headers,timeout=(5,15))
+                        resp.raise_for_status()
+                        payload=resp.json()
+                        data=payload.get("data") if isinstance(payload,dict) else None
+                        if data is None: raise ValueError("NSE history response lacks data array")
+                        frame=parse_nse_history_data(data,index_type,series_label,chunk_start,chunk_end,resp.url)
+                        if not frame.empty: all_rows.extend(frame.to_dict("records"))
+                        diagnostics.append({"regime_id":regime_id,"series":series_label,"from":params["from"],"to":params["to"],"result":"PASS","rows":len(frame),"source_url":resp.url})
+                    except Exception as exc:
+                        diagnostics.append({"regime_id":regime_id,"series":series_label,"from":params["from"],"to":params["to"],"result":"BLOCKED","error":f"{type(exc).__name__}: {str(exc)[:220]}"})
+                    chunk_start=chunk_end+timedelta(days=1)
+                    time.sleep(0.15)
+        frame=pd.DataFrame(all_rows)
+        if not frame.empty: frame=frame.drop_duplicates(["DATE","SERIES"],keep="last")
+        status="COLLECTED_OFFICIAL_NSE_HISTORY" if not frame.empty else "BLOCKED_NO_OFFICIAL_NSE_HISTORY"
+        return frame,{"status":status,"rows":int(len(frame)),"series":sorted(frame["SERIES"].unique().tolist()) if not frame.empty else [],
+            "regimes":[x[0] for x in old],"catalogue_series_found":len(catalog),
+            "diagnostics_summary":{"requests":len(diagnostics),"passed":sum(x.get("result")=="PASS" for x in diagnostics),"blocked":sum(x.get("result")=="BLOCKED" for x in diagnostics),"catalogue_missing":sum(x.get("result")=="CATALOGUE_NAME_NOT_FOUND" for x in diagnostics)},
+            "diagnostics":diagnostics}
+    finally:
+        sess.close()
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     if not REGIMES.exists() or not PANEL.exists(): raise SystemExit("Required regime registry or market panel missing.")
@@ -144,6 +238,15 @@ def main():
         if n%25==0: print(json.dumps({"attempted":n,"total_dates":len(attempted),"valid_rows":len(new)}),flush=True)
         time.sleep(0.06)
     fetched=pd.DataFrame(new)
+    # Query the documented NSE India historicalOR endpoint for pre-2015 anchors.
+    # This is an official source path, separate from the daily CSV archive and Yahoo fallback.
+    nse_old_anchor_status={"status":"NOT_ATTEMPTED","rows":0}
+    try:
+        old_nse, nse_old_anchor_status = fetch_nse_official_old_anchor_history(regimes)
+        if not old_nse.empty:
+            fetched=pd.concat([fetched,old_nse],ignore_index=True,sort=False) if not fetched.empty else old_nse
+    except Exception as exc:
+        nse_old_anchor_status={"status":"BLOCKED","rows":0,"error":f"{type(exc).__name__}: {str(exc)[:240]}"}
     # The NSE daily archive path has no confirmed coverage before 2015. Fill
     # historical NIFTY 50 anchor gaps from a separately labelled real secondary
     # history series so old regimes are tested against observations, not today's
@@ -218,7 +321,7 @@ def main():
       "old_archive_anchors_skipped":[str(x) for x in regimes.loc[pd.to_datetime(regimes["start_date"],errors="coerce").dt.date < date(2015,1,1),"regime_id"].tolist()],
       "diagnostics_summary":{"requests":len(diagnostics),"http_404":sum(x.get("http_status")==404 for x in diagnostics),
        "schema_fail":sum(x.get("result")=="SCHEMA_FAIL" for x in diagnostics),"valid_rows":len(new)},
-      "diagnostics":diagnostics,"historical_nifty50_secondary":secondary_status,
+      "diagnostics":diagnostics,"historical_nse_official_api":nse_old_anchor_status,"historical_nifty50_secondary":secondary_status,
       "limitations":["A successful live smoke test does not guarantee every historical weekday archive exists.",
        "H+ horizons use actual returned close observations on/after anchor; missing series/windows remain incomplete.",
        "Historical anchor source verification and full Factor Registry validation remain separate hard-gate requirements."]}
