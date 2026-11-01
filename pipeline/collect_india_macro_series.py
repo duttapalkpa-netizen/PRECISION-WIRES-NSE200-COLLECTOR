@@ -179,6 +179,12 @@ def normalize_release_observations(report):
  qa["status"]="NORMALIZED_PARTIAL_SERIES_WITH_PROVENANCE_LIMITS"
  OUT.mkdir(parents=True,exist_ok=True)
  (OUT/"macro_series_observation_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n")
+ for key,item in qa["sources"].items():
+  if key in report["sources"]:
+   report["sources"][key]["normalized_status"]=item["status"]
+   report["sources"][key]["normalized_rows"]=item["rows"]
+   report["sources"][key]["coverage_limit"]=item["coverage_limit"]
+   report["sources"][key]["status"]=item["status"]
  report["normalized_observation_qa"]=qa
 
 def main():
@@ -218,7 +224,7 @@ def main():
    row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
    if row is None: row={"source":name};srcs.append(row)
    row.update({"status":"DATA_QUALITY_WARN","rows":0,"observed_rows":0,"evidence_path":"outputs/macro_geo/india_macro_series_source_audit.json","reason":"Official source releases captured in this exact run, but normalized observations/release-vintage schema QA is not yet complete; remain UNKNOWN."})
-  cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
+  cov["p0_source_coverage_as_of_utc"]=cov.get("as_of_utc")\n  cov["as_of_utc"]=report["as_of_utc"]\n  cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
   covpath.write_text(json.dumps(cov,ensure_ascii=False,indent=2)+"\\n")
  p=OUT/"india_macro_series_source_audit.json";p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
  (OUT/"india_macro_series_source_audit.sha256").write_text(sha(p.read_bytes())+"  "+p.name+"\n")
