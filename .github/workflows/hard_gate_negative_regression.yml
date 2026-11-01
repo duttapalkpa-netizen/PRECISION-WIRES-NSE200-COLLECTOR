@@ -1,0 +1,33 @@
+name: Hard Gate Missing and Stale Input Regression
+
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/macro_geo_hard_gate.py"
+      - "qa/test_macro_geo_hard_gate_negative.py"
+      - ".github/workflows/hard_gate_negative_regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hard-gate-negative-regression-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hard-gate-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal QA dependency
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Test missing input and stale panel rejection
+        run: python -m unittest qa.test_macro_geo_hard_gate_negative -v
