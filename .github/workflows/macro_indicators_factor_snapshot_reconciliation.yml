@@ -72,6 +72,11 @@ jobs:
           a=json.loads((r/"factor_coverage_audit.json").read_text())
           l=json.loads((r/"macro_indicators_snapshot_ledger.json").read_text())
           assert a["factor_groups"]==35
+          assert c["sources_total"]==len(c["sources"])
+          assert c["available"]==sum(x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") for x in c["sources"])
+          assert c["not_connected"]==sum(x.get("status")=="NOT_CONNECTED" for x in c["sources"])
+          assert c["quality_warn"]==sum(x.get("status")=="DATA_QUALITY_WARN" for x in c["sources"])
+          assert c["blocked"]==sum(x.get("status")=="BLOCKED" for x in c["sources"])
           assert a["source_coverage_as_of"]==c["as_of_utc"]
           assert l["snapshot_id"]==c["evidence_snapshot_id"]
           assert a["fully_available_schema_groups"]==0

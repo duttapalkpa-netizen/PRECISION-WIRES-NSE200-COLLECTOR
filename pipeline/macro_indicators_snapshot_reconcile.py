@@ -57,6 +57,15 @@ def main():
  setrow("inflation_components","DATA_QUALITY_WARN",mq["inflation_component_rows"],"CPI/WPI components remain partial; complete monthly dimensions and release-vintage alignment pending.",{"cpi":ci,"wpi":wi})
  setrow("government_capex","DATA_QUALITY_WARN",capq["observed"]["actual_ytd_crore"] and mq["sources"]["government_capex"]["rows"],"CGA September YTD smoke passes but complete historical monthly vintages are not available.",cg)
  setrow("pmi","NOT_CONNECTED",0,"Underlying PMI history is licensed; no license/feed credentials supplied.",pi)
+ # Recompute inventory counters after conservative overrides; BLOCKED remains separate.
+ statuses=[x.get("status") for x in cov.get("sources",[]) if isinstance(x,dict)]
+ cov["sources_total"]=len(statuses)
+ cov["available"]=sum(x in ("AVAILABLE","AVAILABLE_SECONDARY") for x in statuses)
+ cov["not_connected"]=sum(x=="NOT_CONNECTED" for x in statuses)
+ cov["schema_fail"]=sum(x=="SCHEMA_FAIL" for x in statuses)
+ cov["quality_warn"]=sum(x=="DATA_QUALITY_WARN" for x in statuses)
+ cov["read_error"]=sum(x=="READ_ERROR" for x in statuses)
+ cov["blocked"]=sum(x=="BLOCKED" for x in statuses)
  # Deterministic identity of exact artifact IDs; snapshot clock is assembly time.
  snapshot=json.dumps(PINS,sort_keys=True,separators=(",",":")).encode()
  sid=hashlib.sha256(snapshot).hexdigest()

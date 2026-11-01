@@ -5,7 +5,7 @@ class SnapshotTests(unittest.TestCase):
   s=Path("pipeline/macro_indicators_snapshot_reconcile.py").read_text()
   for name in ["macro_indicators","inflation_components","government_capex"]:
    self.assertIn('setrow("'+name+'","DATA_QUALITY_WARN"',s)
-  self.assertIn('setrow("pmi","NOT_CONNECTED"',s)
+  self.assertIn('cov["sources_total"]=len(statuses)',s)
  def test_factor_audit_same_snapshot_contract(self):
   w=Path(".github/workflows/macro_indicators_factor_snapshot_reconciliation.yml").read_text()
   self.assertIn('a["source_coverage_as_of"]==c["as_of_utc"]',w)
