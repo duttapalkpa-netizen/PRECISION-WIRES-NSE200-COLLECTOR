@@ -7,7 +7,7 @@ not Government of India; public headlines are not licensed underlying data.
 Raw-file capture is never promoted to AVAILABLE without a reviewed normalized
 schema adapter, valid periods/units/release timestamps, unique keys and QA.
 """
-import hashlib,json,re,time
+import hashlib,json,re,time,os
 from io import StringIO
 from datetime import datetime,timezone
 from pathlib import Path
@@ -222,7 +222,7 @@ def normalize_release_observations(report):
 
 def main():
  RAW.mkdir(parents=True,exist_ok=True);OUT.mkdir(parents=True,exist_ok=True);s=requests.Session()
- report={"schema_version":"1.0","observed_at_utc":datetime.now(timezone.utc).isoformat(),"sources":{}}
+ report={"schema_version":"1.0","observed_at_utc":datetime.now(timezone.utc).isoformat(),"workflow_run_id":os.environ.get("GITHUB_RUN_ID"),"sources":{}}
  for key,sp in SOURCES.items():
   folder=RAW/key;folder.mkdir(parents=True,exist_ok=True)
   x={"provider":sp["provider"],"landing_url":sp["url"],"expected_frequency":sp["frequency"],"unit_contract":sp["unit"],"observed_at_utc":datetime.now(timezone.utc).isoformat(),"rows":0,"status":"BLOCKED"}
@@ -267,6 +267,8 @@ def main():
   cov["p0_source_coverage_as_of_utc"]=cov.get("as_of_utc")
   cov["as_of_utc"]=report["as_of_utc"]
   cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
+  cov["p0_workflow_run_id"]=os.environ.get("GITHUB_RUN_ID")
+  cov["macro_series_source_audit_run_id"]=os.environ.get("GITHUB_RUN_ID")
   csvpath=OUT/"source_coverage.csv"
   if csvpath.exists():
    cdf=pd.read_csv(csvpath)
