@@ -13,6 +13,18 @@ def get(url,limit=60000000):
  # Preserve TLS certificate and hostname verification. MoSPI public API needs the
  # same legacy TLS cipher compatibility already validated in the GDP collector.
  ctx=ssl.create_default_context(cafile=certifi.where())
+ host=urllib.parse.urlparse(url).hostname or ""
+ if host in ("eaindustry.nic.in","www.eaindustry.nic.in"):
+  # Strictly pin the official YR1 intermediate only after verify_oea_tls_chain.py
+  # has validated its parent chain to trusted ISRG Root X1 and endpoint hostname.
+  pinned=OUT/"tls_diagnostics"/"yr1_intermediate.pem"
+  proof=OUT/"tls_diagnostics"/"oea_tls_chain_verification.json"
+  if not pinned.is_file() or not proof.is_file():
+   raise RuntimeError("OEA pinned YR1 chain evidence missing; keep WPI NOT_CONNECTED")
+  evidence=json.loads(proof.read_text())
+  if evidence.get("status")!="STRICT_TLS_PASS":
+   raise RuntimeError("OEA strict TLS chain verification did not PASS")
+  ctx.load_verify_locations(cafile=str(pinned))
  if "api.mospi.gov.in" in url:
   ctx.set_ciphers("DEFAULT:@SECLEVEL=1");ctx.options |= 0x4
  req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"*/*","Origin":"https://esankhyiki.mospi.gov.in","Referer":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue"})
