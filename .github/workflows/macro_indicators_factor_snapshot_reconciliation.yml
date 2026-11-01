@@ -1,0 +1,91 @@
+name: Macro Indicators Factor Registry Same Snapshot Reconciliation
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/macro_indicators_snapshot_reconcile.py"
+      - "qa/test_macro_indicators_snapshot_reconcile.py"
+      - ".github/workflows/macro_indicators_factor_snapshot_reconciliation.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: macro-indicators-factor-snapshot-reconciliation
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install audit dependency
+        run: python -m pip install pandas
+      - name: Run snapshot guardrail tests
+        run: python -m unittest qa.test_macro_indicators_snapshot_reconcile -v
+      - name: Download exact pinned successful evidence artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/{macro_series,gdp,cpi,wpi,cga,pmi,factor_source}
+          gh run download 41283471652 -n india-macro-series-source-audit -D inputs/macro_series
+          gh run download 41285765677 -n mospi-nas-gdp-bounded-live-smoke -D inputs/gdp
+          gh run download 41286559713 -n mospi-cpi-2024-bounded-live-smoke -D inputs/cpi
+          gh run download 41287256251 -n oea-wpi-2022-23-september-live-smoke -D inputs/wpi
+          gh run download 41287828206 -n cga-capex-fy2026-27-september-live-smoke -D inputs/cga
+          gh run download 41287685168 -n pmi-source-access-assessment -D inputs/pmi
+          gh run download 41282726166 -n macro-geo-factor-source-repair -D inputs/factor_source
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ["GITHUB_REPOSITORY"]
+          pins={41283471652:(13073712835,"sha256:b289c1cd6e2ed984eebe5e4987cc5397ac2159f430b00156c7eee66f5df305d8"),
+          41285765677:(13074739522,"sha256:7233d9ce139de56aa4cbad9815091981a3e39239d9b974c2034ff8d8be999683"),
+          41286559713:(13074709251,"sha256:34fc0165e823d4e0f2f75aa98b496b0b56f14b0871d1cdfc4eeeb8e703a46c3f"),
+          41287256251:(13075163044,"sha256:8f665f66036e9b02c41709c0c8d6e476147c716c0306bc02ec7d710220d92db1"),
+          41287828206:(13076111188,"sha256:0dedc7e2788eb52fd88232abfb833c6e1c8d722ba281b1eb601cc9d8186b0ded"),
+          41287685168:(13076305289,"sha256:2c34c28a4c391cd45b92e27826888f56c5c7b39aa31708e5de4379e55cfbb71e"),
+          41282726166:(13074122025,"sha256:14ec9cf6d67715ae3af451027a9009c77bdf6454b61b4c057dbf0d2f4f9175c3")}
+          for run,(aid,digest) in pins.items():
+           meta=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run}"],text=True))
+           assert meta["conclusion"]=="success",(run,meta.get("conclusion"))
+           arts=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run}/artifacts"],text=True))["artifacts"]
+           a=next(x for x in arts if x["id"]==aid)
+           assert a["digest"]==digest,(run,a.get("digest"))
+           print({"run_id":run,"artifact_id":aid,"digest":"verified"})
+          PY
+      - name: Build pinned macro-indicator evidence snapshot
+        run: python pipeline/macro_indicators_snapshot_reconcile.py
+      - name: Re-audit all 35 Factor Registry groups
+        run: python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Assert same-snapshot linkage and fail-closed result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=Path("outputs/macro_geo")
+          c=json.loads((r/"source_coverage.json").read_text())
+          a=json.loads((r/"factor_coverage_audit.json").read_text())
+          l=json.loads((r/"macro_indicators_snapshot_ledger.json").read_text())
+          assert a["factor_groups"]==35
+          assert a["source_coverage_as_of"]==c["as_of_utc"]
+          assert l["snapshot_id"]==c["evidence_snapshot_id"]
+          assert a["fully_available_schema_groups"]==0
+          print({"same_snapshot":"PASS","snapshot_id":l["snapshot_id"],"factor_groups":35,
+          "fully_available":a["fully_available_schema_groups"],"partial":a["partial_source_coverage"],
+          "not_connected":a["not_connected"],"hard_gate":"BLOCKED"})
+          PY
+      - name: Upload immutable snapshot and Factor Registry audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-indicators-factor-registry-same-snapshot
+          path: |
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/macro_indicators_snapshot_ledger.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+          if-no-files-found: warn
