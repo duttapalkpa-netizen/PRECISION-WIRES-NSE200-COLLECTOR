@@ -224,7 +224,9 @@ def main():
    row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
    if row is None: row={"source":name};srcs.append(row)
    row.update({"status":"DATA_QUALITY_WARN","rows":0,"observed_rows":0,"evidence_path":"outputs/macro_geo/india_macro_series_source_audit.json","reason":"Official source releases captured in this exact run, but normalized observations/release-vintage schema QA is not yet complete; remain UNKNOWN."})
-  cov["p0_source_coverage_as_of_utc"]=cov.get("as_of_utc")\n  cov["as_of_utc"]=report["as_of_utc"]\n  cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
+  cov["p0_source_coverage_as_of_utc"]=cov.get("as_of_utc")
+  cov["as_of_utc"]=report["as_of_utc"]
+  cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
   covpath.write_text(json.dumps(cov,ensure_ascii=False,indent=2)+"\\n")
  p=OUT/"india_macro_series_source_audit.json";p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
  (OUT/"india_macro_series_source_audit.sha256").write_text(sha(p.read_bytes())+"  "+p.name+"\n")
