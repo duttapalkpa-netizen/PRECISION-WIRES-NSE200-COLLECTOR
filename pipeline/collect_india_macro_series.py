@@ -244,12 +244,12 @@ def try:
  if not macro.empty:
   def period_date(value):
    value=str(value)
-   m=re.fullmatch(r"FY(\\d{4})-(\\d{2})-Q([1-4])",value)
+   m=re.fullmatch(r"FY(\d{4})-(\d{2})-Q([1-4])",value)
    if m:
     year=int(m.group(1));quarter=int(m.group(3));month=4+(quarter-1)*3
     if month>12: year+=1;month-=12
     return pd.Timestamp(year=year,month=month,day=1).strftime("%Y-%m-%d")
-   return pd.to_datetime(value+"-01" if re.fullmatch(r"\\d{4}-\\d{2}",value) else value,errors="coerce").strftime("%Y-%m-%d")
+   return pd.to_datetime(value+"-01" if re.fullmatch(r"\d{4}-\d{2}",value) else value,errors="coerce").strftime("%Y-%m-%d")
   macro["DATE"]=macro["period"].map(period_date)
   macro["INDICATOR"]=macro["series"].astype(str)+"|"+macro["dimension"].astype(str)
   macro["VALUE"]=pd.to_numeric(macro["value"],errors="coerce")
