@@ -7,7 +7,7 @@
 
 ## Executive decision
 
-The project is not restarting. Steps 1 and 2 are PASS/CLOSED on the current Quarterly Results acceptance runs. Step 3 has a historical PASS WITH COVERAGE LIMITATION from the full paired-ablation artifact; the later zero-item RSS transport smoke does not invalidate it. Step 4 has PASS WITH SOURCE QUALIFICATIONS for all eight P0 groups on a separate audit-branch artifact. Step 5 is PARTIAL because code and a BLOCKED real-data report exist, but explicit missing-file and stale-panel negative-test artifacts were not found. Step 6 remains BLOCKED.
+The project is not restarting. Steps 1 and 2 are PASS/CLOSED on the current Quarterly Results acceptance runs. Step 3 has a historical PASS WITH COVERAGE LIMITATION from the full paired-ablation artifact; the later zero-item RSS transport smoke does not invalidate it. Step 4 has PASS WITH SOURCE QUALIFICATIONS for all eight P0 groups on a separate audit-branch artifact. Step 5 is PASS for the tested missing-file and stale/misalignment rejection scope; absolute wall-clock staleness is not covered. Step 6 remains BLOCKED.
 
 Do not rerun Steps 1–4 absent a changed source snapshot, an evidenced freshness failure, or a specific provenance defect. Preserve PR #13 as Draft and do not merge.
 
@@ -20,7 +20,7 @@ Do not rerun Steps 1–4 absent a changed source snapshot, an evidenced freshnes
 | 3 — News/Catalyst join | Historical Run `39977796193`; artifact `12513903105`; ZIP SHA-256 `5dbf03176d7d655a533c04f97f27c56209948b3b8318515a6b4af98bce6e3b59`. | 10 cutoff-symbol pairs; 10 coverage rows; unknown 0; verified news 1; unverified 0; no-match GDELT query windows 9; timestamp-window failures 0; invalid article/query URLs 0; duplicate pairs 0. Verification report PASS (1 checked row). Status `READY_FOR_PAIRED_ABLATION`. | **PASS WITH COVERAGE LIMITATION** for that historical snapshot. Nine no-match queries do not prove no material news exists. |
 | 3 — later transport smoke | Run `41335754845`; artifact `13095585092`; Google News RSS HTTP 200 for test symbol TESTCO, 0 items; full Step 3 acceptance `NOT_EVALUATED`. | This was not a replay of the historical 10-pair candidate universe and did not run the full join. | **Does not invalidate historical Step 3 PASS.** A refreshed snapshot needs its own frozen candidate universe and full acceptance run. |
 | 4 — Macro-Geo P0 | Run `41283471559` on `audit/run145-factor-registry-gap-audit` (PR #11 branch); artifact `13074955372`; ZIP SHA-256 `82352f62a22647ff6d6c4c2a448b73285e092808893f34768b8362e3e1f1dde4`. | P0 coverage 8/8 `P0_COMPLETE`; crude_oil 211 rows (`AVAILABLE_SECONDARY`, US EIA official XLS); usd_inr 203 rows (`AVAILABLE_SECONDARY`, community mirror, not direct RBI); corporate_events 1,689 rows (NSE official); fpi_dii_flows 208 rows (NSDL official; FPI 105 dates/151 days, DII 103 dates/150 days). Benchmark 10, sector 90, volatility 228, geopolitical 15; four-group validator PASS. | **PASS WITH SOURCE QUALIFICATIONS** for P0 coverage on this artifact snapshot. Do not recollect without a specific reason. |
-| 5 — hard-gate rejection | Same Run `41283471559`: `hard_gate_report.json` status BLOCKED; `candidate_release_allowed=false`; blockers `FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE` and `HISTORICAL_REGIME_ANCHOR_COVERAGE_INCOMPLETE`. Code checks missing required files, incomplete P0 and >3-day market/equity date misalignment. | Missing-data semantics `UNKNOWN/BLOCKED`; production selector, ranking score and pressure fade all reported unchanged. But current QA file `qa/test_macro_geo_hard_gate.py` only has incomplete-P0 rejection and all-inputs-pass tests. P0 workflow test step does not invoke this file. No dedicated missing-file/stale-panel negative-test artifact was found. | **PARTIAL** — fail-closed implementation and live BLOCKED result exist; explicit Step 5 negative-test acceptance is not complete. |
+| 5 — hard-gate rejection | Initial real-data Run `41283471559` was BLOCKED as expected. Follow-up isolated regression Run `41340059447` SUCCESS; artifact `13097241013`; ZIP SHA-256 `24f553d2983f5369904f6b545986d5b5d7b35955bae634341efd6c8043531099`. Inspected log: 3 tests PASS — aligned complete fixture passes; missing required coverage input blocks and preserves UNKNOWN/BLOCKED; market/equity date gap >3 days blocks. | All three tests assert production selector, `RANKING_SCORE` and `+1 PRESSURE_FADE` unchanged. | **PASS — defined negative-test scope**; absolute wall-clock staleness when both panels are equally old remains untested. |
 | 6 — final consistency audit | Same P0 artifact manifest reports `final_manifest_reconciliation.status=RECONCILED`, but `source_snapshot_id` and `snapshot_id` are null; hard gate remains BLOCKED. | Cross-report reconciliation exists, but it is not final release acceptance. | **BLOCKED** |
 
 ## Step 4 interpretation: what PASS does and does not mean
@@ -43,7 +43,7 @@ The same artifact's overall strict hard gate remains BLOCKED because 35 Factor R
 2. Do not rerun Step 2 five-field metadata acceptance unless the source snapshot changes.
 3. Do not rerun the historical 10-pair Step 3 audit. For a new snapshot, first restore/build the frozen cutoff-symbol universe, then run full join acceptance.
 4. Do not recollect Step 4 P0 groups without a new snapshot, freshness failure, or source-provenance correction.
-5. Complete Step 5 only: add isolated deterministic negative tests for missing required input and stale/misaligned market panel, execute a bounded QA run, inspect its artifact, and verify frozen invariants.
+5. Step 5 missing-input and stale/misalignment rejection tests now PASS in Run `41340059447`; artifact `13097241013` inspected. Preserve this evidence. Absolute wall-clock staleness remains a narrower follow-up, not a reason to rerun the completed negative tests.
 6. Then perform Step 6 against one immutable snapshot ID.
 
 ## Frozen invariants
@@ -56,3 +56,11 @@ The same artifact's overall strict hard gate remains BLOCKED because 35 Factor R
 - No synthetic rows, fabricated timestamps, unsupported source promotion, or gate relaxation.
 - Hard Gate remains BLOCKED until all required Factor Registry, historical-regime, provenance and matured event-study conditions pass.
 - Research spend remains ₹0; no paid APIs, licences, subscriptions or external contact without explicit approval.
+
+## Step 5 regression completion — 2026-11-02
+
+- Workflow [Run `41340059447`](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/41340059447) completed SUCCESS on the active PR #13 branch.
+- Artifact `13097241013` inspected; ZIP SHA-256 `24f553d2983f5369904f6b545986d5b5d7b35955bae634341efd6c8043531099`.
+- Three deterministic tests passed in 0.017 seconds: missing required input rejects; >3-day market/equity date misalignment rejects; aligned complete fixture passes.
+- `UNKNOWN/BLOCKED` semantics and all frozen production invariants were asserted unchanged.
+- Limitation: this test covers panel/equity date misalignment, not absolute wall-clock staleness where both datasets are equally old.
