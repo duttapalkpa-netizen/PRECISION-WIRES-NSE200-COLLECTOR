@@ -4,6 +4,7 @@ on:
     branches: [fix/factor-registry-same-snapshot-reconcile]
     paths:
       - "pipeline/macro_full_history_source_discovery.py"
+      - "pipeline/verify_oea_tls_chain.py"
       - "qa/test_macro_full_history_source_discovery.py"
       - ".github/workflows/macro_full_history_source_discovery.yml"
   workflow_dispatch:
@@ -67,6 +68,8 @@ jobs:
           (out/"tls_diagnostics.json").write_text(json.dumps(result,indent=2,default=str)+"\\n")
           print(json.dumps(result,indent=2,default=str))
           PY
+      - name: Verify official YR1 chain and fetch OEA over strict TLS
+        run: python pipeline/verify_oea_tls_chain.py
       - name: Discover official WPI, CGA, GDP and CPI historical source inventory
         run: python pipeline/macro_full_history_source_discovery.py
       - name: Verify raw-source hashes and discovery manifest
