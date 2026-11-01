@@ -266,7 +266,8 @@ def main():
   cov=json.loads(covpath.read_text()); srcs=cov.setdefault("sources",[])
   for name,path,rows,status,reason in [
    ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Only source-published GDP/CPI/WPI observations with publication timestamps are promoted; historical completeness remains partial."),
-   ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified."),\n   ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.")
+   ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified."),
+   ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.")
   ]:
    row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
    if row is None: row={"source":name};srcs.append(row)
@@ -285,7 +286,8 @@ def main():
    cdf=pd.read_csv(csvpath)
    for name,path,rows,status,reason in [
     ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Published GDP/CPI/WPI observations; historical completeness partial."),
-    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA publication timestamp unverified; remains UNKNOWN."),\n    ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Published CPI/WPI component observations; historical backseries partial.")
+    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA publication timestamp unverified; remains UNKNOWN."),
+    ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Published CPI/WPI component observations; historical backseries partial.")
    ]:
     if name in set(cdf["source"].astype(str)):
      cdf.loc[cdf["source"].astype(str).eq(name),"status"]=status
