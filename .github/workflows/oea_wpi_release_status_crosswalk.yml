@@ -9,6 +9,7 @@ on:
       - "pipeline/audit_oea_wpi_factor_registry_eligibility.py"
       - "pipeline/build_oea_wpi_inflation_components_adapter.py"
       - "pipeline/audit_factor_registry_same_snapshot.py"
+      - "pipeline/macro_geo_source_coverage.py"
       - "pipeline/recheck_f14_eligibility_after_coverage.py"
       - "data/reference/oea_wpi_release_status_evidence.json"
       - "qa/test_oea_wpi_itemwise.py"
@@ -58,6 +59,8 @@ jobs:
           test -s /tmp/factor-evidence/outputs/macro_geo/source_coverage.json
           test -s /tmp/factor-evidence/outputs/macro_geo/factor_source_collection_report.json
           cp -a /tmp/factor-evidence/. .
+      - name: Build one refreshed source-coverage snapshot including WPI adapter
+        run: python pipeline/macro_geo_source_coverage.py
       - name: Run same-snapshot Factor Registry coverage audit
         run: python pipeline/audit_factor_registry_same_snapshot.py
       - name: Recheck F14 eligibility after coverage audit
