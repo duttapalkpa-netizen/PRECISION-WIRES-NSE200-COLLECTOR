@@ -1,0 +1,54 @@
+name: CGA Full Monthly Historical Series and Vintage Audit
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_cga_monthly_historical_series.py"
+      - "qa/test_cga_monthly_historical_series.py"
+      - ".github/workflows/cga_monthly_historical_series.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cga-monthly-historical-series
+  cancel-in-progress: false
+jobs:
+  cga-history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install workbook reader
+        run: python -m pip install openpyxl
+      - name: Run focused CGA historical tests
+        run: python -m unittest qa.test_cga_monthly_historical_series -v
+      - name: Collect and derive official monthly history
+        run: python pipeline/collect_cga_monthly_historical_series.py
+      - name: Verify raw and derived series hashes
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/cga_monthly_historical_series")
+          q=json.loads((p/"domain_qa.json").read_text());m=json.loads((p/"manifest.json").read_text())
+          assert q["status"]=="PASS_BOUNDED_HISTORICAL_EXTRACTION"
+          for sheet in ["actual","actual2"]:
+           x=q["sheets"][sheet]
+           assert x["first_period"]=="2014-04" and x["last_period"]=="2026-02"
+           assert x["unique_months"]==143 and x["missing_periods"]==[]
+           f=p/m["exports"][sheet]
+           assert hashlib.sha256(f.read_bytes()).hexdigest()==x["csv_sha256"]
+          raw=p/m["raw_file"]
+          assert hashlib.sha256(raw.read_bytes()).hexdigest()==m["workbook_sha256"]
+          assert q["vintage_status"]=="VINTAGE_UNVERIFIED_SINGLE_LATEST_SNAPSHOT"
+          print({"status":"PASS_BOUNDED_HISTORICAL_EXTRACTION","vintage":q["vintage_status"],"sheets":q["sheets"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cga-full-monthly-historical-series-vintage-audit
+          path: artifacts/cga_monthly_historical_series/
+          if-no-files-found: warn
