@@ -97,7 +97,8 @@ def main():
  result["sources"]["mospi_cpi"]=mospi("CPI")
  (OUT/"source_inventory.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+chr(10))
  print(json.dumps({"status":"DISCOVERY_COMPLETE","retrieved_at_utc":retrieved,
-  "oea_download_links":result["sources"]["oea_wpi"]["link_count"],\n  "oea_status":result["sources"]["oea_wpi"]["status"],
+  "oea_download_links":result["sources"]["oea_wpi"]["link_count"],
+  "oea_status":result["sources"]["oea_wpi"]["status"],
   "cga_sheets":result["sources"]["cga_dashboard"]["sheet_count"],
   "cga_numeric_cells":result["sources"]["cga_dashboard"]["numeric_cells"],
   "nas_catalogue_records":result["sources"]["mospi_nas"]["catalogue_records"],
