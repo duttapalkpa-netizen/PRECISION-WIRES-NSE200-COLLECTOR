@@ -355,12 +355,52 @@ def fetch_nse(endpoint, start, end):
             if endpoint == RESULTS_URL and candidate == INTEGRATED_RESULTS_URL:
                 xbrl_aliases = ("xbrlurl", "xbrlfileurl", "xbrlfilepath", "xbrlattachmenturl", "ixbrlurl", "xbrllink", "xbrl", "ixbrl")
                 diagnostic["rows_with_xbrl_url"] = sum(bool(first(row, list(xbrl_aliases))) for row in rows)
-                # A non-empty grid response without an XBRL link is not sufficient
-                # for the verified-financial-metrics pipeline. Keep probing routes.
                 if rows and not diagnostic["rows_with_xbrl_url"]:
                     FETCH_DIAGNOSTICS.append(diagnostic)
                     failures.append(f"{candidate}: {len(rows)} rows but no explicit XBRL URL field")
                     continue
+                # Exhaust all pages reported by NSE; a first-page sample is not
+                # a complete source snapshot. NSE response page is zero-based.
+                if isinstance(payload, dict) and isinstance(payload.get("totalCount"), int):
+                    page_size = int(payload.get("size") or len(rows) or 500)
+                    current_page = int(payload.get("page") or 0)
+                    total_count = int(payload["totalCount"])
+                    collected = list(rows)
+                    seen = {str(first(row, ["seq_Id", "seqId", "xbrl", "ixbrl"]) or digest(row)) for row in collected}
+                    page_requests = []
+                    max_pages = min(20, max(1, (total_count + max(page_size, 1) - 1) // max(page_size, 1)))
+                    while len(collected) < total_count and len(page_requests) < max_pages:
+                        next_page = current_page + 1
+                        page_params = {**request_params, "page": str(next_page), "size": str(page_size)}
+                        page_response = session.get(candidate, params=page_params, timeout=(5, 30))
+                        page_response.raise_for_status()
+                        page_payload = page_response.json()
+                        page_rows = records_from(page_payload)
+                        page_meta = page_payload if isinstance(page_payload, dict) else {}
+                        actual_page = int(page_meta.get("page", next_page))
+                        page_requests.append({"requested_page": next_page, "returned_page": actual_page,
+                                              "row_count": len(page_rows), "total_count": page_meta.get("totalCount")})
+                        if not page_rows:
+                            break
+                        added = 0
+                        for page_row in page_rows:
+                            key = str(first(page_row, ["seq_Id", "seqId", "xbrl", "ixbrl"]) or digest(page_row))
+                            if key not in seen:
+                                seen.add(key); collected.append(page_row); added += 1
+                        current_page = actual_page
+                        if added == 0:
+                            break
+                    diagnostic["pagination"] = {
+                        "reported_total_count": total_count, "page_size": page_size,
+                        "pages_fetched_including_first": 1 + len(page_requests),
+                        "additional_page_requests": page_requests,
+                        "unique_rows_collected": len(collected),
+                        "complete": len(collected) >= total_count,
+                        "page_cap": max_pages
+                    }
+                    rows = collected
+                else:
+                    diagnostic["pagination"] = {"complete": False, "reason": "NSE response omitted totalCount envelope"}
             if candidate == ANNOUNCEMENTS_URL:
                 def announcement_text(row):
                     return " ".join(str(first(row, names)) for names in (
@@ -422,14 +462,25 @@ def evaluate_endpoint_schema(sources, result_events, calendar_events):
             all(k in row for k in required_calendar) for row in calendar_events
         ),
     }
-    urls = [str(sources.get(k, {}).get("request_url", "")) for k in ("RESULT_DISCLOSURE", "BOARD_MEETING")]
-    fallback_used = any("/api/corporate-announcements" in url for url in urls)
+    result_url = str(sources.get("RESULT_DISCLOSURE", {}).get("request_url", ""))
+    result_fallback = "/api/corporate-announcements" in result_url
+    if "/api/integrated-filing-results" in result_url:
+        source_mode = "INTEGRATED_FILING_FINANCIALS"
+    elif result_fallback:
+        source_mode = "ANNOUNCEMENT_FALLBACK"
+    elif result_url:
+        source_mode = "DEDICATED_ENDPOINT"
+    else:
+        source_mode = "UNKNOWN"
+    pagination = sources.get("RESULT_DISCLOSURE", {}).get("pagination", {})
+    pagination_complete = pagination.get("complete") is True
+    checks["result_pagination_complete"] = pagination_complete
     passed = all(checks.values())
     return {
         "status": "PASS" if passed else "BLOCKED",
         "checks": checks,
-        "source_mode": "ANNOUNCEMENT_FALLBACK" if fallback_used else "DEDICATED_ENDPOINT",
-        "fallback_used": fallback_used,
+        "source_mode": source_mode,
+        "fallback_used": result_fallback,
         "schema_contract": {
             "result_disclosure_required_fields": list(required_result),
             "board_calendar_required_fields": list(required_calendar),
