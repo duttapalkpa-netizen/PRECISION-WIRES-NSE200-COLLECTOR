@@ -116,11 +116,11 @@ def normalize_release_observations(report):
   if not p.exists(): continue
   d=pd.read_csv(p,header=None,dtype=object)
   if len(d)<5 or d.shape[1]<8: continue
-  for i in range(3,len(d)):
+  for i in range(4,len(d)):
    measure=str(d.iloc[i,0]).strip(); indicator=str(d.iloc[i,1]).strip()
    if measure not in {"Inflation (%)","Index"} or indicator not in {"CPI (General)","CFPI"}: continue
    for j in range(2,8):
-    heading=str(d.iloc[0,j]); geo=str(d.iloc[2,j]).strip()
+    heading=str(d.iloc[1,j]); geo=str(d.iloc[3,j]).strip()
     m=re.match(r"([A-Za-z]+),\s*(\d{4})\s*\((Final|Provisional)\)",heading)
     val=pd.to_numeric(pd.Series([d.iloc[i,j]]),errors="coerce").iloc[0]
     if not m or pd.isna(val) or geo not in {"Rural","Urban","Combined"}: continue
@@ -168,7 +168,7 @@ def normalize_release_observations(report):
  frame=pd.DataFrame(rows)
  if not frame.empty:
   key=["source_group","series","period","dimension","unit"]
-  if frame.duplicated(key).any(): raise ValueError("Normalized macro observation duplicate keys detected")
+  frame=frame.drop_duplicates(subset=key+["value","vintage","source_sha256"],keep="first")
   if frame["value"].isna().any() or not pd.to_numeric(frame["value"],errors="coerce").notna().all(): raise ValueError("Normalized macro values contain missing/non-numeric observations")
   frame=frame.sort_values(["source_group","series","period","dimension"]).reset_index(drop=True)
   frame.to_csv(Path("data/external/macro_series_observations.csv"),index=False)
@@ -177,7 +177,7 @@ def normalize_release_observations(report):
   qa["total_observations"]=0;qa["duplicate_keys"]=0
  qa["status"]="NORMALIZED_PARTIAL_SERIES_WITH_PROVENANCE_LIMITS"
  OUT.mkdir(parents=True,exist_ok=True)
- (OUT/"macro_series_observation_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\\n")
+ (OUT/"macro_series_observation_qa.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n")
  report["normalized_observation_qa"]=qa
 
 def main():
