@@ -31,7 +31,7 @@ FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 
 # FRED series IDs are explicit and auditable. The WTI series is not relabelled
 # as Brent; the commodity name is preserved in the output.
-YIELD_SERIES = {"DGS2": "US_TREASURY_2Y", "DGS10": "US_TREASURY_10Y", "DGS30": "US_TREASURY_30Y", "DFII10": "US_TREASURY_10Y_REAL"}
+YIELD_SERIES = {"DGS2": "US_TREASURY_2Y", "DGS10": "US_TREASURY_10Y", "DGS30": "US_TREASURY_30Y"}
 COMMODITY_SERIES = {"DCOILWTICO": "WTI_CRUDE_USD_PER_BBL", "GOLDAMGBD228NLBM": "GOLD_USD_PER_TROY_OUNCE"}
 POLICY_FEEDS = [
     ("https://www.federalreserve.gov/feeds/press_all.xml", "United States", "FEDERAL_RESERVE"),
@@ -540,7 +540,7 @@ def validate_observed_series_group(name, frame, start, end, series_map):
         raise ValueError(f"{name} domain QA failed: missing source series identity")
     if frame["OBSERVED_AT_UTC"].astype(str).str.strip().eq("").any():
         raise ValueError(f"{name} domain QA failed: missing observation timestamp")
-    key = ["DATE", "SERIES"] if name == "us_yields" else ["DATE", "COMMODITY"]
+    key = ["DATE", "SERIES"] if name in {"us_yields","us_real_yields"} else ["DATE", "COMMODITY"]
     if frame.duplicated(key).any():
         raise ValueError(f"{name} domain QA failed: duplicate date/series keys")
     if name == "us_yields":
@@ -609,9 +609,9 @@ def collect_group(name, series_map, start, end, session):
     if not rows:
         return {"status": "BLOCKED", "rows": 0, "failures": failures,
                 "notes": "No valid source observations; missing data remains UNKNOWN."}
-    key = ["DATE", "SERIES"] if name == "us_yields" else ["DATE", "COMMODITY"]
+    key = ["DATE", "SERIES"] if name in {"us_yields","us_real_yields"} else ["DATE", "COMMODITY"]
     frame = pd.DataFrame(rows).drop_duplicates(key).sort_values(key)
-    target = OUT / ("us_yields.csv" if name == "us_yields" else "commodity_prices.csv")
+    target = OUT / (name + ".csv" if name in {"us_yields","us_real_yields"} else "commodity_prices.csv")
     OUT.mkdir(parents=True, exist_ok=True)
     tmp = target.with_suffix(target.suffix + ".tmp")
     frame.to_csv(tmp, index=False)
