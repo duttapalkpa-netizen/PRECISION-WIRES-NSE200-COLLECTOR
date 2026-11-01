@@ -82,7 +82,7 @@ jobs:
           restore-keys: |
             macro-geo-nse200-${{ github.ref_name }}-
       - name: Test event-study timestamp and data-quality logic
-        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest qa.test_macro_geo_factor_source_collectors qa.test_macro_geo_nsdl_flows qa.test_macro_geo_same_snapshot_reconcile -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest qa.test_macro_geo_factor_source_collectors qa.test_macro_geo_nsdl_flows qa.test_macro_geo_same_snapshot_reconcile qa.test_macro_geo_regime_anchor_evidence -v
       - name: Validate cached canonical panel before reuse
         id: panel_cache_check
         run: |
@@ -226,5 +226,7 @@ jobs:
             outputs/macro_geo/event_level_window_audit.json
             outputs/macro_geo/nsdl_fpi_dii_collection.json
             config/macro_geo_historical_regimes.csv
+            config/macro_geo_historical_regime_anchor_evidence.csv
+            research/HISTORICAL_REGIME_ANCHOR_EVIDENCE.md
             config/macro_geo_sector_transmission_map.csv
           if-no-files-found: warn
