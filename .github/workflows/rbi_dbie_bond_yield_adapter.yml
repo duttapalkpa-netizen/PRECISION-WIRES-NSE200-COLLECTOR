@@ -7,7 +7,6 @@ on:
       - "qa/test_rbi_dbie_bond_yield_adapter.py"
       - ".github/workflows/rbi_dbie_bond_yield_adapter.yml"
   workflow_dispatch:
-# Evidence-only monthly RBI curve; does not claim daily FBIL benchmark coverage.
 permissions:
   contents: read
 concurrency:
@@ -23,30 +22,32 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install requests
-      - name: Run parser and schema tests
+      - name: Run fail-closed schema diagnostic tests
         run: python -m unittest qa.test_rbi_dbie_bond_yield_adapter -v
-      - name: Collect official RBI DBIE month-end yield curve
+      - name: Capture official RBI DBIE raw schema evidence
         run: python pipeline/collect_rbi_dbie_bond_yields.py
-      - name: Assert evidence boundaries and hashes
+      - name: Verify raw evidence hashes and no-promotion boundary
         run: |
           python - <<'PY'
-          import json,hashlib
+          import json, hashlib
           from pathlib import Path
           p=Path("artifacts/india_bond_yields")
           r=json.loads((p/"rbi_dbie_source_adapter_report.json").read_text())
-          f=p/"rbi_dbie_month_end_gsec_yields.csv"
-          assert r["status"]=="RBI_DBIE_MONTH_END_GSEC_ADAPTER_PASS_EVIDENCE_ONLY"
-          assert r["frequency"]=="MONTHLY" and r["rows"]>0
-          assert r["date_min"]<"2000-01-01"
-          assert r["released_at"]=="UNKNOWN; DBIE CSV/API does not expose per-observation original release timestamps in the retrieved payload."
-          assert hashlib.sha256(f.read_bytes()).hexdigest()==r["csv_sha256"]
-          assert "Daily FBIL" in r["not_equivalent_to"]
-          print({"status":r["status"],"rows":r["rows"],"months":r["distinct_months"],"tenors":r["distinct_tenors"],"date_range":[r["date_min"],r["date_max"]],"promotion":r["factor_registry_promotion"]})
+          raw=p/"rbi_dbie_raw.csv"
+          meta=p/"rbi_dbie_table_metadata.json"
+          assert r["status"]=="RBI_DBIE_RAW_SCHEMA_DIAGNOSTIC_PASS_MAPPING_BLOCKED"
+          assert r["mapping_status"]=="BLOCKED"
+          assert r["factor_registry_promotion"]=="NOT_PROMOTED"
+          assert r["frequency"]=="MONTHLY"
+          assert r["csv_data_rows"]>0 and len(r["sample_rows"])>0
+          assert hashlib.sha256(raw.read_bytes()).hexdigest()==r["raw_csv_sha256"]
+          assert hashlib.sha256(meta.read_bytes()).hexdigest()==r["metadata_sha256"]
+          assert any(x.startswith("c") and x[1:].isdigit() for x in r["csv_header"])
+          print({"status":r["status"],"rows":r["csv_data_rows"],"header":r["csv_header"],"raw_sha256":r["raw_csv_sha256"],"mapping":"BLOCKED","promotion":"NOT_PROMOTED"})
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: rbi-dbie-month-end-gsec-yield-source
+          name: rbi-dbie-raw-schema-diagnostic
           path: artifacts/india_bond_yields/
-          if-no-files-found: warn
-
+          if-no-files-found: error
