@@ -76,9 +76,10 @@ def capture_page(s,key,sp,folder):
    name=f"{key}_release_table_{i+1:02d}.csv"; target=folder/name
    frame.to_csv(target,index=False)
    tables.append({"file":name,"rows":len(frame),"columns":len(frame.columns),"sha256":sha(target.read_bytes()),"headers":[str(c) for c in frame.columns]})
- except ValueError:
+ except (ValueError,ImportError):
   pass
- posted=re.search(r"(?:Posted On|Dated)\s*:\s*([^<\n]+)",r.text,re.I)
+ page_text=tree.text(separator=" ")
+ posted=re.search(r"(?:Posted On|Dated)\\s*:\\s*(.{1,100}?)(?:\\s+by\\s+PIB|$)",page_text,re.I)
  return {"http_status":r.status_code,"landing_url":r.url,"landing_sha256":sha(r.content),"release_timestamp_text":posted.group(1).strip() if posted else None,"catalogue_url":sp.get("catalogue_url"),"candidate_links":links[:30],"captured_files":files,"release_tables":tables}
 def main():
  RAW.mkdir(parents=True,exist_ok=True);OUT.mkdir(parents=True,exist_ok=True);s=requests.Session()
