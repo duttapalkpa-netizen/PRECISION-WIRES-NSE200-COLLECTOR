@@ -1,0 +1,83 @@
+name: Step 3 News Catalyst Timestamp Audit
+
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - ".github/workflows/step3_news_catalyst_timestamp_audit.yml"
+      - "pipeline/stock_news_24h_collect.py"
+      - "pipeline/stock_news_24h_join.py"
+      - "pipeline/stock_news_verify.py"
+      - "qa/test_stock_news_verify.py"
+      - "qa/test_stock_news_24h_fallback.py"
+      - "qa/step3_live_rss_smoke.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  step3-bounded-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded dependencies
+        run: python -m pip install "pandas>=2.2,<3" "requests>=2.31,<3" "pytest>=8,<9" "gnewsdecoder>=0.1.7"
+      - name: Run deterministic RSS fallback and publisher-verification tests
+        run: python -m pytest -q qa/test_stock_news_verify.py qa/test_stock_news_24h_fallback.py
+      - name: Run one bounded live Google News RSS source smoke test
+        env:
+          NEWS_SYMBOL: TESTCO
+          NEWS_CUTOFF: "2026-10-14"
+        run: |
+          mkdir -p outputs/news_24h
+          python qa/step3_live_rss_smoke.py | tee outputs/news_24h/step3_live_rss_smoke.json
+      - name: Record Step 3 bounded acceptance boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("outputs/news_24h/step3_live_rss_smoke.json")
+          smoke = json.loads(p.read_text(encoding="utf-8"))
+          report = {
+              "status": "PARTIAL" if smoke.get("status") == "PASS" else "BLOCKED",
+              "live_rss_transport_smoke": smoke.get("status", "UNKNOWN"),
+              "live_rss_http_status": smoke.get("http_status"),
+              "sample_count": len(smoke.get("sample_items", [])),
+              "all_discovered_items_unverified": smoke.get("all_items_unverified", True),
+              "full_step3_acceptance": "NOT_EVALUATED",
+              "remaining_acceptance": [
+                  "frozen candidate cutoff-symbol universe available from same snapshot",
+                  "complete source-query coverage per cutoff-symbol pair",
+                  "publisher URL and headline independently verified",
+                  "timestamp alignment and no-look-ahead assertions across all joined rows",
+                  "quarterly catalyst join and row-level reconciliation",
+                  "artifact review for full join coverage"
+              ],
+              "production_selector_changed": False,
+              "ranking_score_changed": False,
+              "pressure_fade_changed": False,
+              "note": "A live RSS HTTP/schema smoke test proves transport only, not news coverage, publisher verification, or Step 3 PASS."
+          }
+          Path("outputs/news_24h/step3_bounded_audit_status.json").write_text(
+              json.dumps(report, indent=2), encoding="utf-8")
+          print("STEP3_BOUNDED_AUDIT=" + json.dumps(report, sort_keys=True))
+          PY
+      - name: Upload Step 3 bounded audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: step3-news-catalyst-bounded-audit
+          if-no-files-found: error
+          path: |
+            outputs/news_24h/step3_live_rss_smoke.json
+            outputs/news_24h/step3_bounded_audit_status.json
