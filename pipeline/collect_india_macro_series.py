@@ -99,8 +99,8 @@ def normalize_release_observations(report):
   plain=__import__("html").unescape(plain)
   pub=published_utc(g.get("release_timestamp_text"))
   for label,pattern in [
-   ("REAL_GDP_CONSTANT_PRICE",r"Real GDP or GDP at Constant Prices.*?₹\\s*([\\d.]+)\\s*lakh crore.*?₹\\s*([\\d.]+)\\s*lakh crore.*?growth rate of ([\\d.]+)%"),
-   ("NOMINAL_GDP_CURRENT_PRICE",r"Nominal GDP or GDP at Current Prices.*?₹\\s*([\\d.]+)\\s*lakh crore.*?₹\\s*([\\d.]+)\\s*lakh crore.*?growth rate of ([\\d.]+)%")]:
+   ("REAL_GDP_CONSTANT_PRICE",r"Real GDP or GDP at Constant Prices.*?₹\s*([\d.]+)\s*lakh crore.*?₹\s*([\d.]+)\s*lakh crore.*?growth rate of ([\d.]+)%"),
+   ("NOMINAL_GDP_CURRENT_PRICE",r"Nominal GDP or GDP at Current Prices.*?₹\s*([\d.]+)\s*lakh crore.*?₹\s*([\d.]+)\s*lakh crore.*?growth rate of ([\d.]+)%")]:
    m=re.search(pattern,plain,re.I|re.S)
    if m:
     current,prior,growth=map(float,m.groups())
@@ -121,7 +121,7 @@ def normalize_release_observations(report):
    if measure not in {"Inflation (%)","Index"} or indicator not in {"CPI (General)","CFPI"}: continue
    for j in range(2,8):
     heading=str(d.iloc[0,j]); geo=str(d.iloc[2,j]).strip()
-    m=re.match(r"([A-Za-z]+),\\s*(\\d{4})\\s*\\((Final|Provisional)\\)",heading)
+    m=re.match(r"([A-Za-z]+),\s*(\d{4})\s*\((Final|Provisional)\)",heading)
     val=pd.to_numeric(pd.Series([d.iloc[i,j]]),errors="coerce").iloc[0]
     if not m or pd.isna(val) or geo not in {"Rural","Urban","Combined"}: continue
     period=pd.to_datetime(f"{m.group(1)} 1 {m.group(2)}").strftime("%Y-%m")
@@ -139,7 +139,7 @@ def normalize_release_observations(report):
   for _,row in d.iterrows():
    group=str(row.iloc[0]).strip()
    for col in d.columns[2:]:
-    m=re.match(r"([A-Za-z]{3})-(\\d{2})\\s*\\(([FP])\\)",str(col).strip())
+    m=re.match(r"([A-Za-z]{3})-(\d{2})\s*\(([FP])\)",str(col).strip())
     val=pd.to_numeric(pd.Series([row[col]]),errors="coerce").iloc[0]
     if not m or pd.isna(val): continue
     month=pd.to_datetime(f"{m.group(1)} 1 20{m.group(2)}").strftime("%Y-%m")
