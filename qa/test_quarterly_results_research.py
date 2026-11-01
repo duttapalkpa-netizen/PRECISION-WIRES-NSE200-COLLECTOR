@@ -46,6 +46,24 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
         self.assertEqual(len(payload["data"]), 1000)
         self.assertEqual(payload["_audit_pagination"]["reported_total_count"], 1000)
 
+    def test_revision_without_broadcast_keeps_original_timestamp_unknown(self):
+        row = {
+            "symbol": "ABC", "sm_isin": "INE123A01011",
+            "type_Sub": "Revision", "qe_Date": "30-SEP-2026",
+            "broadcast_Date": None,
+            "creation_Date": "01-Nov-2026 21:32:51",
+            "revised_Date": "01-NOV-2026 21:32:14",
+            "xbrl": "https://nsearchives.nseindia.com/corporate/result.xml",
+        }
+        normalized = stage.normalize_event(
+            row, "RESULT_DISCLOSURE",
+            "https://www.nseindia.com/api/integrated-filing-results")
+        self.assertEqual(normalized["BROADCAST_AT"], "")
+        self.assertEqual(normalized["ORIGINAL_BROADCAST_AT"], "")
+        self.assertTrue(normalized["REVISION_TIMESTAMP"])
+        self.assertEqual(normalized["PUBLICATION_TIMESTAMP"], normalized["REVISION_TIMESTAMP"])
+        self.assertNotIn("01-Nov-2026 21:32:51", normalized["PUBLICATION_TIMESTAMP"])
+
     def test_step1_integrated_filing_is_not_mislabelled_announcement_fallback(self):
         sources = {
             "RESULT_DISCLOSURE": {"status": "AVAILABLE",
