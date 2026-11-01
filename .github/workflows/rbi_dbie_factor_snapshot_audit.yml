@@ -1,0 +1,70 @@
+name: RBI DBIE Same-Snapshot Factor Registry Audit
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/merge_rbi_dbie_into_factor_source_snapshot.py"
+      - ".github/workflows/rbi_dbie_factor_snapshot_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: rbi-dbie-factor-snapshot-audit
+  cancel-in-progress: false
+jobs:
+  same-snapshot-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download exact successful factor repair baseline and RBI adapter
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/factor_source_baseline artifacts/rbi_adapter
+          gh run download 41282726166 -n macro-geo-factor-source-repair -D artifacts/factor_source_baseline
+          gh run download 41314656919 -n rbi-dbie-monthly-gsec-yield-adapter -D artifacts/rbi_adapter
+          test -s artifacts/factor_source_baseline/outputs/macro_geo/source_coverage.json
+          test -s artifacts/rbi_adapter/india_bond_yields.csv
+          test -s artifacts/rbi_adapter/rbi_dbie_source_adapter_report.json
+      - name: Attach RBI evidence without promotion
+        run: python pipeline/merge_rbi_dbie_into_factor_source_snapshot.py
+      - name: Run canonical same-snapshot Factor Registry audit
+        run: |
+          python pipeline/macro_geo_factor_coverage_audit.py
+          python pipeline/audit_factor_registry_same_snapshot.py
+      - name: Assert F14 and hard-gate boundaries
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("outputs/macro_geo")
+          c=json.loads((p/"source_coverage.json").read_text())
+          a=json.loads((p/"factor_coverage_audit.json").read_text())
+          india=next(x for x in c["sources"] if x.get("source")=="india_bond_yields")
+          f14=next(x for x in a["missing_factors"] if x["factor_id"]=="F14")
+          assert india["status"]=="DATA_QUALITY_WARN" and india["rows"]==0
+          assert a["factor_groups"]==35
+          assert f14["coverage_status"]=="PARTIAL_SOURCE_COVERAGE"
+          assert "india_bond_yields:DATA_QUALITY_WARN" in f14["source_statuses"]
+          print({"audit_status":a["status"],"factor_groups":a["factor_groups"],
+                 "india_bond_yields":india["status"],"F14":f14["coverage_status"],
+                 "F14_source_statuses":f14["source_statuses"],
+                 "hard_gate":"BLOCKED_UNCHANGED"})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rbi-dbie-same-snapshot-factor-audit
+          path: |
+            data/external/india_bond_yields.csv
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+            artifacts/macro_full_history_discovery/factor_registry_same_snapshot_coverage_audit.json
+          if-no-files-found: warn
