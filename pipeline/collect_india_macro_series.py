@@ -300,7 +300,8 @@ def main():
   x={"provider":sp["provider"],"landing_url":sp["url"],"expected_frequency":sp["frequency"],"unit_contract":sp["unit"],"observed_at_utc":datetime.now(timezone.utc).isoformat(),"rows":0,"status":"BLOCKED"}
   try:
    if sp.get("product"):
-    x.update(capture_page(s,key,sp,folder))\n   rows,pag=catalogue(s,sp["product"]); matches=select(rows,sp["terms"])
+    x.update(capture_page(s,key,sp,folder))
+   rows,pag=catalogue(s,sp["product"]); matches=select(rows,sp["terms"])
     if not matches: raise ValueError("no matching catalogue dataset with official file identity")
     x["pagination"]=pag;x["vintages"]=[]
     for rec in matches[:40]:
