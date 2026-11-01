@@ -301,7 +301,7 @@ def main():
   try:
    if sp.get("product"):
     x.update(capture_page(s,key,sp,folder))
-   rows,pag=catalogue(s,sp["product"]); matches=select(rows,sp["terms"])
+    rows,pag=catalogue(s,sp["product"]); matches=select(rows,sp["terms"])
     if not matches: raise ValueError("no matching catalogue dataset with official file identity")
     x["pagination"]=pag;x["vintages"]=[]
     for rec in matches[:40]:
