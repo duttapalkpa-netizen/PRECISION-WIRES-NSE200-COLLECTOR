@@ -227,7 +227,7 @@ def main():
   cov["p0_source_coverage_as_of_utc"]=cov.get("as_of_utc")
   cov["as_of_utc"]=report["as_of_utc"]
   cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
-  covpath.write_text(json.dumps(cov,ensure_ascii=False,indent=2)+"\\n")
+  covpath.write_text(json.dumps(cov,ensure_ascii=False,indent=2)+"\n")
  p=OUT/"india_macro_series_source_audit.json";p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
  (OUT/"india_macro_series_source_audit.sha256").write_text(sha(p.read_bytes())+"  "+p.name+"\n")
  print(json.dumps({"status":report["status"],"sources":{k:v["status"] for k,v in report["sources"].items()}},indent=2))
