@@ -157,17 +157,19 @@ def try:
   plain=__import__("html").unescape(plain)
   pub=published_utc(g.get("release_timestamp_text"))
   for label,pattern in [
-   ("REAL_GDP_CONSTANT_PRICE",r"Real GDP or GDP at Constant Prices.*?₹\s*([\d.]+)\s*lakh crore.*?₹\s*([\d.]+)\s*lakh crore.*?growth rate of ([\d.]+)%"),
-   ("NOMINAL_GDP_CURRENT_PRICE",r"Nominal GDP or GDP at Current Prices.*?₹\s*([\d.]+)\s*lakh crore.*?₹\s*([\d.]+)\s*lakh crore.*?growth rate of ([\d.]+)%")]:
+   ("REAL_GDP_CONSTANT_PRICE_LATEST_RELEASE",r"Real GDP or GDP at Constant Prices.*?₹\s*([\d.]+)\s*lakh crore.*?₹\s*([\d.]+)\s*lakh crore.*?growth rate of ([\d.]+)%"),
+   ("NOMINAL_GDP_CURRENT_PRICE_LATEST_RELEASE",r"Nominal GDP or GDP at Current Prices.*?₹\s*([\d.]+)\s*lakh crore.*?₹\s*([\d.]+)\s*lakh crore.*?growth rate of ([\d.]+)%")]:
    m=re.search(pattern,plain,re.I|re.S)
    if m:
     current,prior,growth=map(float,m.groups())
-    for period,val in [("2026-Q1",current),("2025-Q1",prior)]:
+    for period,val in [("FY2026-27-Q1",current),("FY2025-26-Q1",prior)]:
      rows.append({"source_group":"macro_indicators","series":label,"period":period,"dimension":"ALL_INDIA","value":val,"unit":"INR_LAKH_CRORE","vintage":"OFFICIAL_RELEASE","published_at_utc":pub,"source_url":g["landing_url"],"source_sha256":g.get("landing_sha256"),"release_status":"PUBLISHED"})
-    rows.append({"source_group":"macro_indicators","series":label+"_YOY_GROWTH","period":"2026-Q1","dimension":"ALL_INDIA","value":growth,"unit":"PERCENT","vintage":"OFFICIAL_RELEASE","published_at_utc":pub,"source_url":g["landing_url"],"source_sha256":g.get("landing_sha256"),"release_status":"PUBLISHED"})
+    rows.append({"source_group":"macro_indicators","series":label+"_YOY_GROWTH_LATEST_RELEASE","period":"FY2026-27-Q1","dimension":"ALL_INDIA","value":growth,"unit":"PERCENT","vintage":"OFFICIAL_RELEASE","published_at_utc":pub,"source_url":g["landing_url"],"source_sha256":g.get("landing_sha256"),"release_status":"PUBLISHED"})
   qa["sources"]["gdp"]={"status":"PARTIAL_NORMALIZED_RELEASE_WINDOW" if any(x["series"].startswith(("REAL_GDP","NOMINAL_GDP")) for x in rows) else "SCHEMA_PENDING","rows":sum(x["series"].startswith(("REAL_GDP","NOMINAL_GDP")) for x in rows),"coverage_limit":"Latest Q1 headline only; complete quarterly NAS time series not yet ingested"}
  # Add the independently parsed official quarterly GDP statements from MoSPI
  rows.extend(report.get("sources",{}).get("gdp",{}).get("backseries_observations",[]))
+ if report.get("sources",{}).get("gdp",{}).get("quarterly_backseries",{}).get("status")=="OFFICIAL_QUARTERLY_BACKSERIES_CAPTURED_AND_PARSED":
+  qa["sources"]["gdp"]={"status":"PARTIAL_OFFICIAL_QUARTERLY_BACKSERIES_CAPTURED","rows":len(report["sources"]["gdp"]["backseries_observations"]),"coverage_limit":"Q1 FY2022-23 to Q3 FY2025-26; earlier new-base backseries pending; latest Q1 FY2026-27 release captured separately."}
  # CPI: normalize the national table by month, rural/urban/combined and CPI/CFPI measure.
  c=report["sources"].get("cpi",{}); cpi_rows=[]
  for item in c.get("release_tables",[]):
@@ -260,7 +262,7 @@ def try:
   macro_path=Path("data/external/macro_indicators.csv")
   macro[["DATE","INDICATOR","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC","UNIT","PERIOD","VINTAGE","SOURCE_SHA256","RELEASE_STATUS"]].to_csv(macro_path,index=False)
   qa["registry_macro_rows"]=int(len(macro));qa["registry_macro_sha256"]=sha(macro_path.read_bytes())
-  inflation=macro.copy()
+  inflation=macro[macro["series"].astype(str).str.contains("CPI|CFPI|WPI",case=False,regex=True)].copy()
   inflation["COUNTRY"]="INDIA"
   inflation["COMPONENT"]=inflation["INDICATOR"]
   inflation["RELEASED_AT"]=inflation["RELEASED_AT"].astype(str)
