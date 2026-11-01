@@ -32,10 +32,13 @@ jobs:
           test -s artifacts/factor_source_baseline/outputs/macro_geo/source_coverage.json
           test -s artifacts/rbi_adapter/india_bond_yields.csv
           test -s artifacts/rbi_adapter/rbi_dbie_source_adapter_report.json
+      - name: Install canonical audit dependency
+        run: python -m pip install pandas
       - name: Attach RBI evidence without promotion
         run: python pipeline/merge_rbi_dbie_into_factor_source_snapshot.py
       - name: Run canonical same-snapshot Factor Registry audit
         run: |
+          mkdir -p artifacts/macro_full_history_discovery
           python pipeline/macro_geo_factor_coverage_audit.py
           python pipeline/audit_factor_registry_same_snapshot.py
       - name: Assert F14 and hard-gate boundaries
