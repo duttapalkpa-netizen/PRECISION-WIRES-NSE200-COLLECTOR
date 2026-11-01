@@ -56,11 +56,13 @@ jobs:
           r=json.loads((p/"fbil_historical_backfill_report.json").read_text())
           assert r["minimum_200_sessions_met"] is True
           assert r["downloaded_xlsx_files"] >= 200
+          assert r["download_errors"] == [], r["download_errors"]
           parse=json.loads((p/"fbil_10y_archive_parse_report.json").read_text())
           rows=list(__import__("csv").DictReader((p/"fbil_10y_archive_observations.csv").open()))
           assert parse["status"] == "FBIL_ARCHIVE_10Y_ROWS_PARSED_RELEASE_TIMESTAMP_MISSING"
           assert len(rows) >= 200 and len({x["OBSERVATION_DATE"] for x in rows}) == len(rows)
-          assert len(parse["quarantined_files"]) == 1 or len(parse["quarantined_files"]) >= 0
+          assert len(parse["quarantined_files"]) == 1, parse["quarantined_files"]
+          assert parse["errors"] == [], parse["errors"]
           assert parse["release_timestamp_coverage"] == 0
           assert r["commercial_permission"] == "NOT_OBTAINED; written permission required before production use"
           print({"backfill_status":r["status"],"sessions":r["downloaded_xlsx_files"],"date_range":[r["downloaded_date_min"],r["downloaded_date_max"]],"timestamp_policy":r["timestamp_policy"],"permission":r["commercial_permission"]})
