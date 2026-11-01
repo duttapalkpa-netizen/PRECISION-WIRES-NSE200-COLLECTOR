@@ -1,0 +1,64 @@
+name: OEA WPI Release Status Crosswalk QA
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_oea_wpi_itemwise.py"
+      - "pipeline/verify_oea_tls_chain.py"
+      - "pipeline/build_oea_wpi_release_status_crosswalk.py"
+      - "data/reference/oea_wpi_release_status_evidence.json"
+      - "qa/test_oea_wpi_release_status_crosswalk.py"
+      - ".github/workflows/oea_wpi_release_status_crosswalk.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oea-wpi-release-status-crosswalk
+  cancel-in-progress: false
+jobs:
+  crosswalk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install workbook reader
+        run: python -m pip install openpyxl certifi
+      - name: Run crosswalk guardrail tests
+        run: python -m unittest qa.test_oea_wpi_itemwise qa.test_oea_wpi_release_status_crosswalk -v
+      - name: Verify official OEA TLS chain and retrieve WPI workbook
+        run: |
+          python pipeline/verify_oea_tls_chain.py
+          python pipeline/collect_oea_wpi_itemwise.py
+      - name: Build official revision-status crosswalk
+        run: python pipeline/build_oea_wpi_release_status_crosswalk.py
+      - name: Verify source and output hashes and status gates
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/macro_full_history_discovery")
+          m=json.loads((p/"oea_wpi_itemwise_manifest.json").read_text())
+          r=json.loads((p/"oea_wpi_release_status_crosswalk.json").read_text())
+          for file,digest in [
+            (p/m["source"]["raw_file"],m["source"]["raw_sha256"]),
+            (p/m["normalized_csv"]["file"],m["normalized_csv"]["sha256"]),
+            (p/"oea_wpi_release_status_crosswalk.csv",r["crosswalk_csv_sha256"])
+          ]:
+            assert hashlib.sha256(file.read_bytes()).hexdigest()==digest
+          assert r["status"]=="WPI_RELEASE_STATUS_CROSSWALK_PASS"
+          assert r["status_counts"]["FINAL"]==4
+          assert r["status_counts"]["PROVISIONAL"]==2
+          assert r["october_2026"]["status"]=="NOT_YET_RELEASED_AS_OF_2026-11-01"
+          assert r["october_2026"]["observation_rows"]==0
+          assert r["promotion"]=="SOURCE_EVIDENCE_ONLY_NOT_PROMOTED_TO_FACTOR_REGISTRY"
+          print({"status":r["status"],"crosswalk_rows":r["crosswalk_rows"],"status_counts":r["status_counts"],"october":r["october_2026"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: oea-wpi-release-status-crosswalk
+          path: artifacts/macro_full_history_discovery/
+          if-no-files-found: warn
