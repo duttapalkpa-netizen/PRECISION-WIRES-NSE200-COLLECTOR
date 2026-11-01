@@ -292,6 +292,46 @@ def normalize_release_observations(report):
    report["sources"][key]["status"]=item["status"]
  report["normalized_observation_qa"]=qa
 
+
+def apply_macro_series_coverage_overrides(cov, cdf, qa):
+    """Apply one authoritative status map to source_coverage JSON and CSV."""
+    srcs = cov.setdefault("sources", [])
+    overrides = {
+        "macro_indicators": {
+            "rows": int(qa.get("registry_macro_rows", 0)),
+            "status": "DATA_QUALITY_WARN",
+            "reason": "Source-published GDP/CPI/WPI observations are present, but CPI/WPI history remains incomplete; group stays DATA_QUALITY_WARN.",
+        },
+        "government_capex": {
+            "rows": int(qa.get("sources", {}).get("government_capex", {}).get("rows", 0)),
+            "status": "DATA_QUALITY_WARN",
+            "reason": "CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified.",
+        },
+        "inflation_components": {
+            "rows": int(qa.get("inflation_component_rows", 0)),
+            "status": "DATA_QUALITY_WARN",
+            "reason": "Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.",
+        },
+    }
+    for name, item in overrides.items():
+        row = next((v for v in srcs if isinstance(v, dict) and v.get("source") == name), None)
+        if row is None:
+            row = {"source": name}
+            srcs.append(row)
+        selected_path = f"data/external/{name}.csv" if item["rows"] else ""
+        row.update({"status": item["status"], "rows": item["rows"],
+                    "observed_rows": item["rows"], "selected_path": selected_path,
+                    "evidence_path": "outputs/macro_geo/macro_series_observation_qa.json",
+                    "reason": item["reason"]})
+        if cdf is not None and "source" in cdf.columns:
+            mask = cdf["source"].astype(str).eq(name)
+            if mask.any():
+                cdf.loc[mask, "status"] = item["status"]
+                cdf.loc[mask, "selected_path"] = selected_path
+                cdf.loc[mask, "rows"] = item["rows"]
+                cdf.loc[mask, "notes"] = item["reason"]
+    return cdf
+
 def main():
  RAW.mkdir(parents=True,exist_ok=True);OUT.mkdir(parents=True,exist_ok=True);s=requests.Session()
  report={"schema_version":"1.0","observed_at_utc":datetime.now(timezone.utc).isoformat(),"workflow_run_id":os.environ.get("GITHUB_RUN_ID"),"sources":{}}
@@ -332,15 +372,11 @@ def main():
  qa=report.get("normalized_observation_qa",{})
  covpath=OUT/"source_coverage.json"
  if covpath.exists():
-  cov=json.loads(covpath.read_text()); srcs=cov.setdefault("sources",[])
-  for name,path,rows,status,reason in [
-   ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"DATA_QUALITY_WARN","Source-published GDP/CPI/WPI observations are present, but CPI/WPI history remains incomplete; group stays DATA_QUALITY_WARN."),
-   ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified."),
-   ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"DATA_QUALITY_WARN","Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.")
-  ]:
-   row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
-   if row is None: row={"source":name};srcs.append(row)
-   row.update({"status":status,"rows":rows,"observed_rows":rows,"selected_path":path if rows else "","evidence_path":"outputs/macro_geo/macro_series_observation_qa.json","reason":reason})
+  cov=json.loads(covpath.read_text())
+  csvpath=OUT/"source_coverage.csv"
+  cdf=pd.read_csv(csvpath) if csvpath.exists() else None
+  cdf=apply_macro_series_coverage_overrides(cov,cdf,qa)
+  srcs=cov.setdefault("sources",[])
   cov["sources_total"]=len(srcs)
   cov["available"]=sum(1 for x in srcs if x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") and int(x.get("rows",0) or 0)>0)
   cov["not_connected"]=sum(1 for x in srcs if x.get("status")=="NOT_CONNECTED")
@@ -350,20 +386,7 @@ def main():
   cov["macro_series_source_audit_as_of_utc"]=report["as_of_utc"]
   cov["p0_workflow_run_id"]=os.environ.get("GITHUB_RUN_ID")
   cov["macro_series_source_audit_run_id"]=os.environ.get("GITHUB_RUN_ID")
-  csvpath=OUT/"source_coverage.csv"
-  if csvpath.exists():
-   cdf=pd.read_csv(csvpath)
-   for name,path,rows,status,reason in [
-    ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Published GDP/CPI/WPI observations; historical completeness partial."),
-    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA publication timestamp unverified; remains UNKNOWN."),
-    ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Published CPI/WPI component observations; historical backseries partial.")
-   ]:
-    if name in set(cdf["source"].astype(str)):
-     cdf.loc[cdf["source"].astype(str).eq(name),"status"]=status
-     cdf.loc[cdf["source"].astype(str).eq(name),"selected_path"]=path if rows else ""
-     cdf.loc[cdf["source"].astype(str).eq(name),"rows"]=rows
-     cdf.loc[cdf["source"].astype(str).eq(name),"notes"]=reason
-   cdf.to_csv(csvpath,index=False)
+  if cdf is not None: cdf.to_csv(csvpath,index=False)
   covpath.write_text(json.dumps(cov,ensure_ascii=False,indent=2)+"\n")
  p=OUT/"india_macro_series_source_audit.json";p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
  (OUT/"india_macro_series_source_audit.sha256").write_text(sha(p.read_bytes())+"  "+p.name+"\n")
