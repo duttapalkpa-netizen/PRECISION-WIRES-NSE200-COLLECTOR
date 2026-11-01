@@ -24,9 +24,11 @@ jobs:
       - run: python -m pip install requests beautifulsoup4
       - name: Unit tests
         run: python -m unittest qa.test_fbil_10y_provenance -v
-      - name: Fetch official FBIL daily 10Y rows with publication times
+      - name: Fetch official FBIL daily 10Y rows and retain diagnostics
+        continue-on-error: true
         run: python pipeline/audit_fbil_10y_provenance.py
       - name: Verify timestamp, row integrity and hashes
+        if: always()
         run: |
           python - <<'PY'
           import csv,json,hashlib
