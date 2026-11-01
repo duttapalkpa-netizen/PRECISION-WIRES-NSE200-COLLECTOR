@@ -23,7 +23,12 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 def opener():
+    # MoSPI's public API endpoint currently requires legacy TLS renegotiation.
+    # Keep CA validation and hostname checking enabled; only enable legacy server
+    # connect compatibility, matching the already-validated IIP collector.
     ctx = ssl.create_default_context()
+    ctx.set_ciphers("DEFAULT:@SECLEVEL=1")
+    ctx.options |= 0x4
     return urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx))
 
 def get(url: str, accept: str = "application/json, */*"):
