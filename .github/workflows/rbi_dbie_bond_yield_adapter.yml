@@ -1,0 +1,50 @@
+name: RBI DBIE Government Bond Yield Source Adapter QA
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_rbi_dbie_bond_yields.py"
+      - "qa/test_rbi_dbie_bond_yield_adapter.py"
+      - ".github/workflows/rbi_dbie_bond_yield_adapter.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rbi-dbie-bond-yield-adapter
+  cancel-in-progress: false
+jobs:
+  adapter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests
+      - name: Run parser and schema tests
+        run: python -m unittest qa.test_rbi_dbie_bond_yield_adapter -v
+      - name: Collect official RBI DBIE month-end yield curve
+        run: python pipeline/collect_rbi_dbie_bond_yields.py
+      - name: Assert evidence boundaries and hashes
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/india_bond_yields")
+          r=json.loads((p/"rbi_dbie_source_adapter_report.json").read_text())
+          f=p/"rbi_dbie_month_end_gsec_yields.csv"
+          assert r["status"]=="RBI_DBIE_MONTH_END_GSEC_ADAPTER_PASS_EVIDENCE_ONLY"
+          assert r["frequency"]=="MONTHLY" and r["rows"]>0
+          assert r["date_min"]<"2000-01-01"
+          assert r["released_at"]=="UNKNOWN; DBIE CSV/API does not expose per-observation original release timestamps in the retrieved payload."
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==r["csv_sha256"]
+          assert "Daily FBIL" in r["not_equivalent_to"]
+          print({"status":r["status"],"rows":r["rows"],"months":r["distinct_months"],"tenors":r["distinct_tenors"],"date_range":[r["date_min"],r["date_max"]],"promotion":r["factor_registry_promotion"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rbi-dbie-month-end-gsec-yield-source
+          path: artifacts/india_bond_yields/
+          if-no-files-found: warn
