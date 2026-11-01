@@ -3,7 +3,7 @@ name: Quarterly Results Targeted Tests
 on:
   push:
     branches:
-      - audit/prospective-selector-tracking
+      - fix/factor-registry-same-snapshot-reconcile
     paths:
       - ".github/workflows/quarterly_results_targeted_tests.yml"
       - "pipeline/quarterly_results_research.py"
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout audit branch
         uses: actions/checkout@v4
         with:
-          ref: audit/prospective-selector-tracking
+          ref: fix/factor-registry-same-snapshot-reconcile
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
