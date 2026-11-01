@@ -37,7 +37,7 @@ def main():
   csv=pd.read_csv(FILES["coverage_csv"])
   csv_status={str(r["source"]):str(r["status"]) for _,r in csv.iterrows()}
   json_status={str(r["source"]):str(r["status"]) for r in coverage.get("sources",[])}
-  report["checks"]["macro_source_timestamp_matches_snapshot"]=coverage.get("macro_series_source_audit_as_of_utc")==coverage.get("as_of_utc")
+  report["checks"]["macro_source_audit_belongs_to_p0_run"]=str(coverage.get("macro_series_source_audit_run_id",""))==str(coverage.get("p0_workflow_run_id","")) and bool(coverage.get("p0_workflow_run_id"))
   report["checks"]["factor_audit_uses_same_source_snapshot"]=factor.get("source_coverage_as_of")==coverage.get("as_of_utc")
   report["checks"]["source_coverage_csv_json_statuses_match"]=all(csv_status.get(k)==v for k,v in json_status.items() if k in csv_status)
   macro=pd.read_csv(FILES["macro_indicators"])
