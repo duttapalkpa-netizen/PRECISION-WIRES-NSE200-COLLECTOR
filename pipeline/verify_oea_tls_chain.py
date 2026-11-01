@@ -12,19 +12,29 @@ OFFICIAL = {
     "yr1_intermediate": "https://letsencrypt.org/certs/gen-y/int-yr1.pem",
     "root_yr_cross_signed_by_isrg_x1": "https://letsencrypt.org/certs/gen-y/root-yr-by-x1.pem",
 }
+# Immutable source copy of the official PEM files. The live Let's Encrypt site
+# currently has an incomplete TLS chain, so bootstrap over verified GitHub HTTPS.
+LE_WEBSITE_COMMIT = "280bc5b9857a5745be34511ce98c339ac3040273"
+GITHUB_MIRROR = {
+    "yr1_intermediate": "https://raw.githubusercontent.com/letsencrypt/website/280bc5b9857a5745be34511ce98c339ac3040273/static/certs/gen-y/int-yr1.pem",
+    "root_yr_cross_signed_by_isrg_x1": "https://raw.githubusercontent.com/letsencrypt/website/280bc5b9857a5745be34511ce98c339ac3040273/static/certs/gen-y/root-yr-by-x1.pem",
+}
 UA = "PRECISION-WIRES-OEA-TLS-Chain-Verification/1.0"
 
 def sha(b): return hashlib.sha256(b).hexdigest()
-def fetch_official(url):
+def fetch_official(key, canonical_url):
+    # HTTPS validation is never disabled. The immutable GitHub source is the
+    # official Let's Encrypt website repository; OpenSSL verifies CA signatures below.
     ctx = ssl.create_default_context(cafile=certifi.where())
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/x-pem-file,text/plain,*/*"})
+    source_url = GITHUB_MIRROR[key]
+    req = urllib.request.Request(source_url, headers={"User-Agent": UA, "Accept": "text/plain,*/*"})
     with urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx)).open(req, timeout=25) as r:
-        if r.geturl().split("/")[2].lower() != "letsencrypt.org":
-            raise RuntimeError("Unexpected redirect host for official CA certificate")
+        if r.geturl().split("/")[2].lower() != "raw.githubusercontent.com":
+            raise RuntimeError("Unexpected redirect host for immutable CA certificate source")
         body = r.read(200000)
         if not body.startswith(b"-----BEGIN CERTIFICATE-----"):
-            raise RuntimeError("Official CA endpoint did not return PEM")
-        return body, r.geturl()
+            raise RuntimeError("Let's Encrypt source repository did not return PEM")
+        return body, r.geturl(), source_url
 
 def peer_leaf(host):
     p = subprocess.run(
@@ -46,10 +56,11 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True); TLS.mkdir(parents=True, exist_ok=True)
     chain = {}
     for key, url in OFFICIAL.items():
-        body, final = fetch_official(url)
+        body, final, source_url = fetch_official(key, url)
         path = TLS / (key + ".pem"); path.write_bytes(body)
-        chain[key] = {"url": url, "final_url": final, "file": str(path),
-                      "bytes": len(body), "sha256": sha(body)}
+        chain[key] = {"official_url": url, "immutable_source_url": source_url, "final_url": final,
+                      "source_repository": "letsencrypt/website", "source_commit": LE_WEBSITE_COMMIT,
+                      "file": str(path), "bytes": len(body), "sha256": sha(body)}
     yr1 = TLS / "yr1_intermediate.pem"
     rootyr = TLS / "root_yr_cross_signed_by_isrg_x1.pem"
     leaf = TLS / "oea_peer_leaf.pem"
