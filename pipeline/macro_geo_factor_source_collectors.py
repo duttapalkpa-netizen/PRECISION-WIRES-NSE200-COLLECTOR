@@ -379,6 +379,37 @@ def fetch_treasury_yields(session, start, end):
     return rows
 
 
+def fetch_treasury_real_yields(session, start, end):
+    """Collect official US Treasury daily 10-year real yield curve CSV."""
+    rows=[]
+    template=("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/"
+              "daily-treasury-real-yield-curve-rates.csv/{year}/all")
+    for year in range(start.year,end.year+1):
+        response=session.get(template.format(year=year),
+            params={"type":"daily_treasury_real_yield_curve","field_tdr_date_value":str(year),
+                    "page":"","_format":"csv"},timeout=(5,15))
+        response.raise_for_status()
+        frame=pd.read_csv(StringIO(response.content.decode("utf-8-sig",errors="replace")))
+        frame.columns=[str(c).strip().upper() for c in frame.columns]
+        date_col=next((c for c in ("DATE","RECORD DATE") if c in frame.columns),None)
+        real_col=next((c for c in ("10 YR","10 YEAR","10 YR REAL") if c in frame.columns),None)
+        if not date_col or not real_col:
+            raise ValueError("US Treasury real-yield CSV schema mismatch for "+str(year)+": "+str(list(frame.columns)))
+        dates=pd.to_datetime(frame[date_col],errors="coerce")
+        values=pd.to_numeric(frame[real_col],errors="coerce")
+        for i in range(len(frame)):
+            if pd.isna(dates.iloc[i]) or pd.isna(values.iloc[i]): continue
+            day=dates.iloc[i].date()
+            if start<=day<=end:
+                rows.append({"DATE":day.isoformat(),"SERIES":"US_TREASURY_10Y_REAL",
+                    "CLOSE":float(values.iloc[i]),"SOURCE":"US Department of the Treasury",
+                    "SOURCE_SERIES":"10 YR REAL","SOURCE_URL":response.url,
+                    "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+    if not rows:
+        raise ValueError("US Treasury returned no real-yield observations in "+str(start)+".."+str(end))
+    return rows
+
+
 def fetch_dxy_yahoo(session, start, end):
     """Fetch the ICE US Dollar Index ticker from Yahoo Finance; keep provider explicit."""
     period1 = int(datetime.combine(start, datetime.min.time(), tzinfo=timezone.utc).timestamp())
@@ -545,7 +576,7 @@ def validate_observed_series_group(name, frame, start, end, series_map):
             raise ValueError(f"{name} domain QA failed: expected {sorted(expected)}, got {sorted(actual)}")
         if not frame["SOURCE"].astype(str).str.contains("FRED|Treasury", case=False, regex=True).all():
             raise ValueError(f"{name} domain QA failed: source is neither FRED nor US Treasury")
-        if name == "us_real_yields" and set(frame["SOURCE_SERIES"].astype(str)) != {"DFII10"}:
+        if name == "us_real_yields" and set(frame["SOURCE_SERIES"].astype(str)) != {"10 YR REAL"}:
             raise ValueError("us_real_yields domain QA failed: exact DFII10 series required")
     else:
         expected = set(series_map.values())
@@ -575,6 +606,19 @@ def validate_observed_series_group(name, frame, start, end, series_map):
 
 def collect_group(name, series_map, start, end, session):
     rows, failures, fallback_evidence = [], {}, {}
+    if name == "us_real_yields":
+        try:
+            rows=fetch_treasury_real_yields(session,start,end)
+            frame=pd.DataFrame(rows).drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+            qa=validate_observed_series_group(name,frame,start,end,{"10 YR REAL":"US_TREASURY_10Y_REAL"})
+            target=OUT/"us_real_yields.csv";OUT.mkdir(parents=True,exist_ok=True)
+            frame.to_csv(target,index=False)
+            return {**qa,"path":str(target),"source":"US Department of the Treasury",
+                    "requested_series":["10 YR REAL"],"official_source_url":str(frame["SOURCE_URL"].iloc[0])}
+        except Exception as exc:
+            return {"status":"BLOCKED","rows":0,"failures":{"US_TREASURY_REAL_YIELD":type(exc).__name__+": "+str(exc)[:240]},
+                    "notes":"Official Treasury real-yield series unavailable; remains UNKNOWN."}
+
     for series_id, label in series_map.items():
         try:
             for day, value, url in fetch_fred(session, series_id, start, end):
@@ -642,7 +686,7 @@ def main():
         session = requests.Session()
         session.headers.update({"User-Agent": UA, "Accept": "text/csv,*/*"})
         report["groups"]["us_yields"] = collect_group("us_yields", YIELD_SERIES, start, end, session)
-        report["groups"]["us_real_yields"] = collect_group("us_real_yields", {"DFII10": "US_TREASURY_10Y_REAL"}, start, end, session)
+        report["groups"]["us_real_yields"] = collect_group("us_real_yields", {"10 YR REAL": "US_TREASURY_10Y_REAL"}, start, end, session)
         report["groups"]["global_commodity_prices"] = collect_group("global_commodity_prices", COMMODITY_SERIES, start, end, session)
         try:
             report["groups"]["dxy"] = fetch_dxy_yahoo(session, start, end)
