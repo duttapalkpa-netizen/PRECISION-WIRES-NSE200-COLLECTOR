@@ -8,7 +8,7 @@ from pathlib import Path
 CGA_URL="https://cga.nic.in/writereaddata/MonthAccount/92026/DATA2627.htm"
 PIB_URL="https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2330455&lang=1&reg=3"
 OUT=Path("artifacts/cga_capex_fy2026_27_smoke")
-UA="Mozilla/5.0 (compatible; PRECISION-WIRES-CGA-Capex-Smoke/1.1)"
+UA="Mozilla/5.0 (compatible; PRECISION-WIRES-CGA-Capex-Smoke/1.2)"
 EXPECTED={"budget_estimate_crore":1221821,"actual_ytd_crore":654547,"be_utilization_percent":53.6,"coppy_percent":51.8}
 class Text(HTMLParser):
  def __init__(self): super().__init__(); self.parts=[]
@@ -25,17 +25,21 @@ def get(url):
  if m["http_status"]!=200 or not b: raise RuntimeError(f"Official source HTTP failure: {m}")
  p=Text(); p.feed(b.decode("utf-8-sig",errors="replace"))
  return b,p.text(),m
+def capex_row_values(text):
+ i=text.lower().find("capital expenditure")
+ if i<0:return []
+ segment=text[i:i+300]
+ tokens=re.findall(r"(?<!\d)\d[\d,]*(?:\.\d+)?%?",segment)
+ return tokens[:4]
 def capex_row_matches(text):
- pattern=r"Capital Expenditure.{0,180}?1221821.{0,60}?654547.{0,30}?53\.6%.{0,30}?51\.8%"
- return bool(re.search(pattern,text,re.I|re.S))
+ return capex_row_values(text)==["1221821","654547","53.6%","(51.8%)"]
 def main():
  OUT.mkdir(parents=True,exist_ok=True); retrieved=datetime.now(timezone.utc).isoformat()
  cga_raw,cga_text,cga_meta=get(CGA_URL); pib_raw,pib_text,pib_meta=get(PIB_URL)
  if not cga_meta["final_url"].startswith("https://cga.nic.in/") or not pib_meta["final_url"].startswith("https://www.pib.gov.in/"):
   raise RuntimeError("CGA/PIB final host mismatch")
  norm=re.sub(r"\s+"," ",cga_text)
- checks={
-  "CGA_official_host":True,"PIB_official_host":True,
+ checks={"CGA_official_host":True,"PIB_official_host":True,
   "CGA_report_as_at_end_September_2026":"AS AT THE END OF SEPTEMBER 2026" in norm.upper(),
   "FY_2026_27_present":"2026-2027" in norm,
   "capex_BE_actual_percent_row_matches":capex_row_matches(norm),
@@ -43,7 +47,9 @@ def main():
   "PIB_capital_account_actual_654547":"6,54,547 crore" in pib_text,
   "PIB_capital_account_share_47_7":"47.7%" in pib_text,
   "CGA_provisional_unaudited_notice":"unaudited provisional figures" in norm.lower()}
- if not all(checks.values()): raise RuntimeError(f"CGA capex domain QA failed: {[k for k,v in checks.items() if not v]}")
+ if not all(checks.values()):
+  i=norm.lower().find("capital expenditure")
+  raise RuntimeError(f"CGA capex domain QA failed: {[k for k,v in checks.items() if not v]}; row={norm[i:i+300]}")
  (OUT/"CGA_Monthly_Accounts_September_2026.html").write_bytes(cga_raw)
  (OUT/"PIB_Monthly_Accounts_Review_September_2026.html").write_bytes(pib_raw)
  (OUT/"CGA_text.txt").write_text(cga_text+"\n"); (OUT/"PIB_text.txt").write_text(pib_text+"\n")
