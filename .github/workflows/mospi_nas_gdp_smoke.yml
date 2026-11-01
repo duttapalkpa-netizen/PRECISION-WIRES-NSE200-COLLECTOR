@@ -1,0 +1,57 @@
+name: MoSPI NAS GDP Bounded Live Smoke
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_mospi_nas_gdp_smoke.py"
+      - "qa/test_mospi_nas_gdp_smoke.py"
+      - ".github/workflows/mospi_nas_gdp_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mospi-nas-gdp-bounded-smoke
+  cancel-in-progress: false
+jobs:
+  gdp-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded workbook dependency
+        run: python -m pip install openpyxl
+      - name: Run focused workbook QA tests
+        run: python -m unittest qa.test_mospi_nas_gdp_smoke -v
+      - name: Collect exact public MoSPI GDP catalogue workbook
+        run: python pipeline/collect_mospi_nas_gdp_smoke.py
+      - name: Assert evidence and provenance files
+        run: |
+          set -euo pipefail
+          test -s artifacts/mospi_nas_gdp_smoke/domain_qa.json
+          test -s artifacts/mospi_nas_gdp_smoke/manifest.json
+          test -s artifacts/mospi_nas_gdp_smoke/workbook_inventory.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("artifacts/mospi_nas_gdp_smoke")
+          qa=json.loads((root/"domain_qa.json").read_text())
+          manifest=json.loads((root/"manifest.json").read_text())
+          assert qa["status"] == "PASS"
+          assert qa["table_id"] == "AEQEAFY2607QTR"
+          assert qa["base_year"] == "2022-23"
+          assert qa["workbook"]["numeric_cells"] > 0
+          assert len(manifest["sha256"]) == 64
+          assert manifest["http_status"] == 200
+          print({"domain_qa":"PASS","table_id":qa["table_id"],
+                 "numeric_cells":qa["workbook"]["numeric_cells"],
+                 "sha256":manifest["sha256"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mospi-nas-gdp-bounded-live-smoke
+          path: artifacts/mospi_nas_gdp_smoke/
+          if-no-files-found: warn
