@@ -14,7 +14,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 from urllib.parse import urlencode,urljoin,quote
 import requests,pandas as pd
-from selectolax.parser import HTMLParser
+from selectolax.lexbor import LexborHTMLParser as HTMLParser
 API="https://api.mospi.gov.in/api/esankhyiki/"
 LIST=API+"cms/golden-sheet/list"
 DOWNLOAD=API+"file/download/"
