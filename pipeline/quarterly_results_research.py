@@ -682,7 +682,12 @@ def main():
                     "isin": bool(re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}[0-9]", str(item.get("ISIN", "")))),
                 }
                 validation_rows.append({"EVENT_KIND": kind, "RESULT_DECLARED": bool(item.get("RESULT_DECLARED", False)), "SYMBOL": item.get("SYMBOL", ""), "ISIN": item.get("ISIN", ""), "SOURCE_URL": item.get("SOURCE_URL", ""), "PUBLICATION_TIMESTAMP": item.get("PUBLICATION_TIMESTAMP") or item.get("BROADCAST_AT", ""), "REPORTING_PERIOD": item.get("PERIOD_END", ""), **{f"{name.upper()}_VALID": value for name, value in fields.items()}, "RECORD_VALID": all(fields.values()), "MISSING_FIELDS": ";".join(name for name, value in fields.items() if not value), "SOURCE_RECORD_SHA256": item.get("SOURCE_RECORD_SHA256", "")})
-            manifest["sources"][kind] = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url, "raw_response_file": str(raw_path)}
+            source_meta = {"status": "AVAILABLE", "rows": len(raw), "response_sha256": digest(payload), "request_url": source_url, "raw_response_file": str(raw_path)}
+            if kind == "RESULT_DISCLOSURE":
+                selected_diag = next((d for d in reversed(FETCH_DIAGNOSTICS)
+                                      if d.get("endpoint") == INTEGRATED_RESULTS_URL and d.get("pagination")), {})
+                source_meta["pagination"] = selected_diag.get("pagination", {"complete": False, "reason": "pagination diagnostics unavailable"})
+            manifest["sources"][kind] = source_meta
         except Exception as exc:
             if kind == "RESULT_DISCLOSURE":
                 manifest["integrated_filing_route_diagnostics"] = list(FETCH_DIAGNOSTICS)
