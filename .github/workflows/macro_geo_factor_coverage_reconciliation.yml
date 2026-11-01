@@ -72,6 +72,7 @@ jobs:
             data/processed/symbol_session_coverage.csv
             data/external/macro_series_observations.csv
             data/external/macro_indicators.csv
+            data/external/inflation_components.csv
             data/external/government_capex.csv
             outputs/macro_geo/factor_source_collection_report.json
             outputs/macro_geo/factor_coverage_audit.csv
