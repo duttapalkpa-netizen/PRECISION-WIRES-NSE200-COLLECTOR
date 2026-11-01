@@ -13,6 +13,7 @@ class GDPWorkbookSmokeTests(unittest.TestCase):
             ws.title = "GDP"
             ws.append(["Quarter", "GDP at constant prices"])
             ws.append(["Q1 FY 2026-27", 81.36])
+            ws.append([None, None, "sparse trailing value"])
             wb.save(path)
             result = workbook_inventory(path)
             self.assertGreater(result["numeric_cells"], 0)
