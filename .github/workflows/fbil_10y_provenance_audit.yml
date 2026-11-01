@@ -61,7 +61,9 @@ jobs:
           rows=list(__import__("csv").DictReader((p/"fbil_10y_archive_observations.csv").open()))
           assert parse["status"] == "FBIL_ARCHIVE_10Y_ROWS_PARSED_RELEASE_TIMESTAMP_MISSING"
           assert len(rows) >= 200 and len({x["OBSERVATION_DATE"] for x in rows}) == len(rows)
-          assert len(parse["quarantined_files"]) == 1, parse["quarantined_files"]
+          # Current backfill is expected to contain no filename/workbook date
+          # mismatches; any future mismatch must fail closed and be quarantined.
+          assert parse["quarantined_files"] == [], parse["quarantined_files"]
           assert parse["errors"] == [], parse["errors"]
           assert parse["release_timestamp_coverage"] == 0
           assert r["commercial_permission"] == "NOT_OBTAINED; written permission required before production use"
