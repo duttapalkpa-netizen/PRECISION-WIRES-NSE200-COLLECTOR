@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Read-only probe of FBIL's first-party GSEC data API; never bypasses auth."""
-import hashlib, json
+"""Read-only probe of FBIL's first-party GSEC index and published-file route."""
+import hashlib, json, re
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 import requests
 
 BASE = "https://www.fbil.org.in/wasdm"
@@ -13,46 +14,64 @@ TO_DATE = "2026-11-01"
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     observed = datetime.now(timezone.utc).isoformat()
-    url = BASE + "/gsec/fetchfiltered"
-    params = {"fromDate": FROM_DATE, "toDate": TO_DATE, "authenticated": "false"}
-    response = requests.get(url, params=params, headers={
+    session = requests.Session()
+    session.headers.update({
         "User-Agent": "Mozilla/5.0 (compatible; PRECISION-WIRES provenance audit)",
         "Accept": "application/json, text/plain, */*",
         "Referer": "https://www.fbil.org.in/"
-    }, timeout=(10, 45))
+    })
+    url = BASE + "/gsec/fetchfiltered"
+    params = {"fromDate": FROM_DATE, "toDate": TO_DATE, "authenticated": "false"}
+    response = session.get(url, params=params, timeout=(10, 45))
     raw = response.content
     (OUT / "fbil_gsec_api_response.bin").write_bytes(raw)
+    response.raise_for_status()
+    payload = response.json()
+    if not isinstance(payload, list):
+        raise RuntimeError("FBIL GSEC index response is not a JSON list")
     report = {
-        "endpoint": url, "request_params": params, "final_url": response.url,
+        "index_endpoint": url, "request_params": params, "final_url": response.url,
         "http_status": response.status_code, "content_type": response.headers.get("Content-Type"),
         "response_bytes": len(raw), "response_sha256": hashlib.sha256(raw).hexdigest(),
         "observed_at_utc": observed, "authentication_parameter": "false",
-        "auth_bypass_attempted": False
+        "auth_bypass_attempted": False, "index_record_count": len(payload),
+        "index_sample": payload[:3], "published_file_probes": []
     }
-    try:
-        payload = response.json()
-        report["json_type"] = type(payload).__name__
-        if isinstance(payload, dict):
-            report["top_level_keys"] = sorted(payload.keys())
-            data = next((payload[k] for k in ("data", "result", "records", "content") if isinstance(payload.get(k), list)), None)
-        elif isinstance(payload, list):
-            data = payload
-        else:
-            data = None
-        report["record_count"] = len(data) if isinstance(data, list) else None
-        report["sample_record_keys"] = sorted(data[0].keys()) if data and isinstance(data[0], dict) else []
-        report["sample_records"] = data[:3] if isinstance(data, list) else None
-        report["response_preview"] = None
-    except ValueError:
-        report["json_type"] = "non_json"
-        report["record_count"] = None
-        report["response_preview"] = raw[:1200].decode("utf-8", "replace")
+    # Probe only the three newest archive dates; this is a read-only GET of the
+    # first-party route explicitly called by the FBIL frontend.
+    dates = []
+    for item in payload:
+        if isinstance(item, dict):
+            value = str(item.get("processRunDate", ""))
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                dates.append(value)
+    for day in sorted(set(dates), reverse=True)[:3]:
+        download_url = BASE + "/gsec/downloadPublished"
+        try:
+            r = session.get(download_url, params={"date": day}, timeout=(10, 60))
+            body = r.content
+            safe_name = day.replace("-", "")
+            path = OUT / f"fbil_gsec_published_{safe_name}.bin"
+            path.write_bytes(body)
+            report["published_file_probes"].append({
+                "date": day, "url": r.url, "http_status": r.status_code,
+                "content_type": r.headers.get("Content-Type"),
+                "content_disposition": r.headers.get("Content-Disposition"),
+                "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest(),
+                "saved_file": path.name,
+                "body_preview": body[:240].decode("utf-8", "replace")
+                    if "text" in (r.headers.get("Content-Type") or "").lower()
+                    or "json" in (r.headers.get("Content-Type") or "").lower()
+                    else None
+            })
+        except requests.RequestException as exc:
+            report["published_file_probes"].append({"date": day, "error": str(exc)})
     (OUT / "fbil_gsec_api_probe.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
-    if response.status_code >= 400:
-        raise RuntimeError(f"FBIL GSEC API returned HTTP {response.status_code}; raw response retained")
-    if report.get("record_count") is None:
-        raise RuntimeError("FBIL GSEC API response is not a recognized JSON record collection; diagnostics retained")
+    if not payload:
+        raise RuntimeError("FBIL GSEC index returned no archive records")
+    if not report["published_file_probes"]:
+        raise RuntimeError("No dated FBIL published-file route was probed")
 
 if __name__ == "__main__":
     main()
