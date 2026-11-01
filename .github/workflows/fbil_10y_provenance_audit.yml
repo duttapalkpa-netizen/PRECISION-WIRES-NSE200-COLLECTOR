@@ -1,0 +1,51 @@
+name: FBIL Daily 10Y G-Sec Provenance Audit
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/audit_fbil_10y_provenance.py"
+      - "qa/test_fbil_10y_provenance.py"
+      - ".github/workflows/fbil_10y_provenance_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fbil-10y-provenance-audit
+  cancel-in-progress: false
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests beautifulsoup4
+      - name: Unit tests
+        run: python -m unittest qa.test_fbil_10y_provenance -v
+      - name: Fetch official FBIL daily 10Y rows with publication times
+        run: python pipeline/audit_fbil_10y_provenance.py
+      - name: Verify timestamp, row integrity and hashes
+        run: |
+          python - <<'PY'
+          import csv,json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/fbil_10y_provenance")
+          r=json.loads((p/"fbil_10y_provenance_report.json").read_text())
+          f=p/"fbil_10y_daily.csv"
+          rows=list(csv.DictReader(f.open()))
+          assert r["status"]=="FBIL_DAILY_10Y_PUBLISHER_TIMESTAMP_AUDIT_PASS"
+          assert len(rows)==r["rows"]>0
+          assert len({x["OBSERVATION_DATE"] for x in rows})==len(rows)
+          assert all(x["TENOR"]=="10YR" and x["PUBLISHED_AT_IST"] and x["RELEASED_AT_UTC"] for x in rows)
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==r["normalized_csv_sha256"]
+          assert r["factor_registry_promotion"].startswith("NOT_PROMOTED")
+          print({"status":r["status"],"rows":r["rows"],"date_range":[r["date_min"],r["date_max"]],"sha256":r["normalized_csv_sha256"],"promotion":r["factor_registry_promotion"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fbil-daily-10y-provenance-audit
+          path: artifacts/fbil_10y_provenance/
+          if-no-files-found: error
