@@ -5,8 +5,10 @@ on:
     paths:
       - "pipeline/audit_fbil_10y_provenance.py"
       - "pipeline/probe_fbil_gsec_api.py"
+      - "pipeline/parse_fbil_gsec_archives.py"
       - "pipeline/discover_fbil_js_endpoints.py"
       - "qa/test_fbil_10y_provenance.py"
+      - "qa/test_fbil_archive_parser.py"
       - ".github/workflows/fbil_10y_provenance_audit.yml"
   workflow_dispatch:
 permissions:
@@ -23,33 +25,38 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install requests beautifulsoup4
+      - run: python -m pip install requests beautifulsoup4 openpyxl
       - name: Unit tests
-        run: python -m unittest qa.test_fbil_10y_provenance -v
+        run: |
+          python -m unittest qa.test_fbil_10y_provenance -v
+          python -m unittest qa.test_fbil_archive_parser -v
       - name: Discover official FBIL JavaScript bundles and API/archive endpoints
         run: python pipeline/discover_fbil_js_endpoints.py
       - name: Probe official FBIL GSEC JSON endpoint (read-only)
         run: python pipeline/probe_fbil_gsec_api.py
-      - name: Fetch official FBIL daily 10Y rows and retain diagnostics
+      - name: Parse official FBIL published XLSX archives (date-only; no inferred release time)
+        continue-on-error: true
+        run: python pipeline/parse_fbil_gsec_archives.py
+      - name: Retain legacy homepage parser diagnostics
         continue-on-error: true
         run: python pipeline/audit_fbil_10y_provenance.py
-      - name: Verify timestamp, row integrity and hashes
-        if: always() && hashFiles('artifacts/fbil_10y_provenance/fbil_10y_provenance_report.json') != ''
+      - name: Verify archive row integrity and hashes; enforce timestamp hold
+        if: always() && hashFiles('artifacts/fbil_10y_provenance/fbil_10y_archive_parse_report.json') != ''
         run: |
           python - <<'PY'
           import csv,json,hashlib
           from pathlib import Path
           p=Path("artifacts/fbil_10y_provenance")
-          r=json.loads((p/"fbil_10y_provenance_report.json").read_text())
-          f=p/"fbil_10y_daily.csv"
+          r=json.loads((p/"fbil_10y_archive_parse_report.json").read_text())
+          f=p/"fbil_10y_archive_observations.csv"
           rows=list(csv.DictReader(f.open()))
-          assert r["status"]=="FBIL_DAILY_10Y_PUBLISHER_TIMESTAMP_AUDIT_PASS"
-          assert len(rows)==r["rows"]>0
+          assert len(rows)==r["parsed_rows"]>0
           assert len({x["OBSERVATION_DATE"] for x in rows})==len(rows)
-          assert all(x["TENOR"]=="10YR" and x["PUBLISHED_AT_IST"] and x["RELEASED_AT_UTC"] for x in rows)
+          assert all(x["TENOR"]=="10YR" and x["YTM_SEMI_ANNUAL_PCT"] and x["YTM_ANNUALIZED_PCT"] for x in rows)
+          assert all(not x["PUBLISHED_AT_IST"] and not x["RELEASED_AT_UTC"] for x in rows)
           assert hashlib.sha256(f.read_bytes()).hexdigest()==r["normalized_csv_sha256"]
           assert r["factor_registry_promotion"].startswith("NOT_PROMOTED")
-          print({"status":r["status"],"rows":r["rows"],"date_range":[r["date_min"],r["date_max"]],"sha256":r["normalized_csv_sha256"],"promotion":r["factor_registry_promotion"]})
+          print({"status":r["status"],"rows":r["parsed_rows"],"date_range":[r["date_min"],r["date_max"]],"sha256":r["normalized_csv_sha256"],"timestamp_coverage":r["release_timestamp_coverage"],"promotion":r["factor_registry_promotion"]})
           PY
       - uses: actions/upload-artifact@v4
         if: always()
