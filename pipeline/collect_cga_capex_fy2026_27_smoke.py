@@ -32,7 +32,7 @@ def capex_row_values(text):
  tokens=re.findall(r"(?<!\d)\d[\d,]*(?:\.\d+)?%?",segment)
  return tokens[:4]
 def capex_row_matches(text):
- return capex_row_values(text)==["1221821","654547","53.6%","(51.8%)"]
+ return capex_row_values(text)==["1221821","654547","53.6%","51.8%"]
 def main():
  OUT.mkdir(parents=True,exist_ok=True); retrieved=datetime.now(timezone.utc).isoformat()
  cga_raw,cga_text,cga_meta=get(CGA_URL); pib_raw,pib_text,pib_meta=get(PIB_URL)
