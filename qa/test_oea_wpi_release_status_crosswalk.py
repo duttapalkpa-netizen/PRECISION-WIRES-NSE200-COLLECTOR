@@ -3,7 +3,7 @@ from pipeline.build_oea_wpi_release_status_crosswalk import build_crosswalk
 
 class WPIReleaseStatusCrosswalkTests(unittest.TestCase):
     def test_only_officially_labelled_months_promoted(self):
-        manifest={"workbook":{"periods":["2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"]}}
+        manifest={"workbook":{"periods":["2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"]}}
         evidence={
           "source_url":"https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2323098&lang=1&reg=1",
           "published_date":"2026-10-14",
