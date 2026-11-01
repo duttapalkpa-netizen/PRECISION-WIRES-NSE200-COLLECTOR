@@ -39,9 +39,12 @@ def period_label(value):
     if value is None:
         return None
     s = str(value).strip()
-    m = re.search(r"(?i)\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s*[-/]?\s*(20\d{2})\b", s)
+    m = re.search(r"(?i)\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s*[-/]?\s*(\d{2}|20\d{2})\b", s)
     if m:
-        return f"{m.group(2)}-{MONTHS[m.group(1).lower()[:3]]:02d}"
+        year = m.group(2)
+        # OEA workbook headers use both Apr-2023 and Apr-23 conventions.
+        year = int(year) + (2000 if len(year) == 2 else 0)
+        return f"{year:04d}-{MONTHS[m.group(1).lower()[:3]]:02d}"
     m = re.search(r"\b(20\d{2})[-/](0?[1-9]|1[0-2])\b", s)
     if m:
         return f"{m.group(1)}-{int(m.group(2)):02d}"
@@ -165,7 +168,9 @@ def main():
                      "item_key_count":len(item_pairs), "distinct_item_code_count":len(item_codes),
                      "missing_item_code_observations":sum(1 for x in all_obs if not x["item_code"]),
                      "observation_count":len(all_obs), "period_count":len(periods),
-                     "periods":periods,
+                     "periods":periods, "latest_observation_period":max(periods) if periods else None,
+                     "requested_period":f"{period[:4]}-{period[4:6]}",
+                     "requested_period_included":f"{period[:4]}-{period[4:6]}" in periods,
                      "revision_status":"NOT_STATED_IN_WORKBOOK; no provisional/final label inferred"},
         "normalized_csv": {"file":csv_path.name, "rows":len(all_obs),
                            "sha256":sha(csv_path.read_bytes())},
