@@ -250,6 +250,7 @@ def main():
   print(json.dumps({"source":key,"status":x["status"],"vintages":len(x.get("vintages",[])),"files":len(x.get("captured_files",[]))}))
  report["status"]="SOURCE_ACQUISITION_AUDITED_WITH_NORMALIZATION_GAPS";report["as_of_utc"]=datetime.now(timezone.utc).isoformat()
  normalize_release_observations(report)
+ qa=report.get("normalized_observation_qa",{})
  covpath=OUT/"source_coverage.json"
  if covpath.exists():
   cov=json.loads(covpath.read_text()); srcs=cov.setdefault("sources",[])
