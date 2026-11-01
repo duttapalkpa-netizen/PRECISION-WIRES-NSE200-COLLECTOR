@@ -584,7 +584,7 @@ def collect_group(name, series_map, start, end, session):
                 common = {"DATE": day, "SOURCE": "Federal Reserve Bank of St. Louis FRED",
                           "SOURCE_SERIES": series_id, "SOURCE_URL": url,
                           "OBSERVED_AT_UTC": datetime.now(timezone.utc).isoformat()}
-                if name == "us_yields":
+                if name in {"us_yields","us_real_yields"}:
                     rows.append({**common, "SERIES": label, "CLOSE": value})
                 else:
                     rows.append({**common, "COMMODITY": label, "CLOSE": value})
