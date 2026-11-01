@@ -171,12 +171,15 @@ def main():
  if csv_path.exists():
   csv_frame=pd.read_csv(csv_path)
   for source_name,item in by_name.items():
-   if source_name in set(csv_frame["source"].astype(str)):
-    row=csv_frame["source"].astype(str).eq(source_name)
-    csv_frame.loc[row,"status"]=item.get("status","NOT_CONNECTED")
-    csv_frame.loc[row,"rows"]=int(item.get("rows",0) or 0)
-    csv_frame.loc[row,"selected_path"]=item.get("selected_path","")
-    csv_frame.loc[row,"notes"]=item.get("notes",item.get("reason",""))
+   if source_name not in set(csv_frame["source"].astype(str)):
+    new_row={column:None for column in csv_frame.columns}
+    new_row["source"]=source_name
+    csv_frame=pd.concat([csv_frame,pd.DataFrame([new_row])],ignore_index=True)
+   row=csv_frame["source"].astype(str).eq(source_name)
+   csv_frame.loc[row,"status"]=item.get("status","NOT_CONNECTED")
+   csv_frame.loc[row,"rows"]=int(item.get("rows",0) or 0)
+   csv_frame.loc[row,"selected_path"]=item.get("selected_path","")
+   csv_frame.loc[row,"notes"]=item.get("notes",item.get("reason",""))
   csv_frame.to_csv(csv_path,index=False)
  # Re-run registry audit against reconciled observed coverage.
  print(json.dumps({"groups":evidence,"coverage_file":str(COVERAGE)},indent=2))
