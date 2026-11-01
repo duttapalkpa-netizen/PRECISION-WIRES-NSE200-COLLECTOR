@@ -370,17 +370,21 @@ def fetch_nse(endpoint, start, end):
                     page_requests = []
                     max_pages = min(20, max(1, (total_count + max(page_size, 1) - 1) // max(page_size, 1)))
                     while len(collected) < total_count and len(page_requests) < max_pages:
-                        next_page = current_page + 1
+                        # NSE query parameter is one-based while response.page is
+                        # zero-based: request page 2 after response page 0.
+                        next_page = current_page + 2
+                        expected_response_page = current_page + 1
                         page_params = {**request_params, "page": str(next_page), "size": str(page_size)}
                         page_response = session.get(candidate, params=page_params, timeout=(5, 30))
                         page_response.raise_for_status()
                         page_payload = page_response.json()
                         page_rows = records_from(page_payload)
                         page_meta = page_payload if isinstance(page_payload, dict) else {}
-                        actual_page = int(page_meta.get("page", next_page))
-                        page_requests.append({"requested_page": next_page, "returned_page": actual_page,
-                                              "row_count": len(page_rows), "total_count": page_meta.get("totalCount")})
-                        if not page_rows:
+                        actual_page = int(page_meta.get("page", -1))
+                        page_requests.append({"requested_page": next_page, "expected_response_page": expected_response_page,
+                                              "returned_page": actual_page, "row_count": len(page_rows),
+                                              "total_count": page_meta.get("totalCount")})
+                        if actual_page != expected_response_page or not page_rows:
                             break
                         added = 0
                         for page_row in page_rows:
@@ -390,14 +394,22 @@ def fetch_nse(endpoint, start, end):
                         current_page = actual_page
                         if added == 0:
                             break
+                    complete = len(collected) >= total_count
                     diagnostic["pagination"] = {
                         "reported_total_count": total_count, "page_size": page_size,
                         "pages_fetched_including_first": 1 + len(page_requests),
                         "additional_page_requests": page_requests,
                         "unique_rows_collected": len(collected),
-                        "complete": len(collected) >= total_count,
-                        "page_cap": max_pages
+                        "complete": complete,
+                        "page_cap": max_pages,
+                        "pagination_contract": "one-based request page; zero-based response page",
                     }
+                    # Persist the complete collected dataset in the raw envelope;
+                    # the initial HTTP page alone is not the accepted snapshot.
+                    if isinstance(payload, dict):
+                        payload = dict(payload)
+                        payload["data"] = collected
+                        payload["_audit_pagination"] = diagnostic["pagination"]
                     rows = collected
                 else:
                     diagnostic["pagination"] = {"complete": False, "reason": "NSE response omitted totalCount envelope"}
