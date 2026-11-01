@@ -84,6 +84,8 @@ jobs:
           name: macro-geo-factor-source-repair
           path: |
             data/external/us_yields.csv
+            data/external/us_real_yields.csv
+            outputs/macro_geo/source_coverage.csv
             data/external/commodity_prices.csv
             data/external/dxy.csv
             data/external/global_policy_events.csv
