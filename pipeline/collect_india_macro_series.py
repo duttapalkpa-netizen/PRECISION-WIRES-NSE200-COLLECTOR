@@ -198,6 +198,16 @@ def normalize_release_observations(report):
   macro_path=Path("data/external/macro_indicators.csv")
   macro[["DATE","INDICATOR","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC","UNIT","PERIOD","VINTAGE","SOURCE_SHA256","RELEASE_STATUS"]].to_csv(macro_path,index=False)
   qa["registry_macro_rows"]=int(len(macro));qa["registry_macro_sha256"]=sha(macro_path.read_bytes())
+  inflation=macro.copy()
+  inflation["COUNTRY"]="INDIA"
+  inflation["COMPONENT"]=inflation["INDICATOR"]
+  inflation["RELEASED_AT"]=inflation["RELEASED_AT"].astype(str)
+  inflation["SOURCE"]=inflation["SOURCE"].astype(str)
+  inflation["OBSERVED_AT_UTC"]=report.get("observed_at_utc")
+  inflation_path=Path("data/external/inflation_components.csv")
+  inflation[["DATE","COUNTRY","COMPONENT","VALUE","RELEASED_AT","SOURCE_URL","SOURCE","OBSERVED_AT_UTC","UNIT","PERIOD","VINTAGE","SOURCE_SHA256"]].to_csv(inflation_path,index=False)
+  qa["inflation_component_rows"]=int(len(inflation))
+  qa["inflation_components_sha256"]=sha(inflation_path.read_bytes())
  else: qa["registry_macro_rows"]=0
  # Capex is normalized separately, but release time remains unknown and is
  # intentionally not inferred from retrieval time or HTTP metadata.
@@ -256,7 +266,7 @@ def main():
   cov=json.loads(covpath.read_text()); srcs=cov.setdefault("sources",[])
   for name,path,rows,status,reason in [
    ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Only source-published GDP/CPI/WPI observations with publication timestamps are promoted; historical completeness remains partial."),
-   ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified.")
+   ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA actual observations captured, but publication timestamp and complete point-in-time release vintage are unverified."),\n   ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Source-published CPI/WPI components with publication timestamps; historical backseries remains partial.")
   ]:
    row=next((v for v in srcs if isinstance(v,dict) and v.get("source")==name),None)
    if row is None: row={"source":name};srcs.append(row)
@@ -275,7 +285,7 @@ def main():
    cdf=pd.read_csv(csvpath)
    for name,path,rows,status,reason in [
     ("macro_indicators","data/external/macro_indicators.csv",int(qa.get("registry_macro_rows",0)),"AVAILABLE" if int(qa.get("registry_macro_rows",0))>0 else "DATA_QUALITY_WARN","Published GDP/CPI/WPI observations; historical completeness partial."),
-    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA publication timestamp unverified; remains UNKNOWN.")
+    ("government_capex","data/external/government_capex.csv",int(qa["sources"]["government_capex"]["rows"]),"DATA_QUALITY_WARN","CGA publication timestamp unverified; remains UNKNOWN."),\n    ("inflation_components","data/external/inflation_components.csv",int(qa.get("inflation_component_rows",0)),"AVAILABLE" if int(qa.get("inflation_component_rows",0))>0 else "DATA_QUALITY_WARN","Published CPI/WPI component observations; historical backseries partial.")
    ]:
     if name in set(cdf["source"].astype(str)):
      cdf.loc[cdf["source"].astype(str).eq(name),"status"]=status
