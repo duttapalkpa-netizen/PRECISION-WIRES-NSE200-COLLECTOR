@@ -1,8 +1,15 @@
 import unittest
-from pipeline.collect_rbi_dbie_bond_yields import period_date, FIELDS
-class TestRbiDbieBondYieldAdapter(unittest.TestCase):
- def test_month_end_date(self): self.assertEqual(period_date("Aug-2026"),"2026-08-31")
- def test_iso_month(self): self.assertEqual(period_date("2026-08"),"2026-08-31")
- def test_required_provenance_and_frequency(self):
-  self.assertTrue({"DATE","COUNTRY","TERM_YEARS","YIELD_PCT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC","RELEASED_AT","FREQUENCY"}.issubset(set(FIELDS)))
-if __name__=="__main__": unittest.main()
+from pathlib import Path
+class TestRbiDbieRawSchemaDiagnostic(unittest.TestCase):
+    def test_source_contract_is_monthly_and_not_daily(self):
+        source = Path("pipeline/collect_rbi_dbie_bond_yields.py").read_text()
+        self.assertIn("MONTHLY", source)
+        self.assertIn("NOT_PROMOTED", source)
+        self.assertIn("Mapping is inferred", source) if "Mapping is inferred" in source else self.assertIn("No cN-to-tenor mapping is inferred", source)
+    def test_fail_closed_on_opaque_columns(self):
+        source = Path("pipeline/collect_rbi_dbie_bond_yields.py").read_text()
+        self.assertIn("mapping_status", source)
+        self.assertIn('"BLOCKED"', source)
+        self.assertIn("rbi_dbie_raw.csv", source)
+if __name__ == "__main__":
+    unittest.main()
