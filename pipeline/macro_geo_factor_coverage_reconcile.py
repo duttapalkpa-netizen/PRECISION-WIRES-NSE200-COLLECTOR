@@ -15,6 +15,35 @@ MAP={
  "global_policy_events":("global_policy_events.csv","global_policy_events"),
  "gold_prices_monthly":("gold_prices_monthly.csv","gold_prices_monthly"),
 }
+def latest_evidence_timestamp(coverage, report, root=ROOT):
+ """Return the latest real evidence timestamp represented in this reconciliation snapshot."""
+ candidates=[]
+ for raw in (coverage.get("as_of_utc"), report.get("observed_at_utc")):
+  parsed=pd.to_datetime(raw,errors="coerce",utc=True)
+  if pd.notna(parsed): candidates.append(parsed)
+ for filename,_ in MAP.values():
+  path=root/"data/external"/filename
+  if not path.exists(): continue
+  try:
+   frame=pd.read_csv(path)
+  except Exception:
+   continue
+  col=next((c for c in frame.columns if str(c).strip().upper()=="OBSERVED_AT_UTC"),None)
+  if col is None: continue
+  parsed=pd.to_datetime(frame[col],errors="coerce",utc=True).dropna()
+  if not parsed.empty: candidates.append(parsed.max())
+ if not candidates:
+  raise RuntimeError("No valid UTC evidence timestamp; refusing to emit an undated factor snapshot")
+ return max(candidates).isoformat().replace("+00:00","Z")
+
+
+def policy_events_promotable(policy_date_qa, collector_status):
+ """Promote policy events only when row-level checks AND collector domain QA pass."""
+ return (collector_status == "COLLECTED_AND_DOMAIN_QA_PASSED"
+         and policy_date_qa.get("status") == "VALIDATED"
+         and int(policy_date_qa.get("rows_eligible_for_event_study") or 0) > 0)
+
+
 def validate_policy_event_frame(policy_frame):
  """Validate each policy row against reviewed official URL/date/type and schema."""
  import sys
@@ -136,7 +165,8 @@ def main():
  policy_frame=pd.read_csv(policy_path) if policy_path.exists() else pd.DataFrame()
  policy_date_qa=validate_policy_event_frame(policy_frame)
  coverage["policy_event_date_qa"]=policy_date_qa
- policy_valid=(policy_date_qa["status"]=="VALIDATED" and policy_date_qa["rows_eligible_for_event_study"]>0)
+ policy_collector_status=report.get("groups",{}).get("global_policy_events",{}).get("status","BLOCKED")
+ policy_valid=policy_events_promotable(policy_date_qa,policy_collector_status)
  policy_group={"source":"global_policy_events",
                "status":"AVAILABLE" if policy_valid else ("DATA_QUALITY_WARN" if policy_date_qa["observed_rows"] else "BLOCKED"),
                "rows":policy_date_qa["rows_eligible_for_event_study"] if policy_valid else 0,
@@ -148,12 +178,13 @@ def main():
                "missing_columns":[] if policy_valid else ["complete event-date/provenance validation"],
                "notes":("All observed policy events have complete provenance and exact official URL/date/type validation." if policy_valid else "Policy events remain excluded until exact official URL/date/type validation passes."),
                "provider":"Official Federal Reserve and ECB pages, independently URL/date/type validated",
-               "reason":policy_date_qa["reason"]}
+               "reason":policy_date_qa["reason"] + (" Collector domain QA passed." if policy_valid else f" Collector domain QA status is {policy_collector_status}; event rows remain warning/unknown.")}
  existing=by_name.get("global_policy_events")
  if existing is None:
   existing={"source":"global_policy_events"}; sources.append(existing); by_name["global_policy_events"]=existing
  existing.update(policy_group)
  evidence["global_policy_events"]={**policy_group,"provider":"Official Federal Reserve and ECB RSS feeds"}
+ coverage["as_of_utc"]=latest_evidence_timestamp(coverage,report)
  coverage["factor_source_repair_reconciled_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
  coverage["factor_source_repair_evidence"]=evidence
  COVERAGE.write_text(json.dumps(coverage,indent=2))

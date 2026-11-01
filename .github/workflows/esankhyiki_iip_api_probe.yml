@@ -1,0 +1,30 @@
+name: e-Sankhyiki IIP API Contract Probe
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/probe_esankhyiki_iip_api.py"
+      - ".github/workflows/esankhyiki_iip_api_probe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: esankhyiki-iip-api-contract-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Probe official schema and unauthenticated endpoint
+        run: python pipeline/probe_esankhyiki_iip_api.py --out artifacts/esankhyiki_iip_probe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esankhyiki-iip-api-contract-probe
+          path: artifacts/esankhyiki_iip_probe/
+          if-no-files-found: error

@@ -1,0 +1,39 @@
+name: e-Sankhyiki IIP NIC-2 Backseries Ingestion
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_esankhyiki_iip_backseries.py"
+      - "pipeline/collect_mospi_iip_public_release.py"
+      - ".github/workflows/esankhyiki_iip_backseries.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: esankhyiki-iip-backseries
+  cancel-in-progress: false
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/cache@v4
+        with:
+          path: artifacts/esankhyiki_iip_backseries/raw
+          key: esankhyiki-iip-backseries-${{ github.run_number }}
+          restore-keys: |
+            esankhyiki-iip-backseries-
+      - name: Install workbook parser
+        run: pip install pandas openpyxl
+      - name: Ingest catalogue vintages and build validated panel
+        run: python pipeline/collect_esankhyiki_iip_backseries.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esankhyiki-iip-nic2-backseries
+          path: artifacts/esankhyiki_iip_backseries/
+          if-no-files-found: error

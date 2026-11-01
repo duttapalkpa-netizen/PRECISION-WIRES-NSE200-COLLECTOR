@@ -1,0 +1,80 @@
+name: Run #23 Same-Snapshot Reconciliation Validation (one-shot)
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/macro_geo_factor_coverage_reconcile.py"
+      - "pipeline/macro_geo_factor_coverage_audit.py"
+      - "qa/test_factor_registry_same_snapshot.py"
+      - ".github/workflows/factor_registry_run23_reconciliation_validation.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: factor-registry-run23-reconciliation-validation
+  cancel-in-progress: false
+jobs:
+  validate-run23:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Validate exact source-repair Run #23 metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          RUN_ID=41039896013
+          META=$(gh api "repos/$GH_REPO/actions/runs/$RUN_ID")
+          echo "$META" | python -c 'import json,sys; d=json.load(sys.stdin); assert d.get("conclusion")=="success"; assert d.get("path")==".github/workflows/macro_geo_factor_source_repair.yml"; assert d.get("head_branch")=="audit/run145-factor-registry-gap-audit"; print({"run_id":d["id"],"head_sha":d["head_sha"],"conclusion":d["conclusion"]})'
+          mkdir -p outputs/macro_geo data/external
+          gh run download "$RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor-evidence
+          cp -a /tmp/factor-evidence/. .
+          test -s outputs/macro_geo/source_coverage.json
+          test -s outputs/macro_geo/factor_source_collection_report.json
+      - name: Run focused same-snapshot regression tests
+        run: python -m unittest qa.test_factor_registry_same_snapshot -v
+      - name: Reconcile exact Run #23 artifact
+        run: python pipeline/macro_geo_factor_coverage_reconcile.py
+      - name: Re-audit all 35 registered factors
+        run: python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Assert snapshot consistency and fail-closed status
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("outputs/macro_geo")
+          coverage=json.loads((root/"source_coverage.json").read_text())
+          audit=json.loads((root/"factor_coverage_audit.json").read_text())
+          assert coverage.get("as_of_utc") == "2026-10-30T10:26:10.796257Z", coverage.get("as_of_utc")
+          assert audit.get("source_coverage_as_of") == coverage["as_of_utc"]
+          assert audit.get("factor_groups") == 35
+          assert audit.get("fully_available_schema_groups") == 0
+          assert audit.get("partial_source_coverage") == 25
+          assert audit.get("not_connected") == 10
+          policy=next(x for x in coverage["sources"] if x.get("source")=="global_policy_events")
+          assert policy.get("status")=="DATA_QUALITY_WARN", policy
+          f11=next(x for x in audit["missing_factors"] if x.get("factor_id")=="F11")
+          assert f11.get("coverage_status")=="PARTIAL_SOURCE_COVERAGE", f11
+          print({"snapshot_consistency":"PASS","factor_groups":35,
+                 "fully_available":0,"partial":25,"not_connected":10,
+                 "hard_gate":"BLOCKED"})
+          PY
+      - name: Upload Run #23 reconciled evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: factor-registry-run23-same-snapshot-validation
+          path: |
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_source_collection_report.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+          if-no-files-found: warn

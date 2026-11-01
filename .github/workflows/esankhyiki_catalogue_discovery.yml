@@ -1,0 +1,30 @@
+name: e-Sankhyiki Public Catalogue Route Discovery
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/discover_esankhyiki_catalogue.py"
+      - ".github/workflows/esankhyiki_catalogue_discovery.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: esankhyiki-catalogue-route-discovery
+  cancel-in-progress: false
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Discover official public catalogue links and API routes
+        run: python pipeline/discover_esankhyiki_catalogue.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esankhyiki-public-catalogue-discovery
+          path: artifacts/esankhyiki_catalogue_discovery/
+          if-no-files-found: error

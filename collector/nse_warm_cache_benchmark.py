@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""Measure warm-cache validation without making network requests."""
+from __future__ import annotations
+import argparse, json, time
+from datetime import date
+from pathlib import Path
+from collector.nse_download import validate_cached_file, _clean_key, _parse_date
+import pandas as pd
+
+
+def diagnose(path: Path, expected: date) -> dict:
+    item = {"path": path.name, "exists": path.is_file(), "expected_date": expected.isoformat()}
+    if not path.is_file():
+        item["reason"] = "file_missing"
+        return item
+    item["bytes"] = path.stat().st_size
+    try:
+        df = pd.read_csv(path, dtype=str)
+        cols = {_clean_key(c): c for c in df.columns}
+        date_col = next((cols[k] for k in ("DATE1", "TRADDT", "TRADGDATE", "DATE") if k in cols), None)
+        series_col = cols.get("SERIES") or cols.get("SCTYSRS")
+        item["rows"] = len(df)
+        item["columns"] = list(df.columns)
+        if not date_col:
+            item["reason"] = "date_column_missing"
+        elif not series_col:
+            item["reason"] = "series_column_missing"
+        else:
+            eq = df[df[series_col].astype(str).str.strip().str.upper().eq("EQ")]
+            parsed = eq[date_col].map(_parse_date)
+            item["eq_rows"] = len(eq)
+            item["unparsed_date_rows"] = int(parsed.isna().sum())
+            item["observed_dates"] = sorted({x.isoformat() for x in parsed.dropna()})
+            if eq.empty:
+                item["reason"] = "no_EQ_rows"
+            elif parsed.isna().any():
+                item["reason"] = "unparseable_EQ_dates"
+            elif set(parsed.tolist()) != {expected}:
+                item["reason"] = "trade_date_mismatch"
+            elif not validate_cached_file(path, expected):
+                item["reason"] = "legacy_schema_or_payload_validation_failed"
+            else:
+                item["reason"] = "valid"
+    except Exception as exc:
+        item["reason"] = f"read_error:{type(exc).__name__}:{exc}"
+    return item
+
+
+def audit_cache(raw_dir: Path, sessions: int) -> dict:
+    if sessions < 1:
+        raise ValueError("sessions must be >= 1")
+    session_file = raw_dir / "sessions.txt"
+    if not session_file.is_file():
+        raise RuntimeError("sessions.txt missing; run the collector before benchmarking")
+    dates = [line.strip() for line in session_file.read_text().splitlines() if line.strip()]
+    if len(dates) != sessions or len(set(dates)) != sessions:
+        raise RuntimeError(f"expected {sessions} unique manifest sessions, got {len(dates)}")
+    started = time.perf_counter()
+    hits, misses, diagnostics = [], [], []
+    for value in dates:
+        day = date.fromisoformat(value)
+        path = raw_dir / f"sec_bhavdata_full_{day.strftime('%d%m%Y')}.csv"
+        if path.is_file() and validate_cached_file(path, day):
+            hits.append(value)
+        else:
+            misses.append(value)
+            diagnostics.append(diagnose(path, day))
+    elapsed = time.perf_counter() - started
+    result = {
+        "requested_sessions": sessions,
+        "sessions_checked": len(dates),
+        "valid_cache_hits": len(hits),
+        "cache_misses": len(misses),
+        "hit_dates": hits,
+        "miss_dates": misses,
+        "miss_diagnostics": diagnostics,
+        "elapsed_seconds": round(elapsed, 6),
+        "sessions_per_second": round(len(dates) / elapsed, 3) if elapsed else None,
+        "network_requests": 0,
+        "benchmark_type": "local_warm_cache_validation_only",
+    }
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--raw-dir", default="data/raw")
+    parser.add_argument("--sessions", type=int, default=200)
+    parser.add_argument("--output", default="data/qa/nse_warm_cache_benchmark.json")
+    args = parser.parse_args()
+    result = audit_cache(Path(args.raw_dir), args.sessions)
+    output = Path(args.output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result, indent=2))
+    if result["valid_cache_hits"] != args.sessions:
+        raise SystemExit(f"warm cache incomplete: {result['valid_cache_hits']}/{args.sessions} valid sessions")
+
+
+if __name__ == "__main__":
+    main()
