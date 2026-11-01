@@ -29,7 +29,7 @@ def capex_row_values(text):
  i=text.lower().find("capital expenditure")
  if i<0:return []
  segment=text[i:i+300]
- tokens=re.findall(r"(?<!\d)\d[\d,]*(?:\.\d+)?%?",segment)
+ tokens=re.findall(r"(?<!\d)\d[\d,]*(?:\.\d+)?",segment)
  return tokens[:4]
 def capex_row_matches(text):
  return capex_row_values(text)==["1221821","654547","53.6","51.8"]
