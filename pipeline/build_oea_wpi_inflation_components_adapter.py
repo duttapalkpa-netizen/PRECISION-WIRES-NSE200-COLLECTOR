@@ -59,11 +59,15 @@ def main():
     CANONICAL.parent.mkdir(parents=True,exist_ok=True)
     with CANONICAL.open("w",newline="",encoding="utf-8") as f:
         w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader(); w.writerows(rows)
+    if any(not row["RELEASED_AT"] or not row["RELEASE_EVIDENCE_URL"] for row in rows):
+        raise RuntimeError("A WPI observation lacks a verified month-level release timestamp/source; refusing blank or inferred timestamps")
     digest=hashlib.sha256(OUT.read_bytes()).hexdigest()
     canonical_digest=hashlib.sha256(CANONICAL.read_bytes()).hexdigest()
     if digest != canonical_digest: raise RuntimeError("Canonical adapter output hash mismatch")
     report={"status":"INFLATION_COMPONENTS_ADAPTER_PASS_SCHEMA_COMPLETE",
       "rows":len(rows),"fields":FIELDS,"required_fields_present":True,
+      "month_level_release_timestamp_rows":sum(1 for row in rows if row["RELEASED_AT"]),
+      "item_level_timestamp_claimed":False,
       "released_at_semantics":"Exact official PIB publication time for the relevant monthly release; back-series months use the 15 June 2026 release. This is month-level publication time, not item-specific revision time.",
       "observed_at_semantics":"Actual collector retrieval timestamp copied from the successful itemwise ingestion manifest.",
       "revision_history_boundary":"PIB/OEA evidence reviewed here is month-level aggregate status only. Item-wise revision history is not published in the reviewed sources; item-level revision status remains UNKNOWN where no direct evidence exists.",
