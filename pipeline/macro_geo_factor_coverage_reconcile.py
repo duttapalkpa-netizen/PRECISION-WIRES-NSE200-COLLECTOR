@@ -67,8 +67,11 @@ def main():
   src=ROOT/"data/external"/filename
   status=str(item.get("status","BLOCKED"))
   rows=int(item.get("rows") or 0)
-  # Only collector's explicit complete domain-QA status can improve coverage.
-  valid=status in {"COLLECTED_AND_DOMAIN_QA_PASSED","COLLECTED_MONTHLY_DOMAIN_QA_PASSED"} and rows>0 and src.exists()
+  # Yahoo DX-Y.NYB is a third-party mirror, not ICE's licensed official DXY feed.
+  # Keep it diagnostic-only; do not promote it to official source coverage.
+  unofficial_dxy=(group=="dxy" and "Yahoo Finance" in str(item.get("source","")))
+  # Only exact official-source domain QA can improve official coverage.
+  valid=(status in {"COLLECTED_AND_DOMAIN_QA_PASSED","COLLECTED_MONTHLY_DOMAIN_QA_PASSED"} and rows>0 and src.exists() and not unofficial_dxy)
   if valid:
    frame=pd.read_csv(src)
    required={"DATE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"}
@@ -95,7 +98,7 @@ def main():
     "selected_path":str(src) if valid else "",
     "missing_columns":[] if valid else ["domain/source QA incomplete"],
     "notes":("Collector domain QA passed; provider provenance and observed-series identity retained in evidence fields." if valid else "No clean domain-QA promotion; missing data remains UNKNOWN."),
-    "reason":"Complete collector domain QA passed" if valid else "Not counted as available: source failure, incomplete domain QA, or missing evidence"}
+    "reason":"Complete official-source domain QA passed" if valid else ("Third-party Yahoo DXY mirror is diagnostic-only; official ICE source/licensing evidence is required." if unofficial_dxy else "Not counted as available: source failure, incomplete domain QA, or missing evidence")}
   existing=by_name.get(source_name)
   if existing is None:
    existing={"source":source_name}; sources.append(existing); by_name[source_name]=existing
