@@ -17,19 +17,31 @@ def get(url,limit=60000000):
  if host in ("eaindustry.nic.in","www.eaindustry.nic.in"):
   # Strictly pin the official YR1 intermediate only after verify_oea_tls_chain.py
   # has validated its parent chain to trusted ISRG Root X1 and endpoint hostname.
-  pinned=OUT/"tls_diagnostics"/"yr1_intermediate.pem"
+  # Reuse the exact verified bundle from the preceding strict TLS step:
+  # YR1 intermediate + cross-signed Root YR, whose path was verified to
+  # the runner's trusted ISRG Root X1. Loading YR1 alone is insufficient.
+  pinned=OUT/"tls_diagnostics"/"oea_untrusted_chain.pem"
   proof=OUT/"tls_diagnostics"/"oea_tls_chain_verification.json"
   if not pinned.is_file() or not proof.is_file():
-   raise RuntimeError("OEA pinned YR1 chain evidence missing; keep WPI NOT_CONNECTED")
+   raise RuntimeError("OEA verified chain bundle missing; keep WPI NOT_CONNECTED")
   evidence=json.loads(proof.read_text())
   if evidence.get("status")!="STRICT_TLS_PASS":
    raise RuntimeError("OEA strict TLS chain verification did not PASS")
+  if evidence.get("hostname_checks")!={"eaindustry.nic.in":"PASS","www.eaindustry.nic.in":"PASS"}:
+   raise RuntimeError("OEA hostname verification evidence incomplete")
+  if evidence.get("http",{}).get("status")!=200:
+   raise RuntimeError("OEA strict TLS endpoint HTTP evidence missing")
   ctx.load_verify_locations(cafile=str(pinned))
  if "api.mospi.gov.in" in url:
   ctx.set_ciphers("DEFAULT:@SECLEVEL=1");ctx.options |= 0x4
  req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"*/*","Origin":"https://esankhyiki.mospi.gov.in","Referer":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue"})
  with urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx)).open(req,timeout=45) as r:
-  b=r.read(limit);return b,{"status":r.status,"content_type":r.headers.get("Content-Type",""),"final_url":r.geturl(),"bytes":len(b)}
+  final_url=r.geturl()
+  if host in ("eaindustry.nic.in","www.eaindustry.nic.in"):
+   final_host=urllib.parse.urlparse(final_url).hostname or ""
+   if r.status!=200 or final_host not in ("eaindustry.nic.in","www.eaindustry.nic.in"):
+    raise RuntimeError("OEA HTTPS response failed approved-host/HTTP-200 validation")
+  b=r.read(limit);return b,{"status":r.status,"content_type":r.headers.get("Content-Type",""),"final_url":final_url,"bytes":len(b)}
 def sha(b):return hashlib.sha256(b).hexdigest()
 class Links(HTMLParser):
  def __init__(self):super().__init__();self.links=[];self.href=None;self.text=[]
