@@ -19,6 +19,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: oea-wpi-release-status-crosswalk
   cancel-in-progress: false
@@ -43,6 +44,20 @@ jobs:
         run: python pipeline/build_oea_wpi_release_status_crosswalk.py
       - name: Build full-schema inflation_components adapter
         run: python pipeline/build_oea_wpi_inflation_components_adapter.py
+      - name: Retrieve exact successful Factor Source Repair snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_REPAIR_RUN_ID: '41278895821'
+        run: |
+          set -euo pipefail
+          META=$(gh api "repos/$GH_REPO/actions/runs/$SOURCE_REPAIR_RUN_ID")
+          echo "$META" | python -c 'import json,sys; d=json.load(sys.stdin); assert d.get("conclusion")=="success"; assert d.get("path")==".github/workflows/macro_geo_factor_source_repair.yml"; assert d.get("head_branch")=="audit/run145-factor-registry-gap-audit"; assert d.get("head_sha")=="172d0950b3323c39a6cb4151d3194a6f8e8ffdc6"; print({"run_id":d["id"],"head_sha":d["head_sha"],"snapshot":"validated"})'
+          mkdir -p /tmp/factor-evidence
+          gh run download "$SOURCE_REPAIR_RUN_ID" -n macro-geo-factor-source-repair -D /tmp/factor-evidence
+          test -s /tmp/factor-evidence/outputs/macro_geo/source_coverage.json
+          test -s /tmp/factor-evidence/outputs/macro_geo/factor_source_collection_report.json
+          cp -a /tmp/factor-evidence/. .
       - name: Run same-snapshot Factor Registry coverage audit
         run: python pipeline/audit_factor_registry_same_snapshot.py
       - name: Recheck F14 eligibility after coverage audit
@@ -77,7 +92,9 @@ jobs:
           assert e["promotion_decision"]=="NOT_ELIGIBLE"
           assert a["status"]=="INFLATION_COMPONENTS_ADAPTER_PASS_SCHEMA_COMPLETE"
           assert set(["DATE","COUNTRY","COMPONENT","VALUE","RELEASED_AT","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"]).issubset(set(a["fields"]))
-          assert c["status"] in ["SAME_SNAPSHOT_FACTOR_COVERAGE_AUDIT_EXECUTED","BLOCKED_MISSING_SOURCE_COVERAGE_SNAPSHOT"]
+          assert c["status"]=="SAME_SNAPSHOT_FACTOR_COVERAGE_AUDIT_EXECUTED"
+          assert c["coverage_snapshot_sha256"] is not None
+          assert c["canonical_report_status"] in ["FACTOR_COVERAGE_AUDITED_WITH_GAPS","ALL_MAPPED_SOURCE_GROUPS_SCHEMA_AVAILABLE"]
           assert f["promotion_decision"]=="NOT_ELIGIBLE"
           assert f["factor_registry_change"]=="NONE; F14 mapping and registry remain unchanged"
           assert f["hard_gate"]=="UNCHANGED_BLOCKED_UNTIL_ALL_REQUIRED_P0_AND_FACTOR_EVIDENCE_GATES_PASS"
