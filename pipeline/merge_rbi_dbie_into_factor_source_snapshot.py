@@ -40,10 +40,15 @@ def main():
       "date_max":max(r["DATE"] for r in ten),
       "missing_columns":["RELEASED_AT (not supplied per observation)","DAILY_YIELD_10Y_BENCHMARK (source is monthly SGL curve)"],
       "evidence_path":str(CANON),"evidence_sha256":sha(CANON),
-      "source":"Reserve Bank of India, Database on Indian Economy",
+      "provider":"Reserve Bank of India, Database on Indian Economy",
       "source_series":"RBI_DBIE_MONTH_END_SGL_YTM_10Y","frequency":"MONTHLY",
       "notes":"361 observed 10Y month-end SGL yields from official New Format tab. Not equivalent to daily FBIL par-yield benchmark. Original per-observation release timestamps are not supplied; retained as DATA_QUALITY_WARN and not counted as connected for factor hard gates."})
     snapshot["as_of_utc"]=report["observed_at_utc"]
+    snapshot["sources_total"]=len(sources)
+    snapshot["available"]=sum(1 for x in sources if x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") and int(x.get("rows",0) or 0)>0)
+    snapshot["not_connected"]=sum(1 for x in sources if x.get("status")=="NOT_CONNECTED")
+    snapshot["quality_warn"]=sum(1 for x in sources if x.get("status")=="DATA_QUALITY_WARN")
+    snapshot["schema_fail"]=sum(1 for x in sources if x.get("status")=="SCHEMA_FAIL")
     snapshot["snapshot_augmentation"]={"baseline_run_id":41282726166,
       "baseline_head_sha":"a7dd9161b887b7f79111e610291b1e0935379aa7",
       "baseline_source_coverage_sha256":sha(BASE),
