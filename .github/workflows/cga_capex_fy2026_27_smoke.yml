@@ -1,0 +1,48 @@
+name: CGA Capital Expenditure FY2026-27 September Live QA
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/collect_cga_capex_fy2026_27_smoke.py"
+      - "qa/test_cga_capex_fy2026_27_smoke.py"
+      - ".github/workflows/cga_capex_fy2026_27_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cga-capex-fy2026-27-live-smoke
+  cancel-in-progress: true
+jobs:
+  capex-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run focused capex arithmetic tests
+        run: python -m unittest qa.test_cga_capex_fy2026_27_smoke -v
+      - name: Collect CGA and PIB official monthly accounts
+        run: python pipeline/collect_cga_capex_fy2026_27_smoke.py
+      - name: Verify provenance, evidence and hashes
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/cga_capex_fy2026_27_smoke")
+          q=json.loads((p/"domain_qa.json").read_text());m=json.loads((p/"manifest.json").read_text())
+          assert q["status"]=="PASS" and all(q["domain_checks"].values())
+          assert q["reference_period"]=="April-September 2026 cumulative YTD"
+          assert abs(q["observed"]["actual_ytd_crore"]/q["observed"]["budget_estimate_crore"]*100-53.6)<0.05
+          assert hashlib.sha256((p/"CGA_Monthly_Accounts_September_2026.html").read_bytes()).hexdigest()==m["cga_sha256"]
+          assert hashlib.sha256((p/"PIB_Monthly_Accounts_Review_September_2026.html").read_bytes()).hexdigest()==m["pib_sha256"]
+          print({"qa":"PASS","observed":q["observed"],"hashes":{"cga":m["cga_sha256"],"pib":m["pib_sha256"]}})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cga-capex-fy2026-27-september-live-smoke
+          path: artifacts/cga_capex_fy2026_27_smoke/
+          if-no-files-found: warn
