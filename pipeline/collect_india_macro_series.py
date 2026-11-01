@@ -169,7 +169,7 @@ def try:
  # Add the independently parsed official quarterly GDP statements from MoSPI
  rows.extend(report.get("sources",{}).get("gdp",{}).get("backseries_observations",[]))
  if report.get("sources",{}).get("gdp",{}).get("quarterly_backseries",{}).get("status")=="OFFICIAL_QUARTERLY_BACKSERIES_CAPTURED_AND_PARSED":
-  qa["sources"]["gdp"]={"status":"PARTIAL_OFFICIAL_QUARTERLY_BACKSERIES_CAPTURED","rows":len(report["sources"]["gdp"]["backseries_observations"]),"coverage_limit":"Q1 FY2022-23 to Q3 FY2025-26; earlier new-base backseries pending; latest Q1 FY2026-27 release captured separately."}
+  qa["sources"]["gdp"]={"status":"PARTIAL_OFFICIAL_QUARTERLY_BACKSERIES_CAPTURED","rows":len(report["sources"]["gdp"]["backseries_observations"])+sum(1 for x in rows if "LATEST_RELEASE" in x["series"]),"coverage_limit":"Q1 FY2022-23 to Q3 FY2025-26; earlier new-base backseries pending; latest Q1 FY2026-27 release captured separately."}
  # CPI: normalize the national table by month, rural/urban/combined and CPI/CFPI measure.
  c=report["sources"].get("cpi",{}); cpi_rows=[]
  for item in c.get("release_tables",[]):
