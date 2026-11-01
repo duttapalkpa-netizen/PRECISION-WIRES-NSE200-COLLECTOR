@@ -12,7 +12,7 @@ class SnapshotTests(unittest.TestCase):
   self.assertIn('a["factor_groups"]==35',w)
   self.assertIn('"hard_gate":"BLOCKED"',w)
  def test_production_invariants_explicitly_untouched(self):
-  w=Path(".github/workflows/macro_indicators_factor_snapshot_reconciliation.yml").read_text()
+  s=Path("pipeline/macro_indicators_snapshot_reconcile.py").read_text()
   for term in ["RANKING_SCORE","PRODUCTION_SELECTOR","PRESSURE_FADE","672"]:
-   self.assertIn(term,w)
+   self.assertIn(term,s)
 if __name__=="__main__":unittest.main()

@@ -1,4 +1,5 @@
 name: Macro Indicators Factor Registry Same Snapshot Reconciliation
+# Evidence-only reconciliation: never modify PRODUCTION_SELECTOR, RANKING_SCORE, +1 PRESSURE_FADE, or 672 diagnostic definitions.
 on:
   push:
     branches: [fix/factor-registry-same-snapshot-reconcile]

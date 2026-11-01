@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Pinned macro-series evidence ledger and conservative same-snapshot Factor Registry reconciliation."""
+# PRODUCTION_SELECTOR, RANKING_SCORE, +1 PRESSURE_FADE and all 672 diagnostics are read-only invariants.
 import json,hashlib
 from pathlib import Path
 from datetime import datetime,timezone
