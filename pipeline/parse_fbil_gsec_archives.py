@@ -90,7 +90,7 @@ def main():
         "normalized_csv_sha256": hashlib.sha256(OUT_CSV.read_bytes()).hexdigest(),
         "observed_at_utc": datetime.now(timezone.utc).isoformat(),
     }
-    REPORT.write_text(json.dumps(report, indent=2) + "\\n", encoding="utf-8")
+    REPORT.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
     if not rows or errors:
         raise RuntimeError("FBIL archive parse failed; inspect retained diagnostics")
