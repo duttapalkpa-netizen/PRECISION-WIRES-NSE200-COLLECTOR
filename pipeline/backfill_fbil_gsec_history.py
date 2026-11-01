@@ -38,17 +38,31 @@ def fetch_month(pair):
             "response_sha256":hashlib.sha256(r.content).hexdigest(),"records":data}
 
 def download_one(day):
-    s=get_session()
-    r=s.get(BASE+"/gsec/downloadPublished",params={"date":day},timeout=(10,60))
-    body=r.content
-    cd=r.headers.get("Content-Disposition","")
-    if r.status_code!=200: return {"date":day,"status":r.status_code,"error":"non-200","bytes":len(body)}
-    if not body.startswith(bytes([80,75,3,4])):
-        return {"date":day,"status":r.status_code,"error":"response is not XLSX/ZIP","content_type":r.headers.get("Content-Type"),"bytes":len(body),"preview":body[:160].decode("utf-8","replace")}
-    path=OUT/f"fbil_gsec_published_{day.replace('-','')}.bin"
-    path.write_bytes(body)
-    return {"date":day,"status":r.status_code,"content_type":r.headers.get("Content-Type"),
-            "content_disposition":cd,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"file":path.name}
+    # Retry transient publisher/server failures without bypassing access controls.
+    # Keep every attempt visible in the audit report; never accept non-XLSX bodies.
+    attempts=[]
+    for attempt in range(1,5):
+        try:
+            s=get_session()
+            r=s.get(BASE+"/gsec/downloadPublished",params={"date":day},timeout=(10,60))
+            body=r.content
+            cd=r.headers.get("Content-Disposition","")
+            if r.status_code==200 and body.startswith(bytes([80,75,3,4])):
+                path=OUT/f"fbil_gsec_published_{day.replace('-','')}.bin"
+                path.write_bytes(body)
+                return {"date":day,"status":r.status_code,"attempts":attempt,"attempt_log":attempts,
+                        "content_type":r.headers.get("Content-Type"),"content_disposition":cd,
+                        "bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"file":path.name}
+            attempts.append({"attempt":attempt,"status":r.status_code,
+                             "error":"non-200" if r.status_code!=200 else "response is not XLSX/ZIP",
+                             "bytes":len(body),"preview":body[:120].decode("utf-8","replace")})
+        except Exception as exc:
+            attempts.append({"attempt":attempt,"error":str(exc)})
+        if attempt<4:
+            time.sleep(min(2**attempt,8))
+    last=attempts[-1] if attempts else {}
+    return {"date":day,"status":last.get("status"),"attempts":len(attempts),
+            "attempt_log":attempts,"error":"download failed after bounded retries"}
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
