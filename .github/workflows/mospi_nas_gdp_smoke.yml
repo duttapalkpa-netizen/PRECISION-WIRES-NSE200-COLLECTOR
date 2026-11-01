@@ -43,6 +43,10 @@ jobs:
           assert qa["table_id"] == "AEQEAFY2607QTR"
           assert qa["base_year"] == "2022-23"
           assert qa["workbook"]["numeric_cells"] > 0
+          obs=qa["observations"][0]
+          assert obs["series"] == "REAL_GDP_CONSTANT_2022_23"
+          assert abs(obs["value"]/100000 - 81.36) < 0.02
+          assert abs(obs["yoy_growth_percent"] - 7.8) < 0.15
           assert len(manifest["sha256"]) == 64
           assert manifest["http_status"] == 200
           print({"domain_qa":"PASS","table_id":qa["table_id"],
