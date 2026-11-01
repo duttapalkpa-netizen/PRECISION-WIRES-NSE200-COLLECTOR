@@ -154,9 +154,26 @@ def main():
   existing={"source":"global_policy_events"}; sources.append(existing); by_name["global_policy_events"]=existing
  existing.update(policy_group)
  evidence["global_policy_events"]={**policy_group,"provider":"Official Federal Reserve and ECB RSS feeds"}
+ coverage["p0_source_coverage_as_of_utc"]=coverage.get("as_of_utc")
  coverage["factor_source_repair_reconciled_at_utc"]=pd.Timestamp.now(tz="UTC").isoformat()
+ coverage["as_of_utc"]=coverage["factor_source_repair_reconciled_at_utc"]
  coverage["factor_source_repair_evidence"]=evidence
+ coverage["sources_total"]=len(sources)
+ coverage["available"]=sum(1 for x in sources if x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") and int(x.get("rows",0) or 0)>0)
+ coverage["not_connected"]=sum(1 for x in sources if x.get("status")=="NOT_CONNECTED")
+ coverage["quality_warn"]=sum(1 for x in sources if x.get("status")=="DATA_QUALITY_WARN")
  COVERAGE.write_text(json.dumps(coverage,indent=2))
+ csv_path=OUT/"source_coverage.csv"
+ if csv_path.exists():
+  csv_frame=pd.read_csv(csv_path)
+  for source_name,item in by_name.items():
+   if source_name in set(csv_frame["source"].astype(str)):
+    row=csv_frame["source"].astype(str).eq(source_name)
+    csv_frame.loc[row,"status"]=item.get("status","NOT_CONNECTED")
+    csv_frame.loc[row,"rows"]=int(item.get("rows",0) or 0)
+    csv_frame.loc[row,"selected_path"]=item.get("selected_path","")
+    csv_frame.loc[row,"notes"]=item.get("notes",item.get("reason",""))
+  csv_frame.to_csv(csv_path,index=False)
  # Re-run registry audit against reconciled observed coverage.
  print(json.dumps({"groups":evidence,"coverage_file":str(COVERAGE)},indent=2))
 if __name__=="__main__": main()
