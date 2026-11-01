@@ -645,28 +645,7 @@ def main():
         session = requests.Session()
         session.headers.update({"User-Agent": UA, "Accept": "text/csv,*/*"})
         report["groups"]["us_yields"] = collect_group("us_yields", YIELD_SERIES, start, end, session)
-        # Split the official Treasury 10-year TIPS real yield into its own
-        # registered source group without relabelling nominal yields as real.
-        nominal_path = OUT / "us_yields.csv"
-        real_path = OUT / "us_real_yields.csv"
-        if nominal_path.exists():
-            all_yields = pd.read_csv(nominal_path)
-            real = all_yields[all_yields["SOURCE_SERIES"].astype(str).eq("DFII10")].copy()
-            if not real.empty:
-                real = real.rename(columns={"SERIES":"REAL_YIELD_SERIES"})
-                real.to_csv(real_path,index=False)
-                report["groups"]["us_real_yields"] = {
-                    "status":"COLLECTED_AND_DOMAIN_QA_PASSED",
-                    "rows":int(len(real)),"date_min":str(real["DATE"].min()),"date_max":str(real["DATE"].max()),
-                    "path":str(real_path),"source":sorted(set(real["SOURCE"].astype(str))),
-                    "observed_source_series":["DFII10"],"requested_fred_series_ids":["DFII10"],
-                    "freshness_age_calendar_days":int((datetime.now(timezone.utc).date()-pd.to_datetime(real["DATE"]).max().date()).days),
-                    "domain_qa_checks":["exact DFII10 identity","positive numeric values","unique date keys","source URL provenance","observed timestamp","requested-window bounds"]
-                }
-            else:
-                report["groups"]["us_real_yields"]={"status":"BLOCKED","rows":0,"notes":"No exact DFII10 observations; real-yield group remains UNKNOWN."}
-        else:
-            report["groups"]["us_real_yields"]={"status":"BLOCKED","rows":0,"notes":"Nominal Treasury collector failed; real-yield group remains UNKNOWN."}
+        report["groups"]["us_real_yields"] = collect_group("us_real_yields", {"DFII10": "US_TREASURY_10Y_REAL"}, start, end, session)
         report["groups"]["global_commodity_prices"] = collect_group("global_commodity_prices", COMMODITY_SERIES, start, end, session)
         try:
             report["groups"]["dxy"] = fetch_dxy_yahoo(session, start, end)
