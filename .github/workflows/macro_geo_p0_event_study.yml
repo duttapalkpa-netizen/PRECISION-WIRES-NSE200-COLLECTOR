@@ -206,6 +206,8 @@ jobs:
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
             data/external/macro_series_raw/**
+            data/external/macro_series_observations.csv
+            outputs/macro_geo/macro_series_observation_qa.json
             outputs/macro_geo/india_macro_series_source_audit.json
             outputs/macro_geo/india_macro_series_source_audit.sha256
             outputs/macro_geo/**
