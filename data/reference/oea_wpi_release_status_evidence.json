@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "publisher": "Press Information Bureau, Ministry of Commerce & Industry, Government of India",
+  "title": "PROVISIONAL WHOLESALE PRICE INDEX, OUTPUT PRODUCER PRICE INDEX, AND TRIAL INPUT PRODUCER PRICE INDEX FOR THE MONTH OF SEPTEMBER 2026, AND FINAL INDEX FOR THE MONTH OF JULY 2026",
+  "source_url": "https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2323098&lang=1&reg=1",
+  "prid": "2323098",
+  "published_date": "2026-10-14",
+  "series": "WPI Base Year 2022-23",
+  "official_month_status": {
+    "2026-04": "FINAL",
+    "2026-05": "FINAL",
+    "2026-06": "FINAL",
+    "2026-07": "FINAL",
+    "2026-08": "PROVISIONAL",
+    "2026-09": "PROVISIONAL"
+  },
+  "release_schedule": {
+    "2026-10": {
+      "status": "NOT_YET_RELEASED_AS_OF_2026-11-01",
+      "scheduled_release_date": "2026-11-16"
+    }
+  },
+  "evidence_notes": [
+    "PIB release states July 2026 final index remains unchanged at 110.0 and July inflation 9.78 per cent final.",
+    "PIB Annexure I and II explicitly label Apr-26 through Jul-26 as (F), and Aug-26 and Sep-26 as (P).",
+    "PIB states September 2026 is provisional and was compiled with 83.4 per cent weighted response rate.",
+    "PIB states October 2026 WPI release is scheduled for Monday, 16 November 2026."
+  ],
+  "scope_limit": "The reviewed PIB release establishes month-level aggregate WPI revision status only. It does not certify every individual commodity row or historical month not explicitly listed.",
+  "promotion": "SOURCE_EVIDENCE_ONLY; NOT_PROMOTED_TO_FACTOR_REGISTRY"
+}
