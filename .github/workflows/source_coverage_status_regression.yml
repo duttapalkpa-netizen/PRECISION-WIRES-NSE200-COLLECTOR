@@ -1,0 +1,43 @@
+name: Source Coverage CSV JSON Status Regression
+
+on:
+  push:
+    branches: [fix/source-coverage-status-reconcile]
+    paths:
+      - "pipeline/collect_india_macro_series.py"
+      - "qa/test_india_macro_series.py"
+      - ".github/workflows/source_coverage_status_regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-coverage-status-regression-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  status-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repair branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal collector imports
+        run: python -m pip install --disable-pip-version-check pandas requests pypdf selectolax
+      - name: Run India macro source contract tests
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m unittest qa.test_india_macro_series -v 2>&1 | tee source_coverage_status_regression.log
+      - name: Upload regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-coverage-status-regression
+          path: source_coverage_status_regression.log
+          if-no-files-found: error
