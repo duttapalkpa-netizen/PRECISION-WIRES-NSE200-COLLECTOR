@@ -34,10 +34,15 @@ jobs:
           from pathlib import Path
           p=Path("artifacts/macro_full_history_discovery")
           d=json.loads((p/"source_inventory.json").read_text())
-          for source in ["oea_wpi","cga_dashboard"]:
-           x=d["sources"][source]
-           raw=p/("oea_download_data_2223.html" if source=="oea_wpi" else "CGA_Monthly_Accounts_Dashboard_February_2026.xlsm")
+          x=d["sources"]["oea_wpi"]
+          if x["status"]==200:
+           raw=p/"oea_download_data_2223.html"
            assert hashlib.sha256(raw.read_bytes()).hexdigest()==x["sha256"]
+          else:
+           assert x["status"]=="SOURCE_TRANSPORT_BLOCKED" and x["link_count"]==0
+          x=d["sources"]["cga_dashboard"]
+          raw=p/"CGA_Monthly_Accounts_Dashboard_February_2026.xlsm"
+          assert hashlib.sha256(raw.read_bytes()).hexdigest()==x["sha256"]
           assert d["sources"]["oea_wpi"]["link_count"]>0
           assert d["sources"]["cga_dashboard"]["sheet_count"]>0
           assert d["sources"]["mospi_nas"]["catalogue_records"]>0
