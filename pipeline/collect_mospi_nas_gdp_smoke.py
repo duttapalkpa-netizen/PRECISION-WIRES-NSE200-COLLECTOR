@@ -47,33 +47,24 @@ def get(url: str, accept: str = "application/json, */*"):
         }
 
 def catalogue_record():
+    # The exact latest Q1 FY2026-27 table is advertised on the first NAS
+    # catalogue page. Read only that bounded page; do not crawl 1,700+ entries.
     first_url = LIST + "?" + urllib.parse.urlencode({
         "product": PRODUCT, "page": 1, "limit": 10
     })
     first = get(first_url)
     if first["status"] != 200:
         raise RuntimeError(f"NAS catalogue HTTP {first['status']}")
-    first_json = json.loads(first["body"].decode("utf-8-sig"))
-    meta = first_json.get("meta_data") or {}
-    pages = int(meta.get("totalPages") or 0)
-    total = int(meta.get("totalRecords") or 0)
-    if pages < 1 or total < 1:
-        raise RuntimeError("NAS catalogue pagination metadata absent")
-    records = list(first_json.get("data") or [])
-    for page in range(2, pages + 1):
-        time.sleep(0.10)
-        url = LIST + "?" + urllib.parse.urlencode({
-            "product": PRODUCT, "page": page, "limit": 10
-        })
-        response = get(url)
-        if response["status"] != 200:
-            raise RuntimeError(f"NAS catalogue page {page}/{pages}: HTTP {response['status']}")
-        records.extend((json.loads(response["body"].decode("utf-8-sig"))).get("data") or [])
-    if len(records) < total:
-        raise RuntimeError(f"NAS catalogue incomplete: {len(records)}/{total}")
+    payload = json.loads(first["body"].decode("utf-8-sig"))
+    meta = payload.get("meta_data") or {}
+    records = list(payload.get("data") or [])
+    if not records:
+        raise RuntimeError("NAS catalogue first page returned no records")
     matches = [r for r in records if str(r.get("unique_id", "")) == TABLE_ID]
     if len(matches) != 1:
-        raise RuntimeError(f"Expected exactly one {TABLE_ID}; found {len(matches)}")
+        raise RuntimeError(
+            f"Expected exactly one {TABLE_ID} on bounded first page; found {len(matches)}"
+        )
     record = matches[0]
     required = ("unique_id", "product", "table_name", "ref_period",
                 "release_date", "file_path", "file_name")
@@ -87,10 +78,11 @@ def catalogue_record():
         raise RuntimeError(f"Unexpected table title: {record['table_name']}")
     return record, {
         "request_url": first_url,
-        "first_page_sha256": sha256(first["body"]),
-        "total_records": total,
-        "total_pages": pages,
-        "records_returned": len(records),
+        "response_sha256": sha256(first["body"]),
+        "catalogue_total_records": int(meta.get("totalRecords") or 0),
+        "catalogue_total_pages": int(meta.get("totalPages") or 0),
+        "page_records_returned": len(records),
+        "scope": "single first-page exact-ID lookup; no full catalogue crawl",
     }
 
 def workbook_inventory(path: Path):
