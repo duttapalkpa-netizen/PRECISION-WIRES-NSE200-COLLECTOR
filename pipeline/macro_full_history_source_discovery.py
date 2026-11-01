@@ -5,7 +5,8 @@ import json,hashlib,ssl,urllib.request,urllib.parse,re
 from pathlib import Path
 from datetime import datetime,timezone
 from html.parser import HTMLParser
-from openpyxl import load_workbook\nimport certifi
+from openpyxl import load_workbook
+import certifi
 OUT=Path("artifacts/macro_full_history_discovery")
 UA="Mozilla/5.0 (compatible; PRECISION-WIRES-Macro-History-Discovery/1.0)"
 def get(url,limit=60000000):
