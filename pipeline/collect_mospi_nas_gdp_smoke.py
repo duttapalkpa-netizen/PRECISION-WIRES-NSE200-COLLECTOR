@@ -131,6 +131,49 @@ def workbook_inventory(path: Path):
         "sheets": sheets,
     }
 
+def extract_gdp_observation(path: Path):
+    """Extract the All-India GDP row from the Q1 constant-price statement."""
+    wb = load_workbook(path, read_only=True, data_only=True)
+    ws = wb[wb.sheetnames[0]]
+    rows = list(ws.iter_rows(values_only=True))
+    wb.close()
+    header_index = next((i for i, row in enumerate(rows)
+                         if any(isinstance(v, str) and "Quarterly Levels" in v for v in row)), None)
+    if header_index is None:
+        raise RuntimeError("GDP table header 'Quarterly Levels' not found")
+    year_row = next((row for row in rows[header_index + 1:header_index + 4]
+                     if sum(str(v).strip() == "2026-27" for v in row if v is not None) >= 2), None)
+    if year_row is None:
+        raise RuntimeError("GDP table FY 2026-27 columns not found")
+    positions = [i for i, value in enumerate(year_row)
+                 if str(value).strip() == "2026-27"]
+    if len(positions) != 2:
+        raise RuntimeError(f"Expected level and growth FY2026-27 columns; found {positions}")
+    gdp_row = next((row for row in rows
+                    if any(isinstance(v, str) and v.strip().upper() == "GDP" for v in row)), None)
+    if gdp_row is None:
+        raise RuntimeError("All-India GDP row not found in workbook")
+    level = gdp_row[positions[0]]
+    growth = gdp_row[positions[1]]
+    if not isinstance(level, (int, float)) or not isinstance(growth, (int, float)):
+        raise RuntimeError("GDP level/growth observations are not numeric")
+    if level <= 0 or not -100.0 < growth < 100.0:
+        raise RuntimeError(f"Implausible GDP observation: level={level}, growth={growth}")
+    # Independent headline cross-check: MoSPI/PIB reports real GDP ₹81.36 lakh crore
+    # and 7.8% growth for this exact quarter; one lakh crore = 100,000 crore.
+    if abs(level / 100000.0 - 81.36) > 0.02 or abs(growth - 7.8) > 0.15:
+        raise RuntimeError(f"GDP row does not reconcile to official Q1 headline: {level}, {growth}")
+    return {
+        "series": "REAL_GDP_CONSTANT_2022_23",
+        "period": "FY2026-27-Q1",
+        "dimension": "ALL_INDIA",
+        "value": float(level),
+        "unit": "INR_CRORE",
+        "yoy_growth_percent": float(growth),
+        "base_year": "2022-23",
+        "source_table_id": TABLE_ID,
+    }
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     retrieved = datetime.now(timezone.utc).isoformat()
@@ -152,6 +195,7 @@ def main():
         )
     raw_path.write_bytes(body)
     inventory = workbook_inventory(raw_path)
+    observation = extract_gdp_observation(raw_path)
     qa = {
         "status": "PASS",
         "source_group": "macro_indicators",
@@ -172,6 +216,7 @@ def main():
             "quarterly_labels_found": True,
         },
         "workbook": inventory,
+        "observations": [observation],
     }
     manifest = {
         "retrieved_at_utc": retrieved,
@@ -207,6 +252,8 @@ def main():
         "sheets": inventory["sheet_count"],
         "numeric_cells": inventory["numeric_cells"],
         "quarter_tokens": inventory["quarter_tokens_found"],
+        "gdp_value_inr_crore": observation["value"],
+        "gdp_yoy_growth_percent": observation["yoy_growth_percent"],
     }, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
