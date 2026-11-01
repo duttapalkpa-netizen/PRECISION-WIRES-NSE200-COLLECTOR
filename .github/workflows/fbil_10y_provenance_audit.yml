@@ -4,6 +4,8 @@ on:
     branches: [fix/factor-registry-same-snapshot-reconcile]
     paths:
       - "pipeline/audit_fbil_10y_provenance.py"
+      - "pipeline/probe_fbil_gsec_api.py"
+      - "pipeline/discover_fbil_js_endpoints.py"
       - "qa/test_fbil_10y_provenance.py"
       - ".github/workflows/fbil_10y_provenance_audit.yml"
   workflow_dispatch:
@@ -26,11 +28,13 @@ jobs:
         run: python -m unittest qa.test_fbil_10y_provenance -v
       - name: Discover official FBIL JavaScript bundles and API/archive endpoints
         run: python pipeline/discover_fbil_js_endpoints.py
+      - name: Probe official FBIL GSEC JSON endpoint (read-only)
+        run: python pipeline/probe_fbil_gsec_api.py
       - name: Fetch official FBIL daily 10Y rows and retain diagnostics
         continue-on-error: true
         run: python pipeline/audit_fbil_10y_provenance.py
       - name: Verify timestamp, row integrity and hashes
-        if: always()
+        if: always() && hashFiles('artifacts/fbil_10y_provenance/fbil_10y_provenance_report.json') != ''
         run: |
           python - <<'PY'
           import csv,json,hashlib
