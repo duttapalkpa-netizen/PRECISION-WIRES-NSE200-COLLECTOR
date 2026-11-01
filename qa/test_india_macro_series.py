@@ -1,5 +1,6 @@
 import unittest
-from pipeline.collect_india_macro_series import SOURCES,select,sha,extract_gdp_row,GDP_PERIODS,GDP_GROWTH_PERIODS
+import pandas as pd
+from pipeline.collect_india_macro_series import SOURCES,select,sha,extract_gdp_row,GDP_PERIODS,GDP_GROWTH_PERIODS,apply_macro_series_coverage_overrides
 class Tests(unittest.TestCase):
  def test_sources_are_separate(self):
   self.assertTrue({"gdp","cpi","wpi","government_capex","pmi"}.issubset(SOURCES))
@@ -18,6 +19,18 @@ class Tests(unittest.TestCase):
   self.assertEqual(GDP_PERIODS[-1],"FY2025-26-Q3")
   self.assertEqual(len(GDP_GROWTH_PERIODS),11)
   self.assertEqual(extract_gdp_row("Statement 6A\nGDP 6.6 7.6 7.1 7.5 7.5 6.6 7.4 7.0 6.7 8.4 7.8",11,decimal=True)[-1],7.8)
+ def test_macro_series_json_and_csv_statuses_share_one_override(self):
+  names=["macro_indicators","government_capex","inflation_components"]
+  cov={"sources":[{"source":name,"status":"AVAILABLE","rows":10} for name in names]}
+  frame=pd.DataFrame([{"source":name,"status":"AVAILABLE","rows":10,"selected_path":"old","notes":"old"} for name in names])
+  qa={"registry_macro_rows":490,"inflation_component_rows":432,"sources":{"government_capex":{"rows":143}}}
+  result=apply_macro_series_coverage_overrides(cov,frame,qa)
+  json_status={x["source"]:x["status"] for x in cov["sources"]}
+  csv_status=dict(zip(result["source"],result["status"]))
+  self.assertEqual(json_status,csv_status)
+  self.assertEqual(json_status["macro_indicators"],"DATA_QUALITY_WARN")
+  self.assertEqual(json_status["inflation_components"],"DATA_QUALITY_WARN")
+  self.assertEqual(json_status["government_capex"],"DATA_QUALITY_WARN")
  def test_sha(self):
   self.assertEqual(sha(b"x"),sha(b"x"));self.assertNotEqual(sha(b"x"),sha(b"y"))
 if __name__=="__main__": unittest.main()
