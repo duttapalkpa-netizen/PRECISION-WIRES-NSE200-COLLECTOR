@@ -26,16 +26,19 @@ jobs:
           python - <<'PY'
           import requests,json,hashlib,time
           from pathlib import Path
-          from datetime import datetime,timedelta
+          from datetime import datetime,timedelta,timezone
           from urllib.parse import urlencode
           root=Path("nse_p0_200_session");root.mkdir()
           s=requests.Session()
           s.headers.update({"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36","Accept":"application/json, text/plain, */*","Accept-Language":"en-US,en;q=0.9","Referer":"https://www.nseindia.com/reports-indices-historical-index-data","X-Requested-With":"XMLHttpRequest"})
           home=s.get("https://www.nseindia.com/",timeout=30)
           (root/"nse_home.html").write_bytes(home.content)
-          start,end=datetime.strptime("01-11-2024","%d-%m-%Y").date(),datetime.strptime("10-10-2025","%d-%m-%Y").date()
+          end=datetime.now(timezone.utc).date()
+          start=end-timedelta(days=365)
           expected_count=200
-          manifest={"window":{"from":str(start),"to":str(end)},"captured_at_utc":datetime.utcnow().isoformat()+"Z","series":[]}
+          max_staleness_days=7
+          coverage_dates={}
+          manifest={"window":{"from":str(start),"to":str(end)},"captured_at_utc":datetime.now(timezone.utc).isoformat(),"max_staleness_days":max_staleness_days,"series":[]}
           def parse_date(v):
             for fmt in ("%d-%b-%Y","%d-%m-%Y","%d %b %Y","%d-%b-%y","%d/%m/%Y"):
               try:return datetime.strptime(str(v),fmt).date()
@@ -68,14 +71,22 @@ jobs:
               identities.add(row["EOD_INDEX_NAME"].strip().upper())
             if identities!={name.upper()}:raise RuntimeError(kind+" identity mismatch "+repr(identities))
             if min(dates)<start or max(dates)>end:raise RuntimeError(kind+" out-of-range dates")
+            if (end-max(dates)).days>max_staleness_days:raise RuntimeError(kind+" stale latest observation: "+str(max(dates)))
             if len(set(dates))!=len(dates):raise RuntimeError(kind+" duplicate dates across chunks")
+            if dates!=sorted(dates):raise RuntimeError(kind+" source rows are not chronological")
+            coverage_dates[kind]=set(dates)
             allrows.sort(key=lambda x:parse_date(x["EOD_TIMESTAMP"]))
             merged=json.dumps({"data":allrows},separators=(",",":"),sort_keys=True).encode()
             target=root/(kind+"_merged.json");target.write_bytes(merged)
             manifest["series"].append({"name":kind,"requested_index":name,"rows":len(allrows),"first_date":str(min(dates)),"last_date":str(max(dates)),"unique_dates":len(set(dates)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","merged_bytes":len(merged),"merged_sha256":hashlib.sha256(merged).hexdigest(),"chunks":parts})
           for nm,kind in [("NIFTY 50","benchmark_nifty50"),("NIFTY BANK","sector_nifty_bank"),("NIFTY IT","sector_nifty_it"),("INDIA VIX","india_vix")]:
             fetch_series(nm,kind,is_vix=(kind=="india_vix"))
-          manifest["status"]="PASS_200_SESSION_P0_SOURCE_COVERAGE"
+          date_sets=list(coverage_dates.values())
+          if len(date_sets)!=4 or any(ds!=date_sets[0] for ds in date_sets[1:]):
+            raise RuntimeError("benchmark/sector/VIX date-set mismatch")
+          manifest["common_unique_sessions"]=len(date_sets[0])
+          manifest["cross_series_date_alignment"]="PASS"
+          manifest["status"]="PASS_200_SESSION_FRESH_P0_SOURCE_COVERAGE"
           (root/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True))
           print(json.dumps(manifest,indent=2))
           PY
