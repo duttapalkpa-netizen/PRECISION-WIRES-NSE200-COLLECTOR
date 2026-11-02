@@ -68,7 +68,7 @@ def main():
              "Document Created/LastPrinted metadata are not treated as official release timestamps.",
              "No archived historical vintage is certified from a single current retrieval.",
              "No data is promoted to Factor Registry by this batch."]}
-    (OUT/"vintage_batch_manifest.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+")
+    (OUT/"vintage_batch_manifest.json").write_text(json.dumps(result,indent=2,ensure_ascii=False))
     print(json.dumps({"status":result["status"],"months_fetched":len(rows),
                       "release_timestamp_statuses":sorted({x["release_timestamp_status"] for x in rows})},indent=2))
 if __name__=="__main__": main()
