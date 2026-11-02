@@ -1,0 +1,105 @@
+name: Nifty Indices P0 historical source probe
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/niftyindices_p0_historical_probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: niftyindices-p0-historical-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe official Nifty Indices benchmark, sector and VIX APIs
+        run: |
+          python -m pip install requests
+          python - <<'PY'
+          import requests, json, hashlib, csv, io, time
+          from pathlib import Path
+          from datetime import datetime
+          root=Path("niftyindices_p0_probe");root.mkdir()
+          s=requests.Session()
+          s.headers.update({"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36","Referer":"https://www.niftyindices.com/reports/historical-data","Origin":"https://www.niftyindices.com","Accept":"application/json, text/javascript, */*; q=0.01"})
+          base="https://www.niftyindices.com"
+          start,end="01 Oct 2025","10 Oct 2025"
+          results=[]
+          def save(name,url,body,status,headers):
+            raw=body if isinstance(body,bytes) else body.encode()
+            p=root/(name+".raw")
+            p.write_bytes(raw)
+            return {"name":name,"url":url,"http_status":status,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"content_type":headers.get("Content-Type",""),"file":str(p)}
+          def decode_asp(data):
+            j=data.json()
+            value=j.get("d",j)
+            if isinstance(value,str):
+              try: value=json.loads(value)
+              except Exception: pass
+            return value
+          # Official site metadata route: enumerate categories and indices first.
+          url=base+"/Backpage.aspx/gethistoricaltypeSubindexdata"
+          r=s.post(url,json={"cinfo":{"indextype":"Equity","indexgroup":"Historical Index Data"}},timeout=30)
+          results.append(save("metadata_categories",r.url,r.content,r.status_code,r.headers))
+          r.raise_for_status()
+          categories=decode_asp(r)
+          (root/"metadata_categories.json").write_text(json.dumps(categories,indent=2))
+          # Discover sectoral category's index names.
+          url=base+"/Backpage.aspx/gethistoricaltypeindexdata"
+          r=s.post(url,json={"cinfo":{"indextype":"Sectoral Indices","indexgroup":"Historical Index Data"}},timeout=30)
+          results.append(save("metadata_sector_indices",r.url,r.content,r.status_code,r.headers))
+          r.raise_for_status()
+          sectors=decode_asp(r)
+          (root/"metadata_sector_indices.json").write_text(json.dumps(sectors,indent=2))
+          def post_index(name,group):
+            url=base+"/Backpage.aspx/getHistoricaldatatabletoString"
+            cinfo="{"+f"'name':'{name}','startDate':'{start}','endDate':'{end}','indexName':'{name}'"+"}"
+            r=s.post(url,json={"cinfo":cinfo},timeout=40)
+            results.append(save("data_"+group,r.url,r.content,r.status_code,r.headers))
+            r.raise_for_status()
+            rows=decode_asp(r)
+            if not isinstance(rows,list): raise RuntimeError(f"{group}: response is not a row list: {type(rows).__name__}")
+            parsed=[]
+            for row in rows:
+              d=datetime.strptime(row["HistoricalDate"],"%d %b %Y").date().isoformat()
+              parsed.append(d)
+              if row.get("INDEX_NAME","").strip().upper()!=name.upper(): raise RuntimeError(f"{group}: wrong INDEX_NAME {row.get('INDEX_NAME')}")
+            expected={"2025-10-01","2025-10-03","2025-10-06","2025-10-07","2025-10-08","2025-10-09","2025-10-10"}
+            found=expected.intersection(parsed)
+            if not found: raise RuntimeError(f"{group}: none of expected trading dates present; got {parsed}")
+            return {"group":group,"index_name":name,"row_count":len(rows),"dates":parsed,"date_validation":"PASS","index_name_validation":"PASS","expected_window_dates_found":sorted(found)}
+          benchmark=post_index("NIFTY 50","benchmark_index")
+          time.sleep(1)
+          sector=post_index("NIFTY BANK","sector_indices")
+          time.sleep(1)
+          # Independent India VIX endpoint.
+          url=base+"/Backpage.aspx/BindHistoricalIndiaVixData"
+          body="{"+f"'name':'India VIX','startDate':'{start}','endDate':'{end}'"+"}"
+          r=s.post(url,data=body.encode(),headers={"Content-Type":"application/json; charset=utf-8"},timeout=40)
+          results.append(save("data_india_vix",r.url,r.content,r.status_code,r.headers))
+          r.raise_for_status()
+          vix=decode_asp(r)
+          if not isinstance(vix,list) or not vix: raise RuntimeError("India VIX response empty or not a row list")
+          vixdates=[datetime.strptime(x["date"],"%d %b %Y").date().isoformat() for x in vix]
+          expected={"2025-10-01","2025-10-03","2025-10-06","2025-10-07","2025-10-08","2025-10-09","2025-10-10"}
+          if not expected.intersection(vixdates): raise RuntimeError(f"India VIX expected dates missing: {vixdates}")
+          summary={"status":"PASS_SOURCE_PROBE_AND_SCHEMA_VALIDATION","window":{"start":start,"end":end},"benchmark":benchmark,"sector":sector,"volatility":{"group":"volatility","index_name":"India VIX","row_count":len(vix),"dates":vixdates,"date_validation":"PASS","index_name_validation":"PASS"},"raw_responses":results,"note":"Source retrieval/schema only; no factor promotion; no vintage claims."}
+          (root/"summary.json").write_text(json.dumps(summary,indent=2,sort_keys=True))
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Upload raw API responses and validation manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: niftyindices-p0-historical-probe
+          path: niftyindices_p0_probe/
+          if-no-files-found: warn
+          retention-days: 90
