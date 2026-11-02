@@ -1,0 +1,176 @@
+name: NSE 200-session official source provenance revalidation
+
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_200_session_provenance_revalidation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: nse-200-session-provenance-revalidation
+  cancel-in-progress: false
+
+jobs:
+  revalidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download immutable Run 255 snapshot artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nse-cache-benchmark-run255
+          run-id: 41498405914
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: input
+
+      - name: Re-fetch exact 200 official NSE daily files and compare byte hashes
+        run: |
+          python - <<'PY'
+          import csv, hashlib, io, json, time
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import requests
+
+          root=Path("input")
+          manifest_paths=list(root.glob("**/nse_snapshot_manifest_*.json"))
+          if len(manifest_paths)!=1:
+              raise RuntimeError(f"expected exactly one snapshot manifest, found {len(manifest_paths)}")
+          manifest_path=manifest_paths[0]
+          manifest=json.loads(manifest_path.read_text())
+          records=manifest.get("records",[])
+          expected=int(manifest.get("expected_sessions",0))
+          if expected!=200 or len(records)!=200 or manifest.get("actual_sessions")!=200:
+              raise RuntimeError("source snapshot is not exactly 200 sessions")
+
+          s=requests.Session()
+          s.headers.update({
+              "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
+              "Accept":"text/csv,application/octet-stream,*/*",
+              "Accept-Language":"en-US,en;q=0.9",
+              "Referer":"https://www.nseindia.com/",
+              "Connection":"keep-alive"
+          })
+          for home in ("https://www.nseindia.com/","https://www.nseindia.com/all-reports"):
+              try:
+                  r=s.get(home,timeout=(10,20))
+                  print(f"BOOTSTRAP {r.status_code} {home}",flush=True)
+              except requests.RequestException as e:
+                  print(f"BOOTSTRAP_WARN {type(e).__name__}",flush=True)
+
+          out=Path("provenance_revalidation");out.mkdir(exist_ok=True)
+          results=[]
+          for i,rec in enumerate(records,1):
+              trade_date=rec["trade_date"]
+              stamp=datetime.strptime(trade_date,"%Y-%m-%d").strftime("%d%m%Y")
+              urls=[
+                  f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
+                  f"https://archives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv"
+              ]
+              cached=root/"raw"/rec["file"]
+              if not cached.is_file():
+                  raise RuntimeError(f"snapshot file missing: {cached}")
+              cached_bytes=cached.read_bytes()
+              cached_sha=hashlib.sha256(cached_bytes).hexdigest()
+              if cached_sha!=rec["sha256"]:
+                  raise RuntimeError(f"snapshot input hash mismatch before revalidation: {trade_date}")
+
+              chosen=None
+              attempts=[]
+              for url in urls:
+                  try:
+                      response=s.get(url,timeout=(10,30))
+                      raw=response.content
+                      attempts.append({
+                          "url":url,"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
+                          "http_status":response.status_code,
+                          "content_type":response.headers.get("Content-Type",""),
+                          "bytes":len(raw),"response_sha256":hashlib.sha256(raw).hexdigest() if raw else None
+                      })
+                      if response.status_code==200 and len(raw)>1000 and not raw.lstrip().startswith(b"<"):
+                          chosen=(url,raw,attempts[-1]["retrieved_at_utc"],response.status_code)
+                          break
+                      if response.status_code not in (403,404,429,500,502,503,504):
+                          break
+                  except requests.RequestException as e:
+                      attempts.append({"url":url,"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"http_status":None,"error":f"{type(e).__name__}: {e}"})
+              if chosen:
+                  url,raw,revalidated_at,status=chosen
+                  response_sha=hashlib.sha256(raw).hexdigest()
+                  try:
+                      text=raw.decode("utf-8-sig")
+                      reader=csv.DictReader(io.StringIO(text))
+                      headers={str(x).strip().upper():x for x in (reader.fieldnames or [])}
+                      series_col=headers.get("SERIES")
+                      symbol_col=headers.get("SYMBOL")
+                      date_col=headers.get("DATE1") or headers.get("TRADDT") or headers.get("DATE")
+                      close_col=headers.get("CLOSE_PRICE") or headers.get("CLOSEPRICE") or headers.get("CLSPRIC")
+                      schema_ok=all((series_col,symbol_col,date_col,close_col))
+                      eq_count=0; observed=set()
+                      if schema_ok:
+                          for row in reader:
+                              if str(row.get(series_col,"")).strip().upper()=="EQ":
+                                  eq_count+=1
+                                  observed.add(str(row.get(date_col,"")).strip())
+                      date_ok=schema_ok and eq_count>0 and len(observed)==1
+                      if date_ok:
+                          try:
+                              parsed=datetime.strptime(next(iter(observed)),"%d-%b-%Y").date().isoformat()
+                          except ValueError:
+                              try: parsed=datetime.strptime(next(iter(observed)),"%d-%m-%Y").date().isoformat()
+                              except ValueError: parsed=None
+                          date_ok=parsed==trade_date
+                      else: parsed=None
+                  except Exception:
+                      schema_ok=False;date_ok=False;eq_count=0;parsed=None
+                  results.append({
+                      "trade_date":trade_date,"status":"REVALIDATED" if schema_ok and date_ok else "SOURCE_VALIDATION_FAILED",
+                      "source_url":url,"revalidated_at_utc":revalidated_at,"http_status":status,
+                      "response_bytes":len(raw),"response_sha256":response_sha,"snapshot_sha256":cached_sha,
+                      "byte_identical_to_snapshot":response_sha==cached_sha,
+                      "schema_validation":"PASS" if schema_ok else "FAIL",
+                      "trade_date_validation":"PASS" if date_ok else "FAIL","observed_trade_date":parsed,
+                      "eq_rows":eq_count,"attempts":attempts
+                  })
+              else:
+                  results.append({"trade_date":trade_date,"status":"SOURCE_UNAVAILABLE","snapshot_sha256":cached_sha,"attempts":attempts})
+              print(f"REVALIDATE {i}/200 {trade_date} {results[-1]['status']} hash_match={results[-1].get('byte_identical_to_snapshot')}",flush=True)
+              time.sleep(0.25)
+
+          ok=[x for x in results if x["status"]=="REVALIDATED" and x.get("byte_identical_to_snapshot") is True]
+          source_valid=[x for x in results if x["status"]=="REVALIDATED"]
+          report={
+              "schema_version":1,
+              "snapshot_id":manifest["snapshot_id"],
+              "snapshot_manifest":manifest_path.name,
+              "requested_sessions":200,
+              "revalidated_sessions":len(source_valid),
+              "byte_identical_sessions":len(ok),
+              "source_validation_failures":sum(x["status"]=="SOURCE_VALIDATION_FAILED" for x in results),
+              "source_unavailable":sum(x["status"]=="SOURCE_UNAVAILABLE" for x in results),
+              "original_retrieval_timestamps_recovered":False,
+              "provenance_semantics":"Fresh official-source revalidation time only; never represents original historical retrieval or publication time.",
+              "status":"PASS_200_SOURCE_REVALIDATION_BYTE_IDENTICAL" if len(ok)==200 and len(source_valid)==200 else "BLOCKED_PROVENANCE_REVALIDATION_INCOMPLETE",
+              "completed_at_utc":datetime.now(timezone.utc).isoformat(),
+              "results":results
+          }
+          (out/"provenance_revalidation_report.json").write_text(json.dumps(report,indent=2,sort_keys=True)+"\n")
+          (out/"provenance_revalidation_report.sha256").write_text(hashlib.sha256((out/"provenance_revalidation_report.json").read_bytes()).hexdigest()+"  provenance_revalidation_report.json\n")
+          print(json.dumps({k:v for k,v in report.items() if k!="results"},indent=2),flush=True)
+          if report["status"]!="PASS_200_SOURCE_REVALIDATION_BYTE_IDENTICAL":
+              raise SystemExit("200-session official source provenance revalidation incomplete; no evidence promotion")
+          PY
+
+      - name: Upload provenance revalidation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-200-session-provenance-revalidation
+          path: provenance_revalidation/
+          if-no-files-found: warn
+          retention-days: 90
