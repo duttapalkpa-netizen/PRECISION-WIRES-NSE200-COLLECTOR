@@ -31,7 +31,7 @@ jobs:
 
           sources = [
             ("PIB_PRID_2175552", "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2175552", "html"),
-            ("MEA_Ashgabat_Diwali_2025", "https://www.mea.gov.in/Portal/CountryNews/25076_Press_release_for_Diwali_reception_on_19th_Oct_2025.pdf", "pdf"),
+            ("MEA_Ashgabat_Diwali_2025", "https://www.eoiashgabat.gov.in/pdf/Press%20release%20for%20Diwali%20reception%20on%2019th%20Oct%202025.pdf", "pdf"),
           ]
           root = Path("official_response_archive")
           root.mkdir(exist_ok=True)
