@@ -1,0 +1,91 @@
+name: NSE special-session equity calendar reconciliation
+
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_special_session_calendar_reconciliation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nse-special-session-calendar-reconciliation
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify official NSE equity Bhavcopy for 2026-02-01
+        run: |
+          python - <<'PY'
+          import csv,hashlib,io,json,time
+          from datetime import datetime,timezone
+          from pathlib import Path
+          import requests
+          stamp="01022026"
+          expected="2026-02-01"
+          urls=[
+            f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
+            f"https://archives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv"
+          ]
+          s=requests.Session()
+          s.headers.update({
+            "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
+            "Accept":"text/csv,application/octet-stream,*/*",
+            "Accept-Language":"en-US,en;q=0.9",
+            "Referer":"https://www.nseindia.com/"
+          })
+          attempts=[]; chosen=None
+          for url in urls:
+            try:
+              r=s.get(url,timeout=(10,25)); raw=r.content
+              attempts.append({"url":url,"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"http_status":r.status_code,"content_type":r.headers.get("Content-Type",""),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest() if raw else None})
+              if r.status_code==200 and len(raw)>1000 and not raw.lstrip().startswith(b"<"):
+                chosen=(url,raw);break
+            except requests.RequestException as e:
+              attempts.append({"url":url,"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"error":f"{type(e).__name__}: {e}"})
+          result={"trade_date":expected,"source_attempts":attempts,"checked_at_utc":datetime.now(timezone.utc).isoformat(),"status":"BLOCKED"}
+          if chosen:
+            url,raw=chosen
+            reader=csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
+            cols={x.strip().upper():x for x in (reader.fieldnames or [])}
+            required={"SYMBOL","SERIES","DATE1","CLOSE_PRICE"}
+            missing=sorted(required-set(cols))
+            eq=0; dates=set(); bad_close=0
+            if not missing:
+              for row in reader:
+                if str(row.get(cols["SERIES"],"")).strip().upper()=="EQ":
+                  eq+=1;dates.add(str(row.get(cols["DATE1"],"")).strip())
+                  try:
+                    if float(str(row.get(cols["CLOSE_PRICE"],"")).replace(",","").strip())<=0:bad_close+=1
+                  except Exception:bad_close+=1
+            observed=[]
+            for value in dates:
+              for fmt in ("%d-%b-%Y","%d-%m-%Y","%Y-%m-%d"):
+                try: observed.append(datetime.strptime(value,fmt).date().isoformat());break
+                except ValueError:pass
+            date_ok=observed==[expected] and len(dates)==1
+            schema_ok=not missing and eq>0 and bad_close==0
+            result.update({"source_url":url,"http_status":200,"response_sha256":hashlib.sha256(raw).hexdigest(),"response_bytes":len(raw),"missing_columns":missing,"eq_rows":eq,"observed_dates":sorted(dates),"schema_validation":"PASS" if schema_ok else "FAIL","trade_date_validation":"PASS" if date_ok else "FAIL","status":"PASS_SPECIAL_EQUITY_SESSION_CONFIRMED" if schema_ok and date_ok else "BLOCKED_SPECIAL_SESSION_NOT_CONFIRMED"})
+          out=Path("calendar_reconciliation");out.mkdir(exist_ok=True)
+          payload=json.dumps(result,indent=2,sort_keys=True)+"\n"
+          (out/"nse_2026-02-01_equity_session.json").write_text(payload)
+          (out/"nse_2026-02-01_equity_session.sha256").write_text(hashlib.sha256(payload.encode()).hexdigest()+"  nse_2026-02-01_equity_session.json\n")
+          print(payload,flush=True)
+          if result["status"]!="PASS_SPECIAL_EQUITY_SESSION_CONFIRMED":
+            raise SystemExit("Special equity session is not confirmed; do not modify collector calendar.")
+          PY
+
+      - name: Upload calendar reconciliation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-special-session-calendar-reconciliation
+          path: calendar_reconciliation/
+          if-no-files-found: warn
+          retention-days: 90
