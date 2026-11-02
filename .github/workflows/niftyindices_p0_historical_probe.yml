@@ -29,11 +29,15 @@ jobs:
           from datetime import datetime
           root=Path("niftyindices_p0_probe");root.mkdir()
           s=requests.Session()
-          s.headers.update({"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36","Referer":"https://www.niftyindices.com/reports/historical-data","Origin":"https://www.niftyindices.com","Accept":"application/json, text/javascript, */*; q=0.01"})
+          s.headers.update({"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36","Referer":"https://www.niftyindices.com/reports/historical-data","Origin":"https://www.niftyindices.com","Accept":"application/json, text/javascript, */*; q=0.01","X-Requested-With":"XMLHttpRequest","Content-Type":"application/json; charset=utf-8"})
           base="https://www.niftyindices.com"
           landing=s.get(base+"/reports/historical-data",timeout=30)
           (root/"landing_page.html").write_bytes(landing.content)
           (root/"landing_page_metadata.json").write_text(json.dumps({"status":landing.status_code,"url":landing.url,"content_type":landing.headers.get("Content-Type"),"bytes":len(landing.content),"sha256":hashlib.sha256(landing.content).hexdigest()},indent=2))
+          js=s.get("https://iislliveblob.niftyindices.com/assets/js/IISLComponet.js",timeout=30)
+          (root/"IISLComponet.js").write_bytes(js.content)
+          js2=s.get("https://iislliveblob.niftyindices.com/assets/js/historicalData.js",timeout=30)
+          (root/"historicalData.js").write_bytes(js2.content)
           start,end="01 Oct 2025","10 Oct 2025"
           results=[]
           def save(name,url,body,status,headers):
@@ -50,17 +54,19 @@ jobs:
               except Exception: pass
             return value
           # Official site metadata route: enumerate categories and indices first.
-          url=base+"/Backpage.aspx/gethistoricaltypeSubindexdata"
+          url=base+"/BackPage.aspx/gethistoricaltypeSubindexdata"
           r=s.post(url,json={"cinfo":{"indextype":"Equity","indexgroup":"Historical Index Data"}},timeout=30)
           results.append(save("metadata_categories",r.url,r.content,r.status_code,r.headers))
           r.raise_for_status()
+          if "json" not in r.headers.get("Content-Type","").lower(): raise RuntimeError("metadata_categories returned non-JSON: "+r.headers.get("Content-Type","")+" "+r.text[:300])
           categories=decode_asp(r)
           (root/"metadata_categories.json").write_text(json.dumps(categories,indent=2))
           # Discover sectoral category's index names.
-          url=base+"/Backpage.aspx/gethistoricaltypeindexdata"
+          url=base+"/BackPage.aspx/gethistoricaltypeindexdata"
           r=s.post(url,json={"cinfo":{"indextype":"Sectoral Indices","indexgroup":"Historical Index Data"}},timeout=30)
           results.append(save("metadata_sector_indices",r.url,r.content,r.status_code,r.headers))
           r.raise_for_status()
+          if "json" not in r.headers.get("Content-Type","").lower(): raise RuntimeError("metadata_sector_indices returned non-JSON: "+r.headers.get("Content-Type","")+" "+r.text[:300])
           sectors=decode_asp(r)
           (root/"metadata_sector_indices.json").write_text(json.dumps(sectors,indent=2))
           def post_index(name,group):
