@@ -13,3 +13,5 @@ class DiscoveryGuardrails(unittest.TestCase):
   self.assertIn("eaindustry.nic.in/download_data_2223.asp",s)
   self.assertIn("cga.gov.in/writereaddata/MonthAccount/MonthAccountDashboard",s)
 if __name__=="__main__":unittest.main()
+
+# Evidence-only rerun trigger for the bounded official macro source discovery audit.
