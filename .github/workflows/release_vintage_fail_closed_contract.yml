@@ -1,0 +1,31 @@
+name: Release Vintage Fail-Closed Contract Tests
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "qa/test_release_vintage_fail_closed_contract.py"
+      - "research/evidence/official_release_vintage_source_audit_2026-11-02.md"
+      - ".github/workflows/release_vintage_fail_closed_contract.yml"
+      - "pipeline/collect_rbi_dbie_bond_yields.py"
+      - "pipeline/collect_cga_monthly_historical_series.py"
+      - "pipeline/collect_mospi_nas_gdp_smoke.py"
+      - "pipeline/collect_mospi_cpi_2024_smoke.py"
+      - "pipeline/collect_oea_wpi_itemwise.py"
+      - "pipeline/build_oea_wpi_release_status_crosswalk.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release-vintage-fail-closed-contract
+  cancel-in-progress: true
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run official release-vintage fail-closed contracts
+        run: python -m unittest qa.test_release_vintage_fail_closed_contract -v
