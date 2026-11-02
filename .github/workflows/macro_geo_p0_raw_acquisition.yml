@@ -20,7 +20,7 @@ on:
         default: "2025-10-10"
         type: string
       sources_json:
-        description: "JSON object: sources[] with official HTTPS URLs for all four P0 groups; optional archived_pairs[]"
+        description: "JSON object with official HTTPS sources[] for all four P0 groups; optional archived_pairs[]"
         required: true
         type: string
 permissions:
@@ -35,31 +35,38 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Validate inputs and write source config
         env:
           SOURCES_JSON: ${{ inputs.sources_json }}
-          START_DATE: ${{ inputs.start_date }}
-          END_DATE: ${{ inputs.end_date }}
+          START_DATE: ${{ inputs.start_date || '2025-10-01' }}
+          END_DATE: ${{ inputs.end_date || '2025-10-10' }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           python - <<'PY'
           import json, os
           from datetime import date
-          x=json.loads(os.environ["SOURCES_JSON"])
-          assert isinstance(x,dict) and isinstance(x.get("sources"),list)
-          assert os.environ["START_DATE"] <= os.environ["END_DATE"]
+          if os.environ["EVENT_NAME"] == "push":
+              with open("research/config/macro_geo_p0_sources_2025-10-01_2025-10-10.json", encoding="utf-8") as f:
+                  data=json.load(f)
+          else:
+              data=json.loads(os.environ["SOURCES_JSON"])
+          assert isinstance(data,dict) and isinstance(data.get("sources"),list)
           date.fromisoformat(os.environ["START_DATE"]); date.fromisoformat(os.environ["END_DATE"])
-          open("macro_geo_p0_sources.json","w").write(json.dumps(x))
+          assert os.environ["START_DATE"] <= os.environ["END_DATE"]
+          with open("macro_geo_p0_sources.json","w",encoding="utf-8") as f: json.dump(data,f)
           PY
       - name: Collect twice, hash, compare and preserve raw evidence
         run: |
-          python pipeline/macro_geo_p0_raw_collector.py --config macro_geo_p0_sources.json --start-date "${{ inputs.start_date }}" --end-date "${{ inputs.end_date }}" --out macro_geo_p0_raw_evidence
+          python pipeline/macro_geo_p0_raw_collector.py --config macro_geo_p0_sources.json --start-date "${{ inputs.start_date || '2025-10-01' }}" --end-date "${{ inputs.end_date || '2025-10-10' }}" --out macro_geo_p0_raw_evidence
       - name: Archive raw bytes and integrity ledger
         uses: actions/upload-artifact@v4
         with:
-          name: macro-geo-p0-raw-evidence-${{ inputs.start_date }}-${{ inputs.end_date }}
+          name: macro-geo-p0-raw-evidence-2025-10-01-2025-10-10
           path: macro_geo_p0_raw_evidence/
           if-no-files-found: error
           retention-days: 90
