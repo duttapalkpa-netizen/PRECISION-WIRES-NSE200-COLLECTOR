@@ -1,0 +1,88 @@
+name: NSE historical index and India VIX probe
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_historical_index_vix_probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nse-historical-index-vix-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Acquire official NSE benchmark and VIX raw responses
+        run: |
+          python -m pip install requests
+          python - <<'PY'
+          import requests,json,hashlib
+          from pathlib import Path
+          from datetime import datetime
+          from urllib.parse import urlencode
+          root=Path("nse_historical_probe");root.mkdir()
+          s=requests.Session()
+          h={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36","Accept":"application/json, text/plain, */*","Accept-Language":"en-US,en;q=0.9","Referer":"https://www.nseindia.com/reports-indices-historical-index-data","X-Requested-With":"XMLHttpRequest"}
+          s.headers.update(h)
+          home=s.get("https://www.nseindia.com/",timeout=30)
+          (root/"nse_home.html").write_bytes(home.content)
+          records=[]
+          def fetch(name,url):
+            r=s.get(url,timeout=45)
+            raw=r.content
+            (root/(name+".raw")).write_bytes(raw)
+            info={"name":name,"url":r.url,"status":r.status_code,"content_type":r.headers.get("Content-Type"),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"body_prefix":raw[:160].decode("utf-8","replace")}
+            records.append(info)
+            r.raise_for_status()
+            try: return r.json()
+            except Exception as e: raise RuntimeError(name+" non-JSON response: "+repr(info)) from e
+          params={"indexType":"NIFTY 50","from":"01-10-2025","to":"10-10-2025"}
+          benchmark=fetch("nifty50_index_history","https://www.nseindia.com/api/historicalOR/indicesHistory?"+urlencode(params))
+          vix=fetch("india_vix_history","https://www.nseindia.com/api/historicalOR/vixhistory?"+urlencode({"from":"01-10-2025","to":"10-10-2025"}))
+          def rows_of(obj,key):
+            if isinstance(obj,dict):
+              data=obj.get("data",obj)
+              if isinstance(data,dict): data=data.get(key,data.get("data",[]))
+              return data
+            return obj
+          b=rows_of(benchmark,"indexCloseOnlineRecords")
+          v=rows_of(vix,"data")
+          if not isinstance(b,list) or not b: raise RuntimeError("NIFTY 50 history empty or unexpected response schema")
+          if not isinstance(v,list) or not v: raise RuntimeError("India VIX history empty or unexpected response schema")
+          def datecheck(rows,keys):
+            vals=[]
+            for row in rows:
+              raw=next((row[k] for k in keys if k in row),None)
+              if raw is None: raise RuntimeError("missing date field in "+str(row)[:300])
+              parsed=None
+              for fmt in ("%d-%b-%Y","%d-%m-%Y","%d %b %Y","%d-%b-%y","%d/%m/%Y"):
+                try: parsed=datetime.strptime(str(raw),fmt).date().isoformat();break
+                except ValueError: pass
+              if not parsed: raise RuntimeError("unrecognized date "+str(raw))
+              vals.append(parsed)
+            return vals
+          bd=datecheck(b,["EOD_TIMESTAMP","HistoricalDate","CH_TIMESTAMP","TIMESTAMP"])
+          vd=datecheck(v,["EOD_TIMESTAMP","date","TIMESTAMP","CH_TIMESTAMP"])
+          expected={"2025-10-01","2025-10-03","2025-10-06","2025-10-07","2025-10-08","2025-10-09","2025-10-10"}
+          if not expected.intersection(bd): raise RuntimeError("NIFTY 50 date window mismatch "+str(bd))
+          if not expected.intersection(vd): raise RuntimeError("VIX date window mismatch "+str(vd))
+          summary={"status":"PASS_NSE_BENCHMARK_AND_VIX_RAW_SCHEMA","benchmark":{"requested":"NIFTY 50","rows":len(b),"dates":bd,"date_validation":"PASS"},"vix":{"requested":"India VIX","rows":len(v),"dates":vd,"date_validation":"PASS"},"responses":records,"note":"Research-only source probe. No factor promotion, no revision ledger, no hard-gate relaxation."}
+          (root/"summary.json").write_text(json.dumps(summary,indent=2,sort_keys=True))
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Upload raw NSE responses and validation manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-historical-index-vix-probe
+          path: nse_historical_probe/
+          if-no-files-found: warn
+          retention-days: 90
