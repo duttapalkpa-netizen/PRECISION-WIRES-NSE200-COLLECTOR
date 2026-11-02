@@ -70,7 +70,7 @@ jobs:
               "status": "PASS" if all(x["source_content_validation"] for x in attempts) else "FAIL"
             })
           (root / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-          print(json.dumps({"sources": [(x["name"], x["status"], x["same_bytes_on_repeat"]) for x in manifest["sources"]]}, indent=2))
+          print(json.dumps(manifest, indent=2))
           if any(x["status"] != "PASS" for x in manifest["sources"]):
             raise SystemExit("OFFICIAL_RESPONSE_ARCHIVE_VALIDATION_FAILED")
           PY
