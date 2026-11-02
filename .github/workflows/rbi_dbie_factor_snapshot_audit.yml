@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts/factor_source_baseline artifacts/rbi_adapter
           gh run download 41282726166 -n macro-geo-factor-source-repair -D artifacts/factor_source_baseline
-          gh run download 41314656919 -n rbi-dbie-monthly-gsec-yield-adapter -D artifacts/rbi_adapter
+          gh run download 41393082553 -n rbi-dbie-monthly-gsec-yield-adapter -D artifacts/rbi_adapter
           test -s artifacts/factor_source_baseline/outputs/macro_geo/source_coverage.json
           test -s artifacts/rbi_adapter/india_bond_yields.csv
           test -s artifacts/rbi_adapter/rbi_dbie_source_adapter_report.json

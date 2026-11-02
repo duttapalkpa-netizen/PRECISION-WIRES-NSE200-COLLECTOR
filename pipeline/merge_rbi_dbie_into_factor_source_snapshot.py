@@ -53,8 +53,8 @@ def main():
       "baseline_head_sha":"a7dd9161b887b7f79111e610291b1e0935379aa7",
       "baseline_source_coverage_sha256":sha(BASE),
       "added_evidence":"RBI DBIE monthly SGL yield curve; only india_bond_yields row annotated",
-      "rbi_adapter_run_id":41314656919,
-      "rbi_adapter_head_sha":"46dd002b279a3a63fa102096a53a72a716741670",
+      "rbi_adapter_run_id":41393082553,
+      "rbi_adapter_head_sha":"2ef63d1561ddf5177f77b025ee08ed26121c683b",
       "rbi_adapter_sha256":report["normalized_csv_sha256"],
       "rbi_10y_rows":len(ten),"rbi_10y_frequency":"MONTHLY",
       "promotion":"NOT_PROMOTED; release timestamp unknown and daily benchmark mismatch"}
