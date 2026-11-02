@@ -1,0 +1,58 @@
+name: Macro-Geo P0 bounded raw acquisition
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: "Inclusive source-data window (YYYY-MM-DD)"
+        required: true
+        default: "2025-10-01"
+        type: string
+      end_date:
+        description: "Inclusive source-data window (YYYY-MM-DD)"
+        required: true
+        default: "2025-10-10"
+        type: string
+      sources_json:
+        description: "JSON object: sources[] with official HTTPS URLs for all four P0 groups; optional archived_pairs[]"
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: macro-geo-p0-raw-acquisition
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate inputs and write source config
+        env:
+          SOURCES_JSON: ${{ inputs.sources_json }}
+          START_DATE: ${{ inputs.start_date }}
+          END_DATE: ${{ inputs.end_date }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from datetime import date
+          x=json.loads(os.environ["SOURCES_JSON"])
+          assert isinstance(x,dict) and isinstance(x.get("sources"),list)
+          assert os.environ["START_DATE"] <= os.environ["END_DATE"]
+          date.fromisoformat(os.environ["START_DATE"]); date.fromisoformat(os.environ["END_DATE"])
+          open("macro_geo_p0_sources.json","w").write(json.dumps(x))
+          PY
+      - name: Collect twice, hash, compare and preserve raw evidence
+        run: |
+          python pipeline/macro_geo_p0_raw_collector.py --config macro_geo_p0_sources.json --start-date "${{ inputs.start_date }}" --end-date "${{ inputs.end_date }}" --out macro_geo_p0_raw_evidence
+      - name: Archive raw bytes and integrity ledger
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-p0-raw-evidence-${{ inputs.start_date }}-${{ inputs.end_date }}
+          path: macro_geo_p0_raw_evidence/
+          if-no-files-found: error
+          retention-days: 90
