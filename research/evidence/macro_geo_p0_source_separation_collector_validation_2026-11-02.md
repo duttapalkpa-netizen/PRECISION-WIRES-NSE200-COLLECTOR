@@ -131,3 +131,13 @@ This artifact archives two official response bodies and records request-time res
 
 ## Current decision
 NSE HISTORICAL API ACCESS BLOCKED BY OFFICIAL SITE REDIRECT/AUTH FLOW. Preserve diagnostic artifact and investigate page JavaScript, session/cookie/anti-bot requirements or official NSE alternative. Hard Gate remains BLOCKED; no vintage pair found and no revision ledger created.
+
+
+## Nifty Indices API probe — verified attempts
+Official historical-data page: https://www.niftyindices.com/reports/historical-data . Independent technical reference documents the ASP.NET POST routes and response schemas for historical index OHLC and India VIX; it is implementation guidance, not an official source. The first workflow probe used an invalid endpoint path casing and received HTML instead of JSON. A subsequent probe corrected the path to `/BackPage.aspx/`, added X-Requested-With/AJAX headers, and warmed the official landing page.
+
+- Run #3: 41476680585, failed before API calls because DNS resolution for `iislliveblob.niftyindices.com` failed. Artifact 13156239702 captured only the landing HTML and metadata; artifact digest `adb88378ce4880dd84934a6735f06c4e94e5181190f9e602f05086f8ae823c74`.
+- Run #4: 41476792069, created after removing the static-asset DNS dependency. At the latest audit observation it remained queued; no conclusion or artifact is claimed.
+- The earlier run #1 (41472861029) failed on non-JSON HTML response from the metadata endpoint; artifact 13156405645 was preserved for diagnostics.
+
+No NIFTY 50, sector-index or India VIX raw historical data response has yet been acquired. Date/index validation and independent raw-data hash/drift checks are therefore NOT RUN. The technical route reference is not promoted as source evidence. No revision ledger created. Hard Gate remains BLOCKED.
