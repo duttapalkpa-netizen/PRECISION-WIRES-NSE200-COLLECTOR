@@ -1,0 +1,82 @@
+name: NSE P0 200-session benchmark sector VIX coverage
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_p0_200_session_coverage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nse-p0-200-session-coverage
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Collect official benchmark, sector indices and India VIX
+        run: |
+          python -m pip install requests
+          python - <<'PY'
+          import requests,json,hashlib
+          from pathlib import Path
+          from datetime import datetime
+          from urllib.parse import urlencode
+          root=Path("nse_p0_200_session");root.mkdir()
+          s=requests.Session()
+          s.headers.update({"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36","Accept":"application/json, text/plain, */*","Accept-Language":"en-US,en;q=0.9","Referer":"https://www.nseindia.com/reports-indices-historical-index-data","X-Requested-With":"XMLHttpRequest"})
+          home=s.get("https://www.nseindia.com/",timeout=30)
+          (root/"nse_home.html").write_bytes(home.content)
+          start,end="01-11-2024","10-10-2025"
+          expected_start=datetime.strptime(start,"%d-%m-%Y").date()
+          expected_end=datetime.strptime(end,"%d-%m-%Y").date()
+          expected_count=200
+          manifest={"window":{"from":start,"to":end},"captured_at_utc":datetime.utcnow().isoformat()+"Z","series":[]}
+          def parse_date(v):
+            for fmt in ("%d-%b-%Y","%d-%m-%Y","%d %b %Y","%d-%b-%y","%d/%m/%Y"):
+              try:return datetime.strptime(str(v),fmt).date()
+              except ValueError:pass
+            raise RuntimeError("Unknown date format "+str(v))
+          def fetch_index(name,kind):
+            url="https://www.nseindia.com/api/historicalOR/indicesHistory?"+urlencode({"indexType":name,"from":start,"to":end})
+            r=s.get(url,timeout=60); raw=r.content
+            file=root/(kind+".json");file.write_bytes(raw)
+            r.raise_for_status(); obj=r.json(); rows=obj.get("data",[])
+            if not isinstance(rows,list) or len(rows)<expected_count: raise RuntimeError(kind+" insufficient rows: "+str(len(rows)))
+            dates=[]; identities=set()
+            for row in rows:
+              dates.append(parse_date(row["EOD_TIMESTAMP"]))
+              identities.add(row["EOD_INDEX_NAME"].strip().upper())
+            if identities!={name.upper()}: raise RuntimeError(kind+" index identity mismatch "+repr(identities))
+            if min(dates)<expected_start or max(dates)>expected_end: raise RuntimeError(kind+" date outside requested window")
+            if len(set(dates))!=len(dates): raise RuntimeError(kind+" duplicate dates")
+            manifest["series"].append({"name":kind,"requested_index":name,"rows":len(rows),"first_date":str(min(dates)),"last_date":str(max(dates)),"unique_dates":len(set(dates)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"http_status":r.status_code})
+          for nm,kind in [("NIFTY 50","benchmark_nifty50"),("NIFTY BANK","sector_nifty_bank"),("NIFTY IT","sector_nifty_it")]:
+            fetch_index(nm,kind)
+          url="https://www.nseindia.com/api/historicalOR/vixhistory?"+urlencode({"from":start,"to":end})
+          r=s.get(url,timeout=60);raw=r.content;(root/"india_vix.json").write_bytes(raw);r.raise_for_status()
+          rows=r.json().get("data",[])
+          if len(rows)<expected_count: raise RuntimeError("India VIX insufficient rows "+str(len(rows)))
+          vd=[parse_date(x["EOD_TIMESTAMP"]) for x in rows]
+          names={x["EOD_INDEX_NAME"].strip().upper() for x in rows}
+          if names!={"INDIA VIX"}: raise RuntimeError("VIX identity mismatch "+repr(names))
+          if min(vd)<expected_start or max(vd)>expected_end or len(set(vd))!=len(vd): raise RuntimeError("VIX date/duplicate validation failed")
+          manifest["series"].append({"name":"india_vix","requested_index":"INDIA VIX","rows":len(rows),"first_date":str(min(vd)),"last_date":str(max(vd)),"unique_dates":len(set(vd)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"http_status":r.status_code})
+          manifest["status"]="PASS_200_SESSION_P0_SOURCE_COVERAGE"
+          (root/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True))
+          print(json.dumps(manifest,indent=2))
+          PY
+      - name: Upload raw series and SHA-256 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-p0-200-session-coverage
+          path: nse_p0_200_session/
+          if-no-files-found: warn
+          retention-days: 90
