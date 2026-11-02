@@ -119,3 +119,15 @@ MEA download was captured from the Embassy of India, Ashgabat official website P
 
 ### Scope boundary
 This artifact archives two official response bodies and records request-time response headers; it does not provide October 2025 immutable historical response captures. No revision ledger is justified or created. Market index raw CSVs were not acquired, so market date/index validation, market-file SHA-256 and index-source drift remain NOT RUN. Hard Gate remains BLOCKED.
+
+
+## NSE/Nifty Indices historical endpoint probe — 2026-11-02
+- Workflow run #1: 41472861029, commit 779896c7c042b97ac522a167928c1c364f7d65c2; job failed at the first metadata API response. Artifact 13156405645 (15,738 bytes), ZIP SHA-256 `48fe330fa883a00a94bb61663b1f789d205fdc7164e3b0218dbd09fae31100ad`.
+- Workflow run #2: 41473019128, commit 9b5a6e6bc6ba75a5f7728b2215bb9099cabb9fc8; job failed at the first metadata API response after warming the official historical page. Artifact 13155593115 (34,850 bytes), GitHub digest `sha256:dbca4dbafee17f56417968e84199e77a25081bfc3f9fc453b5460b2d70bf26b3`.
+- Artifact #2 downloaded and independently hashed: `dbca4dbafee17f56417968e84199e77a25081bfc3f9fc453b5460b2d70bf26b3` (matches GitHub digest); ZIP listing/integrity passed.
+- Captured response was HTTP 200 but HTML redirect to `https://www.niftyindices.com/?ReturnUrl=...`, not JSON. The official site's POST metadata endpoint was therefore not accessed; no benchmark/sector/VIX data rows were returned.
+- No market CSV raw files exist in this probe artifact. Date/index validation, market raw SHA-256 and drift remain NOT RUN.
+- Source route references in external reverse-engineering documentation are leads only, not proof of a functioning official API. No source promotion.
+
+## Current decision
+NSE HISTORICAL API ACCESS BLOCKED BY OFFICIAL SITE REDIRECT/AUTH FLOW. Preserve diagnostic artifact and investigate page JavaScript, session/cookie/anti-bot requirements or official NSE alternative. Hard Gate remains BLOCKED; no vintage pair found and no revision ledger created.
