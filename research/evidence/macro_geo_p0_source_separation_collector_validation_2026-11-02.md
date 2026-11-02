@@ -141,3 +141,23 @@ Official historical-data page: https://www.niftyindices.com/reports/historical-d
 - The earlier run #1 (41472861029) failed on non-JSON HTML response from the metadata endpoint; artifact 13156405645 was preserved for diagnostics.
 
 No NIFTY 50, sector-index or India VIX raw historical data response has yet been acquired. Date/index validation and independent raw-data hash/drift checks are therefore NOT RUN. The technical route reference is not promoted as source evidence. No revision ledger created. Hard Gate remains BLOCKED.
+
+
+## Official NSE historical endpoint probe — verified
+- Workflow: `.github/workflows/nse_historical_index_vix_probe.yml`
+- Run ID: 41480560725; job ID: 125397423289; conclusion SUCCESS.
+- Artifact ID: 13160321349; artifact name `nse-historical-index-vix-probe`; size 2,297 bytes.
+- Artifact digest: `sha256:e2f8f838620ed3f248d6d2c27d3183110dcb455920a9e4c18084553db26ec874`.
+- Artifact downloaded and ZIP SHA-256 independently recomputed; exact digest match.
+- Raw benchmark response SHA-256 independently recomputed: `92697f9cba40a712bcf130a36d92ff65c6cc07b919914c73be8afdff4b4b799a`, 1,917 bytes, HTTP 200.
+- Raw India VIX response SHA-256 independently recomputed: `0ff77ae23978f10e3f01617906fcdb3f87a0b9dc123288499f9faa9d1a4f511c`, 1,992 bytes, HTTP 200.
+- Benchmark: NIFTY 50, 7 records, 1/3/6/7/8/9/10 Oct 2025; all identities exactly `NIFTY 50`.
+- Volatility: INDIA VIX, 7 records, same trading dates; all identities exactly `INDIA VIX`.
+- Date and index identity checks PASS. Raw bytes and manifest archived.
+- This proves source endpoint connectivity and schema only, not 200-session coverage or factor-group promotion.
+
+### 200-session acquisition attempt
+- Workflow `.github/workflows/nse_p0_200_session_coverage.yml` first attempt Run ID 41480717765 failed closed because NSE endpoint returned only 70 NIFTY 50 records for the requested one-year window; artifact ID 13159797039 preserved the partial response.
+- Collector changed to bounded 45-day chunks to test whether the endpoint's response cap can be safely handled without dropping records.
+- Second attempt Run ID 41480824206 was observed IN_PROGRESS at audit time; no result/artifact is claimed yet.
+- Separate sector series requested are NIFTY BANK and NIFTY IT; no sector coverage claim until run completion and raw artifact audit.
