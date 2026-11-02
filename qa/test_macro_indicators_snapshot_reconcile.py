@@ -16,3 +16,5 @@ class SnapshotTests(unittest.TestCase):
   for term in ["RANKING_SCORE","PRODUCTION_SELECTOR","PRESSURE_FADE","672"]:
    self.assertIn(term,s)
 if __name__=="__main__":unittest.main()
+
+# Evidence-only rerun trigger: preserve all assertions and frozen production invariants.
