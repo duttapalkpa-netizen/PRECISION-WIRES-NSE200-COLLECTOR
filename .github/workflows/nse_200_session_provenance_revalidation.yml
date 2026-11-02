@@ -24,7 +24,7 @@ jobs:
       - name: Download immutable Run 255 snapshot artifact
         uses: actions/download-artifact@v4
         with:
-          name: nse-cache-benchmark-run255
+          name: nse-200-session-cache-verification-255
           run-id: 41498405914
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: input
