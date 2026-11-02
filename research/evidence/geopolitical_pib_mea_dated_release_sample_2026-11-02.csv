@@ -1,0 +1,7 @@
+publisher,source_id,publication_date,publication_time,timezone,subject,event_occurred_at,evidence_url,source_timestamp_precision,sample_window_status,raw_bytes_archived,sha256
+PIB,PRID-2175552,2025-10-06,19:50,IST,Fourth Kautilya Economic Conclave concluded,UNKNOWN,https://www.pib.gov.in/PressReleasePage.aspx?PRID=2175552&lang=2&reg=3,minute,IN_WINDOW,NO,NOT_COMPUTED
+PIB,PRID-2174721,2025-10-04,12:29,IST,Passport Mobile Seva Kendra at Symbiosis International University Pune,UNKNOWN,https://www.pib.gov.in/PressReleasePage.aspx?PRID=2174721&lang=2&reg=3,minute,IN_WINDOW,NO,NOT_COMPUTED
+PIB,PRID-2177448,2025-10-10,17:58,IST,Passport Mobile Seva Camp at FTII Pune,UNKNOWN,https://www.pib.gov.in/PressReleasePage.aspx?PRID=2177448&lang=2&reg=48,minute,IN_WINDOW,NO,NOT_COMPUTED
+PIB,PRID-2174482,2025-10-03,12:46,IST,Global Mobility Conclave on Overseas Recruitment,UNKNOWN,https://www.pib.gov.in/PressReleasePage.aspx?PRID=2174482&lang=2&reg=3,minute,IN_WINDOW,NO,NOT_COMPUTED
+MEA,advanced-search-result,2025-10-10,,,Swachhata Hi Seva Campaign,2025-09-17/2025-10-02,https://www.mea.gov.in/advanced-search-list.htm,date,IN_WINDOW,NO,NOT_COMPUTED
+MEA,advanced-search-result-control,2025-10-30,,,15th India-Australia JWG on Counter Terrorism,2025-10-29/2025-10-30,https://www.mea.gov.in/advanced-search-list.htm,date,OUTSIDE_WINDOW_CONTROL,NO,NOT_COMPUTED
