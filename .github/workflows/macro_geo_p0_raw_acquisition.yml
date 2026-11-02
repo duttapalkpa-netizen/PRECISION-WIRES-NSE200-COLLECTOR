@@ -1,5 +1,12 @@
 name: Macro-Geo P0 bounded raw acquisition
 on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/macro_geo_p0_raw_acquisition.yml'
+      - 'pipeline/macro_geo_p0_raw_collector.py'
+      - 'research/config/macro_geo_p0_sources_2025-10-01_2025-10-10.json'
   workflow_dispatch:
     inputs:
       start_date:
