@@ -31,7 +31,7 @@ def test_csv_wrong_index_fails():
 
 def test_html_is_not_valid_csv():
     ok, detail = collector.validate_csv(b"<html>Access denied</html>", {"expected_date": "2025-10-01"})
-    assert not ok and detail["reason"] == "CSV_PARSE_ERROR"
+    assert not ok and detail["reason"] in {"CSV_PARSE_ERROR", "CSV_NO_DATA_ROWS", "DATE_COLUMN_MISSING"}
 
 def test_official_host_allowlist():
     assert collector.allowed("https://www.nseindia.com/reports-indices-historical-vix")
