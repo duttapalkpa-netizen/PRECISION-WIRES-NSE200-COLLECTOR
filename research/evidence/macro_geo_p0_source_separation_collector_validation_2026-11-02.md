@@ -68,3 +68,29 @@ Run #6 artifact inventory: 0 artifacts. Consequently there is no workflow artifa
 
 ## Updated decision
 COLLECTOR_QA_PASS_RAW_ACQUISITION_BLOCKED. Route discovery and tests are useful progress, but no market raw acquisition or official-response byte archive has been completed. All P0 coverage remains partial/unknown; no source promotion; Hard Gate BLOCKED.
+
+
+## PIB/MEA raw-response archive — verified success
+- Workflow: `.github/workflows/pib_mea_official_response_archive.yml`
+- Successful run #3 / ID: `41469790857`
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/41469790857
+- Commit: `30cf4e25a8ce2ef0a54b8feb7fe83ee9e1ce3a14`
+- Job: `archive` — success; both source validation and artifact upload steps completed.
+- Artifact: `pib-mea-official-response-archive`, ID `13153344725`, 2,450,096 bytes, expires 2027-01-31.
+- Artifact SHA-256 from GitHub: `d340c12e14e0be71679cf62a13087d3c96eeb15793c2641d02c9648ae7a91164`.
+- Artifact independently downloaded; ZIP integrity test PASS; locally recomputed ZIP SHA-256 matches GitHub digest exactly.
+
+### Raw response byte verification
+| Source | Attempts | HTTP/content validation | Raw bytes | SHA-256 | Repeat |
+|---|---:|---|---:|---|---|
+| PIB PRID 2175552 HTML | 2 | 200 / HTML / PRID+Kautilya markers PASS | 137,059 each | attempt 1 `512e0bd506b8284aac1c08e14b8c3801b50fe48eabebeef379e036f41de45b11`; attempt 2 `6a2c517c1da061f226e9b48890ac716928b9be4aba74c256ec5c8ced6b49cb32` | Different raw bytes; dynamic response drift observed, not interpreted as historical content revision. |
+| MEA Ashgabat Diwali 19 Oct 2025 PDF | 2 | 200 / application/pdf / %PDF signature PASS | 1,182,251 each | `47362d5c6efb4da1a0c7022eb62198109abc56b66092bfe9ca99261d7272f77f` both attempts | Identical bytes. |
+
+MEA download was captured from the Embassy of India, Ashgabat official website PDF route, which serves the same press-release title as the MEA domain PDF. MEA-hosted URL itself returned HTTP 403 from the GitHub runner; the Embassy-hosted official mirror returned HTTP 200 and valid PDF bytes.
+
+### Remaining limits
+- PIB/MEA original response bytes now archived with independently recomputed hashes.
+- PIB raw HTML differs between repeat requests. This is a response-level drift signal only; no vintage/revision inference.
+- Market index/sector/India VIX raw CSV acquisition remains NOT RUN; therefore actual date/index-name validation on market observations remains NOT RUN.
+- No archived vintage pair verified. Revision ledger intentionally NOT created.
+- Hard Gate remains BLOCKED; no factor promotion.
