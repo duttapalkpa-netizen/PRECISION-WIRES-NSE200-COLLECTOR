@@ -1,0 +1,83 @@
+name: PIB MEA official response archive
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/pib_mea_official_response_archive.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pib-mea-response-archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch official source responses and independently hash raw bytes
+        run: |
+          python - <<'PY'
+          import hashlib, json, time
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
+          from datetime import datetime, timezone
+
+          sources = [
+            ("PIB_PRID_2175552", "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2175552", "html"),
+            ("MEA_Ashgabat_Diwali_2025", "https://www.mea.gov.in/Portal/CountryNews/25076_Press_release_for_Diwali_reception_on_19th_Oct_2025.pdf", "pdf"),
+          ]
+          root = Path("official_response_archive")
+          root.mkdir(exist_ok=True)
+          manifest = {"captured_at_utc": datetime.now(timezone.utc).isoformat(), "research_only": True, "sources": []}
+          for name, url, kind in sources:
+            attempts = []
+            for attempt in (1, 2):
+              req = Request(url, headers={"User-Agent":"PRECISION-WIRES-research-evidence/1.0", "Accept":"text/html,application/pdf,*/*"})
+              try:
+                with urlopen(req, timeout=40) as response:
+                  status = response.status
+                  headers = dict(response.headers.items())
+                  body = response.read()
+              except HTTPError as e:
+                status, headers, body = e.code, dict(e.headers.items()), e.read()
+              suffix = ".html" if kind == "html" else ".pdf"
+              target = root / f"{name}_attempt{attempt}{suffix}"
+              target.write_bytes(body)
+              digest = hashlib.sha256(body).hexdigest()
+              valid = status == 200 and bool(body)
+              if kind == "pdf":
+                valid = valid and body.startswith(b"%PDF-")
+              else:
+                low = body.lower()
+                valid = valid and b"2175552" in body and b"kautilya" in low
+              attempts.append({
+                "attempt": attempt, "http_status": status, "headers": headers,
+                "bytes": len(body), "sha256": digest, "file": str(target),
+                "source_content_validation": valid
+              })
+              if attempt == 1:
+                time.sleep(1.2)
+            manifest["sources"].append({
+              "name": name, "url": url, "format": kind, "attempts": attempts,
+              "same_bytes_on_repeat": attempts[0]["sha256"] == attempts[1]["sha256"],
+              "status": "PASS" if all(x["source_content_validation"] for x in attempts) else "FAIL"
+            })
+          (root / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps({"sources": [(x["name"], x["status"], x["same_bytes_on_repeat"]) for x in manifest["sources"]]}, indent=2))
+          if any(x["status"] != "PASS" for x in manifest["sources"]):
+            raise SystemExit("OFFICIAL_RESPONSE_ARCHIVE_VALIDATION_FAILED")
+          PY
+      - name: Upload original responses, headers and SHA-256 manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: pib-mea-official-response-archive
+          path: official_response_archive/
+          if-no-files-found: error
+          retention-days: 90
