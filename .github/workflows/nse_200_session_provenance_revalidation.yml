@@ -1,5 +1,5 @@
 name: NSE 200-session official source provenance revalidation
-# Revision: revalidate calendar-aligned immutable Run 260 snapshot
+# Revision: revalidate latest immutable Run 262 snapshot
 
 on:
   push:
@@ -22,11 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Download immutable Run 255 snapshot artifact
+      - name: Download immutable Run 262 snapshot artifact
         uses: actions/download-artifact@v4
         with:
-          name: nse-200-session-cache-verification-260
-          run-id: 41502068973
+          name: nse-200-session-cache-verification-262
+          run-id: 41502462742
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: input
 
