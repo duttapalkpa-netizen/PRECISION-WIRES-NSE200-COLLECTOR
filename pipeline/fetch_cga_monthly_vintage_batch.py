@@ -45,11 +45,8 @@ def one(item):
     safe=f"{mid:02d}_{month.lower()}.html"
     (OUT/safe).write_bytes(body)
     def meta_date(name):
-        patterns=[rf'<o:{name}>([^<]+)</o:{name}>',rf'<meta[^>]+name=["\\']{name}["\\'][^>]+content=["\\']([^"\\']+)']
-        for pattern in patterns:
-            m=re.search(pattern,text,re.I)
-            if m: return m.group(1).strip()
-        return None
+        m=re.search(rf"<o:{name}>([^<]+)</o:{name}>",text,re.I)
+        return m.group(1).strip() if m else None
     return {"financial_year":FY,"report_month":month,"archive_page_url":page,"archive_page_sha256":page_meta["sha256"],
             "report_url":report_url,"report_sha256":meta["sha256"],"report_bytes":meta["bytes"],
             "http_status":meta["http_status"],"content_type":meta["content_type"],
