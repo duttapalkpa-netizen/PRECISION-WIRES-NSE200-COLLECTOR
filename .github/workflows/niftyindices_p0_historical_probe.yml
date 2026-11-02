@@ -29,7 +29,7 @@ jobs:
           from datetime import datetime
           root=Path("niftyindices_p0_probe");root.mkdir()
           s=requests.Session()
-          s.headers.update({"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36","Referer":"https://www.niftyindices.com/reports/historical-data","Origin":"https://www.niftyindices.com","Accept":"application/json, text/javascript, */*; q=0.01","X-Requested-With":"XMLHttpRequest","Content-Type":"application/json; charset=utf-8"})
+          s.headers.update({"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36","Referer":"https://www.niftyindices.com/reports/historical-data","Origin":"https://www.niftyindices.com","Accept":"application/json, text/javascript, */*; q=0.01","X-Requested-With":"XMLHttpRequest","X-Requested-With":"XMLHttpRequest","Content-Type":"application/json; charset=utf-8"})
           base="https://www.niftyindices.com"
           landing=s.get(base+"/reports/historical-data",timeout=30)
           (root/"landing_page.html").write_bytes(landing.content)
@@ -51,7 +51,7 @@ jobs:
             return value
           # Official site metadata route: enumerate categories and indices first.
           url=base+"/BackPage.aspx/gethistoricaltypeSubindexdata"
-          r=s.post(url,json={"cinfo":{"indextype":"Equity","indexgroup":"Historical Index Data"}},timeout=30)
+          r=s.post(url,data=json.dumps({"cinfo":"{\"indextype\":\"Equity\",\"indexgroup\":\"Historical Index Data\"}"}),timeout=30)
           results.append(save("metadata_categories",r.url,r.content,r.status_code,r.headers))
           r.raise_for_status()
           if "json" not in r.headers.get("Content-Type","").lower(): raise RuntimeError("metadata_categories returned non-JSON: "+r.headers.get("Content-Type","")+" "+r.text[:300])
@@ -59,7 +59,7 @@ jobs:
           (root/"metadata_categories.json").write_text(json.dumps(categories,indent=2))
           # Discover sectoral category's index names.
           url=base+"/BackPage.aspx/gethistoricaltypeindexdata"
-          r=s.post(url,json={"cinfo":{"indextype":"Sectoral Indices","indexgroup":"Historical Index Data"}},timeout=30)
+          r=s.post(url,data=json.dumps({"cinfo":"{\"indextype\":\"Equity\",\"indexgroup\":\"Sectoral Indices\"}"}),timeout=30)
           results.append(save("metadata_sector_indices",r.url,r.content,r.status_code,r.headers))
           r.raise_for_status()
           if "json" not in r.headers.get("Content-Type","").lower(): raise RuntimeError("metadata_sector_indices returned non-JSON: "+r.headers.get("Content-Type","")+" "+r.text[:300])
@@ -68,7 +68,7 @@ jobs:
           def post_index(name,group):
             url=base+"/Backpage.aspx/getHistoricaldatatabletoString"
             cinfo="{"+f"'name':'{name}','startDate':'{start}','endDate':'{end}','indexName':'{name}'"+"}"
-            r=s.post(url,json={"cinfo":cinfo},timeout=40)
+            r=s.post(url,data=json.dumps({"cinfo":cinfo}),timeout=40)
             results.append(save("data_"+group,r.url,r.content,r.status_code,r.headers))
             r.raise_for_status()
             rows=decode_asp(r)
