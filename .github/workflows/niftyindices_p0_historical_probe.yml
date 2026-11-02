@@ -31,6 +31,9 @@ jobs:
           s=requests.Session()
           s.headers.update({"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36","Referer":"https://www.niftyindices.com/reports/historical-data","Origin":"https://www.niftyindices.com","Accept":"application/json, text/javascript, */*; q=0.01"})
           base="https://www.niftyindices.com"
+          landing=s.get(base+"/reports/historical-data",timeout=30)
+          (root/"landing_page.html").write_bytes(landing.content)
+          (root/"landing_page_metadata.json").write_text(json.dumps({"status":landing.status_code,"url":landing.url,"content_type":landing.headers.get("Content-Type"),"bytes":len(landing.content),"sha256":hashlib.sha256(landing.content).hexdigest()},indent=2))
           start,end="01 Oct 2025","10 Oct 2025"
           results=[]
           def save(name,url,body,status,headers):
@@ -39,7 +42,8 @@ jobs:
             p.write_bytes(raw)
             return {"name":name,"url":url,"http_status":status,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"content_type":headers.get("Content-Type",""),"file":str(p)}
           def decode_asp(data):
-            j=data.json()
+            try: j=data.json()
+            except Exception as e: raise RuntimeError("NON_JSON_RESPONSE status="+str(data.status_code)+" content_type="+str(data.headers.get("Content-Type"))+" url="+data.url+" body_prefix="+repr(data.text[:300])) from e
             value=j.get("d",j)
             if isinstance(value,str):
               try: value=json.loads(value)
