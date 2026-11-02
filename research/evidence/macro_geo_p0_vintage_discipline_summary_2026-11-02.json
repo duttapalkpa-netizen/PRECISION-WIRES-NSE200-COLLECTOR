@@ -1,0 +1,24 @@
+{
+  "as_of": "2026-11-02",
+  "status": "MACRO_GEO_P0_VINTAGE_AUDIT_COMPLETE_WITH_GAPS",
+  "cga": {
+    "dated_pib_release_points": 6,
+    "first_publication_timestamp": "UNKNOWN",
+    "independent_archived_target_month_copies": "NOT_FOUND_IN_THIS_RUN",
+    "intermediate_revision_history": "UNKNOWN"
+  },
+  "p0_groups": {
+    "benchmark_index": "PARTIAL_RELEASE_AT_UNKNOWN_VINTAGE_UNVERIFIED",
+    "sector_indices": "PARTIAL_METHODOLOGY_VERSION_REQUIRED_VINTAGE_UNVERIFIED",
+    "volatility": "PARTIAL_RELEASE_AT_UNKNOWN_VINTAGE_UNVERIFIED",
+    "geopolitical_events": "PARTIAL_EVENT_COVERAGE_UNVERIFIED_REVISION_UNKNOWN"
+  },
+  "unknown_is_neither_pass_nor_fail": true,
+  "factor_registry_promotion": "NOT_AUTHORIZED",
+  "hard_gate": "BLOCKED",
+  "production_selector": "UNCHANGED",
+  "ranking_score": "UNCHANGED",
+  "pressure_fade_plus_1": "UNCHANGED",
+  "diagnostics": 672,
+  "research_spend_inr": 0
+}
