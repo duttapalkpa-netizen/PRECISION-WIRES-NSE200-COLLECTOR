@@ -1,0 +1,34 @@
+{
+  "window_start": "2025-10-01",
+  "window_end": "2025-10-10",
+  "status": "ACQUISITION_ATTEMPTED_RAW_BINARY_FETCH_BLOCKED_EVENT_SAMPLE_PARTIAL",
+  "p0": {
+    "benchmark_index": {
+      "status": "UNKNOWN",
+      "sha256": "NOT_COMPUTED",
+      "drift": "NOT_TESTED"
+    },
+    "sector_indices": {
+      "status": "UNKNOWN",
+      "sha256": "NOT_COMPUTED",
+      "drift": "NOT_TESTED"
+    },
+    "volatility": {
+      "status": "UNKNOWN",
+      "sha256": "NOT_COMPUTED",
+      "drift": "NOT_TESTED"
+    },
+    "geopolitical_events": {
+      "status": "PARTIAL_SAMPLE_ONLY",
+      "in_window_dated_rows": 5,
+      "raw_bytes_archived": false,
+      "sha256": "NOT_COMPUTED",
+      "drift": "NOT_TESTED"
+    }
+  },
+  "vintage_revision_ledger": "NOT_CREATED_NO_QUALIFYING_ARCHIVED_VINTAGE_PAIR",
+  "factor_registry_promotion": "NOT_AUTHORIZED",
+  "hard_gate": "BLOCKED",
+  "production_invariants": "UNCHANGED",
+  "research_spend_inr": 0
+}
