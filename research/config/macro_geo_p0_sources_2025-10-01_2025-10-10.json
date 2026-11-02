@@ -1,0 +1,234 @@
+{
+  "sources": [
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_01102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_01102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_01102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_01102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_01102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_01102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_03102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_03102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_03102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_03102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_03102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_03102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_06102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_06102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_06102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_06102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_06102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_06102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_07102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_07102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_07102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_07102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_07102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_07102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_08102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_08102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_08102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_08102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_08102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_08102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_09102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_09102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_09102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_09102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_09102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_09102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "benchmark_index",
+      "name": "nse_all_indices_10102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_10102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "sector_indices",
+      "name": "nse_sector_indices_10102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_10102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "volatility",
+      "name": "nse_india_vix_candidate_10102025",
+      "url": "https://nsearchives.nseindia.com/content/indices/ind_close_all_10102025.csv",
+      "expected_content_types": [
+        "text/csv",
+        "application/vnd.ms-excel"
+      ]
+    },
+    {
+      "group": "geopolitical_events",
+      "name": "PIB_Kautilya_Economic_Conclave_2025-10-06",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2175552",
+      "expected_content_types": [
+        "text/html"
+      ]
+    },
+    {
+      "group": "geopolitical_events",
+      "name": "PIB_Passport_Seva_Camp_2025-10-04",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2174721",
+      "expected_content_types": [
+        "text/html"
+      ]
+    },
+    {
+      "group": "geopolitical_events",
+      "name": "PIB_Passport_Seva_Camp_2025-10-10",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2177448",
+      "expected_content_types": [
+        "text/html"
+      ]
+    },
+    {
+      "group": "geopolitical_events",
+      "name": "PIB_Global_Mobility_Conclave_2025-10-03",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2174482",
+      "expected_content_types": [
+        "text/html"
+      ]
+    },
+    {
+      "group": "geopolitical_events",
+      "name": "MEA_Advanced_Search_Official_Archive_2025-10-01_to_2025-10-10",
+      "url": "https://www.mea.gov.in/advanced-search-list.htm",
+      "expected_content_types": [
+        "text/html"
+      ]
+    }
+  ],
+  "archived_pairs": []
+}
