@@ -75,6 +75,7 @@ jobs:
             raise SystemExit("OFFICIAL_RESPONSE_ARCHIVE_VALIDATION_FAILED")
           PY
       - name: Upload original responses, headers and SHA-256 manifest
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pib-mea-official-response-archive
