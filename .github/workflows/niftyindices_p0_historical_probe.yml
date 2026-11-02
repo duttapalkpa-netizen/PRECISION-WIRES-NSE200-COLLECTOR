@@ -34,10 +34,6 @@ jobs:
           landing=s.get(base+"/reports/historical-data",timeout=30)
           (root/"landing_page.html").write_bytes(landing.content)
           (root/"landing_page_metadata.json").write_text(json.dumps({"status":landing.status_code,"url":landing.url,"content_type":landing.headers.get("Content-Type"),"bytes":len(landing.content),"sha256":hashlib.sha256(landing.content).hexdigest()},indent=2))
-          js=s.get("https://iislliveblob.niftyindices.com/assets/js/IISLComponet.js",timeout=30)
-          (root/"IISLComponet.js").write_bytes(js.content)
-          js2=s.get("https://iislliveblob.niftyindices.com/assets/js/historicalData.js",timeout=30)
-          (root/"historicalData.js").write_bytes(js2.content)
           start,end="01 Oct 2025","10 Oct 2025"
           results=[]
           def save(name,url,body,status,headers):
