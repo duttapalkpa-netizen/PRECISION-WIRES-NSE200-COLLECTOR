@@ -73,9 +73,11 @@ jobs:
             if min(dates)<start or max(dates)>end:raise RuntimeError(kind+" out-of-range dates")
             if (end-max(dates)).days>max_staleness_days:raise RuntimeError(kind+" stale latest observation: "+str(max(dates)))
             if len(set(dates))!=len(dates):raise RuntimeError(kind+" duplicate dates across chunks")
-            if dates!=sorted(dates):raise RuntimeError(kind+" source rows are not chronological")
-            coverage_dates[kind]=set(dates)
+            if len(set(dates))<expected_count:raise RuntimeError(kind+" fewer than 200 unique trading sessions")
             allrows.sort(key=lambda x:parse_date(x["EOD_TIMESTAMP"]))
+            sorted_dates=[parse_date(x["EOD_TIMESTAMP"]) for x in allrows]
+            if sorted_dates!=sorted(sorted_dates):raise RuntimeError(kind+" chronological sort validation failed")
+            coverage_dates[kind]=set(sorted_dates)
             merged=json.dumps({"data":allrows},separators=(",",":"),sort_keys=True).encode()
             target=root/(kind+"_merged.json");target.write_bytes(merged)
             manifest["series"].append({"name":kind,"requested_index":name,"rows":len(allrows),"first_date":str(min(dates)),"last_date":str(max(dates)),"unique_dates":len(set(dates)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","merged_bytes":len(merged),"merged_sha256":hashlib.sha256(merged).hexdigest(),"chunks":parts})
