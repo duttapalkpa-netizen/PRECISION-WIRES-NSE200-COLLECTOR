@@ -1,0 +1,47 @@
+name: CGA Monthly Vintage Snapshot Batch
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - 'pipeline/fetch_cga_monthly_vintage_batch.py'
+      - 'qa/test_cga_monthly_vintage_batch.py'
+      - '.github/workflows/cga_monthly_vintage_snapshot_batch.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run fail-closed tests
+        run: python -m unittest qa.test_cga_monthly_vintage_batch -v
+      - name: Fetch bounded official CGA report batch
+        run: python pipeline/fetch_cga_monthly_vintage_batch.py
+      - name: Validate batch integrity and fail-closed vintage fields
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root=Path("artifacts/cga_monthly_report_vintage_batch")
+          m=json.loads((root/"vintage_batch_manifest.json").read_text())
+          assert m["status"]=="PASS_BOUNDED_CGA_RAW_SNAPSHOT_BATCH_WITH_VINTAGE_LIMITS"
+          assert m["months_fetched"]==6
+          assert len(m["records"])==6
+          for r in m["records"]:
+              p=root/r["snapshot_file"]
+              assert p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==r["report_sha256"]
+              assert r["release_timestamp"] is None
+              assert r["release_timestamp_status"]=="UNKNOWN_NOT_SUPPLIED_AS_PUBLICATION_TIMESTAMP"
+          print({"status":m["status"],"months":m["months_fetched"],"sha256_verified":6})
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cga-monthly-vintage-snapshot-batch
+          path: artifacts/cga_monthly_report_vintage_batch/
+          if-no-files-found: error
