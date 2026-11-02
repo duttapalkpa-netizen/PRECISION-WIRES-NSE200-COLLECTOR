@@ -1,0 +1,29 @@
+{
+  "status": "PASS_DATED_RELEASE_CROSSCHECK_NO_REVISION_DETECTED_WITH_INTERMEDIATE_VINTAGES_UNKNOWN",
+  "financial_year": "2025-26",
+  "months": 6,
+  "dated_pib_releases": 6,
+  "cumulative_exact_matches": 6,
+  "derived_monthly_exact_matches": 6,
+  "cumulative_deltas_inr_crore": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "monthly_deltas_inr_crore": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "intermediate_vintage_history": "UNKNOWN",
+  "source_independence": "NOT_ESTABLISHED",
+  "factor_registry_promotion": "NOT_AUTHORIZED",
+  "hard_gate": "BLOCKED",
+  "production_invariants": "UNCHANGED"
+}
