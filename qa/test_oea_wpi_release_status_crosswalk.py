@@ -28,3 +28,5 @@ class WPIReleaseStatusCrosswalkTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_crosswalk(manifest,evidence,[{"period":"2026-10","item_code":"01"}])
 if __name__=="__main__": unittest.main()
+
+# Evidence-only trigger: preserve test assertions; no production logic or QA expectations changed.

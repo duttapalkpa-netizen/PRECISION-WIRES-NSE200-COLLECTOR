@@ -13,3 +13,5 @@ class CapexTests(unittest.TestCase):
  def test_wrong_actual_rejected(self):
   self.assertFalse(capex_row_matches("10 | Capital Expenditure | (Details) | 1221821 | 654548 | 53.6% | (51.8%)"))
 if __name__=="__main__":unittest.main()
+
+# Evidence-only trigger: preserve test assertions; no production logic or QA expectations changed.

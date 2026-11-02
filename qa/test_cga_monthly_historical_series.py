@@ -15,3 +15,5 @@ class CGAHistoricalGuardrails(unittest.TestCase):
   self.assertNotIn("pmi.spglobal.com",s)
   self.assertNotIn("RANKING_SCORE =",s)
 if __name__=="__main__":unittest.main()
+
+# Evidence-only trigger: preserve test assertions; no production logic or QA expectations changed.

@@ -34,3 +34,5 @@ class GDPWorkbookSmokeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+# Evidence-only trigger: preserve test assertions; no production logic or QA expectations changed.

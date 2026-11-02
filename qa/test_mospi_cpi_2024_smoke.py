@@ -27,3 +27,5 @@ class CPISmokeTests(unittest.TestCase):
    p=Path(d)/"wrong.xlsx"; fixture(p,status="F")
    with self.assertRaises(RuntimeError): inspect(p)
 if __name__=="__main__": unittest.main()
+
+# Evidence-only trigger: preserve test assertions; no production logic or QA expectations changed.
