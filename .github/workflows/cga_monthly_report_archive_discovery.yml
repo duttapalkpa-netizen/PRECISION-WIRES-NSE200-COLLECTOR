@@ -1,0 +1,46 @@
+name: CGA Monthly Report Archive Route Discovery
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/discover_cga_monthly_report_archive.py"
+      - "qa/test_cga_monthly_report_archive_discovery.py"
+      - ".github/workflows/cga_monthly_report_archive_discovery.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cga-monthly-report-archive-discovery
+  cancel-in-progress: false
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run fail-closed discovery tests
+        run: python -m unittest qa.test_cga_monthly_report_archive_discovery -v
+      - name: Inventory official CGA monthly-report archive routes
+        run: python pipeline/discover_cga_monthly_report_archive.py
+      - name: Validate inventory integrity and conservative status
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("artifacts/cga_monthly_report_archive_discovery/archive_route_inventory.json")
+          x=json.loads(p.read_text())
+          assert x["status"] in ("PASS_ROUTE_INVENTORY_WITH_LIMITATIONS","BLOCKED_NO_PAGES")
+          assert x["scope"]["financial_years"][0]=="2014-2015"
+          assert x["scope"]["financial_years"][-1]=="2025-2026"
+          assert "not proof of an archived publication vintage" in x["limitations"][0]
+          print({"status":x["status"],"scope":x["scope"],"counts":x["counts"]})
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cga-monthly-report-archive-route-discovery
+          path: artifacts/cga_monthly_report_archive_discovery/
+          if-no-files-found: warn
