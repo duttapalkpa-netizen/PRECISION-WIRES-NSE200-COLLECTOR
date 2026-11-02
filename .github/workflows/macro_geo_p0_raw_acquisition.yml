@@ -7,6 +7,7 @@ on:
       - '.github/workflows/macro_geo_p0_raw_acquisition.yml'
       - 'pipeline/macro_geo_p0_raw_collector.py'
       - 'research/config/macro_geo_p0_sources_2025-10-01_2025-10-10.json'
+      - 'qa/test_macro_geo_p0_raw_collector.py'
   workflow_dispatch:
     inputs:
       start_date:
@@ -60,7 +61,7 @@ jobs:
           assert os.environ["START_DATE"] <= os.environ["END_DATE"]
           with open("macro_geo_p0_sources.json","w",encoding="utf-8") as f: json.dump(data,f)
           PY
-      - name: Collect twice, hash, compare and preserve raw evidence
+      - name: Run collector fail-closed unit tests\n        run: |\n          python -m pip install pytest\n          pytest -q qa/test_macro_geo_p0_raw_collector.py\n      - name: Collect twice, hash, compare and preserve raw evidence
         run: |
           python pipeline/macro_geo_p0_raw_collector.py --config macro_geo_p0_sources.json --start-date "${{ inputs.start_date || '2025-10-01' }}" --end-date "${{ inputs.end_date || '2025-10-10' }}" --out macro_geo_p0_raw_evidence
       - name: Archive raw bytes and integrity ledger
