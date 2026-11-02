@@ -64,7 +64,7 @@ class ProductionInvariantRegressionTests(unittest.TestCase):
         }
         for name, expected in frozen.items():
             raw = Path(name).read_bytes()
-            git_blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+            git_blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + bytes([0]) + raw).hexdigest()
             self.assertEqual(git_blob, expected, name)
 
     def test_diagnostic_matrix_remains_exactly_672_and_unknown_is_explicit(self):
