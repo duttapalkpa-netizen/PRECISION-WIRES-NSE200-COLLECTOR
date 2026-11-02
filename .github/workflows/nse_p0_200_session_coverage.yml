@@ -20,59 +20,66 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Collect official benchmark, sector indices and India VIX
+      - name: Collect official benchmark, sector indices and India VIX in bounded chunks
         run: |
           python -m pip install requests
           python - <<'PY'
-          import requests,json,hashlib
+          import requests,json,hashlib,time
           from pathlib import Path
-          from datetime import datetime
+          from datetime import datetime,timedelta
           from urllib.parse import urlencode
           root=Path("nse_p0_200_session");root.mkdir()
           s=requests.Session()
           s.headers.update({"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36","Accept":"application/json, text/plain, */*","Accept-Language":"en-US,en;q=0.9","Referer":"https://www.nseindia.com/reports-indices-historical-index-data","X-Requested-With":"XMLHttpRequest"})
           home=s.get("https://www.nseindia.com/",timeout=30)
           (root/"nse_home.html").write_bytes(home.content)
-          start,end="01-11-2024","10-10-2025"
-          expected_start=datetime.strptime(start,"%d-%m-%Y").date()
-          expected_end=datetime.strptime(end,"%d-%m-%Y").date()
+          start,end=datetime.strptime("01-11-2024","%d-%m-%Y").date(),datetime.strptime("10-10-2025","%d-%m-%Y").date()
           expected_count=200
-          manifest={"window":{"from":start,"to":end},"captured_at_utc":datetime.utcnow().isoformat()+"Z","series":[]}
+          manifest={"window":{"from":str(start),"to":str(end)},"captured_at_utc":datetime.utcnow().isoformat()+"Z","series":[]}
           def parse_date(v):
             for fmt in ("%d-%b-%Y","%d-%m-%Y","%d %b %Y","%d-%b-%y","%d/%m/%Y"):
               try:return datetime.strptime(str(v),fmt).date()
               except ValueError:pass
             raise RuntimeError("Unknown date format "+str(v))
-          def fetch_index(name,kind):
-            url="https://www.nseindia.com/api/historicalOR/indicesHistory?"+urlencode({"indexType":name,"from":start,"to":end})
-            r=s.get(url,timeout=60); raw=r.content
-            file=root/(kind+".json");file.write_bytes(raw)
-            r.raise_for_status(); obj=r.json(); rows=obj.get("data",[])
-            if not isinstance(rows,list) or len(rows)<expected_count: raise RuntimeError(kind+" insufficient rows: "+str(len(rows)))
-            dates=[]; identities=set()
-            for row in rows:
+          def chunks():
+            a=start
+            while a<=end:
+              b=min(a+timedelta(days=44),end)
+              yield a,b
+              a=b+timedelta(days=1)
+          def fetch_series(name,kind,is_vix=False):
+            allrows=[];parts=[]
+            for ix,(a,b) in enumerate(chunks(),1):
+              q={"from":a.strftime("%d-%m-%Y"),"to":b.strftime("%d-%m-%Y")}
+              if not is_vix:q["indexType"]=name
+              endpoint="vixhistory" if is_vix else "indicesHistory"
+              url="https://www.nseindia.com/api/historicalOR/"+endpoint+"?"+urlencode(q)
+              r=s.get(url,timeout=45);raw=r.content;r.raise_for_status();obj=r.json()
+              rows=obj.get("data",[])
+              if not isinstance(rows,list):raise RuntimeError(kind+" chunk response not a list")
+              allrows.extend(rows)
+              fn=f"{kind}_chunk_{ix:02d}.json";(root/fn).write_bytes(raw)
+              parts.append({"file":fn,"from":str(a),"to":str(b),"rows":len(rows),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"http_status":r.status_code})
+              time.sleep(1.1)
+            if len(allrows)<expected_count:raise RuntimeError(kind+" insufficient rows after chunk merge: "+str(len(allrows)))
+            dates=[];identities=set()
+            for row in allrows:
               dates.append(parse_date(row["EOD_TIMESTAMP"]))
               identities.add(row["EOD_INDEX_NAME"].strip().upper())
-            if identities!={name.upper()}: raise RuntimeError(kind+" index identity mismatch "+repr(identities))
-            if min(dates)<expected_start or max(dates)>expected_end: raise RuntimeError(kind+" date outside requested window")
-            if len(set(dates))!=len(dates): raise RuntimeError(kind+" duplicate dates")
-            manifest["series"].append({"name":kind,"requested_index":name,"rows":len(rows),"first_date":str(min(dates)),"last_date":str(max(dates)),"unique_dates":len(set(dates)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"http_status":r.status_code})
-          for nm,kind in [("NIFTY 50","benchmark_nifty50"),("NIFTY BANK","sector_nifty_bank"),("NIFTY IT","sector_nifty_it")]:
-            fetch_index(nm,kind)
-          url="https://www.nseindia.com/api/historicalOR/vixhistory?"+urlencode({"from":start,"to":end})
-          r=s.get(url,timeout=60);raw=r.content;(root/"india_vix.json").write_bytes(raw);r.raise_for_status()
-          rows=r.json().get("data",[])
-          if len(rows)<expected_count: raise RuntimeError("India VIX insufficient rows "+str(len(rows)))
-          vd=[parse_date(x["EOD_TIMESTAMP"]) for x in rows]
-          names={x["EOD_INDEX_NAME"].strip().upper() for x in rows}
-          if names!={"INDIA VIX"}: raise RuntimeError("VIX identity mismatch "+repr(names))
-          if min(vd)<expected_start or max(vd)>expected_end or len(set(vd))!=len(vd): raise RuntimeError("VIX date/duplicate validation failed")
-          manifest["series"].append({"name":"india_vix","requested_index":"INDIA VIX","rows":len(rows),"first_date":str(min(vd)),"last_date":str(max(vd)),"unique_dates":len(set(vd)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"http_status":r.status_code})
+            if identities!={name.upper()}:raise RuntimeError(kind+" identity mismatch "+repr(identities))
+            if min(dates)<start or max(dates)>end:raise RuntimeError(kind+" out-of-range dates")
+            if len(set(dates))!=len(dates):raise RuntimeError(kind+" duplicate dates across chunks")
+            allrows.sort(key=lambda x:parse_date(x["EOD_TIMESTAMP"]))
+            merged=json.dumps({"data":allrows},separators=(",",":"),sort_keys=True).encode()
+            target=root/(kind+"_merged.json");target.write_bytes(merged)
+            manifest["series"].append({"name":kind,"requested_index":name,"rows":len(allrows),"first_date":str(min(dates)),"last_date":str(max(dates)),"unique_dates":len(set(dates)),"index_identity":"PASS","date_range":"PASS","duplicate_date_check":"PASS","merged_bytes":len(merged),"merged_sha256":hashlib.sha256(merged).hexdigest(),"chunks":parts})
+          for nm,kind in [("NIFTY 50","benchmark_nifty50"),("NIFTY BANK","sector_nifty_bank"),("NIFTY IT","sector_nifty_it"),("INDIA VIX","india_vix")]:
+            fetch_series(nm,kind,is_vix=(kind=="india_vix"))
           manifest["status"]="PASS_200_SESSION_P0_SOURCE_COVERAGE"
           (root/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True))
           print(json.dumps(manifest,indent=2))
           PY
-      - name: Upload raw series and SHA-256 manifest
+      - name: Upload raw chunks, merged series and SHA-256 manifest
         if: always()
         uses: actions/upload-artifact@v4
         with:
