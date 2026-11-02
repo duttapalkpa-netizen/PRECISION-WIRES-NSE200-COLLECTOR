@@ -4,7 +4,7 @@ import csv
 import tempfile
 import unittest
 
-from collector.nse_download import validate_cached_file
+from collector.nse_download import validate_cached_file, is_trading_session_day
 
 
 class CacheDateValidationTests(unittest.TestCase):
@@ -30,6 +30,16 @@ class CacheDateValidationTests(unittest.TestCase):
             path = Path(tmp) / "sec_bhavdata_full_30102026.csv"
             self._write_csv(path, "29-Oct-2026")
             self.assertFalse(validate_cached_file(path, date(2026, 10, 30)))
+
+    def test_includes_verified_budget_special_sunday_session(self):
+        self.assertTrue(is_trading_session_day(date(2026, 2, 1)))
+
+    def test_excludes_unverified_weekend_dates(self):
+        self.assertFalse(is_trading_session_day(date(2026, 2, 8)))
+        self.assertFalse(is_trading_session_day(date(2026, 2, 7)))
+
+    def test_includes_normal_weekdays(self):
+        self.assertTrue(is_trading_session_day(date(2026, 2, 2)))
 
     def test_rejects_mixed_trade_dates(self):
         with tempfile.TemporaryDirectory() as tmp:
