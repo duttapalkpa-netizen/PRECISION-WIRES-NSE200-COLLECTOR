@@ -11,6 +11,15 @@ import requests
 UDIFF = "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{yyyymmdd}_F_0000.csv.zip"
 LEGACY = "https://archives.nseindia.com/products/content/sec_bhavdata_full_{ddmmyyyy}.csv"
 
+# Verified NSE CM special weekend session: Budget trading session on 2026-02-01.
+# Evidence: NSE Full Bhavcopy HTTP 200, 2,411 EQ rows, exact DATE1, SHA-256
+# 18aef3b3e75af4eb4d9b199b2fb1af692f4ac1798ceebc5f8a0a9c3cc0102247.
+SPECIAL_TRADING_SESSIONS = {date(2026, 2, 1)}
+
+def is_trading_session_day(value: date) -> bool:
+    """Include weekdays and only explicitly evidence-backed weekend sessions."""
+    return value.weekday() < 5 or value in SPECIAL_TRADING_SESSIONS
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -374,7 +383,7 @@ def main():
         if len(valid) >= args.sessions:
             break
         d = today - timedelta(days=offset)
-        if d.weekday() >= 5:
+        if not is_trading_session_day(d):
             continue
 
         stamp = d.strftime("%d%m%Y")
