@@ -94,3 +94,28 @@ MEA download was captured from the Embassy of India, Ashgabat official website P
 - Market index/sector/India VIX raw CSV acquisition remains NOT RUN; therefore actual date/index-name validation on market observations remains NOT RUN.
 - No archived vintage pair verified. Revision ledger intentionally NOT created.
 - Hard Gate remains BLOCKED; no factor promotion.
+
+
+## Verified original-response archive — workflow run #4
+- Run ID: 41469877717; conclusion SUCCESS; archive job 125360328270 SUCCESS.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/41469877717
+- Artifact ID: 13155345145; name `pib-mea-official-response-archive`; size 2,450,101 bytes.
+- GitHub artifact digest: `sha256:3eeac0c74fc39203a3a39664e46a5b47a20782167f440b5ed21550f46c727cc3`.
+- Artifact downloaded independently; ZIP integrity/listing passed. Independently recalculated ZIP SHA-256: `3eeac0c74fc39203a3a39664e46a5b47a20782167f440b5ed21550f46c727cc3` (matches GitHub digest).
+- Artifact contains both attempts for PIB and MEA plus manifest.json.
+
+### Original response hashes independently recalculated from downloaded artifact
+| Source | Attempt | HTTP | Bytes | SHA-256 | Validation |
+|---|---:|---:|---:|---|---|
+| PIB PRID 2175552 HTML | 1 | 200 | 137,060 | `74966f7cbca3b65cd24b49e5b2b37af2a87086c4f6ec7fbc291b74bbdb87aeee` | Source content PASS |
+| PIB PRID 2175552 HTML | 2 | 200 | 137,060 | `35e226513644c0e96c91f9000700f67776988705b54433168e97554be4abaffb` | Source content PASS |
+| MEA Ashgabat Diwali PDF | 1 | 200 | 1,182,251 | `47362d5c6efb4da1a0c7022eb62198109abc56b66092bfe9ca99261d7272f77f` | PDF signature PASS |
+| MEA Ashgabat Diwali PDF | 2 | 200 | 1,182,251 | `47362d5c6efb4da1a0c7022eb62198109abc56b66092bfe9ca99261d7272f77f` | PDF signature PASS |
+
+- Every per-file SHA-256 recomputation matched the archived manifest.
+- MEA repeated download: byte-identical (no drift observed).
+- PIB repeated download: same byte count but different SHA-256; dynamic response drift observed. Both versions are preserved; this is not treated as a publication-vintage pair or revision evidence.
+- The initial run #1/#2 had failed because MEA returned HTTP 403 and the upload was skipped. Run #4 is the first verified complete artifact capture.
+
+### Scope boundary
+This artifact archives two official response bodies and records request-time response headers; it does not provide October 2025 immutable historical response captures. No revision ledger is justified or created. Market index raw CSVs were not acquired, so market date/index validation, market-file SHA-256 and index-source drift remain NOT RUN. Hard Gate remains BLOCKED.
