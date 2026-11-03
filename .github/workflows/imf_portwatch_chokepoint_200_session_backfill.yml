@@ -1,0 +1,73 @@
+name: IMF PortWatch Chokepoint 200-Session Backfill
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/imf_portwatch_chokepoint_200_session_backfill.yml'
+      - 'pipeline/collect_imf_portwatch_chokepoint_200_session.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: imf-portwatch-chokepoint-200-session-backfill
+  cancel-in-progress: false
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout bounded PortWatch collector
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install HTTP client and panel parser
+        run: python -m pip install 'requests>=2.31,<3' 'pandas>=2.2,<3'
+      - name: Download and verify frozen 200-session NSE snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/nse_snapshot
+          gh run download 41589358513 -n nse-200-session-cache-verification-287 -D inputs/nse_snapshot
+          test -s inputs/nse_snapshot/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ['GITHUB_REPOSITORY'];run=41589358513;aid=13210110022
+          digest='sha256:d1f78e86d175c3348851dd4b19f88d2f346f70f7f18ed8c61779ed44eff04cdc'
+          meta=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+          assert meta['conclusion']=='success'
+          arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+          a=next(x for x in arts if x['id']==aid)
+          assert a['digest']==digest and not a['expired'],a
+          print({'run_id':run,'artifact_id':aid,'digest_verified':True})
+          PY
+      - name: Collect 200-session PortWatch chokepoint activity
+        run: python pipeline/collect_imf_portwatch_chokepoint_200_session.py
+      - name: Assert bounded data and explicit missingness
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('artifacts/global_freight_shipping/backfill_qa.json').read_text())
+          assert p['status']=='PASS_BACKFILL_WITH_EXPLICIT_COVERAGE_AUDIT',p
+          assert p['nse_sessions']==200 and p['distinct_chokepoints']>=1,p
+          assert p['records_retrieved']==p['query_total_records'],p
+          assert p['duplicate_date_chokepoint_keys']==0,p
+          assert p['missing_nse_session_keys']>=0,p
+          assert p['promotion_allowed'] is False
+          print({k:p[k] for k in ('status','nse_sessions','query_total_records','distinct_chokepoints','nse_session_rows','expected_nse_session_keys','observed_nse_session_keys','missing_nse_session_keys','nse_session_coverage_pct','promotion_allowed')})
+          PY
+      - name: Upload immutable PortWatch 200-session evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-portwatch-chokepoint-200-session-evidence
+          path: artifacts/global_freight_shipping/
+          if-no-files-found: warn
+          retention-days: 90
