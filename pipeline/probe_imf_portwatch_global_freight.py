@@ -2,7 +2,7 @@
 """Bounded, read-only IMF PortWatch source probe. No coverage promotion."""
 from pathlib import Path
 from datetime import datetime, timezone
-import hashlib, json
+import hashlib, json, time
 import requests
 
 ROOT=Path("artifacts/global_freight_shipping_probe")
@@ -17,13 +17,20 @@ HEADERS={"User-Agent":"PRECISION-WIRES-research/1.0 (read-only source validation
 def sha(b): return hashlib.sha256(b).hexdigest()
 
 def get_json(session,url,params=None):
-    r=session.get(url,params=params,timeout=(8,25))
-    r.raise_for_status()
-    body=r.content
-    if len(body)<2: raise ValueError("empty ArcGIS response")
-    data=r.json()
-    if "error" in data: raise ValueError(f"ArcGIS error: {data['error']}")
-    return data,body,r.url,datetime.now(timezone.utc).isoformat()
+    last=None
+    for attempt in range(2):
+        try:
+            r=session.get(url,params=params,timeout=(10,60))
+            r.raise_for_status()
+            body=r.content
+            if len(body)<2: raise ValueError("empty ArcGIS response")
+            data=r.json()
+            if "error" in data: raise ValueError(f"ArcGIS error: {data['error']}")
+            return data,body,r.url,datetime.now(timezone.utc).isoformat()
+        except Exception as exc:
+            last=exc
+            if attempt==0: time.sleep(2)
+    raise RuntimeError(f"PortWatch endpoint unavailable after bounded retries: {type(last).__name__}: {last}")
 
 def inspect_layer(session,name,url):
     meta,raw,final_url,observed=get_json(session,url,{"f":"pjson"})
@@ -33,7 +40,7 @@ def inspect_layer(session,name,url):
         raise ValueError(f"{name}: required date/portid fields absent: {sorted(field_names)}")
     sample,raw_sample,sample_url,sample_observed=get_json(session,url+"/query",{
         "where":"1=1","outFields":"*","orderByFields":"date DESC",
-        "resultRecordCount":5,"returnGeometry":"false","f":"json"})
+        "resultRecordCount":1,"returnGeometry":"false","f":"json"})
     features=sample.get("features",[])
     if not features:
         raise ValueError(f"{name}: empty sample query")
