@@ -110,6 +110,12 @@ def main():
                 old_raw,old_time=download(session,old_url);old=clean_frame(old_raw,"surveillance_old")
                 new_raw,new_time=download(session,new_url);new=clean_frame(new_raw,"surveillance_new")
                 counts["price_band"]+=1;counts["surveillance_old"]+=1;counts["surveillance_new"]+=1
+                source_dir=ROOT/"source_files"/trade_date
+                source_dir.mkdir(parents=True,exist_ok=True)
+                (source_dir/rec["file"]).write_bytes(raw)
+                (source_dir/f"sec_list_{ddmmyyyy}.csv").write_bytes(pb_raw)
+                (source_dir/f"REG_IND{prev_ddmmyy}.csv").write_bytes(old_raw)
+                (source_dir/f"REG1_IND{prev_ddmmyy}.csv").write_bytes(new_raw)
                 # Prefix the raw official indicator columns to preserve every indicator without interpretation.
                 base_keys=["SYMBOL","SERIES"]
                 old=old.rename(columns={c:"REG_IND__"+c for c in old.columns if c not in base_keys})
