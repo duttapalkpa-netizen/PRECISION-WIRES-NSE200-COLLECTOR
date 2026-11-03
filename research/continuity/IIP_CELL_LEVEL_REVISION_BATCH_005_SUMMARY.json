@@ -1,0 +1,13 @@
+{
+  "batch":"005","reference_period":"2023-06",
+  "previous_vintage":"IIPMFY23058JUN","current_vintage":"IIPMFY23062JUL",
+  "previous_stage":"QUICK","current_stage":"FIRST_REVISION",
+  "candidate_cells":20,"certified_exact_source_matches":20,"mismatches":0,
+  "previous_workbook_sha256":"326629f652ef7a6161ac60516b094a20f2f2b84e81fab278fdc9ea17377b263e",
+  "current_workbook_sha256":"ea5119cb6f76b2640289dcc98e71bfe1ac1786fc02f92f0e7cd57900fde3f26c",
+  "csv_sha256":"338a2bc02919b5b4907a817a4061df72e3c0866fabd9906a1cf54eb1142712ea",
+  "previous_official_release":{"id":1947790,"timestamp":"2023-08-11 17:30 IST","url":"https://www.pib.gov.in/PressReleasePage.aspx?PRID=1947790&lang=2&reg=3"},
+  "current_official_release":{"id":1956663,"timestamp":"2023-09-12 17:30 IST","url":"https://www.pib.gov.in/PressReleasePage.aspx?PRID=1956663&lang=2&reg=3"},
+  "verified_cells":["EH7","EH8","EH9","EH10","EH11","EH12","EH13","EH15","EH16","EH17","EH18","EH19","EH20","EH21","EH22","EH23","EH24","EH26","EH28","EH29"],
+  "note":"All 20 June-2023 Quick-to-First-Revision cells exact-matched against both official PIB statements and original workbook cells. This does not certify the full IIP dataset or Hard Gate."
+}
