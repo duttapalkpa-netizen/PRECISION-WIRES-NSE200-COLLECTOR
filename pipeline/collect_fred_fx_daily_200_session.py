@@ -7,6 +7,7 @@ computed without verified interest-rate/basis source series.
 from pathlib import Path
 from datetime import datetime,timezone
 import hashlib,json
+from io import BytesIO
 import pandas as pd
 import requests
 
@@ -17,7 +18,7 @@ SERIES={
  "DEXINUS":{"name":"Indian Rupees to U.S. Dollar Spot Exchange Rate","unit":"INR per USD","url":"https://fred.stlouisfed.org/series/DEXINUS"},
  "DEXJPUS":{"name":"Japanese Yen to U.S. Dollar Spot Exchange Rate","unit":"JPY per USD","url":"https://fred.stlouisfed.org/series/DEXJPUS"}
 }
-BASE="https://fred.stlouisfed.org/graph/fredgraph.csv"
+BASE="https://fred.stlouisfed.org/data"
 
 def sha(b): return hashlib.sha256(b).hexdigest()
 
@@ -33,17 +34,26 @@ def main():
     s=requests.Session();s.headers.update({"User-Agent":"PRECISION-WIRES-research/1.0","Accept":"text/csv,*/*"})
     data={};reports=[]
     for sid,spec in SERIES.items():
-        url=BASE
-        params={"id":sid,"cosd":start,"coed":end}
-        r=s.get(url,params=params,timeout=(10,45));r.raise_for_status()
-        raw=r.content
-        if len(raw)<20: raise SystemExit(f"BLOCKED_EMPTY_FRED_SERIES:{sid}")
-        raw_path=ROOT/f"{sid}.csv";raw_path.write_bytes(raw)
-        frame=pd.read_csv(raw_path,dtype=str)
-        if frame.shape[1]<2: raise SystemExit(f"BLOCKED_FRED_SCHEMA:{sid}")
-        date_col=frame.columns[0]
-        value_col=sid if sid in frame.columns else frame.columns[1]
-        frame=frame.rename(columns={date_col:"DATE",value_col:sid})
+        url=f"{BASE}/{sid}"
+        last=None
+        for attempt in range(2):
+            try:
+                r=s.get(url,timeout=(10,90));r.raise_for_status()
+                raw=r.content
+                if len(raw)<100: raise ValueError("empty FRED table response")
+                break
+            except Exception as exc:
+                last=exc
+                if attempt==1: raise RuntimeError(f"FRED {sid} unavailable after bounded retries: {type(last).__name__}: {last}")
+        raw_path=ROOT/f"{sid}.html";raw_path.write_bytes(raw)
+        tables=pd.read_html(BytesIO(raw))
+        frame=None
+        for table in tables:
+            cols={str(x).strip().upper():x for x in table.columns}
+            if "DATE" in cols and "VALUE" in cols:
+                frame=table.rename(columns={cols["DATE"]:"DATE",cols["VALUE"]:sid})
+                break
+        if frame is None: raise SystemExit(f"BLOCKED_FRED_TABLE_SCHEMA:{sid}")
         frame["DATE"]=pd.to_datetime(frame["DATE"],errors="coerce").dt.strftime("%Y-%m-%d")
         frame[sid]=pd.to_numeric(frame[sid],errors="coerce")
         frame=frame[frame["DATE"].notna()]
@@ -52,7 +62,7 @@ def main():
         data[sid]=frame.set_index("DATE")[sid]
         reports.append({"series_id":sid,"title":spec["name"],"unit":spec["unit"],
           "source":"Board of Governors of the Federal Reserve System (US), H.10 Foreign Exchange Rates via FRED",
-          "series_url":spec["url"],"download_url":r.url,"http_status":r.status_code,
+          "series_url":spec["url"],"download_url":url,"http_status":r.status_code,
           "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"raw_sha256":sha(raw),
           "raw_file":str(raw_path),"source_frequency":"Daily","seasonal_adjustment":"Not Seasonally Adjusted",
           "source_last_observation":frame["DATE"].max(),"observations":int(frame[sid].notna().sum())})
