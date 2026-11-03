@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Strict audit of all monthly NIC-2 IIP catalogue vintages from MoSPI.
-Audit contract revision: v4; index-only parser, duplicate-key rejection, vintage gap audit. fail-closed ingestion and revision comparison.
+Audit contract revision: v5; index-only parser, duplicate-key rejection, vintage gap audit. fail-closed ingestion and revision comparison.
 Every catalogue row receives an explicit download/parse status. A cumulative
 panel is never treated as multiple downloaded vintages.
 """
@@ -140,17 +140,31 @@ def main():
     with (OUT/"vintage_ingestion_manifest.csv").open("w",newline="",encoding="utf-8-sig") as f:
         w=csv.DictWriter(f,fieldnames=fields); w.writeheader(); w.writerows(manifest)
     pd.DataFrame(obs).to_csv(OUT/"all_vintage_observations.csv",index=False)
+    # Remove duplicate catalogue entries from value comparison while preserving every manifest row.
+    obs_by_vintage={}
+    for o in obs:
+        obs_by_vintage.setdefault((o["table_id"],o["period"],o["nic_code"]),o)
+    obs=list(obs_by_vintage.values())
+    pd.DataFrame(obs).to_csv(OUT/"all_vintage_observations.csv",index=False)
     by={}
-    for o in obs: by.setdefault((o["period"],o["nic_code"]),[]).append(o)
+    for o in obs:
+        by.setdefault((o["period"],o["nic_code"]),[]).append(o)
     diffs=[]
     for (period,nic),items in sorted(by.items()):
         items.sort(key=lambda x:(month(x["release_ref_period"]) or "",str(x.get("release_date","")),str(x.get("table_id",""))))
         for prev,cur in zip(items,items[1:]):
-            if prev["value"]!=cur["value"]:
+            if prev["table_id"] != cur["table_id"] and prev["value"] != cur["value"]:
                 diffs.append({"period":period,"nic_code":nic,"previous_table_id":prev["table_id"],"previous_release_date":prev["release_date"],"previous_value":prev["value"],"current_table_id":cur["table_id"],"current_release_date":cur["release_date"],"current_value":cur["value"],"revision_delta":cur["value"]-prev["value"],"previous_sha256":prev["source_sha256"],"current_sha256":cur["source_sha256"]})
     pd.DataFrame(diffs,columns=["period","nic_code","previous_table_id","previous_release_date","previous_value","current_table_id","current_release_date","current_value","revision_delta","previous_sha256","current_sha256"]).to_csv(OUT/"revision_differences.csv",index=False)
-    downloaded=sum(x["download_status"] in ("DOWNLOADED","CACHE_HIT_RAW_HASH_RECHECKED") for x in manifest); parsed=sum(x["parse_status"]=="PASS" for x in manifest)
-    status="PASS" if len(selected)==41 and len(manifest)==41 and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"hard_gate":"BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len({x.get("unique_id") for x in manifest}),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":min([month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))] or [None]),"last_release_period":max([month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))] or [None]),"pagination":pagination,"policy":"Missing vintage is not inferred; failed downloads/parses remain explicit; cumulative panels are not counted as multiple vintages."}
-    (OUT/"revision_audit.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n"); print(json.dumps(qa,ensure_ascii=False,indent=2))
+    downloaded=sum(x["download_status"] in ("DOWNLOADED","CACHE_HIT_RAW_HASH_RECHECKED") for x in manifest)
+    parsed=sum(x["parse_status"]=="PASS" for x in manifest)
+    period_keys=sorted({month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))})
+    expected_periods=pd.date_range(start=period_keys[0]+"-01",end=period_keys[-1]+"-01",freq="MS") if period_keys else []
+    missing_periods=sorted(set(x.strftime("%Y-%m") for x in expected_periods)-set(period_keys))
+    unique_ids={x.get("unique_id") for x in manifest}
+    duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
+    status="PASS" if len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
+    qa={"audit_status":status,"hard_gate":"BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
+    (OUT/"revision_audit.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\\n")
+    print(json.dumps(qa,ensure_ascii=False,indent=2))
 if __name__=="__main__": main()
