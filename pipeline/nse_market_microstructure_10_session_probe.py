@@ -4,12 +4,12 @@ from pathlib import Path
 from datetime import datetime, timezone
 from io import BytesIO
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import hashlib, json, time, zipfile
+import hashlib, json, time
 import requests
 import pandas as pd
 
 ROOT=Path("artifacts/nse_market_microstructure_10_session")
-SNAPSHOT=Path("inputs/nse_snapshot/nse-200-session-cache-verification.zip")
+SNAPSHOT_ROOT=Path("inputs/nse_snapshot")
 BASE="https://nsearchives.nseindia.com/content/"
 HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
          "Accept":"text/csv,application/octet-stream,*/*","Referer":"https://www.nseindia.com/all-reports"}
@@ -65,7 +65,7 @@ def main():
         session_dates=[r["trade_date"] for r in records]
         outputs=[];failures=[];counts={"price_band":0,"surveillance_old":0,"surveillance_new":0}
         session=requests.Session();session.headers.update(HEADERS)
-        for idx,rec in enumerate(chosen,start=len(records)-10):
+    for idx,rec in enumerate(chosen,start=len(records)-10):
             trade_date=rec["trade_date"]
             prev_date=session_dates[idx-1] if idx>0 else None
             if not prev_date:
@@ -73,7 +73,7 @@ def main():
             ddmmyyyy,ddmmyy=date_parts(trade_date)
             _,prev_ddmmyy=date_parts(prev_date)
             raw_name="raw/"+rec["file"]
-            raw=z.read(raw_name)
+            raw=(SNAPSHOT_ROOT/raw_name).read_bytes()
             if sha(raw)!=rec["sha256"]:
                 raise SystemExit(f"BLOCKED_BHAVCOPY_SHA256_MISMATCH:{trade_date}")
             bhav=pd.read_csv(BytesIO(raw),dtype=str).fillna("")
