@@ -118,7 +118,7 @@ def main():
                 merged=bhav.merge(pb,on=base_keys,how="left",validate="one_to_one")
                 merged=merged.merge(old,on=base_keys,how="left",validate="one_to_one")
                 merged=merged.merge(new,on=base_keys,how="left",validate="one_to_one")
-                merged["TRADE_DATE"]=trade_date
+                merged["TRADE_DATE"]=trade_date\n                merged["DATE"]=trade_date
                 merged["SURVEILLANCE_SOURCE_DATE"]=prev_date
                 merged["SURVEILLANCE_EFFECTIVE_DATE"]=trade_date
                 merged["SURVEILLANCE_EFFECTIVE_RULE"]="REG_IND file dated prior session applies to next trading day"
