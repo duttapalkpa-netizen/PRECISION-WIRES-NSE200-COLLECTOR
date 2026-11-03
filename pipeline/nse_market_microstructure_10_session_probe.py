@@ -4,13 +4,13 @@ from pathlib import Path
 from datetime import datetime, timezone
 from io import BytesIO
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import hashlib, json, time
+import hashlib, json, time, os
 import requests
 import pandas as pd
 
 ROOT=Path("artifacts/nse_market_microstructure_10_session")
 SNAPSHOT_ROOT=Path("inputs/nse_snapshot")
-BASE="https://nsearchives.nseindia.com/content/"
+BASE="https://nsearchives.nseindia.com/content/"\nBHAVCOPY_BASE="https://archives.nseindia.com/products/content/"
 HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
          "Accept":"text/csv,application/octet-stream,*/*","Referer":"https://www.nseindia.com/all-reports"}
 def norm(c): return "".join(x for x in str(c).upper() if x.isalnum())
@@ -60,13 +60,29 @@ def main():
     if len(records)!=200 or manifest["actual_sessions"]!=200:
         raise SystemExit("BLOCKED_SNAPSHOT_NOT_200_SESSIONS")
     records=sorted(records,key=lambda x:x["trade_date"])
-    chosen=records[-10:]
+    batch_size=int(os.environ.get("MARKET_MICROSTRUCTURE_BATCH_SIZE","10"))
+    offset=int(os.environ.get("MARKET_MICROSTRUCTURE_BATCH_OFFSET",str(max(0,len(records)-batch_size))))
+    if batch_size<1 or offset<0 or offset+batch_size>len(records):
+        raise SystemExit("BLOCKED_INVALID_BATCH_WINDOW")
+    chosen=records[offset:offset+batch_size]
     session_dates=[r["trade_date"] for r in records]
-    outputs=[];failures=[];counts={"price_band":0,"surveillance_old":0,"surveillance_new":0}
+    outputs=[];failures=[];counts={"bhavcopy":0,"price_band":0,"surveillance_old":0,"surveillance_new":0}
     session=requests.Session();session.headers.update(HEADERS)
-    for idx,rec in enumerate(chosen,start=len(records)-10):
+    # The 200-session window begins on 09-Jan-2026; verify 08-Jan directly before using its surveillance file for the first session.
+    first_prior_verified=False
+    if offset==0:
+        prior_url=BHAVCOPY_BASE+"sec_bhavdata_full_08012026.csv"
+        try:
+            prior_raw,_=download(session,prior_url)
+            prior_df=pd.read_csv(BytesIO(prior_raw),dtype=str).fillna("")
+            prior_df.columns=[str(x).strip() for x in prior_df.columns]
+            assert len(prior_df)>0 and prior_df["DATE1"].astype(str).str.contains("08-Jan-2026",case=False).all()
+            first_prior_verified=True
+        except Exception as e:
+            failures.append({"trade_date":"2026-01-09","error":f"prior-session verification failed: {type(e).__name__}: {e}"})
+    for idx,rec in enumerate(chosen,start=offset):
             trade_date=rec["trade_date"]
-            prev_date=session_dates[idx-1] if idx>0 else None
+            prev_date=session_dates[idx-1] if idx>0 else ("2026-01-08" if first_prior_verified else None)
             if not prev_date:
                 failures.append({"trade_date":trade_date,"error":"missing prior exchange session for surveillance effective-date join"});continue
             ddmmyyyy,ddmmyy=date_parts(trade_date)
@@ -125,7 +141,7 @@ def main():
             time.sleep(0.15)
     if not outputs: raise SystemExit("BLOCKED_NO_MARKET_MICROSTRUCTURE_ROWS")
     panel=pd.concat(outputs,ignore_index=True,sort=False)
-    out=ROOT/"market_microstructure_10_session.csv"
+    out=ROOT/f"market_microstructure_batch_{offset}_{batch_size}.csv"
     panel.to_csv(out,index=False)
     report={
       "status":"PASS_10_SESSION_SMOKE" if len(outputs)==10 and not failures else "PARTIAL",
@@ -147,7 +163,7 @@ def main():
         "Legacy bhavcopy source URLs/retrieval timestamps are unrecoverable for cached sessions."],
       "output_sha256":sha(out.read_bytes()),"observed_at_utc":datetime.now(timezone.utc).isoformat()
     }
-    (ROOT/"market_microstructure_10_session_qa.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+    (ROOT/f"market_microstructure_batch_{offset}_{batch_size}_qa.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
     print(json.dumps(report,indent=2))
-    if report["status"]!="PASS_10_SESSION_SMOKE": raise SystemExit("10-session market microstructure source probe incomplete")
+    if report["status"]!="PASS_BATCH": raise SystemExit("market microstructure source batch incomplete")
 if __name__=="__main__": main()
