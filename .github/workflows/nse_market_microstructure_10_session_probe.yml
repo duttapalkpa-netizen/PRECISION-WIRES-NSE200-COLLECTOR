@@ -1,0 +1,56 @@
+name: NSE Market Microstructure 10-Session Historical Probe
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_market_microstructure_10_session_probe.yml'
+      - 'pipeline/nse_market_microstructure_10_session_probe.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nse-market-microstructure-10-session-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3'
+      - name: Download exact successful 200-session snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/nse_snapshot
+          gh run download 41589358513 -n nse-200-session-cache-verification-287 -D inputs/nse_snapshot
+          test -s inputs/nse_snapshot/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ['GITHUB_REPOSITORY'];run=41589358513;aid=13210110022
+          digest='sha256:d1f78e86d175c3348851dd4b19f88d2f346f70f7f18ed8c61779ed44eff04cdc'
+          meta=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+          assert meta['conclusion']=='success'
+          arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+          a=next(x for x in arts if x['id']==aid)
+          assert a['digest']==digest and not a['expired'],a
+          print({'run_id':run,'artifact_id':aid,'digest_verified':True})
+          PY
+      - name: Build and validate 10-session price-band and surveillance join
+        run: python pipeline/nse_market_microstructure_10_session_probe.py
+      - name: Upload 10-session market microstructure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-market-microstructure-10-session-evidence
+          path: artifacts/nse_market_microstructure_10_session/
+          if-no-files-found: warn
+          retention-days: 90
