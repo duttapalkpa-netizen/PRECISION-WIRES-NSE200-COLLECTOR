@@ -1,5 +1,5 @@
 name: NSE Market Microstructure Official Source Probe
-# Probe latest published surveillance indicators (30-Oct-2026) and 02-Nov-2026 price-band snapshot.
+# Probe NSE daily-reports API plus ASM/GSM/ESM current CSV endpoints and 02-Nov-2026 price bands.
 on:
   push:
     branches:
