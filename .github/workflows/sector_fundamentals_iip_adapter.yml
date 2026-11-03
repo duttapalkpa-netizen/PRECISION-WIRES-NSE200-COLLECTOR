@@ -1,0 +1,87 @@
+name: Sector Fundamentals NIC-2 IIP Adapter Audit
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/sector_fundamentals_iip_adapter.yml'
+      - 'pipeline/build_sector_fundamentals_from_iip.py'
+      - 'qa/test_sector_fundamentals_iip_adapter.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: sector-fundamentals-iip-adapter
+  cancel-in-progress: false
+jobs:
+  adapter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout adapter and QA code
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install workbook and QA dependencies
+        run: python -m pip install 'pandas>=2.2,<3' openpyxl
+      - name: Download exact successful official MoSPI NIC-2 evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/esankhyiki_iip_backseries
+          gh run download 41588520453 -n esankhyiki-iip-nic2-backseries -D artifacts/esankhyiki_iip_backseries
+          test -s artifacts/esankhyiki_iip_backseries/iip_nic2_monthly_panel_2023_04_to_2026_09.csv
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ['GITHUB_REPOSITORY']
+          run=41588520453; aid=13208997255
+          digest='sha256:86ee2f6fc4d08689ae2290e571785be34afea6e21f261af1ba6fde6e8ab81e62'
+          meta=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+          assert meta['conclusion']=='success'
+          arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+          a=next(x for x in arts if x['id']==aid)
+          assert a['digest']==digest and not a['expired'],a
+          print({'run_id':run,'artifact_id':aid,'digest_verified':True})
+          PY
+      - name: Run sector-fundamentals adapter unit tests
+        run: python -m unittest -v qa.test_sector_fundamentals_iip_adapter
+      - name: Build provenance-rich NIC-2 sector fundamentals panel
+        run: python pipeline/build_sector_fundamentals_from_iip.py
+      - name: Assert partial-only coverage and source provenance
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          import pandas as pd
+          from pathlib import Path
+          p=Path('data/external/sector_fundamentals.csv')
+          r=json.loads(Path('outputs/macro_geo/sector_fundamentals_iip_adapter_qa.json').read_text())
+          d=pd.read_csv(p,dtype=str).fillna('')
+          assert len(d)==966
+          assert d['SECTOR'].nunique()==23 and d['DATE'].nunique()==42
+          assert r['status']=='PARTIAL_SOURCE_COVERAGE'
+          assert r['promotion_allowed'] is False
+          assert r['publication_timestamps_missing']==966
+          assert d['SOURCE_URL'].str.startswith('https://').all()
+          assert d['SOURCE_SHA256'].str.fullmatch(r'[0-9a-f]{64}').all()
+          assert not d.duplicated(['DATE','SECTOR','METRIC']).any()
+          print(json.dumps({'status':r['status'],'rows':len(d),'nic2_groups':d['SECTOR'].nunique(),
+            'months':d['DATE'].nunique(),'period_min':d['DATE'].min(),'period_max':d['DATE'].max(),
+            'promotion_allowed':r['promotion_allowed'],'blockers':r['promotion_blockers']},indent=2))
+          PY
+      - name: Upload sector fundamentals partial-evidence package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sector-fundamentals-nic2-iip-partial-evidence
+          path: |
+            data/external/sector_fundamentals.csv
+            outputs/macro_geo/sector_fundamentals_iip_adapter_qa.json
+            artifacts/esankhyiki_iip_backseries/
+          if-no-files-found: warn
+          retention-days: 90
