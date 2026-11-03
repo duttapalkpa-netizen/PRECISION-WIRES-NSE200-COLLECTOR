@@ -1,0 +1,105 @@
+name: Global Freight Shipping Factor Coverage Reconciliation
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/global_freight_shipping_factor_reconciliation.yml'
+      - 'pipeline/global_freight_shipping_coverage_reconcile.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: global-freight-shipping-factor-reconciliation
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout conservative coverage reconciler
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audit dependency
+        run: python -m pip install 'pandas>=2.2,<3'
+      - name: Download exact factor baseline and PortWatch evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/factor-base /tmp/portwatch
+          gh run download 41593303051 -n nse-market-microstructure-factor-coverage-reconciliation -D /tmp/factor-base
+          gh run download 41594267430 -n imf-portwatch-chokepoint-200-session-evidence -D /tmp/portwatch
+          test -s /tmp/factor-base/outputs/macro_geo/source_coverage.json
+          test -s /tmp/portwatch/backfill_qa.json
+          test -s /tmp/portwatch/imf_portwatch_chokepoint_activity_2026.csv
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ['GITHUB_REPOSITORY']
+          pins=[
+           (41593303051,13210189307,'sha256:ddcdcaa74bdb0f243e9c0ba22a7bb4cad0d563cd70900f7f1cb569932552d034'),
+           (41594267430,13210874855,'sha256:d33f807fcf094c380e237f41ca7737998bd8717fd0a30a7dd2b8f095182d8fbe')]
+          for run,aid,digest in pins:
+           r=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+           assert r['conclusion']=='success',(run,r.get('conclusion'))
+           arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+           a=next(x for x in arts if x['id']==aid)
+           assert a['digest']==digest and not a['expired'],a
+           print({'run_id':run,'artifact_id':aid,'digest_verified':True})
+          PY
+      - name: Assemble immutable evidence inputs
+        run: |
+          set -euo pipefail
+          mkdir -p data/external outputs/macro_geo
+          cp /tmp/factor-base/outputs/macro_geo/source_coverage.json outputs/macro_geo/
+          cp /tmp/portwatch/imf_portwatch_chokepoint_activity_2026.csv data/external/global_freight_shipping.csv
+          cp /tmp/portwatch/backfill_qa.json outputs/macro_geo/global_freight_shipping_200_session_qa.json
+      - name: Reconcile PortWatch evidence and re-audit all 35 factors
+        run: |
+          python pipeline/global_freight_shipping_coverage_reconcile.py
+          python pipeline/macro_geo_factor_coverage_audit.py
+          python pipeline/factor_registry_gap_priority_audit.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('outputs/macro_geo')
+          cov=json.loads((root/'source_coverage.json').read_text())
+          item=next(x for x in cov['sources'] if x.get('source')=='global_freight_shipping')
+          audit=json.loads((root/'factor_coverage_audit.json').read_text())
+          priority=json.loads((root/'factor_gap_priority_audit.json').read_text())
+          assert item['status']=='DATA_QUALITY_WARN' and item['rows']==0 and item['observed_rows']==5432,item
+          assert item['missing_nse_session_keys']==168 and item['nse_session_coverage_pct']==97.0,item
+          assert audit['factor_groups']==35 and audit['status']=='FACTOR_COVERAGE_AUDITED_WITH_GAPS'
+          assert audit['source_coverage_as_of']==cov['as_of_utc']
+          assert priority['not_connected_factors']==12 and priority['partial_factors']==23
+          assert priority['recommended_first_source_group']=='fx_carry_and_cross_currency'
+          print({'global_freight_shipping_status':item['status'],'hard_gate_rows':item['rows'],
+            'observed_nse_session_keys':item['observed_rows'],'coverage_pct':item['nse_session_coverage_pct'],
+            'missing_nse_session_keys':item['missing_nse_session_keys'],
+            'factor_groups':audit['factor_groups'],'not_connected':audit['not_connected'],
+            'partial':audit['partial_source_coverage'],'next_priority':priority['recommended_first_source_group'],
+            'production_selector_changed':False,'ranking_score_changed':False,
+            'pressure_fade_changed':False,'diagnostics_672_changed':False})
+          PY
+      - name: Upload reconciled global freight and factor evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-freight-shipping-factor-coverage-reconciliation
+          path: |
+            data/external/global_freight_shipping.csv
+            outputs/macro_geo/global_freight_shipping_200_session_qa.json
+            outputs/macro_geo/global_freight_shipping_source_coverage_reconciliation.json
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+            outputs/macro_geo/factor_gap_priority_audit.csv
+            outputs/macro_geo/factor_gap_priority_audit.json
+          if-no-files-found: warn
+          retention-days: 90
