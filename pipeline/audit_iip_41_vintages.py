@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Strict audit of all monthly NIC-2 IIP catalogue vintages from MoSPI.
-Audit contract revision: v2; fail-closed ingestion and revision comparison.
+Audit contract revision: v3; fail-closed ingestion and revision comparison.
 Every catalogue row receives an explicit download/parse status. A cumulative
 panel is never treated as multiple downloaded vintages.
 """
@@ -18,12 +18,12 @@ TLS_CONTEXT.set_ciphers("DEFAULT:@SECLEVEL=1")
 TLS_CONTEXT.options |= 0x4
 OPENER=urllib.request.build_opener(urllib.request.HTTPSHandler(context=TLS_CONTEXT))
 def sha(b): return hashlib.sha256(b).hexdigest()
-def req(url,accept,attempts=2):
+def req(url,accept,attempts=2,timeout=12):
     last=""
     for n in range(attempts):
         q=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":accept,"Origin":"https://esankhyiki.mospi.gov.in","Referer":"https://esankhyiki.mospi.gov.in/catalogue-main/catalogue"})
         try:
-            with OPENER.open(q,timeout=25) as r:
+            with OPENER.open(q,timeout=timeout) as r:
                 return {"status":r.status,"type":r.headers.get("Content-Type",""),"final":r.geturl(),"body":r.read(40000000),"error":""}
         except urllib.error.HTTPError as e:
             body=e.read(1000000)
@@ -83,7 +83,7 @@ def fetch_one(r):
         if local.exists() and local.stat().st_size>1000 and local.read_bytes()[:2]==b"PK":
             body=local.read_bytes(); x={"status":200,"type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","final":url,"body":body,"error":""}; row["download_status"]="CACHE_HIT_RAW_HASH_RECHECKED"
         else:
-            x=req(url,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream")
+            x=req(url,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream",attempts=1,timeout=12)
             row["download_status"]="DOWNLOADED" if x["status"]==200 and x["body"].startswith(b"PK") else "FAILED"
         row.update({"http_status":x["status"],"content_type":x["type"],"final_url":x["final"],"raw_bytes":len(x["body"]),"sha256":sha(x["body"]) if x["body"] else "","error":x["error"]})
         if x["status"]!=200 or not x["body"].startswith(b"PK"):
@@ -97,7 +97,7 @@ def main():
     RAW.mkdir(parents=True,exist_ok=True); allr,pagination=get_catalogue()
     selected=sorted([r for r in allr if qualifies(r)],key=lambda r:(month(r.get("ref_period")) or "",str(r.get("release_date","")),str(r.get("unique_id",""))))
     results=[]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
         fs=[pool.submit(fetch_one,r) for r in selected]
         for f in concurrent.futures.as_completed(fs): results.append(f.result())
     manifest=[x[0] for x in results]; manifest.sort(key=lambda x:(month(x.get("ref_period")) or "",str(x.get("release_date","")),str(x.get("unique_id",""))))
