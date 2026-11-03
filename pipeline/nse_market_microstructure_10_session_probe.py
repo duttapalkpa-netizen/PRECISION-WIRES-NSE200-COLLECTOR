@@ -10,7 +10,8 @@ import pandas as pd
 
 ROOT=Path("artifacts/nse_market_microstructure_10_session")
 SNAPSHOT_ROOT=Path("inputs/nse_snapshot")
-BASE="https://nsearchives.nseindia.com/content/"\nBHAVCOPY_BASE="https://archives.nseindia.com/products/content/"
+BASE="https://nsearchives.nseindia.com/content/"
+BHAVCOPY_BASE="https://archives.nseindia.com/products/content/"
 HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
          "Accept":"text/csv,application/octet-stream,*/*","Referer":"https://www.nseindia.com/all-reports"}
 def norm(c): return "".join(x for x in str(c).upper() if x.isalnum())
@@ -88,9 +89,15 @@ def main():
             ddmmyyyy,ddmmyy=date_parts(trade_date)
             _,prev_ddmmyy=date_parts(prev_date)
             raw_name="raw/"+rec["file"]
-            raw=(SNAPSHOT_ROOT/raw_name).read_bytes()
-            if sha(raw)!=rec["sha256"]:
+            cached_raw=(SNAPSHOT_ROOT/raw_name).read_bytes()
+            if sha(cached_raw)!=rec["sha256"]:
                 raise SystemExit(f"BLOCKED_BHAVCOPY_SHA256_MISMATCH:{trade_date}")
+            bhavcopy_url=BHAVCOPY_BASE+rec["file"]
+            raw,bhavcopy_time=download(session,bhavcopy_url)
+            if sha(raw)!=rec["sha256"]:
+                failures.append({"trade_date":trade_date,"error":"official bhavcopy re-download SHA-256 differs from frozen snapshot"})
+                continue
+            counts["bhavcopy"]+=1
             bhav=pd.read_csv(BytesIO(raw),dtype=str).fillna("")
             bhav.columns=[str(c).strip() for c in bhav.columns]
             bhav["SYMBOL"]=bhav["SYMBOL"].astype(str).str.strip().str.upper()
@@ -117,9 +124,10 @@ def main():
                 merged["SURVEILLANCE_EFFECTIVE_RULE"]="REG_IND file dated prior session applies to next trading day"
                 merged["CIRCUIT_STATUS"]="UNKNOWN"
                 merged["FREE_FLOAT"]="UNKNOWN"
-                merged["BHAVCOPY_SOURCE_URL"]=rec.get("source_url") or ""
-                merged["BHAVCOPY_SOURCE_SHA256"]=rec["sha256"]
-                merged["BHAVCOPY_PROVENANCE_STATUS"]=rec.get("source_provenance","")
+                merged["BHAVCOPY_SOURCE_URL"]=bhavcopy_url
+                merged["BHAVCOPY_SOURCE_SHA256"]=sha(raw)
+                merged["BHAVCOPY_REVALIDATED_AT_UTC"]=bhavcopy_time
+                merged["BHAVCOPY_PROVENANCE_STATUS"]="OFFICIAL_SOURCE_URL_REVALIDATED_SHA_MATCH"
                 merged["PRICE_BAND_SOURCE_URL"]=pb_url
                 merged["PRICE_BAND_SOURCE_SHA256"]=sha(pb_raw)
                 merged["PRICE_BAND_RETRIEVED_AT_UTC"]=pb_time
