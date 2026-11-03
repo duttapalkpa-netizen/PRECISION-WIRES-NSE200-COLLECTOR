@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Strict audit of all monthly NIC-2 IIP catalogue vintages from MoSPI.
-Audit contract revision: v5; index-only parser, duplicate-key rejection, vintage gap audit. fail-closed ingestion and revision comparison.
+Audit contract revision: v5; index-only parser, duplicate-key rejection, vintage gap audit.
 Every catalogue row receives an explicit download/parse status. A cumulative
 panel is never treated as multiple downloaded vintages.
 """
