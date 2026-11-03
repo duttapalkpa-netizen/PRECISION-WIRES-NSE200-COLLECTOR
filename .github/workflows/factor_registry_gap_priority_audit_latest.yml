@@ -1,0 +1,77 @@
+name: Latest Snapshot Factor Registry Gap Priority Audit
+
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/factor_registry_gap_priority_audit_latest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: latest-factor-registry-gap-priority-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout audited diagnostic code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download exact latest reconciled evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/macro_geo
+          gh run download 41585579135 -n nse-factor-registry-snapshot-reconciliation -D /tmp/reconciled
+          test -s /tmp/reconciled/factor_coverage_audit.csv
+          test -s /tmp/reconciled/factor_coverage_audit.json
+          test -s /tmp/reconciled/nse_factor_registry_evidence_manifest.json
+          cp /tmp/reconciled/factor_coverage_audit.csv outputs/macro_geo/
+          cp /tmp/reconciled/factor_coverage_audit.json outputs/macro_geo/
+          cp /tmp/reconciled/nse_factor_registry_evidence_manifest.json outputs/macro_geo/
+      - name: Verify diagnostic unit tests
+        run: python -m unittest qa.test_factor_registry_gap_priority_audit -v
+      - name: Build deterministic shared-source remediation priority
+        run: python pipeline/factor_registry_gap_priority_audit.py
+      - name: Assert latest-baseline counts and conservative rules
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('outputs/macro_geo')
+          p=json.loads((root/'factor_gap_priority_audit.json').read_text())
+          a=json.loads((root/'factor_coverage_audit.json').read_text())
+          m=json.loads((root/'nse_factor_registry_evidence_manifest.json').read_text())
+          assert p['factor_groups']==35
+          assert p['not_connected_factors']==12
+          assert p['partial_factors']==23
+          assert p['recommended_first_source_group']=='sector_fundamentals'
+          assert a['factor_groups']==35
+          assert a['status']=='FACTOR_COVERAGE_AUDITED_WITH_GAPS'
+          assert m['nse_snapshot']['snapshot_id']=='1f6d79d9bcdf3a6aa11dd9a80033276061447401dac6c708ab6622b6258b7534'
+          assert 'does not change coverage status' in p['safety']
+          print(json.dumps({'status':p['status'],'factor_groups':p['factor_groups'],
+            'not_connected_factors':p['not_connected_factors'],'partial_factors':p['partial_factors'],
+            'recommended_first_source_group':p['recommended_first_source_group'],
+            'ranked_source_groups':len(p['source_groups_ranked']),
+            'snapshot_id':m['nse_snapshot']['snapshot_id']},indent=2))
+          PY
+      - name: Upload latest gap-priority evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-factor-registry-gap-priority-audit
+          path: outputs/macro_geo/factor_gap_priority_audit.*
+          if-no-files-found: warn
+          retention-days: 90
