@@ -17,7 +17,8 @@ REPORTS={
  "price_band":[f"sec_list_{DAY}.csv"],
  "surveillance_old":[f"REG_IND{SHORT}.csv"],
  "surveillance_new":[f"REG1_IND{SHORT}.csv"],
- "circuit":[f"circuit_30102026.csv"],\n "price_band_changes":[f"eq_band_changes_{DAY}.csv"]
+ "circuit":[f"circuit_30102026.csv"],
+ "price_band_changes":[f"eq_band_changes_{DAY}.csv"]
 }
 HOSTS=["https://nsearchives.nseindia.com/content/equities/","https://archives.nseindia.com/content/equities/"]
 
