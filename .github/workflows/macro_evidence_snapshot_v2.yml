@@ -1,7 +1,7 @@
 name: Macro Evidence Snapshot v2 and Same-Snapshot Factor Audit
 on:
   push:
-    branches: [fix/macro-evidence-snapshot-v2]
+    branches: [fix/macro-evidence-snapshot-v2-clean]
     paths:
       - "pipeline/build_macro_indicator_evidence_snapshot.py"
       - "qa/test_macro_indicator_evidence_snapshot.py"
