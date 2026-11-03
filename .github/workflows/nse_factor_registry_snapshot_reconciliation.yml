@@ -34,11 +34,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p /tmp/nse263 /tmp/prov5 /tmp/factor42
-          gh run download 41507790396 -n nse-200-session-cache-verification-263 -D /tmp/nse263
+          mkdir -p /tmp/nse266 /tmp/prov5 /tmp/factor42
+          gh run download 41576900661 -n nse-200-session-cache-verification-266 -D /tmp/nse266
           gh run download 41507790249 -n nse-200-session-provenance-revalidation -D /tmp/prov5
           gh run download 41576764331 -n macro-geo-factor-source-repair -D /tmp/factor42
-          test -s /tmp/nse263/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
+          test -s /tmp/nse266/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
           test -s /tmp/prov5/provenance_revalidation_report.json
           test -s /tmp/factor42/outputs/macro_geo/source_coverage.json
           test -s /tmp/factor42/outputs/macro_geo/factor_source_collection_report.json
@@ -47,7 +47,7 @@ jobs:
           python - <<'PY'
           import json, hashlib
           from pathlib import Path
-          nse=Path('/tmp/nse263/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json')
+          nse=Path('/tmp/nse266/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json')
           prov=Path('/tmp/prov5/provenance_revalidation_report.json')
           cov=Path('/tmp/factor42/outputs/macro_geo/source_coverage.json')
           repair=Path('/tmp/factor42/outputs/macro_geo/factor_source_collection_report.json')
@@ -69,7 +69,7 @@ jobs:
           manifest={
             'status':'INPUTS_VALIDATED_FOR_FACTOR_REGISTRY_AUDIT',
             'nse_snapshot':{
-              'run_id':41507790396,'manifest':nse.name,'snapshot_id':nm['snapshot_id'],
+              'run_id':41576900661,'manifest':nse.name,'snapshot_id':nm['snapshot_id'],
               'sessions':nm['actual_sessions'],'first_session':nm['first_session'],
               'last_session':nm['last_session'],'manifest_sha256':sha(nse),
               'provenance_run_id':41507790249,
