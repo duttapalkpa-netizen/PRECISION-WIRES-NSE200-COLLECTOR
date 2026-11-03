@@ -5,7 +5,7 @@ from pipeline.nse_market_microstructure_coverage_reconcile import reconcile
 def panel():
     rows=[]
     for i in range(200):
-        rows.append({"DATE":f"2026-01-{(i%28)+1:02d}","SYMBOL":f"S{i}","SERIES":"EQ",
+        rows.append({"DATE":f"session-{i:03d}","SYMBOL":f"S{i}","SERIES":"EQ",
           "CIRCUIT_STATUS":"UNKNOWN","SURVEILLANCE_STATUS":"UNKNOWN","FREE_FLOAT":"UNKNOWN",
           "BHAVCOPY_SOURCE_URL":"https://archives.nseindia.com/products/content/sec_bhavdata_full_x.csv",
           "BHAVCOPY_SOURCE_SHA256":"a"*64,"PRICE_BAND_SOURCE_URL":"https://nsearchives.nseindia.com/content/equities/sec_list_x.csv",
