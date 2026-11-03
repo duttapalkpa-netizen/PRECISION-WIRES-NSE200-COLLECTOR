@@ -1,0 +1,77 @@
+name: Federal Reserve H.10 FX Spot 200-Session Backfill
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/fred_fx_daily_200_session_backfill.yml'
+      - 'pipeline/collect_fred_fx_daily_200_session.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: fred-fx-daily-200-session-backfill
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout official FX spot collector
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install data parser and HTTP client
+        run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3'
+      - name: Download and verify exact NSE and factor baselines
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/nse_snapshot /tmp/factor-base
+          gh run download 41589358513 -n nse-200-session-cache-verification-287 -D inputs/nse_snapshot
+          gh run download 41594842382 -n global-freight-shipping-factor-coverage-reconciliation -D /tmp/factor-base
+          test -s inputs/nse_snapshot/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
+          test -s /tmp/factor-base/outputs/macro_geo/source_coverage.json
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ['GITHUB_REPOSITORY']
+          pins=[
+           (41589358513,13210110022,'sha256:d1f78e86d175c3348851dd4b19f88d2f346f70f7f18ed8c61779ed44eff04cdc'),
+           (41594842382,13211424119,'sha256:255f4b0420a4a45a61875b9d94f8adee4ba534d816e05f2c6e85a52852f38e29')]
+          for run,aid,digest in pins:
+           r=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+           assert r['conclusion']=='success'
+           arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+           a=next(x for x in arts if x['id']==aid)
+           assert a['digest']==digest and not a['expired'],a
+           print({'run_id':run,'artifact_id':aid,'digest_verified':True})
+          PY
+      - name: Collect official daily USDINR and USDJPY spot observations
+        run: python pipeline/collect_fred_fx_daily_200_session.py
+      - name: Assert spot-only scope and explicit carry blockers
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('artifacts/fx_carry_cross_currency/fx_spot_qa.json').read_text())
+          assert p['status']=='PASS_FX_SPOT_COLLECTION_WITH_EXPLICIT_CARRY_BLOCKERS',p
+          assert p['nse_sessions']==200 and p['panel_rows']==200
+          assert set(p['series_session_coverage'])=={'DEXINUS','DEXJPUS'}
+          assert p['promotion_allowed'] is False
+          assert len(p['unresolved_requirements'])>=2
+          print({k:p[k] for k in ('status','nse_sessions','series_session_coverage','complete_fx_spot_rows','missing_value_cells','promotion_allowed','unresolved_requirements')})
+          PY
+      - name: Upload immutable official FX spot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fred-fx-spot-200-session-evidence
+          path: artifacts/fx_carry_cross_currency/
+          if-no-files-found: warn
+          retention-days: 90
