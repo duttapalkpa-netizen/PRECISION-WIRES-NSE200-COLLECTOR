@@ -1,0 +1,39 @@
+name: IIP 41-vintage ingestion and revision audit
+on:
+  push:
+    branches: [fix/iip-41-vintage-ingestion-audit]
+    paths:
+      - "pipeline/audit_iip_41_vintages.py"
+      - ".github/workflows/iip_41_vintage_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: iip-41-vintage-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/cache@v4
+        with:
+          path: artifacts/iip_41_vintage_audit/raw
+          key: iip-41-vintage-audit-${{ github.run_number }}
+          restore-keys: |
+            iip-41-vintage-audit-
+      - name: Install workbook parser
+        run: pip install pandas openpyxl
+      - name: Ingest all catalogue vintages and compare revisions
+        run: python pipeline/audit_iip_41_vintages.py
+      - name: Upload complete audit ledger, including gaps
+        uses: actions/upload-artifact@v4
+        with:
+          name: iip-41-vintage-ingestion-revision-audit
+          path: artifacts/iip_41_vintage_audit/
+          if-no-files-found: error
