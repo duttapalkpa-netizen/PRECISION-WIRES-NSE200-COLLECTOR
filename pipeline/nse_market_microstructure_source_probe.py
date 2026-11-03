@@ -8,7 +8,7 @@ import requests
 import pandas as pd
 
 DAY="02112026"
-SHORT="021126"
+SHORT="301026"
 ROOT=Path("artifacts/nse_market_microstructure_probe")
 HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
          "Accept":"text/csv,application/octet-stream,*/*","Referer":"https://www.nseindia.com/all-reports",
@@ -17,7 +17,7 @@ REPORTS={
  "price_band":[f"sec_list_{DAY}.csv"],
  "surveillance_old":[f"REG_IND{SHORT}.csv"],
  "surveillance_new":[f"REG1_IND{SHORT}.csv"],
- "circuit":[f"circuit_{DAY}.csv"]
+ "circuit":[f"circuit_30102026.csv"],\n "price_band_changes":[f"eq_band_changes_{DAY}.csv"]
 }
 HOSTS=["https://nsearchives.nseindia.com/content/equities/","https://archives.nseindia.com/content/equities/"]
 
@@ -81,7 +81,7 @@ def main():
     required=["price_band","surveillance_old","surveillance_new"]
     passed=[k for k in required if k in bycat]
     status="PASS" if len(passed)==len(required) else ("PARTIAL" if passed else "BLOCKED")
-    report={"status":status,"requested_trade_date":"2026-11-02","requested_file_date":"02-Nov-2026",
+    report={"status":status,"requested_trade_date":"2026-11-02","requested_file_date":"02-Nov-2026","surveillance_report_as_of_date":"2026-10-30",
       "required_categories":required,"passed_categories":passed,"missing_categories":[x for x in required if x not in bycat],
       "results":results,"observed_at_utc":datetime.now(timezone.utc).isoformat(),
       "policy":"Probe only. No status promotion until historical date coverage, symbol/date join, effective-date QA, source provenance and domain rules pass."}
