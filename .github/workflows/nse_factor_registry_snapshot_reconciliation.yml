@@ -91,7 +91,7 @@ jobs:
             'snapshot_boundary':'NSE session snapshot and macro-factor source coverage are separate vintages. No claim is made that factor-source data was refreshed on the NSE snapshot date.',
             'rules':['No synthetic records','No fabricated timestamps','UNKNOWN is neither PASS nor FAIL','No factor promotion from warnings or absent data','No production selector, RANKING_SCORE, PRESSURE_FADE or 672-diagnostic changes']
           }
-          (out/'nse_factor_registry_evidence_manifest.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\\n')
+          (out/'nse_factor_registry_evidence_manifest.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
           print(json.dumps({'nse_snapshot_id':nm['snapshot_id'],'nse_sessions':nm['actual_sessions'],
             'provenance':pr['status'],'factor_source_as_of':cv['as_of_utc'],
             'factor_source_available':cv.get('available'),'factor_source_not_connected':cv.get('not_connected'),
@@ -120,7 +120,7 @@ jobs:
           assert manifest['nse_snapshot']['snapshot_id']=='1f6d79d9bcdf3a6aa11dd9a80033276061447401dac6c708ab6622b6258b7534'
           assert manifest['snapshot_boundary'].startswith('NSE session snapshot and macro-factor source coverage are separate vintages.')
           summary={k:audit.get(k) for k in ['status','factor_groups','fully_available_schema_groups','partial_source_coverage','not_connected','unmapped','source_coverage_as_of']}
-          (root/'factor_registry_reconciliation_summary.json').write_text(json.dumps(summary,indent=2)+'\\n')
+          (root/'factor_registry_reconciliation_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
           for name in ['source_coverage.json','factor_source_collection_report.json','factor_coverage_audit.json','factor_coverage_audit.csv','nse_factor_registry_evidence_manifest.json','factor_registry_reconciliation_summary.json']:
               p=root/name
               if p.exists():
