@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Strict audit of all monthly NIC-2 IIP catalogue vintages from MoSPI.
-Audit contract revision: v5; index-only parser, duplicate-key rejection, vintage gap audit.
+Audit contract revision: v6; index-only parser, explicit base-year/classification lineage, within-series revision audit.
 Every catalogue row receives an explicit download/parse status. A cumulative
 panel is never treated as multiple downloaded vintages.
 """
@@ -61,6 +61,9 @@ def parse_xlsx(path):
         candidates=[]
         for sheet in xl.sheet_names:
             df=pd.read_excel(path,sheet_name=sheet,header=None,dtype=object)
+            base_text=str(df.iloc[1,0]) if len(df)>1 and pd.notna(df.iloc[1,0]) else ""
+            base_match=re.search(r"base\s+([0-9]{4}-[0-9]{2})",base_text,re.I)
+            base_year=base_match.group(1) if base_match else ""
             title_row=None
             for i,row in df.iterrows():
                 title=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
@@ -78,6 +81,9 @@ def parse_xlsx(path):
                     break
             if header_row is None:
                 continue
+            classification=str(df.iloc[header_row,0]).strip().upper().replace(" ","-")
+            if classification not in ("NIC-2008","NIC-2025") or not base_year:
+                raise ValueError(f"missing/unsupported series lineage: base_year={base_year!r}, classification={classification!r}")
             periods=[(ci,month(v)) for ci,v in enumerate(df.iloc[header_row].tolist()) if ci>=3 and month(v)]
             rows=[]
             for _,row in df.iloc[header_row+1:].iterrows():
@@ -94,16 +100,16 @@ def parse_xlsx(path):
                 for ci,period in periods:
                     val=pd.to_numeric(pd.Series([row.iloc[ci]]),errors="coerce").iloc[0]
                     if pd.notna(val):
-                        rows.append({"period":period,"nic_code":nic,"value":float(val),"measure":"index"})
+                        rows.append({"base_year":base_year,"classification":classification,"period":period,"nic_code":nic,"value":float(val),"measure":"index"})
             if rows:
-                candidates.append((sheet,rows))
+                candidates.append((sheet,rows,base_year,classification))
         if not candidates:
             raise ValueError("no supported monthly NIC-2/NIC-2025 index table found")
-        sheet,rows=max(candidates,key=lambda x:len(x[1]))
-        keys=[(x["period"],x["nic_code"]) for x in rows]
+        sheet,rows,base_year,classification=max(candidates,key=lambda x:len(x[1]))
+        keys=[(x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in rows]
         if len(keys)!=len(set(keys)):
             raise ValueError("duplicate period/NIC keys inside index table")
-        return sheet,rows
+        return sheet,rows,base_year,classification
 def fetch_one(r):
     uid=str(r.get("unique_id","")); fname=str(r.get("file_name",""))
     local=RAW/(re.sub(r"[^A-Za-z0-9._-]+","_",uid)+"__"+Path(fname).name)
@@ -120,7 +126,8 @@ def fetch_one(r):
         if x["status"]!=200 or not x["body"].startswith(b"PK"):
             row["parse_status"]="NOT_PARSED"; row["error"]=row["error"] or "NON_XLSX_OR_NON_200_RESPONSE"; return row,[]
         local.write_bytes(x["body"]); row["local_file"]=str(local.relative_to(OUT))
-        sheet,obs=parse_xlsx(local); row.update({"parse_status":"PASS","parsed_rows":len(obs),"sheet":sheet})
+        sheet,obs,base_year,classification=parse_xlsx(local)
+        row.update({"parse_status":"PASS","parsed_rows":len(obs),"sheet":sheet,"base_year":base_year,"classification":classification})
         return row,obs
     except Exception as e:
         row["parse_status"]="FAIL"; row["error"]=f"{type(e).__name__}:{e}"[:500]; return row,[]
@@ -149,19 +156,19 @@ def main():
     # Remove duplicate catalogue entries from value comparison while preserving every manifest row.
     obs_by_vintage={}
     for o in obs:
-        obs_by_vintage.setdefault((o["table_id"],o["period"],o["nic_code"]),o)
+        obs_by_vintage.setdefault((o["table_id"],o["base_year"],o["classification"],o["period"],o["nic_code"]),o)
     obs=list(obs_by_vintage.values())
     pd.DataFrame(obs).to_csv(OUT/"all_vintage_observations.csv",index=False)
     by={}
     for o in obs:
-        by.setdefault((o["period"],o["nic_code"]),[]).append(o)
+        by.setdefault((o["base_year"],o["classification"],o["period"],o["nic_code"]),[]).append(o)
     diffs=[]
-    for (period,nic),items in sorted(by.items()):
+    for (base_year,classification,period,nic),items in sorted(by.items()):
         items.sort(key=lambda x:(month(x["release_ref_period"]) or "",str(x.get("release_date","")),str(x.get("table_id",""))))
         for prev,cur in zip(items,items[1:]):
             if prev["table_id"] != cur["table_id"] and prev["value"] != cur["value"]:
-                diffs.append({"period":period,"nic_code":nic,"previous_table_id":prev["table_id"],"previous_release_date":prev["release_date"],"previous_value":prev["value"],"current_table_id":cur["table_id"],"current_release_date":cur["release_date"],"current_value":cur["value"],"revision_delta":cur["value"]-prev["value"],"previous_sha256":prev["source_sha256"],"current_sha256":cur["source_sha256"]})
-    pd.DataFrame(diffs,columns=["period","nic_code","previous_table_id","previous_release_date","previous_value","current_table_id","current_release_date","current_value","revision_delta","previous_sha256","current_sha256"]).to_csv(OUT/"revision_differences.csv",index=False)
+                diffs.append({"base_year":base_year,"classification":classification,"period":period,"nic_code":nic,"previous_table_id":prev["table_id"],"previous_release_date":prev["release_date"],"previous_value":prev["value"],"current_table_id":cur["table_id"],"current_release_date":cur["release_date"],"current_value":cur["value"],"revision_delta":cur["value"]-prev["value"],"previous_sha256":prev["source_sha256"],"current_sha256":cur["source_sha256"]})
+    pd.DataFrame(diffs,columns=["base_year","classification","period","nic_code","previous_table_id","previous_release_date","previous_value","current_table_id","current_release_date","current_value","revision_delta","previous_sha256","current_sha256"]).to_csv(OUT/"revision_differences.csv",index=False)
     downloaded=sum(x["download_status"] in ("DOWNLOADED","CACHE_HIT_RAW_HASH_RECHECKED") for x in manifest)
     parsed=sum(x["parse_status"]=="PASS" for x in manifest)
     period_keys=sorted({month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))})
@@ -170,7 +177,7 @@ def main():
     unique_ids={x.get("unique_id") for x in manifest}
     duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
     status="PASS" if len(qualifying)==41 and len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"hard_gate":"PASS" if status=="PASS" else "BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
+    qa={"audit_status":status,"hard_gate":"PASS" if status=="PASS" else "BLOCKED","series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
     audit_path=OUT/"revision_audit.json"
     audit_path.write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Validate the serialized artifact itself; never upload malformed JSON.
