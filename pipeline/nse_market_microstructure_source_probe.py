@@ -23,7 +23,7 @@ def inspect_csv(raw, category):
     cols={norm(c):str(c) for c in frame.columns}
     symbol=next((cols[k] for k in ("SYMBOL","TCKRSYMB","SECURITY","SCRIP") if k in cols),None)
     isin=next((cols[k] for k in ("ISIN","ISINNUMBER") if k in cols),None)
-    stage=next((cols[k] for k in ("SURVEILLANCEINDICATOR","INDICATOR","STAGE","GSMSTAGE","ACTION","REMARKS","MEASURE") if k in cols),None)
+    stage=next((cols[k] for k in ("SURVEILLANCEINDICATOR","INDICATOR","STAGE","ASMSTAGE","GSMSTAGE","ESMSTAGE","GSM","ESM","LONGTERMADDITIONALSURVEILLANCEMEASURE","SHORTTERMADDITIONALSURVEILLANCEMEASURE","ACTION","REMARKS","MEASURE","STATUS","DEFAULT","PLEDGE") if k in cols),None)
     band=next((cols[k] for k in ("BAND","PRICEBAND","PRICEBANDPERCENT","BANDPERCENT") if k in cols),None)
     if not symbol: raise ValueError(f"symbol column missing: {list(frame.columns)}")
     if category=="price_band" and not band: raise ValueError(f"price band column missing: {list(frame.columns)}")
