@@ -1,5 +1,5 @@
 name: NSE Market Microstructure Official Source Probe
-# Probe NSE daily-reports API plus ASM/GSM/ESM current CSV endpoints and 02-Nov-2026 price bands.
+# Revalidate daily REG_IND schema and official ASM/GSM/ESM CSV endpoints with exact NSE metadata.
 on:
   push:
     branches:
