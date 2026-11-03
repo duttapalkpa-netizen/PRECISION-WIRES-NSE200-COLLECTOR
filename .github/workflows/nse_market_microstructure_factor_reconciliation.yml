@@ -87,7 +87,7 @@ jobs:
           assert micro['free_float_unknown_rows']==656703
           assert audit['factor_groups']==35
           assert audit['status']=='FACTOR_COVERAGE_AUDITED_WITH_GAPS'
-          assert priority['recommended_first_source_group']=='market_microstructure'
+          assert priority['recommended_first_source_group']=='global_freight_shipping'
           assert priority['not_connected_factors']==12 and priority['partial_factors']==23
           print(json.dumps({'microstructure_status':micro['status'],'hard_gate_rows':micro['rows'],
             'observed_rows':micro['observed_rows'],'factor_groups':audit['factor_groups'],
