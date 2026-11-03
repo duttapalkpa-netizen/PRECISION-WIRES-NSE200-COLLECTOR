@@ -10,11 +10,11 @@ GAPS=ROOT/"config/macro_geo_data_gap_register.csv"
 COVERAGE=ROOT/"outputs/macro_geo/source_coverage.json"
 OUT=ROOT/"outputs/macro_geo"
 MAP={
-"F01":["fpi_dii_flows","dxy","us_yields","volatility","fx_carry_and_cross_currency"],
+"F01":["fpi_dii_flows","dxy","us_yields","us_real_yields","volatility","fx_carry_and_cross_currency"],
 "F02":["crude_oil","global_commodity_prices","global_freight_shipping"],
 "F03":["earnings_revisions","corporate_events","valuation_snapshot"],
 "F04":["usd_inr","india_bond_yields","macro_indicators","india_current_account","inflation_components"],
-"F05":["us_yields","dxy","global_policy_events","fed_policy_surprises"],
+"F05":["us_yields","us_real_yields","dxy","global_policy_events","fed_policy_surprises"],
 "F06":["rbi_policy_liquidity","india_bond_yields","fpi_dii_flows"],
 "F07":["macro_indicators","global_policy_events","sector_fundamentals","government_capex"],
 "F08":["corporate_events","sector_fundamentals","sector_catalysts"],
@@ -23,8 +23,8 @@ MAP={
 "F11":["geopolitical_events","global_policy_events"],
 "F12":["global_policy_events","geopolitical_events","global_commodity_prices"],
 "F13":["global_freight_shipping","crude_oil","global_commodity_prices","shipping_route_risk"],
-"F14":["macro_indicators","us_yields","india_bond_yields","inflation_components"],
-"F15":["global_policy_events","fx_carry_and_cross_currency","us_yields"],
+"F14":["macro_indicators","us_yields","us_real_yields","india_bond_yields","inflation_components"],
+"F15":["global_policy_events","fx_carry_and_cross_currency","us_yields","us_real_yields"],
 "F16":["global_commodity_prices","macro_indicators"],
 "F17":["weather_agriculture","macro_indicators"],
 "F18":["macro_indicators","sector_fundamentals"],
@@ -33,7 +33,7 @@ MAP={
 "F21":["global_freight_shipping","global_commodity_prices","sector_fundamentals"],
 "F22":["sector_fundamentals","corporate_events","global_policy_events"],
 "F23":["geopolitical_events","macro_indicators","global_policy_events"],
-"F24":["global_commodity_prices","us_yields","usd_inr"],
+"F24":["global_commodity_prices","gold_prices_monthly","us_yields","usd_inr"],
 "F25":["benchmark_index","sector_indices","volatility","market_microstructure","valuation_snapshot"],
 "F26":["corporate_events","market_microstructure"],
 "F27":["market_microstructure","nse_daily_equity"],
@@ -44,14 +44,35 @@ MAP={
 "F32":["global_policy_events","corporate_events","global_freight_shipping"],
 "F33":["ipo_float_unlocks","market_microstructure"],
 "F34":["research_house_actions","earnings_revisions"],
-"F35":["volatility","dxy","fx_carry_and_cross_currency","fpi_dii_flows"],
+"F35":["volatility","dxy","fx_carry_and_cross_currency","fpi_dii_flows","us_real_yields"],
 }
+def source_is_connected(item):
+    """Only a clean, nonempty source-coverage row counts as connected."""
+    try:
+        return item.get("status") == "AVAILABLE" and int(item.get("rows") or 0) > 0
+    except (TypeError, ValueError):
+        return False
+
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     registry=pd.read_csv(REGISTRY).fillna("")
     gaps=pd.read_csv(GAPS).fillna("")
     cov=json.loads(COVERAGE.read_text()) if COVERAGE.exists() else {}
-    observed={x["source"]:x for x in cov.get("sources",[])}
+    # Older P0 manifests can store source identifiers as lists (multiple providers).
+    # Normalize them safely; never use a list as a dictionary key.
+    observed={}
+    for item in cov.get("sources",[]):
+        if not isinstance(item,dict):
+            continue
+        source=item.get("source")
+        names=source if isinstance(source,list) else [source]
+        for name in names:
+            if isinstance(name,str) and name.strip():
+                observed[name.strip()]=item
+        # Reconciliation rows use canonical factor-group names as source identifiers.
+        if isinstance(source,str) and source.strip():
+            observed[source.strip()]=item
     rows=[]
     for _,f in registry.iterrows():
         fid=str(f["factor_id"]); sources=MAP.get(fid,[])
@@ -59,13 +80,14 @@ def main():
         for name in sources:
             item=observed.get(name,{})
             status=item.get("status","NOT_CONNECTED")
-            if status=="AVAILABLE" and int(item.get("rows") or 0)>0:
+            # A warning is not source availability for hard-gate purposes.
+            # Keep the observed warning visible, but never count it as a connected
+            # group. Missing or uncertain inputs remain UNKNOWN, not negative.
+            if source_is_connected(item):
                 source_status.append((name,"AVAILABLE"))
-            elif status=="DATA_QUALITY_WARN":
-                source_status.append((name,"AVAILABLE_WITH_WARNINGS"))
             else:
                 source_status.append((name,status))
-        available=sum(s in ("AVAILABLE","AVAILABLE_WITH_WARNINGS") for _,s in source_status)
+        available=sum(s=="AVAILABLE" for _,s in source_status)
         if not sources: state="UNMAPPED"
         elif available==len(sources): state="SOURCE_GROUPS_AVAILABLE_SCHEMA_ONLY"
         elif available>0: state="PARTIAL_SOURCE_COVERAGE"
@@ -73,7 +95,7 @@ def main():
         rows.append({"factor_id":fid,"factor":f["factor"],"provisional_priority":f["provisional_priority"],
           "mapped_source_groups":";".join(sources),"source_statuses":";".join(n+":"+s for n,s in source_status),
           "mapped_groups_total":len(sources),"mapped_groups_available":available,"coverage_status":state,
-          "evidence_boundary":"Coverage is schema/file availability only; not validated units, source authenticity, point-in-time history, empirical factor effect or live scoring."})
+          "evidence_boundary":"Only status AVAILABLE with nonzero rows counts as connected. DATA_QUALITY_WARN, missing provenance, stale data, schema failures and absent files do not count as available; absence remains UNKNOWN, never negative. Even AVAILABLE is schema/generic-QA coverage, not proof of factor effect or live scoring."})
     df=pd.DataFrame(rows)
     df.to_csv(OUT/"factor_coverage_audit.csv",index=False)
     missing=df[df.coverage_status!="SOURCE_GROUPS_AVAILABLE_SCHEMA_ONLY"]

@@ -84,6 +84,41 @@ class Nsdl:
         time.sleep(0.25)
         return page, r.url
 
+def scheduled_dii_sessions(panel_dates,start,end):
+    """Use actual canonical NSE sessions; weekdays alone include exchange holidays."""
+    out=set()
+    for value in panel_dates:
+        d=pd.to_datetime(value,errors="coerce")
+        if pd.notna(d):
+            day=d.date()
+            if FIRST_DII<=day and start<=day<=end:
+                out.add(day)
+    return sorted(out)
+
+def page_diagnostic(page):
+    """Capture bounded schema evidence without storing full HTML responses."""
+    raw=str(page or "")
+    plain=re.sub(r"<[^>]+>"," ",raw)
+    plain=re.sub(r"\s+"," ",html.unescape(plain)).strip()
+    headers=[]
+    for table in re.findall(r"<table\b.*?</table>",raw,re.I|re.S)[:8]:
+        first_row=re.search(r"<tr\b.*?</tr>",table,re.I|re.S)
+        if not first_row:
+            continue
+        cells=re.findall(r"<(?:th|td)\b[^>]*>(.*?)</(?:th|td)>",first_row.group(0),re.I|re.S)
+        labels=[]
+        for cell in cells[:12]:
+            label=re.sub(r"<[^>]+>"," ",cell)
+            label=re.sub(r"\s+"," ",html.unescape(label)).strip()
+            labels.append(label[:120])
+        if labels:
+            headers.append(labels)
+    return {
+        "explicit_no_data_found":bool(re.search(r"\bno\s+data\s+found\b",plain,re.I)),
+        "page_text_preview":plain[:320],
+        "table_headers":headers,
+    }
+
 def table_records(page):
     tables=pd.read_html(StringIO(page),displayed_only=False)
     out=[]
@@ -161,17 +196,27 @@ def main():
             got=find_flow_rows(page,"FPI",qday,url)
             rows.extend(got); fpi_ok+=1
         except Exception as e: report["errors"].append(f"FPI {qday}: {type(e).__name__}: {str(e)[:220]}")
-    # DII archive: NSDL publishes daily DII rows only from 2026-06-01.
-    dii_ok=0; day=start
-    while day<=end:
-        if day.weekday()<5:
-            try:
-                page,url=client.post_date(DII_URL,day)
-                got=find_flow_rows(page,"DII",day,url)
-                rows.extend(got); dii_ok+=1
-            except Exception as e:
-                report["errors"].append(f"DII {day}: {type(e).__name__}: {str(e)[:180]}")
-        day+=timedelta(days=1)
+    # DII archive: query only dates present in the canonical NSE session panel.
+    # Weekday iteration incorrectly queried exchange holidays and mislabeled
+    # the expected absence of a daily report as a schema mismatch.
+    dii_query_dates=scheduled_dii_sessions(dates.dt.date.tolist(),start,end)
+    report["dii_query_dates_from_canonical_nse_sessions"]=len(dii_query_dates)
+    report["dii_weekdays_skipped_not_in_nse_panel"]=[
+        d.isoformat() for d in pd.date_range(start,end,freq="B").date if d not in set(dii_query_dates)
+    ]
+    dii_ok=0; dii_diagnostics=[]
+    for day in dii_query_dates:
+        page=None; url=DII_URL
+        try:
+            page,url=client.post_date(DII_URL,day)
+            got=find_flow_rows(page,"DII",day,url)
+            rows.extend(got); dii_ok+=1
+        except Exception as e:
+            diag=page_diagnostic(page) if page is not None else {"request_completed":False}
+            dii_diagnostics.append({"date":day.isoformat(),"url":url,
+                "error_type":type(e).__name__,"error":str(e)[:220],**diag})
+            report["errors"].append(f"DII {day}: {type(e).__name__}: {str(e)[:180]}")
+    report["dii_query_diagnostics"]=dii_diagnostics
     df=pd.DataFrame(rows,columns=["DATE","GROUP","NET_VALUE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"])
     if not df.empty:
         df["DATE"]=pd.to_datetime(df["DATE"],errors="coerce").dt.date.astype("string")

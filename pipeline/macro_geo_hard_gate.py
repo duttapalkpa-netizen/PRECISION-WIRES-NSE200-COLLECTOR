@@ -39,9 +39,23 @@ def main():
             checks["p0_coverage_status"] = p0.get("status", "UNKNOWN")
             checks["p0_available_groups"] = p0.get("available_count", 0)
             checks["p0_required_groups"] = p0.get("required_count", 8)
+            def p0_group_is_valid(info):
+                if int(info.get("rows", 0) or 0) <= 0:
+                    return False
+                if info.get("status") == "AVAILABLE":
+                    return True
+                # Explicitly QA-verified secondary sources are allowed only for
+                # groups carrying the complete provenance/window/freshness contract.
+                if info.get("status") != "AVAILABLE_SECONDARY":
+                    return False
+                checks=set(info.get("domain_qa_checks", []))
+                required={"source identity", "valid positive values", "unique date keys",
+                          "requested-window bounds", "freshness <= 3 calendar days",
+                          "source URL provenance"}
+                return required.issubset(checks) and info.get("freshness_status")=="FRESH" and bool(info.get("source_url"))
             missing_groups = [
                 name for name, info in p0.get("groups", {}).items()
-                if info.get("status") != "AVAILABLE" or int(info.get("rows", 0) or 0) <= 0
+                if not p0_group_is_valid(info)
             ]
             checks["missing_or_unavailable_p0_groups"] = missing_groups
             if p0.get("status") != "P0_COMPLETE" or missing_groups:
@@ -57,7 +71,22 @@ def main():
             old_required = manifest.get("p0_coverage", {}).get("required_series_available")
             checks["collector_manifest_pre_repair_status"] = old_status
             checks["collector_manifest_pre_repair_required_series_available"] = old_required
-            if old_status == "PASS_WITH_CRITICAL_DATA_GAPS" or old_required is False:
+            # The collector manifest is a pre-repair snapshot. Preserve its
+            # original state as audit evidence, but do not let a stale pre-repair
+            # status override a reconciled final manifest. Release remains blocked
+            # by observed final source coverage below if any required group is absent.
+            final_reconciliation = manifest.get("final_manifest_reconciliation", {})
+            final_p0_meta = manifest.get("p0_coverage", {})
+            final_groups = final_p0_meta.get("group_availability_after_repair", {})
+            required_names = final_p0_meta.get("required_groups", [])
+            final_snapshot_verified = (
+                final_reconciliation.get("status") == "RECONCILED"
+                and final_p0_meta.get("required_series_available") is True
+                and bool(required_names)
+                and all(final_groups.get(name) is True for name in required_names)
+            )
+            checks["collector_manifest_final_snapshot_verified"] = final_snapshot_verified
+            if (old_status == "PASS_WITH_CRITICAL_DATA_GAPS" or old_required is False) and not final_snapshot_verified:
                 blockers.append("COLLECTION_MANIFEST_REPORTS_CRITICAL_P0_GAPS")
             p0_meta = manifest.get("p0_coverage", {})
             if p0_meta.get("fpi_dii_status") != "AVAILABLE":
@@ -184,8 +213,13 @@ def main():
             regime = json.loads(REGIME_REPORT.read_text(encoding="utf-8"))
             checks["historical_regime_study_status"] = regime.get("research_status", regime.get("status", "UNKNOWN"))
             checks["historical_regime_windows"] = int(regime.get("window_rows", 0) or 0)
+            checks["historical_regime_anchors"] = int(regime.get("regime_anchors", 0) or 0)
+            checks["historical_regimes_with_windows"] = int(regime.get("regimes_with_windows", 0) or 0)
+            checks["historical_regime_anchor_coverage_complete"] = regime.get("anchor_coverage_complete") is True
             if checks["historical_regime_windows"] < 1 or checks["historical_regime_study_status"] == "BLOCKED":
                 blockers.append("HISTORICAL_REGIME_STUDY_NOT_VALIDATED")
+            if regime.get("anchor_coverage_complete") is not True:
+                blockers.append("HISTORICAL_REGIME_ANCHOR_COVERAGE_INCOMPLETE")
         except Exception as exc:
             blockers.append(f"INVALID_HISTORICAL_REGIME_REPORT:{type(exc).__name__}:{exc}")
     else:
