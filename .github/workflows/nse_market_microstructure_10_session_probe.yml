@@ -1,4 +1,5 @@
 name: NSE Market Microstructure 10-Session Historical Probe
+# Re-run after SHA-256 output-manifest correction; preserve all prior source evidence.
 on:
   push:
     branches:
