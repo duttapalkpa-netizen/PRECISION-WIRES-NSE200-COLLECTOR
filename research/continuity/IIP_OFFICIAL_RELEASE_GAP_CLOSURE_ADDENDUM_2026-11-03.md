@@ -15,6 +15,6 @@ The July 2024 PIB release explicitly labels July 2024 as Quick Estimate and cont
 
 Updated ledger accounting: 40/40 unique catalogue vintages have verified official PIB release pages; UNKNOWN official release-page rows are now zero. This does not repair the separate April 2026 catalogue workbook HTTP 404: its official Quick Estimate PDF remains evidence of the release, not a substitute XLSX payload.
 
-The revision audit remains unchanged: 1,124 within-series value differences; 693 policy-aligned candidate transitions; 431 historical-panel/out-of-window transitions; zero certified cell-level revision rows. Official release-page identification and policy stage are not sufficient to certify individual value revisions.
+The source audit still contains 1,124 within-series value differences and 431 historical-panel/out-of-window transitions. Subsequent Batch 001 certified 9 exact April-2023 cell-level source matches; 684 policy-aligned candidates remain uncertified. See `IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.md`. Official release-page identification and policy stage are not sufficient to certify individual value revisions.
 
 Hard Gate remains BLOCKED. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, or CORE-672 logic was changed. No synthetic rows or fabricated timestamps were introduced.
