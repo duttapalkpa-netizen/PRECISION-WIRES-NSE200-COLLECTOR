@@ -1,0 +1,137 @@
+name: NSE Snapshot and 35-Group Factor Registry Reconciliation
+
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_factor_registry_snapshot_reconciliation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: nse-factor-registry-snapshot-reconciliation
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout immutable audit code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audit dependency
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Download exact successful evidence artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/nse263 /tmp/prov5 /tmp/factor42
+          gh run download 41507790396 -n nse-200-session-cache-verification-263 -D /tmp/nse263
+          gh run download 41507790249 -n nse-200-session-provenance-revalidation -D /tmp/prov5
+          gh run download 41282726166 -n macro-geo-factor-source-repair -D /tmp/factor42
+          test -s /tmp/nse263/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
+          test -s /tmp/prov5/provenance_revalidation_report.json
+          test -s /tmp/factor42/outputs/macro_geo/source_coverage.json
+          test -s /tmp/factor42/outputs/macro_geo/factor_source_collection_report.json
+      - name: Validate snapshot identity, provenance and factor source evidence
+        run: |
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          nse=Path('/tmp/nse263/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json')
+          prov=Path('/tmp/prov5/provenance_revalidation_report.json')
+          cov=Path('/tmp/factor42/outputs/macro_geo/source_coverage.json')
+          repair=Path('/tmp/factor42/outputs/macro_geo/factor_source_collection_report.json')
+          nm=json.loads(nse.read_text()); pr=json.loads(prov.read_text())
+          cv=json.loads(cov.read_text()); fr=json.loads(repair.read_text())
+          assert nm.get('actual_sessions')==200 and nm.get('expected_sessions')==200
+          assert len(nm.get('records',[]))==200
+          assert pr.get('status')=='PASS_200_SOURCE_REVALIDATION_BYTE_IDENTICAL'
+          assert pr.get('requested_sessions')==200 and pr.get('revalidated_sessions')==200
+          assert pr.get('byte_identical_sessions')==200
+          assert pr.get('source_unavailable')==0 and pr.get('source_validation_failures')==0
+          assert pr.get('snapshot_id')==nm.get('snapshot_id'), 'NSE/provenance snapshot mismatch'
+          assert cv.get('sources_total')==36 and cv.get('as_of_utc')
+          assert fr.get('observed_at_utc')
+          # Keep the macro-factor and NSE snapshots as distinct, explicit evidence vintages.
+          # Never relabel the Nov-01 factor-source observation as a Nov-02 NSE acquisition.
+          out=Path('outputs/macro_geo');out.mkdir(parents=True,exist_ok=True)
+          def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+          manifest={
+            'status':'INPUTS_VALIDATED_FOR_FACTOR_REGISTRY_AUDIT',
+            'nse_snapshot':{
+              'run_id':41507790396,'manifest':nse.name,'snapshot_id':nm['snapshot_id'],
+              'sessions':nm['actual_sessions'],'first_session':nm['first_session'],
+              'last_session':nm['last_session'],'manifest_sha256':sha(nse),
+              'provenance_run_id':41507790249,
+              'provenance_report_sha256':sha(prov),
+              'provenance_status':pr['status'],
+              'revalidated_sessions':pr['revalidated_sessions'],
+              'byte_identical_sessions':pr['byte_identical_sessions'],
+              'revalidation_completed_at_utc':pr['completed_at_utc'],
+              'original_retrieval_timestamps_recovered':False
+            },
+            'factor_source_snapshot':{
+              'run_id':41282726166,'source_coverage_as_of_utc':cv['as_of_utc'],
+              'collector_observed_at_utc':fr['observed_at_utc'],
+              'source_coverage_sha256':sha(cov),
+              'factor_source_report_sha256':sha(repair),
+              'sources_total':cv['sources_total'],'available':cv.get('available'),
+              'not_connected':cv.get('not_connected'),'quality_warn':cv.get('quality_warn')
+            },
+            'snapshot_boundary':'NSE session snapshot and macro-factor source coverage are separate vintages. No claim is made that factor-source data was refreshed on the NSE snapshot date.',
+            'rules':['No synthetic records','No fabricated timestamps','UNKNOWN is neither PASS nor FAIL','No factor promotion from warnings or absent data','No production selector, RANKING_SCORE, PRESSURE_FADE or 672-diagnostic changes']
+          }
+          (out/'nse_factor_registry_evidence_manifest.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\\n')
+          print(json.dumps({'nse_snapshot_id':nm['snapshot_id'],'nse_sessions':nm['actual_sessions'],
+            'provenance':pr['status'],'factor_source_as_of':cv['as_of_utc'],
+            'factor_source_available':cv.get('available'),'factor_source_not_connected':cv.get('not_connected'),
+            'snapshot_boundary':'EXPLICIT_SEPARATE_VINTAGES'},indent=2))
+          PY
+      - name: Run 35-group factor registry audit against validated source coverage
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/macro_geo
+          cp /tmp/factor42/outputs/macro_geo/source_coverage.json outputs/macro_geo/source_coverage.json
+          cp /tmp/factor42/outputs/macro_geo/factor_source_collection_report.json outputs/macro_geo/factor_source_collection_report.json
+          python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Assert conservative factor audit contract and bind exact snapshot manifest
+        run: |
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          root=Path('outputs/macro_geo')
+          audit=json.loads((root/'factor_coverage_audit.json').read_text())
+          coverage=json.loads((root/'source_coverage.json').read_text())
+          manifest=json.loads((root/'nse_factor_registry_evidence_manifest.json').read_text())
+          assert audit.get('factor_groups')==35
+          assert audit.get('source_coverage_as_of')==coverage.get('as_of_utc')
+          assert audit.get('status')=='FACTOR_COVERAGE_AUDITED_WITH_GAPS' or audit.get('status')=='ALL_MAPPED_SOURCE_GROUPS_SCHEMA_AVAILABLE'
+          assert 'Missing source remains UNKNOWN' in audit.get('rule','')
+          assert manifest['nse_snapshot']['snapshot_id']=='1f6d79d9bcdf3a6aa11dd9a80033276061447401dac6c708ab6622b6258b7534'
+          assert manifest['snapshot_boundary'].startswith('NSE session snapshot and macro-factor source coverage are separate vintages.')
+          summary={k:audit.get(k) for k in ['status','factor_groups','fully_available_schema_groups','partial_source_coverage','not_connected','unmapped','source_coverage_as_of']}
+          (root/'factor_registry_reconciliation_summary.json').write_text(json.dumps(summary,indent=2)+'\\n')
+          for name in ['source_coverage.json','factor_source_collection_report.json','factor_coverage_audit.json','factor_coverage_audit.csv','nse_factor_registry_evidence_manifest.json','factor_registry_reconciliation_summary.json']:
+              p=root/name
+              if p.exists():
+                  print(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+str(p))
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Upload reconciled factor registry evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-factor-registry-snapshot-reconciliation
+          path: outputs/macro_geo/
+          if-no-files-found: warn
+          retention-days: 90
