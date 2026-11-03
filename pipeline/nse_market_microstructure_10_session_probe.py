@@ -118,12 +118,15 @@ def main():
                 merged=bhav.merge(pb,on=base_keys,how="left",validate="one_to_one")
                 merged=merged.merge(old,on=base_keys,how="left",validate="one_to_one")
                 merged=merged.merge(new,on=base_keys,how="left",validate="one_to_one")
-                merged["TRADE_DATE"]=trade_date\n                merged["DATE"]=trade_date
+                merged["TRADE_DATE"]=trade_date
+                merged["DATE"]=trade_date
                 merged["SURVEILLANCE_SOURCE_DATE"]=prev_date
                 merged["SURVEILLANCE_EFFECTIVE_DATE"]=trade_date
                 merged["SURVEILLANCE_EFFECTIVE_RULE"]="REG_IND file dated prior session applies to next trading day"
                 merged["CIRCUIT_STATUS"]="UNKNOWN"
+                merged["SURVEILLANCE_STATUS"]="UNKNOWN"
                 merged["FREE_FLOAT"]="UNKNOWN"
+                merged["PUBLICATION_TIMESTAMP"]="UNKNOWN"
                 merged["BHAVCOPY_SOURCE_URL"]=bhavcopy_url
                 merged["BHAVCOPY_SOURCE_SHA256"]=sha(raw)
                 merged["BHAVCOPY_REVALIDATED_AT_UTC"]=bhavcopy_time
