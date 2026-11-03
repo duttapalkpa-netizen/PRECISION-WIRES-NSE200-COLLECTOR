@@ -1,9 +1,30 @@
 import unittest
+import pandas as pd
 
-from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment, basis_from_xbrl_facts, pdf_evidence_lines
+from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fetch_attachment, basis_from_xbrl_facts, pdf_evidence_lines, select_result_batch
 
 
 class QuarterlyXbrlMetricTests(unittest.TestCase):
+    def test_result_batch_offsets_are_non_overlapping_and_complete(self):
+        frame = pd.DataFrame([
+            {"EVENT_KIND": "RESULT_DISCLOSURE", "SYMBOL": f"S{i:03d}"}
+            for i in range(12)
+        ] + [{"EVENT_KIND": "BOARD_MEETING", "SYMBOL": "BOARD"}])
+        first = select_result_batch(frame, offset=0, limit=5)
+        second = select_result_batch(frame, offset=5, limit=5)
+        third = select_result_batch(frame, offset=10, limit=5)
+        combined = list(first["SYMBOL"]) + list(second["SYMBOL"]) + list(third["SYMBOL"])
+        self.assertEqual(combined, [f"S{i:03d}" for i in range(12)])
+        self.assertEqual(len(set(combined)), 12)
+        self.assertNotIn("BOARD", combined)
+
+    def test_result_batch_rejects_negative_offset_or_limit(self):
+        frame = pd.DataFrame([{"EVENT_KIND": "RESULT_DISCLOSURE", "SYMBOL": "ABC"}])
+        with self.assertRaises(ValueError):
+            select_result_batch(frame, offset=-1, limit=10)
+        with self.assertRaises(ValueError):
+            select_result_batch(frame, offset=0, limit=-1)
+
     def test_sebi_taxonomy_revenue_pat_eps_facts_are_recognized(self):
         xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <xbrl xmlns="http://www.xbrl.org/2003/instance">
