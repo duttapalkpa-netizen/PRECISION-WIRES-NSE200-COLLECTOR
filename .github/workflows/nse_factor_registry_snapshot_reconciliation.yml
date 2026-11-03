@@ -37,7 +37,7 @@ jobs:
           mkdir -p /tmp/nse263 /tmp/prov5 /tmp/factor42
           gh run download 41507790396 -n nse-200-session-cache-verification-263 -D /tmp/nse263
           gh run download 41507790249 -n nse-200-session-provenance-revalidation -D /tmp/prov5
-          gh run download 41282726166 -n macro-geo-factor-source-repair -D /tmp/factor42
+          gh run download 41576764331 -n macro-geo-factor-source-repair -D /tmp/factor42
           test -s /tmp/nse263/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
           test -s /tmp/prov5/provenance_revalidation_report.json
           test -s /tmp/factor42/outputs/macro_geo/source_coverage.json
@@ -81,7 +81,7 @@ jobs:
               'original_retrieval_timestamps_recovered':False
             },
             'factor_source_snapshot':{
-              'run_id':41282726166,'source_coverage_as_of_utc':cv['as_of_utc'],
+              'run_id':41576764331,'source_coverage_as_of_utc':cv['as_of_utc'],
               'collector_observed_at_utc':fr['observed_at_utc'],
               'source_coverage_sha256':sha(cov),
               'factor_source_report_sha256':sha(repair),
