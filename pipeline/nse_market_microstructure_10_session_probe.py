@@ -152,23 +152,23 @@ def main():
     out=ROOT/f"market_microstructure_batch_{offset}_{batch_size}.csv"
     panel.to_csv(out,index=False)
     report={
-      "status":"PASS_10_SESSION_SMOKE" if len(outputs)==10 and not failures else "PARTIAL",
+      "status":"PASS_BATCH" if len(outputs)==batch_size and not failures and counts["bhavcopy"]==batch_size else "PARTIAL",
       "snapshot_id":manifest["snapshot_id"],"snapshot_sessions":manifest["actual_sessions"],
-      "probe_sessions":len(outputs),"requested_probe_sessions":10,
+      "batch_offset":offset,"batch_size":batch_size,"probe_sessions":len(outputs),"requested_probe_sessions":batch_size,
+      "bhavcopy_files_sha256_revalidated":counts["bhavcopy"],
       "price_band_files":counts["price_band"],"surveillance_old_files":counts["surveillance_old"],
       "surveillance_new_files":counts["surveillance_new"],"failed_sessions":failures,
       "panel_rows":int(len(panel)),"unique_trade_dates":int(panel["TRADE_DATE"].nunique()),
-      "price_band_join_coverage":float(panel["PRICE_BAND__PRICE_BAND_PERCENT"].notna().mean()),
-      "reg_ind_join_coverage":float(panel.filter(regex="^REG_IND__").notna().any(axis=1).mean()),
-      "reg1_ind_join_coverage":float(panel.filter(regex="^REG1_IND__").notna().any(axis=1).mean()),
+      "price_band_join_coverage":float(panel["PRICE_BAND__PRICE_BAND_PERCENT"].astype(str).str.strip().ne("").mean()),
+      "reg_ind_join_coverage":float(panel.filter(regex="^REG_IND__").astype(str).apply(lambda x:x.str.strip().ne("")).any(axis=1).mean()),
+      "reg1_ind_join_coverage":float(panel.filter(regex="^REG1_IND__").astype(str).apply(lambda x:x.str.strip().ne("")).any(axis=1).mean()),
       "unknown_circuit_status_rows":int(panel["CIRCUIT_STATUS"].eq("UNKNOWN").sum()),
       "unknown_free_float_rows":int(panel["FREE_FLOAT"].eq("UNKNOWN").sum()),
-      "bhavcopy_legacy_source_url_missing_rows":int(panel["BHAVCOPY_SOURCE_URL"].eq("").sum()),
+      "bhavcopy_source_url_missing_rows":int(panel["BHAVCOPY_SOURCE_URL"].eq("").sum()),
       "promotion_allowed":False,
-      "blockers":["Only 10 of 200 sessions tested in this smoke run.",
-        "CIRCUIT_STATUS remains UNKNOWN; price-band percentage is not itself proof of a circuit hit.",
-        "FREE_FLOAT remains UNKNOWN.",
-        "Legacy bhavcopy source URLs/retrieval timestamps are unrecoverable for cached sessions."],
+      "blockers":[f"Only {batch_size} of 200 sessions in this batch.",
+        "CIRCUIT_STATUS remains UNKNOWN; price-band percentage is not proof of a circuit hit.",
+        "FREE_FLOAT remains UNKNOWN."],
       "output_sha256":sha(out.read_bytes()),"observed_at_utc":datetime.now(timezone.utc).isoformat()
     }
     (ROOT/f"market_microstructure_batch_{offset}_{batch_size}_qa.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
