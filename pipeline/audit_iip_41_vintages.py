@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Strict audit of all monthly NIC-2 IIP catalogue vintages from MoSPI.
-Audit contract revision: v3; fail-closed ingestion and revision comparison.
+Audit contract revision: v4; index-only parser, duplicate-key rejection, vintage gap audit. fail-closed ingestion and revision comparison.
 Every catalogue row receives an explicit download/parse status. A cumulative
 panel is never treated as multiple downloaded vintages.
 """
 from __future__ import annotations
-import concurrent.futures,csv,hashlib,json,re,ssl,time,urllib.parse,urllib.request,urllib.error
+import concurrent.futures,csv,hashlib,json,re,ssl,time,threading,urllib.parse,urllib.request,urllib.error
 from datetime import datetime,timezone
 from pathlib import Path
 import pandas as pd
@@ -16,7 +16,7 @@ OUT=Path("artifacts/iip_41_vintage_audit"); RAW=OUT/"raw"
 TLS_CONTEXT=ssl.create_default_context()
 TLS_CONTEXT.set_ciphers("DEFAULT:@SECLEVEL=1")
 TLS_CONTEXT.options |= 0x4
-OPENER=urllib.request.build_opener(urllib.request.HTTPSHandler(context=TLS_CONTEXT))
+OPENER=urllib.request.build_opener(urllib.request.HTTPSHandler(context=TLS_CONTEXT))\nPARSE_LOCK=threading.Lock()
 def sha(b): return hashlib.sha256(b).hexdigest()
 def req(url,accept,attempts=2,timeout=12):
     last=""
@@ -53,26 +53,58 @@ def qualifies(r):
     title=" ".join(str(r.get("table_name","")).lower().split()); period=month(r.get("ref_period"))
     return ("monthly nic-2 digit and sectoral indices and growth rates of industrial production" in title and period and period>=START and r.get("product")=="IIP" and r.get("unique_id") and r.get("file_name") and r.get("file_path"))
 def parse_xlsx(path):
-    xl=pd.ExcelFile(path); candidates=[]
-    for sheet in xl.sheet_names:
-        df=pd.read_excel(path,sheet_name=sheet,header=None,dtype=object); hi=None
-        for i,row in df.iterrows():
-            vals=[str(x).strip().lower() if pd.notna(x) else "" for x in row.iloc[:3]]
-            if vals[:3] in (["nic 2025","description","weights"],["nic 2008","description","weights"]): hi=i; break
-        if hi is None: continue
-        periods=[(ci,month(v)) for ci,v in enumerate(df.iloc[hi].tolist()) if ci>=3 and month(v)]
-        rows=[]
-        for _,row in df.iloc[hi+1:].iterrows():
-            label=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
-            if "growth rates" in label and "previous year" in label: break
-            nic=str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
-            if not re.fullmatch(r"[0-9]{2}",nic): continue
-            for ci,period in periods:
-                val=pd.to_numeric(pd.Series([row.iloc[ci]]),errors="coerce").iloc[0]
-                if pd.notna(val): rows.append({"period":period,"nic_code":nic,"value":float(val)})
-        if rows: candidates.append((sheet,rows))
-    if not candidates: raise ValueError("no supported NIC-2 monthly index table")
-    return max(candidates,key=lambda x:len(x[1]))
+    # Parse ONLY the monthly index table. The workbook also contains a growth-rate
+    # table with the same NIC codes; mixing the two doubles observations and
+    # manufactures false "revisions".
+    with PARSE_LOCK:
+        xl=pd.ExcelFile(path)
+        candidates=[]
+        for sheet in xl.sheet_names:
+            df=pd.read_excel(path,sheet_name=sheet,header=None,dtype=object)
+            title_row=None
+            for i,row in df.iterrows():
+                title=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
+                if title.startswith("monthly nic-2 digit and sectoral indices of industrial production"):
+                    title_row=i
+                    break
+            if title_row is None:
+                continue
+            header_row=None
+            for i in range(title_row+1,min(title_row+5,len(df))):
+                vals=[str(x).strip().lower() if pd.notna(x) else "" for x in df.iloc[i,:3]]
+                if vals[0] in ("nic 2008","nic 2025") and vals[1]=="description" and vals[2]=="weights":
+                    header_row=i
+                    break
+            if header_row is None:
+                continue
+            periods=[(ci,month(v)) for ci,v in enumerate(df.iloc[header_row].tolist()) if ci>=3 and month(v)]
+            rows=[]
+            for _,row in df.iloc[header_row+1:].iterrows():
+                label=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
+                if label.startswith("monthly nic-2 digit and sectoral growth rates"):
+                    break
+                nic_value=pd.to_numeric(pd.Series([row.iloc[0]]),errors="coerce").iloc[0]
+                if pd.isna(nic_value) or int(nic_value)!=nic_value or not 10<=int(nic_value)<=99:
+                    # Blank separator or next section: do not continue across a section boundary.
+                    if not label:
+                        continue
+                    if label.startswith("monthly "):
+                        break
+                    continue
+                nic=str(int(nic_value)).zfill(2)
+                for ci,period in periods:
+                    val=pd.to_numeric(pd.Series([row.iloc[ci]]),errors="coerce").iloc[0]
+                    if pd.notna(val):
+                        rows.append({"period":period,"nic_code":nic,"value":float(val),"measure":"index"})
+            if rows:
+                candidates.append((sheet,rows))
+        if not candidates:
+            raise ValueError("no supported monthly NIC-2 index table found")
+        sheet,rows=max(candidates,key=lambda x:len(x[1]))
+        keys=[(x["period"],x["nic_code"]) for x in rows]
+        if len(keys)!=len(set(keys)):
+            raise ValueError("duplicate period/NIC keys inside index table")
+        return sheet,rows
 def fetch_one(r):
     uid=str(r.get("unique_id","")); fname=str(r.get("file_name",""))
     local=RAW/(re.sub(r"[^A-Za-z0-9._-]+","_",uid)+"__"+Path(fname).name)
@@ -119,6 +151,6 @@ def main():
     pd.DataFrame(diffs,columns=["period","nic_code","previous_table_id","previous_release_date","previous_value","current_table_id","current_release_date","current_value","revision_delta","previous_sha256","current_sha256"]).to_csv(OUT/"revision_differences.csv",index=False)
     downloaded=sum(x["download_status"] in ("DOWNLOADED","CACHE_HIT_RAW_HASH_RECHECKED") for x in manifest); parsed=sum(x["parse_status"]=="PASS" for x in manifest)
     status="PASS" if len(selected)==41 and len(manifest)==41 and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"hard_gate":"BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"revision_differences_detected":len(diffs),"unique_table_ids":len({x.get("unique_id") for x in manifest}),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":min([month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))] or [None]),"last_release_period":max([month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))] or [None]),"pagination":pagination,"policy":"Missing vintage is not inferred; failed downloads/parses remain explicit; cumulative panels are not counted as multiple vintages."}
+    qa={"audit_status":status,"hard_gate":"BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len({x.get("unique_id") for x in manifest}),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":min([month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))] or [None]),"last_release_period":max([month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))] or [None]),"pagination":pagination,"policy":"Missing vintage is not inferred; failed downloads/parses remain explicit; cumulative panels are not counted as multiple vintages."}
     (OUT/"revision_audit.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n"); print(json.dumps(qa,ensure_ascii=False,indent=2))
 if __name__=="__main__": main()
