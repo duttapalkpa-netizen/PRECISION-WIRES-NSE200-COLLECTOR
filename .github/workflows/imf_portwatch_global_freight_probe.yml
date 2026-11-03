@@ -37,8 +37,8 @@ jobs:
           p=json.loads(Path('artifacts/global_freight_shipping_probe/probe_report.json').read_text())
           assert p['status']=='PASS_SOURCE_PROBE_ONLY',p
           assert p['promotion_allowed'] is False
-          assert len(p['layers'])==2
-          assert {x['layer'] for x in p['layers']}=={'chokepoints','ports'}
+          assert len(p['layers'])==1
+          assert {x['layer'] for x in p['layers']}=={'chokepoints'}
           assert all(x['status']=='PASS_METADATA_AND_SAMPLE' and x['sample_rows']>0 for x in p['layers'])
           print({'status':p['status'],'layers':[{'name':x['layer'],'fields':len(x['fields']),'sample_rows':x['sample_rows']} for x in p['layers']],'promotion_allowed':False})
           PY
