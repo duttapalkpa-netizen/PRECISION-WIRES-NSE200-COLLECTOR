@@ -25,12 +25,12 @@ Updated: 2026-11-03 (UTC)
 
 ## Official release-source verification — completed bounded pass
 - Added `research/continuity/IIP_OFFICIAL_RELEASE_EVIDENCE_LEDGER_2026-11-03.md` and `iip_official_release_evidence_summary_2026-11-03.json`.
-- 38 of 40 unique catalogue vintage rows have an independently located official PIB release page. Two remain UNKNOWN: July 2024 (`IIPMFY24014JUL`) and May 2025 (`IIPMFY25006MAY`). No neighbouring-month inference is used.
+- 40 of 40 unique catalogue vintage rows now have an independently located official PIB release page. The previously unresolved July 2024 (`IIPMFY24014JUL`, PRID 2054214) and May 2025 (`IIPMFY25006MAY`, PRID 2140774) pages were verified on 2026-11-03; no neighbouring-month inference is used.
 - April 2026 Quick Estimate is confirmed by official PIB PRID 2267531 / PDF, but the catalogue XLSX still has HTTP 404.
 - May 2026 Output-PPI Quick Estimate is confirmed by PIB PRID 2278961 (29 Jun 2026); it supersedes the 1 Jun WPI-based new series. Keep the methodology break distinct.
 - Legacy release-stage policy is explicit in PIB PRID 1931708: current month Quick, prior month First Revision, third-prior month Final. Revised policy is explicit in PIB PRID 2122427 (17 Apr 2025): from April 2025, Quick followed by one Final estimate in the next release.
 - The source ledger records source workbook SHA-256 and download state alongside PIB ID, publication date/time, and URL. Unknown pages remain UNKNOWN.
-- Ledger CSV SHA-256: `b5a1818fcf29642c4c55162fa34aeb61c13939cfab1e9796b187aa74c18a37df`; summary JSON SHA-256: `16e0996d7edb24ab9d3d892897cb3a76ddf50ee2ce971c51408e6f6b2060fd33`.
+- Updated ledger CSV SHA-256: `21c3b9bac0a1263ecf4b341c8cd8295cfbcd8daff3e90ac906551d69ee0d97b9`; updated summary JSON SHA-256: `1ab30001cd85f16d2ba0407e98278300dc22cc7faef66ad57c295e805488e381`.
 
 ## Policy-derived stage-join sidecar — not certified revision evidence
 - Reproducible builder committed: `pipeline/build_iip_revision_stage_ledger.py`.
@@ -61,3 +61,10 @@ Updated: 2026-11-03 (UTC)
 - Resolve April 2026 catalogue XLSX HTTP 404 only from an independently verified official source; otherwise keep it explicitly unresolved.
 - Reconcile the 431 historical-panel/out-of-window differences and separate catalogue-period continuity from observation-period coverage.
 - Preserve Hard Gate BLOCKED until raw-vintage coverage, cell-level revision provenance, same-snapshot evidence and all other required factors are verified.
+
+
+## 2026-11-03 official PIB page lookup closure
+- July 2024 Quick Estimate: PIB PRID 2054214, 2024-09-12 17:30 IST.
+- May 2025 Quick Estimate: PIB PRID 2140774, 2025-06-30 16:00 IST.
+- Official release-page coverage: 40/40; UNKNOWN official page rows: 0.
+- April 2026 XLSX HTTP 404 remains unresolved. Cell-level revision certification remains 0; Hard Gate remains BLOCKED.
