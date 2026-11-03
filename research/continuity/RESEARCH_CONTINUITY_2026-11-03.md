@@ -90,3 +90,14 @@ Updated: 2026-11-03 (UTC)
 - For this vintage pair, all 20 candidate NIC-period transitions are now exact-matched: Batch 001 = 9, Batch 002 = 6, Batch 003 = 5; total 20/20, mismatch 0. This is bounded April-2023 pair evidence, not certification of the remaining 673 policy-aligned candidate transitions or of the full IIP dataset.
 - Both original source workbook hashes remain: Quick `7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e`; First Revision `6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a`.
 - Hard Gate remains BLOCKED. No production selector, RANKING_SCORE, +1 PRESSURE_FADE or CORE-672 changes.
+
+
+## 2026-11-03 cell-level revision batch 004 — May 2023
+- Bounded vintage pair: `IIPMFY23054MAY` Quick → `IIPMFY23058JUN` First Revision.
+- Official Quick source: PIB PRID 1938974, published 12 Jul 2023 at 17:30 IST; Statement II values checked.
+- Official First Revision source: PIB PRID 1947790, published 11 Aug 2023 at 17:30 IST; Statement IV May-23 column checked.
+- All 14 policy-stage candidate NIC cells for May 2023 exact-matched against both original workbook cells and PIB statement values; mismatches 0. Cells: EG7, EG8, EG10, EG12, EG14, EG15, EG16, EG17, EG19, EG20, EG21, EG24, EG25, EG28.
+- Source workbook SHA-256: Quick `6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a`; First Revision `326629f652ef7a6161ac60516b094a20f2f2b84e81fab278fdc9ea17377b263e`.
+- Batch CSV SHA-256: `a34b3e634c36e11bb213372235d9d7f76d63672b7d901d2348e3bbabd8e301f9`.
+- Cumulative bounded evidence: April 2023 20 exact cells; May 2023 14 exact cells; total 34 exact source-verified cell transitions across two vintage pairs. Other policy-aligned candidates and all broader coverage blockers remain.
+- Hard Gate remains BLOCKED. Frozen production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
