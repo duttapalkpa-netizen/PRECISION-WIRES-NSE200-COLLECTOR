@@ -16,7 +16,8 @@ OUT=Path("artifacts/iip_41_vintage_audit"); RAW=OUT/"raw"
 TLS_CONTEXT=ssl.create_default_context()
 TLS_CONTEXT.set_ciphers("DEFAULT:@SECLEVEL=1")
 TLS_CONTEXT.options |= 0x4
-OPENER=urllib.request.build_opener(urllib.request.HTTPSHandler(context=TLS_CONTEXT))\nPARSE_LOCK=threading.Lock()
+OPENER=urllib.request.build_opener(urllib.request.HTTPSHandler(context=TLS_CONTEXT))
+PARSE_LOCK=threading.Lock()
 def sha(b): return hashlib.sha256(b).hexdigest()
 def req(url,accept,attempts=2,timeout=12):
     last=""
