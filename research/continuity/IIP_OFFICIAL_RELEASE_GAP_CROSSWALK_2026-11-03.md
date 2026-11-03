@@ -32,6 +32,13 @@
 - The 1,124 rows are observed value differences, not certified revisions.
 - 693 policy-stage-aligned candidate transitions remain uncertified pending exact source statement cell matching and per-source payload provenance.
 - 431 historical-panel/out-of-window transitions remain unresolved.
-- Official PIB release page evidence is verified for 38 of 40 unique catalogue vintages. July 2024 and May 2025 remain UNKNOWN, not inferred from adjacent months. See `IIP_OFFICIAL_RELEASE_EVIDENCE_LEDGER_2026-11-03.md`.
+- Official PIB release page evidence is now verified for 40 of 40 unique catalogue vintages. July 2024 (PRID 2054214) and May 2025 (PRID 2140774) were verified in the 3 Nov gap-closure addendum; see `IIP_OFFICIAL_RELEASE_GAP_CLOSURE_ADDENDUM_2026-11-03.md`.
 - The April 2026 catalogue XLSX remains HTTP 404 even though the official Quick PDF exists.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, or CORE-672 changes. UNKNOWN is neither PASS nor FAIL. No synthetic rows, fabricated timestamps, unsupported source promotion, or Hard Gate relaxation.
+
+
+## 3 Nov 2026 official release-page gap closure
+- July 2024: PIB PRID 2054214, 12 Sep 2024 17:30 IST, Quick Estimate.
+- May 2025: PIB PRID 2140774, 30 Jun 2025 16:00 IST, Quick Estimate.
+- Official page coverage: 40/40; UNKNOWN official release-page rows: 0.
+- This closes only the PIB page lookup gap. April 2026 catalogue XLSX remains HTTP 404; certified cell-level revisions remain 0; Hard Gate remains BLOCKED.
