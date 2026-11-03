@@ -1,0 +1,52 @@
+name: IMF PortWatch Global Freight Shipping Source Probe
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/imf_portwatch_global_freight_probe.yml'
+      - 'pipeline/probe_imf_portwatch_global_freight.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-portwatch-global-freight-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout read-only source probe
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install HTTP client
+        run: python -m pip install 'requests>=2.31,<3'
+      - name: Probe public IMF PortWatch ArcGIS metadata and sample records
+        run: python pipeline/probe_imf_portwatch_global_freight.py
+      - name: Assert source probe boundaries
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('artifacts/global_freight_shipping_probe/probe_report.json').read_text())
+          assert p['status']=='PASS_SOURCE_PROBE_ONLY',p
+          assert p['promotion_allowed'] is False
+          assert len(p['layers'])==2
+          assert {x['layer'] for x in p['layers']}=={'chokepoints','ports'}
+          assert all(x['status']=='PASS_METADATA_AND_SAMPLE' and x['sample_rows']>0 for x in p['layers'])
+          print({'status':p['status'],'layers':[{'name':x['layer'],'fields':len(x['fields']),'sample_rows':x['sample_rows']} for x in p['layers']],'promotion_allowed':False})
+          PY
+      - name: Upload immutable source-probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-portwatch-global-freight-source-probe
+          path: artifacts/global_freight_shipping_probe/
+          if-no-files-found: warn
+          retention-days: 90
