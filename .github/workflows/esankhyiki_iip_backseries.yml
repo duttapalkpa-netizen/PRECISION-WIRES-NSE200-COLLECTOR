@@ -1,4 +1,5 @@
 name: e-Sankhyiki IIP NIC-2 Backseries Ingestion
+# Re-run after full quarterly source reconciliation: refresh the official NIC-2 vintage and provenance QA.
 on:
   push:
     branches: [fix/factor-registry-same-snapshot-reconcile]
