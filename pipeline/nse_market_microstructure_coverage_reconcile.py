@@ -52,6 +52,7 @@ def reconcile(coverage, report, panel, panel_sha):
     item.update({
       "status":"DATA_QUALITY_WARN","rows":0,"observed_rows":int(len(panel)),
       "selected_path":"","evidence_path":str(PANEL),
+      "missing_columns":["CIRCUIT_STATUS (validated hit/limit state)","SURVEILLANCE_STATUS (interpreted effective status)","FREE_FLOAT (security-level float history)","PUBLICATION_TIMESTAMP (not published in daily source files)"],
       "date_min":report["date_min"],"date_max":report["date_max"],
       "snapshot_id":report["snapshot_id"],"source_sha256":panel_sha,
       "bhavcopy_sha256_revalidated_sessions":report["bhavcopy_sha256_revalidated_sessions"],
@@ -68,6 +69,7 @@ def reconcile(coverage, report, panel, panel_sha):
       "notes":"200-session official-source raw join evidence verified. Price bands and REG_IND/REG1_IND raw indicators retained, but circuit status, interpreted surveillance status and free float remain UNKNOWN; source publication timestamps unavailable. Zero hard-gate rows until blockers are independently resolved.",
       "reason":"DATA_QUALITY_WARN: raw official evidence only; unknown fields are not promoted."
     })
+    coverage["as_of_utc"]=report["observed_at_utc"]
     coverage["market_microstructure_reconciled_at_utc"]=report["observed_at_utc"]
     return coverage
 
