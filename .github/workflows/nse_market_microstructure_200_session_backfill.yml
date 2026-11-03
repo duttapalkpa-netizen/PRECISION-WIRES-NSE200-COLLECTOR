@@ -1,0 +1,137 @@
+name: NSE Market Microstructure 200-Session Backfill
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/nse_market_microstructure_200_session_backfill.yml'
+      - 'pipeline/nse_market_microstructure_10_session_probe.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nse-market-microstructure-200-session-backfill
+  cancel-in-progress: false
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded collection dependencies
+        run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3'
+      - name: Download and verify frozen 200-session NSE snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/nse_snapshot
+          gh run download 41589358513 -n nse-200-session-cache-verification-287 -D inputs/nse_snapshot
+          test -s inputs/nse_snapshot/raw/nse_snapshot_manifest_1f6d79d9bcdf3a6a.json
+          python - <<'PY'
+          import json,subprocess,os
+          repo=os.environ['GITHUB_REPOSITORY'];run=41589358513;aid=13210110022
+          digest='sha256:d1f78e86d175c3348851dd4b19f88d2f346f70f7f18ed8c61779ed44eff04cdc'
+          meta=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+          assert meta['conclusion']=='success'
+          arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+          a=next(x for x in arts if x['id']==aid)
+          assert a['digest']==digest and not a['expired'],a
+          print({'run_id':run,'artifact_id':aid,'digest_verified':True})
+          PY
+      - name: Collect 200 sessions in four bounded 50-session batches
+        run: |
+          set -euo pipefail
+          for offset in 0 50 100 150; do
+            echo "START_MARKET_MICROSTRUCTURE_BATCH=$offset"
+            MARKET_MICROSTRUCTURE_BATCH_OFFSET="$offset" MARKET_MICROSTRUCTURE_BATCH_SIZE=50 python pipeline/nse_market_microstructure_10_session_probe.py
+          done
+      - name: Merge batches and enforce full 200-session evidence QA
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          import pandas as pd
+          root=Path('artifacts/nse_market_microstructure_10_session')
+          parts=[]; batch_reports=[]
+          for offset in (0,50,100,150):
+              p=root/f'market_microstructure_batch_{offset}_50.csv'
+              q=root/f'market_microstructure_batch_{offset}_50_qa.json'
+              assert p.is_file() and q.is_file(),(p,q)
+              r=json.loads(q.read_text())
+              assert r['status']=='PASS_BATCH',r
+              assert r['probe_sessions']==50 and r['bhavcopy_files_sha256_revalidated']==50,r
+              assert r['price_band_files']==50 and r['surveillance_old_files']==50 and r['surveillance_new_files']==50,r
+              batch_reports.append(r)
+              parts.append(pd.read_csv(p,dtype=str).fillna(''))
+          d=pd.concat(parts,ignore_index=True,sort=False)
+          assert len(d)==sum(len(x) for x in parts)
+          assert d['DATE'].nunique()==200
+          assert d['DATE'].min()=='2026-01-09' and d['DATE'].max()=='2026-11-02'
+          assert not d.duplicated(['DATE','SYMBOL','SERIES']).any()
+          assert d['BHAVCOPY_SOURCE_URL'].astype(str).str.startswith('https://archives.nseindia.com/products/content/').all()
+          assert d['BHAVCOPY_SOURCE_SHA256'].astype(str).str.fullmatch(r'[0-9a-f]{64}').all()
+          assert d['PRICE_BAND_SOURCE_SHA256'].astype(str).str.fullmatch(r'[0-9a-f]{64}').all()
+          assert d['REG_IND_SOURCE_SHA256'].astype(str).str.fullmatch(r'[0-9a-f]{64}').all()
+          assert d['REG1_IND_SOURCE_SHA256'].astype(str).str.fullmatch(r'[0-9a-f]{64}').all()
+          assert d['CIRCUIT_STATUS'].eq('UNKNOWN').all()
+          assert d['SURVEILLANCE_STATUS'].eq('UNKNOWN').all()
+          assert d['FREE_FLOAT'].eq('UNKNOWN').all()
+          Path('data/external').mkdir(parents=True,exist_ok=True)
+          out=Path('data/external/market_microstructure.csv')
+          d.to_csv(out,index=False)
+          def sha(p):
+            h=hashlib.sha256()
+            with open(p,'rb') as f:
+              for b in iter(lambda:f.read(1048576),b''): h.update(b)
+            return h.hexdigest()
+          def coverage(col):
+            return float(d[col].astype(str).str.strip().ne('').mean())
+          report={
+            'status':'PARTIAL_SOURCE_COVERAGE',
+            'snapshot_id':'1f6d79d9bcdf3a6aa11dd9a80033276061447401dac6c708ab6622b6258b7534',
+            'sessions':int(d['DATE'].nunique()),'date_min':d['DATE'].min(),'date_max':d['DATE'].max(),
+            'panel_rows':int(len(d)),'unique_symbols':int(d['SYMBOL'].nunique()),
+            'bhavcopy_sha256_revalidated_sessions':sum(x['bhavcopy_files_sha256_revalidated'] for x in batch_reports),
+            'price_band_files':sum(x['price_band_files'] for x in batch_reports),
+            'surveillance_old_files':sum(x['surveillance_old_files'] for x in batch_reports),
+            'surveillance_new_files':sum(x['surveillance_new_files'] for x in batch_reports),
+            'price_band_join_coverage':coverage('PRICE_BAND__PRICE_BAND_PERCENT'),
+            'reg_ind_join_coverage':float(d.filter(regex='^REG_IND__').astype(str).apply(lambda x:x.str.strip().ne('')).any(axis=1).mean()),
+            'reg1_ind_join_coverage':float(d.filter(regex='^REG1_IND__').astype(str).apply(lambda x:x.str.strip().ne('')).any(axis=1).mean()),
+            'circuit_status_unknown_rows':int(d['CIRCUIT_STATUS'].eq('UNKNOWN').sum()),
+            'surveillance_status_unknown_rows':int(d['SURVEILLANCE_STATUS'].eq('UNKNOWN').sum()),
+            'free_float_unknown_rows':int(d['FREE_FLOAT'].eq('UNKNOWN').sum()),
+            'source_urls_present':int(d['BHAVCOPY_SOURCE_URL'].ne('').sum()),
+            'promotion_allowed':False,
+            'blockers':['CIRCUIT_STATUS remains UNKNOWN; no validated per-security circuit-hit calculation.',
+              'SURVEILLANCE_STATUS remains UNKNOWN as absence/blank flags are not interpreted as a clean status; raw REG_IND/REG1 indicators are retained.',
+              'FREE_FLOAT remains UNKNOWN.',
+              'Exact source publication timestamps are not published in the source files; retrieval timestamps are retained separately.'],
+            'batch_reports':batch_reports,'output_sha256':sha(out),
+            'observed_at_utc':max(x['observed_at_utc'] for x in batch_reports)
+          }
+          Path('outputs/macro_geo').mkdir(parents=True,exist_ok=True)
+          Path('outputs/macro_geo/market_microstructure_200_session_qa.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          # Remove derived batch CSVs after merging; retain all raw source files and per-batch manifests.
+          for offset in (0,50,100,150):
+            (root/f'market_microstructure_batch_{offset}_50.csv').unlink()
+          PY
+      - name: Upload 200-session market microstructure source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-market-microstructure-200-session-partial-evidence
+          path: |
+            data/external/market_microstructure.csv
+            outputs/macro_geo/market_microstructure_200_session_qa.json
+            artifacts/nse_market_microstructure_10_session/
+          if-no-files-found: warn
+          retention-days: 90
