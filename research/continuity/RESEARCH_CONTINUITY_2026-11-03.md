@@ -79,3 +79,14 @@ Updated: 2026-11-03 (UTC)
 - Batch CSV SHA-256: `334bda7be9fdb441fcbdb217fb4ed861724b33e1bc3edda6b7fe2bfbc122d165`; summary SHA-256: `43ffa411a06cf3db1bc18326782f5fe1be650bdf84afd64124c17de27b5f25fa`.
 - Fail-closed verifier committed at `pipeline/audit_iip_cell_level_revision_batch_001.py`.
 - Hard Gate remains BLOCKED. No extrapolation from this nine-row batch; all frozen production invariants remain unchanged.
+
+
+
+## 2026-11-03 cell-level revision batches 002 and 003
+- Continued the same April 2023 vintage pair: `IIPMFY23049APR` Quick → `IIPMFY23054MAY` First Revision.
+- Rechecked the month alignment against official PIB PRID 1938974 Statement IV: the explicit headers are Jun-22 through May-23; April 2023 is the penultimate month column. Workbook header EF is 2023-04 and EG is 2023-05. NIC descriptions and row coordinates were checked.
+- Batch 002: six exact cell matches, NIC codes 21–26; zero mismatches. CSV and summary are stored as `IIP_CELL_LEVEL_REVISION_BATCH_002_2023-04.csv` and `IIP_CELL_LEVEL_REVISION_BATCH_002_SUMMARY.json`.
+- Batch 003: five exact cell matches, NIC codes 27, 28, 29, 30 and 32; zero mismatches. Workbook cells EF24, EF25, EF26, EF27 and EF29. CSV SHA-256: `175ebc61bb55835a8cd50e7053094ddea56041339dced060a738b7a2ad37d2bc`; ZIP SHA-256: `4ac0102d80d8621eeed8d508be4b6bec73bb72046cac76723b96469aa1b1ecda`.
+- For this vintage pair, all 20 candidate NIC-period transitions are now exact-matched: Batch 001 = 9, Batch 002 = 6, Batch 003 = 5; total 20/20, mismatch 0. This is bounded April-2023 pair evidence, not certification of the remaining 673 policy-aligned candidate transitions or of the full IIP dataset.
+- Both original source workbook hashes remain: Quick `7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e`; First Revision `6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a`.
+- Hard Gate remains BLOCKED. No production selector, RANKING_SCORE, +1 PRESSURE_FADE or CORE-672 changes.
