@@ -52,19 +52,18 @@ def download(session,url):
 
 def main():
     ROOT.mkdir(parents=True,exist_ok=True)
-    if not SNAPSHOT.is_file(): raise SystemExit("BLOCKED_MISSING_NSE_SNAPSHOT_ARTIFACT")
-    with zipfile.ZipFile(SNAPSHOT) as z:
-        mname=next(n for n in z.namelist() if n.endswith(".json") and "nse_snapshot_manifest" in n)
-        manifest=json.loads(z.read(mname))
-        records=manifest["records"]
-        if len(records)!=200 or manifest["actual_sessions"]!=200:
-            raise SystemExit("BLOCKED_SNAPSHOT_NOT_200_SESSIONS")
-        records=sorted(records,key=lambda x:x["trade_date"])
-        chosen=records[-10:]
-        by_date={r["trade_date"]:r for r in records}
-        session_dates=[r["trade_date"] for r in records]
-        outputs=[];failures=[];counts={"price_band":0,"surveillance_old":0,"surveillance_new":0}
-        session=requests.Session();session.headers.update(HEADERS)
+    if not SNAPSHOT_ROOT.is_dir(): raise SystemExit("BLOCKED_MISSING_NSE_SNAPSHOT_ARTIFACT")
+    manifest_files=list(SNAPSHOT_ROOT.rglob("nse_snapshot_manifest_*.json"))
+    if len(manifest_files)!=1: raise SystemExit(f"BLOCKED_EXPECTED_ONE_SNAPSHOT_MANIFEST_FOUND_{len(manifest_files)}")
+    manifest=json.loads(manifest_files[0].read_text(encoding="utf-8"))
+    records=manifest["records"]
+    if len(records)!=200 or manifest["actual_sessions"]!=200:
+        raise SystemExit("BLOCKED_SNAPSHOT_NOT_200_SESSIONS")
+    records=sorted(records,key=lambda x:x["trade_date"])
+    chosen=records[-10:]
+    session_dates=[r["trade_date"] for r in records]
+    outputs=[];failures=[];counts={"price_band":0,"surveillance_old":0,"surveillance_new":0}
+    session=requests.Session();session.headers.update(HEADERS)
     for idx,rec in enumerate(chosen,start=len(records)-10):
             trade_date=rec["trade_date"]
             prev_date=session_dates[idx-1] if idx>0 else None
