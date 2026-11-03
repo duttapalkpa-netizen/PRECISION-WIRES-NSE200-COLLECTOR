@@ -40,7 +40,7 @@ Updated: 2026-11-03 (UTC)
 - 693 differences are policy-stage-aligned candidates (389 Quick→First Revision; 271 Quick→Final; 20 Quick→Final Transition Backlog; 13 First Revision→Final Transition Backlog). They remain candidates, NOT certified revisions.
 - 431 differences remain unresolved because one side is a historical-panel/out-of-window value (397 Historical Panel→Final; 15 Historical Panel→Final Transition Backlog; 19 Quick→Historical Panel).
 - Methodology split: 1,056 legacy-base series comparisons; 68 Output-PPI superseding series comparisons. No cross-base-year comparisons.
-- Certified cell-level revision rows: 0. A release-page stage tag alone does not prove every cell-level difference; exact source statements and matching source payloads must be tied to each changed observation pair.
+- At the original 13:25 source-audit snapshot, certified cell-level revision rows were 0. Batch 001 later certified 9 exact April-2023 cell pairs; 684 policy-aligned candidates remain uncertified. A release-page stage tag alone does not prove other cell-level differences.
 - This sidecar does not change the source audit status or Hard Gate.
 
 ## Error learnings / controls
