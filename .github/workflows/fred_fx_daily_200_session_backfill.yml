@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install data parser and HTTP client
-        run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3'
+        run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3' 'lxml>=5,<7'
       - name: Download and verify exact NSE and factor baselines
         env:
           GH_TOKEN: ${{ github.token }}
