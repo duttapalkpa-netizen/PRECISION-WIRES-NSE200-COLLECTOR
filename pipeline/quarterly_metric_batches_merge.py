@@ -8,6 +8,7 @@ from pathlib import Path
 import hashlib
 import json
 import re
+import sys
 import pandas as pd
 
 ROOT = Path(".")
@@ -105,6 +106,7 @@ def main():
     CANONICAL.parent.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     rows.to_csv(CANONICAL, index=False)
+    sys.path.insert(0, str(ROOT.resolve()))
     from pipeline.quarterly_results_research import build_financial_features
     features, feature_report = build_financial_features(CANONICAL)
     features.to_csv(FEATURES, index=False)
