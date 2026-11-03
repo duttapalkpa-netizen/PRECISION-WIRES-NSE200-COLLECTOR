@@ -145,7 +145,7 @@ def main():
         "CIRCUIT_STATUS remains UNKNOWN; price-band percentage is not itself proof of a circuit hit.",
         "FREE_FLOAT remains UNKNOWN.",
         "Legacy bhavcopy source URLs/retrieval timestamps are unrecoverable for cached sessions."],
-      "output_sha256":sha(out),"observed_at_utc":datetime.now(timezone.utc).isoformat()
+      "output_sha256":sha(out.read_bytes()),"observed_at_utc":datetime.now(timezone.utc).isoformat()
     }
     (ROOT/"market_microstructure_10_session_qa.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
     print(json.dumps(report,indent=2))
