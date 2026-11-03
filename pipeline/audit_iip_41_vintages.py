@@ -54,9 +54,8 @@ def qualifies(r):
     title=" ".join(str(r.get("table_name","")).lower().split()); period=month(r.get("ref_period"))
     return ("monthly nic-2 digit and sectoral indices and growth rates of industrial production" in title and period and period>=START and r.get("product")=="IIP" and r.get("unique_id") and r.get("file_name") and r.get("file_path"))
 def parse_xlsx(path):
-    # Parse ONLY the monthly index table. The workbook also contains a growth-rate
-    # table with the same NIC codes; mixing the two doubles observations and
-    # manufactures false "revisions".
+    # Supports the legacy NIC-2 heading and the newer NIC-2025 sectoral heading.
+    # Parse only the index table; growth-rate sections are not index observations.
     with PARSE_LOCK:
         xl=pd.ExcelFile(path)
         candidates=[]
@@ -65,7 +64,8 @@ def parse_xlsx(path):
             title_row=None
             for i,row in df.iterrows():
                 title=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
-                if title.startswith("monthly nic-2 digit and sectoral indices of industrial production"):
+                if (title.startswith("monthly nic-2 digit and sectoral indices of industrial production")
+                    or title.startswith("monthly sectoral, sub-sectoral/nic 2 digit indices of industrial production")):
                     title_row=i
                     break
             if title_row is None:
@@ -82,17 +82,15 @@ def parse_xlsx(path):
             rows=[]
             for _,row in df.iloc[header_row+1:].iterrows():
                 label=str(row.iloc[0]).strip().lower() if pd.notna(row.iloc[0]) else ""
-                if label.startswith("monthly nic-2 digit and sectoral growth rates"):
+                if "growth rates" in label or label.startswith("monthly nic-2 digit and sectoral growth"):
                     break
-                nic_value=pd.to_numeric(pd.Series([row.iloc[0]]),errors="coerce").iloc[0]
-                if pd.isna(nic_value) or int(nic_value)!=nic_value or not 10<=int(nic_value)<=99:
-                    # Blank separator or next section: do not continue across a section boundary.
-                    if not label:
-                        continue
+                code=str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
+                # NIC-2025 includes combined divisions such as 05-06 as well as 2-digit codes.
+                if not re.fullmatch(r"[0-9]{2}(?:-[0-9]{2})?",code):
                     if label.startswith("monthly "):
                         break
                     continue
-                nic=str(int(nic_value)).zfill(2)
+                nic=code
                 for ci,period in periods:
                     val=pd.to_numeric(pd.Series([row.iloc[ci]]),errors="coerce").iloc[0]
                     if pd.notna(val):
@@ -100,7 +98,7 @@ def parse_xlsx(path):
             if rows:
                 candidates.append((sheet,rows))
         if not candidates:
-            raise ValueError("no supported monthly NIC-2 index table found")
+            raise ValueError("no supported monthly NIC-2/NIC-2025 index table found")
         sheet,rows=max(candidates,key=lambda x:len(x[1]))
         keys=[(x["period"],x["nic_code"]) for x in rows]
         if len(keys)!=len(set(keys)):
@@ -128,7 +126,14 @@ def fetch_one(r):
         row["parse_status"]="FAIL"; row["error"]=f"{type(e).__name__}:{e}"[:500]; return row,[]
 def main():
     RAW.mkdir(parents=True,exist_ok=True); allr,pagination=get_catalogue()
-    selected=sorted([r for r in allr if qualifies(r)],key=lambda r:(month(r.get("ref_period")) or "",str(r.get("release_date","")),str(r.get("unique_id",""))))
+    qualifying=sorted([r for r in allr if qualifies(r)],key=lambda r:(month(r.get("ref_period")) or "",str(r.get("release_date","")),str(r.get("unique_id",""))))
+    # One fetch/parse per unique table ID prevents duplicate catalogue rows racing on the same raw path.
+    by_id={}
+    for r in qualifying:
+        uid=str(r.get("unique_id",""))
+        if uid not in by_id or str(r.get("updated_at",""))>str(by_id[uid].get("updated_at","")):
+            by_id[uid]=r
+    selected=sorted(by_id.values(),key=lambda r:(month(r.get("ref_period")) or "",str(r.get("release_date","")),str(r.get("unique_id",""))))
     results=[]
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
         fs=[pool.submit(fetch_one,r) for r in selected]
@@ -164,8 +169,8 @@ def main():
     missing_periods=sorted(set(x.strftime("%Y-%m") for x in expected_periods)-set(period_keys))
     unique_ids={x.get("unique_id") for x in manifest}
     duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
-    status="PASS" if len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"hard_gate":"BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
+    status="PASS" if len(qualifying)==41 and len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
+    qa={"audit_status":status,"hard_gate":"BLOCKED","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
     (OUT/"revision_audit.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\\n")
     print(json.dumps(qa,ensure_ascii=False,indent=2))
 if __name__=="__main__": main()
