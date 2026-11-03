@@ -4,7 +4,7 @@
 - Source artifact: Run #41640521553, Artifact ID 13232127900.
 - Artifact ZIP SHA-256: `e59d98dfe75e1c298b7a46d7304b44ce152d6a3363103238bfd1c466911a141c`.
 - Catalogue: 41 qualifying rows, 40 unique table IDs; one duplicate catalogue row.
-- Official PIB release pages independently located and inspected in this pass: 38 of 40 unique vintage rows.
+- Official PIB release pages independently located and inspected in this pass: 40 of 40 unique vintage rows.
 - Two unique catalogue vintages remain UNKNOWN because their exact official release page was not independently located in this pass: July 2024 and May 2025. UNKNOWN is not PASS or FAIL.
 - 39 source XLSX workbooks downloaded and parsed; one April 2026 XLSX request returned HTTP 404. April 2026 official Quick release PDF is separately verified.
 
@@ -64,3 +64,9 @@
 - Certified revision rows: 0 until each relevant observation pair is tied to official statement cells and the corresponding exact source workbook/PDF payload hashes.
 - The official release evidence ledger CSV records all 40 unique catalogue IDs, exact source workbook hash/status, PIB page ID/date/URL, and UNKNOWN where the page was not verified. It does not infer a release page from a neighbouring month.
 - Hard Gate remains BLOCKED.
+
+
+## 2026-11-03 gap closure
+- `IIPMFY24014JUL` / July 2024: PIB PRID 2054214, 12 Sep 2024 17:30 IST, Quick Estimate. https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2054214&lang=2&reg=48
+- `IIPMFY25006MAY` / May 2025: PIB PRID 2140774, 30 Jun 2025 16:00 IST, Quick Estimate. https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2140774&lang=2&reg=48
+- Updated official PIB release page coverage: 40/40; UNKNOWN: 0. Updated CSV SHA-256: `21c3b9bac0a1263ecf4b341c8cd8295cfbcd8daff3e90ac906551d69ee0d97b9`.
