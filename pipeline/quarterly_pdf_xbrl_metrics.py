@@ -321,18 +321,29 @@ def basis_from_xbrl_facts(selected_facts):
   observed.append("CONSOLIDATED" if has_consolidated else "STANDALONE")
  return observed[0] if len(set(observed)) == 1 and len(observed) == len(selected_facts) else ""
 
+def select_result_batch(df, offset=0, limit=0):
+ """Select a deterministic, non-overlapping slice of RESULT_DISCLOSURE rows."""
+ offset=int(offset)
+ limit=int(limit)
+ if offset < 0:
+  raise ValueError("QUARTERLY_METRIC_OFFSET must be >= 0")
+ if limit < 0:
+  raise ValueError("QUARTERLY_METRIC_MAX_DISCLOSURES must be >= 0")
+ rows=df[df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")].copy()
+ if limit > 0:
+  return rows.iloc[offset:offset+limit].copy()
+ return rows.iloc[offset:].copy()
+
 def main():
  EVIDENCE.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True)
  if not DISC.exists():
   REPORT.write_text(json.dumps({"status":"BLOCKED_MISSING_DISCLOSURES","rows":0},indent=2)); return 0
  df=pd.read_csv(DISC,dtype=str).fillna("")
- # Optional hard cap keeps live attachment verification bounded in CI. Preserve
- # newest disclosures first; uncapped runs remain the default for full research.
+ # Deterministic offset + cap allow the full disclosure set to be processed
+ # in bounded, non-overlapping CI batches without dropping older rows.
  max_disclosures=int(os.environ.get("QUARTERLY_METRIC_MAX_DISCLOSURES", "500") or 500)
- result_rows=df[df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")].copy()
- if max_disclosures > 0 and len(result_rows) > max_disclosures:
-  result_rows=result_rows.head(max_disclosures)
-  df=pd.concat([result_rows, df[~df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")]], ignore_index=True)
+ offset=int(os.environ.get("QUARTERLY_METRIC_OFFSET", "0") or 0)
+ df=select_result_batch(df, offset=offset, limit=max_disclosures)
  sess=requests.Session(); sess.headers.update(HEADERS)
  # Establish NSE web-session cookies before requesting archived filing attachments.
  try:
@@ -517,7 +528,7 @@ def main():
  valid=int(result.EXTRACTION_STATUS.eq("SOURCE_LINKED_XBRL_FACTS").sum())
  superseded=int(result.EXTRACTION_STATUS.eq("SUPERSEDED_BY_LATER_DISCLOSURE").sum())
  report={"status":"COMPUTED_WITH_VERIFIED_ROWS" if valid else "BLOCKED_NO_VERIFIED_ROWS",
-  "input_result_disclosures":int((df.get("EVENT_KIND","")== "RESULT_DISCLOSURE").sum()),
+  "input_result_disclosures":int(len(df)), "batch_offset":offset, "batch_limit":max_disclosures,
   "attachment_attempts":attempted,"ledger_rows":len(result),"verified_metric_rows":valid,
   "blocked_rows":int(result.EXTRACTION_STATUS.str.startswith("BLOCKED").sum()),"superseded_revision_rows":superseded,"ledger_path":str(OUT),"evidence_dir":str(EVIDENCE),
   "required_provenance":["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENUE","PAT","EPS","SOURCE_SHA256","fact tags and context refs"],
