@@ -1,0 +1,88 @@
+name: Quarterly Results Metric Extraction Batch 2
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/quarterly_results_metric_batch2.yml'
+      - 'pipeline/quarterly_pdf_xbrl_metrics.py'
+      - 'qa/test_quarterly_pdf_xbrl_metrics.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: quarterly-results-metric-batch2
+  cancel-in-progress: false
+jobs:
+  batch2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      QUARTERLY_METRIC_OFFSET: '1000'
+      QUARTERLY_METRIC_MAX_DISCLOSURES: '1000'
+      QUARTERLY_METRIC_MAX_ATTACHMENT_ATTEMPTS: '1500'
+    steps:
+      - name: Checkout bounded batch implementation
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install minimal metric dependencies
+        run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3' 'pypdf>=4,<6'
+      - name: Run deterministic batch and regression tests
+        run: |
+          python -m unittest -v qa.test_quarterly_pdf_xbrl_metrics
+          python - <<'PY'
+          import pandas as pd
+          p='data/raw/quarterly_results_disclosures.csv'
+          df=pd.read_csv(p,dtype=str).fillna('')
+          n=int(df.get('EVENT_KIND',pd.Series(dtype=str)).eq('RESULT_DISCLOSURE').sum())
+          assert n==1988, f'Expected 1988 result disclosures from pinned source artifact, got {n}'
+          print({'source_result_disclosures':n,'batch_offset':1000,'batch_limit':1000,'expected_batch_rows':988})
+          PY
+      - name: Download pinned source disclosure artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/quarterly-source
+          gh run download 41585837753 -n quarterly-endpoint-schema-audit -D /tmp/quarterly-source
+          test -s /tmp/quarterly-source/data/raw/quarterly_results_disclosures.csv
+          mkdir -p data/raw
+          cp /tmp/quarterly-source/data/raw/quarterly_results_disclosures.csv data/raw/
+          if [ -f /tmp/quarterly-source/data/raw/quarterly_filing_evidence/AGEL_Q2_FY27_financial_statement.pdf ]; then
+            mkdir -p data/raw/quarterly_filing_evidence
+            cp /tmp/quarterly-source/data/raw/quarterly_filing_evidence/AGEL_Q2_FY27_financial_statement.pdf data/raw/quarterly_filing_evidence/
+          fi
+      - name: Extract source-linked metrics for disclosures 1001-1988
+        run: |
+          set -euo pipefail
+          python pipeline/quarterly_pdf_xbrl_metrics.py
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path('outputs/quarterly_results/filing_metric_extraction_report.json')
+          r=json.loads(p.read_text())
+          assert r['input_result_disclosures']==988, r
+          assert r['batch_offset']==1000, r
+          assert r['batch_limit']==1000, r
+          assert r['attachment_attempts']<=1500, r
+          assert r['ledger_rows']==988, r
+          print(json.dumps({k:r.get(k) for k in ('status','input_result_disclosures','batch_offset','batch_limit','attachment_attempts','ledger_rows','verified_metric_rows','blocked_rows','superseded_revision_rows')},indent=2))
+          PY
+      - name: Upload immutable batch 2 ledger and filing evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarterly-metric-extraction-batch2-offset1000
+          path: |
+            data/raw/quarterly_financial_metrics.csv
+            data/raw/quarterly_filing_evidence/
+            outputs/quarterly_results/filing_metric_extraction_report.json
+          if-no-files-found: error
+          retention-days: 90
