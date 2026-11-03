@@ -1,4 +1,5 @@
 name: Quarterly Results Targeted Tests
+# Sector-fundamentals remediation cycle: reuse official NSE disclosures and source-linked XBRL facts; no production selector changes.
 
 on:
   push:
