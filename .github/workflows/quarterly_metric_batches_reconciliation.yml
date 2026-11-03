@@ -1,0 +1,124 @@
+name: Quarterly Metric Batches Global Reconciliation
+on:
+  push:
+    branches:
+      - fix/factor-registry-same-snapshot-reconcile
+    paths:
+      - '.github/workflows/quarterly_metric_batches_reconciliation.yml'
+      - 'pipeline/quarterly_metric_batches_merge.py'
+      - 'qa/test_quarterly_metric_batches_merge.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: quarterly-metric-batches-global-reconciliation
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout immutable merge and QA code
+        uses: actions/checkout@v4
+        with:
+          ref: fix/factor-registry-same-snapshot-reconcile
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install minimal merge dependencies
+        run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3' 'pypdf>=4,<6'
+      - name: Download exact immutable batch artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/batch1 inputs/batch2
+          gh run download 41585837753 -n quarterly-endpoint-schema-audit -D inputs/batch1
+          gh run download 41587465930 -n quarterly-metric-extraction-batch2-offset1000 -D inputs/batch2
+          test -s inputs/batch1/data/raw/quarterly_financial_metrics.csv
+          test -s inputs/batch1/data/raw/quarterly_results_disclosures.csv
+          test -s inputs/batch2/data/raw/quarterly_financial_metrics.csv
+          python - <<'PY'
+          import json, subprocess, os
+          repo=os.environ['GITHUB_REPOSITORY']
+          pins={
+            41585837753:(13207184371,'sha256:0b8b07e6bbc59bcc87016ed3b96cf54ad01d5b2dfeb3a7fa8f5f748489b25829'),
+            41587465930:(13209235865,'sha256:7bee96713ea6d1f85fd9ea7b79316cca1a18747d2c176b5ad25121b1434bc415')
+          }
+          for run,(artifact_id,digest) in pins.items():
+            meta=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}'],text=True))
+            assert meta['conclusion']=='success',(run,meta.get('conclusion'))
+            arts=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))['artifacts']
+            a=next((x for x in arts if x['id']==artifact_id),None)
+            assert a and a['digest']==digest,(run,a)
+            print({'run_id':run,'artifact_id':artifact_id,'digest_verified':True})
+          PY
+      - name: Assemble exact source-linked evidence files
+        run: |
+          set -euo pipefail
+          mkdir -p data/raw/quarterly_filing_evidence
+          cp -a inputs/batch1/data/raw/quarterly_filing_evidence/. data/raw/quarterly_filing_evidence/
+          cp -a inputs/batch2/data/raw/quarterly_filing_evidence/. data/raw/quarterly_filing_evidence/
+      - name: Run batch merge and revision-policy regression tests
+        run: |
+          python -m unittest -v qa.test_quarterly_metric_batches_merge qa.test_quarterly_pdf_xbrl_metrics
+      - name: Merge all 1,988 disclosure metrics and reapply global revision policy
+        run: python pipeline/quarterly_metric_batches_merge.py
+      - name: Assert full source-row reconciliation and build evidence manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          root=Path('outputs/quarterly_results')
+          report=json.loads((root/'quarterly_metric_batches_reconciliation.json').read_text())
+          assert report['merged_ledger_rows']==1988,report
+          assert report['source_result_disclosures']==1988,report
+          counts=report['status_counts_after_global_revision_reconciliation']
+          assert counts.get('SOURCE_LINKED_XBRL_FACTS',0)+counts.get('SOURCE_LINKED_PDF_TABLE_FACTS',0)>0
+          assert counts.get('BLOCKED_AMBIGUOUS_LATEST_PERIOD_BASIS',0)==0,counts
+          assert report['source_evidence_files_sha256_verified']==1988,report
+          assert report['feature_report']['status']=='COMPUTED',report['feature_report']
+          assert report['feature_rows']>0,report
+          assert report['production_invariants']=={
+            'production_selector_changed':False,'ranking_score_changed':False,
+            'pressure_fade_changed':False,'diagnostics_672_changed':False}
+          def sha(p):
+            h=hashlib.sha256()
+            with open(p,'rb') as f:
+              for b in iter(lambda:f.read(1048576),b''): h.update(b)
+            return h.hexdigest()
+          repo=os.environ['GITHUB_REPOSITORY']
+          pins=[
+            {'run_id':41585837753,'artifact_id':13207184371,'artifact_sha256':'0b8b07e6bbc59bcc87016ed3b96cf54ad01d5b2dfeb3a7fa8f5f748489b25829','batch_offset':0,'rows':1000},
+            {'run_id':41587465930,'artifact_id':13209235865,'artifact_sha256':'7bee96713ea6d1f85fd9ea7b79316cca1a18747d2c176b5ad25121b1434bc415','batch_offset':1000,'rows':988}
+          ]
+          manifest={'status':'PASS_WITH_EXPLICIT_BLOCKERS','source_disclosures':1988,
+            'batches':pins,'merged_ledger_sha256':sha('data/raw/quarterly_financial_metrics.csv'),
+            'features_sha256':sha('outputs/quarterly_results/quarterly_financial_features.csv'),
+            'source_disclosures_sha256':sha('inputs/batch1/data/raw/quarterly_results_disclosures.csv'),
+            'reconciliation_report_sha256':sha(root/'quarterly_metric_batches_reconciliation.json'),
+            'status_counts':counts,'feature_rows':report['feature_rows'],
+            'evidence_files_sha256_verified':report['source_evidence_files_sha256_verified'],
+            'production_invariants':report['production_invariants']}
+          (root/'quarterly_metric_batch_manifest.json').write_text(json.dumps(manifest,indent=2))
+          print(json.dumps(manifest,indent=2))
+          PY
+      - name: Upload global quarterly metric reconciliation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarterly-metric-batches-global-reconciliation
+          path: |
+            data/raw/quarterly_financial_metrics.csv
+            data/raw/quarterly_filing_evidence/
+            inputs/batch1/data/raw/quarterly_results_disclosures.csv
+            outputs/quarterly_results/quarterly_financial_features.csv
+            outputs/quarterly_results/quarterly_metric_batches_reconciliation.json
+            outputs/quarterly_results/quarterly_metric_batch_manifest.json
+          if-no-files-found: warn
+          retention-days: 90
