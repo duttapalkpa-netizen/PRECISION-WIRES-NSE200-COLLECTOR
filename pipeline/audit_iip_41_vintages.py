@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Strict audit of all monthly NIC-2 IIP catalogue vintages from MoSPI.
+Audit contract revision: v1; fail-closed ingestion and revision comparison.
 Every catalogue row receives an explicit download/parse status. A cumulative
 panel is never treated as multiple downloaded vintages.
 """
