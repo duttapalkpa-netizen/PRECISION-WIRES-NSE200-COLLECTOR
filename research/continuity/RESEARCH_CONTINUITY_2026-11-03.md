@@ -68,3 +68,14 @@ Updated: 2026-11-03 (UTC)
 - May 2025 Quick Estimate: PIB PRID 2140774, 2025-06-30 16:00 IST.
 - Official release-page coverage: 40/40; UNKNOWN official page rows: 0.
 - April 2026 XLSX HTTP 404 remains unresolved. Cell-level revision certification remains 0; Hard Gate remains BLOCKED.
+
+
+## 2026-11-03 cell-level revision batch 001
+- Bounded batch: April 2023 NIC-2008, Quick vintage `IIPMFY23049APR` to First Revision vintage `IIPMFY23054MAY`.
+- Official PIB evidence: PRID 1931708 Statement II (12 Jun 2023, 17:30 IST) and PRID 1938974 Statement IV (12 Jul 2023, 17:30 IST).
+- Nine rows independently matched against both exact official PIB statement values and both original MoSPI workbook cells; 18/18 workbook cell checks and 18/18 PIB statement value checks passed; mismatches 0.
+- Certified cell-level source matches: 9; policy-aligned candidates still uncertified: 684; historical-panel/out-of-window transitions unresolved: 431; total observed differences 1,124.
+- Source workbook SHA-256 values: `7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e` and `6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a`.
+- Batch CSV SHA-256: `334bda7be9fdb441fcbdb217fb4ed861724b33e1bc3edda6b7fe2bfbc122d165`; summary SHA-256: `43ffa411a06cf3db1bc18326782f5fe1be650bdf84afd64124c17de27b5f25fa`.
+- Fail-closed verifier committed at `pipeline/audit_iip_cell_level_revision_batch_001.py`.
+- Hard Gate remains BLOCKED. No extrapolation from this nine-row batch; all frozen production invariants remain unchanged.
