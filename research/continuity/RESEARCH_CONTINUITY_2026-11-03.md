@@ -101,3 +101,14 @@ Updated: 2026-11-03 (UTC)
 - Batch CSV SHA-256: `a34b3e634c36e11bb213372235d9d7f76d63672b7d901d2348e3bbabd8e301f9`.
 - Cumulative bounded evidence: April 2023 20 exact cells; May 2023 14 exact cells; total 34 exact source-verified cell transitions across two vintage pairs. Other policy-aligned candidates and all broader coverage blockers remain.
 - Hard Gate remains BLOCKED. Frozen production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
+
+
+## 2026-11-03 cell-level revision batch 005 — June 2023
+- Bounded vintage pair: `IIPMFY23058JUN` Quick → `IIPMFY23062JUL` First Revision.
+- Previous official Quick source: PIB PRID 1947790, published 11 Aug 2023 at 17:30 IST; all 20 candidate NIC values matched Statement II.
+- Current official First Revision source: PIB PRID 1956663, published 12 Sep 2023 at 17:30 IST; all 20 June-2023 values matched Statement IV Jun-23 column.
+- Exact cell matches: 20/20; mismatches 0. Workbook cells in June column EH: EH7, EH8, EH9, EH10, EH11, EH12, EH13, EH15, EH16, EH17, EH18, EH19, EH20, EH21, EH22, EH23, EH24, EH26, EH28, EH29.
+- Source workbook SHA-256: Quick `326629f652ef7a6161ac60516b094a20f2f2b84e81fab278fdc9ea17377b263e`; First Revision `ea5119cb6f76b2640289dcc98e71bfe1ac1786fc02f92f0e7cd57900fde3f26c`.
+- Batch CSV SHA-256: `338a2bc02919b5b4907a817a4061df72e3c0866fabd9906a1cf54eb1142712ea`.
+- Cumulative exact cell-level evidence: April 2023 20; May 2023 14; June 2023 20; total 54 exact-source-verified cell transitions across three vintage pairs. Other 639 of the original 693 policy-aligned candidates remain uncertified.
+- Hard Gate remains BLOCKED; no production selector, RANKING_SCORE, +1 PRESSURE_FADE or CORE-672 changes.
