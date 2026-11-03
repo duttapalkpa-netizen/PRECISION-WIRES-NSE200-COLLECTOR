@@ -9,7 +9,6 @@ ROOT=Path("artifacts/global_freight_shipping_probe")
 BASE="https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services"
 LAYERS={
  "chokepoints":f"{BASE}/Daily_Chokepoints_Data/FeatureServer/0",
- "ports":f"{BASE}/Daily_Trade_Data/FeatureServer/0",
 }
 HEADERS={"User-Agent":"PRECISION-WIRES-research/1.0 (read-only source validation)",
          "Accept":"application/json"}
