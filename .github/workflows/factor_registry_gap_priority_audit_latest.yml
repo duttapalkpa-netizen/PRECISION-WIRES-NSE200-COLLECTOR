@@ -60,7 +60,7 @@ jobs:
           assert a['factor_groups']==35
           assert a['status']=='FACTOR_COVERAGE_AUDITED_WITH_GAPS'
           assert m['nse_snapshot']['snapshot_id']=='1f6d79d9bcdf3a6aa11dd9a80033276061447401dac6c708ab6622b6258b7534'
-          assert 'does not change coverage status' in p['safety']
+          assert 'Does not change coverage status' in p['safety']
           print(json.dumps({'status':p['status'],'factor_groups':p['factor_groups'],
             'not_connected_factors':p['not_connected_factors'],'partial_factors':p['partial_factors'],
             'recommended_first_source_group':p['recommended_first_source_group'],
