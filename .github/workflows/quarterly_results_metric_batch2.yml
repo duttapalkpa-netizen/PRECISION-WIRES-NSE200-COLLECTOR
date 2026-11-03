@@ -34,17 +34,6 @@ jobs:
           cache: pip
       - name: Install minimal metric dependencies
         run: python -m pip install 'pandas>=2.2,<3' 'requests>=2.31,<3' 'pypdf>=4,<6'
-      - name: Run deterministic batch and regression tests
-        run: |
-          python -m unittest -v qa.test_quarterly_pdf_xbrl_metrics
-          python - <<'PY'
-          import pandas as pd
-          p='data/raw/quarterly_results_disclosures.csv'
-          df=pd.read_csv(p,dtype=str).fillna('')
-          n=int(df.get('EVENT_KIND',pd.Series(dtype=str)).eq('RESULT_DISCLOSURE').sum())
-          assert n==1988, f'Expected 1988 result disclosures from pinned source artifact, got {n}'
-          print({'source_result_disclosures':n,'batch_offset':1000,'batch_limit':1000,'expected_batch_rows':988})
-          PY
       - name: Download pinned source disclosure artifact
         env:
           GH_TOKEN: ${{ github.token }}
@@ -59,6 +48,17 @@ jobs:
             mkdir -p data/raw/quarterly_filing_evidence
             cp /tmp/quarterly-source/data/raw/quarterly_filing_evidence/AGEL_Q2_FY27_financial_statement.pdf data/raw/quarterly_filing_evidence/
           fi
+      - name: Run deterministic batch and regression tests
+        run: |
+          python -m unittest -v qa.test_quarterly_pdf_xbrl_metrics
+          python - <<'PY'
+          import pandas as pd
+          p='data/raw/quarterly_results_disclosures.csv'
+          df=pd.read_csv(p,dtype=str).fillna('')
+          n=int(df.get('EVENT_KIND',pd.Series(dtype=str)).eq('RESULT_DISCLOSURE').sum())
+          assert n==1988, f'Expected 1988 result disclosures from pinned source artifact, got {n}'
+          print({'source_result_disclosures':n,'batch_offset':1000,'batch_limit':1000,'expected_batch_rows':988})
+          PY
       - name: Extract source-linked metrics for disclosures 1001-1988
         run: |
           set -euo pipefail
