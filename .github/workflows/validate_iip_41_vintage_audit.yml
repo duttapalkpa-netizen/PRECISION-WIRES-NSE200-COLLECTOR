@@ -1,0 +1,33 @@
+name: Validate IIP 41-vintage ingestion and revision audit
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "pipeline/audit_iip_41_vintages.py"
+      - ".github/workflows/iip_41_vintage_audit.yml"
+      - ".github/workflows/validate_iip_41_vintage_audit.yml"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install workbook parser
+        run: python -m pip install pandas openpyxl
+      - name: Run full 41-vintage download, parse and revision audit
+        run: python pipeline/audit_iip_41_vintages.py
+      - name: Upload vintage manifest and revision ledger even when blocked
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iip-41-vintage-ingestion-revision-audit
+          path: artifacts/iip_41_vintage_audit/
+          if-no-files-found: warn
