@@ -54,6 +54,14 @@ def reconcile(coverage,report,panel,panel_sha):
       "reason":"DATA_QUALITY_WARN: 97% date/chokepoint coverage with 6 missing NSE sessions and no exact provider publication timestamp; zero hard-gate rows."
     })
     coverage["as_of_utc"]=report["observed_at_utc"]
+    statuses=[str(x.get("status","")) for x in sources]
+    coverage["sources_total"]=len(sources)
+    coverage["available"]=sum(x=="AVAILABLE" for x in statuses)
+    coverage["not_connected"]=sum(x=="NOT_CONNECTED" for x in statuses)
+    coverage["quality_warn"]=sum(x=="DATA_QUALITY_WARN" for x in statuses)
+    coverage["schema_fail"]=sum(x=="SCHEMA_FAIL" for x in statuses)
+    coverage["read_error"]=sum(x=="READ_ERROR" for x in statuses)
+    coverage["blocked"]=sum(x in {"BLOCKED","BLOCKED_MISSING_INPUT"} for x in statuses)
     coverage["global_freight_shipping_reconciled_at_utc"]=report["observed_at_utc"]
     return coverage
 
