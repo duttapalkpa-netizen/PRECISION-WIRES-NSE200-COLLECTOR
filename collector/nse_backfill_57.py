@@ -52,7 +52,7 @@ def valid_csv(raw: bytes, expected: date):
                     parsed.add(datetime.strptime(v, fmt).date()); break
                 except ValueError:
                     pass
-        if parsed and parsed != {expected}:
+        if parsed != {expected}:
             return None, "date_mismatch:" + ",".join(sorted(x.isoformat() for x in parsed))
         close = [r.get(found["CLOSE"]) for r in eq]
         dq = [r.get(found["DELIV_QTY"]) for r in eq]
