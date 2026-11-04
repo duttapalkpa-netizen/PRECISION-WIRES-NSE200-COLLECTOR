@@ -1,4 +1,4 @@
-name: NSE-57 Backfill Workflow Registration (Inert)
+name: NSE Historical Backfill (Branch-Scoped Collector)
 
 on:
   workflow_dispatch:
@@ -6,17 +6,17 @@ on:
       before_date:
         description: "Exclusive cutoff: first date of existing 200-session cache"
         required: true
-        default: "2026-01-28"
+        default: "2025-11-04"
         type: string
       sessions:
         description: "Number of prior verified NSE trading sessions"
         required: true
-        default: "57"
+        default: "60"
         type: string
 
-# Registration-only stub on the default branch.
-# The operational workflow remains isolated on research/nse-57-session-backfill.
-# This job is deliberately disabled and cannot collect data or modify artifacts.
+# Default-branch registration only. Select research/nse-57-session-backfill
+# in the dispatch form to run the verified collector. The main-branch job remains
+# deliberately disabled and cannot collect data or modify artifacts.
 jobs:
   registration_only:
     if: false
