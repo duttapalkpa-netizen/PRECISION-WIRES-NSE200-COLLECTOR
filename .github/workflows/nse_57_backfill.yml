@@ -1,0 +1,42 @@
+name: NSE-57 Verified Historical Backfill
+on:
+  workflow_dispatch:
+    inputs:
+      before_date:
+        description: "Exclusive cutoff: first date of existing 200-session cache"
+        required: true
+        default: "2026-01-28"
+      sessions:
+        description: "Number of prior verified NSE trading sessions"
+        required: true
+        default: "57"
+permissions:
+  contents: read
+jobs:
+  nse-57-backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal dependency
+        run: python -m pip install requests
+      - name: Collect and verify official NSE files
+        run: >-
+          python collector/nse_backfill_57.py
+          --before "${{ inputs.before_date }}"
+          --sessions "${{ inputs.sessions }}"
+          --lookback-days 500
+          --out data/raw/nse_57_backfill
+      - name: Upload immutable audit outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-57-verified-backfill-${{ github.run_number }}
+          path: data/raw/nse_57_backfill/
+          if-no-files-found: warn
+          retention-days: 90
