@@ -79,7 +79,7 @@ def main():
     ap.add_argument("--lookback-days", type=int, default=500)
     ap.add_argument("--out", default="data/raw/nse_57_backfill")
     args=ap.parse_args()
-    cutoff=date.fromisoformat(args.before)
+    cutoff=date.fromisoformat(args.before.strip())
     out=Path(args.out); out.mkdir(parents=True, exist_ok=True)
     s=requests.Session(); s.headers.update(HEADERS)
     for home in ("https://www.nseindia.com/", "https://www.nseindia.com/all-reports"):
