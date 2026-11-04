@@ -1,0 +1,26 @@
+name: NSE-57 Backfill Workflow Registration (Inert)
+
+on:
+  workflow_dispatch:
+    inputs:
+      before_date:
+        description: "Exclusive cutoff: first date of existing 200-session cache"
+        required: true
+        default: "2026-01-28"
+        type: string
+      sessions:
+        description: "Number of prior verified NSE trading sessions"
+        required: true
+        default: "57"
+        type: string
+
+# Registration-only stub on the default branch.
+# The operational workflow remains isolated on research/nse-57-session-backfill.
+# This job is deliberately disabled and cannot collect data or modify artifacts.
+jobs:
+  registration_only:
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Intentionally do nothing
+        run: echo "Registration stub only; select the research branch to run the collector."
