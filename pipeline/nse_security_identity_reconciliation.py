@@ -78,10 +78,14 @@ def main():
         for cat,mp in lists.items():
             if sym in mp:
                 vals=mp[sym]
-                if isin and any(v and v==isin for v in vals): found.append((cat,"ISIN_MATCH"))
-                elif not isin or not any(vals): found.append((cat,"SYMBOL_MATCH_ISIN_UNAVAILABLE"))
-                elif isin in vals: found.append((cat,"ISIN_MATCH"))
-                else: found.append((cat,"SYMBOL_MATCH_ISIN_CONFLICT"))
+                # A matching ISIN does not override conflicting/blank identity rows
+                # for the same symbol in the same official snapshot.
+                if not isin or not any(vals):
+                    found.append((cat,"SYMBOL_MATCH_ISIN_UNAVAILABLE"))
+                elif vals == {isin}:
+                    found.append((cat,"ISIN_MATCH"))
+                else:
+                    found.append((cat,"SYMBOL_MATCH_ISIN_CONFLICT"))
         return found
     rows=[]
     for _,r in stale.iterrows():
