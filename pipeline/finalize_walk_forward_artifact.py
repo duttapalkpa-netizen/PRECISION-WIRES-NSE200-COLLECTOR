@@ -44,8 +44,8 @@ metrics["audit_note"]="Final metrics recomputed from persisted prediction/univer
 report["status"]="PASS_PERSISTED_CSV_RECOMPUTED"
 report["cutoffs"]=int(pred.CUT_OFF.nunique())
 report["top30_rows"]=int(len(pred)); report["universe_rows"]=int(len(uni))
-metrics_path.write_text(json.dumps(metrics,indent=2)+"\\n")
-report_path.write_text(json.dumps(report,indent=2)+"\\n")
+metrics_path.write_text(json.dumps(metrics,indent=2)+"\n")
+report_path.write_text(json.dumps(report,indent=2)+"\n")
 # Mandatory independent read-back after rewriting both JSON files.
 m2=json.loads(metrics_path.read_text()); r2=json.loads(report_path.read_text())
 for key in r2["metrics"]:
@@ -56,7 +56,7 @@ for key in r2["metrics"]:
 hashes={}
 for p in sorted(ROOT.iterdir()):
     if p.is_file(): hashes[p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
-(ROOT/"walk_forward_artifact_file_hashes.json").write_text(json.dumps(hashes,indent=2)+"\\n")
+(ROOT/"walk_forward_artifact_file_hashes.json").write_text(json.dumps(hashes,indent=2)+"\n")
 print(json.dumps({"status":"PASS_PERSISTED_CSV_RECOMPUTED",
                   "pred_rows":len(pred),"universe_rows":len(uni),
                   "metrics":r2["metrics"],"file_hashes":hashes},indent=2))
