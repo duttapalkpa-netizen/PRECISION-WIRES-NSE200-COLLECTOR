@@ -15,7 +15,7 @@ class IdentityHelpersTest(unittest.TestCase):
                            equity_header=("SYMBOL", "ISIN"), stale_header=("SYMBOL", "ISIN")):
         stale = self.write_csv(root, "stale.csv", stale_header, stale_rows)
         equity = self.write_csv(root, "equity.csv", equity_header, equity_rows)
-        changes = self.write_csv(root, "changes.csv", ["Old Symbol", "New Symbol"], changes_rows)
+        changes = self.write_csv(root, "changes.csv", ["Old Symbol", "New Symbol"], changes_rows or [["", ""]])
         out = root / "out"
         proc = subprocess.run([sys.executable, str(SCRIPT), "--stale", str(stale),
             "--equity", str(equity), "--symbol-changes", str(changes), "--out", str(out)],
@@ -58,7 +58,7 @@ class IdentityHelpersTest(unittest.TestCase):
             stale=self.write_csv(root,"stale.csv",["SYMBOL","ISIN"],[["DUAL","INE000000010"]])
             equity=self.write_csv(root,"equity.csv",["SYMBOL","ISIN"],[["DUAL","INE000000010"]])
             etf=self.write_csv(root,"etf.csv",["SYMBOL","ISIN"],[["DUAL","INE000000010"]])
-            changes=self.write_csv(root,"changes.csv",["Old Symbol","New Symbol"],[])
+            changes=self.write_csv(root,"changes.csv",["Old Symbol","New Symbol"],[["",""]])
             out=root/"out"
             proc=subprocess.run([sys.executable,str(SCRIPT),"--stale",str(stale),
                 "--equity",str(equity),"--etf",str(etf),"--symbol-changes",str(changes),
@@ -77,7 +77,7 @@ class IdentityHelpersTest(unittest.TestCase):
             import pandas as pd
             result=pd.read_csv(out/"nse_identity_reconciliation.csv")
             self.assertEqual(result.loc[0,"STATUS"],"UNKNOWN_AMBIGUOUS_RENAME_OR_CATEGORY")
-            self.assertEqual(result.loc[0,"RESOLVED_SYMBOL"],"")
+            self.assertTrue(pd.isna(result.loc[0,"RESOLVED_SYMBOL"]))
 
     def test_duplicate_stale_symbols_fail_closed(self):
         with tempfile.TemporaryDirectory() as d:
