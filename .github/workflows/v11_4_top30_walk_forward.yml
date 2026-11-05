@@ -6,7 +6,8 @@ on:
     branches: [fix/iip-41-vintage-audit-clean]
     paths:
       - "pipeline/walk_forward_backtest.py"
-      - "pipeline/reconcile_walk_forward_maturity.py"\n      - "pipeline/finalize_walk_forward_artifact.py"
+      - "pipeline/reconcile_walk_forward_maturity.py"
+      - "pipeline/finalize_walk_forward_artifact.py"
       - ".github/workflows/v11_4_top30_walk_forward.yml"
 
 permissions:
@@ -70,7 +71,9 @@ jobs:
           WF_SOURCE="$GITHUB_WORKSPACE/$SOURCE" WF_SESSIONS=30 python pipeline/walk_forward_backtest.py
       - name: Reconcile all metrics on complete matured windows
         run: python pipeline/reconcile_walk_forward_maturity.py --input outputs/backtest
-      - name: Recompute final metrics from persisted CSVs and seal file hashes\n        run: python pipeline/finalize_walk_forward_artifact.py\n      - name: Upload Top-30 walk-forward evidence
+      - name: Recompute final metrics from persisted CSVs and seal file hashes
+        run: python pipeline/finalize_walk_forward_artifact.py
+      - name: Upload Top-30 walk-forward evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
