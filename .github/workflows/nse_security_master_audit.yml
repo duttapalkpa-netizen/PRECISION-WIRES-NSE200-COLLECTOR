@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - 'collector/security_master.py'
+      - '.github/workflows/nse_security_master_audit.yml'
   schedule:
     - cron: "30 4 * * 1-5"
 
