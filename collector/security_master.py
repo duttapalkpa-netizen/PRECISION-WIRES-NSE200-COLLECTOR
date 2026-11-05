@@ -19,6 +19,7 @@ import requests
 OUT=Path("data/reference/security_master.csv")
 UNIVERSE=Path("config/universe.csv")
 MANIFEST=Path("data/reference/security_master_manifest.json")
+RAW=Path("data/reference/NSE_EQUITY_L_source.csv")
 URLS=[
     "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
     "https://archives.nseindia.com/content/equities/EQUITY_L.csv",
@@ -39,6 +40,15 @@ def atomic_csv(frame: pd.DataFrame, path: Path) -> None:
     os.close(fd)
     try:
         frame.to_csv(tmp,index=False)
+        os.replace(tmp,path)
+    finally:
+        if os.path.exists(tmp): os.unlink(tmp)
+
+def atomic_bytes(data: bytes, path: Path) -> None:
+    path.parent.mkdir(parents=True,exist_ok=True)
+    fd,tmp=tempfile.mkstemp(prefix=path.name+".",suffix=".tmp",dir=str(path.parent))
+    try:
+        with os.fdopen(fd,"wb") as f: f.write(data)
         os.replace(tmp,path)
     finally:
         if os.path.exists(tmp): os.unlink(tmp)
@@ -102,11 +112,13 @@ def main() -> None:
                 "required_source_columns":sorted(REQUIRED),
                 "listing_date_column":listing_col,
                 "outputs":{
+                    "raw_source":"data/reference/NSE_EQUITY_L_source.csv",
                     "security_master":"data/reference/security_master.csv",
                     "universe":"config/universe.csv",
                 },
                 "scope_note":"Exchange security identity only; no NIC-2 or business-segment exposure inferred."
             }
+            atomic_bytes(raw,RAW)
             atomic_csv(out,OUT)
             atomic_csv(universe,UNIVERSE)
             MANIFEST.parent.mkdir(parents=True,exist_ok=True)
