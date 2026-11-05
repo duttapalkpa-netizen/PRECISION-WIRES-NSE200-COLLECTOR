@@ -47,6 +47,9 @@ def main():
         d[c]=pd.to_numeric(d[c],errors="coerce")
     d=d[d.SYMBOL.isin(HOLDINGS)].dropna(subset=["DATE","OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY"])
     d=d.sort_values(["SYMBOL","DATE"]).drop_duplicates(["SYMBOL","DATE"],keep="last")
+    if d.duplicated(["SYMBOL","DATE"]).any(): raise SystemExit("BLOCKED: duplicate symbol/session rows remain")
+    if (d[["OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY"]].dropna() <= 0).any().any(): raise SystemExit("BLOCKED: non-positive OHLCV value")
+    if (d.HIGH_PRICE < d.LOW_PRICE).any(): raise SystemExit("BLOCKED: high below low")
     summaries=[]; daily=[]
     for sym,meta in HOLDINGS.items():
         x=d[d.SYMBOL.eq(sym)].copy().sort_values("DATE").reset_index(drop=True)
