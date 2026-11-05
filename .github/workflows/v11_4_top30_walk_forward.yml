@@ -8,6 +8,7 @@ on:
       - "pipeline/walk_forward_backtest.py"
       - "pipeline/reconcile_walk_forward_maturity.py"
       - "pipeline/finalize_walk_forward_artifact.py"
+      - "pipeline/verify_walk_forward_artifact.py"
       - ".github/workflows/v11_4_top30_walk_forward.yml"
 
 permissions:
@@ -81,4 +82,18 @@ jobs:
           path: |
             outputs/backtest/
             rolling_source_path.txt
+          if-no-files-found: warn
+      - name: Download exact uploaded artifact for independent read-back
+        uses: actions/download-artifact@v4
+        with:
+          name: v11-4-top30-walk-forward-30-cutoffs-${{ github.run_number }}
+          path: artifact_readback
+      - name: Verify exact uploaded artifact against its persisted CSVs
+        run: python pipeline/verify_walk_forward_artifact.py --input artifact_readback/outputs/backtest --report artifact_readback_verification.json
+      - name: Preserve artifact read-back verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v11-4-top30-walk-forward-readback-audit-${{ github.run_number }}
+          path: artifact_readback_verification.json
           if-no-files-found: warn
