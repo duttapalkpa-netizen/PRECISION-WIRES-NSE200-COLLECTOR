@@ -71,9 +71,13 @@ def main():
         x["RESEARCH_SETUP_2_5"]=(x.TREND_OK&x.PARTICIPATION_OK&x.DELIVERY_OK&x.NOT_EXTENDED)
         # Future windows start at T+1. Incomplete tails are intentionally excluded.
         for k in HORIZONS:
-            x[f"FUT{k}_HIGH_PCT"]=(x.groupby("SYMBOL").HIGH_PRICE.transform(lambda z:z.shift(-1).rolling(k,min_periods=k).max())/c-1)*100
-            x[f"FUT{k}_CLOSE_PCT"]=(x.groupby("SYMBOL").CLOSE_PRICE.transform(lambda z:z.shift(-1).rolling(k,min_periods=k).max())/c-1)*100
-            x[f"FUT{k}_LOW_PCT"]=(x.groupby("SYMBOL").LOW_PRICE.transform(lambda z:z.shift(-1).rolling(k,min_periods=k).min())/c-1)*100
+            # Explicit forward windows T+1..T+k; min_count=k excludes incomplete tails.
+            future_high=pd.concat([h.shift(-i) for i in range(1,k+1)],axis=1).max(axis=1,min_count=k)
+            future_close=pd.concat([c.shift(-i) for i in range(1,k+1)],axis=1).max(axis=1,min_count=k)
+            future_low=pd.concat([l.shift(-i) for i in range(1,k+1)],axis=1).min(axis=1,min_count=k)
+            x[f"FUT{k}_HIGH_PCT"]=(future_high/c-1)*100
+            x[f"FUT{k}_CLOSE_PCT"]=(future_close/c-1)*100
+            x[f"FUT{k}_LOW_PCT"]=(future_low/c-1)*100
         matured=x.dropna(subset=[f"FUT{k}_HIGH_PCT" for k in HORIZONS]).copy()
         for cohort_name,cohort in [("ALL_CUTOFFS",matured),("RESEARCH_SETUP_2_5",matured[matured.RESEARCH_SETUP_2_5])]:
             for k in HORIZONS:
