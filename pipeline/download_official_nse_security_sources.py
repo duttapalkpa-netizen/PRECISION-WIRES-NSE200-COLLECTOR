@@ -23,9 +23,12 @@ def csv_check(raw, name):
     rows=list(csv.reader(text.splitlines()))
     if len(rows)<2 or not rows[0]: raise ValueError(f"{name}: empty/header-only CSV")
     norm=[re.sub(r"[^A-Z0-9]","",x.strip().upper()) for x in rows[0]]
-    if any(not x for x in norm) or len(norm)!=len(set(norm)):
-        raise ValueError(f"{name}: blank or duplicate normalized headers")
-    return {"columns":norm,"record_count":len(rows)-1}
+    # NSE SME export may contain empty padding columns; preserve raw bytes but
+    # exclude blank header cells from schema validation. Nonblank duplicates fail closed.
+    nonblank=[x for x in norm if x]
+    if not nonblank or len(nonblank)!=len(set(nonblank)):
+        raise ValueError(f"{name}: empty or duplicate normalized nonblank headers")
+    return {"columns":nonblank,"record_count":len(rows)-1}
 def main():
     out=Path(os.environ.get("NSE_OUT","nse_official_sources")); out.mkdir(parents=True,exist_ok=True)
     entries=[]; failures=[]
