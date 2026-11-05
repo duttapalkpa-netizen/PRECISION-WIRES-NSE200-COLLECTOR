@@ -32,6 +32,11 @@ def parse_row(line: str):
     kind = 'MIXED_PARTIAL_AGGREGATION' if partial and aggregation else 'PARTIAL' if partial else 'AGGREGATION' if aggregation else 'DIRECT'
     return {'nic2025_4digit':nic25,'nic2008_expression_raw':expr,'mapping_type':kind,'partial_flag':partial,'aggregation_flag':aggregation}
 
+# Parser regression checks: ensure plus expressions are preserved and separate rows cannot merge.
+assert parse_row('0113 0113+0128 (p)')['nic2008_expression_raw'] == '0113+0128(P)'
+assert parse_row('0330 0311(p)+0312(p)+0321(p)+0322(p)')['mapping_type'] == 'MIXED_PARTIAL_AGGREGATION'
+assert parse_row('0111 0111')['mapping_type'] == 'DIRECT'
+assert parse_row('0111 0111\n0112 0112') is None
 if not PDF.exists(): raise SystemExit('BLOCKED: official NIC-2025 PDF binary not acquired')
 pdf_bytes = PDF.read_bytes()
 pdf_sha = hashlib.sha256(pdf_bytes).hexdigest()
