@@ -32,7 +32,7 @@ def main():
         raise SystemExit("BLOCKED: normalized 200-session data or NSE security master missing")
     d=pd.read_csv(SRC,dtype={"SYMBOL":str,"ISIN":str})
     d.columns=[str(c).strip().upper() for c in d.columns]
-    required={"SYMBOL","DATE","OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY","DELIV_QTY","DELIV_PER","ISIN"}
+    required={"SYMBOL","DATE","OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY","DELIV_QTY","DELIV_PER"}
     missing=sorted(required-set(d.columns))
     if missing: raise SystemExit(f"BLOCKED: missing normalized columns {missing}")
     m=pd.read_csv(MASTER,dtype=str)
@@ -43,6 +43,22 @@ def main():
             raise SystemExit(f"BLOCKED: NSE Security Master identity mismatch for {sym}")
     d["SYMBOL"]=d.SYMBOL.astype(str).str.upper().str.strip()
     d["DATE"]=pd.to_datetime(d.DATE,errors="coerce")
+    # NSE daily Full Bhavcopy may omit ISIN; join identity from the independently
+    # acquired official Security Master rather than requiring an absent source column.
+    master_ids=m[["SYMBOL","ISIN"]].copy()
+    master_ids["SYMBOL"]=master_ids.SYMBOL.astype(str).str.upper().str.strip()
+    master_ids["ISIN"]=master_ids.ISIN.astype(str).str.upper().str.strip()
+    if "ISIN" in d.columns:
+        source_isin=d["ISIN"].astype(str).str.upper().str.strip()
+        check=d[["SYMBOL"]].copy()
+        check["SOURCE_ISIN"]=source_isin
+        check=check.merge(master_ids,on="SYMBOL",how="left",validate="many_to_one")
+        mismatch=check.SOURCE_ISIN.ne("") & check.SOURCE_ISIN.ne(check.ISIN)
+        if mismatch.any(): raise SystemExit("BLOCKED: daily source ISIN conflicts with NSE Security Master")
+        d=d.drop(columns=["ISIN"])
+    d=d.merge(master_ids,on="SYMBOL",how="left",validate="many_to_one")
+    if d.ISIN.isna().any() or d.ISIN.astype(str).str.strip().eq("").any():
+        raise SystemExit("BLOCKED: symbol not resolvable to an NSE Security Master ISIN")
     for c in ["OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY","DELIV_QTY","DELIV_PER"]:
         d[c]=pd.to_numeric(d[c],errors="coerce")
     d=d[d.SYMBOL.isin(HOLDINGS)].dropna(subset=["DATE","OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY"])
