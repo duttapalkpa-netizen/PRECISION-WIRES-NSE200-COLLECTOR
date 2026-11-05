@@ -4,10 +4,14 @@ on:
     paths:
       - "pipeline/nse_security_identity_reconciliation.py"
       - "qa/test_nse_security_identity_reconciliation.py"
+      - "pipeline/nse_source_provenance.py"
+      - "qa/test_nse_source_provenance.py"
+      - "pipeline/download_official_nse_security_sources.py"
       - ".github/workflows/nse_security_identity_reconciliation_tests.yml"
   workflow_dispatch:
 permissions:
   contents: read
+  actions: write
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -18,4 +22,27 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check pandas
-      - run: python -m unittest qa.test_nse_security_identity_reconciliation -v
+      - run: python -m unittest qa.test_nse_security_identity_reconciliation qa.test_nse_source_provenance -v
+  official-source-acquisition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download and verify official NSE CSVs
+        id: acquire
+        continue-on-error: true
+        run: python pipeline/download_official_nse_security_sources.py
+      - name: Preserve raw bytes and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-official-security-sources-${{ github.run_id }}
+          path: nse_official_sources/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Require at least one acquired source
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1
