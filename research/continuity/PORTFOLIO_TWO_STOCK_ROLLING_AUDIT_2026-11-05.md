@@ -87,3 +87,13 @@ The user's research already had a validated 317-session master. The earlier port
 
 ### Non-changes
 No change to production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A/B/C/D/E, hard gates or UNKNOWN semantics. No synthetic rows, fabricated timestamps, paid sources or portfolio quantity/cost-basis use.
+
+
+
+## 317-source component verification and integration status (2026-11-05)
+- Re-opened the Library source ZIP and independently streamed the merged CSV: ZIP SHA-256 remains `5875be86d9b4753582b24363243ffad9fa18c197e4e7f9eecd7e1d0936ce7880`; merged CSV SHA-256 remains `a6e8c4c703365dfa320df448740690b0b445be4aac6383e0765a488867e85dff`.
+- Independently counted the actual CSV: 765,887 rows, 317 distinct dates (2025-08-06 to 2026-11-03), 3,040 symbols, all series EQ, zero duplicate SYMBOL+SERIES+DATE keys; HINDCOPPER 317 rows and EPACKPEB 279 rows. Manifest and CSV counts agree.
+- The three source Actions artifacts were re-read from GitHub: baseline Run 41633211838 / Artifact 13229637442 / archive SHA `369e5c1dcb8ab60584861564549de07c2d3bce4fb33abcff93724ae3ec99fa52`; 57-session Run 41846486071 / Artifact 13330413906 / archive SHA `f7234520994cf6ab6d878b693e5d9cfba2abc4f7394a0d3f080ca64a919b2ecb`; 60-session Run 41887855100 / Artifact 13352257383 / archive SHA `f3be8d977ecc6905569693b09ac10004e73775db1a54f7aee67eb30feb7c2d3a`.
+- The 57-session dates are 2025-11-04 through 2026-01-27; the 60-session dates are 2025-08-06 through 2025-11-03. Together with the baseline 200, these are disjoint components of the verified 317-session calendar.
+- Added planning record `research/continuity/PORTFOLIO_317_WORKFLOW_INTEGRATION_PLAN_2026-11-05.md` in commit `34f2f9a12dd14faf74cdd5e229316f1c627d36f0`.
+- Integration is NOT yet complete: no new 317-session GitHub workflow run or artifact exists. The attempt to create the assembler source file was blocked by the GitHub write safety layer; do not claim code was committed or the new workflow executed. Keep the already successful 200-session run distinct from the verified local 317-session audit. Next safe action is to add and validate the assembler + separate workflow in a controlled commit, then inspect its run artifact before calling it operational.
