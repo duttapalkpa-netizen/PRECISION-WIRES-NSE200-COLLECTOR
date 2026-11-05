@@ -1,0 +1,111 @@
+name: Portfolio Two-Stock Rolling Audit — Incremental Official NSE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - "pipeline/append_official_nse_sessions.py"
+      - "pipeline/verify_317_artifact_inputs.py"
+      - "pipeline/portfolio_rolling_audit.py"
+      - ".github/workflows/portfolio_two_stock_rolling_audit_incremental.yml"
+  schedule:
+    # 17:00 IST weekdays; scheduled runs activate only on the default branch.
+    - cron: "30 11 * * 1-5"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: portfolio-two-stock-rolling-incremental
+  cancel-in-progress: false
+
+jobs:
+  incremental-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy requests
+      - name: Restore append-only rolling research cache
+        id: rolling-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/processed/nse_eq_rolling_sessions.csv
+            data/processed/nse_eq_rolling_manifest.json
+          key: portfolio-nse-rolling-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            portfolio-nse-rolling-${{ runner.os }}-
+      - name: Download immutable 200-session baseline artifact
+        if: steps.rolling-cache.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: precision-wires-adaptive-92
+          path: artifacts/baseline
+          repository: ${{ github.repository }}
+          run-id: "41633211838"
+          github-token: ${{ github.token }}
+      - name: Download verified 57-session backfill artifact
+        if: steps.rolling-cache.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: nse-57-verified-backfill-2
+          path: artifacts/backfill_57
+          repository: ${{ github.repository }}
+          run-id: "41846486071"
+          github-token: ${{ github.token }}
+      - name: Download verified 60-session backfill artifact
+        if: steps.rolling-cache.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: nse-57-verified-backfill-8
+          path: artifacts/backfill_60
+          repository: ${{ github.repository }}
+          run-id: "41887855100"
+          github-token: ${{ github.token }}
+      - name: Reconstruct immutable 317-session seed on cache miss
+        if: steps.rolling-cache.outputs.cache-hit != 'true'
+        run: |
+          python pipeline/verify_317_artifact_inputs.py
+          python pipeline/append_official_nse_sessions.py --seed
+      - name: Acquire only the latest five published official NSE sessions
+        run: python collector/nse_download.py --sessions 5 --lookback-days 14 --out data/raw/rolling_incremental
+      - name: Append only dates newer than the rolling cache
+        run: python pipeline/append_official_nse_sessions.py
+      - name: Acquire current official NSE Security Master
+        run: python collector/security_master.py
+      - name: Run isolated portfolio audit on rolling history
+        env:
+          PORTFOLIO_SOURCE: data/processed/nse_eq_rolling_sessions.csv
+        run: python pipeline/portfolio_rolling_audit.py
+      - name: Save updated append-only rolling cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/processed/nse_eq_rolling_sessions.csv
+            data/processed/nse_eq_rolling_manifest.json
+          key: portfolio-nse-rolling-${{ runner.os }}-${{ github.run_id }}
+      - name: Upload reproducible incremental evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-two-stock-rolling-incremental-${{ github.run_number }}
+          path: |
+            data/processed/nse_eq_rolling_sessions.csv
+            data/processed/nse_eq_rolling_manifest.json
+            data/processed/nse_eq_317_sessions_manifest.json
+            data/reference/NSE_EQUITY_L_source.csv
+            data/reference/security_master.csv
+            data/reference/security_master_manifest.json
+            data/raw/rolling_incremental/
+            outputs/portfolio/
+          if-no-files-found: warn
