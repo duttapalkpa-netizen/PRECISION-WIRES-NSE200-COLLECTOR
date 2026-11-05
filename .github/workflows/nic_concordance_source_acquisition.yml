@@ -1,0 +1,32 @@
+name: Official NIC Concordance Source Acquisition
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nic-concordance-source-acquisition
+  cancel-in-progress: false
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/iip-41-vintage-audit-clean
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install XLSX parser
+        run: pip install openpyxl
+      - name: Download official NIC PDFs and workbooks; hash raw bytes
+        run: python pipeline/acquire_nic_official_sources.py
+      - name: Upload source binaries and acquisition manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-nic-concordance-sources-${{ github.run_number }}
+          path: artifacts/nic_concordance_audit/
+          if-no-files-found: error
+          retention-days: 90
