@@ -1,7 +1,7 @@
 name: IIP 41-vintage ingestion and revision audit
 on:
   push:
-    branches: [fix/iip-41-vintage-ingestion-audit]
+    branches: [fix/iip-41-vintage-ingestion-audit, fix/iip-41-vintage-audit-clean]
     paths:
       - "pipeline/audit_iip_41_vintages.py"
       - ".github/workflows/iip_41_vintage_audit.yml"
