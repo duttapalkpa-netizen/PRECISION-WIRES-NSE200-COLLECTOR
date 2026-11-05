@@ -6,11 +6,11 @@ CORE-672 diagnostics, or engines. It measures descriptive setup/outcome rates
 on NSE daily OHLCV + deliverable history with strictly forward labels.
 """
 from __future__ import annotations
-import hashlib, json
+import hashlib, json, os
 from pathlib import Path
 import pandas as pd
 
-SRC=Path("data/processed/nse_eq_200_sessions.csv")
+SRC=Path(os.environ.get("PORTFOLIO_SOURCE", "data/processed/nse_eq_200_sessions.csv"))
 MASTER=Path("data/reference/security_master.csv")
 OUT=Path("outputs/portfolio")
 OUT.mkdir(parents=True, exist_ok=True)
