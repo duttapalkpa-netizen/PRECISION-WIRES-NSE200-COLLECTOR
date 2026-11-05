@@ -37,3 +37,11 @@ This is a portfolio-specific diagnostic overlay, not a trade recommendation and 
 
 ## Non-changes
 No use of portfolio quantity, average purchase price or P&L to bias the model. No guessed NIC-2 mapping. No synthetic data, fabricated timestamps, look-ahead, hard-gate relaxation, paid APIs or external services.
+
+## First execution and schema correction
+- Run 41979992934 successfully acquired 200 NSE sessions and built 499,798 normalized rows across 2,991 symbols. The run took approximately three minutes for the 200-session acquisition and dataset build.
+- The portfolio audit step then correctly blocked because the daily Full Bhavcopy schema did not include an ISIN column. This was an audit-code schema assumption, not a failure of the NSE data acquisition.
+- Corrective commit 9fa5985cacec177420ff0870bc04a10a83f30cd2 changed the audit to resolve symbol identity from the independently validated NSE Security Master; if source ISIN is present it is cross-checked, not trusted blindly.
+- Script also retains UNKNOWN when delivery evidence is missing and uses exact forward windows T+1..T+H.
+- Follow-up workflow 41980329391 was queued at record time; preceding cache-enabled workflow 41980203487 was still acquiring historical sessions. No final rolling metrics are claimed until a successful run artifact contains all three portfolio outputs.
+- Rolling cache is configured with per-run keys and a shared restore prefix to make later daily runs incremental.
