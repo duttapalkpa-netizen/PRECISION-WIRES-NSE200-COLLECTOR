@@ -110,7 +110,7 @@ def main() -> None:
             atomic_csv(out,OUT)
             atomic_csv(universe,UNIVERSE)
             MANIFEST.parent.mkdir(parents=True,exist_ok=True)
-            MANIFEST.write_text(json.dumps(manifest,indent=2)+"\\n",encoding="utf-8")
+            MANIFEST.write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
             print(json.dumps(manifest,indent=2))
             return
         except Exception as exc:
