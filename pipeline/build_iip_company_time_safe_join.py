@@ -105,12 +105,15 @@ def main() -> int:
         Path(a.report).write_text(json.dumps(report,indent=2)+"\n")
         print(json.dumps(report,indent=2)); return 2
 
-    eligible = verified[
-        (verified.eff_from <= cutoff.tz_convert("UTC")) &
-        (verified.eff_to.isna() | (verified.eff_to >= cutoff.tz_convert("UTC"))) &
-        (verified.evidence_ts <= cutoff.tz_convert("UTC")) &
-        (verified.nic_2025_2digit.isin(valid_codes))
-    ]
+    if verified.empty:
+        eligible = verified.copy()
+    else:
+        eligible = verified[
+            (verified.eff_from <= cutoff.tz_convert("UTC")) &
+            (verified.eff_to.isna() | (verified.eff_to >= cutoff.tz_convert("UTC"))) &
+            (verified.evidence_ts <= cutoff.tz_convert("UTC")) &
+            (verified.nic_2025_2digit.isin(valid_codes))
+        ]
     # Release timestamp, not reference month, controls information availability.
     vintages = i[i.release_ts <= cutoff.tz_convert("UTC")].copy()
     joined = eligible.merge(vintages, on="nic_2025_2digit", how="inner", validate="many_to_many")
