@@ -114,6 +114,31 @@ def main():
                           "maturity":metrics["outcome_maturity_counts"][k]}
                        for k in metrics["precision"]}}
     (root/"walk_forward_maturity_reconciliation.json").write_text(json.dumps(report,indent=2)+"\n")
-    print(json.dumps(report,indent=2))
+    # Read-back verification: certify the exact CSV files that will be uploaded.
+    persisted_pred=pd.read_csv(root/"walk_forward_predictions.csv")
+    persisted_uni=pd.read_csv(root/"walk_forward_universe_probabilities.csv")
+    persisted_report=json.loads((root/"walk_forward_maturity_reconciliation.json").read_text())
+    for h,t,_ in [(1,5,"P5_H1"),(3,10,"P10_H3"),(5,20,"P20_H5")]:
+        col=f"FUT{h}_HIGH_PCT"
+        pe=persisted_pred[persisted_pred[col].notna()]
+        ue=persisted_uni[persisted_uni[col].notna()]
+        disk_hits=int((pe[col]>=t).sum())
+        disk_winners=int((ue[col]>=t).sum())
+        key=f"T{t}_H{h}"
+        got=persisted_report["metrics"][key]["maturity"]
+        if (disk_hits!=got["top30_hits"] or len(pe)!=got["top30_matured"]
+                or disk_winners!=got["universe_winners"] or len(ue)!=got["universe_matured"]):
+            raise SystemExit(
+                f"BLOCKED: persisted CSV/JSON mismatch {key}: "
+                f"top_hits={disk_hits}/{got['top30_hits']}, "
+                f"universe_winners={disk_winners}/{got['universe_winners']}"
+            )
+    if len(persisted_pred)!=900 or persisted_pred.groupby("CUT_OFF").size().ne(30).any():
+        raise SystemExit("BLOCKED: persisted Top-30 CSV row/cutoff integrity failed")
+    metrics_disk=json.loads((root/"walk_forward_metrics.json").read_text())
+    for key in persisted_report["metrics"]:
+        if metrics_disk["outcome_maturity_counts"][key]!=persisted_report["metrics"][key]["maturity"]:
+            raise SystemExit(f"BLOCKED: metrics JSON and reconciliation JSON disagree for {key}")
+    print(json.dumps(persisted_report,indent=2))
 
 if __name__=="__main__": main()
