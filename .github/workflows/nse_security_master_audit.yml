@@ -2,6 +2,10 @@ name: NSE Equity Security Master — Identity & Provenance Audit
 
 on:
   workflow_dispatch:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+  schedule:
+    - cron: "30 4 * * 1-5"
 
 permissions:
   contents: read
