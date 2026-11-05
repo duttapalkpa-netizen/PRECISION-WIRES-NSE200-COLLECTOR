@@ -32,13 +32,24 @@
 - The 1,124 rows are observed value differences, not certified revisions.
 - 684 policy-stage-aligned candidate transitions remain uncertified; Batch 001 has certified 9 exact April-2023 cell pairs against PIB statements and both source workbook hashes.
 - 431 historical-panel/out-of-window transitions remain unresolved.
-- Official PIB release page evidence is now verified for 40 of 40 unique catalogue vintages. July 2024 (PRID 2054214) and May 2025 (PRID 2140774) were verified in the 3 Nov gap-closure addendum; see `IIP_OFFICIAL_RELEASE_GAP_CLOSURE_ADDENDUM_2026-11-03.md`.
+- Official PIB release page evidence is verified for 40 of 40 unique catalogue vintages. July 2024 and May 2025 were verified in the 3 Nov gap-closure addendum; see `IIP_OFFICIAL_RELEASE_GAP_CLOSURE_ADDENDUM_2026-11-03.md`.
 - The April 2026 catalogue XLSX remains HTTP 404 even though the official Quick PDF exists.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, or CORE-672 changes. UNKNOWN is neither PASS nor FAIL. No synthetic rows, fabricated timestamps, unsupported source promotion, or Hard Gate relaxation.
-
 
 ## 3 Nov 2026 official release-page gap closure
 - July 2024: PIB PRID 2054214, 12 Sep 2024 17:30 IST, Quick Estimate.
 - May 2025: PIB PRID 2140774, 30 Jun 2025 16:00 IST, Quick Estimate.
 - Official page coverage: 40/40; UNKNOWN official release-page rows: 0.
-- This closes only the PIB page lookup gap. April 2026 catalogue XLSX remains HTTP 404; certified cell-level revisions now total 9 (Batch 001 only); Hard Gate remains BLOCKED.
+- This closes only the PIB page lookup gap. April 2026 catalogue XLSX remains HTTP 404; certified cell-level revisions total 9 (Batch 001 only); Hard Gate remains BLOCKED.
+
+## 5 Nov 2026 artifact re-verification — append-only
+- Re-verified workflow Run #41646170762, job `validate`: conclusion `success`.
+- Artifact ID: `13235815514`; artifact name: `iip-41-vintage-ingestion-revision-audit`.
+- GitHub artifact digest and independently recomputed ZIP SHA-256 both equal: `5f9a2fa87b749607a750b4a1753be65f59483f004ad29c64a5a308329c7e4b90`.
+- Current snapshot: 41 qualifying catalogue rows; 40 unique vintage IDs; 39 XLSX payloads downloaded and parsed; 1 HTTP 404; 125,220 observations; 1,124 observed within-series differences.
+- Exact failed row: `IIPMFY26002APR`, April 2026, catalogue code 158504, HTTP 404, `HTTP_404`; retain as a failed raw-workbook acquisition, not a successful vintage.
+- January 2026 remains a dedicated catalogue-row gap but its observations are present in six later vintages; do not label it a missing observation.
+- Run success confirms the audit job and artifact upload only. The embedded audit status remains `BLOCKED_WITH_GAPS`; Hard Gate remains `BLOCKED`.
+- The two release-page lookups were independently rechecked against PIB: July 2024 PRID 2054214 (12 Sep 2024 17:30 IST) and May 2025 PRID 2140774 (30 Jun 2025 16:00 IST). Official PIB page coverage remains 40/40.
+- Remaining work: 684 policy-stage-aligned candidates are not cell-certified; 431 historical-panel/out-of-window transitions remain unresolved; April 2026 raw catalogue XLSX remains HTTP 404. Do not promote the 1,124 observed differences to certified revisions.
+- This appendix changes documentation only; no production selector, RANKING_SCORE, +1 PRESSURE_FADE, or CORE-672 logic changed.
