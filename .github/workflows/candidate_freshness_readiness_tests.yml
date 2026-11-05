@@ -1,0 +1,29 @@
+name: Candidate Freshness Readiness Unit Tests
+
+on:
+  push:
+    branches:
+      - research/candidate-freshness-audit
+    paths:
+      - "qa/evaluate_candidate_freshness_gate.py"
+      - "qa/test_candidate_freshness_gate.py"
+      - ".github/workflows/candidate_freshness_readiness_tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install bounded dependency
+        run: python -m pip install --disable-pip-version-check "pandas>=2.0,<3"
+      - name: Run freshness readiness unit tests
+        run: python -m unittest qa.test_candidate_freshness_gate -v
