@@ -6,11 +6,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
 import csv, re
 
 SOURCES = {
  "equity": "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
+ "sme_equity": "https://nsearchives.nseindia.com/emerge/corporates/content/SME_EQUITY_L.csv",
  "etf": "https://nsearchives.nseindia.com/content/equities/eq_etfseclist.csv",
  "symbol_changes": "https://nsearchives.nseindia.com/content/equities/symbolchange.csv",
 }
@@ -47,7 +47,6 @@ def main():
                     if ctype not in {"text/csv","application/csv","application/octet-stream","application/vnd.ms-excel"}:
                         raise ValueError(f"{name}: unexpected content-type {ctype!r}")
                     stats=csv_check(raw,name)
-                    # Save only after all checks pass.
                     path=out/(name+".csv"); path.write_bytes(raw)
                     entries.append({"name":name,"source_url":url,"final_url":response.geturl(),
                         "report_date":datetime.now(timezone.utc).date().isoformat(),
