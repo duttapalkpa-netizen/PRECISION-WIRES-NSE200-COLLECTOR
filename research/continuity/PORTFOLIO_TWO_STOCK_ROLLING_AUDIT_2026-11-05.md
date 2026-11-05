@@ -45,3 +45,45 @@ No use of portfolio quantity, average purchase price or P&L to bias the model. N
 - Script also retains UNKNOWN when delivery evidence is missing and uses exact forward windows T+1..T+H.
 - Follow-up workflow 41980329391 was queued at record time; preceding cache-enabled workflow 41980203487 was still acquiring historical sessions. No final rolling metrics are claimed until a successful run artifact contains all three portfolio outputs.
 - Rolling cache is configured with per-run keys and a shared restore prefix to make later daily runs incremental.
+
+
+## 317-session master reuse and portfolio audit result (2026-11-05)
+
+### Correction to prior workflow design
+The user's research already had a validated 317-session master. The earlier portfolio workflow independently reacquired 200 sessions because its initial implementation hard-coded a 200-session minimum and used a separate 200-session collector. Calling that a 200-session completion without distinguishing it from the existing 317-session research master was misleading. Do not repeat historical acquisition when the validated master is available.
+
+### Recovered source master
+- Library source: `NSE_317_SESSION_MASTER_MERGE_2026-11-05.zip`
+- Source ZIP SHA-256: `5875be86d9b4753582b24363243ffad9fa18c197e4e7f9eecd7e1d0936ce7880`
+- Dataset: `nse_eq_317_sessions.csv`
+- Dataset SHA-256: `a6e8c4c703365dfa320df448740690b0b445be4aac6383e0765a488867e85dff`
+- 317 dates: 2025-08-06 through 2026-11-03; 765,887 EQ rows; 3,040 symbols; zero duplicate SYMBOL+SERIES+DATE rows.
+- HINDCOPPER: 317 sessions (2025-08-06 through 2026-11-03).
+- EPACKPEB: 279 sessions (2025-10-01 through 2026-11-03), reflecting its shorter listing history; no missing history was synthesized.
+- Source master embeds OHLCV and delivery quantity/percentage fields. The package manifest lists the 200-session baseline plus 57- and 60-session verified backfills; the 317-session merge was verified separately from the fresh portfolio workflow.
+
+### Portfolio historical audit output (research-only; local execution against recovered 317-session master)
+- Package: `PRECISION_WIRES_PORTFOLIO_317_SESSION_ROLLING_AUDIT_2026-11-05.zip`
+- Package SHA-256: `fe561c593b25c0ac2de5beb1e5874e967d1342bb32d0c61b5120b58e3104661c`
+- Saved to Library root at `/PRECISION_WIRES_PORTFOLIO_317_SESSION_ROLLING_AUDIT_2026-11-05.zip`.
+- Identity reference uses the two official NSE Integrated Filing URLs and ISINs, not a fabricated copy of the full NSE EQUITY_L security master.
+- Latest historical session in this 317-master audit: 2026-11-03. Latest session has no matured forward outcome and is excluded from outcome denominators.
+- All-cutoff baseline metrics (high-touch / maximum-close-confirmation rates):
+  - HINDCOPPER: T+1 2% = 40.190% / 22.152%; T+3 = 60.510% / 39.490%; T+5 = 69.551% / 49.679%.
+  - HINDCOPPER: T+1 3% = 28.165% / 14.873%; T+3 = 49.682% / 32.166%; T+5 = 58.974% / 42.308%.
+  - HINDCOPPER: T+1 5% = 12.658% / 5.380%; T+3 = 30.892% / 19.427%; T+5 = 41.346% / 31.731%.
+  - EPACKPEB: T+1 2% = 54.317% / 23.022%; T+3 = 72.101% / 43.841%; T+5 = 76.642% / 52.920%.
+  - EPACKPEB: T+1 3% = 40.288% / 17.626%; T+3 = 59.783% / 35.507%; T+5 = 67.153% / 45.620%.
+  - EPACKPEB: T+1 5% = 15.827% / 8.993%; T+3 = 38.406% / 26.087%; T+5 = 48.540% / 36.496%.
+- Setup-qualified sample sizes were very small: HINDCOPPER 2 cutoffs, EPACKPEB 3 cutoffs. These rates are descriptive only and are not adequate evidence of predictive edge. Do not relax setup gates to inflate sample size.
+- Latest 2026-11-03 daily setup state was false for both stocks; latest forward labels remain NOT_MATURED.
+- This 317-session audit is a local research computation and is not a GitHub Actions run. The saved ZIP contains daily status, rolling metrics, JSON report, identity reference and manifest.
+
+### GitHub workflow failure diagnosis and fix
+- Run `41981518300` failed in the outcome aggregation step because pandas DataFrame.max() does not accept `min_count`. NSE security master acquisition, 200-session acquisition and normalized dataset build all succeeded.
+- Fixed complete-window aggregation using explicit per-row completeness masks in commit `71b52c5f87bb94ee63cf6fcd24a3c8585a4c11cc`; blob SHA `0285a29104edb925fd9342cd62db6b894fd9d208`.
+- Run `41982221358` succeeded, artifact ID `13395020000`, artifact SHA-256 `41c9ebafbd7d45080b4d0a6e6f87dfed9e2483d397b3fc975e80993b40c140a7`. It used a separate 200-session dataset with 200 sessions per stock and latest session 2026-11-04. This success does NOT replace or supersede the 317-session master audit above.
+- The workflow still needs a controlled integration path to consume the existing 317-session master/backfill components for ongoing GitHub-based portfolio refreshes; do not describe the current 200-session workflow as a 317-session run.
+
+### Non-changes
+No change to production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A/B/C/D/E, hard gates or UNKNOWN semantics. No synthetic rows, fabricated timestamps, paid sources or portfolio quantity/cost-basis use.
