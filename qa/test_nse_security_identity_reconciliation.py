@@ -113,7 +113,7 @@ class IdentityHelpersTest(unittest.TestCase):
             import pandas as pd
             result = pd.read_csv(out / "nse_identity_reconciliation.csv")
             self.assertEqual(result.loc[0, "STATUS"], "UNKNOWN_ISIN_CONFLICT")
-            self.assertEqual(result.loc[0, "RESOLVED_SYMBOL"], "")
+            self.assertTrue(pd.isna(result.loc[0, "RESOLVED_SYMBOL"]))
 
     def test_no_production_mutation(self):
         source=SCRIPT.read_text()
