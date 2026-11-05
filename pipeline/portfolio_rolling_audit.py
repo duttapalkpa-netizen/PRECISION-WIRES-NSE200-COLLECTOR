@@ -99,10 +99,15 @@ def main():
         x.loc[x.SETUP_EVIDENCE_COMPLETE,"RESEARCH_SETUP_2_5"]=setup_condition[x.SETUP_EVIDENCE_COMPLETE].astype(bool)
         # Future windows start at T+1. Incomplete tails are intentionally excluded.
         for k in HORIZONS:
-            # Explicit forward windows T+1..T+k; min_count=k excludes incomplete tails.
-            future_high=pd.concat([h.shift(-i) for i in range(1,k+1)],axis=1).max(axis=1,min_count=k)
-            future_close=pd.concat([c.shift(-i) for i in range(1,k+1)],axis=1).max(axis=1,min_count=k)
-            future_low=pd.concat([l.shift(-i) for i in range(1,k+1)],axis=1).min(axis=1,min_count=k)
+            # Explicit forward windows T+1..T+k. pandas DataFrame.max/min do not
+            # support min_count; require every forward session before aggregating.
+            high_window=pd.concat([h.shift(-i) for i in range(1,k+1)],axis=1)
+            close_window=pd.concat([c.shift(-i) for i in range(1,k+1)],axis=1)
+            low_window=pd.concat([l.shift(-i) for i in range(1,k+1)],axis=1)
+            complete=high_window.notna().all(axis=1)&close_window.notna().all(axis=1)&low_window.notna().all(axis=1)
+            future_high=high_window.max(axis=1).where(complete)
+            future_close=close_window.max(axis=1).where(complete)
+            future_low=low_window.min(axis=1).where(complete)
             x[f"FUT{k}_HIGH_PCT"]=(future_high/c-1)*100
             x[f"FUT{k}_CLOSE_PCT"]=(future_close/c-1)*100
             x[f"FUT{k}_LOW_PCT"]=(future_low/c-1)*100
