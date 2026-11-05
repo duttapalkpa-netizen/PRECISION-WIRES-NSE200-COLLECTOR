@@ -1,0 +1,34 @@
+name: NSE official security master acquisition
+on:
+  pull_request:
+    paths:
+      - "pipeline/download_official_nse_security_sources.py"
+      - ".github/workflows/nse_official_security_source_acquisition.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download and verify official NSE CSVs
+        id: acquire
+        continue-on-error: true
+        run: python pipeline/download_official_nse_security_sources.py
+      - name: Upload raw source bytes and provenance manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-official-security-sources-${{ github.run_id }}
+          path: nse_official_sources/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Fail if no official source was acquired
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1

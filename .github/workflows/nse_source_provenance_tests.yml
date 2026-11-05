@@ -1,0 +1,20 @@
+name: NSE source provenance manifest tests
+on:
+  pull_request:
+    paths:
+      - "pipeline/nse_source_provenance.py"
+      - "qa/test_nse_source_provenance.py"
+      - ".github/workflows/nse_source_provenance_tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest qa.test_nse_source_provenance -v
