@@ -71,7 +71,10 @@ def main():
         x["PARTICIPATION_OK"]=x.RVOL20>=1.2
         x["DELIVERY_OK"]=x.DELIV_GAP_PP>=0
         x["NOT_EXTENDED"]=(x.DIST_HIGH20_PCT<=7)&(x.RET5_PCT<8)
-        x["RESEARCH_SETUP_2_5"]=(x.TREND_OK&x.PARTICIPATION_OK&x.DELIVERY_OK&x.NOT_EXTENDED)
+        x["SETUP_EVIDENCE_COMPLETE"]=x[["EMA20","EMA50","RVOL20","DELIV_GAP_PP","DIST_HIGH20_PCT","RET5_PCT"]].notna().all(axis=1)
+        setup_condition=x.TREND_OK&x.PARTICIPATION_OK&x.DELIVERY_OK&x.NOT_EXTENDED
+        x["RESEARCH_SETUP_2_5"]=pd.Series(pd.NA,index=x.index,dtype="boolean")
+        x.loc[x.SETUP_EVIDENCE_COMPLETE,"RESEARCH_SETUP_2_5"]=setup_condition[x.SETUP_EVIDENCE_COMPLETE].astype(bool)
         # Future windows start at T+1. Incomplete tails are intentionally excluded.
         for k in HORIZONS:
             # Explicit forward windows T+1..T+k; min_count=k excludes incomplete tails.
@@ -82,7 +85,7 @@ def main():
             x[f"FUT{k}_CLOSE_PCT"]=(future_close/c-1)*100
             x[f"FUT{k}_LOW_PCT"]=(future_low/c-1)*100
         matured=x.dropna(subset=[f"FUT{k}_HIGH_PCT" for k in HORIZONS]).copy()
-        for cohort_name,cohort in [("ALL_CUTOFFS",matured),("RESEARCH_SETUP_2_5",matured[matured.RESEARCH_SETUP_2_5])]:
+        for cohort_name,cohort in [("ALL_CUTOFFS",matured),("RESEARCH_SETUP_2_5",matured[matured.RESEARCH_SETUP_2_5.fillna(False)])]:
             for k in HORIZONS:
                 for t in TARGETS:
                     vals=cohort[f"FUT{k}_HIGH_PCT"]
@@ -110,8 +113,9 @@ def main():
             "ret5_pct":round(float(latest.RET5_PCT),3),"ret20_pct":round(float(latest.RET20_PCT),3),
             "distance_from_20d_high_pct":round(float(latest.DIST_HIGH20_PCT),3),
             "trend_ok":bool(latest.TREND_OK),"participation_ok":bool(latest.PARTICIPATION_OK),
-            "delivery_ok":bool(latest.DELIVERY_OK),"not_extended":bool(latest.NOT_EXTENDED),
-            "research_setup_2_5":bool(latest.RESEARCH_SETUP_2_5),
+            "delivery_ok":bool(latest.DELIVERY_OK) if pd.notna(latest.DELIV_GAP_PP) else None,
+            "not_extended":bool(latest.NOT_EXTENDED) if pd.notna(latest.DIST_HIGH20_PCT) and pd.notna(latest.RET5_PCT) else None,
+            "research_setup_2_5":(bool(latest.RESEARCH_SETUP_2_5) if pd.notna(latest.RESEARCH_SETUP_2_5) else "UNKNOWN"),
             "latest_forward_outcomes":"NOT_MATURED; excluded from backtest hit-rate denominator",
         })
     pd.DataFrame(summaries).to_csv(OUT/"portfolio_rolling_metrics.csv",index=False)
