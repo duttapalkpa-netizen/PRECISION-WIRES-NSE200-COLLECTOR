@@ -43,11 +43,15 @@ def main():
             raise SystemExit(f"BLOCKED: NSE Security Master identity mismatch for {sym}")
     d["SYMBOL"]=d.SYMBOL.astype(str).str.upper().str.strip()
     d["DATE"]=pd.to_datetime(d.DATE,errors="coerce")
-    # NSE daily Full Bhavcopy may omit ISIN; join identity from the independently
-    # acquired official Security Master rather than requiring an absent source column.
+    # Restrict the join to the two explicitly requested holdings first. The
+    # normalized market-wide file also contains non-EQ/non-master symbols;
+    # requiring an ISIN for every market row would create false failures.
+    d=d[d.SYMBOL.isin(HOLDINGS)].copy()
     master_ids=m[["SYMBOL","ISIN"]].copy()
     master_ids["SYMBOL"]=master_ids.SYMBOL.astype(str).str.upper().str.strip()
     master_ids["ISIN"]=master_ids.ISIN.astype(str).str.upper().str.strip()
+    if master_ids["SYMBOL"].duplicated().any():
+        raise SystemExit("BLOCKED: duplicate SYMBOL rows in NSE Security Master")
     if "ISIN" in d.columns:
         source_isin=d["ISIN"].astype(str).str.upper().str.strip()
         check=d[["SYMBOL"]].copy()
@@ -57,8 +61,10 @@ def main():
         if mismatch.any(): raise SystemExit("BLOCKED: daily source ISIN conflicts with NSE Security Master")
         d=d.drop(columns=["ISIN"])
     d=d.merge(master_ids,on="SYMBOL",how="left",validate="many_to_one")
-    if d.ISIN.isna().any() or d.ISIN.astype(str).str.strip().eq("").any():
-        raise SystemExit("BLOCKED: symbol not resolvable to an NSE Security Master ISIN")
+    for sym,meta in HOLDINGS.items():
+        rows=d[d.SYMBOL.eq(sym)]
+        if rows.empty or rows.ISIN.isna().any() or not rows.ISIN.astype(str).str.upper().eq(meta["isin"]).all():
+            raise SystemExit(f"BLOCKED: {sym} daily rows do not resolve to the expected NSE Security Master ISIN")
     for c in ["OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY","DELIV_QTY","DELIV_PER"]:
         d[c]=pd.to_numeric(d[c],errors="coerce")
     d=d[d.SYMBOL.isin(HOLDINGS)].dropna(subset=["DATE","OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY"])
