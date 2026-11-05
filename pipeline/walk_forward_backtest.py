@@ -15,11 +15,11 @@ outputs/backtest/behavioral_dna_library.json
 outputs/backtest/diagnostic_separation_672.csv
 """
 from pathlib import Path
-import json
+import json, os
 import numpy as np
 import pandas as pd
 
-SRC=Path("data/processed/nse_eq_200_sessions.csv")
+SRC=Path(os.environ.get("WF_SOURCE", "data/processed/nse_eq_200_sessions.csv"))
 OUT=Path("outputs/backtest")
 OUT.mkdir(parents=True,exist_ok=True)
 
@@ -96,11 +96,14 @@ def add_features(df):
     return df
 
 def future_outcomes(df):
-    g=df.groupby("SYMBOL",sort=False)
+    """Strictly complete T+1..T+H labels; partial tail windows stay NaN."""
     for h in [1,3,5]:
-        fut=g["HIGH_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
+        high=pd.concat([df.groupby("SYMBOL",sort=False)["HIGH_PRICE"].shift(-i) for i in range(1,h+1)],axis=1)
+        close=pd.concat([df.groupby("SYMBOL",sort=False)["CLOSE_PRICE"].shift(-i) for i in range(1,h+1)],axis=1)
+        complete=high.notna().all(axis=1)&close.notna().all(axis=1)
+        fut=high.max(axis=1).where(complete)
+        futclose=close.max(axis=1).where(complete)
         df[f"FUT{h}_HIGH_PCT"]=(fut/df["CLOSE_PRICE"]-1)*100
-        futclose=g["CLOSE_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
         df[f"FUT{h}_CLOSE_PCT"]=(futclose/df["CLOSE_PRICE"]-1)*100
     return df
 
@@ -527,10 +530,18 @@ def main():
         if x.empty: continue
 
         # Train only on earlier cutoffs: strict expanding-window, no look-ahead.
-        prior=df[(df["DATE"]<dt)&(df["HISTORY_DEPTH_AT_T"].fillna(0)>=20)].copy()
+        # Embargo five sessions before each test cutoff so training labels have matured.
+        cutoff_idx=dates.index(dt)
+        train_end_idx=cutoff_idx-6
+        if train_end_idx<0:
+            prior=df.iloc[0:0].copy()
+        else:
+            train_end_date=dates[train_end_idx]
+            prior=df[(df["DATE"]<=train_end_date)&(df["HISTORY_DEPTH_AT_T"].fillna(0)>=20)].copy()
         prior=prior[~prior["ABNORMAL_RETURN_FLAG"]].copy()
         for target,h in [("WIN5_H1",1),("WIN10_H3",3),("WIN20_H5",5)]:
-            prior[target]=(prior[f"FUT{h}_HIGH_PCT"]>=({"WIN5_H1":5,"WIN10_H3":10,"WIN20_H5":20}[target])).astype(int)
+            vals=prior[f"FUT{h}_HIGH_PCT"]
+            prior[target]=np.where(vals.notna(),(vals>=({"WIN5_H1":5,"WIN10_H3":10,"WIN20_H5":20}[target])).astype(float),np.nan)
         train=prior.dropna(subset=prob_features+["WIN5_H1","WIN10_H3","WIN20_H5"])
         cal_meta={}
         for target,col in [("WIN5_H1","P5_H1"),("WIN10_H3","P10_H3"),("WIN20_H5","P20_H5")]:
@@ -577,15 +588,19 @@ def main():
                 score=ab[variant]
                 order=score.rank(method="first",ascending=False)
                 chosen=order<=30
-                winners=(x[f"FUT{h}_HIGH_PCT"]>=t)
+                outcome=x[f"FUT{h}_HIGH_PCT"]
+                matured=outcome.notna()
+                winners=outcome>=t
+                selected_matured=chosen&matured
+                hits=int((selected_matured&winners).sum())
+                n_selected=int(selected_matured.sum())
+                n_winners=int((matured&winners).sum())
                 ablation_rows.append({
                     "CUT_OFF":dt.date(),"VARIANT":variant,"TARGET":f"T{t}_H{h}",
-                    "TOP_N":int(chosen.sum()),
-                    "HITS":int((chosen&winners).sum()),
-                    "UNIVERSE_WINNERS":int(winners.sum()),
-                    "UNIVERSE_ROWS":int(len(x)),
-                    "PRECISION":float((chosen&winners).sum()/chosen.sum()) if chosen.sum() else np.nan,
-                    "RECALL":float((chosen&winners).sum()/winners.sum()) if winners.sum() else np.nan,
+                    "TOP_N":n_selected,"HITS":hits,"UNIVERSE_WINNERS":n_winners,
+                    "UNIVERSE_ROWS":int(matured.sum()),
+                    "PRECISION":float(hits/n_selected) if n_selected else np.nan,
+                    "RECALL":float(hits/n_winners) if n_winners else np.nan,
                 })
         x=x.sort_values(["RANKING_SCORE","WINNER_PROBABILITY","TOMORROW_EXPANSION_SCORE","SYMBOL"],
                         ascending=[False,False,False,True]).copy()
@@ -593,6 +608,7 @@ def main():
         for _,r in x.iterrows():
             universe_predictions.append({"CUT_OFF":dt.date(),"SYMBOL":r["SYMBOL"],
                 "P5_H1":r["P5_H1"],"P10_H3":r["P10_H3"],"P20_H5":r["P20_H5"],
+                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"],
                 "P5_H1_PCTL":r["P5_H1_PCTL"],"P10_H3_PCTL":r["P10_H3_PCTL"],"P20_H5_PCTL":r["P20_H5_PCTL"],
                 "WINNER_PROBABILITY":r["WINNER_PROBABILITY"],"WINNER_PROBABILITY_PCTL":r["WINNER_PROBABILITY_PCTL"],
                 "RECOVERY_SCORE":r["RECOVERY_SCORE"],"SEPARATION_SCORE":r["SEPARATION_SCORE"],
@@ -694,15 +710,19 @@ def main():
              "ranking":"WINNER_PROBABILITY_PCTL with penalty-state adjustment",
              "probability_targets":["P5_H1","P10_H3","P20_H5"],
              "precision":{},"recall":{},"base_rate":{},"lift":{},"state_performance":{}}
-    all_by_date=df[df["DATE"].isin(pd.to_datetime(cutoffs))].copy()
+    all_by_date=universe_pred.copy()
     for h,t in [(1,5),(3,10),(5,20)]:
         key=f"T{t}_H{h}"
-        hits=int((pred[f"FUT{h}_HIGH_PCT"]>=t).sum())
-        universe=int((all_by_date[f"FUT{h}_HIGH_PCT"]>=t).sum())
-        metrics["precision"][key]=float(hits/len(pred)) if len(pred) else None
+        p_eval=pred[pred[f"FUT{h}_HIGH_PCT"].notna()]
+        u_eval=all_by_date[all_by_date[f"FUT{h}_HIGH_PCT"].notna()]
+        hits=int((p_eval[f"FUT{h}_HIGH_PCT"]>=t).sum())
+        universe=int((u_eval[f"FUT{h}_HIGH_PCT"]>=t).sum())
+        precision=float(hits/len(p_eval)) if len(p_eval) else None
+        base=float(universe/len(u_eval)) if len(u_eval) else None
+        metrics["precision"][key]=precision
         metrics["recall"][key]=float(hits/universe) if universe else None
-        metrics["base_rate"][key]=float(universe/len(all_by_date)) if len(all_by_date) else None
-        metrics["lift"][key]=float((hits/len(pred))/(universe/len(all_by_date))) if universe and len(all_by_date) else None
+        metrics["base_rate"][key]=base
+        metrics["lift"][key]=float(precision/base) if universe and precision is not None and base else None
     if not pred.empty:
         for state,g in pred.groupby("STATE"):
             metrics["state_performance"][state]={
