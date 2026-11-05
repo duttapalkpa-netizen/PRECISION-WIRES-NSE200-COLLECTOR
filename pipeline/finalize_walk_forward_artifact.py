@@ -5,8 +5,8 @@ from pathlib import Path
 import pandas as pd
 
 ROOT=Path("outputs/backtest")
-pred=pd.read_csv(ROOT/"walk_forward_predictions.csv")
-uni=pd.read_csv(ROOT/"walk_forward_universe_probabilities.csv")
+pred=pd.read_csv(ROOT/"walk_forward_predictions.csv", float_precision="round_trip")
+uni=pd.read_csv(ROOT/"walk_forward_universe_probabilities.csv", float_precision="round_trip")
 for name,df in [("predictions",pred),("universe",uni)]:
     if df.duplicated(["CUT_OFF","SYMBOL"]).any():
         raise SystemExit(f"BLOCKED: duplicate {name} keys")

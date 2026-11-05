@@ -40,11 +40,11 @@ def main():
         print(json.dumps(result, indent=2))
         return 1
 
-    pred = pd.read_csv(root / required[0])
-    uni = pd.read_csv(root / required[1])
+    pred = pd.read_csv(root / required[0], float_precision="round_trip")
+    uni = pd.read_csv(root / required[1], float_precision="round_trip")
     metrics = json.loads((root / required[2]).read_text())
     recon = json.loads((root / required[3]).read_text())
-    diag = pd.read_csv(root / required[4])
+    diag = pd.read_csv(root / required[4], float_precision="round_trip")
 
     for frame, name in ((pred, "predictions"), (uni, "universe"), (diag, "diagnostics")):
         if not {"CUT_OFF", "SYMBOL"}.issubset(frame.columns):

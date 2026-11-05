@@ -22,9 +22,9 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--input",default="outputs/backtest")
     a=ap.parse_args(); root=Path(a.input)
-    pred=pd.read_csv(root/"walk_forward_predictions.csv")
-    uni=pd.read_csv(root/"walk_forward_universe_probabilities.csv")
-    diag=pd.read_csv(root/"diagnostic_separation_672.csv")
+    pred=pd.read_csv(root/"walk_forward_predictions.csv", float_precision="round_trip")
+    uni=pd.read_csv(root/"walk_forward_universe_probabilities.csv", float_precision="round_trip")
+    diag=pd.read_csv(root/"diagnostic_separation_672.csv", float_precision="round_trip")
     for x,name in [(pred,"predictions"),(uni,"universe"),(diag,"diagnostics")]:
         for c in ["CUT_OFF","SYMBOL"]:
             if c not in x: raise SystemExit(f"BLOCKED: {name} missing {c}")
@@ -115,8 +115,8 @@ def main():
                        for k in metrics["precision"]}}
     (root/"walk_forward_maturity_reconciliation.json").write_text(json.dumps(report,indent=2)+"\n")
     # Read-back verification: certify the exact CSV files that will be uploaded.
-    persisted_pred=pd.read_csv(root/"walk_forward_predictions.csv")
-    persisted_uni=pd.read_csv(root/"walk_forward_universe_probabilities.csv")
+    persisted_pred=pd.read_csv(root/"walk_forward_predictions.csv", float_precision="round_trip")
+    persisted_uni=pd.read_csv(root/"walk_forward_universe_probabilities.csv", float_precision="round_trip")
     persisted_report=json.loads((root/"walk_forward_maturity_reconciliation.json").read_text())
     for h,t,_ in [(1,5,"P5_H1"),(3,10,"P10_H3"),(5,20,"P20_H5")]:
         col=f"FUT{h}_HIGH_PCT"
