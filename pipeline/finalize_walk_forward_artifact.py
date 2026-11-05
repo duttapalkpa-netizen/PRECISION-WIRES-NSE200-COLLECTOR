@@ -16,9 +16,9 @@ if set(pred.CUT_OFF.unique())!=set(uni.CUT_OFF.unique()):
     raise SystemExit("BLOCKED: cutoff mismatch")
 
 metrics_path=ROOT/"walk_forward_metrics.json"
-metrics=json.loads(metrics_path.read_text())
+metrics=json.loads(metrics_path.read_text().rstrip("\\n"))
 report_path=ROOT/"walk_forward_maturity_reconciliation.json"
-report=json.loads(report_path.read_text())
+report=json.loads(report_path.read_text().rstrip("\\n"))
 metrics["precision"]={}; metrics["recall"]={}; metrics["base_rate"]={}; metrics["lift"]={}
 metrics["outcome_maturity_counts"]={}
 report["metrics"]={}
