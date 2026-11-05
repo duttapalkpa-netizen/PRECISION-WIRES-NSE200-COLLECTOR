@@ -83,7 +83,7 @@ def main():
         for c in ["OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY"]:
             if out[c].isna().any() or (out[c]<=0).any():
                 raise SystemExit("BLOCKED: invalid "+c+" in "+path.name)
-        if out.DELIV_PER.dropna().between(0,100).all() is False:
+        if not bool(out.DELIV_PER.dropna().between(0,100).all()):
             raise SystemExit("BLOCKED: delivery percentage outside 0..100")
         if out.duplicated(["SYMBOL","SERIES","DATE"]).any():
             raise SystemExit("BLOCKED: duplicate keys in "+path.name)
