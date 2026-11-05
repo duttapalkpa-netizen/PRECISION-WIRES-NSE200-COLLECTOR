@@ -101,6 +101,20 @@ class IdentityHelpersTest(unittest.TestCase):
             self.assertNotEqual(proc.returncode,0)
             self.assertIn("missing required column",proc.stderr)
 
+
+    def test_matching_isin_does_not_override_conflicting_isin_rows(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            proc, out = self.run_reconciliation(root,
+                [["DUAL_ISIN", "INE000000060"]],
+                [["DUAL_ISIN", "INE000000060"], ["DUAL_ISIN", "INE999999999"]],
+                [])
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            import pandas as pd
+            result = pd.read_csv(out / "nse_identity_reconciliation.csv")
+            self.assertEqual(result.loc[0, "STATUS"], "UNKNOWN_ISIN_CONFLICT")
+            self.assertEqual(result.loc[0, "RESOLVED_SYMBOL"], "")
+
     def test_no_production_mutation(self):
         source=SCRIPT.read_text()
         for forbidden in ("RANKING_SCORE =","PRESSURE_FADE =","CORE_672 ="):
