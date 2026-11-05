@@ -18,15 +18,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Validate source-attributed metrics ledger
+      - name: Validate release-level source-attributed metrics
         run: python pipeline/validate_iip_2026_09_release_metrics.py
-      - name: Upload QA report and exact CSV input
+      - name: Validate complete NIC-2 manufacturing table
+        run: python pipeline/validate_iip_2026_09_manufacturing_nic2.py
+      - name: Upload exact inputs and QA reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: iip-2026-09-release-metrics-qa-${{ github.run_number }}
           path: |
             research/data/iip_new_series_release_2026_09_official_metrics.csv
+            research/data/iip_2026_09_manufacturing_nic2_statement_IIA.csv
             artifacts/iip_release_qa/
           if-no-files-found: error
           retention-days: 90
