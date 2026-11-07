@@ -209,3 +209,11 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Reconciliation report: `research/continuity/IIP_POLICY_CANDIDATE_ACCOUNTING_RECONCILIATION_2026-11-07.md`; commit `f9345f59541953a2b0d1fd25b60e90ed37981d0a`.
 - This is accounting reconciliation and carry-forward of bounded batch certifications, not fresh source workbook/PIB revalidation of all 54 rows. Legacy CSV hash mismatches (001,003,004,005) remain quarantined; provenance unresolved. IIP audit status remains BLOCKED_WITH_PROVENANCE_GAPS; Hard Gate BLOCKED.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 changes; no synthetic data; research spend ₹0. Overall project percentage remains 36% baseline pending full workstream denominator reconciliation.
+
+
+## Continuation 18 — original source XLSX binary hashes verified for IIP Batches 001-005 (2026-11-07)
+- Downloaded preserved GitHub Actions artifact Run `41640521553`, Artifact ID `13232127900`, ZIP SHA-256 `e59d98dfe75e1c298b7a46d7304b44ce152d6a3363103238bfd1c466911a141c`.
+- Read exact raw XLSX member bytes from ZIP and independently computed SHA-256: APR vintage `IIPMFY23049APR` 63,571 bytes, `7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e`; MAY `IIPMFY23054MAY` 64,111 bytes, `6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a`; JUN `IIPMFY23058JUN` 64,381 bytes, `326629f652ef7a6161ac60516b094a20f2f2b84e81fab278fdc9ea17377b263e`; JUL `IIPMFY23062JUL` 64,416 bytes, `ea5119cb6f76b2640289dcc98e71bfe1ac1786fc02f92f0e7cd57900fde3f26c`.
+- Cross-mapped to batches: 001-003 use APR→MAY; 004 uses MAY→JUN; 005 uses JUN→JUL. Workbook hashes align with source hashes recorded in the respective ledger CSVs and notes. This closes original XLSX binary identity for four vintages used across all five batches.
+- Report `research/continuity/IIP_BATCHES_001_005_SOURCE_WORKBOOK_BINARY_HASH_VERIFICATION_2026-11-07.md`; commit `692a2ec4d15fbf272f206939086e3691f7dac244`.
+- Strict boundary: this does not resolve separate ledger CSV hash drift (001,003,004,005), and does not re-run every source-cell crosswalk. No new candidate certified. IIP full audit remains BLOCKED_WITH_PROVENANCE_GAPS; Hard Gate BLOCKED. Overall research remains 36% baseline. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; ₹0.
