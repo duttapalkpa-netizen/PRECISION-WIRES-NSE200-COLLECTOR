@@ -11,7 +11,7 @@ Research-only overlay for PRECISION-WIRES V11.3. It does **not** change the prod
 5. **Stock-level bridge:** sector revenue/geography/export exposure, client concentration where disclosed, FX sensitivity, input cost, order book, earnings sensitivity, liquidity and price confirmation. Sector-level story alone never becomes a stock signal.
 
 ## Required observations
-Long-format CSV fields: date, indicator, value, unit, source, source_url, published_at, as_of_date, quality_status. Allowed quality: VERIFIED_OFFICIAL, VERIFIED_SECONDARY, PROVISIONAL, UNKNOWN. Keep publication date, observation date and retrieval time distinct. Preserve source vintage and revisions. Never forward-fill a missing daily flow; stale data remains stale/UNKNOWN.
+Long-format CSV fields: date, indicator, value, unit, source, source_url, published_at, as_of_date, quality_status. Allowed quality: VERIFIED_OFFICIAL, VERIFIED_SECONDARY, PROVISIONAL, UNKNOWN. Keep publication date, observation date and retrieval time distinct. Preserve source vintage and revisions. Never forward-fill a missing daily flow. The code enforces maximum age windows: EM monthly aggregate 45 days; India FPI/DII daily 7 days; market/FX/oil/relative indicators 7–30 days; policy events 180 days. These are conservative engineering expiry limits, not economic thresholds. Use --as-of-date for reproducible runs. Expired data is excluded and reported as stale/UNKNOWN.
 
 Indicator keys:
 - em_portfolio_flow_usd_bn
