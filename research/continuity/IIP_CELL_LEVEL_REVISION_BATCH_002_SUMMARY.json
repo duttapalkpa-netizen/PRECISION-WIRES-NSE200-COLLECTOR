@@ -1,0 +1,19 @@
+{
+  "batch": "002",
+  "reference_period": "2023-04",
+  "previous_vintage": "IIPMFY23049APR",
+  "current_vintage": "IIPMFY23054MAY",
+  "previous_stage": "QUICK",
+  "current_stage": "FIRST_REVISION",
+  "candidate_cells": 6,
+  "certified_exact_source_matches": 6,
+  "mismatches": 0,
+  "source_month_mapping": "PIB Statement IV headers Jun-22 through May-23; April 2023 is the penultimate month column. Workbook EF is Apr-23 and EG is May-23.",
+  "verified_workbook_cells": ["EF18","EF19","EF20","EF21","EF22","EF23"],
+  "previous_workbook_sha256": "7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e",
+  "current_workbook_sha256": "6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a",
+  "official_release_id": 1938974,
+  "official_release_timestamp": "2023-07-12 17:30 IST",
+  "official_source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1938974&lang=2&reg=3",
+  "note": "These six exact cells are certified; this does not certify the full IIP dataset or Hard Gate."
+}

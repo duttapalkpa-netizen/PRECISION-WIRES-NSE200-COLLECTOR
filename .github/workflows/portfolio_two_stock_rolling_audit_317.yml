@@ -1,0 +1,80 @@
+name: Portfolio Two-Stock Rolling Audit — Verified 317 Sessions
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - "pipeline/verify_317_artifact_inputs.py"
+      - "pipeline/portfolio_rolling_audit.py"
+      - ".github/workflows/portfolio_two_stock_rolling_audit_317.yml"
+  schedule:
+    # 17:00 IST weekdays; schedule is active only after this workflow is on the default branch.
+    - cron: "30 11 * * 1-5"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: portfolio-two-stock-rolling-audit-317
+  cancel-in-progress: false
+
+jobs:
+  verified-317-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy requests
+      - name: Download immutable 200-session baseline artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: precision-wires-adaptive-92
+          path: artifacts/baseline
+          repository: ${{ github.repository }}
+          run-id: "41633211838"
+          github-token: ${{ github.token }}
+      - name: Download verified 57-session backfill artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nse-57-verified-backfill-2
+          path: artifacts/backfill_57
+          repository: ${{ github.repository }}
+          run-id: "41846486071"
+          github-token: ${{ github.token }}
+      - name: Download verified 60-session backfill artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nse-57-verified-backfill-8
+          path: artifacts/backfill_60
+          repository: ${{ github.repository }}
+          run-id: "41887855100"
+          github-token: ${{ github.token }}
+      - name: Reconstruct and reconcile original 317 sessions
+        run: python pipeline/verify_317_artifact_inputs.py
+      - name: Acquire current official NSE Security Master
+        run: python collector/security_master.py
+      - name: Run isolated portfolio audit on all 317 sessions
+        env:
+          PORTFOLIO_SOURCE: data/processed/nse_eq_317_sessions.csv
+        run: python pipeline/portfolio_rolling_audit.py
+      - name: Upload reproducible 317-session evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-two-stock-rolling-audit-317-${{ github.run_number }}
+          path: |
+            data/processed/nse_eq_317_sessions.csv
+            data/processed/nse_eq_317_sessions_manifest.json
+            data/reference/NSE_EQUITY_L_source.csv
+            data/reference/security_master.csv
+            data/reference/security_master_manifest.json
+            outputs/portfolio/
+          if-no-files-found: warn

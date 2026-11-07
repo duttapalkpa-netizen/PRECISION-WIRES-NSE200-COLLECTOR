@@ -1,0 +1,35 @@
+name: Official NIC Concordance Source Acquisition and Extraction
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nic-concordance-source-acquisition
+  cancel-in-progress: false
+jobs:
+  acquire-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/iip-41-vintage-audit-clean
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install parsers
+        run: pip install openpyxl pymupdf
+      - name: Acquire official NIC sources and hash raw bytes
+        run: python pipeline/acquire_nic_official_sources.py
+      - name: Extract and audit the official 4-digit concordance
+        if: always()
+        run: python pipeline/extract_nic_4digit_concordance.py
+      - name: Upload raw sources, concordance CSV and audit manifests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-nic-concordance-audit-${{ github.run_number }}
+          path: artifacts/nic_concordance_audit/
+          if-no-files-found: error
+          retention-days: 90
