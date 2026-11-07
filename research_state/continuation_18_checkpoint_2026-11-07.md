@@ -144,3 +144,14 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Independently read back the Batch 001 CSV and summary JSON before runtime: 9 ledger rows, 9 unique expected NIC codes (10,11,13,14,15,16,17,19,20), ledger count equals certified count, 9+684+431=1,124 accounting reconciles, no duplicate transition key. All five independent preflight assertions passed.
 - Guard scope is ledger consistency only. Batch 001 remains 9 certified; no additional candidate was promoted. The 684 policy-aligned candidates remain uncertified; 431 historical/out-of-window transitions remain unresolved. IIP 41-vintage audit remains BLOCKED_WITH_GAPS; Hard Gate remains BLOCKED.
 - Workstream status: guard implementation + bounded runtime QA 100% for current Batch 001 ledger. This is not completion of IIP source-cell certification. Overall research percentage remains last defensible baseline 36%; no whole-project denominator reconciliation. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged; research spend ₹0.
+
+
+## Continuation 18 — IIP ledger guard adversarial regression QA (2026-11-07)
+- Extended the existing ledger guard QA with five adversarial/unit cases; no new source-cell certifications and no production logic changes.
+- Test file: `qa/test_iip_certified_cell_ledger_guard.py`; initial commit `396bfde33868221b310ab88670b67f804c385a38`.
+- First regression run `42388059053` FAILED at the adversarial test step. Inspection identified a test-fixture writer issue: the intentional missing-column test was passing extra dictionary fields to DictWriter. Corrected fixture with `extrasaction="ignore"` (test-only; production guard unchanged), commit `a1589bf7e5fe478c73db9b40a8c9e52e74e94288`.
+- Final corrected workflow Run `42388083193` SUCCESS: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42388083193. All steps passed: checkout, Python setup, compile, five adversarial regression tests, bounded live ledger guard, artifact upload.
+- Regression cases: (1) real Batch 001 ledger passes; (2) duplicate transition across two batch files is BLOCKED; (3) accounting mismatch is BLOCKED; (4) missing provenance column is BLOCKED; (5) attempted Hard Gate promotion is BLOCKED.
+- Artifact ID `13580456878`, name `iip-certified-cell-ledger-guard`, 377 bytes, digest SHA-256 `80b6a9e5d85398503db7dfd68401a84f50b65bbb851993638851f67e57b4bd81`.
+- Workstream result: guard + bounded runtime + five adversarial regression cases PASS for the existing Batch 001 ledger. This is guard QA only, not source certification of any additional candidate. Batch 001 remains 9 certified; 684 policy-aligned candidates remain uncertified; 431 historical/out-of-window transitions remain unresolved. IIP vintage audit and final Hard Gate remain BLOCKED.
+- Overall project percentage remains last defensible baseline 36%; no denominator-based recalculation. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged; spend ₹0.
