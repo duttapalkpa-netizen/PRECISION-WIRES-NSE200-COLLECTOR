@@ -200,3 +200,12 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Batches 003-005 remain quarantined as previously documented. No legacy digest changed; no file replaced; no rows recertified.
 - 54 unique rows across 5 ledgers remain structurally reconciled. Hash-provenance issue is still unresolved; IIP source certification and Hard Gate remain BLOCKED. Overall research remains 36% baseline.
 - Next required provenance recovery: retrieve original artifact/commit bytes matching each declared SHA-256, or establish the exact immutable source artifact and a documented derivation chain. Do not recompute-and-overwrite legacy hashes.
+
+
+## Continuation 18 — IIP policy-candidate denominator reconciled across Batches 001-005 (2026-11-07)
+- Independently parsed the five committed CSV ledgers and grouped all rows by observation period + previous vintage ID + current vintage ID + NIC code. Result: 54 rows, 54 unique transition keys, exactly 3 period/vintage pairs: Apr-2023 Quick→First Revision 20 rows (9+6+5 in Batches 001-003); May-2023 Quick→First Revision 14 rows (Batch004); Jun-2023 Quick→First Revision 20 rows (Batch005).
+- Batch001 audit note explicitly says original policy-stage candidate universe 693, with 9 certified and 684 remaining immediately after Batch001. Batch003 README confirms 9+6+5=20 completes Apr-2023 pair. Batch004 README describes 14/14 policy-stage candidates; Batch005 README describes 20 policy-stage candidates.
+- Therefore updated policy-stage accounting: 693 total = 54 recorded certified across batches 001-005 + 639 remaining policy-stage candidates. Add 431 historical-panel/out-of-window unresolved = 1,124 total observed differences. This corrects stale 684 remaining count (it was after Batch001 only). No subtraction was made without row-level unique transition grouping.
+- Reconciliation report: `research/continuity/IIP_POLICY_CANDIDATE_ACCOUNTING_RECONCILIATION_2026-11-07.md`; commit `f9345f59541953a2b0d1fd25b60e90ed37981d0a`.
+- This is accounting reconciliation and carry-forward of bounded batch certifications, not fresh source workbook/PIB revalidation of all 54 rows. Legacy CSV hash mismatches (001,003,004,005) remain quarantined; provenance unresolved. IIP audit status remains BLOCKED_WITH_PROVENANCE_GAPS; Hard Gate BLOCKED.
+- No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 changes; no synthetic data; research spend ₹0. Overall project percentage remains 36% baseline pending full workstream denominator reconciliation.
