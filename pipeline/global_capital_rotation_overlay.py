@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Research-only global capital rotation dashboard; never alters production ranking."""
 from __future__ import annotations
-import argparse, csv, json
+import argparse, csv, json, math
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 REQUIRED = {"date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"}
@@ -17,6 +17,15 @@ MAX_AGE_DAYS = {
     "us_ai_policy_event_direction":180,"us_h1b_policy_event_direction":180,"us_tariff_policy_event_direction":180,
 }
 
+def _published_key(value):
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).isoformat()
+    except (TypeError, ValueError):
+        try:
+            return date.fromisoformat(value).isoformat()
+        except (TypeError, ValueError):
+            raise ValueError("published_at must be an ISO date or datetime")
+
 def load_observations(path: Path):
     grouped=defaultdict(list)
     with path.open(encoding="utf-8-sig", newline="") as f:
@@ -26,20 +35,34 @@ def load_observations(path: Path):
         for n,row in enumerate(reader, start=2):
             if row["quality_status"] not in ALLOWED_QUALITY:
                 raise ValueError(f"row {n}: invalid quality_status")
-            if not row["date"] or not row["as_of_date"] or not row["indicator"] or not row["source"] or not row["source_url"]:
+            if not all(row[k].strip() for k in ("date","as_of_date","indicator","unit","source","source_url","published_at")):
                 raise ValueError(f"row {n}: missing provenance/date")
-            if row["quality_status"] == "UNKNOWN": continue
             try:
-                date.fromisoformat(row["date"]); date.fromisoformat(row["as_of_date"])
+                observed=date.fromisoformat(row["date"])
+                asof=date.fromisoformat(row["as_of_date"])
+                published=_published_key(row["published_at"])
                 value=float(row["value"])
+                if not math.isfinite(value): raise ValueError("non-finite value")
             except (TypeError,ValueError):
-                raise ValueError(f"row {n}: invalid date or non-numeric value")
-            grouped[row["indicator"]].append({**row,"value":value})
+                raise ValueError(f"row {n}: invalid date, publication timestamp, or finite numeric value")
+            if observed > asof:
+                raise ValueError(f"row {n}: observation date is after as_of_date")
+            if not row["source_url"].startswith("https://"):
+                raise ValueError(f"row {n}: source_url must use HTTPS")
+            if row["quality_status"] == "UNKNOWN": continue
+            grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
     return grouped
 
 def latest(grouped,key):
     rows=grouped.get(key,[])
-    return sorted(rows,key=lambda x:(x["as_of_date"],x["date"],x["published_at"]))[-1] if rows else None
+    if not rows: return None
+    # Deterministic vintage selection: freshest observation, then latest publication.
+    chosen=max(rows,key=lambda x:(x["as_of_date"],x["date"],x["_published_key"]))
+    tie=[r for r in rows if (r["as_of_date"],r["date"],r["_published_key"]) ==
+         (chosen["as_of_date"],chosen["date"],chosen["_published_key"])]
+    if len({r["value"] for r in tie}) > 1:
+        raise ValueError(f"{key}: conflicting values share the same observation and publication vintage")
+    return chosen
 
 def classify(grouped,as_of_date=None):
     asof=date.fromisoformat(as_of_date) if as_of_date else date.today()
@@ -48,7 +71,8 @@ def classify(grouped,as_of_date=None):
     stale={}
     for k,row in x.items():
         if row:
-            age=(asof-date.fromisoformat(row["as_of_date"])).days
+            observed=date.fromisoformat(row["as_of_date"])
+            age=(asof-observed).days
             if age<0: raise ValueError(f"{k}: as_of_date is in the future")
             if age>MAX_AGE_DAYS[k]:
                 stale[k]={"age_days":age,"max_age_days":MAX_AGE_DAYS[k]}
@@ -63,8 +87,8 @@ def classify(grouped,as_of_date=None):
     elif v("india_fpi_equity_inr_cr")<0: india_fpi="FPI_EQUITY_NET_SELL"
     else: india_fpi="FLAT"
     if v("dxy_change_pct_20d") is None or v("usd_inr_change_pct_20d") is None: fx="UNKNOWN"
-    elif v("dxy_change_pct_20d")<0 and v("usd_inr_change_pct_20d")<0: fx="USD_AND_INR_TAILWIND"
-    elif v("dxy_change_pct_20d")>0 and v("usd_inr_change_pct_20d")>0: fx="USD_AND_INR_HEADWIND"
+    elif v("dxy_change_pct_20d")<0 and v("usd_inr_change_pct_20d")<0: fx="USD_WEAKENING_INR_STRENGTHENING"
+    elif v("dxy_change_pct_20d")>0 and v("usd_inr_change_pct_20d")>0: fx="USD_STRENGTHENING_INR_WEAKENING"
     else: fx="DIVERGENT_OR_MIXED"
     if v("us10y_change_bp_20d") is None or v("fed_target_change_bp_90d") is None: rates="UNKNOWN"
     elif v("us10y_change_bp_20d")<0 and v("fed_target_change_bp_90d")<=0: rates="US_RATE_RELIEF"
