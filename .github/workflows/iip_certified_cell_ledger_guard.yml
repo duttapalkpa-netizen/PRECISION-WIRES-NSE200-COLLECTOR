@@ -6,7 +6,6 @@ on:
     paths:
       - 'qa/iip_certified_cell_ledger_guard.py'
       - 'qa/test_iip_certified_cell_ledger_guard.py'
-      - 'qa/test_iip_certified_cell_ledger_guard.py'
       - 'data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.csv'
       - 'data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_SUMMARY.json'
       - '.github/workflows/iip_certified_cell_ledger_guard.yml'
@@ -27,8 +26,6 @@ jobs:
           python-version: '3.12'
       - name: Compile guard and tests
         run: python -m py_compile qa/iip_certified_cell_ledger_guard.py qa/test_iip_certified_cell_ledger_guard.py
-      - name: Run adversarial regression tests
-        run: python -m unittest qa.test_iip_certified_cell_ledger_guard -v
       - name: Run adversarial regression tests
         run: python -m unittest qa.test_iip_certified_cell_ledger_guard -v
       - name: Run bounded ledger guard
