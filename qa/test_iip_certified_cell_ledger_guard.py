@@ -31,7 +31,7 @@ class LedgerGuardTests(unittest.TestCase):
     def write_ledger(self, name, rows, fields=None):
         path = self.root / name
         with path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fields or self.fields)
+            writer = csv.DictWriter(f, fieldnames=fields or self.fields, extrasaction="ignore")
             writer.writeheader()
             writer.writerows(rows)
         return path
