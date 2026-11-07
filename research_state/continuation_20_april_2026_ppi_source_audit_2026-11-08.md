@@ -55,3 +55,12 @@ Page: গবেষণা যাচাই অব্যাহত 20
 - Master Hard Gate BLOCKED.
 - Research spend ₹0.
 - Overall research progress last defensible baseline: 36%.
+
+
+## Completed bounded task — April 2026 Statement IV transcription and QA (2026-11-08)
+- Re-opened official PIB PRID 2278961 and extracted Statement IV April-2026 column from source-rendered lines 157–199; source URL https://www.pib.gov.in/PressReleasePage.aspx?PRID=2278961&lang=1&reg=3.
+- Created 37-row separately typed PIB HTML transcription ledger: research/data/iip_april_2026_statement_iv_output_ppi_pib_transcription.csv; commit 65b1ed4304a7decc26fc39327e3211b5c3fe217f. Read-back verified: 38 lines including header.
+- Created QA report: research/continuity/IIP_APRIL_2026_STATEMENT_IV_TRANSCRIPTION_QA_2026-11-08.md; commit 4461bad6db2666024cda6e92b4c83bfdceed5ac8. Read-back verified.
+- QA: 37 rows; no duplicate NIC keys; all 37 April indices numeric and positive. Manufacturing weight 76.065 vs displayed aggregate 76.062 (+0.003 rounding); weighted index 118.6934 -> 118.7. Mining 106.0877 -> 106.1; Electricity 122.9177 -> 122.9; Electricity+Gas 121.7285 -> 121.7; Water 146.0667 -> 146.1. All agree with displayed aggregates after rounding.
+- Status PASS_TRANSCRIPTION_AND_WEIGHTED_AGGREGATE_QA_WITH_SOURCE_TYPE_LIMITATION. This is PIB HTML transcription, not native MoSPI XLSX/API. Statement IV explicitly labels base 2011-12=100 while release explains Output-PPI superseding series; both labels preserved without relabeling. No catalogue ID inferred.
+- April column transcription and internal weighted-aggregate QA: 100%. Native catalogue XLSX recovery/API reconciliation and independent source-agency verification: still open. IIP full audit/Hard Gate remain BLOCKED. Overall research remains last defensible 36%. Invariants unchanged; ₹0.
