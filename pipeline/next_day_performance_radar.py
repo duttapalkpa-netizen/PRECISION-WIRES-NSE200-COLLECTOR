@@ -6,9 +6,14 @@ replaces any partial same-date processed panel, and fails closed on incomplete d
 No changes to selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Hard Gate.
 """
 from pathlib import Path
-import hashlib, json, re
+import hashlib, json, re, sys
 import numpy as np
 import pandas as pd
+# Direct script execution sets sys.path to pipeline/, not the repository root.
+# Add the repository root explicitly so the sibling pipeline namespace resolves.
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 from pipeline.walk_forward_backtest import (
     add_features, add_tomorrow_features, future_outcomes,
     _robust_return_filter, _calibrated_probability,
