@@ -99,7 +99,10 @@ def main():
     if pd.Timestamp(dates[-1]).normalize()!=latest.normalize(): raise ValueError("Latest model date does not equal verified raw NSE date")
     current=x[(x.DATE==dates[-1])&(x.HISTORY_DEPTH_AT_T>=20)].copy()
     if current.empty: raise ValueError("No eligible latest-session symbols with >=20 observations")
-    if current.SYMBOL.nunique()!=len(daily): raise ValueError("Not every eligible latest-session EQ symbol entered the model")
+    history_counts=combined.groupby("SYMBOL").DATE.nunique()
+    expected_eligible=int(daily.SYMBOL.isin(history_counts[history_counts>=20].index).sum())
+    if current.SYMBOL.nunique()!=expected_eligible:
+        raise ValueError(f"Eligible latest-session coverage mismatch: modeled={current.SYMBOL.nunique()} expected={expected_eligible}")
     cutoff=dates[-6]
     train=x[(x.DATE<=cutoff)&(x.HISTORY_DEPTH_AT_T>=20)].copy()
     train=train[~train.ABNORMAL_RETURN_FLAG].copy()
