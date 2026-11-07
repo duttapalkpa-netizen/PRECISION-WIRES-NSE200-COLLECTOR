@@ -46,3 +46,13 @@ Continue through official e-Sankhyiki's user-facing metadata/table workflow to i
 - NIC-2 Statement II-A QA: `PASS_TRANSCRIPTION_STRUCTURE_AND_ARITHMETIC_QA`, 23/23 codes 10–32, 0 errors; positive/negative/zero groups 17/6/0; weight sum 76.065 vs official 76.062, +0.003 rounding within ±0.005; source CSV SHA-256 `102bef6c87b95c1478686935d9a6f5fcacda90dce07ea48f36d09e340fc29b7f`; JSON SHA-256 `5e22145ecd4e96f7881a427a1cd556b2ca9f689350dad83e31fbef23573493c0`.
 - Report: `research/continuity/IIP_SEPTEMBER_2026_RELEASE_QA_CI_RESULT_2026-11-07.md`, commit `4630e2a56c4bf55e2e1dbd64f25a3dedc50d9d38`.
 - Scope boundary: transcription/schema/arithmetic QA only. Raw PIB PDF binary hash still NOT_ACQUIRED; not a full April-2023 onward monthly panel, not full vintage revision audit. IIP full audit/Hard Gate remain BLOCKED. Overall research remains last defensible 36% baseline. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; ₹0.
+
+
+## Completed next priority — IIP 41-month catalogue coverage reconciliation (2026-11-07)
+- Re-downloaded immutable Run `41640521553`, Artifact ID `13232127900`; verified its ZIP SHA-256 against retained digest `e59d98dfe75e1c298b7a46d7304b44ce152d6a3363103238bfd1c466911a141c`.
+- Reconciled all 40 unique rows in `vintage_ingestion_manifest.csv` against 41 calendar months from 2023-04 through 2026-08.
+- Exact result: 39 parsed XLSX vintages; April 2026 catalogue ID `IIPMFY26002APR` returned HTTP 404; January 2026 has no record in the manifest. Distinguish absent catalogue record from present-but-404 record; no table ID inferred.
+- Parsed legacy segment: 35 vintages Apr-2023–Mar-2026, base 2011-12/NIC-2008. Parsed new segment: 4 vintages May–Aug 2026, base 2022-23/NIC-2025. April 2026 is unassigned/UNKNOWN because workbook unavailable. Never concatenate across base-year/deflator breaks.
+- Created `research/continuity/IIP_MONTHLY_CATALOGUE_COVERAGE_RECONCILIATION_2026-11-07.md` commit `f58c76a22d0db436534fbc71b2447d75a45a1430`; companion 41-month ledger `research/data/iip_monthly_catalogue_coverage_2023-04_to_2026-08.csv` commit `afbaa057279df6b30466655e6c7ba281b3ea4a12`.
+- Period coverage: 40/41 months represented; 39/41 successfully parsed. These are period counts, not observation/cell certification rates.
+- Remaining: resolve official January 2026 catalogue record and April 2026 Output-PPI vintage independently; 693 candidate transitions remain uncertified; 431 historical/out-of-window unresolved. IIP full audit/Hard Gate BLOCKED. Overall research stays at last defensible 36% baseline. Invariants unchanged; ₹0.
