@@ -154,7 +154,24 @@ def main():
           "NOT_YET_MOVED","EXHAUSTION","RVOL20","RS5","STATE","HISTORY_DEPTH_AT_T","TRAINING_ROWS",
           "TRAINING_MATURED_THROUGH","UNIVERSE_SCOPE","LIMITATION"]
     cols += [c for c in ["V11_3_CORE_SCORE","SCORE","A","B","C","D","E","ANALYSIS_MODE","DATA_CONFIDENCE"] if c in current]
-    radar=current[cols].sort_values(["RADAR_SCORE","TOMORROW_EXPANSION_SCORE","SYMBOL"],ascending=[False,False,True])
+    # Preserve the entire official EQ universe. Symbols below the 20-session
+    # threshold remain visible as UNKNOWN; never silently drop them or impute scores.
+    unknown_symbols=sorted(set(daily.SYMBOL)-set(current.SYMBOL))
+    unknown_rows=pd.DataFrame({"SYMBOL":unknown_symbols})
+    for col in cols:
+        if col not in unknown_rows.columns:
+            unknown_rows[col]=np.nan
+    unknown_rows["DATA_ASOF"]=latest.date().isoformat()
+    unknown_rows["NEXT_SESSION_DIRECTION"]="UNKNOWN_INSUFFICIENT_HISTORY"
+    unknown_rows["PROBABILITY_STATUS"]="UNKNOWN_INSUFFICIENT_HISTORY"
+    unknown_rows["RADAR_RANK_BASIS"]="INSUFFICIENT_HISTORY"
+    unknown_rows["HISTORY_DEPTH_AT_T"]=unknown_rows.SYMBOL.map(history_counts).fillna(0).astype(int)
+    unknown_rows["TRAINING_ROWS"]=int(len(train))
+    unknown_rows["TRAINING_MATURED_THROUGH"]=pd.Timestamp(cutoff).date().isoformat()
+    unknown_rows["UNIVERSE_SCOPE"]="Official NSE EQ symbol retained; insufficient history for scoring"
+    unknown_rows["LIMITATION"]="UNKNOWN: fewer than 20 total sessions; no probability or ranking score assigned."
+    radar=pd.concat([current[cols],unknown_rows[cols]],ignore_index=True)
+    radar=radar.sort_values(["RADAR_SCORE","TOMORROW_EXPANSION_SCORE","SYMBOL"],ascending=[False,False,True],na_position="last")
     OUT.mkdir(parents=True,exist_ok=True)
     out_csv=OUT/"next_day_performance_radar.csv"
     radar.to_csv(out_csv,index=False)
@@ -162,7 +179,7 @@ def main():
       "status":"PASS_SIGNAL_ONLY" if not all_probs else "PASS_CALIBRATED",
       "as_of":latest.date().isoformat(),"raw_source":str(raw_path),"raw_source_sha256":sha256(raw_path),
       "raw_eq_rows":int(len(daily)),"raw_unique_symbols":int(daily.SYMBOL.nunique()),
-      "eligible_symbols":int(len(radar)),"history_insufficient_symbols":int(len(daily)-len(radar)),
+      "eligible_symbols":int(len(current)),"history_insufficient_symbols":int(len(unknown_rows)),
       "candidate_join_status":candidate_join,"training_matured_through":pd.Timestamp(cutoff).date().isoformat(),
       "calibrated_probabilities_available":bool(all_probs),"calibration":calibration,"training_rows":int(len(train)),
       "unknown_probability_rows":int(radar.P5_H1.isna().sum()),
