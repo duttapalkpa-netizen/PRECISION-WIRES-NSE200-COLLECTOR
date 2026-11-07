@@ -35,6 +35,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: official-iip-api-contract-${{ github.run_number }}
-          path: artifacts/iip_api_contract/
+          path: |
+            artifacts/iip_api_contract/
+            artifacts/iip_api_apr2026/
           if-no-files-found: error
           retention-days: 90
