@@ -45,7 +45,7 @@ for path,item in spec['paths'].items():
 iip_ops=[o for o in operations if 'iip' in o['path'].lower() or 'iip' in str(o.get('operationId','')).lower()]
 expected=[o for o in iip_ops if 'getiipdata' in (o['path']+' '+str(o.get('operationId',''))).lower()]
 baseyear_params=[p for o in iip_ops for p in o['parameters'] if p['name'] and p['name'].lower() in ('base_year','baseyear','baseyearcode') ]
-supports_2022=any('2022-23' in (p.get('enum') or []) or p.get('default')=='2022-23' for p in baseyear_params)
+supports_2022=any(\n    '2022-23' in (p.get('enum') or [])\n    or p.get('default')=='2022-23'\n    or '2022-23' in str(p.get('description') or '')\n    or '2022-23' in str(p.get('example') or '')\n    for p in baseyear_params\n)\nbase_year_evidence=[{\n    'name':p.get('name'),'enum':p.get('enum'),'default':p.get('default'),\n    'example':p.get('example'),'description':p.get('description'),\n    'explicit_2022_23_mention':('2022-23' in str(p.get('description') or '') or '2022-23' in str(p.get('example') or '') or '2022-23' in (p.get('enum') or []) or p.get('default')=='2022-23')\n} for p in base_year_params]
 security=spec.get('components',{}).get('securitySchemes',{})
 auth_declared=bool(security) or any(o.get('security') for o in iip_ops)
 status='CONTRACT_COMPATIBLE_REVIEW_REQUIRED' if expected and supports_2022 else 'BLOCKED_LEGACY_OR_INCOMPLETE_CONTRACT'
