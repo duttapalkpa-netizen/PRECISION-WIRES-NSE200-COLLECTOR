@@ -53,7 +53,19 @@ def audit():
             errors.append(f"batch {batch}: summary row count {expected_count} != ledger {len(rows)}")
         declared_csv_hash = summary.get("csv_sha256") or summary.get("ledger_csv_sha256")
         if declared_csv_hash and declared_csv_hash != digest:
-            hash_drift.append({"batch": batch, "legacy_declared_sha256": declared_csv_hash, "current_committed_sha256": digest, "status": "QUARANTINED_UNRESOLVED_PROVENANCE"})
+            alias_path = (ROOT / "data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.csv") if batch == "001" else None
+            alias_digest = hashlib.sha256(alias_path.read_bytes()).hexdigest() if alias_path and alias_path.exists() else None
+            alias_same_bytes = bool(alias_path and alias_path.exists() and alias_path.read_bytes() == raw)
+            if alias_digest == declared_csv_hash:
+                hash_drift.append({"batch": batch, "legacy_declared_sha256": declared_csv_hash,
+                    "current_committed_sha256": digest, "alternate_copy": str(alias_path.relative_to(ROOT)),
+                    "alternate_copy_sha256": alias_digest, "alternate_copy_same_bytes_as_research": alias_same_bytes,
+                    "status": "DECLARED_HASH_MATCHES_ALTERNATE_COPY"})
+            else:
+                hash_drift.append({"batch": batch, "legacy_declared_sha256": declared_csv_hash,
+                    "current_committed_sha256": digest, "alternate_copy": str(alias_path.relative_to(ROOT)) if alias_path else None,
+                    "alternate_copy_sha256": alias_digest, "alternate_copy_same_bytes_as_research": alias_same_bytes,
+                    "status": "QUARANTINED_UNRESOLVED_PROVENANCE"})
         certified = 0
         for line, row in enumerate(rows, 2):
             period = pick(row, "observation_period", "period")
