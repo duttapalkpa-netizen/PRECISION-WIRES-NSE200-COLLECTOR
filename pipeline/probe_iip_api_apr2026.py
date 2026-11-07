@@ -6,8 +6,9 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import Request, build_opener, HTTPSHandler
 from urllib.error import HTTPError, URLError
+import ssl
 
 BASE = "https://api.mospi.gov.in/api/iip/getIIPData"
 PARAMS = {
@@ -22,6 +23,10 @@ OUT = Path("artifacts/iip_api_apr2026")
 RAW = OUT / "raw"
 RAW.mkdir(parents=True, exist_ok=True)
 URL = BASE + "?" + urlencode(PARAMS)
+TLS_CONTEXT = ssl.create_default_context()
+TLS_CONTEXT.set_ciphers("DEFAULT:@SECLEVEL=1")
+TLS_CONTEXT.options |= 0x4  # Permit legacy server renegotiation; certificate verification stays enabled.
+OPENER = build_opener(HTTPSHandler(context=TLS_CONTEXT))
 retrieved = datetime.now(timezone.utc).isoformat()
 
 def sha256(data: bytes) -> str:
@@ -45,7 +50,7 @@ report = {
     "hard_gate": "BLOCKED",
 }
 try:
-    with urlopen(request, timeout=35) as response:
+    with OPENER.open(request, timeout=35) as response:
         body = response.read()
         report.update({
             "http_status": response.status,
