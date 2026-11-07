@@ -29,7 +29,8 @@ jobs:
         run: |
           set -o pipefail
           python qa/audit_iip_certified_batches_001_005.py | tee iip_batches_001_005_integrity.json
-      - name: Upload audit result
+      - name: Upload audit result even when blocked
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: iip-batches-001-005-integrity
