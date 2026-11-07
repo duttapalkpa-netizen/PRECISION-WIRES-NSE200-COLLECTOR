@@ -38,6 +38,13 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - GitHub commit adding audit JSON: c35a250d3c3d6c38898e0172471c0fffde57d3ce
 - Read-back QA on committed CSV: 16 columns, 36 data rows, statement counts 24/4/5/3, 0 duplicate statement/code pairs, 0 contract violations. Commit combined status currently has no status checks (no CI PASS claimed).
 
+
+- Final bounded dual-month API reconciliation: workflow Run 42381121341 (#12), commit `5f079524dfa7e1210005e46020fd9b6e109401e2`, all steps PASS. Artifact ID `13577128037`, SHA-256 `2337b9ed18d0057cac3a4c503a6d0657f0750df720f5a50878f14b3fc67d5059`.
+- Run #12 validated April API 43/43 and May API 43/43 against PIB PRID=2329475 (28-Oct-2026), i.e. all 86 month-record comparisons PASS; each month has 0 missing, 0 mismatch, 0 unexpected, 0 duplicate. April raw API response SHA-256 remains `ba0ee42f7fb7809483a86dcbfe53057d401c51af67e28638c6603fcedcdca71a`. The same 8,129-byte official JSON response contained 43 April records, HTTP 200.
+- Latest official PIB reference: https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2329475 (28-Oct-2026). It explicitly states base 2022-23 and revision policy (lines 70-79); Statement I April values line 109, Statement III April values line 197, and Statement IV April-26 manufacturing/sector/sub-sector/general values lines 220-260. API index values were compared at one decimal; no growth rates were recomputed.
+- Run #11 (42381063918) also completed PASS for the API contract + April retrieval + May reconciliation after comment/provenance cleanup. It was an automated push-triggered duplicate check; Run #12 is the final expanded audit including April-vs-latest-PIB comparison.
+- Conclusion: API April and May data identity for base 2022-23 are now independently matched to the latest official PIB revised values. This resolves the April catalogue dead-link as a data-access path via official API, but does NOT recover the native catalogue XLSX or certify its file provenance. Keep the original missing XLSX issue visible; keep 41-vintage audit status BLOCKED_WITH_GAPS and Hard Gate BLOCKED.
+
 ## Other known unresolved work
 - 693 IIP-related candidate transitions: 431 unresolved; source-cell certification was not established; certified revisions previously reported as 0.
 - Step 6 same-snapshot reconciliation was pending: CSV/JSON source coverage parity, Factor Registry/Macro-Series/Event Study/Hard-Gate hashes, immutable snapshot ID, and source_coverage_csv_json_statuses_match=true still require evidence.
