@@ -1,0 +1,70 @@
+{
+  "audit_name": "Next-Day Radar 2026-11-09 independent artifact-to-source reconciliation",
+  "audit_status": "PASS_WITH_SCOPE_LIMITATION",
+  "audit_type": "independent artifact/source reconciliation; not a rerun of the latest hardened runner",
+  "as_of": "2026-11-06",
+  "next_session": "2026-11-09",
+  "eligibility_rule": "HISTORY_DEPTH_AT_T includes the as-of session; >=20 means >=19 prior distinct sessions plus 2026-11-06.",
+  "checks": {
+    "radar_asof_matches_official_source": true,
+    "next_session_is_2026_11_09": true,
+    "official_eq_universe_exact_match": true,
+    "official_eq_count_2746": true,
+    "radar_symbols_unique": true,
+    "history_has_200_distinct_sessions": true,
+    "history_latest_session_matches_source": true,
+    "historical_symbol_date_duplicates_zero": true,
+    "expected_eligible_20_total_sessions_match": true,
+    "scored_history_depth_minimum_20": true,
+    "unknown_history_count_56": true,
+    "unknown_history_depth_below_20": true,
+    "unknown_probability_fields_all_null": true,
+    "scored_probability_fields_all_present": true,
+    "probabilities_within_zero_one": true,
+    "training_cutoff_precedes_asof": true,
+    "source_zip_sha256_matches_summary": true,
+    "historical_artifact_sha256_matches_summary": true,
+    "immutable_selector_flags_false": true,
+    "delivery_excluded_explicitly": true
+  },
+  "checks_passed": 20,
+  "checks_total": 20,
+  "counts": {
+    "official_raw_rows": 3715,
+    "official_EQ_rows": 2746,
+    "official_EQ_unique_symbols": 2746,
+    "radar_rows": 2746,
+    "radar_unique_symbols": 2746,
+    "eligible_20_total_sessions": 2690,
+    "unknown_insufficient_history": 56,
+    "history_rows": 497789,
+    "history_sessions": 200,
+    "history_unique_symbols": 2991,
+    "training_rows": 426853
+  },
+  "hashes": {
+    "radar_zip_sha256": "b126cd6310afea4eb197300d8709f0353d8334e9ed40e2b56318396c9f23ee0e",
+    "radar_csv_sha256": "54a6ca0d5e0e682a5898a80c9a9bb20d92fbd1f589189a8c748b85d188b735ab",
+    "radar_json_sha256": "fe74f9654c7ca40edf01c294c8a750f7a86519b9f85917c2c10885fe146a657a",
+    "official_bhavcopy_zip_sha256": "339e3f07bb00acb27d0200ea5bfa748de71d9b3f779b956d1069f2168c8c9904",
+    "historical_artifact_zip_sha256": "66fe9d58e7e2c0c3b2dd335de3416b551b0fea1ef5fc0d3c31aa5108fe79a015",
+    "historical_processed_csv_sha256": "a330fe4e02e5c7168f8857d599df74c0446245cc3cc6e8856961ebf082afa908"
+  },
+  "calibration_metrics": {
+    "P5_H1": {"status":"PASS_HOLDOUT_EVALUATED","core_n":290617,"calibration_n":64977,"test_n":71259,"test_start":"2026-09-24","base_rate":0.09473891017275012,"brier":0.08444850982115598,"ece":0.012565652217415624},
+    "P10_H3": {"status":"PASS_HOLDOUT_EVALUATED","core_n":290617,"calibration_n":64977,"test_n":71259,"test_start":"2026-09-24","base_rate":0.06181675297155447,"brier":0.057506122929620054,"ece":0.001115544208188876},
+    "P20_H5": {"status":"PASS_HOLDOUT_EVALUATED","core_n":290617,"calibration_n":64977,"test_n":71259,"test_start":"2026-09-24","base_rate":0.018495909288651257,"brier":0.018140741476810617,"ece":0.0032928261828507194}
+  },
+  "limitations": [
+    "This reconciles the previously generated 2026-11-09 Radar artifact; it does not prove the newly hardened next_day_performance_radar.py completed a runtime execution.",
+    "Model is price-volume-only because official CM UDiFF Bhavcopy has no delivery columns.",
+    "Hard Gate remains unchanged and BLOCKED; supplemental radar is not production selector."
+  ],
+  "immutable_contracts": {
+    "production_selector_changed": false,
+    "RANKING_SCORE_changed": false,
+    "plus_1_PRESSURE_FADE_changed": false,
+    "CORE_672_changed": false,
+    "hard_gate": "UNCHANGED_BLOCKED"
+  }
+}
