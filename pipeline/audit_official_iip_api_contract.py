@@ -45,10 +45,26 @@ for path,item in spec['paths'].items():
 iip_ops=[o for o in operations if 'iip' in o['path'].lower() or 'iip' in str(o.get('operationId','')).lower()]
 expected=[o for o in iip_ops if 'getiipdata' in (o['path']+' '+str(o.get('operationId',''))).lower()]
 baseyear_params=[p for o in iip_ops for p in o['parameters'] if p['name'] and p['name'].lower() in ('base_year','baseyear','baseyearcode') ]
-supports_2022=any(\n    '2022-23' in (p.get('enum') or [])\n    or p.get('default')=='2022-23'\n    or '2022-23' in str(p.get('description') or '')\n    or '2022-23' in str(p.get('example') or '')\n    for p in baseyear_params\n)\nbase_year_evidence=[{\n    'name':p.get('name'),'enum':p.get('enum'),'default':p.get('default'),\n    'example':p.get('example'),'description':p.get('description'),\n    'explicit_2022_23_mention':('2022-23' in str(p.get('description') or '') or '2022-23' in str(p.get('example') or '') or '2022-23' in (p.get('enum') or []) or p.get('default')=='2022-23')\n} for p in base_year_params]
+supports_2022 = any(
+    '2022-23' in (p.get('enum') or [])
+    or p.get('default') == '2022-23'
+    or '2022-23' in str(p.get('description') or '')
+    for p in baseyear_params
+)
+base_year_evidence = [{
+    'name': p.get('name'),
+    'enum': p.get('enum'),
+    'default': p.get('default'),
+    'description': p.get('description'),
+    'explicit_2022_23_mention': (
+        '2022-23' in str(p.get('description') or '')
+        or '2022-23' in (p.get('enum') or [])
+        or p.get('default') == '2022-23'
+    )
+} for p in baseyear_params]
 security=spec.get('components',{}).get('securitySchemes',{})
 auth_declared=bool(security) or any(o.get('security') for o in iip_ops)
 status='CONTRACT_COMPATIBLE_REVIEW_REQUIRED' if expected and supports_2022 else 'BLOCKED_LEGACY_OR_INCOMPLETE_CONTRACT'
-report={'status':status,'source_url':URL,'http_status':status_code,'content_type':content_type,'bytes':len(raw),'sha256':sha,'openapi':spec.get('openapi'),'swagger':spec.get('swagger'),'info':spec.get('info'),'servers':spec.get('servers'),'iip_operations':iip_ops,'expected_getIIPData_operation_found':bool(expected),'base_year_parameters':baseyear_params,'base_year_2022_23_declared':supports_2022,'authentication_declared':auth_declared,'security_schemes':security,'data_api_called':False,'interpretation':'The contract is accepted for further manual review only when the IIP data operation and 2022-23 base-year parameter are both explicitly declared. An older operation or missing base-year enum is a blocker; do not reuse old parameters or assume authentication is optional.'}
+report={'status':status,'source_url':URL,'http_status':status_code,'content_type':content_type,'bytes':len(raw),'sha256':sha,'openapi':spec.get('openapi'),'swagger':spec.get('swagger'),'info':spec.get('info'),'servers':spec.get('servers'),'iip_operations':iip_ops,'expected_getIIPData_operation_found':bool(expected),'base_year_parameters':baseyear_params,'base_year_2022_23_evidence':base_year_evidence,'base_year_2022_23_declared':supports_2022,'authentication_declared':auth_declared,'security_schemes':security,'data_api_called':False,'interpretation':'The contract is accepted for further manual review only when the IIP data operation and 2022-23 base-year parameter are both explicitly declared. An older operation or missing base-year enum is a blocker; do not reuse old parameters or assume authentication is optional.'}
 save(report)
 if status!='CONTRACT_COMPATIBLE_REVIEW_REQUIRED': raise SystemExit(2)
