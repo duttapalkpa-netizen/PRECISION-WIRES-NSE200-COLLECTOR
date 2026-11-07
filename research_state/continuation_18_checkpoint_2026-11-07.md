@@ -155,3 +155,15 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Artifact ID `13580456878`, name `iip-certified-cell-ledger-guard`, 377 bytes, digest SHA-256 `80b6a9e5d85398503db7dfd68401a84f50b65bbb851993638851f67e57b4bd81`.
 - Workstream result: guard + bounded runtime + five adversarial regression cases PASS for the existing Batch 001 ledger. This is guard QA only, not source certification of any additional candidate. Batch 001 remains 9 certified; 684 policy-aligned candidates remain uncertified; 431 historical/out-of-window transitions remain unresolved. IIP vintage audit and final Hard Gate remain BLOCKED.
 - Overall project percentage remains last defensible baseline 36%; no denominator-based recalculation. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged; spend ₹0.
+
+
+## Continuation 18 — IIP ledger guard adversarial regression QA PASS (2026-11-07)
+- Added `qa/test_iip_certified_cell_ledger_guard.py` with five tests: current Batch 001 accepted; duplicate transition across batches rejected; accounting mismatch rejected; missing provenance column rejected; attempted Hard Gate promotion rejected.
+- First adversarial run exposed a defect in the test fixture writer (not in production guard): malformed-column test passed unexpected keys to csv.DictWriter. The test fixture was corrected to serialize only the intentionally retained columns. No production source or certification data was changed.
+- Workflow YAML was cleaned to ensure exactly one regression-test step and one path trigger entry.
+- Final bounded workflow Run `42389221091` SUCCESS: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42389221091. Exact commit `4dbd7d6ada8e253a27b798c194e21ed1d4b072c7`.
+- All five adversarial tests passed; guard compile passed; production Batch 001 ledger guard passed; artifact upload passed. Test output: `Ran 5 tests ... OK`; guard result `PASS_LEDGER_GUARD`.
+- Artifact ID `13579814959`, name `iip-certified-cell-ledger-guard`, 377 bytes, SHA-256 digest `f65cd2262ab4eb590f20de8ed044539a0921adcbe266eadea6ecc2f912061db9`.
+- Final workflow YAML read-back confirms duplicate test steps and duplicate path entries removed. Branch only; no merge to main.
+- Scope: guard and adversarial regression suite are 100% complete for current Batch 001 ledger. This does not certify any new candidate. Batch 001 remains 9 certified; 684 policy-aligned candidates remain uncertified; 431 historical/out-of-window transitions remain unresolved; IIP 41-vintage audit remains BLOCKED_WITH_GAPS; Hard Gate remains BLOCKED.
+- Overall project percentage remains last defensible baseline 36%; no whole-project denominator reconciliation. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; research spend ₹0.
