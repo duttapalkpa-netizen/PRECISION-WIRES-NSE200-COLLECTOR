@@ -10,7 +10,8 @@ from urllib.error import HTTPError
 
 BASE = "https://api.mospi.gov.in/api/iip/getIIPData"
 PARAMS = {"frequency":"Monthly","base_year":"2022-23","year":"2026","month_code":"5","type":"All","viz_req":"true"}
-PIB_URL = "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2278961&lang=1&reg=3"
+PIB_URL = "https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2329475"
+
 OUT = Path("artifacts/iip_api_pib_crosscheck_2026_05")
 RAW = OUT / "raw"
 RAW.mkdir(parents=True, exist_ok=True)
@@ -23,49 +24,49 @@ URL = BASE + "?" + urlencode(PARAMS)
 # Official published May-2026 index values transcribed from PIB PRID 2278961:
 # General/sectoral + NIC-2025 Statements II-A to II-D + Use-Based Statement III.
 EXPECTED = {
-    ("General","General",""):122.7,
-    ("Sectoral","Mining & Quarrying","Fuel Minerals"):98.8,
+    ("General","General",""):122.5,
+    ("Sectoral","Mining & Quarrying","Fuel Minerals"):99.2,
     ("Sectoral","Mining & Quarrying","Metallic Minerals incl. Rare Earth Minerals"):143.1,
-    ("Sectoral","Mining & Quarrying","Non-Metallic Minerals incl. Minor Mineral"):118.5,
-    ("Sectoral","Mining & Quarrying",""):112.9,
-    ("Sectoral","Manufacturing","Manufacture of food products"):102.1,
-    ("Sectoral","Manufacturing","Manufacture of beverages"):166.0,
-    ("Sectoral","Manufacturing","Manufacture of tobacco products"):119.7,
-    ("Sectoral","Manufacturing","Manufacture of textiles"):136.2,
-    ("Sectoral","Manufacturing","Manufacture of wearing apparel"):94.5,
-    ("Sectoral","Manufacturing","Manufacture of leather and related products"):103.8,
-    ("Sectoral","Manufacturing","Manufacture of wood and products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials"):95.5,
-    ("Sectoral","Manufacturing","Manufacture of paper and paper products"):118.1,
-    ("Sectoral","Manufacturing","Printing and reproduction of recorded media"):95.3,
-    ("Sectoral","Manufacturing","Manufacture of coke and refined petroleum products"):106.9,
-    ("Sectoral","Manufacturing","Manufacture of chemicals and chemical products"):108.2,
-    ("Sectoral","Manufacturing","Manufacture of basic pharmaceutical products and pharmaceutical preparations"):129.4,
-    ("Sectoral","Manufacturing","Manufacture of rubber and plastics products"):111.9,
-    ("Sectoral","Manufacturing","Manufacture of other non-metallic mineral products"):117.4,
-    ("Sectoral","Manufacturing","Manufacture of basic metals"):132.5,
-    ("Sectoral","Manufacturing","Manufacture of fabricated metal products, except machinery and equipment"):130.0,
-    ("Sectoral","Manufacturing","Manufacture of computer, electronic and optical products"):148.6,
-    ("Sectoral","Manufacturing","Manufacture of electrical equipment"):161.3,
-    ("Sectoral","Manufacturing","Manufacture of machinery and equipment n.e.c."):120.8,
-    ("Sectoral","Manufacturing","Manufacture of motor vehicles, trailers and semi-trailers"):132.0,
-    ("Sectoral","Manufacturing","Manufacture of other transport equipment"):153.2,
-    ("Sectoral","Manufacturing","Manufacture of furniture"):113.8,
-    ("Sectoral","Manufacturing","Other manufacturing"):103.6,
-    ("Sectoral","Manufacturing",""):122.6,
+    ("Sectoral","Mining & Quarrying","Non-Metallic Minerals incl. Minor Minerals"):118.5,
+    ("Sectoral","Mining & Quarrying",""):113.1,
+    ("Sectoral","Manufacturing","Manufacture of food products"):103.3,
+    ("Sectoral","Manufacturing","Manufacture of beverages"):166.9,
+    ("Sectoral","Manufacturing","Manufacture of tobacco products"):113.7,
+    ("Sectoral","Manufacturing","Manufacture of textiles"):136.8,
+    ("Sectoral","Manufacturing","Manufacture of wearing apparel"):94.7,
+    ("Sectoral","Manufacturing","Manufacture of leather and related products"):102.1,
+    ("Sectoral","Manufacturing","Manufacture of wood and products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials"):94.7,
+    ("Sectoral","Manufacturing","Manufacture of paper and paper products"):119.5,
+    ("Sectoral","Manufacturing","Printing and reproduction of recorded media"):97.5,
+    ("Sectoral","Manufacturing","Manufacture of coke and refined petroleum products"):106.8,
+    ("Sectoral","Manufacturing","Manufacture of chemicals and chemical products"):108.0,
+    ("Sectoral","Manufacturing","Manufacture of basic pharmaceutical products and pharmaceutical preparations"):115.3,
+    ("Sectoral","Manufacturing","Manufacture of rubber and plastics products"):111.4,
+    ("Sectoral","Manufacturing","Manufacture of other non-metallic mineral products"):122.3,
+    ("Sectoral","Manufacturing","Manufacture of basic metals"):131.8,
+    ("Sectoral","Manufacturing","Manufacture of fabricated metal products, except machinery and equipment"):128.4,
+    ("Sectoral","Manufacturing","Manufacture of computer, electronic and optical products"):160.0,
+    ("Sectoral","Manufacturing","Manufacture of electrical equipment"):162.5,
+    ("Sectoral","Manufacturing","Manufacture of machinery and equipment n.e.c."):125.9,
+    ("Sectoral","Manufacturing","Manufacture of motor vehicles, trailers and semi-trailers"):132.9,
+    ("Sectoral","Manufacturing","Manufacture of other transport equipment"):146.8,
+    ("Sectoral","Manufacturing","Manufacture of furniture"):116.3,
+    ("Sectoral","Manufacturing","Other manufacturing"):100.7,
+    ("Sectoral","Manufacturing",""):122.2,
     ("Sectoral","Electricity & Gas Supply","Non-Renewable Electricity"):124.4,
     ("Sectoral","Electricity & Gas Supply","Renewable Electricity"):153.8,
     ("Sectoral","Electricity & Gas Supply","Electricity"):131.1,
-    ("Sectoral","Electricity & Gas Supply","Gas Supply"):108.0,
-    ("Sectoral","Electricity & Gas Supply",""):129.6,
+    ("Sectoral","Electricity & Gas Supply","Gas Supply"):115.2,
+    ("Sectoral","Electricity & Gas Supply",""):130.1,
     ("Sectoral","Water Supply, Sewerage & Waste Management","Water Supply"):156.6,
     ("Sectoral","Water Supply, Sewerage & Waste Management","Sewerage & Waste Management"):132.4,
     ("Sectoral","Water Supply, Sewerage & Waste Management",""):145.1,
-    ("Use-based category","Primary Goods",""):119.6,
-    ("Use-based category","Capital Goods",""):135.3,
+    ("Use-based category","Primary Goods",""):119.8,
+    ("Use-based category","Capital Goods",""):138.4,
     ("Use-based category","Intermediate Goods",""):123.1,
-    ("Use-based category","Infrastructure/ Construction Goods",""):130.8,
-    ("Use-based category","Consumer Durables",""):120.4,
-    ("Use-based category","Consumer Non-durables",""):118.4,
+    ("Use-based category","Infrastructure/ Construction Goods",""):131.7,
+    ("Use-based category","Consumer Durables",""):121.3,
+    ("Use-based category","Consumer Non-durables",""):113.8,
 }
 
 def norm(value):
@@ -82,8 +83,8 @@ report = {
     "official_comparison_source":PIB_URL,
     "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
     "request_parameters":PARAMS,
-    "official_pib_reference":"PRID 2278961, 2026-06-29, Statements II-A to II-D, Statement III and May 2026 key highlights",
-    "official_pib_locator":"Statements II-A lines 69-97; II-B 99-108; II-C 110-119; II-D 120-127; Use-Based 130-137; General/sectoral highlights 51-60",
+    "official_pib_reference":"PRID 2329475, 2026-10-28, latest IIP release; May-2026 revised values from Statement IV, Statement I and Statement III",
+    "official_pib_locator":"Statement I sectoral May column; Statement III May row; Statement IV May-26 column for NIC-2025 and sector/sub-sector groups",
     "expected_official_records":len(EXPECTED),
 }
 req=Request(URL,headers={"User-Agent":"PRECISION-WIRES-IIP-PIB-crosscheck/1.0","Accept":"application/json"})
@@ -141,7 +142,7 @@ report.update({
     "duplicate_keys":report.get("duplicate_keys",[]),
     "rounding_policy":"API index values rounded to one decimal before comparison with official PIB values published to one decimal; no growth rates recomputed.",
     "status":"PASS_ALL_43_MATCH" if len(observed)==len(EXPECTED) and not missing and not mismatches and not extra and not report.get("duplicate_keys") else "BLOCKED_PIB_API_MISMATCH",
-    "interpretation":"This verifies that the official IIP API's May-2026 2022-23 response matches all 43 published values in the 29-Jun-2026 Output-PPI-based PIB release. It validates the API's current series identity for May; April records from the same official 2022-23 API endpoint remain separately captured and must retain their own raw hash. Native catalogue XLSX is not replaced by this API evidence.",
+    "interpretation":"This verifies the API's May-2026 2022-23 response against the latest official 28-Oct-2026 PIB IIP release after subsequent revisions. The 29-Jun quick-estimate values were deliberately not used because IIP values are revised; the latest published May values are the benchmark. A full match validates the API's current series identity for May. April records from the same official 2022-23 API endpoint remain separately captured and retain their own raw hash. Native catalogue XLSX is not replaced by this API evidence.",
     "hard_gate":"BLOCKED",
 })
 (OUT/"iip_api_pib_crosscheck_2026_05.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
