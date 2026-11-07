@@ -107,6 +107,7 @@ if payload.get("statusCode") is not True or not isinstance(rows,list):
     report.update({"status":"BLOCKED_API_ENVELOPE_INVALID","api_message":payload.get("msg") if isinstance(payload,dict) else None})
     (OUT/"iip_api_pib_crosscheck_2026_05.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(json.dumps(report,indent=2,ensure_ascii=False)); raise SystemExit(2)
+expected_normalized={tuple(norm(x) for x in k):v for k,v in EXPECTED.items()}
 observed={}
 for row in rows:
     if str(row.get("base_year"))!="2022-23" or str(row.get("year"))!="2026" or norm(row.get("month"))!="may":
