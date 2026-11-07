@@ -1,0 +1,79 @@
+{
+  "audit_name": "Next-Day Radar hardened runner bounded runtime verification",
+  "audit_status": "PASS",
+  "runtime_run_id": 42385524572,
+  "runtime_run_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42385524572",
+  "static_qa_run_id": 42385628048,
+  "static_qa_conclusion": "success",
+  "branch": "fix/iip-41-vintage-audit-clean",
+  "head_commit": "460c146b1d16000073c48e7deda93d284b5ef14d",
+  "artifact": {
+    "artifact_id": 13579421445,
+    "name": "next-day-radar-runtime-smoke-6",
+    "sha256": "08a114830871fb87267fb4a476ee581c811e5776a69102d6fd961b980a8a9017",
+    "size_bytes": 428522
+  },
+  "forecast": {
+    "as_of": "2026-11-06",
+    "next_session": "2026-11-09",
+    "official_EQ_symbols": 2746,
+    "radar_rows": 2746,
+    "unique_symbols": 2746,
+    "scored_calibrated_out_of_sample": 2690,
+    "unknown_insufficient_history": 56,
+    "minimum_scored_history_depth": 20,
+    "maximum_unknown_history_depth": 19,
+    "training_matured_through": "2026-10-30",
+    "training_rows": 426853,
+    "candidate_join_status": "SAME_DATE_V11_3_CANDIDATES",
+    "probability_method": "TIME_SPLIT_PLATT",
+    "delivery_features": "EXCLUDED_NOT_AVAILABLE_IN_OFFICIAL_CM_UDIFF"
+  },
+  "checks": {
+    "runtime_script_completed": true,
+    "official_NSE_source_downloaded_and_normalized": true,
+    "official_source_sha256_verified": true,
+    "full_EQ_universe_retained": true,
+    "unique_symbol_count_matches_rows": true,
+    "all_56_insufficient_history_symbols_retained_as_UNKNOWN": true,
+    "unknown_probability_and_radar_scores_are_null": true,
+    "all_2690_eligible_symbols_have_calibrated_probabilities": true,
+    "candidate_join_is_same_date": true,
+    "output_sha256_matches_summary": true,
+    "selector_unchanged": true,
+    "RANKING_SCORE_unchanged": true,
+    "plus_1_PRESSURE_FADE_unchanged": true,
+    "CORE_672_unchanged": true,
+    "Hard_Gate_unchanged": true,
+    "static_QA_success": true
+  },
+  "hashes": {
+    "official_normalized_raw_csv_sha256": "d9525e1bf8ace057b7c47cbb79b13b56086e5fe95e17b9dbbffbd31712f4bab8",
+    "radar_csv_sha256": "14f1726f816d2ff933b38f39f3f0397c172b22580d75728d63c1d4e3b41b519f",
+    "radar_summary_json_sha256": "f8c9300eb1c2f479ab4bc4e1a4cbf52b880d370b9fa0f6a2360f581653f51c47",
+    "runtime_artifact_sha256": "08a114830871fb87267fb4a476ee581c811e5776a69102d6fd961b980a8a9017"
+  },
+  "corrected_runtime_failures": [
+    {
+      "run_id": 42385300388,
+      "root_cause": "ModuleNotFoundError: No module named pipeline",
+      "correction": "Explicitly add repository root to sys.path before importing pipeline.walk_forward_backtest."
+    },
+    {
+      "run_id": 42385344865,
+      "root_cause": "ISO date 2026-11-06 was misread as 2026-06-11 because dayfirst=True.",
+      "correction": "Parse UDiFF DATE1 explicitly with format=ISO8601."
+    },
+    {
+      "run_id": 42385408976,
+      "root_cause": "Runtime passed for eligible 2,690 but omitted the 56 below-history symbols from CSV.",
+      "correction": "Append all 56 to the Radar as UNKNOWN_INSUFFICIENT_HISTORY with null probabilities and null ranking score; assert full 2,746-row universe."
+    }
+  ],
+  "scope_limitations": [
+    "This is a bounded runtime verification against preserved 200-session data and the exact 2026-11-06 official NSE source; it is not a fresh 200-session recollection.",
+    "Price-volume-only model; delivery metrics are not fabricated.",
+    "Hard Gate remains BLOCKED pending the other independent research acceptance criteria.",
+    "Daily automation is not active on main; the runtime smoke workflow is branch-scoped."
+  ]
+}
