@@ -33,6 +33,12 @@ jobs:
           assert '"core_672_changed":False' in p
           assert "UNKNOWN_INSUFFICIENT_CALIBRATION" in p
           assert "SIGNAL_ONLY_NOT_PROBABILITY" in p
+          assert "latest_official_daily" in p
+          assert "MIN_DAILY_EQ_ROWS = 1000" in p
+          assert "Latest EQ source has blank or duplicate symbols" in p
+          assert "Latest model date does not equal verified raw NSE date" in p
+          assert "Eligible latest-session coverage mismatch" in p
+          assert "raw_source_sha256" in p
           assert "WINNER_PROBABILITY" not in p or "_calibrated_probability" in p
           print("STATIC_QA_PASS: supplemental radar, no selector mutation, unknown preserved")
           PY
