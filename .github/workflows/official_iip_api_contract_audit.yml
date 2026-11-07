@@ -5,6 +5,7 @@ on:
     branches: [fix/iip-41-vintage-audit-clean]
     paths:
       - "pipeline/audit_official_iip_api_contract.py"
+      - "pipeline/probe_iip_api_apr2026.py"
       - ".github/workflows/official_iip_api_contract_audit.yml"
 permissions:
   contents: read
@@ -27,6 +28,8 @@ jobs:
         run: pip install pyyaml
       - name: Fetch official IIP API contract and fingerprint it
         run: python pipeline/audit_official_iip_api_contract.py
+      - name: Query official IIP API for April 2026 2022-23 records
+        run: python pipeline/probe_iip_api_apr2026.py
       - name: Upload official contract and schema audit
         if: always()
         uses: actions/upload-artifact@v4
