@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-check all May-2026 official IIP API records against the 29-Jun-2026 PIB PPI-based release."""
+"""Cross-check all May-2026 official IIP API records against the latest 28-Oct-2026 PIB revision."""
 from __future__ import annotations
 import hashlib, json, ssl
 from datetime import datetime, timezone
