@@ -52,7 +52,8 @@ def latest_official_daily():
     daily=daily[daily.SERIES.astype(str).str.strip().str.upper().eq("EQ")].copy()
     daily["SYMBOL"]=daily.SYMBOL.astype(str).str.strip().str.upper()
     if "DATE1" in daily:
-        source_dates=pd.to_datetime(daily.DATE1,errors="coerce",dayfirst=True).dropna().dt.normalize().unique()
+        # UDiFF DATE1 is ISO-8601 (YYYY-MM-DD); dayfirst=True misreads 2026-11-06 as 2026-06-11.
+        source_dates=pd.to_datetime(daily.DATE1,format="ISO8601",errors="coerce").dropna().dt.normalize().unique()
         if len(source_dates)!=1 or pd.Timestamp(source_dates[0])!=dt.normalize():
             raise ValueError(f"Raw daily source date mismatch: filename={dt.date()} dates={list(source_dates)}")
     if len(daily)<MIN_DAILY_EQ_ROWS:
