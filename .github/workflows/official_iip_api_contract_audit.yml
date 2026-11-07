@@ -1,6 +1,11 @@
 name: Official e-Sankhyiki IIP API Contract Audit
 on:
   workflow_dispatch:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - "pipeline/audit_official_iip_api_contract.py"
+      - ".github/workflows/official_iip_api_contract_audit.yml"
 permissions:
   contents: read
   actions: read
