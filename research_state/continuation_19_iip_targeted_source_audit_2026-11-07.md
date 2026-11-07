@@ -65,3 +65,13 @@ Continue through official e-Sankhyiki's user-facing metadata/table workflow to i
 - New report: `research/continuity/IIP_JANUARY_2026_OFFICIAL_RELEASE_GAP_RECONCILIATION_2026-11-07.md`, commit `3a86a7a71683fc20bf61c7ed484b67021c80860b`.
 - January official release identification/classification: 100% complete. Native catalogue table/XLSX recovery: still open; observation-level transcription and independent cell QA: not performed. April 2026 Output-PPI source recovery and API schema verification remain open.
 - IIP full audit remains BLOCKED_WITH_GAPS; master Hard Gate BLOCKED. Overall research stays at last defensible 36% baseline. Production invariants unchanged; ₹0.
+
+
+## Completed bounded task — April 2026 Output-PPI superseding-release evidence (2026-11-08)
+- Official PIB PRID 2278961, 29-Jun-2026 16:00 IST, independently opened and checked: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2278961&lang=1&reg=3
+- Lines 21–25 and 40–45 explicitly confirm the entire 2022-23 IIP series was revised using Output PPI and supersedes the 1-Jun WPI-based series; users are directed to use the PPI-based series. Lines 61 and 157–159 identify Statement IV as a 13-month month-wise index panel; the HTML rendering contains April 2026 values.
+- Critical distinction: 1-Jun PRID 2267531 is WPI-based and must not be used as the final PPI series. 29-Jun PRID 2278961 is the valid superseding PPI release.
+- The prior April table ID IIPMFY26002APR remains a 404 in the immutable catalogue manifest; no replacement catalogue ID or native April XLSX was recovered. API schema/filters remain unverified.
+- New report research/continuity/IIP_APRIL_2026_OUTPUT_PPI_SUPERSEDING_RELEASE_EVIDENCE_2026-11-08.md, commit bb637c0051a29bd87df5992cb4d67fa64922e694.
+- April Output-PPI official release identity and inclusion of April in superseding month-wise panel: 100% verified. Full April column transcription/cell QA: 0% in this task. Native catalogue XLSX/API recovery: still open.
+- IIP full audit/Hard Gate remain BLOCKED_WITH_GAPS/BLOCKED. Overall research remains last defensible 36% baseline. No production invariant changed; ₹0.
