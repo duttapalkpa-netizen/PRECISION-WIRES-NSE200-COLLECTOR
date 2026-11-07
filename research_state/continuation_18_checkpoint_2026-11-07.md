@@ -118,3 +118,18 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Probability calibration holdout metrics unchanged: P5_H1 Brier 0.0844485 / ECE 0.0125657; P10_H3 0.0575061 / 0.0011155; P20_H5 0.0181407 / 0.0032928. Model is price-volume-only because official UDiFF has no delivery columns.
 - Next task: create a bounded, reproducible runtime harness/workflow that runs the latest hardened runner against the preserved 200-session artifact plus official 06-Nov raw source, writes outputs under isolated temp paths, and verifies complete symbol coverage + hashes; do not rerun the old Radar or recollect 200 sessions. Do not promote to full PASS until this succeeds.
 - Overall research progress remains last authoritative baseline 36%; no denominator-based recalculation. Hard Gate remains BLOCKED. Daily schedule not yet enabled on main branch.
+
+
+## Continuation 18 — Hardened Radar bounded runtime PASS (2026-11-07)
+- Successfully executed latest hardened `pipeline/next_day_performance_radar.py` with preserved 200-session dataset from prior successful run `42216720465` / artifact `13501792734`; did NOT recollect the 200 sessions.
+- Runtime workflow Run `42385524572` SUCCESS: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42385524572
+- Runtime artifact ID `13579421445`, name `next-day-radar-runtime-smoke-6`, SHA-256 `08a114830871fb87267fb4a476ee581c811e5776a69102d6fd961b980a8a9017`.
+- Official NSE source hash verified before execution; normalized CSV SHA-256 `d9525e1bf8ace057b7c47cbb79b13b56086e5fe95e17b9dbbffbd31712f4bab8`.
+- Output CSV SHA-256 `14f1726f816d2ff933b38f39f3f0397c172b22580d75728d63c1d4e3b41b519f`; summary JSON SHA-256 `f8c9300eb1c2f479ab4bc4e1a4cbf52b880d370b9fa0f6a2360f581653f51c47`.
+- Runtime output now preserves all 2,746 official EQ symbols exactly once: 2,690 calibrated OOS rows with history depth >=20; 56 explicitly retained as `UNKNOWN_INSUFFICIENT_HISTORY` with null probabilities and null RADAR_SCORE. Max history depth among UNKNOWN is 19. Calibration uses TIME_SPLIT_PLATT, training 426,853 rows, matured through 2026-10-30. Candidate join status `SAME_DATE_V11_3_CANDIDATES`. Delivery metrics excluded because UDiFF source lacks delivery fields.
+- Corrected three genuine runtime issues in sequence: (1) Run `42385300388`: direct-script import failed; added repository root to sys.path. (2) Run `42385344865`: ISO date misread due dayfirst=True; changed to explicit ISO8601 parser. (3) Run `42385408976`: scored eligible symbols but omitted 56 insufficient-history names; appended explicit UNKNOWN rows and tightened runtime assertions to require all 2,746 symbols. Final Run `42385524572` then passed all runtime steps and artifact upload.
+- Strengthened Static QA Run `42385628048` SUCCESS; verifies the new explicit UNKNOWN retention contract and immutable architecture flags.
+- Runtime audit JSON committed at `outputs/audits/next_day_radar_hardened_runtime_2026-11-07.json`; commit `46c58c68df4b9f1e13cdc208e0fadc63eae3b064`.
+- Runtime verification is PASS for this preserved 06-Nov source + historical snapshot. It is NOT evidence that daily scheduled automation is active; workflow remains branch-scoped and main branch not changed. Do not merge without approval.
+- V11.3 production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Hard Gate remain unchanged. Hard Gate remains BLOCKED pending all other acceptance criteria.
+- Overall research percentage remains last authoritative baseline 36%; no denominator reconciliation has been performed. Radar runtime workstream: hardened runtime PASS 100%; branch static QA PASS 100%; main-branch daily automation 0%; wider project remains 36% last recorded.
