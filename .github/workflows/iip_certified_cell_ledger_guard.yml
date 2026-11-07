@@ -1,0 +1,39 @@
+name: IIP Certified Cell Ledger Guard
+on:
+  push:
+    branches:
+      - fix/iip-41-vintage-audit-clean
+    paths:
+      - 'qa/iip_certified_cell_ledger_guard.py'
+      - 'data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.csv'
+      - 'data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_SUMMARY.json'
+      - '.github/workflows/iip_certified_cell_ledger_guard.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  ledger-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile guard
+        run: python -m py_compile qa/iip_certified_cell_ledger_guard.py
+      - name: Run bounded ledger guard
+        run: |
+          python qa/iip_certified_cell_ledger_guard.py \
+            --ledger data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.csv \
+            --summary data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_SUMMARY.json \
+            | tee iip_certified_cell_ledger_guard_result.json
+      - name: Upload guard result
+        uses: actions/upload-artifact@v4
+        with:
+          name: iip-certified-cell-ledger-guard
+          path: iip_certified_cell_ledger_guard_result.json
+          if-no-files-found: error
