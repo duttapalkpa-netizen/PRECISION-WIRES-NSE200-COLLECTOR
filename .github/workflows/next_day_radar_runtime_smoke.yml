@@ -71,7 +71,13 @@ jobs:
           assert s["raw_eq_rows"]==2746 and s["raw_unique_symbols"]==2746
           assert s["eligible_symbols"]==2690
           assert s["history_insufficient_symbols"]==56
-          assert len(d)==2690 and d.SYMBOL.nunique()==2690
+          assert len(d)==2746 and d.SYMBOL.nunique()==2746
+          scored=d[d.PROBABILITY_STATUS=="CALIBRATED_OUT_OF_SAMPLE"]
+          unknown=d[d.PROBABILITY_STATUS=="UNKNOWN_INSUFFICIENT_HISTORY"]
+          assert len(scored)==2690 and len(unknown)==56
+          assert unknown[["P5_H1","P10_H3","P20_H5"]].isna().all().all()
+          assert unknown["RADAR_SCORE"].isna().all()
+          assert s["unknown_probability_rows"]==56
           assert s["selector_changed"] is False
           assert s["ranking_score_changed"] is False
           assert s["pressure_fade_changed"] is False
