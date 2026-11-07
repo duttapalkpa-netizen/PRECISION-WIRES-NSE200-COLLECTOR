@@ -38,6 +38,9 @@ jobs:
           assert "Latest EQ source has blank or duplicate symbols" in p
           assert "Latest model date does not equal verified raw NSE date" in p
           assert "Eligible latest-session coverage mismatch" in p
+          assert "UNKNOWN_INSUFFICIENT_HISTORY" in p
+          assert "unknown_rows[\"RADAR_SCORE\"]=np.nan" not in p
+          assert "unknown_probability_rows" in p
           assert "raw_source_sha256" in p
           assert "WINNER_PROBABILITY" not in p or "_calibrated_probability" in p
           print("STATIC_QA_PASS: supplemental radar, no selector mutation, unknown preserved")
