@@ -72,3 +72,20 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Do not present a guessed overall percentage. The last remembered overall baseline was 36%, but no complete current workstream denominator/reconciliation was available on 2026-11-07.
 - Report workstream-specific ratios with their denominator and scope. For IIP ingestion, 39/41 = 95.1% of expected monthly periods parsed; the vintage audit remains BLOCKED.
 - Next priority: repair the April 2026 MoSPI catalogue/XLSX provenance mismatch using the correct official 2022-23/NIC-2025 source, and preserve the PIB crosswalk only as supplemental evidence. Do not rerun the full 41-vintage workflow unless a targeted validation requires it.
+
+
+## IIP cell-level revision certification — Batch 001 completed (2026-11-07)
+- Used existing Run 41640521553 artifact ID 13232127900 (SHA-256 e59d98dfe75e1c298b7a46d7304b44ce152d6a3363103238bfd1c466911a141c); no recollection/re-download/re-run of the original 41-vintage collection was performed.
+- Extracted the two exact source workbooks from that immutable artifact and independently recomputed their SHA-256:
+  - IIPMFY23049APR QUICK workbook: 7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e
+  - IIPMFY23054MAY FIRST_REVISION workbook: 6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a
+- Ran the existing bounded pipeline/audit_iip_cell_level_revision_batch_001.py logic against those exact files; all nine pre-specified April-2023 NIC-2008 rows matched both official PIB statements and both source XLSX cell values. 18/18 workbook cell matches; 18/18 official statement value matches; 9/9 transitions certified; zero mismatches.
+- Verified source cells on sheet NIC 2d, sectoral monthly: previous/current cell pairs EF7, EF8, EF10, EF11, EF12, EF13, EF14, EF16, EF17. Values respectively: 135.2->136.1; 106.8->106.7; 106.9->106.8; 91.8->91.7; 99.5->97.8; 89.3->89.6; 79.4->80.6; 128.9->128.8; 126.9->126.2.
+- PIB sources: PRID 1931708 (2023-06-12, Quick Estimates, Statement II) and PRID 1938974 (2023-07-12, April-2023 first revision in Statement IV). Official search results confirmed the release stages and values.
+- Committed evidence:
+  - data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.csv, commit d22d36a534a57c465598a44f600730492a884d6c, GitHub blob SHA f93044e17d65b9d762ed7adf8b5673760189ff2c, SHA-256 40644baabc0273b0011cedf9eeaab765af48fac91340e5f07da810d4af25024b.
+  - data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_SUMMARY.json, commit 6cedbab197dd9ed15aadc8fd1c45596d7b3ce5c2, GitHub blob SHA 0be4a0f4c1fc2825b4900621f2acfe91dba23097, SHA-256 7e2d8a468e1946bae9bf7986bf123313f2b3f24a76e1785ad108136d749a4d7e.
+- Candidate accounting after this batch: 9 certified; 684 policy-aligned candidates still NOT certified; 431 historical-panel/out-of-window transitions unresolved; 1,124 total observed differences. The remaining 1,115 are untouched by this batch. No extrapolation.
+- Batch task progress: 100% (source artifact verification, 9 row source matching, CSV/JSON output, repository read-back). Overall research progress remains last defensible baseline 36%; no new whole-project denominator/reconciliation, so do not invent an updated percentage.
+- IIP 41-vintage audit remains BLOCKED_WITH_GAPS; overall Hard Gate remains BLOCKED. Native April-2026 PPI XLSX provenance remains unresolved. The 86 April/May 2026 API-vs-PIB matches from Run #12 are supplemental and distinct.
+- No production logic, RANKING_SCORE, +1 PRESSURE_FADE, or CORE-672 components changed.
