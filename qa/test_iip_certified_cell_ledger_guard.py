@@ -33,7 +33,7 @@ class LedgerGuardTests(unittest.TestCase):
         with path.open("w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fields or self.fields, extrasaction="ignore")
             writer.writeheader()
-            writer.writerows(rows)
+            writer.writerows([{k: v for k, v in row.items() if k in (fields or self.fields)} for row in rows])
         return path
 
     def write_summary(self, summary=None):
