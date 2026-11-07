@@ -117,7 +117,7 @@ for row in rows:
     observed[k]=row
 mismatches=[]
 missing=[]
-for k,expected in EXPECTED.items():
+for k,expected in expected_normalized.items():
     row=observed.get(k)
     if row is None:
         missing.append({"key":k,"expected_index":expected})
@@ -126,7 +126,7 @@ for k,expected in EXPECTED.items():
     except Exception: actual=None
     if actual!=expected:
         mismatches.append({"key":k,"expected_index":expected,"api_index":row.get("index"),"api_growth_rate":row.get("growth_rate")})
-extra=[k for k in observed if k not in EXPECTED]
+extra=[k for k in observed if k not in expected_normalized]
 report.update({
     "api_statusCode":payload.get("statusCode"),
     "api_message":payload.get("msg"),
