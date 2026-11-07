@@ -36,3 +36,13 @@ Continue through official e-Sankhyiki's user-facing metadata/table workflow to i
 - IIP monthly ingestion count remains 39/41 = 95.1%; this is period ingestion coverage only, not audit completion.
 - No defensible new overall research percentage calculated. Last recorded overall baseline remains 36%, not re-certified.
 - Production selector, RANKING_SCORE, +1 PRESSURE_FADE, and CORE-672 remain untouched.
+
+
+## Completed bounded task — September 2026 IIP metrics and full NIC-2 CI QA (2026-11-07)
+- Workflow previously manual-only was safely extended to trigger on pushes touching only the two September 2026 source CSVs, their validators, or the workflow file. Branch-scoped to `fix/iip-41-vintage-audit-clean`; timeout remains 5 minutes; artifacts uploaded even on failure. No main branch automation.
+- Run `42400271361` SUCCESS, commit `fe9f87a37bb110a5202729c721a8713a671b6392`: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42400271361.
+- Artifact ID `13584194796`, ZIP SHA-256 `6a97828061391dece1825a1b26c1daea65ad1705c6edef92468e5510cf54956b`; downloaded ZIP hash independently matches GitHub digest.
+- Release metrics QA: `PASS_TRANSCRIPTION_AND_STRUCTURE_QA`, 19 rows, 19 unique keys, 0 errors; CSV SHA-256 `79ff77d60d6ad3e776a5aa68fedec3a4891269c5b196a2c4f50b558b30d39540`; JSON SHA-256 `33a55d1e6eccd10dd361c02783a901ca0e3e90729c2f5f8b6a5cd849024d1bd1`.
+- NIC-2 Statement II-A QA: `PASS_TRANSCRIPTION_STRUCTURE_AND_ARITHMETIC_QA`, 23/23 codes 10–32, 0 errors; positive/negative/zero groups 17/6/0; weight sum 76.065 vs official 76.062, +0.003 rounding within ±0.005; source CSV SHA-256 `102bef6c87b95c1478686935d9a6f5fcacda90dce07ea48f36d09e340fc29b7f`; JSON SHA-256 `5e22145ecd4e96f7881a427a1cd556b2ca9f689350dad83e31fbef23573493c0`.
+- Report: `research/continuity/IIP_SEPTEMBER_2026_RELEASE_QA_CI_RESULT_2026-11-07.md`, commit `4630e2a56c4bf55e2e1dbd64f25a3dedc50d9d38`.
+- Scope boundary: transcription/schema/arithmetic QA only. Raw PIB PDF binary hash still NOT_ACQUIRED; not a full April-2023 onward monthly panel, not full vintage revision audit. IIP full audit/Hard Gate remain BLOCKED. Overall research remains last defensible 36% baseline. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; ₹0.
