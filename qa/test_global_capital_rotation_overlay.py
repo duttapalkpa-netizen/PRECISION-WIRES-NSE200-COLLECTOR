@@ -39,7 +39,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
                 load_observations(self.make([self.row("em_portfolio_flow_usd_bn",value)]))
     def test_rejects_observation_after_asof(self):
         with self.assertRaises(ValueError):
-            load_observations(self.make([self.row("em_portfolio_flow_usd_bn",1,asof="2026-11-08")]))
+            load_observations(self.make([{**self.row("em_portfolio_flow_usd_bn",1,asof="2026-11-07"),"date":"2026-11-08"}]))
     def test_rejects_non_https_source(self):
         row=self.row("em_portfolio_flow_usd_bn",1); row["source_url"]="http://example.org"
         with self.assertRaises(ValueError): load_observations(self.make([row]))
