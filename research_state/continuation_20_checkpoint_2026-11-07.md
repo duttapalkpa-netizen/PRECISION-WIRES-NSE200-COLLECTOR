@@ -43,9 +43,10 @@ Branch: fix/iip-41-vintage-audit-clean
 - CSV: data/macro/iip_apr2026_mospi_api_records.csv
   - 43 rows, 8 columns.
   - SHA-256 192267b76af8cc0bc524d33a86461d0d70906a96a34eadfdccea12b2245a82ee
+  - Commit 198ad7bccf5d6f634e0f0af6a5868119369f1921; blob SHA 61b72e94a7308c60c9da801b563de74b733d7be8
   - Commit 198ad7bccf5d6f634e0f0af6a5868119369f1921
 - Validation JSON: data/macro/iip_apr2026_mospi_api_validation.json
-  - Commit 6b0bd934152fb83fb258fc6a3ffce29f4dce4f86
+  - Commit 6b0bd934152fb83fb258fc6a3ffce29f4dce4f86; blob SHA a08f4b8346af3102099a33dea4dd17b10e0830e7
   - Contains API request provenance, response hash, 43/43 official release cross-check, PPI series evidence, and hard-gate caveat.
 - Successful workflow run 42367705456 (run #10), job PASS; artifact ID 13572745125; artifact zip SHA-256 01c5b8d28fff2049cc3e706b01cb841da550bbdbc40acf58a3f461eae58c6ecc; artifact retention 90 days.
 - API contract audit run 42367367533 succeeded; artifact ID 13571339650; artifact zip SHA-256 2efadcee518fc2deff6db37361491b08e3c29d26683c7f361958fb90ba3cf9f1.
@@ -57,6 +58,7 @@ Branch: fix/iip-41-vintage-audit-clean
   - Run 42367573000 and 42367604833 were failed May cross-check attempts: first key normalization, then missing normalized-map initialization; no source data mismatch was implied.
   - Run 42367705456 succeeded with May 43/43 match and artifact capture.
 - Do not rerun these successful API queries unless a specific validation requires it.
+- Continuation 20 checkpoint commit: 1a7111599a578ca2f3ce98521d12d086ab4729af; blob SHA before this identifier addendum: b6e7f33b37afb2fb7f4e816960c222fcf677ff53.
 
 ## Remaining blockers and next priorities
 - Native April 2026 MoSPI catalogue XLSX provenance still unresolved; API JSON is not the native workbook.
