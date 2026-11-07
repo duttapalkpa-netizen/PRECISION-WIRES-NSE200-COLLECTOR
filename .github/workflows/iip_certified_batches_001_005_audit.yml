@@ -1,0 +1,36 @@
+name: IIP Certified Batches 001-005 Integrity Audit
+on:
+  push:
+    branches:
+      - fix/iip-41-vintage-audit-clean
+    paths:
+      - 'qa/audit_iip_certified_batches_001_005.py'
+      - 'research/continuity/IIP_CELL_LEVEL_REVISION_BATCH_00*.csv'
+      - 'research/continuity/IIP_CELL_LEVEL_REVISION_BATCH_00*_SUMMARY.json'
+      - '.github/workflows/iip_certified_batches_001_005_audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  consolidated-ledger-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile audit
+        run: python -m py_compile qa/audit_iip_certified_batches_001_005.py
+      - name: Run consolidated read-only audit
+        run: |
+          python qa/audit_iip_certified_batches_001_005.py | tee iip_batches_001_005_integrity.json
+      - name: Upload audit result
+        uses: actions/upload-artifact@v4
+        with:
+          name: iip-batches-001-005-integrity
+          path: iip_batches_001_005_integrity.json
+          if-no-files-found: error
