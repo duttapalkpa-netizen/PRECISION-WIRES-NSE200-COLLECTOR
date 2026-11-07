@@ -67,7 +67,7 @@ jobs:
           assert csv.is_file() and js.is_file()
           d=pd.read_csv(csv); s=json.loads(js.read_text())
           assert s["as_of"]=="2026-11-06"
-          assert s["raw_source_sha256"]==""
+          assert len(s["raw_source_sha256"])==64
           assert s["raw_eq_rows"]==2746 and s["raw_unique_symbols"]==2746
           assert s["eligible_symbols"]==2690
           assert s["history_insufficient_symbols"]==56
