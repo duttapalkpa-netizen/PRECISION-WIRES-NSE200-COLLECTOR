@@ -191,3 +191,12 @@ Page: গবেষণা যাচাই অব্যাহত 18
 - Investigation note added: `research/continuity/IIP_BATCHES_001_005_HASH_MISMATCH_INVESTIGATION_2026-11-07.md` (commit `92daa1d816e063cced0600f4a25566847ca6a6f3`).
 - Interpretation: integrity audit pass is limited to structural ledger checks with hash drift quarantined. It is NOT independent PIB/workbook recertification and does not clear source provenance. 54 rows exist across ledgers; Batch001 summary denominator 684 is not recalculated until candidate-universe accounting is reconciled. Do not subtract 45 without a denominator reconciliation.
 - IIP audit and Hard Gate remain BLOCKED. Overall research percentage remains last defensible baseline 36%. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; ₹0 spend.
+
+
+## Continuation 18 — Batch 001 alternate-copy provenance probe (2026-11-07)
+- Extended consolidated auditor to test whether Batch 001 summary's declared ledger hash is explained by the parallel `data/macro/IIP_CELL_LEVEL_REVISION_BATCH_001_2023-04.csv` copy.
+- Runtime Run `42391693758` SUCCESS, commit `32ee5265e1d19ac4b8868b5dc1b73ee9c4a4e0f0`: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42391693758. Artifact ID `13581328043`, SHA-256 `a5ddd1cfb3a46903e64e8b087d273fdc52f4385787d4a362e2f40fb46b99ae40`.
+- Batch 001 declared hash `334bda7be9fdb441fcbdb217fb4ed861724b33e1bc3edda6b7fe2bfbc122d165`; research copy hash `b30e8135bf0f0edc421c3fa6bd7e78bdbc5d023f33be8bf8f609dac35172e97c`; alternate data/macro copy hash `40644baabc0273b0011cedf9eeaab765af48fac91340e5f07da810d4af25024b`. Alternate copy bytes are not identical to research copy and do not match the declared hash. Therefore Batch 001 remains quarantined; no assumption that it is a copy alias.
+- Batches 003-005 remain quarantined as previously documented. No legacy digest changed; no file replaced; no rows recertified.
+- 54 unique rows across 5 ledgers remain structurally reconciled. Hash-provenance issue is still unresolved; IIP source certification and Hard Gate remain BLOCKED. Overall research remains 36% baseline.
+- Next required provenance recovery: retrieve original artifact/commit bytes matching each declared SHA-256, or establish the exact immutable source artifact and a documented derivation chain. Do not recompute-and-overwrite legacy hashes.
