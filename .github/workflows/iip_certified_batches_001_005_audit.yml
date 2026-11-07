@@ -27,6 +27,7 @@ jobs:
         run: python -m py_compile qa/audit_iip_certified_batches_001_005.py
       - name: Run consolidated read-only audit
         run: |
+          set -o pipefail
           python qa/audit_iip_certified_batches_001_005.py | tee iip_batches_001_005_integrity.json
       - name: Upload audit result
         uses: actions/upload-artifact@v4
