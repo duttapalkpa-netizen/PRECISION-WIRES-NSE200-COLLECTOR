@@ -45,6 +45,11 @@ class CurrentSeriesTests(unittest.TestCase):
         fields, rows = self.load(); rows[0]["source_workbook_sha256"] = "a" * 64
         errors = self.run_rows(fields, rows)
         self.assertTrue(any("does not match the inspected original workbook" in e for e in errors))
+    def test_april_catalogue_id_must_not_be_guessed_from_august(self):
+        fields, rows = self.load(); rows[0]["source_table_id"] = "IIPMFY26018AUG"
+        errors = self.run_rows(fields, rows)
+        self.assertTrue(any("source_table_id must equal 'NOT_VERIFIED'" in e for e in errors))
+
     def test_second_official_release_metadata_is_required(self):
         fields, rows = self.load(); rows[0]["second_official_release_id"] = "2315957"
         errors = self.run_rows(fields, rows)
