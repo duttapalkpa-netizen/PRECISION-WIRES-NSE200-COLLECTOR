@@ -61,10 +61,11 @@ def main():
             errors.append(f"row {line}: unsupported series lineage {series}")
             continue
         key = (base, cls, row["period"], row["nic_code"])
-        if key in seen:
-            errors.append(f"row {line}: duplicate comparison key {key}")
+        comparison_key = (row["previous_table_id"], row["current_table_id"], *key)
+        if comparison_key in seen:
+            errors.append(f"row {line}: duplicate comparison-pair key {comparison_key}")
             continue
-        seen.add(key)
+        seen.add(comparison_key)
 
         prev_key = (row["previous_table_id"], *key)
         curr_key = (row["current_table_id"], *key)
