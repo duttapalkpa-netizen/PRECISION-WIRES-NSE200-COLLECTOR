@@ -7,6 +7,9 @@ on:
       - "audit_inputs/iip_apr2026_nic2025_pdf_first_release_crosscheck.csv"
       - "qa/validate_iip_apr2026_pdf_crosscheck.py"
       - "qa/test_validate_iip_apr2026_pdf_crosscheck.py"
+      - "audit_inputs/iip_apr2026_current_output_ppi_nic2025_monthly_values.csv"
+      - "qa/validate_iip_apr2026_current_series.py"
+      - "qa/test_validate_iip_apr2026_current_series.py"
       - ".github/workflows/iip-ledger-qa.yml"
 
 permissions:
@@ -27,3 +30,7 @@ jobs:
         run: python qa/validate_iip_apr2026_pdf_crosscheck.py audit_inputs/iip_apr2026_nic2025_pdf_first_release_crosscheck.csv
       - name: Run regression tests
         run: python -m unittest qa/test_validate_iip_apr2026_pdf_crosscheck.py -v
+      - name: Validate current Output-PPI NIC-2025 monthly observations
+        run: python qa/validate_iip_apr2026_current_series.py audit_inputs/iip_apr2026_current_output_ppi_nic2025_monthly_values.csv
+      - name: Run current-series regression tests
+        run: python -m unittest qa/test_validate_iip_apr2026_current_series.py -v
