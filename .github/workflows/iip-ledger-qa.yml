@@ -8,6 +8,7 @@ on:
       - "qa/validate_iip_apr2026_pdf_crosscheck.py"
       - "qa/test_validate_iip_apr2026_pdf_crosscheck.py"
       - "audit_inputs/iip_apr2026_current_output_ppi_nic2025_monthly_values.csv"
+      - "audit_inputs/iip_apr2026_current_series_september_release_crosscheck_20261108.md"
       - "qa/validate_iip_apr2026_current_series.py"
       - "qa/test_validate_iip_apr2026_current_series.py"
       - ".github/workflows/iip-ledger-qa.yml"
