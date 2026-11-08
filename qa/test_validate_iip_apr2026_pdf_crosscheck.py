@@ -40,7 +40,7 @@ class LedgerValidatorTests(unittest.TestCase):
     def test_revision_arithmetic_mismatch_is_rejected(self):
         fields, rows = self.load_rows()
         rows[0]["revision_delta_latest_minus_first"] = "0.0"
-        self.assertTrue(any("revision delta arithmetic mismatch" in e for e for e in validate(self.write_temp(fields, rows))))
+        self.assertTrue(any("revision delta arithmetic mismatch" in e for e in validate(self.write_temp(fields, rows))))
 
     def test_missing_raw_hash_must_remain_provisional(self):
         fields, rows = self.load_rows()
