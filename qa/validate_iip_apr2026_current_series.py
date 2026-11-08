@@ -71,6 +71,7 @@ def validate(path: Path) -> list[str]:
                 errors.append(p + "weight must be >0 and <100")
         except (ValueError, TypeError):
             errors.append(p + "weight must be numeric")
+        value = None
         try:
             value = float(row["monthly_index"])
             if not (0 < value < 1000):
@@ -82,7 +83,7 @@ def validate(path: Path) -> list[str]:
             errors.append(p + "monthly_index must be numeric")
         try:
             third_value = float(row.get("third_official_crosscheck_monthly_index", "").strip())
-            if third_value != value:
+            if value is not None and third_value != value:
                 errors.append(p + "third_official_crosscheck_monthly_index must match current monthly_index")
         except (ValueError, TypeError):
             errors.append(p + "third_official_crosscheck_monthly_index must be numeric")
