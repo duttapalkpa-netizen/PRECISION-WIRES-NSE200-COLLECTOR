@@ -72,3 +72,27 @@ Updated status on 2026-11-08:
 - April 2026 current PPI-based IIP NIC-2 catalogue table ID: NOT_VERIFIED.
 - April 2026 current PPI-based IIP NIC-2 values 10-32: NOT_EXTRACTED.
 - Raw June 01 WPI first-release PDF SHA-256: PENDING; the exact MoSPI PDF URL returned 403 in the web fetcher and DNS resolution failure in the container download runtime. No substitute hash is acceptable.
+
+
+## 7. May 2026 Output-PPI IIP Statement II-A transcription (2026-11-08)
+
+- Official source: MoSPI/PIB May 2026 IIP release, Release ID `IIPMFY26006MAY`, posted 29 June 2026:
+  https://www.pib.gov.in/newsite/archiveContent.aspx?lang=2&reg=48&relid=290616
+- The release explicitly says the entire 2022-23 IIP series was revised with Output PPI and supersedes the WPI-based 01 June series; users are advised to use the PPI-based series (release paragraphs 8-10, 27-28).
+- Statement II-A contains NIC-2025 codes 10-32 and publishes May 2026 monthly index, May 2025 comparison index, Apr-May cumulative index, and growth rates. It does **not** publish a standalone April 2026 monthly index column in that statement.
+- A source-faithful 23-row transcription was added:
+  `audit_inputs/iip_may2026_output_ppi_nic2025_statement_IIA_transcription.csv`
+  Commit: `963cf6b9e86ed7bff8da57af9240183b1f4f8149`
+  Blob SHA: `efbc8940fb1bac66dddb927444ebada5394401a4`
+- Verification performed after write: 23 data rows; NIC codes exactly 10 through 32 in contiguous order; all rows identify base year 2022-23, NIC-2025, release ID/date and Statement II-A; every row explicitly marks standalone April 2026 index as `NOT_PRESENT_IN_STATEMENT`.
+- This is a separate evidence artifact for the May release. It is not substituted into the April 2026 ledger and does not claim to complete the 23 April values.
+- The April and May cumulative values must not be used to infer April values unless an official, documented aggregation formula and required inputs are available. No inferred April values are created.
+- Current April 2026 NIC-2 PPI-IIP catalogue table ID remains NOT_VERIFIED from the accessible catalogue index. Catalogue search confirms current monthly NIC-2 table `IIPMFY26018AUG` for August 2026 only.
+- Raw first-release PDF SHA-256 remains PENDING: the official PDF URL is confirmed, but the runtime download attempt failed with DNS resolution error; no bytes or hash were produced.
+
+Acceptance status remains:
+- May 2026 PPI-based NIC-2025 evidence transcription: PASS (23/23 rows and codes verified).
+- April 2026 standalone PPI-based NIC-2 IIP values: NOT_EXTRACTED.
+- April 2026 exact catalogue table ID: NOT_VERIFIED.
+- Original WPI PDF raw SHA-256: PENDING.
+- IIP sub-audit and project hard gate: BLOCKED; no production logic changed.
