@@ -25,7 +25,9 @@ jobs:
         run: python -m pip install pandas openpyxl
       - name: Run full 41-vintage download, parse and revision audit
         run: python pipeline/audit_iip_41_vintages.py
-      - name: Independently validate every detected revision difference\n        run: python pipeline/validate_iip_revision_differences.py\n      - name: Upload vintage manifest and revision ledger even when blocked
+      - name: Independently validate every detected revision difference
+        run: python pipeline/validate_iip_revision_differences.py
+      - name: Upload vintage manifest and revision ledger even when blocked
         if: always()
         uses: actions/upload-artifact@v4
         with:
