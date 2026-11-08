@@ -10,7 +10,7 @@ Official source: https://www.pib.gov.in/newsite/archiveContent.aspx?lang=2&reg=4
 Independently validate the committed 23-row transcription:
 `audit_inputs/iip_may2026_output_ppi_nic2025_statement_IIA_transcription.csv`
 
-CSV blob SHA-256 (Git blob SHA): `efbc8940fb1bac66dddb927444ebada5394401a4`.
+CSV Git blob SHA: `efbc8940fb1bac66dddb927444ebada5394401a4`.
 
 ## Source-to-ledger reconciliation
 
@@ -26,7 +26,7 @@ Independent field-by-field comparison against the official Statement II-A rows 1
 - Apr-May 2026-27 cumulative index: 23/23 exact.
 - May 2026 year-on-year growth: 23/23 exact.
 - Apr-May cumulative growth: 23/23 exact.
-- Total numeric/source-cell comparisons: 207/207 exact (9 fields per row: weight plus 8 index/growth values).
+- Total numeric/source-cell comparisons: 161/161 exact (7 numeric fields per row: weight, two monthly indices, two cumulative indices, and two growth rates).
 
 ## Independent arithmetic QA
 
