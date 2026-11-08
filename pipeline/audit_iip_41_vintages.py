@@ -228,17 +228,27 @@ def main():
                 continue
             key=(o["base_year"],o["classification"],o["nic_code"])
             by_series.setdefault(key,[]).append(o)
-        stable=0; revised=0
+        stable=0; revised=0; insufficient=0
         for (base_year,classification,nic_code),items in sorted(by_series.items()):
             items.sort(key=lambda x:(month(x.get("release_ref_period")) or "",str(x.get("release_date","")),str(x.get("table_id",""))))
             values=[x["value"] for x in items]
-            is_revised=len(set(values))>1
-            stable+=0 if is_revised else 1
-            revised+=1 if is_revised else 0
+            vintage_count=len({x["table_id"] for x in items})
+            if vintage_count < 2:
+                assessment="INSUFFICIENT_LATER_VINTAGES"
+                stable_value=None
+                insufficient+=1
+            elif len(set(values))>1:
+                assessment="REVISED"
+                stable_value=False
+                revised+=1
+            else:
+                assessment="STABLE_ACROSS_OBSERVED_LATER_VINTAGES"
+                stable_value=True
+                stable+=1
             coverage_rows.append({
                 "target_release_period":target_period,"target_status":target_status,
                 "base_year":base_year,"classification":classification,"nic_code":nic_code,
-                "later_vintage_count":len({x["table_id"] for x in items}),
+                "later_vintage_count":vintage_count,
                 "later_vintage_ids":";".join(dict.fromkeys(x["table_id"] for x in items)),
                 "first_later_vintage_id":items[0]["table_id"],
                 "first_later_release_date":items[0]["release_date"],
@@ -246,7 +256,8 @@ def main():
                 "last_later_vintage_id":items[-1]["table_id"],
                 "last_later_release_date":items[-1]["release_date"],
                 "last_later_value":items[-1]["value"],
-                "later_values_stable":not is_revised,
+                "later_values_stable":stable_value,
+                "later_vintage_assessment":assessment,
                 "later_vintage_observation_count":len(items)
             })
         coverage_summary.append({
@@ -254,10 +265,11 @@ def main():
             "series_keys_available_in_later_vintages":len(by_series),
             "series_keys_stable_across_later_vintages":stable,
             "series_keys_revised_across_later_vintages":revised,
+            "series_keys_insufficient_later_vintages":insufficient,
             "later_vintage_ids":sorted({item["table_id"] for series_items in by_series.values() for item in series_items})
         })
     coverage_path=OUT/"unavailable_vintage_period_observation_coverage.csv"
-    pd.DataFrame(coverage_rows,columns=["target_release_period","target_status","base_year","classification","nic_code","later_vintage_count","later_vintage_ids","first_later_vintage_id","first_later_release_date","first_later_value","last_later_vintage_id","last_later_release_date","last_later_value","later_values_stable","later_vintage_observation_count"]).to_csv(coverage_path,index=False)
+    pd.DataFrame(coverage_rows,columns=["target_release_period","target_status","base_year","classification","nic_code","later_vintage_count","later_vintage_ids","first_later_vintage_id","first_later_release_date","first_later_value","last_later_vintage_id","last_later_release_date","last_later_value","later_values_stable","later_vintage_assessment","later_vintage_observation_count"]).to_csv(coverage_path,index=False)
     unique_ids={x.get("unique_id") for x in manifest}
     duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
     status="PASS" if len(qualifying)==41 and len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
