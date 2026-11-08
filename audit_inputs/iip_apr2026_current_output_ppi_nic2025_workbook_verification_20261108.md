@@ -26,7 +26,7 @@ The official PIB release for August 2026 states:
 - Source URL: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2315957&lang=1&reg=3
 - Statement IV locator: lines 157-182 in the web-rendered official PIB release (NIC 10-32 rows).
 
-Comparison result: all 23 workbook April-2026 values for NIC 10-32 match the official August-2026 PIB Statement IV April-2026 column exactly at the displayed one-decimal precision (23/23; 0 mismatches). The row codes are contiguous 10 through 32 and the displayed weights match the official NIC-2025 weights.
+Comparison result: all 23 workbook April-2026 values for NIC 10-32 match the official August-2026 PIB Statement IV April-2026 column exactly at the displayed one-decimal precision (23/23; 0 mismatches). The row codes are contiguous 10 through 32 and each displayed NIC-2025 weight matches its official row. The 23 displayed weights sum to 76.065, while the official aggregate manufacturing weight is 76.062; retain this 0.003 displayed-rounding discrepancy as observed and do not force-adjust any row.
 
 ## Reconciliation of the apparent cross-base-year value collision
 
