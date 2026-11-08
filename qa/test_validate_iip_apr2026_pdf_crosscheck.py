@@ -74,6 +74,19 @@ class LedgerValidatorTests(unittest.TestCase):
         errors = validate(self.write_temp(fields, rows))
         self.assertTrue(any("current_series_apr2026_index_status must equal 'NOT_YET_EXTRACTED_FROM_COMPARABLE_CURRENT_SERIES_SOURCE'" in e for e in errors))
 
+
+    def test_first_release_numeric_value_is_pinned_to_official_statement(self):
+        fields, rows = self.load_rows()
+        rows[0]["first_release_index"] = "101.1"
+        errors = validate(self.write_temp(fields, rows))
+        self.assertTrue(any("first_release_index must match official first-release" in e for e in errors))
+
+    def test_pending_pdf_hash_cannot_be_filled_with_unverified_digest(self):
+        fields, rows = self.load_rows()
+        rows[0]["raw_pdf_sha256"] = "a" * 64
+        errors = validate(self.write_temp(fields, rows))
+        self.assertTrue(any("must remain blank while evidence status is pending" in e for e in errors))
+
     def test_missing_raw_hash_must_remain_provisional(self):
         fields, rows = self.load_rows()
         rows[0]["raw_pdf_sha256"] = ""
