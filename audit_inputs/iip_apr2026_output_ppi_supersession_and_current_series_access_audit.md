@@ -96,3 +96,31 @@ Acceptance status remains:
 - April 2026 exact catalogue table ID: NOT_VERIFIED.
 - Original WPI PDF raw SHA-256: PENDING.
 - IIP sub-audit and project hard gate: BLOCKED; no production logic changed.
+
+## 8. First-release PDF byte-provenance follow-up (2026-11-08)
+
+### Official HTML copy independently accessible
+
+- PIB official release page for the 01 June 2026 first release is accessible:
+  https://www.pib.gov.in/PressReleasePage.aspx?PRID=2267531&lang=1&reg=3
+- The page identifies the Ministry of Statistics & Programme Implementation, title "FIRST PRESS RELEASE OF ALL INDIA INDEX OF INDUSTRIAL PRODUCTION OF NEW SERIES WITH BASE YEAR 2022-23", and posting date 01 June 2026.
+- The page's Statement II-A is explicitly headed "INDEX OF INDUSTRIAL PRODUCTION - (Manufacturing at NIC 2 digit)" and "(Base: 2022-23=100)", with NIC 2025 codes and April 2026 quick-estimate index column. The table is available in the accessible HTML at lines 79-109 of the rendered page.
+- The 23 first-release April 2026 index values in the existing ledger match the official PIB HTML Statement II-A at displayed precision. The HTML is a second accessible official representation of the release content, not the original PDF byte stream.
+- The PIB page does not expose a direct raw-PDF byte response in the accessible rendering.
+
+### Raw PDF checksum status
+
+- Exact official MoSPI PDF URL remains:
+  https://www.mospi.gov.in/uploads/latestReleases/latest_release_1780371708887_52b83604-666c-443a-82c6-4411103e2ede_Press_Release_IIP_2022-23f.pdf
+- A fresh web fetch on 2026-11-08 returned HTTP 403 Forbidden.
+- A fresh runtime HTTP request failed DNS resolution for www.mospi.gov.in before any response bytes were received.
+- Therefore no raw PDF bytes were acquired and no SHA-256 can be computed. The earlier status remains PENDING; do not substitute the HTML page hash, CSV hash, browser-rendered page hash, or a guessed value.
+- This does not invalidate official content verification of the 23 table values, but raw-file byte provenance remains incomplete.
+
+### Updated evidence interpretation
+
+- First-release table values: independently supported by the official PIB HTML Statement II-A and earlier PDF visual/text review.
+- Original PDF byte checksum: NOT AVAILABLE / PENDING.
+- First-release ledger remains provisional specifically for raw PDF byte provenance.
+- First-release values remain historical WPI-based observations and are superseded by the 29 June 2026 Output-PPI series. They must not be presented as current PPI values.
+- No synthetic data, inferred hash, cross-base-year arithmetic, or production logic changes.
