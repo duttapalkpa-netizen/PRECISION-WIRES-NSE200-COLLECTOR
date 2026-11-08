@@ -50,5 +50,14 @@ class CurrentSeriesTests(unittest.TestCase):
         errors = self.run_rows(fields, rows)
         self.assertTrue(any("second_official_release_id must equal" in e for e in errors))
 
+    def test_third_official_statement_iv_value_mismatch_is_rejected(self):
+        fields, rows = self.load(); rows[0]["third_official_crosscheck_monthly_index"] = "101.5"
+        errors = self.run_rows(fields, rows)
+        self.assertTrue(any("third_official_crosscheck_monthly_index must match" in e for e in errors))
+    def test_third_official_release_id_is_pinned(self):
+        fields, rows = self.load(); rows[0]["third_official_release_id"] = "2315957"
+        errors = self.run_rows(fields, rows)
+        self.assertTrue(any("third_official_release_id must equal" in e for e in errors))
+
 if __name__ == "__main__":
     unittest.main()
