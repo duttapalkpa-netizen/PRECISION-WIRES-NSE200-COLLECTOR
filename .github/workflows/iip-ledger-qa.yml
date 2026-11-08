@@ -1,4 +1,4 @@
-name: IIP April 2026 PDF first-release ledger QA
+name: IIP April 2026 first-release and current-series ledger QA
 
 on:
   pull_request:
