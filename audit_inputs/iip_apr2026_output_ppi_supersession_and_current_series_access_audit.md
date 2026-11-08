@@ -125,14 +125,14 @@ Acceptance status remains:
 - First-release values remain historical WPI-based observations and are superseded by the 29 June 2026 Output-PPI series. They must not be presented as current PPI values.
 - No synthetic data, inferred hash, cross-base-year arithmetic, or production logic changes.
 
-## 9. Third independent official current-series cross-check (2026-11-08)
+## 9. Two-source independent current-series cross-check and duplicate-count correction (2026-11-08)
 
-- The 28 October 2026 PIB/MoSPI IIP release (Release ID `2329475`) publishes Statement IV, "Monthly Index of Industrial Production", base 2022-23=100, with NIC-2025 and an explicit Apr-26 column.
-- Official URL: https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2329475&lang=2&reg=48
-- The April 2026 column for NIC codes 10-32 was independently read from Statement IV. All 23 values match the current-series ledger and the earlier 28 September release ID `2315957`.
-- The third release April column is separately recorded in `third_official_crosscheck_monthly_index`, with release ID/date, Statement IV, URL and per-row status.
-- No values were derived from cumulative indices or Output-PPI deflator values. No revision is inferred from different release windows; the same April column is directly observed in both official Statement IV releases.
-- The current-series validator now requires the third release metadata and checks all 23 third-release values equal the independently pinned current April values. Regression tests reject a modified third-source value or wrong release identifier.
-- The official release notes that September 2026 estimates are quick estimates and August 2026 values were revised; this does not change the separately printed April 2026 values in Statement IV.
-- Raw first-release WPI PDF SHA-256 remains PENDING; this cross-check does not resolve that separate byte-provenance gap.
-- The precise April e-Sankhyiki catalogue table ID remains NOT_VERIFIED.
+- The 28 September 2026 PIB/MoSPI IIP release (Release ID `2315957`) and the 28 October 2026 release (Release ID `2329475`) are the two distinct official releases used for the April 2026 NIC-2025 Statement IV cross-check.
+- Official September release: https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2315957&lang=1&reg=3
+- Official October release: https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2329475&lang=2&reg=48
+- All 23 April 2026 values (NIC 10-32) match across the workbook-derived ledger and both separately published official Statement IV releases.
+- A schema review on 2026-11-08 found that Release ID `2329475` had been represented twice in the CSV and validator under both `second_official` and `third_official` field groups. These were not two independent sources. The duplicate third-source columns and checks have now been removed; the validator explicitly rejects reintroduction of `third_official_*` duplicate-source fields.
+- The evidence count is therefore **two distinct official releases**, not three. No claim of a third independent release is made.
+- The duplicate-source correction does not change any of the 23 April index values, workbook hash, base year, classification, or the two actual release IDs. The current-series validator continues to pin both official release metadata sets and all 23 index values.
+- The exact April 2026 e-Sankhyiki catalogue table ID remains NOT_VERIFIED. The August catalogue ID `IIPMFY26018AUG` must not be re-labelled as an April ID.
+- Raw first-release WPI PDF SHA-256 remains PENDING; this separate byte-provenance gap is unaffected.
