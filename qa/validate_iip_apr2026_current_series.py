@@ -21,7 +21,7 @@ EXPECTED = {
     "deflator": "Output PPI",
     "source_sheet": "NIC 2d, sectoral monthly",
     "source_month_column": "Apr-26",
-    "source_table_id": "IIPMFY26018AUG",
+    "source_table_id": "NOT_VERIFIED",
     "official_crosscheck_release_id": "2315957",
     "official_crosscheck_date": "2026-09-28",
     "official_crosscheck_statement": "Statement IV",
