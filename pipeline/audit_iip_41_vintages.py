@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 API="https://api.mospi.gov.in/api/esankhyiki/"
 LIST=API+"cms/golden-sheet/list"; DOWNLOAD=API+"file/download/"
-START="2023-04"; UA="Mozilla/5.0 (compatible; PRECISION-WIRES-IIP-Vintage-Audit/1.0)"
+START="2023-04"; END="2026-08"; UA="Mozilla/5.0 (compatible; PRECISION-WIRES-IIP-Vintage-Audit/1.0)"
 OUT=Path("artifacts/iip_41_vintage_audit"); RAW=OUT/"raw"
 TLS_CONTEXT=ssl.create_default_context()
 TLS_CONTEXT.set_ciphers("DEFAULT:@SECLEVEL=1")
@@ -52,7 +52,7 @@ def get_catalogue():
     return records,{"total_records":total,"total_pages":pages,"records_returned":len(records),"page_payloads":page_hashes}
 def qualifies(r):
     title=" ".join(str(r.get("table_name","")).lower().split()); period=month(r.get("ref_period"))
-    return ("monthly nic-2 digit and sectoral indices and growth rates of industrial production" in title and period and period>=START and r.get("product")=="IIP" and r.get("unique_id") and r.get("file_name") and r.get("file_path"))
+    return ("monthly nic-2 digit and sectoral indices and growth rates of industrial production" in title and period and START<=period<=END and r.get("product")=="IIP" and r.get("unique_id") and r.get("file_name") and r.get("file_path"))
 def parse_xlsx(path):
     # Supports the legacy NIC-2 heading and the newer NIC-2025 sectoral heading.
     # Parse only the index table; growth-rate sections are not index observations.
@@ -176,12 +176,14 @@ def main():
     downloaded=sum(x["download_status"] in ("DOWNLOADED","CACHE_HIT_RAW_HASH_RECHECKED") for x in manifest)
     parsed=sum(x["parse_status"]=="PASS" for x in manifest)
     period_keys=sorted({month(x.get("ref_period")) for x in manifest if month(x.get("ref_period"))})
-    expected_periods=pd.date_range(start=period_keys[0]+"-01",end=period_keys[-1]+"-01",freq="MS") if period_keys else []
+    # Fixed acceptance window: Apr-2023 through Aug-2026 (41 months).
+    # Later catalogue additions must not silently change the audit denominator.
+    expected_periods=pd.date_range(start=START+"-01",end=END+"-01",freq="MS")
     missing_periods=sorted(set(x.strftime("%Y-%m") for x in expected_periods)-set(period_keys))
     unique_ids={x.get("unique_id") for x in manifest}
     duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
     status="PASS" if len(qualifying)==41 and len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"iip_vintage_gate":"PASS" if status=="PASS" else "BLOCKED","hard_gate":"BLOCKED","hard_gate_scope":"PROJECT_GLOBAL_GATE_NOT_EVALUATED_BY_IIP_SUBAUDIT","series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
+    qa={"audit_status":status,"iip_vintage_gate":"PASS" if status=="PASS" else "BLOCKED","hard_gate":"BLOCKED","hard_gate_scope":"PROJECT_GLOBAL_GATE_NOT_EVALUATED_BY_IIP_SUBAUDIT","audit_window_start":START,"audit_window_end":END,"expected_reference_periods":len(expected_periods),"series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
     audit_path=OUT/"revision_audit.json"
     audit_path.write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Validate the serialized artifact itself; never upload malformed JSON.
