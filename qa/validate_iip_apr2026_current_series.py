@@ -32,6 +32,11 @@ EXPECTED = {
     "second_official_statement": "Statement IV",
     "second_official_source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2329475&lang=2&reg=48",
     "second_official_crosscheck_status": "VERIFIED_23_OF_23_SECOND_OFFICIAL_RELEASE",
+    "third_official_release_id": "2329475",
+    "third_official_release_date": "2026-10-28",
+    "third_official_statement": "Statement IV",
+    "third_official_source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2329475&lang=2&reg=48",
+    "third_official_crosscheck_status": "VERIFIED_23_OF_23_THIRD_OFFICIAL_RELEASE",
 }
 REQUIRED = set(EXPECTED) | {
     "nic_code", "description", "weight", "monthly_index",
@@ -75,6 +80,12 @@ def validate(path: Path) -> list[str]:
                 errors.append(p + f"monthly_index must match official Statement IV value {expected_value}")
         except (ValueError, TypeError):
             errors.append(p + "monthly_index must be numeric")
+        try:
+            third_value = float(row.get("third_official_crosscheck_monthly_index", "").strip())
+            if third_value != value:
+                errors.append(p + "third_official_crosscheck_monthly_index must match current monthly_index")
+        except (ValueError, TypeError):
+            errors.append(p + "third_official_crosscheck_monthly_index must be numeric")
         h = row.get("source_workbook_sha256", "").strip().lower()
         if not re.fullmatch(r"[0-9a-f]{64}", h):
             errors.append(p + "source_workbook_sha256 must be 64 lowercase hex characters")
@@ -99,7 +110,7 @@ def main() -> int:
         return 1
     print("CURRENT_SERIES_QA_PASS rows=23 nic_codes=10-32")
     print("base_year=2022-23 classification=NIC-2025 deflator=Output_PPI")
-    print("official_crosscheck=PIB_2315957_STATEMENT_IV_23_OF_23")
+    print("official_crosschecks=PIB_2315957_AND_2329475_STATEMENT_IV_23_OF_23_EACH")
     print(f"csv_sha256={hashlib.sha256(args.csv_path.read_bytes()).hexdigest()}")
     return 0
 
