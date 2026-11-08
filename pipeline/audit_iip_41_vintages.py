@@ -53,6 +53,32 @@ def get_catalogue():
 def qualifies(r):
     title=" ".join(str(r.get("table_name","")).lower().split()); period=month(r.get("ref_period"))
     return ("monthly nic-2 digit and sectoral indices and growth rates of industrial production" in title and period and START<=period<=END and r.get("product")=="IIP" and r.get("unique_id") and r.get("file_name") and r.get("file_path"))
+def catalogue_scope_diagnostic(records):
+    # Preserve near-miss catalogue rows so absent periods can be distinguished
+    # from title/schema variants without silently promoting them into the audit.
+    out=[]
+    for r in records:
+        if r.get("product")!="IIP":
+            continue
+        period=month(r.get("ref_period"))
+        if not period or not (START<=period<=END):
+            continue
+        title=" ".join(str(r.get("table_name","")).lower().split())
+        exact=("monthly nic-2 digit and sectoral indices and growth rates of industrial production" in title)
+        nic_hint=("nic" in title or "sectoral" in title)
+        reason=("EXACT_TITLE_CANDIDATE" if exact else
+                "NEAR_MATCH_TITLE_REVIEW_REQUIRED" if nic_hint else
+                "OTHER_IIP_TABLE_NOT_NIC2")
+        if exact and not (r.get("unique_id") and r.get("file_name") and r.get("file_path")):
+            reason="EXACT_TITLE_MISSING_FILE_METADATA"
+        out.append({
+            "reference_period":period,"catalogue_code":r.get("catalogue_code"),
+            "unique_id":r.get("unique_id"),"table_name":r.get("table_name"),
+            "release_date":r.get("release_date"),"frequency":r.get("frequency"),
+            "file_path":r.get("file_path"),"file_name":r.get("file_name"),
+            "qualification_diagnostic":reason
+        })
+    return sorted(out,key=lambda x:(x["reference_period"],str(x.get("release_date","")),str(x.get("unique_id",""))))
 def parse_xlsx(path):
     # Supports the legacy NIC-2 heading and the newer NIC-2025 sectoral heading.
     # Parse only the index table; growth-rate sections are not index observations.
@@ -137,6 +163,8 @@ def fetch_one(r):
         row["parse_status"]="FAIL"; row["error"]=f"{type(e).__name__}:{e}"[:500]; return row,[]
 def main():
     RAW.mkdir(parents=True,exist_ok=True); allr,pagination=get_catalogue()
+    scope_diag=catalogue_scope_diagnostic(allr)
+    pd.DataFrame(scope_diag).to_csv(OUT/"catalogue_scope_diagnostics.csv",index=False)
     qualifying=sorted([r for r in allr if qualifies(r)],key=lambda r:(month(r.get("ref_period")) or "",str(r.get("release_date","")),str(r.get("unique_id",""))))
     # One fetch/parse per unique table ID prevents duplicate catalogue rows racing on the same raw path.
     by_id={}
@@ -183,7 +211,7 @@ def main():
     unique_ids={x.get("unique_id") for x in manifest}
     duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
     status="PASS" if len(qualifying)==41 and len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"iip_vintage_gate":"PASS" if status=="PASS" else "BLOCKED","hard_gate":"BLOCKED","hard_gate_scope":"PROJECT_GLOBAL_GATE_NOT_EVALUATED_BY_IIP_SUBAUDIT","audit_window_start":START,"audit_window_end":END,"expected_reference_periods":len(expected_periods),"series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
+    qa={"audit_status":status,"iip_vintage_gate":"PASS" if status=="PASS" else "BLOCKED","hard_gate":"BLOCKED","hard_gate_scope":"PROJECT_GLOBAL_GATE_NOT_EVALUATED_BY_IIP_SUBAUDIT","audit_window_start":START,"audit_window_end":END,"expected_reference_periods":len(expected_periods),"series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"catalogue_scope_diagnostic_rows":len(scope_diag),"near_match_title_rows":sum(x["qualification_diagnostic"]=="NEAR_MATCH_TITLE_REVIEW_REQUIRED" for x in scope_diag),"exact_title_missing_metadata_rows":sum(x["qualification_diagnostic"]=="EXACT_TITLE_MISSING_FILE_METADATA" for x in scope_diag),"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
     audit_path=OUT/"revision_audit.json"
     audit_path.write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Validate the serialized artifact itself; never upload malformed JSON.
