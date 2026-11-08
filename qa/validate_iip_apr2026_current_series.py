@@ -27,6 +27,11 @@ EXPECTED = {
     "official_crosscheck_statement": "Statement IV",
     "official_crosscheck_locator": "NIC 10-32; Apr-26 column",
     "verification_status": "VERIFIED_AGAINST_OFFICIAL_AUG_2026_STATEMENT_IV",
+    "second_official_release_id": "2329475",
+    "second_official_release_date": "2026-10-28",
+    "second_official_statement": "Statement IV",
+    "second_official_source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2329475&lang=2&reg=48",
+    "second_official_crosscheck_status": "VERIFIED_23_OF_23_SECOND_OFFICIAL_RELEASE",
 }
 REQUIRED = set(EXPECTED) | {
     "nic_code", "description", "weight", "monthly_index",
