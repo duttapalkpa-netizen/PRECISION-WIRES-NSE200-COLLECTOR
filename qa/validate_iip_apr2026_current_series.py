@@ -13,7 +13,8 @@ EXPECTED_INDEXES = {
     "26": 137.9, "27": 151.5, "28": 109.9, "29": 130.4,
     "30": 153.4, "31": 109.8, "32": 112.1,
 }
-EXPECTED_WORKBOOK_SHA256 = "ce4c0bba17d2135474c6abd10aabe03758248e1423d434817c90a2d497ee16ce"
+EXPECTED_WORKBOOK_SHA256 = "31ab1a00ea14b90a21086d3c618cd65456e45b3a02b4ae85251ee1dac9fb189e"
+EXPECTED_WORKBOOK_FILENAME = "iip_62.xlsx"
 EXPECTED = {
     "period": "2026-04",
     "base_year": "2022-23",
@@ -85,8 +86,8 @@ def validate(path: Path) -> list[str]:
         workbook_hashes.add(h)
         if h != EXPECTED_WORKBOOK_SHA256:
             errors.append(p + "source_workbook_sha256 does not match the inspected original workbook")
-        if not row.get("source_workbook", "").strip():
-            errors.append(p + "source_workbook is blank")
+        if row.get("source_workbook", "").strip() != EXPECTED_WORKBOOK_FILENAME:
+            errors.append(p + f"source_workbook must equal {EXPECTED_WORKBOOK_FILENAME!r}")
     if len(workbook_hashes) != 1 or "" in workbook_hashes:
         errors.append("all rows must reference one identical, non-empty source workbook SHA-256")
     return errors
