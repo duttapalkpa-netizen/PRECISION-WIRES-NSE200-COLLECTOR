@@ -14,7 +14,7 @@ from pathlib import Path
 
 URL = "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2256241&lang=2&reg=48"
 OUT = Path("artifacts/iip_41_vintage_audit")
-TARGETS = {"Apr-25":"2025-04", "Sep-25":"2025-09", "Feb-26":"2026-02"}
+TARGETS = {"apr-25":"2025-04", "sep-25":"2025-09", "feb-26":"2026-02"}
 EXPECTED_CODES = {str(x) for x in range(10, 33)}
 UA = "Mozilla/5.0 (compatible; PRECISION-WIRES-IIP-PIB-Snapshot-Audit/1.0)"
 
