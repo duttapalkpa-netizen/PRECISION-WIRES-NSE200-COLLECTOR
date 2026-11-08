@@ -5,6 +5,7 @@ on:
     paths:
       - "pipeline/audit_iip_41_vintages.py"
       - "pipeline/validate_iip_revision_differences.py"
+      - "pipeline/ingest_pib_iip_missing_period_snapshot.py"
       - ".github/workflows/iip_41_vintage_audit.yml"
       - ".github/workflows/validate_iip_41_vintage_audit.yml"
 permissions:
@@ -25,6 +26,8 @@ jobs:
         run: python -m pip install pandas openpyxl
       - name: Run full 41-vintage download, parse and revision audit
         run: python pipeline/audit_iip_41_vintages.py
+      - name: Ingest official PIB later snapshot for missing legacy IIP periods
+        run: python pipeline/ingest_pib_iip_missing_period_snapshot.py
       - name: Independently validate every detected revision difference
         run: python pipeline/validate_iip_revision_differences.py
       - name: Upload vintage manifest and revision ledger even when blocked
