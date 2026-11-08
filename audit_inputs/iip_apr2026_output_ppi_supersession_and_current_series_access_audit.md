@@ -56,3 +56,19 @@ If the portal does not expose a standalone April current-series table, retain th
 - Spend: ₹0; official sources only.
 
 This audit note supplements the prior cross-base-year contamination audit and supersedes any interpretation that the June 01 WPI first-release values remain the current Output-PPI series.
+
+
+## 6. Additional official Output-PPI source located on 2026-11-08
+
+- The Office of the Economic Adviser (OEA), DPIIT, official page `https://eaindustry.nic.in/download_data_2223.asp` is titled "Index Files For WPI & PPI Series (Base Year = 2022-23)" and lists monthly/quarterly Output Producer Price Index (OPPI) index files from April 2023 onwards.
+- OEA's 15 June 2026 Output PPI release states that SUT category-wise Output PPI indices from April 2023 to May 2026 are available from that download page: `https://eaindustry.nic.in/press_release/press_release_202606.pdf`.
+- This is a useful official source for the **deflator input series**, but it is not itself the MoSPI IIP NIC-2025 manufacturing output index table. Do not substitute OEA OPPI values for the 23 IIP NIC-2 index values.
+- The OEA download page could not be fetched in this runtime (timeout), and no OPPI file bytes, file name, download URL, or SHA-256 were captured in this audit. Treat OEA file extraction as not yet complete.
+- The e-Sankhyiki catalogue search result confirms the August 2026 monthly NIC-2/sectoral IIP table ID `IIPMFY26018AUG`; a separate April 2026 catalogue record/table ID was not independently exposed by the public search/index used here. Do not infer an April table ID from the August sequence.
+- The e-Sankhyiki Macro Indicators page is JavaScript-rendered and returned no readable table content in this runtime. The official portal FAQ says filtered CSV downloads are available without registration, but this audit has not captured the April 2026 export bytes.
+
+Updated status on 2026-11-08:
+- Official route for Output PPI deflator files: IDENTIFIED (page-level only; file not downloaded).
+- April 2026 current PPI-based IIP NIC-2 catalogue table ID: NOT_VERIFIED.
+- April 2026 current PPI-based IIP NIC-2 values 10-32: NOT_EXTRACTED.
+- Raw June 01 WPI first-release PDF SHA-256: PENDING; the exact MoSPI PDF URL returned 403 in the web fetcher and DNS resolution failure in the container download runtime. No substitute hash is acceptable.
