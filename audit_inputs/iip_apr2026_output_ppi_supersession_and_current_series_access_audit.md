@@ -57,7 +57,6 @@ If the portal does not expose a standalone April current-series table, retain th
 
 This audit note supplements the prior cross-base-year contamination audit and supersedes any interpretation that the June 01 WPI first-release values remain the current Output-PPI series.
 
-
 ## 6. Additional official Output-PPI source located on 2026-11-08
 
 - The Office of the Economic Adviser (OEA), DPIIT, official page `https://eaindustry.nic.in/download_data_2223.asp` is titled "Index Files For WPI & PPI Series (Base Year = 2022-23)" and lists monthly/quarterly Output Producer Price Index (OPPI) index files from April 2023 onwards.
@@ -72,7 +71,6 @@ Updated status on 2026-11-08:
 - April 2026 current PPI-based IIP NIC-2 catalogue table ID: NOT_VERIFIED.
 - April 2026 current PPI-based IIP NIC-2 values 10-32: NOT_EXTRACTED.
 - Raw June 01 WPI first-release PDF SHA-256: PENDING; the exact MoSPI PDF URL returned 403 in the web fetcher and DNS resolution failure in the container download runtime. No substitute hash is acceptable.
-
 
 ## 7. May 2026 Output-PPI IIP Statement II-A transcription (2026-11-08)
 
@@ -137,7 +135,6 @@ Acceptance status remains:
 - The exact April 2026 e-Sankhyiki catalogue table ID remains NOT_VERIFIED. The August catalogue ID `IIPMFY26018AUG` must not be re-labelled as an April ID.
 - Raw first-release WPI PDF SHA-256 remains PENDING; this separate byte-provenance gap is unaffected.
 
-
 ## 10. Official e-Sankhyiki catalogue/API capability re-check (2026-11-08)
 
 ### Catalogue search result
@@ -162,3 +159,17 @@ Acceptance status remains:
 - Official API/MCP documented IIP base-year coverage for this route: legacy bases only; 2022-23 unsupported in published parameter documentation.
 - Next valid path: capture the exact April export through the official portal UI or an official downloadable catalogue record whose metadata explicitly states reference period Apr 2026, base year 2022-23, NIC-2025, and table identifier. If no such record can be observed, retain `NOT_VERIFIED` and do not manufacture a locator.
 - No values or table IDs were inferred, no old base-year data were promoted, no production code was changed, and project Hard Gate remains BLOCKED.
+
+
+## 11. Official portal IIP API tab and authentication/parameter boundary (2026-11-08)
+
+- The official e-Sankhyiki IIP Macro Indicators page exposes an `API` tab. The rendered portal documentation identifies the IIP endpoint as `GET /api/iip/getIIPData` and links its OpenAPI description as `swagger_user_iip.yaml`.
+  Portal API tab: https://esankhyiki.mospi.gov.in/macroindicators?product=iip&tab=api
+- The matching published NSO India / MoSPI OpenAPI specification is available at:
+  https://github.com/nso-india/esankhyiki-mcp/blob/main/swagger/swagger_user_iip.yaml
+- The specification declares the endpoint `/api/iip/getIipData`, requires a `base_year` query parameter, and enumerates only `2011-12`, `2004-05`, and `1993-94`. It also declares a Bearer Authorization header. The current published spec therefore does not document a 2022-23 parameter value for this IIP API endpoint.
+- The official portal API tab was directly observed on 2026-11-08. The linked YAML itself could not be fetched from the portal host in this runtime because the response was served as `application/octet-stream`; the corresponding NSO India repository copy was inspected and its blob SHA is `d9acaccf1557825f2a093c7f826b15d659f2c646`.
+- No bearer token, login, private credential, guessed parameter, or API request was used. No authentication was bypassed.
+- This finding narrows the earlier API conclusion: the **published IIP API specification** is legacy-base-only and token-protected. It does not prove that the separate open-access catalogue or Macro Indicators UI lacks a 2022-23 downloadable table. The UI/CSV route remains distinct and must be tested through its visible filters and exported file.
+- Decision: do not attempt this API for the 2022-23 April 2026 NIC-2025 cross-check unless MoSPI publishes a revised specification/metadata explicitly including that base year and lawful access is available. Continue with the public catalogue/UI route; retain exact table ID and export bytes as NOT_VERIFIED / NOT_CAPTURED until observed.
+- No data values, catalogue IDs, or authentication material were inferred. All production invariants and project gate status remain unchanged.
