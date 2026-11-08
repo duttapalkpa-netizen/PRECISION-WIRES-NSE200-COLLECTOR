@@ -211,12 +211,17 @@ def main():
     # Later catalogue additions must not silently change the audit denominator.
     expected_periods=pd.date_range(start=START+"-01",end=END+"-01",freq="MS")
     missing_periods=sorted(set(x.strftime("%Y-%m") for x in expected_periods)-set(period_keys))
-    # Separate a missing release vintage from whether its reference-month
-    # observations survive in later official workbooks. Later values never
-    # backfill the missing vintage or enter its revision history as if original.
+    # Audit later-vintage observations for BOTH absent catalogue releases and
+    # catalogue entries whose workbook download failed. These remain distinct
+    # target statuses; later values never backfill an original vintage.
+    coverage_targets={p:"MISSING_CATALOGUE_RELEASE" for p in missing_periods}
+    for row in manifest:
+        p=month(row.get("ref_period"))
+        if p and START<=p<=END and row.get("download_status")=="FAILED":
+            coverage_targets.setdefault(p,"FAILED_DOWNLOAD")
     coverage_rows=[]
     coverage_summary=[]
-    for target_period in missing_periods:
+    for target_period,target_status in sorted(coverage_targets.items()):
         by_series={}
         for o in obs:
             if o["period"]!=target_period or (month(o.get("release_ref_period")) or "")<=target_period:
@@ -231,8 +236,8 @@ def main():
             stable+=0 if is_revised else 1
             revised+=1 if is_revised else 0
             coverage_rows.append({
-                "missing_release_period":target_period,"base_year":base_year,
-                "classification":classification,"nic_code":nic_code,
+                "target_release_period":target_period,"target_status":target_status,
+                "base_year":base_year,"classification":classification,"nic_code":nic_code,
                 "later_vintage_count":len({x["table_id"] for x in items}),
                 "later_vintage_ids":";".join(dict.fromkeys(x["table_id"] for x in items)),
                 "first_later_vintage_id":items[0]["table_id"],
@@ -245,18 +250,18 @@ def main():
                 "later_vintage_observation_count":len(items)
             })
         coverage_summary.append({
-            "missing_release_period":target_period,
+            "target_release_period":target_period,"target_status":target_status,
             "series_keys_available_in_later_vintages":len(by_series),
             "series_keys_stable_across_later_vintages":stable,
             "series_keys_revised_across_later_vintages":revised,
-            "later_vintage_ids":sorted({x["table_id"] for x in coverage_rows if x["missing_release_period"]==target_period})
+            "later_vintage_ids":sorted({x["table_id"] for x in coverage_rows if x["target_release_period"]==target_period})
         })
-    coverage_path=OUT/"missing_vintage_period_observation_coverage.csv"
-    pd.DataFrame(coverage_rows,columns=["missing_release_period","base_year","classification","nic_code","later_vintage_count","later_vintage_ids","first_later_vintage_id","first_later_release_date","first_later_value","last_later_vintage_id","last_later_release_date","last_later_value","later_values_stable","later_vintage_observation_count"]).to_csv(coverage_path,index=False)
+    coverage_path=OUT/"unavailable_vintage_period_observation_coverage.csv"
+    pd.DataFrame(coverage_rows,columns=["target_release_period","target_status","base_year","classification","nic_code","later_vintage_count","later_vintage_ids","first_later_vintage_id","first_later_release_date","first_later_value","last_later_vintage_id","last_later_release_date","last_later_value","later_values_stable","later_vintage_observation_count"]).to_csv(coverage_path,index=False)
     unique_ids={x.get("unique_id") for x in manifest}
     duplicate_ids=sorted(k for k in unique_ids if sum(1 for x in manifest if x.get("unique_id")==k)>1)
     status="PASS" if len(qualifying)==41 and len(selected)==41 and len(unique_ids)==41 and len(period_keys)==41 and not missing_periods and downloaded==41 and parsed==41 else "BLOCKED_WITH_GAPS"
-    qa={"audit_status":status,"iip_vintage_gate":"PASS" if status=="PASS" else "BLOCKED","hard_gate":"BLOCKED","hard_gate_scope":"PROJECT_GLOBAL_GATE_NOT_EVALUATED_BY_IIP_SUBAUDIT","audit_window_start":START,"audit_window_end":END,"expected_reference_periods":len(expected_periods),"series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"catalogue_scope_diagnostic_rows":len(scope_diag),"near_match_title_rows":sum(x["qualification_diagnostic"]=="NEAR_MATCH_TITLE_REVIEW_REQUIRED" for x in scope_diag),"nic2_annual_non_target_rows":sum(x["qualification_diagnostic"]=="NIC2_ANNUAL_NON_TARGET" for x in scope_diag),"exact_title_missing_metadata_rows":sum(x["qualification_diagnostic"]=="EXACT_TITLE_MISSING_FILE_METADATA" for x in scope_diag),"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"missing_vintage_period_observation_coverage":coverage_summary,"missing_vintage_period_coverage_rows":len(coverage_rows),"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"failed_download_evidence":[{"reference_period":x.get("ref_period"),"unique_id":x.get("unique_id"),"http_status":x.get("http_status"),"request_url":x.get("request_url"),"error_response_sha256":x.get("error_response_sha256"),"error_response_excerpt":x.get("error_response_excerpt")} for x in manifest if x.get("download_status")=="FAILED"],"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
+    qa={"audit_status":status,"iip_vintage_gate":"PASS" if status=="PASS" else "BLOCKED","hard_gate":"BLOCKED","hard_gate_scope":"PROJECT_GLOBAL_GATE_NOT_EVALUATED_BY_IIP_SUBAUDIT","audit_window_start":START,"audit_window_end":END,"expected_reference_periods":len(expected_periods),"series_definitions":sorted({(x.get("base_year"),x.get("classification")) for x in manifest if x.get("parse_status")=="PASS"}),"revision_comparison_policy":"same base_year + classification + NIC code + reference period only","catalogue_total_records":pagination["total_records"],"catalogue_pages":pagination["total_pages"],"catalogue_scope_diagnostic_rows":len(scope_diag),"near_match_title_rows":sum(x["qualification_diagnostic"]=="NEAR_MATCH_TITLE_REVIEW_REQUIRED" for x in scope_diag),"nic2_annual_non_target_rows":sum(x["qualification_diagnostic"]=="NIC2_ANNUAL_NON_TARGET" for x in scope_diag),"exact_title_missing_metadata_rows":sum(x["qualification_diagnostic"]=="EXACT_TITLE_MISSING_FILE_METADATA" for x in scope_diag),"qualifying_catalogue_rows":len(qualifying),"qualifying_vintage_records":len(selected),"manifest_rows":len(manifest),"duplicate_catalogue_rows_excluded_from_download":len(qualifying)-len(selected),"unique_vintage_ids":len(unique_ids),"unique_reference_periods":len(period_keys),"duplicate_catalogue_ids":duplicate_ids,"missing_reference_periods":missing_periods,"unavailable_vintage_period_observation_coverage":coverage_summary,"unavailable_vintage_period_coverage_rows":len(coverage_rows),"missing_catalogue_release_periods":missing_periods,"failed_download_release_periods":sorted({month(x.get("ref_period")) for x in manifest if x.get("download_status")=="FAILED" and month(x.get("ref_period")) and START<=month(x.get("ref_period"))<=END}),"raw_files_downloaded_or_cache_verified":downloaded,"workbooks_parsed":parsed,"failed_downloads":sum(x["download_status"]=="FAILED" for x in manifest),"failed_download_evidence":[{"reference_period":x.get("ref_period"),"unique_id":x.get("unique_id"),"http_status":x.get("http_status"),"request_url":x.get("request_url"),"error_response_sha256":x.get("error_response_sha256"),"error_response_excerpt":x.get("error_response_excerpt")} for x in manifest if x.get("download_status")=="FAILED"],"parse_failures":sum(x["parse_status"]=="FAIL" for x in manifest),"parsed_observations":len(obs),"unique_observation_keys":len({(x["table_id"],x["base_year"],x["classification"],x["period"],x["nic_code"]) for x in obs}),"revision_differences_detected":len(diffs),"unique_table_ids":len(unique_ids),"unique_release_dates":len({x.get("release_date") for x in manifest}),"first_release_period":period_keys[0] if period_keys else None,"last_release_period":period_keys[-1] if period_keys else None,"pagination":pagination,"policy":"Missing vintage is not inferred; duplicate catalogue rows are retained in manifest but excluded from independent vintage count; only monthly index table is compared; missing/failed source files remain explicit."}
     audit_path=OUT/"revision_audit.json"
     audit_path.write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Validate the serialized artifact itself; never upload malformed JSON.
