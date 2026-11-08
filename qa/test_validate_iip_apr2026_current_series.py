@@ -38,6 +38,13 @@ class CurrentSeriesTests(unittest.TestCase):
     def test_non_numeric_index_is_rejected(self):
         fields, rows = self.load(); rows[0]["monthly_index"] = "UNKNOWN"
         self.assertTrue(any("monthly_index must be numeric" in e for e in self.run_rows(fields, rows)))
+    def test_numeric_but_wrong_official_index_is_rejected(self):
+        fields, rows = self.load(); rows[0]["monthly_index"] = "101.5"
+        self.assertTrue(any("must match official Statement IV value" in e for e in self.run_rows(fields, rows)))
+    def test_different_workbook_hash_is_rejected(self):
+        fields, rows = self.load(); rows[0]["source_workbook_sha256"] = "a" * 64
+        errors = self.run_rows(fields, rows)
+        self.assertTrue(any("does not match the inspected original workbook" in e for e in errors))
 
 if __name__ == "__main__":
     unittest.main()
