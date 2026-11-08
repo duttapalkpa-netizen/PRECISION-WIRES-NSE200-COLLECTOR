@@ -1,0 +1,29 @@
+name: IIP April 2026 PDF first-release ledger QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "audit_inputs/iip_apr2026_nic2025_pdf_first_release_crosscheck.csv"
+      - "qa/validate_iip_apr2026_pdf_crosscheck.py"
+      - "qa/test_validate_iip_apr2026_pdf_crosscheck.py"
+      - ".github/workflows/iip-ledger-qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate official-source ledger
+        run: python qa/validate_iip_apr2026_pdf_crosscheck.py audit_inputs/iip_apr2026_nic2025_pdf_first_release_crosscheck.csv
+      - name: Run regression tests
+        run: python -m unittest qa/test_validate_iip_apr2026_pdf_crosscheck.py -v
