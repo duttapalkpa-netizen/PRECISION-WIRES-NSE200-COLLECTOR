@@ -33,7 +33,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Independent classification: 1,010 differences in 2011-12/NIC-2008 and 48 in 2022-23/NIC-2025. All are snapshot differences, not necessarily corrections or errors.
 - Run #252 / ID `42501277644`: SUCCESS on PIB ingestion sidecar's initial commit (script not yet included in workflow at that commit).
 - Run #253 / ID `42501293659`: FAILED. The new PIB sidecar found the Statement IV table but failed due to a case mismatch: HTML headers were lowercased, while month lookup keys were mixed-case. Exact fix committed as `cc1b8c0ceaf7f7d4bcf0660827534f482357d69f`: normalize target keys to lowercase.
-- Run #254 / ID `42507902637`: CI currently in progress at last check, testing the case-normalized PIB parser plus full audit and independent revision validator. Do not call PASS until completion.
+- Run #254 / ID `42507902637`: SUCCESS; full 41-vintage audit, PIB supplementary snapshot ingestion and independent revision validator all passed. Artifact ID `13628033276`, ZIP SHA-256 `a988e47f6679def45d3fa3316e5d3207040047a847cd19410458a40db1814f3b`.
+- Run #254 PIB sidecar output: exactly 69 rows = 3 periods × 23 NIC codes (10–32), no missing code-period combinations; periods 2025-04, 2025-09, 2026-02; source PRID 2256241, release date 2026-04-28; all rows carry the same non-empty source-page SHA-256 `cf78fee28f487cd152c527d5249de5747316348cbc1fcc646ebcb24b95c9eb2b`; CSV SHA-256 `1199f490ad3003f28628d4fbb6f990d0d0371b277bf4f877b2b1d4c3384c9038`.
+- All 69 rows explicitly labelled `PIB_LATER_RELEASE_SNAPSHOT` and `NOT_ESTABLISHED_FROM_THIS_SNAPSHOT` for first-release status. This is supplementary later-snapshot coverage, not original MoSPI vintage recovery.
+- Run #254 revision validator again passed: 116,740 observation rows; 1,058 differences; 0 integrity errors.
+- Run #253 case mismatch root cause was fixed by lowercasing TARGETS keys; no further parser patch was needed after Run #254.
 
 ### Missing periods and source boundary
 - Three missing reference periods in the legacy 2011-12/NIC-2008 audit window: 2025-04, 2025-09, 2026-02.
@@ -55,10 +59,10 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Full production acceptance ledger and event-study maturity are not complete; no defensible overall project percentage until reconciled.
 
 ## 5. Next actions — ordered, do not repeat completed work
-1. Check Run #254 / ID `42507902637` once. If SUCCESS, inspect artifact and verify PIB sidecar has exactly 69 rows (3 periods × NIC 10–32), expected source release metadata and non-empty page SHA-256; confirm it is explicitly labelled later snapshot.
-2. If Run #254 fails, inspect exact failing step/log and patch only that defect; do not rerun completed successful Run #251 audit unless code change requires it.
-3. Keep missing original catalogue vintage and legacy April-2026 404 explicit. Search official MoSPI catalogue/source for an actual replacement file or erratum; if unavailable, status stays NOT_RECOVERED.
-4. Add a reproducible continuity ledger update with Run #254 result, artifact SHA-256, and status; preserve PR #21 open/unmerged.
+1. Run #254 and its 69-row supplementary PIB snapshot validation are complete; do not repeat this ingestion or the 1,058-difference audit without a new source/code change.
+2. Highest next IIP task: search official MoSPI catalogue/source and archived official metadata for an actual replacement file or erratum for the legacy April-2026 2011-12/NIC-2008 workbook (IIPMFY26002APR); do not substitute the new-base series. If no official replacement exists, retain NOT_RECOVERED and close only the recovery attempt as BLOCKED.
+3. Reconcile the three supplementary later-snapshot periods against the exact source table values if a new independent cross-source release is found; otherwise keep them supplementary.
+4. Preserve PR #21 open/unmerged and PR #23 evidence separately.
 5. Complete consolidated project acceptance reconciliation before publishing an overall progress percentage.
 
 ## 6. Progress reporting rules
