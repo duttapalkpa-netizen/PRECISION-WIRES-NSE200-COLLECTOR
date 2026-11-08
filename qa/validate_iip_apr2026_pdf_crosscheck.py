@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Offline QA for the April-2026 NIC-2025 first-release cross-check ledger.
+"""Offline QA for the April-2026 NIC-2025 first-release ledger.
 
-This validator never downloads, infers, or backfills source values. A missing raw
-PDF SHA-256 is permitted only while the ledger explicitly remains provisional.
+Later-vintage values are retained as raw observations but quarantined because
+the matching official monthwise table explicitly declares base 2011-12=100.
+No cross-base-year revision arithmetic is permitted.
 """
 from __future__ import annotations
 
@@ -10,8 +11,6 @@ import argparse
 import csv
 import hashlib
 import re
-import sys
-from datetime import datetime
 from pathlib import Path
 
 EXPECTED_CODES = [f"{n:02d}" for n in range(10, 33)]
@@ -22,6 +21,7 @@ EXPECTED_URL = (
     "latest_release_1780371708887_52b83604-666c-443a-82c6-4411103e2ede_"
     "Press_Release_IIP_2022-23f.pdf"
 )
+LATER_SOURCE_URL = "https://www.pib.gov.in/newsite/archiveContent.aspx?lang=2&reg=48&relid=290616"
 REQUIRED = {
     "reference_period", "base_year", "classification", "nic_code",
     "first_release_index", "first_release_date", "source_type",
@@ -30,6 +30,8 @@ REQUIRED = {
     "later_vintage_index_values", "latest_later_index",
     "revision_delta_latest_minus_first", "revision_detected",
     "later_vintage_assessment", "evidence_status",
+    "later_vintage_source_base_year", "later_vintage_source_table",
+    "later_vintage_source_url",
 }
 
 
@@ -60,9 +62,19 @@ def validate(path: Path) -> list[str]:
             ("source_table", "STATEMENT II A"),
             ("source_page", "5"),
             ("source_url", EXPECTED_URL),
+            ("later_vintage_source_base_year", "2011-12"),
+            ("later_vintage_source_table", "INDEX OF INDUSTRIAL PRODUCTION - MONTHWISE"),
+            ("later_vintage_source_url", LATER_SOURCE_URL),
+            ("later_vintage_assessment", "SOURCE_BASE_YEAR_MISMATCH_NOT_COMPARABLE"),
+            ("revision_detected", "UNKNOWN"),
         ):
             if row.get(key, "").strip() != expected:
                 errors.append(prefix + f"{key} must equal {expected!r}")
+
+        if row.get("latest_later_index", "").strip():
+            errors.append(prefix + "latest_later_index must be blank for cross-base-year evidence")
+        if row.get("revision_delta_latest_minus_first", "").strip():
+            errors.append(prefix + "revision delta must be blank for cross-base-year evidence")
 
         ids = row.get("later_vintage_ids", "").split(";")
         dates = row.get("later_vintage_release_dates", "").split(";")
@@ -72,48 +84,26 @@ def validate(path: Path) -> list[str]:
         if dates != EXPECTED_DATES:
             errors.append(prefix + "later vintage release dates/order mismatch")
         try:
-            parsed_dates = [datetime.strptime(value, "%d %b %Y") for value in dates]
-            if parsed_dates != sorted(parsed_dates):
-                errors.append(prefix + "later vintage dates are not chronological")
-        except ValueError:
-            errors.append(prefix + "invalid later vintage date")
-
-        try:
-            first = float(row["first_release_index"])
             values = [float(value) for value in values_text]
-            latest = float(row["latest_later_index"])
-            delta = float(row["revision_delta_latest_minus_first"])
             if len(values) != 3:
-                errors.append(prefix + "exactly three later index values required")
-            elif len(set(values)) != 1:
-                errors.append(prefix + "three later vintage values must agree for this ledger status")
-            if values and abs(latest - values[-1]) > 1e-9:
-                errors.append(prefix + "latest_later_index does not match final chronological value")
-            if abs(delta - (latest - first)) > 1e-9:
-                errors.append(prefix + "revision delta arithmetic mismatch")
-            expected_revision = abs(latest - first) > 1e-9
-            if row["revision_detected"].strip().upper() != str(expected_revision).upper():
-                errors.append(prefix + "revision_detected flag mismatch")
-            if not expected_revision:
-                errors.append(prefix + "expected first-release revision for this evidence ledger")
-        except (TypeError, ValueError):
-            errors.append(prefix + "non-numeric index or revision field")
+                errors.append(prefix + "expected three preserved raw monthwise observations")
+        except ValueError:
+            errors.append(prefix + "non-numeric preserved source observation")
+
+        status = row.get("evidence_status", "")
+        required_statuses = (
+            "RUN245_XLSX_NOT_COMPARABLE_BASEYEAR_CLASSIFICATION_MISMATCH",
+            "LATER_VALUES_MATCH_2011_12_MONTHWISE_TABLE",
+            "REVISION_STATUS_UNKNOWN_NOT_COMPARABLE",
+            "RAW_PDF_SHA256_PENDING",
+        )
+        for marker in required_statuses:
+            if marker not in status:
+                errors.append(prefix + f"evidence status must retain {marker}")
 
         raw_hash = row.get("raw_pdf_sha256", "").strip().lower()
-        status = row.get("evidence_status", "")
-        if "RUN245_XLSX_CROSSCHECKED" in status:
-            errors.append(prefix + "Run245 2011-12/NIC-2008 workbook cannot substantiate 2022-23/NIC-2025 values")
-        if "RUN245_XLSX_NOT_COMPARABLE_BASEYEAR_CLASSIFICATION_MISMATCH" not in status:
-            errors.append(prefix + "base-year/classification mismatch must remain explicit")
-        if "LATER_VINTAGE_SOURCE_CROSSCHECK_PENDING" not in status:
-            errors.append(prefix + "later-vintage source cross-check must remain pending until comparable evidence is attached")
-        if raw_hash:
-            if not re.fullmatch(r"[0-9a-f]{64}", raw_hash):
-                errors.append(prefix + "raw_pdf_sha256 must be 64 lowercase hex characters")
-        elif "RAW_PDF_SHA256_PENDING" not in status:
-            errors.append(prefix + "blank raw PDF hash must remain explicitly pending")
-        if row.get("later_vintage_assessment") != "3_LATER_VINTAGES_AGREE_CHRONOLOGICAL_ORDER":
-            errors.append(prefix + "later vintage assessment label mismatch")
+        if raw_hash and not re.fullmatch(r"[0-9a-f]{64}", raw_hash):
+            errors.append(prefix + "raw_pdf_sha256 must be 64 lowercase hex characters")
 
     return errors
 
@@ -129,7 +119,8 @@ def main() -> int:
         print(f"QA_FAIL errors={len(errors)}")
         return 1
     digest = hashlib.sha256(args.csv_path.read_bytes()).hexdigest()
-    print("QA_PASS rows=23 nic_codes=10-32 chronological_vintages=3")
+    print("QA_PASS rows=23 nic_codes=10-32 later_values_quarantined=2011-12")
+    print("revision_status=UNKNOWN_CROSS_BASE_YEAR_NOT_COMPARABLE")
     print(f"raw_pdf_sha256_status={'PRESENT' if all(r.get('raw_pdf_sha256','').strip() for r in csv.DictReader(args.csv_path.open(encoding='utf-8-sig'))) else 'PENDING_PROVISIONAL'}")
     print(f"ledger_sha256={digest}")
     return 0
