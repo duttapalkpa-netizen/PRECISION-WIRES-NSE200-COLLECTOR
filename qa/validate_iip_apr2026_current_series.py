@@ -5,6 +5,15 @@ import argparse, csv, hashlib, re
 from pathlib import Path
 
 EXPECTED_CODES = [str(n) for n in range(10, 33)]
+EXPECTED_INDEXES = {
+    "10": 100.5, "11": 155.2, "12": 113.8, "13": 135.7,
+    "14": 91.0, "15": 99.8, "16": 84.3, "17": 115.0,
+    "18": 103.8, "19": 104.6, "20": 104.9, "21": 110.7,
+    "22": 125.8, "23": 115.8, "24": 128.9, "25": 125.9,
+    "26": 137.9, "27": 151.5, "28": 109.9, "29": 130.4,
+    "30": 153.4, "31": 109.8, "32": 112.1,
+}
+EXPECTED_WORKBOOK_SHA256 = "ce4c0bba17d2135474c6abd10aabe03758248e1423d434817c90a2d497ee16ce"
 EXPECTED = {
     "period": "2026-04",
     "base_year": "2022-23",
@@ -56,12 +65,17 @@ def validate(path: Path) -> list[str]:
             value = float(row["monthly_index"])
             if not (0 < value < 1000):
                 errors.append(p + "monthly_index must be >0 and <1000")
+            expected_value = EXPECTED_INDEXES.get(row.get("nic_code", "").strip())
+            if expected_value is not None and value != expected_value:
+                errors.append(p + f"monthly_index must match official Statement IV value {expected_value}")
         except (ValueError, TypeError):
             errors.append(p + "monthly_index must be numeric")
         h = row.get("source_workbook_sha256", "").strip().lower()
         if not re.fullmatch(r"[0-9a-f]{64}", h):
             errors.append(p + "source_workbook_sha256 must be 64 lowercase hex characters")
         workbook_hashes.add(h)
+        if h != EXPECTED_WORKBOOK_SHA256:
+            errors.append(p + "source_workbook_sha256 does not match the inspected original workbook")
         if not row.get("source_workbook", "").strip():
             errors.append(p + "source_workbook is blank")
     if len(workbook_hashes) != 1 or "" in workbook_hashes:
