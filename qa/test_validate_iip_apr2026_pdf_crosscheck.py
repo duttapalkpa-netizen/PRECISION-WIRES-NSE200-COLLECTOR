@@ -42,6 +42,15 @@ class LedgerValidatorTests(unittest.TestCase):
         rows[0]["revision_delta_latest_minus_first"] = "0.0"
         self.assertTrue(any("revision delta arithmetic mismatch" in e for e in validate(self.write_temp(fields, rows))))
 
+    def test_run245_old_base_vintage_cannot_be_claimed_as_nic2025_crosscheck(self):
+        fields, rows = self.load_rows()
+        rows[0]["evidence_status"] = rows[0]["evidence_status"].replace(
+            "RUN245_XLSX_NOT_COMPARABLE_BASEYEAR_CLASSIFICATION_MISMATCH; LATER_VINTAGE_SOURCE_CROSSCHECK_PENDING",
+            "RUN245_XLSX_CROSSCHECKED",
+        )
+        errors = validate(self.write_temp(fields, rows))
+        self.assertTrue(any("cannot substantiate 2022-23/NIC-2025" in e for e in errors))
+
     def test_missing_raw_hash_must_remain_provisional(self):
         fields, rows = self.load_rows()
         rows[0]["raw_pdf_sha256"] = ""
