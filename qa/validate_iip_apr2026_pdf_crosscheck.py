@@ -101,6 +101,12 @@ def validate(path: Path) -> list[str]:
 
         raw_hash = row.get("raw_pdf_sha256", "").strip().lower()
         status = row.get("evidence_status", "")
+        if "RUN245_XLSX_CROSSCHECKED" in status:
+            errors.append(prefix + "Run245 2011-12/NIC-2008 workbook cannot substantiate 2022-23/NIC-2025 values")
+        if "RUN245_XLSX_NOT_COMPARABLE_BASEYEAR_CLASSIFICATION_MISMATCH" not in status:
+            errors.append(prefix + "base-year/classification mismatch must remain explicit")
+        if "LATER_VINTAGE_SOURCE_CROSSCHECK_PENDING" not in status:
+            errors.append(prefix + "later-vintage source cross-check must remain pending until comparable evidence is attached")
         if raw_hash:
             if not re.fullmatch(r"[0-9a-f]{64}", raw_hash):
                 errors.append(prefix + "raw_pdf_sha256 must be 64 lowercase hex characters")
