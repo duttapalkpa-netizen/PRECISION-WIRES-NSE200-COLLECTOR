@@ -254,7 +254,7 @@ def main():
             "series_keys_available_in_later_vintages":len(by_series),
             "series_keys_stable_across_later_vintages":stable,
             "series_keys_revised_across_later_vintages":revised,
-            "later_vintage_ids":sorted({x["table_id"] for x in coverage_rows if x["target_release_period"]==target_period})
+            "later_vintage_ids":sorted({item["table_id"] for series_items in by_series.values() for item in series_items})
         })
     coverage_path=OUT/"unavailable_vintage_period_observation_coverage.csv"
     pd.DataFrame(coverage_rows,columns=["target_release_period","target_status","base_year","classification","nic_code","later_vintage_count","later_vintage_ids","first_later_vintage_id","first_later_release_date","first_later_value","last_later_vintage_id","last_later_release_date","last_later_value","later_values_stable","later_vintage_observation_count"]).to_csv(coverage_path,index=False)
