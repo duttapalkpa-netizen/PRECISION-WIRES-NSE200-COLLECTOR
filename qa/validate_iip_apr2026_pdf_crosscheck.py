@@ -32,6 +32,9 @@ REQUIRED = {
     "later_vintage_assessment", "evidence_status",
     "later_vintage_source_base_year", "later_vintage_source_table",
     "later_vintage_source_url",
+    "first_release_deflator", "first_release_series_status",
+    "superseded_by_release_id", "superseding_release_date",
+    "superseding_deflator", "current_series_apr2026_index_status",
 }
 
 
@@ -67,6 +70,12 @@ def validate(path: Path) -> list[str]:
             ("later_vintage_source_url", LATER_SOURCE_URL),
             ("later_vintage_assessment", "SOURCE_BASE_YEAR_MISMATCH_NOT_COMPARABLE"),
             ("revision_detected", "UNKNOWN"),
+            ("first_release_deflator", "WPI"),
+            ("first_release_series_status", "SUPERSEDED_BY_OUTPUT_PPI_SERIES"),
+            ("superseded_by_release_id", "IIPMFY26006MAY"),
+            ("superseding_release_date", "2026-06-29"),
+            ("superseding_deflator", "Output PPI"),
+            ("current_series_apr2026_index_status", "NOT_YET_EXTRACTED_FROM_COMPARABLE_CURRENT_SERIES_SOURCE"),
         ):
             if row.get(key, "").strip() != expected:
                 errors.append(prefix + f"{key} must equal {expected!r}")
