@@ -15,6 +15,13 @@ from pathlib import Path
 
 EXPECTED_CODES = [f"{n:02d}" for n in range(10, 33)]
 EXPECTED_IDS = ["IIPMFY26006MAY", "IIPMFY26010JUN", "IIPMFY26018AUG"]
+EXPECTED_FIRST_RELEASE_VALUES = {
+    "10": 101.0, "11": 152.8, "12": 116.6, "13": 132.6, "14": 91.6,
+    "15": 98.3, "16": 83.6, "17": 116.0, "18": 106.8, "19": 104.1,
+    "20": 104.4, "21": 117.5, "22": 107.6, "23": 116.0, "24": 130.0,
+    "25": 124.3, "26": 138.7, "27": 150.6, "28": 122.5, "29": 130.8,
+    "30": 148.4, "31": 111.1, "32": 124.6,
+}
 EXPECTED_DATES = ["29 Jun 2026", "28 Jul 2026", "28 Sep 2026"]
 EXPECTED_URL = (
     "https://www.mospi.gov.in/uploads/latestReleases/"
@@ -80,6 +87,14 @@ def validate(path: Path) -> list[str]:
             if row.get(key, "").strip() != expected:
                 errors.append(prefix + f"{key} must equal {expected!r}")
 
+        try:
+            first_value = float(row.get("first_release_index", "").strip())
+            expected_first_value = EXPECTED_FIRST_RELEASE_VALUES.get(row.get("nic_code", "").strip())
+            if expected_first_value is None or first_value != expected_first_value:
+                errors.append(prefix + f"first_release_index must match official first-release Statement II-A value {expected_first_value}")
+        except (ValueError, TypeError):
+            errors.append(prefix + "first_release_index must be numeric")
+
         if row.get("latest_later_index", "").strip():
             errors.append(prefix + "latest_later_index must be blank for cross-base-year evidence")
         if row.get("revision_delta_latest_minus_first", "").strip():
@@ -104,13 +119,17 @@ def validate(path: Path) -> list[str]:
             "RUN245_XLSX_NOT_COMPARABLE_BASEYEAR_CLASSIFICATION_MISMATCH",
             "LATER_VALUES_MATCH_2011_12_MONTHWISE_TABLE",
             "REVISION_STATUS_UNKNOWN_NOT_COMPARABLE",
-            "RAW_PDF_SHA256_PENDING",
         )
         for marker in required_statuses:
             if marker not in status:
                 errors.append(prefix + f"evidence status must retain {marker}")
 
         raw_hash = row.get("raw_pdf_sha256", "").strip().lower()
+        pending_marker = "RAW_PDF_SHA256_PENDING" in status
+        if pending_marker and raw_hash:
+            errors.append(prefix + "raw_pdf_sha256 must remain blank while evidence status is pending")
+        if not pending_marker and not raw_hash:
+            errors.append(prefix + "a missing raw_pdf_sha256 must retain RAW_PDF_SHA256_PENDING")
         if raw_hash and not re.fullmatch(r"[0-9a-f]{64}", raw_hash):
             errors.append(prefix + "raw_pdf_sha256 must be 64 lowercase hex characters")
 
