@@ -173,3 +173,13 @@ Acceptance status remains:
 - This finding narrows the earlier API conclusion: the **published IIP API specification** is legacy-base-only and token-protected. It does not prove that the separate open-access catalogue or Macro Indicators UI lacks a 2022-23 downloadable table. The UI/CSV route remains distinct and must be tested through its visible filters and exported file.
 - Decision: do not attempt this API for the 2022-23 April 2026 NIC-2025 cross-check unless MoSPI publishes a revised specification/metadata explicitly including that base year and lawful access is available. Continue with the public catalogue/UI route; retain exact table ID and export bytes as NOT_VERIFIED / NOT_CAPTURED until observed.
 - No data values, catalogue IDs, or authentication material were inferred. All production invariants and project gate status remain unchanged.
+
+
+## 12. April catalogue-ID provenance correction (2026-11-08)
+
+- A PR-wide changed-file/validator review found a provenance-label defect in the current-series CSV: its `source_table_id` column had been populated with `IIPMFY26018AUG`, although that identifier belongs to the August 2026 catalogue record, not an independently verified April 2026 catalogue record.
+- The April observations themselves were independently cross-checked against the April-2026 column in Statement IV of two later official PIB releases (Release IDs `2315957` and `2329475`). That does not establish that the April source catalogue table ID is the August ID.
+- Corrected all 23 CSV rows to `source_table_id=NOT_VERIFIED`. No April index values, workbook bytes/hash, NIC codes, release IDs, or cross-check results were changed.
+- Updated the current-series validator to require `source_table_id=NOT_VERIFIED`, and added a regression test that explicitly rejects reintroduction of `IIPMFY26018AUG` as an April identifier.
+- The August ID remains valid only for its August catalogue record. April 2026 exact catalogue ID and standalone official export URL/bytes remain NOT_VERIFIED / NOT_CAPTURED.
+- This correction is an evidence-label/provenance repair only. No production selector, score, pressure-fade, CORE-672, collector, or engine logic was changed. Project-wide Hard Gate remains BLOCKED.
