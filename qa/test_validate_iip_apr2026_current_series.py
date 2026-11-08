@@ -41,6 +41,11 @@ class CurrentSeriesTests(unittest.TestCase):
     def test_numeric_but_wrong_official_index_is_rejected(self):
         fields, rows = self.load(); rows[0]["monthly_index"] = "101.5"
         self.assertTrue(any("must match official Statement IV value" in e for e in self.run_rows(fields, rows)))
+    def test_different_workbook_filename_is_rejected(self):
+        fields, rows = self.load(); rows[0]["source_workbook"] = "wrong.xlsx"
+        errors = self.run_rows(fields, rows)
+        self.assertTrue(any("source_workbook must equal" in e for e in errors))
+
     def test_different_workbook_hash_is_rejected(self):
         fields, rows = self.load(); rows[0]["source_workbook_sha256"] = "a" * 64
         errors = self.run_rows(fields, rows)
