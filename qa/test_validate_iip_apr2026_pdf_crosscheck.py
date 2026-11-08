@@ -61,6 +61,19 @@ class LedgerValidatorTests(unittest.TestCase):
         errors = validate(self.write_temp(fields, rows))
         self.assertTrue(any("must retain RUN245_XLSX_NOT_COMPARABLE" in e for e in errors))
 
+
+    def test_wpi_first_release_must_be_marked_superseded_by_ppi(self):
+        fields, rows = self.load_rows()
+        rows[0]["first_release_series_status"] = "CURRENT"
+        errors = validate(self.write_temp(fields, rows))
+        self.assertTrue(any("first_release_series_status must equal 'SUPERSEDED_BY_OUTPUT_PPI_SERIES'" in e for e in errors))
+
+    def test_current_ppi_april_value_cannot_be_claimed_without_source_extraction(self):
+        fields, rows = self.load_rows()
+        rows[0]["current_series_apr2026_index_status"] = "VERIFIED"
+        errors = validate(self.write_temp(fields, rows))
+        self.assertTrue(any("current_series_apr2026_index_status must equal 'NOT_YET_EXTRACTED_FROM_COMPARABLE_CURRENT_SERIES_SOURCE'" in e for e in errors))
+
     def test_missing_raw_hash_must_remain_provisional(self):
         fields, rows = self.load_rows()
         rows[0]["raw_pdf_sha256"] = ""
