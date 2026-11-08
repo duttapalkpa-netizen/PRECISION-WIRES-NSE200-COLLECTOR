@@ -136,3 +136,29 @@ Acceptance status remains:
 - The duplicate-source correction does not change any of the 23 April index values, workbook hash, base year, classification, or the two actual release IDs. The current-series validator continues to pin both official release metadata sets and all 23 index values.
 - The exact April 2026 e-Sankhyiki catalogue table ID remains NOT_VERIFIED. The August catalogue ID `IIPMFY26018AUG` must not be re-labelled as an April ID.
 - Raw first-release WPI PDF SHA-256 remains PENDING; this separate byte-provenance gap is unaffected.
+
+
+## 10. Official e-Sankhyiki catalogue/API capability re-check (2026-11-08)
+
+### Catalogue search result
+- Official e-Sankhyiki catalogue page: https://esankhyiki.mospi.gov.in/catalogue-main/catalogue
+- The currently indexed catalogue result identifies the monthly NIC-2 digit and sectoral IIP table for reference period Aug 2026 as `IIPMFY26018AUG`, release date 28 September 2026.
+- Exact April 2026 NIC-2 current-series table ID was not returned by the official catalogue page rendering or targeted public search. The catalogue page is JavaScript-rendered and has no readable page lines in the current retrieval environment.
+- The August ID is evidence only for August. No April ID is derived by changing the month suffix or decrementing any sequence.
+
+### Official MoSPI MCP/API documentation check
+- The NSO India / MoSPI e-Sankhyiki MCP repository publishes its source code and documents the sequential workflow `list_datasets -> get_indicators -> get_metadata -> get_data`.
+- Repository: https://github.com/nso-india/esankhyiki-mcp
+- Source file: https://github.com/nso-india/esankhyiki-mcp/blob/main/mospi_server.py
+- In the published IIP metadata documentation, supported IIP base-year values are explicitly listed as `2011-12`, `2004-05`, and `1993-94`; the IIP metadata implementation also defaults to `2011-12`. The published documentation does not list the 2022-23 series.
+- Source lines in the currently rendered GitHub page: 3056-3068 (base-year and IIP frequency parameter documentation) and 3147-3166 (IIP metadata implementation and stated coverage).
+- This means the documented IIP MCP/API route is not currently an evidenced route for querying the 2022-23 NIC-2025 April 2026 current series. No unsupported base-year value was submitted; no API request was made using undocumented parameters; no authentication bypass or credentials were used.
+- The same repository README describes the API workflow and says metadata-returned filter values must be used as-is. This reinforces the no-guessing rule; it does not establish April catalogue ID.
+
+### Updated access conclusion
+- April 2026 exact catalogue table ID: `NOT_VERIFIED`.
+- April 2026 current-series standalone IIP export bytes and download URL: `NOT_CAPTURED`.
+- Publicly indexed August 2026 monthly NIC-2 table ID: `IIPMFY26018AUG` (not reusable as April).
+- Official API/MCP documented IIP base-year coverage for this route: legacy bases only; 2022-23 unsupported in published parameter documentation.
+- Next valid path: capture the exact April export through the official portal UI or an official downloadable catalogue record whose metadata explicitly states reference period Apr 2026, base year 2022-23, NIC-2025, and table identifier. If no such record can be observed, retain `NOT_VERIFIED` and do not manufacture a locator.
+- No values or table IDs were inferred, no old base-year data were promoted, no production code was changed, and project Hard Gate remains BLOCKED.
