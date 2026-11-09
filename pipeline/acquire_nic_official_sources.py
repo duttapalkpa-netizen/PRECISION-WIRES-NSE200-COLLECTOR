@@ -13,7 +13,7 @@ RAW.mkdir(parents=True, exist_ok=True)
 SOURCES = {
   'nic2025_xlsx': 'https://www.mospi.gov.in/uploads/publications_reports/publications_reports1763618655097_29a4a622-fa4c-47e9-abba-b549e27a1bbb_NIC_2025.xlsx',
   'nic2008_xlsx': 'https://www.mospi.gov.in/uploads/documents/publicDocuments/1760616763355-NIC_2008.xlsx',
-  'nic2025_pdf': 'https://www.mospi.gov.in/sites/default/files/main_menu/national_industrial_classification/NIC_2025Final_18112025.pdf',
+  'nic2025_pdf': 'https://www.mospi.gov.in/uploads/publications_reports/publications_reports1763457214315_c3e5d4f3-8e25-4775-85e3-ad42d571652f_NIC_2025_Final.pdf',
 }
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
