@@ -9,7 +9,7 @@ class DeliveryCoverageTests(unittest.TestCase):
         self.assertEqual(present, 500806)
         self.assertEqual(missing, 2)
         self.assertLess(pct, 100.0)
-        self.assertAlmostEqual(pct, 99.9996001663, places=8)
+        self.assertAlmostEqual(pct, 99.9996006454, places=8)
 
     def test_empty_dataset_reports_zero_coverage(self):
         present, missing, pct = _coverage(pd.Series([], dtype="float64"), 0)
