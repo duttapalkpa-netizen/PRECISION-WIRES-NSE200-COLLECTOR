@@ -10,14 +10,14 @@ ROOT = Path('artifacts/nic_concordance_audit')
 PDF = ROOT / 'raw' / 'nic2025_pdf.pdf'
 OUT = ROOT / 'concordance'
 SOURCE_URL = 'https://www.mospi.gov.in/uploads/publications_reports/publications_reports1763457214315_c3e5d4f3-8e25-4775-85e3-ad42d571652f_NIC_2025_Final.pdf'
-HEADING = re.compile(r'CONCORDANCE\\s+BETWEEN\\s+4-DIGIT\\s+INDUSTRY\\s+CLASSES\\s+OF\\s+NIC-2025\\s+AND\\s+NIC-2008', re.I)
-CODE_ROW = re.compile(r'^\\s*(\\d{4})\\s+(.+?)\\s*$')
-EXPR_ONLY = re.compile(r'^\\s*(\\d{4}(?:\\s*\\(\\s*p\\s*\\))?(?:\\s*\\+\\s*\\d{4}(?:\\s*\\(\\s*p\\s*\\))?)*)\\s*$')
-TOKEN = re.compile(r'^(\\d{4})(\\(P\\))?$', re.I)
+HEADING = re.compile(r'CONCORDANCE\s+BETWEEN\s+4-DIGIT\s+INDUSTRY\s+CLASSES\s+OF\s+NIC-2025\s+AND\s+NIC-2008', re.I)
+CODE_ROW = re.compile(r'^\s*(\d{4})\s+(.+?)\s*$')
+EXPR_ONLY = re.compile(r'^\s*(\d{4}(?:\s*\(\s*p\s*\))?(?:\s*\+\s*\d{4}(?:\s*\(\s*p\s*\))?)*)\s*$')
+TOKEN = re.compile(r'^(\d{4})(\(P\))?$', re.I)
 HEADER_LINES = {'NIC 2025 Code', 'NIC 2008 Code', 'NIC 2025 Code NIC 2008 Code'}
 
 def normalize_expr(raw: str) -> str:
-    return re.sub(r'\\s+', '', raw).upper()
+    return re.sub(r'\s+', '', raw).upper()
 
 def parse_components(expr: str, allow_trailing_plus: bool = False):
     canonical = normalize_expr(expr)
@@ -36,14 +36,14 @@ def parse_components(expr: str, allow_trailing_plus: bool = False):
     return parsed
 
 def is_header_or_layout(line: str) -> bool:
-    s = re.sub(r'\\s+', ' ', line).strip()
+    s = re.sub(r'\s+', ' ', line).strip()
     return not s or s in HEADER_LINES or s.lower() in {'concordance with nic 2008'}
 
 def parse_lines(lines, printed_page: int):
     """Attach a blank-code continuation only to an immediately open trailing '+' row."""
     rows, pending = [], None
     for line_no, line in enumerate(lines, 1):
-        raw_line = line.rstrip('\\r\\n')
+        raw_line = line.rstrip('\r\n')
         if is_header_or_layout(raw_line):
             continue
         m = CODE_ROW.fullmatch(raw_line)
