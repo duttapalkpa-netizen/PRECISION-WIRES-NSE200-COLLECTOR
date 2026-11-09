@@ -5,6 +5,7 @@ on:
     paths:
       - "pipeline/walk_forward_backtest.py"
       - "qa/test_delivery_missingness_policy.py"
+      - "qa/test_delivery_missingness_downstream_counterfactual.py"
       - ".github/workflows/validate_delivery_missingness_policy.yml"
   workflow_dispatch:
 
@@ -25,4 +26,6 @@ jobs:
       - name: Install test dependencies
         run: python -m pip install numpy pandas
       - name: Run isolated missingness policy tests
-        run: PYTHONPATH=. python -m unittest qa.test_delivery_missingness_policy -v
+        run: |
+          PYTHONPATH=. python -m unittest qa.test_delivery_missingness_policy -v
+          PYTHONPATH=. python -m unittest qa.test_delivery_missingness_downstream_counterfactual -v
