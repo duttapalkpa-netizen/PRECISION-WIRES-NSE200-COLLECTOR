@@ -47,13 +47,13 @@ for key, url in SOURCES.items():
             wb = load_workbook(dest, read_only=True, data_only=True)
             sheets = []
             for ws in wb.worksheets:
-                first = next(ws.iter_rows(min_row=1, max_row=min(ws.max_row or 1, 5), values_only=True), ())
-                sheets.append({'title':ws.title,'max_row':ws.max_row,'max_column':ws.max_column,'first_rows':[list(row) for row in first]})
+                first_rows = [list(row) for row in ws.iter_rows(min_row=1, max_row=min(ws.max_row or 1, 5), values_only=True)]
+                sheets.append({'title':ws.title,'max_row':ws.max_row,'max_column':ws.max_column,'first_rows':first_rows})
             manifest['workbooks'][key] = {'sheetnames':wb.sheetnames,'sheets':sheets}
             wb.close()
         except Exception as exc:
             manifest['workbooks'][key] = {'inventory_status':'FAILED','error':f'{type(exc).__name__}: {exc}'}
-manifest['status'] = 'PASS' if all(x['status']=='DOWNLOADED' for x in manifest['sources'].values()) else 'BLOCKED_WITH_SOURCE_ACCESS_GAPS'
+manifest['status'] = 'PASS' if all(x['status']=='DOWNLOADED' for x in manifest['sources'].values()) and all(v.get('sheets') for v in manifest['workbooks'].values()) and len(manifest['workbooks']) == 2 else 'BLOCKED_WITH_SOURCE_ACCESS_OR_WORKBOOK_INVENTORY_GAPS'
 OUT.mkdir(parents=True, exist_ok=True)
 (OUT / 'nic_source_sha256_and_workbook_inventory.json').write_text(json.dumps(manifest, indent=2, ensure_ascii=False, default=str), encoding='utf-8')
 print(json.dumps({k:{'status':v['status'],'bytes':v.get('bytes'),'sha256':v.get('sha256'),'error':v.get('error')} for k,v in manifest['sources'].items()}, indent=2))
