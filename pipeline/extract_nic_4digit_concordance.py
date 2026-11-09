@@ -45,7 +45,9 @@ def parse_tables(page_tables, printed_page: int):
             right = '' if cells[1] is None else str(cells[1]).strip()
             if not left and not right:
                 continue
-            if 'NIC 2025' in left or 'NIC 2008' in right:
+            left_header = re.sub(r'\s+', '', left).upper()
+            right_header = re.sub(r'\s+', '', right).upper()
+            if 'NIC2025CODE' in left_header or 'NIC2008CODE' in right_header:
                 continue
             if CODE.fullmatch(left):
                 if pending:
