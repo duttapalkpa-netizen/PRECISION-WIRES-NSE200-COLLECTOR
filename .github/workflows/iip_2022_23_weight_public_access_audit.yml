@@ -1,0 +1,38 @@
+name: IIP 2022-23 Public Weight and Item Access Audit
+on:
+  push:
+    branches:
+      - research/iip-item-weight-public-access-audit
+    paths:
+      - "pipeline/audit_iip_2022_23_weight_public_access.py"
+      - "qa/test_iip_weight_public_access_audit.py"
+      - "research/data/iip_2026_09_manufacturing_nic2_statement_IIA.csv"
+      - ".github/workflows/iip_2022_23_weight_public_access_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: iip-2022-23-weight-public-access-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/iip-item-weight-public-access-audit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run regression tests and weight audit
+        run: python -m unittest qa/test_iip_weight_public_access_audit.py -v
+      - name: Upload reconciliation and access matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iip-2022-23-weight-public-access-audit-${{ github.run_number }}
+          path: artifacts/iip_item_weight_public_access/
+          if-no-files-found: warn
+          retention-days: 90
