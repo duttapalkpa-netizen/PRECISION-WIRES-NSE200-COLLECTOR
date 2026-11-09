@@ -49,11 +49,11 @@ class DownstreamDeliveryCounterfactualTests(unittest.TestCase):
         n = neutral.iloc[-1]
 
         # READINESS weights ABSORPTION at 20%; TOMORROW score separately
-        # weights ABSORPTION directly at 15%.
+        # weights ABSORPTION directly at 15% (25 * 0.15 = 3.75 points).
         self.assertAlmostEqual(n["READINESS"] - m["READINESS"], 5.0, places=12)
         self.assertAlmostEqual(
             n["TOMORROW_EXPANSION_SCORE"] - m["TOMORROW_EXPANSION_SCORE"],
-            0.75,
+            3.75,
             places=12,
         )
 
