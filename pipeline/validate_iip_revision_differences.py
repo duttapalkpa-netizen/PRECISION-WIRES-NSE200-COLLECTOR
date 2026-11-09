@@ -148,7 +148,7 @@ def main():
         "release_pair_summary": pairs,
         "interpretation": [
             "Each reported delta reconciles to both source-vintage observation rows and their recorded SHA-256 values.",
-            "The 1,058 rows are verified differences between successive available snapshots for the same base year, classification, NIC code and observation period; they are not 1,058 independent monthly observations.",
+            f"The {len(differences):,} rows are verified differences between successive available snapshots for the same base year, classification, NIC code and observation period; they are not {len(differences):,} independent monthly observations.",
             "Successive available snapshots are not guaranteed to be adjacent calendar releases where catalogue vintages are missing or failed.",
             "The comparison establishes that the published snapshots differ; it does not establish the reason, correction policy, or which vintage is economically preferable.",
             "Magnitude bands are descriptive only and are not pass/fail thresholds."
