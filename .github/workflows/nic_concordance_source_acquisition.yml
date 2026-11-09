@@ -1,5 +1,14 @@
 name: Official NIC Concordance Source Acquisition and Extraction
 on:
+  push:
+    branches:
+      - research/nic-concordance-463-extraction-hardening
+    paths:
+      - "pipeline/extract_nic_4digit_concordance.py"
+      - "qa/test_nic_concordance_parser.py"
+      - "qa/validate_nic_concordance_artifact.py"
+      - ".github/workflows/nic_concordance_source_acquisition.yml"
+      - "pipeline/acquire_nic_official_sources.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,22 +23,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix/iip-41-vintage-audit-clean
+          ref: research/nic-concordance-463-extraction-hardening
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Install parsers
         run: pip install openpyxl pymupdf
+      - name: Run parser regression tests
+        run: python -m unittest qa/test_nic_concordance_parser.py -v
       - name: Acquire official NIC sources and hash raw bytes
         run: python pipeline/acquire_nic_official_sources.py
       - name: Extract and audit the official 4-digit concordance
-        if: always()
         run: python pipeline/extract_nic_4digit_concordance.py
+      - name: Independently validate CSV, raw markers, provenance and hashes
+        run: python qa/validate_nic_concordance_artifact.py
       - name: Upload raw sources, concordance CSV and audit manifests
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: official-nic-concordance-audit-${{ github.run_number }}
           path: artifacts/nic_concordance_audit/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
