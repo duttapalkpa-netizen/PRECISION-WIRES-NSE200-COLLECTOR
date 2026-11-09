@@ -24,13 +24,13 @@ reverse = defaultdict(list)
 errors = []
 for i, row in enumerate(rows, 2):
     code = row['nic2025_class_4d']
-    if not re.fullmatch(r'\\d{4}', code): errors.append(f'row {i}: invalid NIC-2025 code')
+    if not re.fullmatch(r'\d{4}', code): errors.append(f'row {i}: invalid NIC-2025 code')
     try:
         components = json.loads(row['components'])
         fragments = json.loads(row['source_fragments'])
     except Exception as exc:
         errors.append(f'row {i}: invalid JSON fields: {exc}'); continue
-    canonical = re.sub(r'\\s+', '', row['nic2008_expression_raw']).upper()
+    canonical = re.sub(r'\s+', '', row['nic2008_expression_raw']).upper()
     if canonical != row['nic2008_expression_canonical']:
         errors.append(f'row {i}: raw/canonical expression mismatch')
     if not components: errors.append(f'row {i}: empty mapping components')
@@ -41,7 +41,7 @@ for i, row in enumerate(rows, 2):
     elif any(not 232 <= int(x['printed_page']) <= 238 for x in fragments):
         errors.append(f'row {i}: source page outside concordance')
     for c in components:
-        if not re.fullmatch(r'\\d{4}', c['nic2008_class_4d']):
+        if not re.fullmatch(r'\d{4}', c['nic2008_class_4d']):
             errors.append(f'row {i}: invalid NIC-2008 component')
         reverse[c['nic2008_class_4d']].append(code)
 csv_sha = hashlib.sha256(CSV_PATH.read_bytes()).hexdigest()
