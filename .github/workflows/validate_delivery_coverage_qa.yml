@@ -1,0 +1,32 @@
+name: Validate Run 110 delivery coverage QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "qa/validate_dataset.py"
+      - "tests/test_delivery_coverage_reporting.py"
+      - ".github/workflows/validate_delivery_coverage_qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  delivery-coverage-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout pull request head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal test dependency
+        run: python -m pip install pandas
+      - name: Run delivery coverage regression tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest discover -s tests -p "test_delivery_coverage_reporting.py" -v
