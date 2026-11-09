@@ -1,5 +1,14 @@
 name: Official NIC Concordance Source Acquisition and Extraction
 on:
+  push:
+    branches:
+      - research/nic-concordance-463-extraction-hardening
+    paths:
+      - "pipeline/extract_nic_4digit_concordance.py"
+      - "qa/test_nic_concordance_parser.py"
+      - "qa/validate_nic_concordance_artifact.py"
+      - ".github/workflows/nic_concordance_source_acquisition.yml"
+      - "pipeline/acquire_nic_official_sources.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,7 +35,7 @@ jobs:
         run: python pipeline/acquire_nic_official_sources.py
       - name: Extract and audit the official 4-digit concordance
         run: python pipeline/extract_nic_4digit_concordance.py
-      - name: Independently validate CSV, raw markers, provenance and hashes
+      - name: Independently validate PDF extraction against official NIC workbooks
         run: python qa/validate_nic_concordance_artifact.py
       - name: Upload raw sources, concordance CSV and audit manifests
         if: always()
