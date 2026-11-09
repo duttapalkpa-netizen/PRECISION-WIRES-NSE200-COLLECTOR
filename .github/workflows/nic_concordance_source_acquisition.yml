@@ -1,14 +1,5 @@
 name: Official NIC Concordance Source Acquisition and Extraction
 on:
-  push:
-    branches:
-      - research/nic-concordance-463-extraction-hardening
-    paths:
-      - "pipeline/extract_nic_4digit_concordance.py"
-      - "qa/test_nic_concordance_parser.py"
-      - "qa/validate_nic_concordance_artifact.py"
-      - ".github/workflows/nic_concordance_source_acquisition.yml"
-      - "pipeline/acquire_nic_official_sources.py"
   workflow_dispatch:
 permissions:
   contents: read
