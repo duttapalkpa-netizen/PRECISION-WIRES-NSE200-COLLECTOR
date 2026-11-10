@@ -5,6 +5,7 @@ on:
       - "pipeline/global_capital_rotation_overlay.py"
       - "qa/test_global_capital_rotation_overlay.py"
       - "docs/GLOBAL_CAPITAL_ROTATION_OVERLAY_V1.md"
+      - "docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
       - "data/global_capital_rotation/**"
       - ".github/workflows/global_capital_rotation_overlay_tests.yml"
   workflow_dispatch:
