@@ -91,4 +91,15 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("positions",content.lower())
         self.assertIn("Daily trading trigger suitability",content)
         self.assertIn("no synthetic",content.lower())
+
+    def test_imf_bop_spec_documents_public_structure_api_retrieval_contract(self):
+        spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
+        content=spec.read_text(encoding="utf-8")
+        self.assertIn("public access for the Structure Web Service",content)
+        self.assertIn("structure/datastructure/IMF/BOP/2.6.0/",content)
+        self.assertIn("references=children",content)
+        self.assertIn("response HTTP status: UNKNOWN",content)
+        self.assertIn("SHA-256: NOT AVAILABLE",content)
+        self.assertIn("not evidence that this audit successfully retrieved the response",content)
+        self.assertIn("Observation extraction requires a separately verified",content)
 if __name__=="__main__": unittest.main()
