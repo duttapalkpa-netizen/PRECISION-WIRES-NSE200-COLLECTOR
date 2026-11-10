@@ -61,3 +61,43 @@ Status semantics: VERIFIED_SOURCE = official route/source identified; OBSERVATIO
 
 ## Next non-duplicate action
 Resolve and test only the highest-priority unresolved official series access routes (IMF BOP dataflow/observations; RBI current DBIE/CIMS and reference-rate downloads; MoSPI GDP/CPI/IIP/WPI release series). Do not rerun completed XML/XSD validation or re-ingest the already reconciled CDSL snapshot. Store raw responses before parsing; if access is not public/authorized, retain UNKNOWN/BLOCKED and move to the next source.
+
+
+## 2026-11-10 evidence addendum — MoSPI release metadata and access boundaries
+This addendum supplements (does not replace) the original 27-variable matrix.
+
+### Verified official catalogue facts
+- eSankhyiki catalogue exposes 4,784 catalogue entries in the current search snapshot and includes IIP, CPI and NAS product families. Catalogue existence is not equivalent to a machine-readable API response.
+- IIP catalogue entry: monthly indices and growth rates by use-based classification through August 2026; reference period August 2026; release date 28-Sep-2026; stated publication lag approximately six weeks.
+- CPI catalogue entry: All-India general group-wise indices/inflation for August 2026 (provisional), base year 2024; release date 14-Sep-2026. July 2026 entry release date 12-Aug-2026. CPI must therefore carry provisional/final status and base-year metadata.
+- MoSPI CPI National Metadata Structure states monthly public dissemination for aggregated CPI (item/subclass/class/group/division levels for All India and States/UTs), normally 4 PM on the 12th of the following month or next working day. Unit-level basket price data are not public.
+- MoSPI GSDD FAQ classifies aggregated National Accounts, CPI and IIP at NIC 2-digit level as Category A Open Access, free without registration. Anonymized unit/item-level data are Category B and require Microdata Portal registration; commercial use may be priced. Restricted data require authorization.
+- NAS catalogue exposes an official quarterly current-statement workbook snapshot dated 05-Jun-2026. This is a downloadable publication artifact, not yet normalized into a time-series observation panel.
+
+### API schema inspection outcome
+- Official IIP API documentation page identifies OpenAPI 3.0.0 and GET `/api/iip/getIIPData`.
+- The page's Swagger UI says its preview returns only the first 10 records. Therefore preview output must never be treated as complete history.
+- The page links to `../../layout/swagger_user_iip.yaml`, but the raw YAML could not be retrieved through the available inspection route in this audit. Exact query parameters, required fields, pagination, authentication and response schema remain UNKNOWN.
+- A separately discovered GitHub implementation is non-government code and is not accepted as the authoritative API contract. It may be used only as a discovery clue, never to fill missing official schema fields.
+- An attempted raw-YAML open returned an unsupported-content-type/tool fetch error; this is a tooling limitation, not evidence that the MoSPI endpoint is down or that the YAML is invalid.
+
+### Updated variable-level gate decisions
+| Variable | New evidence | Gate |
+|---|---|---|
+| India IIP (M10) | Official catalogue coverage through Aug-2026; release date and approximate six-week lag documented; API endpoint named but exact schema not retrieved | SOURCE + RELEASE METADATA VERIFIED; API PARAMETER SCHEMA UNKNOWN; OBSERVATIONS NOT INGESTED |
+| India CPI (M11) | Official catalogue exposes Aug-2026 provisional 2024-base dataset and release date; monthly release timing documented; aggregate open-access policy verified | SOURCE + RELEASE METADATA VERIFIED; OBSERVATIONS NOT INGESTED |
+| India GDP/NAS (M09) | Official NAS quarterly statement workbook exists as a downloadable catalogue artifact; new 2022-23 base series must be kept distinct from 2011-12 historical series | SOURCE ARTIFACT VERIFIED; OBSERVATION PANEL NOT INGESTED; SERIES BRIDGE UNKNOWN |
+| India WPI (M12) | No new official series-level route or observation evidence in this audit | UNKNOWN; unchanged |
+
+### Quality controls before first ingestion
+1. Preserve the original downloaded bytes and SHA-256 before opening/parsing.
+2. Record catalogue table ID, product, reference period, release date, base year, provisional/final flag and source URL.
+3. For IIP, obtain the complete API response with documented pagination; compare row count and coverage with the matching catalogue table before accepting it.
+4. For CPI, keep Rural/Urban/Combined and base-year 2024 series separate; do not splice 2012-base and 2024-base without an official linking method.
+5. For NAS, distinguish quarterly/annual estimates, current-price/constant-price series, base year, and first/revised/provisional vintages.
+6. No API key, registration or authentication bypass is to be attempted where terms do not permit it. Public aggregate data only.
+
+### Progress control
+- This addendum: completed as source/release-metadata audit; not an observation ingestion.
+- Milestone 6 stays at 20% design/source mapping; observation ingestion remains 0%.
+- Overlay remains 62.5% (5/8); overall V11.3 remains NOT_CALCULABLE.
