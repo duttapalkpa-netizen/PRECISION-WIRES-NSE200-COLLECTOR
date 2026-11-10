@@ -120,3 +120,37 @@ Suppose Economy X reports quarterly portfolio-liability transactions of +12.0 in
 | Daily trading trigger suitability | FAIL — BOP is annual/quarterly, not a daily trigger |
 
 This specification is an extraction contract and source audit, not a claim that IMF data have already been extracted. It does not change the production selector, ranking score, pressure-fade logic, CORE-672 diagnostics, engines, or Hard Gate.
+
+
+## 2B. Reproducible IMF SDMX Central DSD retrieval recipe (verified API contract)
+
+The IMF SDMX Central Web Services Guide (last updated May 2025) specifies public access for the Structure Web Service, HTTP GET, entry point `https://sdmxcentral.imf.org/sdmx/v2/`, resource type `datastructure`, path parameters `agencyID`, `structureID`, and `version`, `references=children` to return referenced structures such as codelists, and `format=sdmx-2.1` plus `prettyPrint=true` for formatted XML.
+
+**Exact request to execute and archive:**
+
+```text
+https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true
+```
+
+This URL is constructed from the official guide's documented entry point, resource, path parameters and request parameters. It is a reproducible request specification, **not evidence that this audit successfully retrieved the response**. The prior download attempt in this environment failed before an HTTP response body was obtained. Therefore:
+- response HTTP status: UNKNOWN;
+- XML byte count and SHA-256: NOT AVAILABLE;
+- parsed component and codelist counts: UNKNOWN;
+- no IMF-specific code mapping is promoted to PASS.
+
+### Execution and acceptance procedure
+
+1. Request the URL above using an HTTP client with redirects enabled; save response headers and body without modifying the body.
+2. Accept only HTTP 200 with an XML media type and a parseable SDMX-ML document. Record HTTP status, Content-Type, retrieval timestamp (UTC), final URL and byte count.
+3. Compute SHA-256 over the exact saved response bytes before parsing.
+4. Parse with a namespace-aware XML parser; reject HTML error pages, empty responses, malformed XML, or an SDMX error message.
+5. Inventory the DSD identity/version, dimensions, measures, attribute attachment levels, enumerated representations and every referenced codelist/concept scheme. Save a machine-readable component inventory.
+6. Independently request the relevant referenced codelists or use the complete `references=children` response; confirm each component's representation points to the expected agency, codelist ID and version.
+7. Compare parsed components against the independent Vademecum crosswalk. Differences are recorded, not silently overwritten. The IMF DSD is authoritative for IMF extraction.
+8. Archive raw XML, response metadata, SHA-256, parser version, inventory and QA report together. Only then may the DSD-parse gate become PASS.
+
+**Fallback:** use the IMF SDMX Central web UI at https://sdmxcentral.imf.org/webservice/structure.html, select Data Structure / IMF / BOP / version 2.6.0 / SDMX-ML v2.1 / Detail Full / References Children, and use Download. Record the exact generated query URL and downloaded file checksum. The UI is an alternate transport for the same metadata request, not a substitute for recording provenance.
+
+### Important source boundary
+
+The IMF SDMX Central guide describes the Structure Web Service for metadata (Dataflows, Codelists, Concepts and Data Structures). Do not mistake successful DSD retrieval for access to actual BOP observations. Observation extraction requires a separately verified IMF Data Portal data endpoint and dataset vintage. The IMF Data API page documents SDMX 2.1/3.0 access, while its Swagger explorer requires beta-portal sign-in. No observation API request is asserted as tested here.
