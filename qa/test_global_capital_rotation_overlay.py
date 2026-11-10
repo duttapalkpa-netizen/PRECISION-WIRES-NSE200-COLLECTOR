@@ -78,6 +78,10 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/",content)
         self.assertIn("XML payload itself was not parsed",content)
         self.assertIn("Country-level portfolio transaction panel extracted | UNKNOWN / NOT DONE",content)
+        self.assertIn("FLOW_STOCK_ENTRY",content)
+        self.assertIn("UNIT_MULT",content)
+        self.assertIn("positive values indicate an increase",content)
+        self.assertIn("Eurostat-specific dataset IDs",content)
     def test_imf_bop_extraction_contract_is_explicitly_not_an_extracted_panel(self):
         spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
         content=spec.read_text(encoding="utf-8")
