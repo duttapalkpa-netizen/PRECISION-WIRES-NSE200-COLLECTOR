@@ -101,7 +101,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("saveAs=IMF_BOP_DSD_2_6_0",content)
         self.assertIn("ws/public/sdmxapi/rest/datastructure/IMF/BOP/2.6.0/",content)
         self.assertIn("IMF_BOP_DSD_2_6_0_legacy",content)
-        self.assertIn("not been successfully retrieved in this audit",content)
+        self.assertIn("candidate to test, not as a verified response URL",content)
         self.assertIn("response HTTP status: UNKNOWN",content)
         self.assertIn("SHA-256: NOT AVAILABLE",content)
         self.assertIn("not evidence that this audit successfully retrieved the response",content)
