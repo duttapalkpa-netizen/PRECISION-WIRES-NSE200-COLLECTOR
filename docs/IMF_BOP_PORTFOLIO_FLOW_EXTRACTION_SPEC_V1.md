@@ -11,7 +11,9 @@ Scope: free IMF-published data only; research branch; no production signal.
 - Official API documentation: https://data.imf.org/en/Resource-Pages/IMF-API
 - IMF states that its data are accessible through SDMX 2.1 and SDMX 3.0 APIs.
 - IMF's API page links to a Swagger explorer and states that a beta portal account is required to sign in there. This audit has not authenticated, downloaded, or validated a BOP observation payload. Do not describe the raw data endpoint as anonymously tested.
-- IMF SDMX Central lists the BOP data structure (DSD) and offers public structure/metadata discovery. A data structure listing is not proof that a complete BOP country panel has been downloaded.
+- The SDMx Global Registry publishes the IMF-maintained BOP DSD V2.6.0 (published December 2025) and states registry access is unauthenticated. SDMX-ML 2.1 structure URL: https://registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1 . The official SDMx page also provides the SDMX 3.0 structure link. The XML payload itself was not parsed in this audit because the web viewer rejected application/xml; therefore dimension/codelist mapping remains UNKNOWN until the raw XML is downloaded and archived.
+- IMF SDMX Central's public structure service is documented at https://sdmxcentral.imf.org/sdmx/v2/ and its web-services guide specifies public GET access for structure queries. This is metadata access, not proof of public BOP observations.
+- The IMF Data Portal API page documents SDMX 2.1/3.0 data APIs but says the Swagger explorer requires beta-portal sign-in. No authenticated data API session was used. Dataset page provides VIEW DATA and DOWNLOAD controls; actual download has not yet been tested.
 
 ## 2. Required extraction target
 
@@ -78,8 +80,9 @@ Suppose Economy X reports quarterly portfolio-liability transactions of +12.0 in
 | Official BOP dataset identified | PASS |
 | Official SDMX 2.1/3.0 API route documented | PASS |
 | BOP frequency (annual/quarterly) confirmed | PASS |
-| Exact BOP DSD/codelist dimension mapping archived in this repo | UNKNOWN / NOT DONE |
-| Authenticated or public raw observation download tested | UNKNOWN / NOT DONE |
+| Official BOP DSD V2.6.0 public registry URL and version identified | PASS |
+| Exact BOP DSD/codelist dimension mapping downloaded, parsed and archived in this repo | UNKNOWN / NOT DONE |
+| IMF BOP observation download tested and reconciled | UNKNOWN / NOT DONE |
 | Country-level portfolio transaction panel extracted | UNKNOWN / NOT DONE |
 | Versioned EM country membership committed | UNKNOWN / NOT DONE |
 | EM aggregate calculated and reconciled | UNKNOWN / NOT DONE |
