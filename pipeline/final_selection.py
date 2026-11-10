@@ -31,6 +31,16 @@ def main():
     qa_path=Path("data/qa/qa_report.json")
     qa=json.loads(qa_path.read_text()) if qa_path.exists() else {}
     blockers=[]
+    calibration_status_path=Path("outputs/backtest/calibration_validation.json")
+    if not calibration_status_path.exists():
+        blockers.append("CALIBRATION_EVIDENCE_STATUS_MISSING")
+    else:
+        try:
+            calibration_status=json.loads(calibration_status_path.read_text())
+            if calibration_status.get("block_selection") is not False or calibration_status.get("status") != "VALID":
+                blockers.append("CALIBRATION_EVIDENCE_INVALID_OR_UNKNOWN")
+        except Exception:
+            blockers.append("CALIBRATION_EVIDENCE_STATUS_UNREADABLE")
     if not qa.get("delivery_ready_for_final_selection",False):
         blockers.append("DELIVERY_COVERAGE_BELOW_95_PERCENT_OR_MISSING")
     for col in ["RISK_MACRO","RISK_FII_DII","RISK_GEO"]:
