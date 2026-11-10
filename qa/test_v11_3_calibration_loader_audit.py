@@ -10,6 +10,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from pipeline.calibration_gate import validate_calibration_artifact
 
 SOURCE = Path(os.environ.get("V11_3_SOURCE", "pipeline/v11_3_abcd_e.py"))
 
@@ -42,7 +43,7 @@ class CalibrationLoaderAudit(unittest.TestCase):
                 if create:
                     target.parent.mkdir(parents=True)
                     target.write_text(payload, encoding="utf-8")
-                ns = {"Path": Path, "json": json}
+                ns = {"Path": Path, "json": json, "validate_calibration_artifact": validate_calibration_artifact}
                 exec(self.loader_code, ns)
                 return ns["calib"]
             finally:
