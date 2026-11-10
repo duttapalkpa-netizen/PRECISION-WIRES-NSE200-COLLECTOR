@@ -1,44 +1,64 @@
 # Global Capital Rotation & Relative-Attraction Overlay V1
-
 ## Scope and safety
-Research-only overlay for PRECISION-WIRES V11.3. It does **not** change the production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or Hard Gate. It emits transparent categorical diagnostics, not a score, ranking, buy/sell instruction, or automatic trade trigger.
+Research-only overlay for PRECISION-WIRES V11.3. It does **not** change the production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 × 12), Engine A–E logic, or Hard Gate. It emits provenance-backed categorical diagnostics and horizon divergence, not a composite score, stock ranking, buy/sell instruction, or automatic trade trigger. No PR merge or production integration is authorized by this change.
 
 ## Transmission chain
-1. **Global supply of capital:** IIF nonresident portfolio flows to EM (equity and debt separately when available); Fed target-rate changes; US 2Y/10Y yields and real yields; DXY; VIX; global liquidity/credit stress.
-2. **India capture:** NSDL/CDSL FPI equity/debt/hybrid flows, primary-market flows, RBI FX and balance-of-payments data, USD/INR, India bond yields, FII futures positioning where published.
-3. **Relative attraction:** India vs MSCI EM/World returns, earnings revisions/growth, valuation differential, macro stability, current-account/oil sensitivity. Relative attraction is UNKNOWN until comparable sourced inputs exist.
-4. **Sector transmission:** policy/event registry tags tariff, H-1B/immigration, AI regulation/capex, semiconductors, IT services, pharma, auto/EV, textiles, metals, energy, defence, shipping and financials. Each event requires issuer, jurisdiction, publication time, effective time, source URL, affected sector, transmission channel, direction and confidence. No automatic sector benefit from a political headline.
-5. **Stock-level bridge:** sector revenue/geography/export exposure, client concentration where disclosed, FX sensitivity, input cost, order book, earnings sensitivity, liquidity and price confirmation. Sector-level story alone never becomes a stock signal.
+1. **Global capital supply:** official cross-border portfolio-flow aggregates where publicly available; US Fed policy expectations, US 2Y/10Y and real yields, DXY, VIX/credit spreads, and global liquidity. IIF or commercial data are not labelled official and are excluded from the official-source evidence set. If a suitable free official global EM flow series is not verified, this layer is UNKNOWN.
+2. **India capture:** NSDL/CDSL FPI equity, debt (General/VRR/FAR separately where possible), hybrid, primary-market and mutual-fund/AIF flows; RBI FX/reserves/BOP; USD/INR; India bond yields; SEBI/NSE positioning where officially disclosed. Separate daily, MTD, monthly and YTD horizons.
+3. **Relative attraction:** India versus MSCI EM/World or official comparable broad indices, earnings revisions/growth, valuation differential, macro stability, current-account/oil sensitivity. A single weaker DXY or one positive FPI day is insufficient.
+4. **Sector transmission:** event registry covers tariff/trade policy, H-1B/immigration, AI regulation and data-centre capex/power, semiconductors, IT services, pharma, auto/EV, textiles, metals, energy, defence, shipping and financials. Each event must include jurisdiction, official source URL, publication/effective dates, affected sector, channel, direction, confidence and whether it is enacted, proposed, stayed, or merely political commentary. No automatic sector benefit from an election headline.
+5. **Stock bridge:** disclosed company revenue/geography, export mix, client concentration, FX sensitivity, import/input costs, order book, earnings sensitivity, liquidity and price/volume confirmation. A sector narrative alone never becomes a stock signal.
 
-## Required observations
-Long-format CSV fields: date, indicator, value, unit, source, source_url, published_at, as_of_date, quality_status. Allowed quality: VERIFIED_OFFICIAL, VERIFIED_SECONDARY, PROVISIONAL, UNKNOWN. Keep publication date, observation date and retrieval time distinct. Preserve source vintage and revisions. Never forward-fill a missing daily flow. The code enforces maximum age windows: EM monthly aggregate 45 days; India FPI/DII daily 7 days; market/FX/oil/relative indicators 7–30 days; policy events 180 days. These are conservative engineering expiry limits, not economic thresholds. Use --as-of-date for reproducible runs. Expired data is excluded and reported as stale/UNKNOWN.
+## Required observations and provenance
+Long-format CSV fields: date, indicator, value, unit, source, source_url, published_at, as_of_date, quality_status. Allowed quality: VERIFIED_OFFICIAL, VERIFIED_SECONDARY, PROVISIONAL, UNKNOWN. Preserve publication date, observation date, retrieval date/time, source vintage, route, gross buys/sells and revisions. Daily depository flows are based on custodian reports and may refer to trades on/up to previous trading days. Do not equate reporting date with real-time execution. Never forward-fill missing flow observations.
 
-Indicator keys:
-- em_portfolio_flow_usd_bn
+Maximum age windows in code are conservative engineering expiry limits, not economic thresholds: EM monthly aggregate 45 days; India FPI/DII daily 7 days; market/FX/oil/relative indicators 7–30 days; policy events 180 days. Use --as-of-date for reproducible runs. Expired data is excluded and reported as stale/UNKNOWN.
+
+Indicator keys include:
+- em_portfolio_flow_usd_bn (only if a free official source is verified; otherwise UNKNOWN)
 - india_fpi_equity_inr_cr, india_fpi_debt_inr_cr, india_dii_equity_inr_cr
+- india_fpi_equity_mtd_inr_cr, india_fpi_equity_ytd_inr_cr
 - dxy_change_pct_20d, us10y_change_bp_20d, fed_target_change_bp_90d
 - usd_inr_change_pct_20d, brent_change_pct_20d, india_vs_world_relative_return_pct_20d, vix_change_pct_20d
 - us_ai_policy_event_direction, us_h1b_policy_event_direction, us_tariff_policy_event_direction
 
 ## Interpretation rules
-- EM net outflows can coexist with India-specific FPI inflows; this is a country allocation divergence, not proof of broad capital rotation.
-- USD weakening alone is insufficient: check USD/INR, local FX intervention/flows and hedging costs.
-- Lower US yields are not always risk-on: distinguish real yields, term premium, credit spreads, growth shock and policy expectations.
-- Oil decline benefits India only if it is not offset by INR depreciation, taxes, refining margins or demand shocks.
-- H-1B, tariffs and AI regulation are event-specific. Use primary official policy text and effective dates; do not infer from election narratives.
+- Global EM outflow and India FPI inflow can coexist; this is country-specific divergence, not proof of broad capital rotation.
+- A positive MTD number cannot override a negative YTD number; report both horizons. A short-window reversal is not a durable trend.
+- USD weakening alone is insufficient: confirm DXY and USD/INR together and consider local FX intervention and hedging costs.
+- Lower US yields are not automatically risk-on: separate real yields, term premium, credit spreads, growth shock and Fed policy expectations.
+- Oil decline benefits India only if it is not offset by INR depreciation, taxes, refining margins or a demand shock.
+- H-1B, tariffs and AI rules are event-specific. Use primary policy text and effective dates; distinguish proposed legislation from enacted law and court-stayed measures.
 - 13F filings are delayed, incomplete for global positioning and not a real-time flow feed; use only as lagged ownership context, never a trigger.
+- Do not infer hedge-fund intentions or named institutions' allocation from aggregate depository flow data.
 
-## Current evidence snapshot (2026-11-07)
-- IIF November tracker (released 2026-11-05): nonresident portfolio flows to EM were -$33.8bn in October 2026, after -$19.3bn in September. This is aggregate EM, not India alone.
-- CDSL daily FPI report (06-Nov-2026): equity subtotal +₹16,277.99 crore; debt total across General/VRR/FAR subtotals +₹3,191.88 crore; hybrid -₹29.71 crore. Data are based on custodian reports and trades on/up to previous trading days; avoid treating as final same-day execution.
-- The coexistence of October EM outflows and a positive 06-Nov India daily FPI print demonstrates why global and India flows must be tracked separately; it does not establish a durable trend.
-- FOMC 2026-10-28: target range maintained at 3.75%-4.00%; inflation remained elevated.
-- White House 2026-09-18: extended certain H-1B entry restrictions for 12 months; $100,000 payment condition with exceptions. This is not a visa-easing signal.
-- US midterm election market reaction (AP, 2026-11-04): US equities rose after Republicans lost control of Congress; selected AI-related shares weakened amid regulation/data-centre concerns. Do not label this a broad US market crash or an AI-sector crash.
-- EIA weekly Brent data showed elevated and volatile prices into early November; oil must be treated as an India macro sensitivity, not assumed to be falling.
+## Evidence snapshot — as of 2026-11-10 (Asia/Kolkata)
+### India FPI — official CDSL archive
+CDSL archive reports six November trading dates through 09-Nov-2026. Daily equity net investment (INR crore):
+- 02-Nov: +4,457.80
+- 03-Nov: +3,352.12
+- 04-Nov: +7,052.74
+- 05-Nov: +7,830.40
+- 06-Nov: +16,277.99
+- 09-Nov: +14,767.73
+- November MTD equity subtotal through 09-Nov: +53,738.78 crore.
+- 2026 YTD equity subtotal through 09-Nov: -241,407.13 crore.
+- 09-Nov debt combined General + VRR + FAR subtotal: +2,578.19 crore (General -512.72; VRR +49.65; FAR +3,041.26).
+These values are transcribed from CDSL's archive, which states that the data are compiled from custodian reports received by depositories on 10-Nov-2026 and represent trades on and up to previous trading day(s). The positive November MTD reversal must be shown alongside the still-negative 2026 YTD total. It does not prove that funds exited US equities and entered India; the two datasets do not identify matched source/destination capital.
+Official source: https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx
+Daily source: https://www.cdslindia.com/eservices/publications/fiidaily
+
+### US political and AI-policy transmission
+- 03-Nov-2026 was a US midterm election, not a presidential election. Democrats won control of both chambers of Congress; Donald Trump remained President. Do not describe this as Trump losing the US election or being removed from office.
+- Reuters reported that on 05-Nov the Nasdaq fell 5.56% amid investor concern that Democratic lawmakers/governors could pursue data-centre power-cost protections and independent AI testing. This is secondary reporting about political proposals/market expectations, not proof that a federal AI restriction had become law. Store as a WATCH event only until primary bill text, sponsor, status and effective date are verified.
+- Reuters reported the dollar index at 101.60, down 0.25%, on 04-Nov and noted US equities rose about 2% that day. AP reported on 09-Nov that the S&P 500 rose 2.3%, Nasdaq 2.7%, and Brent crude fell 5.8% as US equities rebounded. Therefore this was a volatile repricing and rebound, not a one-way US market collapse.
+- White House Proclamation 11069 (18-Sep-2026) extended certain H-1B entry restrictions through 21-Sep-2027, subject to stated exceptions. This is not an H-1B easing signal. Any fee/enforcement status potentially affected by litigation must be separately checked against primary court orders before operational interpretation.
+- Current DXY 20-day change, US 10Y yield 20-day change, Fed policy repricing, USD/INR 20-day change, Brent 20-day change, India-vs-world relative return, and official global EM flow series were not all independently captured in the official-only seed file. They remain UNKNOWN; no value is imputed.
 
 ## Source hierarchy
-Official first: IIF tracker for global flow aggregates; NSDL/CDSL for FPI; RBI for FX/BOP; Federal Reserve/FRED for rates and dollar; EIA for crude; NSE/SEBI for market/sector data; White House/Federal Register/USCIS/Congress for policy. Secondary news is context only. No paid feeds, no API subscriptions.
+Official/free first: CDSL/NSDL/SEBI for FPI; RBI for FX/BOP/reserves; Federal Reserve/FRED and US Treasury for rates/yields; EIA for crude; NSE/SEBI for Indian market/sector data; White House/Federal Register/Congress/USCIS and official court records for policy. Secondary news (Reuters/AP) is contextual event discovery only, not an official policy source. IIF is not a government source and is excluded from the official-only evidence dataset. No paid feeds, subscriptions or API spend.
 
-## Limitations
-No fund-level real-time holdings are available from public 13F/quarterly filings; these are delayed and US-only. IIF is monthly aggregate. India daily FPI is lagged/provisional depending on feed. Never infer named hedge-fund intentions from aggregate flows.
+## Status and limitations
+This overlay's schema, parser, categorical diagnostics and tests exist on PR #20. This does **not** mean live collection, full global-flow coverage, predictive validation or production integration is complete. Current evidence confirms a short-window India FPI equity inflow alongside a negative YTD position; broad global rotation is unconfirmed because official global EM flow, DXY/yields, FX, relative-return and sector-specific exposure inputs are incomplete.
+
+No named hedge-fund real-time holdings are inferred. Public 13F filings are delayed and US-centric. India daily FPI data are depository/custodian-derived and lagged. Missing/stale/unverified values remain UNKNOWN.
