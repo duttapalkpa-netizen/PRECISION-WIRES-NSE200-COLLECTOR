@@ -4,10 +4,12 @@ on:
   pull_request:
     paths:
       - "pipeline/calibration_gate.py"
+      - "pipeline/walk_forward_backtest.py"
       - "pipeline/final_selection.py"
       - "qa/test_calibration_gate_policy.py"
       - "qa/test_v11_3_calibration_loader_audit.py"
       - "qa/test_final_selection_calibration_integration.py"
+      - "qa/test_behavioral_dna_producer_metadata.py"
       - ".github/workflows/calibration_evidence_gate_qa.yml"
   workflow_dispatch:
 
@@ -25,5 +27,5 @@ jobs:
           python-version: "3.12"
       - name: Install minimal runtime dependency for final-selection integration
         run: python -m pip install "pandas>=2.2,<3"
-      - name: Run isolated calibration gate and final-selection tests
-        run: python -m unittest qa/test_calibration_gate_policy.py qa/test_v11_3_calibration_loader_audit.py qa/test_final_selection_calibration_integration.py
+      - name: Run isolated calibration gate, producer, and final-selection tests
+        run: python -m unittest qa/test_calibration_gate_policy.py qa/test_v11_3_calibration_loader_audit.py qa/test_final_selection_calibration_integration.py qa/test_behavioral_dna_producer_metadata.py
