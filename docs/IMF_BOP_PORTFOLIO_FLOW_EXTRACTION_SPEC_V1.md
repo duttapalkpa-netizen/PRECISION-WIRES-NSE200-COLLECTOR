@@ -124,12 +124,12 @@ This specification is an extraction contract and source audit, not a claim that 
 
 ## 2B. Reproducible IMF SDMX Central DSD retrieval recipe (verified API contract)
 
-The IMF SDMX Central Web Services Guide (last updated May 2025) specifies public access for the Structure Web Service, HTTP GET, entry point `https://sdmxcentral.imf.org/sdmx/v2/`, resource type `datastructure`, path parameters `agencyID`, `structureID`, and `version`, `references=children` to return referenced structures such as codelists, and `format=sdmx-2.1` plus `prettyPrint=true` for formatted XML.
+The IMF SDMX Central Web Services Guide (last updated May 2025) specifies public access for the Structure Web Service, HTTP GET, entry point `https://sdmxcentral.imf.org/sdmx/v2/`, resource type `datastructure`, path parameters `agencyID`, `structureID`, and `version`, `references=children` to return referenced structures such as codelists, and `format=sdmx-2.1` plus `prettyPrint=true` for formatted XML. It also documents `saveAs` as a request parameter that sets Content-Disposition to an attachment and lets the server choose the extension from the response format; this is used below to request a direct file download.
 
 **Exact request to execute and archive:**
 
 ```text
-https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true
+https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true&saveAs=IMF_BOP_DSD_2_6_0
 ```
 
 This URL is constructed from the official guide's documented entry point, resource, path parameters and request parameters. It is a reproducible request specification, **not evidence that this audit successfully retrieved the response**. The prior download attempt in this environment failed before an HTTP response body was obtained. Therefore:
@@ -148,6 +148,8 @@ This URL is constructed from the official guide's documented entry point, resour
 6. Independently request the relevant referenced codelists or use the complete `references=children` response; confirm each component's representation points to the expected agency, codelist ID and version.
 7. Compare parsed components against the independent Vademecum crosswalk. Differences are recorded, not silently overwritten. The IMF DSD is authoritative for IMF extraction.
 8. Archive raw XML, response metadata, SHA-256, parser version, inventory and QA report together. Only then may the DSD-parse gate become PASS.
+
+**Download handling:** `saveAs=IMF_BOP_DSD_2_6_0` is included to request an attachment, as documented in the IMF guide. It is a transport hint, not evidence of successful retrieval; the HTTP status, Content-Type, final URL, exact byte count and SHA-256 must still be captured and validated.
 
 **Fallback:** use the IMF SDMX Central web UI at https://sdmxcentral.imf.org/webservice/structure.html, select Data Structure / IMF / BOP / version 2.6.0 / SDMX-ML v2.1 / Detail Full / References Children, and use Download. Record the exact generated query URL and downloaded file checksum. The UI is an alternate transport for the same metadata request, not a substitute for recording provenance.
 
