@@ -56,6 +56,9 @@ Daily source: https://www.cdslindia.com/eservices/publications/fiidaily
 - Current DXY 20-day change, US 10Y yield 20-day change, Fed policy repricing, USD/INR 20-day change, Brent 20-day change, India-vs-world relative return, and official global EM flow series were not all independently captured in the official-only seed file. They remain UNKNOWN; no value is imputed.
 
 ## Source hierarchy
+See docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md for the dated source inventory, frequency/coverage checks and measurement caveats. Important: Fed DTWEXBGS is a broad trade-weighted USD index, not ICE DXY; IMF BOP transactions are flows, while IMF PIP/CPIS observations are positions. These must never be conflated.
+
+
 Official/free first: CDSL/NSDL/SEBI for FPI; RBI for FX/BOP/reserves; Federal Reserve/FRED and US Treasury for rates/yields; EIA for crude; NSE/SEBI for Indian market/sector data; White House/Federal Register/Congress/USCIS and official court records for policy. Secondary news (Reuters/AP) is contextual event discovery only, not an official policy source. IIF is not a government source and is excluded from the official-only evidence dataset. No paid feeds, subscriptions or API spend.
 
 ## Status and limitations
