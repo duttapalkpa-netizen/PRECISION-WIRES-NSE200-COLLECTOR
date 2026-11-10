@@ -1,6 +1,6 @@
 # V11.3 behavioral calibration artifact — QA contract (draft)
 
-Status: QA specification only. This document does not change production behavior or choose a production fallback policy.
+Status: User-approved fail-closed policy implemented on the draft QA branch; awaiting full CI verification and review. Missing, invalid, incomplete, or unproven calibration evidence blocks final selection readiness.
 
 ## Confirmed source defect
 
@@ -38,9 +38,16 @@ A future versioned artifact should carry:
 
 All counts must be non-negative integers, with hit count <= sample count. Rates must be finite and in [0,1], and must reconcile to counts within a documented floating-point tolerance. A zero sample count is not a measured zero rate; it is UNKNOWN/insufficient evidence.
 
-## Policy decision still required
+## Approved policy (user approval recorded 2026-11-10)
 
-The QA contract requires missing/invalid/stale/mismatched evidence to remain distinguishable from valid measured zero. It does **not** decide whether the production engine should block all candidates, mark calibration UNKNOWN and omit that component, or use another approved behavior. That decision changes production scoring/selection semantics and requires explicit approval plus a separately reviewed change.
+Policy A: when calibration evidence is missing, malformed, incomplete, lacks required provenance metadata, or contains invalid rates, the calibration-dependent final selection is BLOCKED. The engine may retain provisional research rankings for diagnosis, but they are not actionable finalists.
+
+Implementation boundary:
+- The V11.3 candidate-generation step writes a separate `calibration_validation.json` status record.
+- The final readiness gate adds a calibration blocker unless status is exactly `VALID` and `block_selection=false`.
+- The existing score calculation, sort keys, ranking weights, Production Selector ordering, `RANKING_SCORE`, `+1 PRESSURE_FADE`, and 672 diagnostics are not edited by this policy.
+- A complete metadata-bearing artifact with a measured zero rate remains VALID_ZERO in meaning (valid evidence), and is not treated as missing.
+- This validator checks structural metadata and numeric rates. Freshness, dataset fingerprint equality, and source-lineage verification still require explicit machine-verifiable producer/consumer context; they are not silently marked PASS here.
 
 ## Acceptance criteria for implementation
 
@@ -54,7 +61,7 @@ The QA contract requires missing/invalid/stale/mismatched evidence to remain dis
 
 ## Scope and status
 
-- QA/specification only.
-- No production code changed.
-- No selector, ranking, pressure-fade, diagnostics, or Hard Gate changes.
-- No workflow rerun and no external/paid source used.
+- User-approved fail-closed calibration readiness gate added on this draft branch.
+- Candidate score calculation and ranking order remain unchanged; final readiness is blocked on UNKNOWN/invalid calibration evidence.
+- Dedicated QA-only GitHub Actions workflow added; it performs unit tests only and does not download market data.
+- No paid source or external service used.
