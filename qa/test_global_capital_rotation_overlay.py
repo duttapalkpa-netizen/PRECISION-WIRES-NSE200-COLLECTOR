@@ -51,4 +51,10 @@ class TestGlobalCapitalRotation(unittest.TestCase):
               self.row("india_fpi_equity_inr_cr",-5,published="2026-11-07T01:00:00Z")]
         out=classify(load_observations(self.make(rows)),"2026-11-07")
         self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
+
+    def test_short_term_fpi_inflow_does_not_hide_ytd_outflow(self):
+        rows=[self.row("india_fpi_equity_mtd_inr_cr",53738.78),
+              self.row("india_fpi_equity_ytd_inr_cr",-241407.13)]
+        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        self.assertEqual(out["india_fpi_horizon_divergence"],"SHORT_TERM_INFLOW_LONG_TERM_OUTFLOW")
 if __name__=="__main__": unittest.main()
