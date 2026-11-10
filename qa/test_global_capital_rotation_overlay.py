@@ -62,4 +62,11 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         seed=Path(__file__).resolve().parents[1]/"data"/"global_capital_rotation"/"2026-11-07_seed_observations.csv"
         grouped=load_observations(seed)
         self.assertNotIn("em_portfolio_flow_usd_bn",grouped)
+
+    def test_source_register_preserves_measurement_boundaries(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("NOT ICE DXY",content)
+        self.assertIn("positions, NOT flows",content)
+        self.assertIn("UNKNOWN / NOT DONE",content)
 if __name__=="__main__": unittest.main()
