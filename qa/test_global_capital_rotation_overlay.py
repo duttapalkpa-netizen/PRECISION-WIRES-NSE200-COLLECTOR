@@ -98,6 +98,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("public access for the Structure Web Service",content)
         self.assertIn("structure/datastructure/IMF/BOP/2.6.0/",content)
         self.assertIn("references=children",content)
+        self.assertIn("saveAs=IMF_BOP_DSD_2_6_0",content)
         self.assertIn("response HTTP status: UNKNOWN",content)
         self.assertIn("SHA-256: NOT AVAILABLE",content)
         self.assertIn("not evidence that this audit successfully retrieved the response",content)
