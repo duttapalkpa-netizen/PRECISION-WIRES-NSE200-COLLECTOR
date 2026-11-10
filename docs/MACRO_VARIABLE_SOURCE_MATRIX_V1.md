@@ -101,3 +101,38 @@ This addendum supplements (does not replace) the original 27-variable matrix.
 - This addendum: completed as source/release-metadata audit; not an observation ingestion.
 - Milestone 6 stays at 20% design/source mapping; observation ingestion remains 0%.
 - Overlay remains 62.5% (5/8); overall V11.3 remains NOT_CALCULABLE.
+
+
+## 2026-11-10 prior-artifact reconciliation — IIP ingestion is NOT zero
+A targeted Library audit found prior verified IIP artifacts. This corrects the overly broad wording in the previous progress note; it does not create a new ingestion or rerun prior work.
+
+### Existing evidence located
+- Prior macro-indicator audit: `MACRO_INDICATORS_SOURCE_DISCOVERY_AUDIT_20261101.md` records IIP panel QA PASS in Run #4: 966 combined NIC-2 monthly rows, 23 NIC groups, 42 periods from 2023-04 to 2026-09, zero duplicate NIC-period keys. September 2026 is a separate quick-estimate vintage. Factor Registry linkage remained NOT_CONNECTED pending exact-snapshot reconciliation and registry-specific QA.
+- IIP collector artifact: GitHub Actions run `42571880049`, artifact `13653871515`, ZIP SHA-256 `f4be46c12567ceadeadcedbc5a1a810d0c5c5e998f3fb782637cf1b0025c9b48`.
+- 41-reference-month acceptance window: 2023-04 through 2026-08. Original catalogue vintages downloaded and parsed: 36/41 = 87.8%.
+- Unresolved original catalogue vintages: catalogue release absent — 2025-04, 2025-09, 2026-02, 2026-07; catalogue record present but download failed — 2026-04.
+- Supplementary later snapshots cover 2025-04, 2025-09 and 2026-02 (69/69 rows match later legacy-vintage values) but are not original catalogue vintages and must not be inserted into the original-vintage manifest.
+- July 2026 official Statement IV later snapshot has 23 NIC-2025 manufacturing rows, but original July monthly catalogue workbook was not recovered.
+- April 2026 is a series supersession (WPI-based IIP first release to Output-PPI-based later full series), not an ordinary revision. Keep series lineage separate.
+- July 2026 revision chain for NIC-2025 code 15: 113.2 (2026-08-28, PRID 2304222) → 113.3 (2026-09-28, PRID 2315957) → 113.2 (2026-10-28, PRID 2329475). The 2026-09 and 2026-10 comparisons are different snapshot stages, not contradictory counts and not three independent monthly observations.
+- The latest official October Statement IV snapshot matched the August artifact for April 2026: 23/23; July 2026: 22/23, with one later revision (NIC-2025 code 15, 113.3 → 113.2). This does not recover the missing original catalogue XLSX files.
+- Raw PIB page SHA-256 was NOT_CAPTURED. Do not claim raw-page hash verification.
+
+### Corrected IIP variable gate (M10)
+- Existing IIP panel ingestion and structural QA: PASS for the specific Run #4 artifact scope.
+- Original catalogue vintage acquisition: PARTIAL, 36/41 (87.8%).
+- Original 41-vintage acceptance gate: BLOCKED due to 5 unresolved original periods (4 absent catalogue releases; 1 failed download).
+- Later official statement reconciliation: PASS for the scoped April/July comparison, with one later July NIC-15 revision detected.
+- Factor Registry linkage: NOT_CONNECTED until exact same-snapshot reconciliation and registry-specific QA.
+- Do not call IIP observation ingestion 0%; do not call the full 41-vintage gate PASS.
+- Keep the legacy 2011-12/NIC-2008 panel and newer 2022-23/NIC-2025 series separate; never splice without official classification/base-year bridge evidence.
+
+### Corrective progress accounting
+- This task: 100% completed as prior-artifact discovery and gate reconciliation.
+- IIP source variable: panel ingestion/QA PASS within Run #4 scope; 41-vintage acquisition 87.8%; full 41-vintage gate BLOCKED.
+- Milestone 6 overall: no percentage change until the milestone acceptance denominator and all required macro-variable gates are reconciled. Previous 20% design/source-mapping figure is retained as the conservative milestone-level score, not an IIP ingestion score.
+- Overlay: 62.5% (5/8) unchanged.
+- Overall PRECISION-WIRES V11.3: NOT_CALCULABLE.
+
+### No-repeat rule
+Do not rerun IIP Run #4, re-download the 36 already acquired original catalogue vintages, or repeat the April/July comparison. Next work must target only the five unresolved original periods or a separately defined non-IIP macro variable.
