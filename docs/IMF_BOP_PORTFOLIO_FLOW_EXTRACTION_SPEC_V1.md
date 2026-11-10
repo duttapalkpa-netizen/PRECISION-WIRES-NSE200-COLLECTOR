@@ -21,7 +21,7 @@ Extract only BOP financial-account **portfolio investment transactions**. Preser
 - Assets and liabilities, separately
 - Credits/debits or the official net acquisition/net incurrence representation, exactly as defined in the selected BOP vintage
 
-Do not assume SDMX dimension codes, codelist values, sign conventions, units, or a single net-flow variable from a display label. First retrieve and archive the exact DSD, codelists, dataflow, annotations, and dataset vintage. Map official dimension values to human-readable fields only after inspecting those metadata.
+Do not assume SDMX dimension codes, codelist values, sign conventions, units, or a single net-flow variable from a display label. Apply a metadata-first extraction: retrieve and archive the exact DSD, codelists, dataflow, annotations, and dataset vintage. Map official dimension values to human-readable fields only after inspecting those metadata.
 
 ## 3. Raw observation contract
 
