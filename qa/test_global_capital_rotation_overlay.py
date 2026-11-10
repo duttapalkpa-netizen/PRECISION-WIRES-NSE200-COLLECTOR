@@ -70,6 +70,14 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("positions are stocks, NOT flows",content)
         self.assertIn("UNKNOWN / NOT DONE",content)
         self.assertIn("SDMX 2.1/3.0 API route VERIFIED",content)
+        self.assertIn("BOP DSD V2.6.0",content)
+    def test_imf_bop_spec_pins_public_dsd_but_keeps_data_unknown(self):
+        spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
+        content=spec.read_text(encoding="utf-8")
+        self.assertIn("BOP DSD V2.6.0",content)
+        self.assertIn("registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/",content)
+        self.assertIn("XML payload itself was not parsed",content)
+        self.assertIn("Country-level portfolio transaction panel extracted | UNKNOWN / NOT DONE",content)
     def test_imf_bop_extraction_contract_is_explicitly_not_an_extracted_panel(self):
         spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
         content=spec.read_text(encoding="utf-8")
