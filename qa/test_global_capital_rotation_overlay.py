@@ -69,4 +69,14 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("NOT ICE DXY",content)
         self.assertIn("positions are stocks, NOT flows",content)
         self.assertIn("UNKNOWN / NOT DONE",content)
+        self.assertIn("SDMX 2.1/3.0 API route VERIFIED",content)
+    def test_imf_bop_extraction_contract_is_explicitly_not_an_extracted_panel(self):
+        spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
+        content=spec.read_text(encoding="utf-8")
+        self.assertIn("NO COUNTRY OBSERVATIONS EXTRACTED",content)
+        self.assertIn("metadata-first",content.lower())
+        self.assertIn("UNKNOWN / NOT DONE",content)
+        self.assertIn("positions",content.lower())
+        self.assertIn("Daily trading trigger suitability",content)
+        self.assertIn("no synthetic",content.lower())
 if __name__=="__main__": unittest.main()
