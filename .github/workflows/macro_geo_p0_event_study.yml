@@ -3,25 +3,33 @@ name: Audit-only Macro Geo P0 Collection and Event Study
 on:
   workflow_dispatch:
   push:
-    branches: [audit/prospective-selector-tracking]
+    branches: [audit/prospective-selector-tracking, audit/run93-corrective-fixes]
     paths:
       - "pipeline/macro_geo_collect_p0.py"
+      - "pipeline/macro_geo_historical_news_backfill.py"
       - "pipeline/macro_geo_repair_p0.py"
       - "pipeline/macro_geo_nsdl_flows.py"
       - "pipeline/quarterly_results_research.py"
       - "qa/test_macro_geo_repair_p0.py"
       - "pipeline/macro_geo_source_coverage.py"
+      - "pipeline/macro_geo_finalize_manifest.py"
+      - "qa/test_macro_geo_finalize_manifest.py"
       - "pipeline/macro_geo_four_group_validation.py"
       - "pipeline/macro_geo_factor_coverage_audit.py"
       - "pipeline/macro_geo_event_study.py"
+      - "pipeline/macro_geo_event_level_audit.py"
       - "pipeline/macro_geo_hard_gate.py"
       - "pipeline/historical_regime_event_study.py"
+      - "pipeline/macro_geo_historical_index_backfill.py"
+      - "pipeline/macro_geo_targeted_historical_backfill.py"
+      - "pipeline/macro_geo_targeted_archive_backfill.py"
       - "pipeline/sector_rotation_features.py"
       - "config/macro_factor_registry.csv"
       - "config/macro_geo_data_gap_register.csv"
       - "config/macro_geo_historical_regimes.csv"
       - "config/macro_geo_sector_transmission_map.csv"
       - "qa/test_macro_geo_engine.py"
+      - "qa/test_macro_geo_historical_news_backfill.py"
       - "collector/**"
       - "requirements.txt"
       - ".github/workflows/macro_geo_p0_event_study.yml"
@@ -31,7 +39,7 @@ permissions:
 
 concurrency:
   group: macro-geo-p0-audit-v5
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   macro-geo-p0:
@@ -41,7 +49,7 @@ jobs:
       - name: Checkout audit branch only
         uses: actions/checkout@v4
         with:
-          ref: audit/prospective-selector-tracking
+          ref: ${{ github.sha }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -49,14 +57,59 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
+      - name: Restore prior raw NSE sessions and canonical panel
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
       - name: Test event-study timestamp and data-quality logic
-        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_repair_p0 qa.test_macro_geo_historical_news_backfill qa.test_macro_geo_finalize_manifest -v
+      - name: Validate cached canonical panel before reuse
+        id: panel_cache_check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          p=Path("data/processed/nse_eq_200_sessions.csv")
+          ok=False
+          if p.exists():
+              try:
+                  d=pd.read_csv(p, usecols=lambda c: str(c).strip().upper()=="DATE")
+                  dates=pd.to_datetime(d.iloc[:,0], errors="coerce").dropna().dt.normalize()
+                  unique=sorted(dates.unique())
+                  age=(pd.Timestamp.now(tz="UTC").date()-pd.Timestamp(unique[-1]).date()).days if unique else 9999
+                  ok=len(unique)>=200 and -1<=age<=5
+                  print({"unique_sessions":len(unique),"latest_session":str(pd.Timestamp(unique[-1]).date()) if unique else None,"calendar_age_days":age,"reuse":ok})
+              except Exception as exc:
+                  print(f"cache validation failed: {type(exc).__name__}: {exc}")
+          with open(__import__("os").environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("reuse_panel="+("true" if ok else "false")+"\n")
+          PY
       - name: Acquire 200 NSE equity sessions from official archives
+        if: steps.panel_cache_check.outputs.reuse_panel != 'true'
         run: python collector/nse_download.py --sessions 200 --lookback-days 500
       - name: Build canonical NSE 200-session equity panel
+        if: steps.panel_cache_check.outputs.reuse_panel != 'true'
         run: python collector/build_200_sessions.py
+      - name: Cache validated canonical panel for later runs
+        if: success() && steps.panel_cache_check.outputs.reuse_panel == 'false'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-${{ github.run_id }}
       - name: Collect P0 market series and timestamped media evidence
         run: python pipeline/macro_geo_collect_p0.py
+      - name: Backfill historical timestamped macro-geo publisher events (strict source validation)
+        if: always()
+        run: python pipeline/macro_geo_historical_news_backfill.py
       - name: Collect NSE corporate disclosures for P0 event normalization
         if: always()
         run: python pipeline/quarterly_results_research.py
@@ -68,6 +121,9 @@ jobs:
         run: python pipeline/macro_geo_nsdl_flows.py
       - name: Audit source coverage and data quality
         run: python pipeline/macro_geo_source_coverage.py
+      - name: Reconcile final P0 manifest after repair and source audits
+        if: always()
+        run: python pipeline/macro_geo_finalize_manifest.py
       - name: Strictly validate benchmark, sector, volatility and geopolitical groups
         if: always()
         run: python pipeline/macro_geo_four_group_validation.py
@@ -75,12 +131,18 @@ jobs:
         run: python pipeline/macro_geo_factor_coverage_audit.py
       - name: Run sourced publication-time event study
         run: python pipeline/macro_geo_event_study.py
-      - name: Run strict Macro-Geo P0 hard gate
+      - name: Build event-level publication and close-window audit
         if: always()
-        run: python pipeline/macro_geo_hard_gate.py
+        run: python pipeline/macro_geo_event_level_audit.py
+      - name: Backfill genuine historical index observations for registered regimes
+        if: always()
+        run: python pipeline/macro_geo_targeted_archive_backfill.py
       - name: Run historical regime and sector-relative study
         if: always()
         run: python pipeline/historical_regime_event_study.py
+      - name: Run strict Macro-Geo P0 hard gate
+        if: always()
+        run: python pipeline/macro_geo_hard_gate.py
       - name: Build daily sector rotation features
         run: python pipeline/sector_rotation_features.py
       - name: Upload P0 data and audit reports
@@ -105,7 +167,14 @@ jobs:
             data/external/corporate_events.csv
             data/external/fpi_dii_flows.csv
             outputs/macro_geo/**
+            outputs/macro_geo/historical_index_backfill_report.json
+            outputs/macro_geo/targeted_historical_backfill_report.json
+            outputs/macro_geo/targeted_historical_backfill_coverage.csv
+            outputs/macro_geo/nse_archive_live_smoke_test.json
+            outputs/macro_geo/nse_archive_live_smoke_test.json
             outputs/macro_geo/hard_gate_report.json
+            outputs/macro_geo/event_level_window_audit.csv
+            outputs/macro_geo/event_level_window_audit.json
             outputs/macro_geo/nsdl_fpi_dii_collection.json
             config/macro_geo_historical_regimes.csv
             config/macro_geo_sector_transmission_map.csv
