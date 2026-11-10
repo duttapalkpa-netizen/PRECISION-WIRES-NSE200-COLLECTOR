@@ -6,7 +6,16 @@ from pipeline.calibration_gate import REQUIRED_METADATA, validate_calibration_ar
 
 def valid_payload(rate=0.0):
     data = {key: "test" for key in REQUIRED_METADATA}
-    data["states"] = {"CONTINUATION_READY": {"hit10_h3_rate": rate}}
+    data.update({
+        "schema_version": "1.0", "producer_engine": "V11.3",
+        "producer_engine_version": "11.3", "feature_contract_version": "1",
+        "producer_run_id": "run-test", "producer_commit_sha": "a" * 40,
+        "dataset_sha256": "b" * 64, "cutoff_start": "2026-01-01",
+        "cutoff_end": "2026-10-01", "generated_at_utc": "2026-10-02T00:00:00+00:00",
+        "target_definition": "hit10_h3", "label_maturity_cutoff": "2026-10-01",
+    })
+    hits = int(rate * 10) if isinstance(rate, (int, float)) and not isinstance(rate, bool) and 0 <= rate <= 1 else 0
+    data["states"] = {"CONTINUATION_READY": {"sample_count": 10, "hit10_h3_count": hits, "hit10_h3_rate": rate}}
     return data
 
 class CalibrationGatePolicyTests(unittest.TestCase):
@@ -42,6 +51,16 @@ class CalibrationGatePolicyTests(unittest.TestCase):
         data = valid_payload()
         data["states"] = {"CONTINUATION_READY": {}}
         self.assertEqual(self.check(data)["status"], "UNKNOWN_INCOMPLETE")
+
+    def test_zero_sample_count_is_unknown(self):
+        data = valid_payload()
+        data["states"]["CONTINUATION_READY"]["sample_count"] = 0
+        self.assertEqual(self.check(data)["status"], "UNKNOWN_INCOMPLETE")
+
+    def test_rate_count_mismatch_blocks(self):
+        data = valid_payload(0.2)
+        data["states"]["CONTINUATION_READY"]["hit10_h3_count"] = 1
+        self.assertEqual(self.check(data)["status"], "INVALID_VALUE")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
