@@ -5,6 +5,7 @@ on:
     paths:
       - "pipeline/calibration_gate.py"
       - "qa/test_calibration_gate_policy.py"
+      - "qa/test_v11_3_calibration_loader_audit.py"
       - ".github/workflows/calibration_evidence_gate_qa.yml"
   workflow_dispatch:
 
@@ -21,4 +22,4 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run isolated calibration gate tests
-        run: python -m unittest qa/test_calibration_gate_policy.py
+        run: python -m unittest qa/test_calibration_gate_policy.py qa/test_v11_3_calibration_loader_audit.py
