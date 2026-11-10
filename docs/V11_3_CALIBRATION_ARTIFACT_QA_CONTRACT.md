@@ -65,3 +65,19 @@ Implementation boundary:
 - Candidate score calculation and ranking order remain unchanged; final readiness is blocked on UNKNOWN/invalid calibration evidence.
 - Dedicated QA-only GitHub Actions workflow added; it performs unit tests only and does not download market data.
 - No paid source or external service used.
+
+
+## Producer provenance implementation (2026-11-10)
+
+The V11.4 walk-forward producer is the writer of `behavioral_dna_library.json`, not the V11.3 consumer. On the draft QA branch, the producer now adds:
+- SHA-256 of the exact normalized dataset file it reads;
+- GitHub producer run ID and checkout commit SHA (missing context remains null);
+- engine/version and feature-contract version;
+- first/last tested cutoff dates, generated UTC timestamp, and label maturity cutoff;
+- per-state sample count, H+3 hit count, and H+3 hit rate under a separate `states` object.
+
+The legacy state-keyed records and their `hit10_h3` field are retained for the existing V11.3 consumer lookup. This metadata addition does not alter walk-forward cutoffs, model fitting, outcome labels, scores, ranking, or the 672 diagnostic definitions.
+
+Isolated QA: 18 tests passed on GitHub Actions run 42769180185 (commit d19e4bcba7073ec36a109f4243392b8b8fe825ad). Tests cover real file-hash calculation, legacy-field preservation, validator acceptance with supplied run/commit provenance, and fail-closed behavior when GitHub lineage is absent.
+
+Still not verified: freshness age threshold, consumer-side equality between artifact dataset SHA/cutoffs and the exact V11.3 input dataset, producer run/commit lineage cross-check against the actual workflow artifact, and a full historical production artifact replay. No market-data workflow was run for this QA.
