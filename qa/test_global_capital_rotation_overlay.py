@@ -67,6 +67,6 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
         content=register.read_text(encoding="utf-8")
         self.assertIn("NOT ICE DXY",content)
-        self.assertIn("positions, NOT flows",content)
+        self.assertIn("positions are stocks, NOT flows",content)
         self.assertIn("UNKNOWN / NOT DONE",content)
 if __name__=="__main__": unittest.main()
