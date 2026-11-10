@@ -11,6 +11,7 @@ ALLOWED_QUALITY = {"VERIFIED_OFFICIAL","VERIFIED_SECONDARY","PROVISIONAL","UNKNO
 MAX_AGE_DAYS = {
     "em_portfolio_flow_usd_bn":45,
     "india_fpi_equity_inr_cr":7,"india_fpi_debt_inr_cr":7,"india_dii_equity_inr_cr":7,
+    "india_fpi_equity_mtd_inr_cr":7,"india_fpi_equity_ytd_inr_cr":30,
     "dxy_change_pct_20d":30,"us10y_change_bp_20d":30,"fed_target_change_bp_90d":120,
     "usd_inr_change_pct_20d":7,"brent_change_pct_20d":7,
     "india_vs_world_relative_return_pct_20d":7,"vix_change_pct_20d":7,
@@ -106,9 +107,16 @@ def classify(grouped,as_of_date=None):
     elif v("vix_change_pct_20d")<0: risk="VOLATILITY_EASING"
     elif v("vix_change_pct_20d")>0: risk="VOLATILITY_RISING"
     else: risk="FLAT"
+    mtd=v("india_fpi_equity_mtd_inr_cr"); ytd=v("india_fpi_equity_ytd_inr_cr")
+    if mtd is None or ytd is None: horizon="UNKNOWN"
+    elif mtd>0 and ytd<0: horizon="SHORT_TERM_INFLOW_LONG_TERM_OUTFLOW"
+    elif mtd<0 and ytd<0: horizon="OUTFLOW_BOTH_HORIZONS"
+    elif mtd>0 and ytd>0: horizon="INFLOW_BOTH_HORIZONS"
+    elif mtd<0 and ytd>0: horizon="SHORT_TERM_OUTFLOW_LONG_TERM_INFLOW"
+    else: horizon="MIXED_OR_FLAT"
     return {
       "status":"RESEARCH_ONLY_NO_PRODUCTION_SCORE","as_of_date":asof.isoformat(),
-      "global_em_flow":global_flow,"india_fpi_equity":india_fpi,"fx_transmission":fx,
+      "global_em_flow":global_flow,"india_fpi_equity":india_fpi,"india_fpi_horizon_divergence":horizon,"fx_transmission":fx,
       "us_rates_transmission":rates,"relative_attraction":relative,"oil_transmission":oil,
       "global_risk_appetite":risk,
       "india_fpi_debt":"UNKNOWN" if v("india_fpi_debt_inr_cr") is None else ("FPI_DEBT_NET_BUY" if v("india_fpi_debt_inr_cr")>0 else "FPI_DEBT_NET_SELL" if v("india_fpi_debt_inr_cr")<0 else "FLAT"),
