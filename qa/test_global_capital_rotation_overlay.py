@@ -57,4 +57,9 @@ class TestGlobalCapitalRotation(unittest.TestCase):
               self.row("india_fpi_equity_ytd_inr_cr",-241407.13)]
         out=classify(load_observations(self.make(rows)),"2026-11-07")
         self.assertEqual(out["india_fpi_horizon_divergence"],"SHORT_TERM_INFLOW_LONG_TERM_OUTFLOW")
+
+    def test_non_government_iif_seed_is_not_promoted_to_official_flow(self):
+        seed=Path(__file__).resolve().parents[1]/"data"/"global_capital_rotation"/"2026-11-07_seed_observations.csv"
+        grouped=load_observations(seed)
+        self.assertNotIn("em_portfolio_flow_usd_bn",grouped)
 if __name__=="__main__": unittest.main()
