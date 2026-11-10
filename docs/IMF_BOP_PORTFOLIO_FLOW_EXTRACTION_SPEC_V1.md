@@ -25,6 +25,37 @@ Extract only BOP financial-account **portfolio investment transactions**. Preser
 
 Do not assume SDMX dimension codes, codelist values, sign conventions, units, or a single net-flow variable from a display label. Apply a metadata-first extraction: retrieve and archive the exact DSD, codelists, dataflow, annotations, and dataset vintage. Map official dimension values to human-readable fields only after inspecting those metadata.
 
+
+## 2A. Independently documented BOP DSD V2.6.0 component crosswalk
+
+A current European Commission/Eurostat BOP Vademecum (updated November 2025 / July 2026) identifies the BOP DSD V2.6.0 dimensions and attributes. This is a standards cross-check for the shared BOP DSD, **not evidence that an IMF Data Portal dataflow uses the same selected series or country coverage**.
+
+| DSD component | Meaning | Extraction handling |
+|---|---|---|
+| FREQ | Frequency | Preserve Q/A as transmitted; do not mix quarterly and annual series |
+| REF_AREA | Reporting economy/area | Primary country key |
+| ADJUSTMENT | Seasonal/calendar adjustment | Keep separate; don't combine adjusted and unadjusted series |
+| COUNTERPART_AREA | Counterpart economy/area | Preserve, including world/region codes; avoid double counting bilateral and total |
+| REF_SECTOR / COUNTERPART_SECTOR | Institutional sectors | Retain exact scope; total economy vs sector-specific is not interchangeable |
+| FLOW_STOCK_ENTRY | Transactions / positions / other changes | Select transaction code only after reading CL_FSENTRY |
+| ACCOUNT_ENTRY | Accounting entry | Keep net acquisition of assets distinct from net incurrence of liabilities |
+| INT_ACC_ITEM | International accounts item | Financial account selection must be confirmed against CL_ACCOUNTS_ITEM |
+| FUNCTIONAL_CAT | Functional investment category | Portfolio investment classification; verify code list |
+| INSTR_ASSET | Financial instrument/asset | Preserve equity/investment-fund shares vs debt instruments; do not infer from text |
+| MATURITY | Original/remaining maturity | Retain debt maturity split when supplied; equity maturity is not applicable |
+| UNIT_MEASURE / CURRENCY_DENOM | Reporting unit / currency of denomination | Preserve both, not interchangeable |
+| VALUATION / COMP_METHOD / TYPE_ENTITY | Valuation, compilation method, entity type | Preserve series qualifiers and breaks |
+
+Vademecum further documents observation-level `OBS_STATUS` and `CONF_STATUS`, and series-level `UNIT_MULT` and `DECIMALS`. These are required ingestion fields, not optional decoration. The exact IMF dataflow's attributes and codelist values still need direct comparison before extraction is accepted.
+
+### Sign and key rules confirmed from the Vademecum
+- For BPM6 financial-account entries, the updated terminology is net acquisition of assets and net incurrence of liabilities; positive values indicate an increase and negative values a decrease in the respective asset or liability. Never apply an extra sign flip without a separately documented transformation.
+- A complete SDMX series key includes all DSD dimensions. Deduplicate on the complete dimension key plus time period and vintage, not merely country + period.
+- The Vademecum's sample series keys and code values are European transmission examples. Do not copy its Eurostat-specific dataset IDs or country coverage into the IMF dataflow without verification.
+
+### Practical example (standards illustration, not an IMF observation)
+A quarterly series with `FLOW_STOCK_ENTRY = T` is explicitly labelled transactions in the Vademecum example. If an asset-side financial-account transaction is +10 in the source unit, that denotes an increase in the asset under the documented BPM6 convention; it is not automatically a +10 net inflow into the reporting economy. A liability-side +10 denotes an increase in liabilities. Keep these as separate columns and preserve the source unit/multiplier.
+
 ## 3. Raw observation contract
 
 Every downloaded observation must retain:
