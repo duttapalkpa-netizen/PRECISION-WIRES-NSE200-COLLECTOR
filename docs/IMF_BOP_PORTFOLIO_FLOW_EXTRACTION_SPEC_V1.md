@@ -72,7 +72,7 @@ Every downloaded observation must retain:
 - source URL and dataset identifier
 - retrieval timestamp (UTC), publication/release vintage, and file checksum
 
-No conversion to USD, no annualisation, no aggregation, and no sign inversion may occur in the raw layer. Any derived field must be a separate, documented transformation with its own test.
+No synthetic rows, values, timestamps, or mappings are permitted. No conversion to USD, no annualisation, no aggregation, and no sign inversion may occur in the raw layer. Any derived field must be a separate, documented transformation with its own test.
 
 ## 4. EM panel membership and aggregation gate
 
