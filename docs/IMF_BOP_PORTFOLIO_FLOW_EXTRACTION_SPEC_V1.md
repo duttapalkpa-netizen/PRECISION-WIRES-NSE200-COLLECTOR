@@ -151,6 +151,14 @@ This URL is constructed from the official guide's documented entry point, resour
 
 **Download handling:** `saveAs=IMF_BOP_DSD_2_6_0` is included to request an attachment, as documented in the IMF guide. It is a transport hint, not evidence of successful retrieval; the HTTP status, Content-Type, final URL, exact byte count and SHA-256 must still be captured and validated.
 
+**Second documented transport candidate (legacy SDMX-REST 1.x):** IMF SDMX Central also advertises the public SDMX-REST 1.x entry point `https://sdmxcentral.imf.org/ws/public/sdmxapi/rest`. The IMF's older technical guide demonstrates the `/datastructure/{agency}/{id}/{version}/` path and `format=sdmx-2.1`, `detail=full`, and `references=all` parameters. The following version-pinned request combines that documented path pattern with the documented attachment parameter:
+
+```text
+https://sdmxcentral.imf.org/ws/public/sdmxapi/rest/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&detail=full&references=children&saveAs=IMF_BOP_DSD_2_6_0_legacy
+```
+
+This is an independently documented alternate endpoint family, but the exact BOP 2.6.0 request has **not** been successfully retrieved in this audit. Treat it as a candidate to test, not as a verified response URL. The legacy service is for structure metadata; it does not supply BOP country observations.
+
 **Fallback:** use the IMF SDMX Central web UI at https://sdmxcentral.imf.org/webservice/structure.html, select Data Structure / IMF / BOP / version 2.6.0 / SDMX-ML v2.1 / Detail Full / References Children, and use Download. Record the exact generated query URL and downloaded file checksum. The UI is an alternate transport for the same metadata request, not a substitute for recording provenance.
 
 ### Important source boundary
