@@ -41,3 +41,5 @@ Scope: free public sources only; research overlay, not production approval.
 - Production integration: NOT AUTHORIZED / 0%.
 
 Register revision: 2026-11-10; automated QA guards the distinction between broad Fed dollar index vs ICE DXY and IMF portfolio positions vs transactions.
+
+QA alignment note: register wording is asserted verbatim by the overlay unit test.
