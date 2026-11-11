@@ -24,8 +24,7 @@ jobs:
       - name: Checkout research branch
         uses: actions/checkout@v4
 
-      - name: Probe known historical and recent windows after 13:30 IST
-        # A post-fixing run tests same-day publication separately from historical backfill.
+      - name: Probe rolling Mumbai-local dates and historical control
         shell: bash
         run: |
           set -euo pipefail
@@ -38,19 +37,20 @@ jobs:
 
           out = Path("probe-output")
           ist = ZoneInfo("Asia/Kolkata")
-          now = datetime.now(timezone.utc)
-          today = now.astimezone(ist).date()
-          windows = {
-              "known_overlap": (date(2026, 10, 15), date(2026, 10, 16)),
-              "nse_latest_display": (date(2026, 11, 5), date(2026, 11, 6)),
-              "post_latest_display": (date(2026, 11, 7), date(2026, 11, 11)),
-          }
-          for label, (start, end) in windows.items():
-              def api_date(d):
-                  return d.strftime("%Y-%m-%d")
+          windows = [("historical_control", date(2026, 10, 15), date(2026, 10, 16))]
+          retrieved_at = datetime.now(timezone.utc)
+          today_ist = retrieved_at.astimezone(ist).date()
+
+          # Probe each of the last seven Mumbai-local calendar dates separately.
+          # Weekends/holidays are retained as observations, never silently filled.
+          for offset in range(6, -1, -1):
+              probe_date = today_ist - timedelta(days=offset)
+              windows.append((f"rolling_{probe_date.isoformat().replace('-', '')}", probe_date, probe_date))
+
+          for label, start, end in windows:
               url = (
                   "https://www.fbil.org.in/wasdm/refrates/fetchfiltered"
-                  f"?fromDate={api_date(start)}&toDate={api_date(end)}&authenticated=false"
+                  f"?fromDate={start.isoformat()}&toDate={end.isoformat()}&authenticated=false"
               )
               req = urllib.request.Request(
                   url,
@@ -60,31 +60,35 @@ jobs:
                   },
               )
               status_code = None
-              headers = {}
+              response_headers = {}
+              transport_error = None
               try:
-                  with urllib.request.urlopen(req, timeout=35) as response:
+                  with urllib.request.urlopen(req, timeout=25) as response:
                       raw = response.read()
                       status_code = response.status
-                      headers = dict(response.headers.items())
+                      response_headers = dict(response.headers.items())
               except urllib.error.HTTPError as exc:
                   raw = exc.read()
                   status_code = exc.code
-                  headers = dict(exc.headers.items()) if exc.headers else {}
+                  response_headers = dict(exc.headers.items()) if exc.headers else {}
               except Exception as exc:
                   raw = b""
-                  (out / f"{label}_transport_error.txt").write_text(repr(exc) + "\n")
+                  transport_error = repr(exc)
+
               (out / f"{label}_raw.json").write_bytes(raw)
               metadata = {
                   "request_url": url,
                   "from_date": start.isoformat(),
                   "to_date": end.isoformat(),
-                  "retrieved_at_utc": now.isoformat(),
-                  "retrieved_at_ist": now.astimezone(ist).isoformat(),
+                  "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                  "retrieved_at_ist": datetime.now(ist).isoformat(),
                   "http_status": status_code,
-                  "content_type": headers.get("Content-Type"),
+                  "content_type": response_headers.get("Content-Type"),
                   "raw_bytes": len(raw),
                   "raw_sha256": hashlib.sha256(raw).hexdigest(),
               }
+              if transport_error:
+                  metadata["transport_error"] = transport_error
               try:
                   obj = json.loads(raw)
                   metadata["json_root_type"] = type(obj).__name__
@@ -97,24 +101,29 @@ jobs:
               except Exception as exc:
                   metadata["json_status"] = "INVALID_JSON"
                   metadata["json_error"] = str(exc)
-              (out / f"{label}_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
-              print(label, json.dumps(metadata))
+              (out / f"{label}_metadata.json").write_text(
+                  json.dumps(metadata, indent=2) + "\\n", encoding="utf-8"
+              )
+              print(label, json.dumps(metadata, sort_keys=True))
           PY
 
-      - name: Validate non-empty payloads only
+      - name: Validate each non-empty response independently
         shell: bash
         run: |
           set -euo pipefail
-          for label in known_overlap nse_latest_display post_latest_display; do
-            [ -f "probe-output/${label}_metadata.json" ] || continue
-            if grep -q '"json_status": "PASS_NONEMPTY_ARRAY"' "probe-output/${label}_metadata.json"; then
+          for metadata in probe-output/*_metadata.json; do
+            [ -f "$metadata" ] || continue
+            label="$(basename "$metadata" _metadata.json)"
+            if grep -q '"json_status": "PASS_NONEMPTY_ARRAY"' "$metadata"; then
+              from_date="$(python -c "import json,sys; print(json.load(open(sys.argv[1]))['from_date'])" "$metadata")"
+              to_date="$(python -c "import json,sys; print(json.load(open(sys.argv[1]))['to_date'])" "$metadata")"
               python qa/validate_fbil_reference_payload.py \
                 --raw "probe-output/${label}_raw.json" \
-                --from-date "$(python -c "import json; print(json.load(open('probe-output/${label}_metadata.json'))['from_date'])")" \
-                --to-date "$(python -c "import json; print(json.load(open('probe-output/${label}_metadata.json'))['to_date'])")" \
+                --from-date "$from_date" \
+                --to-date "$to_date" \
                 --csv-out "probe-output/${label}_validated.csv"
             else
-              echo "NO INGESTION: ${label} returned no non-empty valid array."
+              echo "NO INGESTION: $label did not return a non-empty JSON array."
             fi
           done
 
