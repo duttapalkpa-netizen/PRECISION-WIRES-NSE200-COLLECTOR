@@ -78,3 +78,40 @@ The raw response is archived unchanged in the repository. The original workflow 
 This closes the FBIL live-access and first historical-sample acquisition subtask. It does not close full historical coverage, the USD/INR OHLC source, Macro-Geo P0, Factor Registry, event-study maturity, or production integration. Therefore the overall V11.3 percentage remains `NOT_CALCULABLE`; no percentage is increased for partial source acquisition alone.
 
 Production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672, Engines A–E, and Hard Gate are unchanged. Research spend remains ₹0.
+
+
+## Follow-up: post-publication and date-format diagnostic (13:44–13:45 IST)
+
+Two additional post-13:30 IST runs were completed to test whether the earlier empty recent window was merely a pre-publication timing issue.
+
+### Run A — 13:44:34 IST
+- Workflow run: `42985468800`
+- Artifact ID: `13839811307`
+- Artifact ZIP SHA-256: `c4abc815b0ebfa2a25693582676624b1af8ae537adefbbdc8e8d02536cefa795`
+- Historical control (15–16 Oct): HTTP 200, 14 records, same raw SHA-256 as first capture.
+- Recent window (9–11 Nov): HTTP 200, 2-byte empty JSON array, SHA-256 `4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945`.
+
+### Run B — 13:45:54 IST, zero-padded date parameters
+- Workflow run: `42985646860`
+- Artifact ID: `13839361982`
+- Artifact ZIP SHA-256: `be9fff6123f769b3bc7e4cac7ae55019bb162d3cfe589df2bb1de7e0b71ba6fe`
+- Request dates explicitly zero-padded as YYYY-MM-DD.
+- 05–06 Nov: HTTP 200, empty array.
+- 07–11 Nov: HTTP 200, empty array.
+- 15–16 Oct control: HTTP 200, 14 records, same raw SHA-256.
+
+### Diagnosis
+
+- Pre-publication timing alone does **not** explain the empty recent-window result: the same dates remained empty after 13:30 IST.
+- A date-format bug was found and corrected (un-padded day values were being sent for single-digit days). The zero-padded retest returned the same empty result; therefore date padding was not the root cause.
+- The FBIL endpoint is demonstrably reachable and returns historical October observations, but its accessible data window appears stale or otherwise excludes 05–11 November in these tests. Exact cause remains **UNKNOWN**; do not label it a confirmed outage or infer a documented retention policy.
+- The NSE page's display of 05-Nov is a separately observed public display and does not prove that the API endpoint's JSON backend contains that date.
+
+### Updated gate
+
+- FBIL API live access: **PASS**
+- Historical sample acquisition (15–16 Oct): **PASS, 14 rows**
+- Recent API availability for 05–11 Nov: **EMPTY_ARRAY, REPRODUCED**
+- Root cause of recent API emptiness: **UNKNOWN**
+- Full historical backfill / production daily collector: **NOT DONE**
+- No recent rows admitted; no imputation, no forward fill, no synthetic observations.
