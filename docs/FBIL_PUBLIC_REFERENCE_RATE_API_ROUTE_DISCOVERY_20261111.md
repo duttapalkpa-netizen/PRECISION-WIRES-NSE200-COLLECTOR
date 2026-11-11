@@ -89,3 +89,39 @@ Evidence:
 - FBIL methodology: https://www.fbil.org.in/uploads/FBIL_REFERENCE_RATE_FINAL_fa318d5727.pdf
 
 This follow-up adds a small, reproducible display-level cross-check. It does not promote any data rows into the project and does not alter any production invariant.
+
+
+## Follow-up: source-window and production-use boundary
+
+A current connector/tool reference describing the FBIL public feed reports that the feed exposes only a rolling window of approximately two days and that no bulk historical archive was found through that feed. This is **secondary implementation documentation**, not an FBIL-published service-level guarantee. Treat the exact retention window as **UNVERIFIED** until tested against the official endpoint.
+
+Operational implication:
+- First live test should request a very short date interval, not a multi-year range.
+- If the endpoint is rolling-window only, use a daily/weekday collector with immutable raw-response archive and explicit missed-day recovery; do not expect the API to backfill arbitrarily old observations.
+- A missed polling window must create a visible gap / UNKNOWN status, never a synthetic or forward-filled observation.
+- Historical data acquisition must be handled separately through FBIL/NSE public archive routes or another source whose provenance is explicitly accepted.
+
+## Benchmark construction facts (IMF metadata)
+
+IMF SDDS/DQAF metadata describes:
+- USD/INR reference rate based on actual spot transaction data from electronic platforms during 11:30–12:30 IST on Mumbai business days.
+- FBIL publishes USD/INR, EUR/INR, GBP/INR and JPY/INR around 13:30 IST on Mumbai business days.
+- Cross-currency rates use the corresponding spot cross rates from the same selected time window.
+- The published reference rate is a benchmark observation, not an OHLC bar or a continuous intraday price.
+
+This reinforces the hard separation:
+1. FBIL reference-rate factor: daily benchmark fixing.
+2. Interbank OHLC factor: separate market-data series, still unresolved at RBI-primary source level.
+3. Never derive open/high/low/close from the FBIL fixing.
+
+## Current acquisition result
+
+No live FBIL API JSON body was retrieved in this turn. The web retrieval service could not open the candidate API URL, and the FBIL homepage itself rendered without extractable page lines. Therefore the live API request, response status, content type, response byte count, raw bytes, retrieval timestamp and SHA-256 remain **NOT ACQUIRED / UNKNOWN**. No observations are admitted.
+
+Evidence:
+- IMF SDDS/DQAF India Exchange Rates: https://dsbb.imf.org/sdds/dqaf-base/country/IND/category/EXR00
+- RBI press release confirming transition effective 10-Jul-2018: https://www.rbi.org.in/commonman/Upload/English/PressRelease/PDFs/PR3504072018.PDF
+- FBIL official homepage: https://www.fbil.org.in/
+- Secondary feed-window note (discovery lead only): DalalOS FX reference-rate tool documentation, https://glama.ai/mcp/connectors/in.dalalos/mcp/tools/get_fx_reference_rates
+
+No changes to production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, existing accepted observations or prior PASS artifacts.
