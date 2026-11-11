@@ -24,93 +24,95 @@ jobs:
       - name: Checkout research branch
         uses: actions/checkout@v4
 
-      - name: Probe historical and recent windows
+      - name: Probe known historical and recent windows
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p probe-output
-          export TZ=Asia/Kolkata
-
-          probe_range() {
-            local label="$1" from_iso="$2" to_iso="$3"
-            local from_date to_date url http_code curl_exit
-            from_date="$(date -d "$from_iso" +%-Y-%-m-%-d)"
-            to_date="$(date -d "$to_iso" +%-Y-%-m-%-d)"
-            url="https://www.fbil.org.in/wasdm/refrates/fetchfiltered?fromDate=${from_date}&toDate=${to_date}&authenticated=false"
-            printf '%s\n' "$from_iso" > "probe-output/${label}_from_date.txt"
-            printf '%s\n' "$to_iso" > "probe-output/${label}_to_date.txt"
-            printf '%s\n' "$url" > "probe-output/${label}_request_url.txt"
-            date -u +%Y-%m-%dT%H:%M:%SZ > "probe-output/${label}_retrieved_at_utc.txt"
-            date +%Y-%m-%dT%H:%M:%S%:z > "probe-output/${label}_retrieved_at_ist.txt"
-
-            set +e
-            http_code="$(curl --location --silent --show-error --max-time 35 --retry 1 --retry-delay 2 \
-              --user-agent 'PRECISION-WIRES-V11.3-research/1.0' \
-              --header 'Accept: application/json' \
-              --dump-header "probe-output/${label}_response_headers.txt" \
-              --output "probe-output/${label}_raw.json" \
-              --write-out '%{http_code}' "$url" 2>"probe-output/${label}_curl_stderr.txt)"
-            curl_exit=$?
-            set -e
-            printf '%s\n' "$http_code" > "probe-output/${label}_http_status.txt"
-            printf '%s\n' "$curl_exit" > "probe-output/${label}_curl_exit.txt"
-            if [ -f "probe-output/${label}_raw.json" ]; then
-              wc -c < "probe-output/${label}_raw.json" > "probe-output/${label}_raw_bytes.txt"
-              sha256sum "probe-output/${label}_raw.json" > "probe-output/${label}_raw_sha256.txt"
-            else
-              printf '0\n' > "probe-output/${label}_raw_bytes.txt"
-              printf 'NO_FILE\n' > "probe-output/${label}_raw_sha256.txt"
-            fi
-
-            if [ "$curl_exit" -ne 0 ] || [ "$http_code" != "200" ]; then
-              printf 'TRANSPORT_OR_HTTP_FAILURE\n' > "probe-output/${label}_status.txt"
-              return 0
-            fi
-
-            LABEL="$label" python - <<'PY'
-          import json, os
+          python - <<'PY'
+          import hashlib, json, urllib.request, urllib.error
+          from datetime import date, datetime, timedelta, timezone
           from pathlib import Path
-          label=os.environ["LABEL"]
-          p=Path(f"probe-output/{label}_raw.json")
-          try:
-              obj=json.loads(p.read_bytes())
-              if not isinstance(obj,list):
-                  status={"status":"INVALID_ROOT","root_type":type(obj).__name__}
-              elif not obj:
-                  status={"status":"HTTP_200_EMPTY_ARRAY","record_count":0}
-              else:
-                  status={"status":"HTTP_200_NONEMPTY_ARRAY","record_count":len(obj)}
-          except Exception as exc:
-              status={"status":"INVALID_JSON","error":str(exc)}
-          Path(f"probe-output/{label}_json_status.json").write_text(json.dumps(status,indent=2)+"\n")
-          print(label, json.dumps(status))
-          PY
+          from zoneinfo import ZoneInfo
+
+          out = Path("probe-output")
+          ist = ZoneInfo("Asia/Kolkata")
+          now = datetime.now(timezone.utc)
+          today = now.astimezone(ist).date()
+          windows = {
+              "known_overlap": (date(2026, 10, 15), date(2026, 10, 16)),
+              "recent_window": (today - timedelta(days=2), today),
           }
+          for label, (start, end) in windows.items():
+              def api_date(d):
+                  return f"{d.year}-{d.month}-{d.day}"
+              url = (
+                  "https://www.fbil.org.in/wasdm/refrates/fetchfiltered"
+                  f"?fromDate={api_date(start)}&toDate={api_date(end)}&authenticated=false"
+              )
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": "PRECISION-WIRES-V11.3-research/1.0",
+                      "Accept": "application/json",
+                  },
+              )
+              status_code = None
+              headers = {}
+              try:
+                  with urllib.request.urlopen(req, timeout=35) as response:
+                      raw = response.read()
+                      status_code = response.status
+                      headers = dict(response.headers.items())
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read()
+                  status_code = exc.code
+                  headers = dict(exc.headers.items()) if exc.headers else {}
+              except Exception as exc:
+                  raw = b""
+                  (out / f"{label}_transport_error.txt").write_text(repr(exc) + "\n")
+              (out / f"{label}_raw.json").write_bytes(raw)
+              metadata = {
+                  "request_url": url,
+                  "from_date": start.isoformat(),
+                  "to_date": end.isoformat(),
+                  "retrieved_at_utc": now.isoformat(),
+                  "retrieved_at_ist": now.astimezone(ist).isoformat(),
+                  "http_status": status_code,
+                  "content_type": headers.get("Content-Type"),
+                  "raw_bytes": len(raw),
+                  "raw_sha256": hashlib.sha256(raw).hexdigest(),
+              }
+              try:
+                  obj = json.loads(raw)
+                  metadata["json_root_type"] = type(obj).__name__
+                  metadata["record_count"] = len(obj) if isinstance(obj, list) else None
+                  metadata["json_status"] = (
+                      "PASS_NONEMPTY_ARRAY" if isinstance(obj, list) and obj
+                      else "EMPTY_ARRAY" if isinstance(obj, list)
+                      else "INVALID_ROOT"
+                  )
+              except Exception as exc:
+                  metadata["json_status"] = "INVALID_JSON"
+                  metadata["json_error"] = str(exc)
+              (out / f"{label}_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
+              print(label, json.dumps(metadata))
+          PY
 
-          # Known overlap dates were independently displayed by FBIL and NSE.
-          probe_range known_overlap 2026-10-15 2026-10-16
-          # Recent window, kept separate to test freshness/publication timing.
-          TODAY="$(date +%F)"
-          TWO_DAYS_AGO="$(date -d '2 days ago' +%F)"
-          probe_range recent_window "$TWO_DAYS_AGO" "$TODAY"
-
-      - name: Validate any non-empty HTTP 200 response
-        if: always()
+      - name: Validate non-empty payloads only
         shell: bash
         run: |
           set -euo pipefail
           for label in known_overlap recent_window; do
-            [ -f "probe-output/${label}_http_status.txt" ] || continue
-            [ "$(cat "probe-output/${label}_http_status.txt")" = "200" ] || continue
-            [ -f "probe-output/${label}_json_status.json" ] || continue
-            if grep -q '"status": "HTTP_200_NONEMPTY_ARRAY"' "probe-output/${label}_json_status.json"; then
+            [ -f "probe-output/${label}_metadata.json" ] || continue
+            if grep -q '"json_status": "PASS_NONEMPTY_ARRAY"' "probe-output/${label}_metadata.json"; then
               python qa/validate_fbil_reference_payload.py \
                 --raw "probe-output/${label}_raw.json" \
-                --from-date "$(cat "probe-output/${label}_from_date.txt")" \
-                --to-date "$(cat "probe-output/${label}_to_date.txt")" \
+                --from-date "$(python -c "import json; print(json.load(open('probe-output/${label}_metadata.json'))['from_date'])")" \
+                --to-date "$(python -c "import json; print(json.load(open('probe-output/${label}_metadata.json'))['to_date'])")" \
                 --csv-out "probe-output/${label}_validated.csv"
             else
-              echo "NO INGESTION: ${label} did not return a non-empty JSON array."
+              echo "NO INGESTION: ${label} returned no non-empty valid array."
             fi
           done
 
