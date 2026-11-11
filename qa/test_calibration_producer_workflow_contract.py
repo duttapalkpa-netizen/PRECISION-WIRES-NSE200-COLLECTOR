@@ -26,6 +26,10 @@ class CalibrationProducerWorkflowContractTests(unittest.TestCase):
         self.assertIn("if-no-files-found: error", self.text)
         self.assertNotIn("continue-on-error: true", self.text)
 
+    def test_producer_is_not_auto_triggered_on_pull_request(self):
+        self.assertIn("workflow_dispatch:", self.text)
+        self.assertNotIn("pull_request:", self.text)
+
     def test_manifest_and_artifact_are_uploaded(self):
         self.assertIn("calibration_producer_manifest.json", self.text)
         self.assertIn("behavioral_dna_library.json", self.text)
