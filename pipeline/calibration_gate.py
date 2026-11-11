@@ -24,10 +24,11 @@ def _sha256_file(path):
     return digest.hexdigest()
 
 def validate_calibration_artifact(path, dataset_path=None):
-    """Validate artifact structure and, when supplied, bind it to exact consumer bytes.
+    """Validate structure and bind artifact to consumer bytes when supplied.
 
-    Freshness and GitHub run/commit existence checks are deliberately not inferred:
-    they require an explicitly approved age policy and external lineage evidence.
+    A numeric producer run ID is required. Actual run/commit existence and
+    freshness are not inferred from syntactic metadata; they need independent
+    GitHub run evidence and an explicitly approved age policy.
     """
     path = Path(path)
     if not path.exists():
@@ -41,6 +42,8 @@ def validate_calibration_artifact(path, dataset_path=None):
     missing = [key for key in REQUIRED_METADATA if key not in payload or payload[key] in (None, "")]
     if missing:
         return _unknown("UNKNOWN_PROVENANCE", "required_metadata_missing", missing_metadata=missing)
+    if not re.fullmatch(r"[0-9]+", str(payload["producer_run_id"])):
+        return _unknown("UNKNOWN_PROVENANCE", "producer_run_id_must_be_numeric")
     if not re.fullmatch(r"[0-9a-fA-F]{40}", str(payload["producer_commit_sha"])):
         return _unknown("UNKNOWN_PROVENANCE", "producer_commit_sha_invalid")
     if not re.fullmatch(r"[0-9a-fA-F]{64}", str(payload["dataset_sha256"])):
