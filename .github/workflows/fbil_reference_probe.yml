@@ -42,7 +42,8 @@ jobs:
           today = now.astimezone(ist).date()
           windows = {
               "known_overlap": (date(2026, 10, 15), date(2026, 10, 16)),
-              "recent_window": (today - timedelta(days=2), today),
+              "nse_latest_display": (date(2026, 11, 5), date(2026, 11, 6)),
+              "post_latest_display": (date(2026, 11, 7), date(2026, 11, 11)),
           }
           for label, (start, end) in windows.items():
               def api_date(d):
@@ -104,7 +105,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for label in known_overlap recent_window; do
+          for label in known_overlap nse_latest_display post_latest_display; do
             [ -f "probe-output/${label}_metadata.json" ] || continue
             if grep -q '"json_status": "PASS_NONEMPTY_ARRAY"' "probe-output/${label}_metadata.json"; then
               python qa/validate_fbil_reference_payload.py \
