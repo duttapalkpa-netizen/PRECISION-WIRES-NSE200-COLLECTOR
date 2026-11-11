@@ -94,3 +94,18 @@ A repository workflow inventory at PR head `75724424101acd6bbf9c8755b0c0d1f92d38
 Required next integration (not implemented by this QA-only patch): a dedicated, approved calibration producer workflow that executes the walk-forward producer on the approved input dataset, uploads the calibration artifact plus a manifest, and binds manifest fields to GitHub run ID, head SHA, artifact ID/name, dataset SHA-256, and cutoff context. A separate verifier must compare those values to GitHub's run/artifact metadata. Until then final-selection readiness remains fail-closed. Freshness age policy also remains unapproved and UNKNOWN.
 
 This audit did not trigger a market-data workflow, create synthetic market rows, alter selector/ranking logic, or merge the draft PR.
+
+
+## Dedicated producer workflow added (2026-11-11)
+
+A manual-only GitHub Actions workflow, `.github/workflows/calibration_evidence_producer.yml`, has been added on the draft QA branch. It:
+- accepts an explicit matured-cutoff window input (1–100; default 100);
+- requires the existing approved dataset file to be present and non-empty; it does not download, synthesize, or replace market data;
+- runs the existing walk-forward producer with a hard 420-second process timeout and a 10-minute job timeout;
+- requires producer run ID, checkout commit SHA, and dataset SHA-256 to match the actual workflow context and exact input bytes;
+- writes a manifest binding run ID/attempt, commit SHA, dataset hash, calibration artifact hash, artifact name, cutoff dates, label maturity cutoff, target definition, and state metrics;
+- uploads the calibration JSON and manifest together as one GitHub Actions artifact (14-day retention).
+
+The workflow is deliberately `workflow_dispatch` only; it is not triggered by pull requests and has not been dispatched in this audit. The current repository snapshot does not establish that the approved historical dataset is available in the GitHub runner checkout. Therefore producer execution, actual output, GitHub artifact ID, and external run/commit/artifact cross-verification remain UNKNOWN until a permitted manual run completes. The QA test checks the workflow contract without running market-data research.
+
+No freshness threshold is introduced. No selector/ranking logic, 672 diagnostics, Hard Gate, market-data files, or production workflow was changed. The draft PR remains unmerged.
