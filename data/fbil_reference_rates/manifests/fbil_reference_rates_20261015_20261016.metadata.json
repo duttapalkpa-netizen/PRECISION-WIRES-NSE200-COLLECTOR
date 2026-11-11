@@ -1,0 +1,17 @@
+{
+  "request_url": "https://www.fbil.org.in/wasdm/refrates/fetchfiltered?fromDate=2026-10-15&toDate=2026-10-16&authenticated=false",
+  "from_date": "2026-10-15",
+  "to_date": "2026-10-16",
+  "retrieved_at_utc": "2026-11-11T07:55:32.114141+00:00",
+  "retrieved_at_ist": "2026-11-11T13:25:32.114141+05:30",
+  "http_status": 200,
+  "content_type": "application/json",
+  "raw_bytes": 1919,
+  "raw_sha256": "aeec99630a30d4b5961755c35e05b1e795dec1c39a373e48d95eca5edd165e27",
+  "json_root_type": "list",
+  "record_count": 14,
+  "json_status": "PASS_NONEMPTY_ARRAY",
+  "workflow_run_id": 42983033561,
+  "workflow_artifact_id": 13837574133,
+  "artifact_zip_sha256": "48340a456b11aa8b3cc7e6133d00dcd92794b08c8460cbe65742cc25986c56f4"
+}
