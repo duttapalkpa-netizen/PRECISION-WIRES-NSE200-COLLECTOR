@@ -102,7 +102,7 @@ jobs:
                   metadata["json_status"] = "INVALID_JSON"
                   metadata["json_error"] = str(exc)
               (out / f"{label}_metadata.json").write_text(
-                  json.dumps(metadata, indent=2) + "\\n", encoding="utf-8"
+                  json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
               )
               print(label, json.dumps(metadata, sort_keys=True))
           PY
