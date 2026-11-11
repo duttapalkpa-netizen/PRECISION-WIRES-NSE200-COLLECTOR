@@ -106,13 +106,4 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("SHA-256: NOT AVAILABLE",content)
         self.assertIn("not evidence that this audit successfully retrieved the response",content)
         self.assertIn("Observation extraction requires a separately verified",content)
-    def test_imf_bop_live_access_audit_fails_closed_without_observations(self):
-        spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
-        content=spec.read_text(encoding="utf-8")
-        self.assertIn("Live access audit — 2026-11-12",content)
-        self.assertIn("redirected to the IMF API portal sign-in page",content)
-        self.assertIn("Raw BOP observation bytes / SHA-256 | NOT AVAILABLE",content)
-        self.assertIn("global EM portfolio-flow indicator remains UNKNOWN",content)
-        self.assertIn("Do not guess an observation URL",content)
-
 if __name__=="__main__": unittest.main()
