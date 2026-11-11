@@ -47,7 +47,7 @@ jobs:
           }
           for label, (start, end) in windows.items():
               def api_date(d):
-                  return f"{d.year}-{d.month}-{d.day}"
+                  return d.strftime("%Y-%m-%d")
               url = (
                   "https://www.fbil.org.in/wasdm/refrates/fetchfiltered"
                   f"?fromDate={api_date(start)}&toDate={api_date(end)}&authenticated=false"
