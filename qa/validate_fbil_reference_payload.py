@@ -21,6 +21,7 @@ PAIR_UNITS = {
     "INR / 1 EUR": ("EUR", 1),
     "INR / 100 JPY": ("JPY", 100),
     "INR / 1 AED": ("AED", 1),
+    "INR / 1 RUB": ("RUB", 1),
     "INR / 10000 IDR": ("IDR", 10000),
 }
 
