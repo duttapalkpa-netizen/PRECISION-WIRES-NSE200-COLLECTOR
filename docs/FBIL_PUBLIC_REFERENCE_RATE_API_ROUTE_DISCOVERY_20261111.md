@@ -125,3 +125,63 @@ Evidence:
 - Secondary feed-window note (discovery lead only): DalalOS FX reference-rate tool documentation, https://glama.ai/mcp/connectors/in.dalalos/mcp/tools/get_fx_reference_rates
 
 No changes to production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, existing accepted observations or prior PASS artifacts.
+
+
+## Live endpoint acquisition — 2026-11-11 (new evidence)
+
+A GitHub Actions runner successfully reached the FBIL endpoint over HTTPS.
+
+### Known historical overlap window: 2026-10-15 to 2026-10-16
+
+- HTTP status: **200**
+- Content-Type: **application/json**
+- JSON root: array
+- Records: **14**
+- Distinct dates: **2**
+- Product labels: USD, GBP, EUR, JPY, AED, IDR and RUB
+- Retrieval UTC: **2026-11-11T07:55:32.114141+00:00**
+- Retrieval IST: **2026-11-11T13:25:32.114141+05:30**
+- Raw response bytes: **1,919**
+- Raw response SHA-256: **aeec99630a30d4b5961755c35e05b1e795dec1c39a373e48d95eca5edd165e27**
+- Validator: **PASS** after adding the observed `INR / 1 RUB` product label to the accepted mapping.
+- Duplicate date-currency keys: none in this sample.
+- Positive numeric rates and requested-date bounds: PASS.
+
+The raw response is preserved unchanged at:
+`data/raw/fbil_reference_rate_api_20261015_20261016.json`
+
+Provenance is preserved at:
+`data/raw/fbil_reference_rate_api_20261015_20261016.provenance.json`
+
+GitHub Actions:
+- Workflow run: **42983033561** — success
+- Artifact ID: **13837574133**
+- Artifact ZIP SHA-256: **48340a456b11aa8b3cc7e6133d00dcd92794b08c8460cbe65742cc25986c56f4**
+- Artifact retained raw response, request metadata, and validated CSV.
+- Re-fetched GitHub raw file blob SHA: `63830f63507b51bf5377fd9de72e8f1ef425669e`
+- Re-fetched provenance blob SHA: `8f49369671989cd24a0b4815b022679fd69aed56`
+
+### Recent window: 2026-11-09 to 2026-11-11
+
+- HTTP status: **200**
+- Content-Type: **application/json**
+- Raw bytes: **2**
+- Body: `[]`
+- Raw SHA-256: `4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945`
+- Status: **EMPTY_ARRAY / UNKNOWN cause**
+
+The empty recent response is not interpreted as a missing market observation, endpoint outage, or definitive retention limit. Possible causes (publication lag, server-side filter/data availability, or a feed coverage boundary) remain unresolved. The historical sample proves that the candidate endpoint can return data for a known window; it does not prove recent freshness or full history.
+
+### Updated gate
+
+- Live HTTPS reachability: **PASS**
+- Historical JSON acquisition: **PASS — 14 raw records**
+- Raw bytes + SHA-256 + retrieval timestamps: **PASS**
+- Fail-closed parser/validator: **PASS — scoped sample**
+- FBIL/NSE displayed overlap for USD/GBP/EUR/JPY on 15–16 Oct: **PASS — 8/8 values**
+- Recent-window freshness: **UNKNOWN — HTTP 200 empty array**
+- Full historical backfill: **NOT DONE**
+- Interbank OHLC: **NOT PROVIDED**
+- Factor Registry / production integration: **NOT CONNECTED**
+
+No raw records are promoted into production. The sample is archived as research evidence only. No gap filling, forward filling, fabricated rows, or OHLC derivation. No changes to selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, or Hard Gate.
