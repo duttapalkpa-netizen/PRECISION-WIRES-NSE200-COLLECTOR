@@ -1,4 +1,5 @@
 """Fail-closed validation for V11.3 behavioral calibration evidence."""
+import hashlib
 import json
 import math
 import re
@@ -15,7 +16,19 @@ REQUIRED_METADATA = (
 def _unknown(status, reason, **extra):
     return {"status": status, "block_selection": True, "reason": reason, **extra}
 
-def validate_calibration_artifact(path):
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+def validate_calibration_artifact(path, dataset_path=None):
+    """Validate artifact structure and, when supplied, bind it to exact consumer bytes.
+
+    Freshness and GitHub run/commit existence checks are deliberately not inferred:
+    they require an explicitly approved age policy and external lineage evidence.
+    """
     path = Path(path)
     if not path.exists():
         return _unknown("UNKNOWN_MISSING", "artifact_missing")
@@ -40,6 +53,15 @@ def validate_calibration_artifact(path):
             raise ValueError("invalid chronology or timezone")
     except ValueError:
         return _unknown("UNKNOWN_PROVENANCE", "date_or_timestamp_metadata_invalid")
+    if dataset_path is not None:
+        dataset_path = Path(dataset_path)
+        if not dataset_path.is_file():
+            return _unknown("UNKNOWN_DATASET", "consumer_dataset_missing")
+        actual_sha256 = _sha256_file(dataset_path)
+        if actual_sha256.lower() != str(payload["dataset_sha256"]).lower():
+            return _unknown("PROVENANCE_MISMATCH", "dataset_sha256_mismatch",
+                            artifact_dataset_sha256=payload["dataset_sha256"],
+                            consumer_dataset_sha256=actual_sha256)
     states = payload.get("states")
     if not isinstance(states, dict) or not states:
         return _unknown("UNKNOWN_INCOMPLETE", "states_missing_or_empty")
@@ -55,4 +77,6 @@ def validate_calibration_artifact(path):
             return _unknown("INVALID_VALUE", "rate_must_be_finite_number_in_0_1", state=str(state))
         if not math.isclose(float(rate), hits / n, rel_tol=0.0, abs_tol=1e-9):
             return _unknown("INVALID_VALUE", "rate_does_not_reconcile_to_counts", state=str(state))
-    return {"status": "VALID", "block_selection": False, "reason": "validated_metadata_counts_and_rates"}
+    return {"status": "VALID", "block_selection": False,
+            "reason": "validated_metadata_counts_rates_and_dataset_binding",
+            "dataset_sha256": payload["dataset_sha256"]}
