@@ -11,7 +11,7 @@ on:
 
 permissions:
   contents: read
-  actions: write
+  actions: read
 
 jobs:
   produce-calibration-evidence:
@@ -28,19 +28,59 @@ jobs:
           python-version: "3.12"
       - name: Install producer dependencies
         run: python -m pip install "numpy>=1.26,<3" "pandas>=2.2,<3"
-      - name: Validate immutable input availability and requested window
+      - name: Retrieve the immutable approved 200-session source artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p data/processed
+          api="https://api.github.com/repos/${GH_REPOSITORY}/actions/artifacts/13854135591"
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" "${api}" -o /tmp/source-artifact.json
+          python - <<'PY'
+          import json
+          p=json.load(open("/tmp/source-artifact.json",encoding="utf-8"))
+          assert p.get("id")==13854135591, "unexpected source artifact ID"
+          assert p.get("name")=="precision-wires-adaptive-112", "unexpected source artifact name"
+          assert p.get("expired") is False, "source artifact expired"
+          assert p.get("workflow_run",{}).get("id")==43016431808, "source run ID mismatch"
+          assert p.get("workflow_run",{}).get("head_sha")=="7d7f3075b65eca66d606f06b39ed8c7e375c0e28", "source run commit mismatch"
+          assert p.get("digest")=="sha256:b29c3da9b5c4ed082519b025c7844d151e2e0f874cf61e5cb00c63e6b0c8617e", "source artifact digest mismatch"
+          PY
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${api}/zip" -o /tmp/source-artifact.zip
+          echo "b29c3da9b5c4ed082519b025c7844d151e2e0f874cf61e5cb00c63e6b0c8617e  /tmp/source-artifact.zip" | sha256sum --check -
+          unzip -tq /tmp/source-artifact.zip
+          unzip -p /tmp/source-artifact.zip data/processed/nse_eq_200_sessions.csv > data/processed/nse_eq_200_sessions.csv
           test -s data/processed/nse_eq_200_sessions.csv
+          echo "f3d259302cd44af4b402734db7aa43829208430978679be66f11cb2928d304c8  data/processed/nse_eq_200_sessions.csv" | sha256sum --check -
+      - name: Validate exact dataset schema and requested window
+        env:
+          WF_SESSIONS: ${{ inputs.sessions }}
+        shell: bash
+        run: |
+          set -euo pipefail
           python - <<'PY'
           import os, re
+          import pandas as pd
+          from pathlib import Path
           value=os.environ["WF_SESSIONS"]
           if not re.fullmatch(r"[1-9][0-9]{0,2}", value) or int(value)>100:
               raise SystemExit("sessions must be an integer from 1 through 100")
+          p=Path("data/processed/nse_eq_200_sessions.csv")
+          df=pd.read_csv(p,usecols=["SYMBOL","DATE"])
+          if df["DATE"].nunique()!=200:
+              raise SystemExit("approved dataset must contain exactly 200 distinct sessions")
+          if df.duplicated(["SYMBOL","DATE"]).any():
+              raise SystemExit("duplicate SYMBOL/DATE rows in approved dataset")
+          if df["SYMBOL"].nunique()!=2994 or len(df)!=501476:
+              raise SystemExit("approved dataset row/symbol count mismatch")
           PY
-        env:
-          WF_SESSIONS: ${{ inputs.sessions }}
       - name: Run walk-forward calibration producer
         env:
           WF_SESSIONS: ${{ inputs.sessions }}
@@ -54,30 +94,35 @@ jobs:
           GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
         run: |
           python - <<'PY'
-          import hashlib, json, os
+          import hashlib, json, os, re
           from pathlib import Path
           src=Path("data/processed/nse_eq_200_sessions.csv")
           artifact=Path("outputs/backtest/behavioral_dna_library.json")
           if not src.is_file() or not artifact.is_file():
               raise SystemExit("required source dataset or producer artifact missing")
           payload=json.loads(artifact.read_text(encoding="utf-8"))
-          required=("producer_run_id","producer_commit_sha","dataset_sha256","cutoff_start","cutoff_end","generated_at_utc","label_maturity_cutoff","states")
+          required=("schema_version","producer_engine","producer_engine_version","feature_contract_version","producer_run_id","producer_commit_sha","dataset_sha256","cutoff_start","cutoff_end","generated_at_utc","target_definition","label_maturity_cutoff","states")
           missing=[k for k in required if payload.get(k) in (None,"")]
           if missing:
               raise SystemExit("producer provenance missing: "+",".join(missing))
           sha=lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
-          if payload["producer_run_id"] != os.environ["GITHUB_RUN_ID"]:
+          if str(payload["producer_run_id"]) != os.environ["GITHUB_RUN_ID"]:
               raise SystemExit("producer run ID does not match this GitHub Actions run")
           if payload["producer_commit_sha"] != os.environ["GITHUB_SHA"]:
               raise SystemExit("producer commit SHA does not match checked-out commit")
           if payload["dataset_sha256"] != sha(src):
               raise SystemExit("producer dataset fingerprint mismatch")
+          if not re.fullmatch(r"[0-9a-f]{64}", sha(artifact)):
+              raise SystemExit("calibration artifact SHA-256 invalid")
           manifest={
             "manifest_schema":"PRECISION-WIRES-CALIBRATION-MANIFEST-1",
             "producer_workflow":"V11.4 calibration evidence producer",
             "producer_run_id":os.environ["GITHUB_RUN_ID"],
             "producer_run_attempt":os.environ["GITHUB_RUN_ATTEMPT"],
             "producer_commit_sha":os.environ["GITHUB_SHA"],
+            "source_run_id":43016431808,
+            "source_artifact_id":13854135591,
+            "source_artifact_sha256":"b29c3da9b5c4ed082519b025c7844d151e2e0f874cf61e5cb00c63e6b0c8617e",
             "dataset_path":str(src),
             "dataset_sha256":sha(src),
             "calibration_artifact_path":str(artifact),
