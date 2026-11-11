@@ -11,6 +11,8 @@ on:
       - "qa/test_final_selection_calibration_integration.py"
       - "qa/test_behavioral_dna_producer_metadata.py"
       - ".github/workflows/calibration_evidence_gate_qa.yml"
+      - ".github/workflows/calibration_evidence_producer.yml"
+      - "qa/test_calibration_producer_workflow_contract.py"
   workflow_dispatch:
 
 permissions:
