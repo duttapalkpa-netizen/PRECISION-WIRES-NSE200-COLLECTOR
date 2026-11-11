@@ -19,7 +19,7 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - name: Checkout research branch
         uses: actions/checkout@v4
@@ -41,8 +41,16 @@ jobs:
           retrieved_at = datetime.now(timezone.utc)
           today_ist = retrieved_at.astimezone(ist).date()
 
-          # Probe each of the last seven Mumbai-local calendar dates separately.
-          # Weekends/holidays are retained as observations, never silently filled.
+          # Probe the previously unexamined gap (17 Oct through 4 Nov 2026)
+          # as individual Mumbai-local calendar dates, preserving weekends/holidays.
+          gap_start = date(2026, 10, 17)
+          gap_end = date(2026, 11, 4)
+          probe_date = gap_start
+          while probe_date <= gap_end:
+              windows.append((f"gap_{probe_date.isoformat().replace('-', '')}", probe_date, probe_date))
+              probe_date += timedelta(days=1)
+
+          # Retain the rolling seven-day window for ongoing freshness monitoring.
           for offset in range(6, -1, -1):
               probe_date = today_ist - timedelta(days=offset)
               windows.append((f"rolling_{probe_date.isoformat().replace('-', '')}", probe_date, probe_date))
