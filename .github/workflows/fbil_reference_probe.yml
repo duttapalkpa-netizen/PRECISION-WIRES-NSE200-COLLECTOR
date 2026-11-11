@@ -1,0 +1,106 @@
+name: FBIL reference-rate live probe
+
+on:
+  push:
+    branches:
+      - research/global-capital-rotation-overlay-v1
+    paths:
+      - ".github/workflows/fbil_reference_probe.yml"
+      - "qa/validate_fbil_reference_payload.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fbil-reference-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+
+      - name: Request short FBIL date window and preserve raw response
+        id: acquire
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p probe-output
+          export TZ=Asia/Kolkata
+          FROM_DATE="$(date -d '2 days ago' +%-Y-%-m-%-d)"
+          TO_DATE="$(date +%-Y-%-m-%-d)"
+          FROM_ISO="$(date -d '2 days ago' +%F)"
+          TO_ISO="$(date +%F)"
+          URL="https://www.fbil.org.in/wasdm/refrates/fetchfiltered?fromDate=${FROM_DATE}&toDate=${TO_DATE}&authenticated=false"
+          printf '%s\n' "$FROM_ISO" > probe-output/from_date.txt
+          printf '%s\n' "$TO_ISO" > probe-output/to_date.txt
+          printf '%s\n' "$URL" > probe-output/request_url.txt
+          date -u +%Y-%m-%dT%H:%M:%SZ > probe-output/retrieved_at_utc.txt
+          date +%Y-%m-%dT%H:%M:%S%:z > probe-output/retrieved_at_ist.txt
+          set +e
+          HTTP_CODE="$(curl --location --silent --show-error --max-time 35 --retry 1 --retry-delay 2 \
+            --user-agent 'PRECISION-WIRES-V11.3-research/1.0' \
+            --header 'Accept: application/json' \
+            --dump-header probe-output/response_headers.txt \
+            --output probe-output/fbil_raw_response.json \
+            --write-out '%{http_code}' "$URL" 2>probe-output/curl_stderr.txt)"
+          CURL_EXIT=$?
+          set -e
+          printf '%s\n' "$HTTP_CODE" > probe-output/http_status.txt
+          printf '%s\n' "$CURL_EXIT" > probe-output/curl_exit_code.txt
+          if [ -f probe-output/fbil_raw_response.json ]; then
+            wc -c < probe-output/fbil_raw_response.json > probe-output/raw_byte_count.txt
+            sha256sum probe-output/fbil_raw_response.json > probe-output/raw_sha256.txt
+          else
+            printf '0\n' > probe-output/raw_byte_count.txt
+            printf 'NO_FILE\n' > probe-output/raw_sha256.txt
+          fi
+          if [ "$CURL_EXIT" -ne 0 ] || [ "$HTTP_CODE" != "200" ]; then
+            echo "FBIL request did not return HTTP 200; raw diagnostics retained as artifact."
+            exit 0
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("probe-output/fbil_raw_response.json")
+          try:
+              obj = json.loads(p.read_bytes())
+              kind = type(obj).__name__
+              count = len(obj) if isinstance(obj, list) else None
+              result = {"json_parse": "PASS", "root_type": kind, "record_count": count}
+          except Exception as exc:
+              result = {"json_parse": "FAIL", "error": str(exc)}
+          Path("probe-output/json_probe.json").write_text(json.dumps(result, indent=2) + "\n")
+          print(json.dumps(result, indent=2))
+          PY
+
+      - name: Run fail-closed payload validator when response is HTTP 200
+        if: steps.acquire.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          CODE="$(cat probe-output/http_status.txt)"
+          if [ "$CODE" != "200" ]; then
+            echo "SKIP: no HTTP 200 response; no rows admitted."
+            exit 0
+          fi
+          FROM_ISO="$(cat probe-output/from_date.txt)"
+          TO_ISO="$(cat probe-output/to_date.txt)"
+          python qa/validate_fbil_reference_payload.py \
+            --raw probe-output/fbil_raw_response.json \
+            --from-date "$FROM_ISO" \
+            --to-date "$TO_ISO" \
+            --csv-out probe-output/validated_fbil_reference_rates.csv
+
+      - name: Upload immutable probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fbil-reference-live-probe-${{ github.run_id }}
+          path: probe-output/
+          if-no-files-found: warn
+          retention-days: 30
