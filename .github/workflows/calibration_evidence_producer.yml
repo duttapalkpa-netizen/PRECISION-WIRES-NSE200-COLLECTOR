@@ -1,0 +1,103 @@
+name: V11.4 calibration evidence producer
+
+on:
+  workflow_dispatch:
+    inputs:
+      sessions:
+        description: "Number of matured walk-forward cutoffs (1–100); use the approved research window"
+        required: true
+        default: "100"
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  produce-calibration-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact producer commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install producer dependencies
+        run: python -m pip install "numpy>=1.26,<3" "pandas>=2.2,<3"
+      - name: Validate immutable input availability and requested window
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s data/processed/nse_eq_200_sessions.csv
+          python - <<'PY'
+          import os, re
+          value=os.environ["WF_SESSIONS"]
+          if not re.fullmatch(r"[1-9][0-9]{0,2}", value) or int(value)>100:
+              raise SystemExit("sessions must be an integer from 1 through 100")
+          PY
+        env:
+          WF_SESSIONS: ${{ inputs.sessions }}
+      - name: Run walk-forward calibration producer
+        env:
+          WF_SESSIONS: ${{ inputs.sessions }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: timeout --signal=TERM --kill-after=15s 420s python -m pipeline.walk_forward_backtest
+      - name: Validate producer output and create provenance manifest
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          src=Path("data/processed/nse_eq_200_sessions.csv")
+          artifact=Path("outputs/backtest/behavioral_dna_library.json")
+          if not src.is_file() or not artifact.is_file():
+              raise SystemExit("required source dataset or producer artifact missing")
+          payload=json.loads(artifact.read_text(encoding="utf-8"))
+          required=("producer_run_id","producer_commit_sha","dataset_sha256","cutoff_start","cutoff_end","generated_at_utc","label_maturity_cutoff","states")
+          missing=[k for k in required if payload.get(k) in (None,"")]
+          if missing:
+              raise SystemExit("producer provenance missing: "+",".join(missing))
+          sha=lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+          if payload["producer_run_id"] != os.environ["GITHUB_RUN_ID"]:
+              raise SystemExit("producer run ID does not match this GitHub Actions run")
+          if payload["producer_commit_sha"] != os.environ["GITHUB_SHA"]:
+              raise SystemExit("producer commit SHA does not match checked-out commit")
+          if payload["dataset_sha256"] != sha(src):
+              raise SystemExit("producer dataset fingerprint mismatch")
+          manifest={
+            "manifest_schema":"PRECISION-WIRES-CALIBRATION-MANIFEST-1",
+            "producer_workflow":"V11.4 calibration evidence producer",
+            "producer_run_id":os.environ["GITHUB_RUN_ID"],
+            "producer_run_attempt":os.environ["GITHUB_RUN_ATTEMPT"],
+            "producer_commit_sha":os.environ["GITHUB_SHA"],
+            "dataset_path":str(src),
+            "dataset_sha256":sha(src),
+            "calibration_artifact_path":str(artifact),
+            "calibration_artifact_sha256":sha(artifact),
+            "calibration_artifact_name":"v11-4-calibration-evidence",
+            "cutoff_start":payload["cutoff_start"],
+            "cutoff_end":payload["cutoff_end"],
+            "generated_at_utc":payload["generated_at_utc"],
+            "label_maturity_cutoff":payload["label_maturity_cutoff"],
+            "target_definition":payload["target_definition"],
+            "states":payload["states"]
+          }
+          Path("outputs/backtest/calibration_producer_manifest.json").write_text(json.dumps(manifest,indent=2),encoding="utf-8")
+          PY
+      - name: Upload immutable calibration evidence and manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: v11-4-calibration-evidence
+          path: |
+            outputs/backtest/behavioral_dna_library.json
+            outputs/backtest/calibration_producer_manifest.json
+          if-no-files-found: error
+          retention-days: 14
