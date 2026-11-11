@@ -41,7 +41,7 @@ class FinalSelectionCalibrationIntegrationTests(unittest.TestCase):
                 payload = {
                     "schema_version": "1.0", "producer_engine": "V11.3",
                     "producer_engine_version": "11.3", "feature_contract_version": "1",
-                    "producer_run_id": "qa-fixture-run", "producer_commit_sha": "a" * 40,
+                    "producer_run_id": "43051456434", "producer_commit_sha": "a" * 40,
                     "dataset_sha256": artifact_hash, "cutoff_start": "2026-01-01",
                     "cutoff_end": "2026-01-30", "generated_at_utc": "2026-02-01T00:00:00+00:00",
                     "target_definition": "hit10_h3", "label_maturity_cutoff": "2026-02-01",
