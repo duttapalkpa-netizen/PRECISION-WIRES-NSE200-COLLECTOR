@@ -1,0 +1,28 @@
+{
+  "source": "FBIL public reference-rate API",
+  "request_url": "https://www.fbil.org.in/wasdm/refrates/fetchfiltered?fromDate=2026-10-15&toDate=2026-10-16&authenticated=false",
+  "request_window": {"from": "2026-10-15", "to": "2026-10-16"},
+  "retrieved_at_utc": "2026-11-11T07:55:32.114141+00:00",
+  "retrieved_at_ist": "2026-11-11T13:25:32.114141+05:30",
+  "http_status": 200,
+  "content_type": "application/json",
+  "raw_bytes": 1919,
+  "raw_sha256": "aeec99630a30d4b5961755c35e05b1e795dec1c39a373e48d95eca5edd165e27",
+  "json_root": "array",
+  "record_count": 14,
+  "date_count": 2,
+  "product_labels": ["INR / 1 RUB", "INR / 1 USD", "INR / 1 GBP", "INR / 1 EUR", "INR / 100 JPY", "INR / 1 AED", "INR / 10000 IDR"],
+  "workflow_run_id": 42983033561,
+  "workflow_run_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42983033561",
+  "workflow_artifact_id": 13837574133,
+  "workflow_artifact_sha256": "48340a456b11aa8b3cc7e6133d00dcd92794b08c8460cbe65742cc25986c56f4",
+  "validation": "PASS",
+  "validation_scope": "14 records; 2 dates; 7 FBIL product labels; duplicate date-currency check; numeric positive rates; requested-date bounds",
+  "limitations": [
+    "This is a two-day historical sample, not a full historical backfill.",
+    "The separate recent window 2026-11-09 through 2026-11-11 returned HTTP 200 with an empty JSON array.",
+    "The recent-window empty response remains unexplained; do not treat it as proof of an API retention limit or a missing market observation.",
+    "FBIL reference rates are benchmark fixings, not interbank OHLC.",
+    "No observations are promoted into production or Factor Registry by this evidence capture."
+  ]
+}
