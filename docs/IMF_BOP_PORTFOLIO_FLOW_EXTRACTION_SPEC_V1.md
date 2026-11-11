@@ -164,28 +164,3 @@ This is an independently documented alternate endpoint family, but the exact BOP
 ### Important source boundary
 
 The IMF SDMX Central guide describes the Structure Web Service for metadata (Dataflows, Codelists, Concepts and Data Structures). Do not mistake successful DSD retrieval for access to actual BOP observations. Observation extraction requires a separately verified IMF Data Portal data endpoint and dataset vintage. The IMF Data API page documents SDMX 2.1/3.0 access, while its Swagger explorer requires beta-portal sign-in. No observation API request is asserted as tested here.
-
-
-## 2C. Live access audit — 2026-11-12 (official portal)
-
-This is a fresh transport/access check, separate from the 2026-11-10 metadata contract.
-
-- The public IMF BOP dataset page identifies the dataset as Balance of Payments and describes it as transactions between residents and non-residents. The page exposes an API link and View Data / Download controls.
-- Following the page's API link in this audit redirected to the IMF API portal sign-in page. The public IMF API help page states that the Swagger explorer requires a beta-portal account sign-in.
-- Therefore, public dataset-page visibility is **not** evidence that the observation API is anonymously accessible. No authenticated account/session is available in this research execution, and no BOP observation payload was obtained.
-- Public DSD registry metadata and the IMF BOP observation API are separate resources. A DSD or structure response cannot be counted as portfolio transaction data.
-
-| Gate | 2026-11-12 result |
-|---|---|
-| Public IMF BOP dataset page | VERIFIED |
-| Dataset frequency | Annual and quarterly (dataset metadata) |
-| API navigation endpoint | Redirects to sign-in |
-| Anonymous BOP observation response | UNKNOWN / NOT ACCESSIBLE IN THIS AUDIT |
-| HTTP status / response body for observation query | NOT AVAILABLE — no observation query URL validated |
-| Raw BOP observation bytes / SHA-256 | NOT AVAILABLE |
-| Portfolio investment transaction panel | UNKNOWN / NOT DONE |
-| EM membership and aggregation | UNKNOWN / NOT DONE |
-
-**Decision:** Do not guess an observation URL, scrape a hidden UI endpoint, use a paid API, or substitute IMF PIP/CPIS positions for BOP transactions. The next valid path is either (a) a public, documented IMF observation download/API route that can be tested without sign-in, or (b) explicit user-authorized access to an eligible free IMF beta-portal account. No external contact is initiated. Until a real payload is retrieved and reconciled, the global EM portfolio-flow indicator remains UNKNOWN and the Overlay remains incomplete.
-
-This access block does not change any production selector, ranking score, pressure-fade logic, diagnostic, engine, or Hard Gate.
