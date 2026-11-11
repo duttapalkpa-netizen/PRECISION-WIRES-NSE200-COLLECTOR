@@ -81,3 +81,16 @@ The legacy state-keyed records and their `hit10_h3` field are retained for the e
 Isolated QA: 18 tests passed on GitHub Actions run 42769180185 (commit d19e4bcba7073ec36a109f4243392b8b8fe825ad). Tests cover real file-hash calculation, legacy-field preservation, validator acceptance with supplied run/commit provenance, and fail-closed behavior when GitHub lineage is absent.
 
 Still not verified: freshness age threshold, consumer-side equality between artifact dataset SHA/cutoffs and the exact V11.3 input dataset, producer run/commit lineage cross-check against the actual workflow artifact, and a full historical production artifact replay. No market-data workflow was run for this QA.
+
+
+## Producer lineage audit (2026-11-11)
+
+The validator now rejects non-numeric `producer_run_id` values; a syntactically plausible SHA and a text label are not accepted as run identity. The QA fixture uses a numeric run identifier and includes a negative test for a non-numeric identifier.
+
+A repository workflow inventory at PR head `75724424101acd6bbf9c8755b0c0d1f92d38600f` found no workflow that invokes `pipeline/walk_forward_backtest.py` or uploads `outputs/backtest/behavioral_dna_library.json` as a named producer artifact. The only calibration-specific workflow is `.github/workflows/calibration_evidence_gate_qa.yml`, which runs isolated unit tests and does not produce market calibration evidence. Therefore its successful run ID must not be misrepresented as the calibration producer run.
+
+**Lineage disposition: UNKNOWN / BLOCKED.** The current code verifies the run-ID field format and commit-SHA format, but does not yet establish that the referenced run exists, succeeded, used the referenced commit, and emitted the exact calibration JSON artifact. No independent producer artifact ID or provenance attestation is available from the inspected workflow inventory. Do not promote this check to PASS.
+
+Required next integration (not implemented by this QA-only patch): a dedicated, approved calibration producer workflow that executes the walk-forward producer on the approved input dataset, uploads the calibration artifact plus a manifest, and binds manifest fields to GitHub run ID, head SHA, artifact ID/name, dataset SHA-256, and cutoff context. A separate verifier must compare those values to GitHub's run/artifact metadata. Until then final-selection readiness remains fail-closed. Freshness age policy also remains unapproved and UNKNOWN.
+
+This audit did not trigger a market-data workflow, create synthetic market rows, alter selector/ranking logic, or merge the draft PR.
