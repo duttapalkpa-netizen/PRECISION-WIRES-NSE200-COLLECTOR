@@ -24,7 +24,8 @@ jobs:
       - name: Checkout research branch
         uses: actions/checkout@v4
 
-      - name: Probe known historical and recent windows
+      - name: Probe known historical and recent windows after 13:30 IST
+        # A post-fixing run tests same-day publication separately from historical backfill.
         shell: bash
         run: |
           set -euo pipefail
