@@ -10,7 +10,7 @@ def valid_payload(rate=0.0, dataset_sha=None):
     data.update({
         "schema_version": "1.0", "producer_engine": "V11.3",
         "producer_engine_version": "11.3", "feature_contract_version": "1",
-        "producer_run_id": "run-test", "producer_commit_sha": "a" * 40,
+        "producer_run_id": "43051456434", "producer_commit_sha": "a" * 40,
         "dataset_sha256": dataset_sha or "b" * 64, "cutoff_start": "2026-01-01",
         "cutoff_end": "2026-10-01", "generated_at_utc": "2026-10-02T00:00:00+00:00",
         "target_definition": "hit10_h3", "label_maturity_cutoff": "2026-10-01",
@@ -40,6 +40,11 @@ class CalibrationGatePolicyTests(unittest.TestCase):
     def test_missing_provenance_blocks(self):
         data = valid_payload()
         del data["producer_run_id"]
+        self.assertEqual(self.check(data)["status"], "UNKNOWN_PROVENANCE")
+
+    def test_non_numeric_producer_run_id_blocks(self):
+        data = valid_payload()
+        data["producer_run_id"] = "qa-fixture-run"
         self.assertEqual(self.check(data)["status"], "UNKNOWN_PROVENANCE")
 
     def test_measured_zero_is_valid_and_distinct(self):
