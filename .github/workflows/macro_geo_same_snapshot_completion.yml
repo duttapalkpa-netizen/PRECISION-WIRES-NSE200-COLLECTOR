@@ -31,8 +31,6 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: |
-            data/processed/nse_eq_200_sessions.csv
-            data/processed/symbol_session_coverage.csv
           key: macro-geo-nse200-audit/run145-factor-registry-gap-audit-41274367993
       - name: Verify exact immutable P0 evidence artifact
         env:
@@ -67,32 +65,37 @@ jobs:
           test -s inputs/p0/outputs/macro_geo/source_coverage.csv
           cp -a inputs/p0/data/external/. data/external/
           cp -a inputs/p0/outputs/. outputs/
-      - name: Require the exact cached NSE panel and validate its snapshot identity
+      - name: Record exact P0 NSE panel cache availability without substituting another snapshot
         run: |
           set -euo pipefail
-          test -s data/processed/nse_eq_200_sessions.csv
           python - <<'PY'
           import json, hashlib
           from pathlib import Path
-          import pandas as pd
           root=Path("outputs/macro_geo")
           coverage=json.loads((root/"source_coverage.json").read_text())
           item=next(x for x in coverage["sources"] if x.get("source")=="nse_daily_equity")
           panel=Path("data/processed/nse_eq_200_sessions.csv")
-          df=pd.read_csv(panel)
-          cols={str(c).strip().upper():c for c in df.columns}
-          assert "DATE" in cols
-          dates=pd.to_datetime(df[cols["DATE"]],errors="coerce").dropna().dt.normalize()
-          unique=sorted(dates.unique())
-          assert len(unique)>=200, len(unique)
-          assert len(df)==int(item["rows"]), (len(df),item["rows"])
-          assert str(unique[0].date())==str(item["date_min"]), (unique[0],item["date_min"])
-          assert str(unique[-1].date())==str(item["date_max"]), (unique[-1],item["date_max"])
-          digest=hashlib.sha256(panel.read_bytes()).hexdigest()
-          result={"status":"EXACT_P0_CACHE_PANEL_RESTORED","cache_key":"macro-geo-nse200-audit/run145-factor-registry-gap-audit-41274367993",
-            "rows":len(df),"unique_sessions":len(unique),"date_min":str(unique[0].date()),"date_max":str(unique[-1].date()),
-            "source_coverage_rows":int(item["rows"]),"panel_sha256":digest}
-          Path("outputs/macro_geo/nse_panel_snapshot_identity.json").write_text(json.dumps(result,indent=2)+"\n")
+          result={"cache_key":"macro-geo-nse200-audit/run145-factor-registry-gap-audit-41274367993",
+            "source_coverage_rows":int(item["rows"]),"source_coverage_date_min":item["date_min"],
+            "source_coverage_date_max":item["date_max"]}
+          if panel.is_file():
+              import pandas as pd
+              df=pd.read_csv(panel)
+              cols={str(c).strip().upper():c for c in df.columns}
+              assert "DATE" in cols
+              dates=pd.to_datetime(df[cols["DATE"]],errors="coerce").dropna().dt.normalize()
+              unique=sorted(dates.unique())
+              assert len(unique)>=200 and len(df)==int(item["rows"])
+              assert str(unique[0].date())==str(item["date_min"])
+              assert str(unique[-1].date())==str(item["date_max"])
+              result.update({"status":"EXACT_P0_CACHE_PANEL_RESTORED","rows":len(df),
+                "unique_sessions":len(unique),"date_min":str(unique[0].date()),
+                "date_max":str(unique[-1].date()),"panel_sha256":hashlib.sha256(panel.read_bytes()).hexdigest()})
+          else:
+              result.update({"status":"BLOCKED_EXACT_P0_PANEL_CACHE_EXPIRED",
+                "reason":"The original cache key used by P0 run 41283471559 is no longer available. No newer or differently dated NSE panel is substituted.",
+                "required_action":"Recover the exact panel artifact or regenerate the complete P0 snapshot before same-snapshot acceptance."})
+          Path(root/"nse_panel_snapshot_identity.json").write_text(json.dumps(result,indent=2)+"\n")
           print(json.dumps(result,indent=2))
           PY
       - name: Regenerate normalized macro tables from the exact archived P0 source evidence
@@ -131,27 +134,57 @@ jobs:
           python pipeline/reconcile_source_coverage_status.py
       - name: Recompute exact same-snapshot reconciliation
         run: python pipeline/macro_geo_same_snapshot_reconcile.py
-      - name: Require all consistency checks and retain blocked hard gate
+      - name: Require independent consistency checks and preserve exact panel blocker
         run: |
           python - <<'PY'
-          import json
+          import json, hashlib
           from pathlib import Path
+          import pandas as pd
           root=Path("outputs/macro_geo")
           report=json.loads((root/"same_snapshot_reconciliation.json").read_text())
           parity=json.loads((root/"source_coverage_status_reconciliation.json").read_text())
+          coverage=json.loads((root/"source_coverage.json").read_text())
           factor=json.loads((root/"factor_coverage_audit.json").read_text())
           hard=json.loads((root/"hard_gate_report.json").read_text())
-          assert report["status"]=="RECONCILED_SAME_WORKFLOW_SNAPSHOT",report
-          assert report["missing_required_files"]==[]
-          assert report["checks"] and all(report["checks"].values()),report["checks"]
+          panel=json.loads((root/"nse_panel_snapshot_identity.json").read_text())
           assert parity["status"]=="PASS_EXACT_SOURCE_KEY_AND_STATUS_PARITY"
           assert parity["status_mismatches_after_reconciliation"]==0
           assert parity["json_source_rows"]==35 and parity["csv_source_rows"]==35
           assert factor["factor_groups"]==35
           assert hard["status"]=="BLOCKED"
           assert "FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE" in hard.get("blockers",[])
-          print({"same_snapshot":"PASS","snapshot_as_of_utc":report["source_snapshot_as_of_utc"],
-            "checks":report["checks"],"factor_groups":factor["factor_groups"],
+          assert report["status"]=="INCOMPLETE_REQUIRED_EVIDENCE_MISSING",report
+          assert report["missing_required_files"]==["data/processed/nse_eq_200_sessions.csv"],report["missing_required_files"]
+          assert panel["status"]=="BLOCKED_EXACT_P0_PANEL_CACHE_EXPIRED"
+          macroqa=json.loads((root/"macro_series_observation_qa.json").read_text())
+          obs_hash=hashlib.sha256(Path("data/external/macro_series_observations.csv").read_bytes()).hexdigest()
+          macro=pd.read_csv("data/external/macro_indicators.csv")
+          inflation=pd.read_csv("data/external/inflation_components.csv")
+          capex=pd.read_csv("data/external/government_capex.csv")
+          non_panel_checks={
+            "macro_source_audit_belongs_to_p0_run":str(coverage.get("macro_series_source_audit_run_id",""))==str(coverage.get("p0_workflow_run_id",""))=="41283471559",
+            "factor_audit_uses_same_source_snapshot":factor.get("source_coverage_as_of")==coverage.get("as_of_utc"),
+            "source_coverage_csv_json_status_parity":parity["status_mismatches_after_reconciliation"]==0,
+            "normalized_observation_hash_matches":macroqa.get("sha256")==obs_hash=="80b76c3246033931c4637d7a2895854b33c9a9629c7446ca51f67adaf8cddc3e",
+            "normalized_duplicate_keys_zero":int(macroqa.get("duplicate_keys",-1))==0,
+            "macro_indicator_release_timestamps_present":len(macro)>0 and macro["RELEASED_AT"].notna().all(),
+            "inflation_component_release_timestamps_present":len(inflation)>0 and inflation["RELEASED_AT"].notna().all(),
+            "capex_unverified_release_times_not_promoted":"RELEASED_AT" in capex.columns and capex["RELEASED_AT"].isna().all(),
+            "factor_group_count_35":int(factor.get("factor_groups",0))==35,
+            "hard_gate_report_present":bool(hard.get("status"))
+          }
+          assert all(non_panel_checks.values()),non_panel_checks
+          (root/"same_snapshot_non_panel_checks.json").write_text(json.dumps({
+            "status":"PASS_WITH_EXACT_NSE_PANEL_DEPENDENCY_BLOCKED",
+            "source_snapshot_as_of_utc":coverage.get("as_of_utc"),
+            "checks":non_panel_checks,
+            "missing_required_file":report["missing_required_files"][0],
+            "hard_gate_status":hard["status"],
+            "hard_gate_blockers":hard.get("blockers",[])
+          },indent=2)+"\n")
+          print({"non_panel_checks":"PASS","checks":non_panel_checks,
+            "same_snapshot_overall":"BLOCKED_PANEL_ARTIFACT_UNAVAILABLE",
+            "factor_groups":factor["factor_groups"],
             "fully_available_schema_groups":factor["fully_available_schema_groups"],
             "partial_source_coverage":factor["partial_source_coverage"],
             "not_connected":factor["not_connected"],"hard_gate":hard["status"],
@@ -175,6 +208,7 @@ jobs:
             outputs/macro_geo/same_snapshot_reconciliation.json
             outputs/macro_geo/same_snapshot_reconciliation.json.sha256
             outputs/macro_geo/nse_panel_snapshot_identity.json
+            outputs/macro_geo/same_snapshot_non_panel_checks.json
             outputs/macro_geo/factor_coverage_audit.csv
             outputs/macro_geo/factor_coverage_audit.json
             outputs/macro_geo/macro_series_observation_qa.json
