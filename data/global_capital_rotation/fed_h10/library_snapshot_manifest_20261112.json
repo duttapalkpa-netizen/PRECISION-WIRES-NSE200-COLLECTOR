@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "dataset": "Federal Reserve H.10",
+  "scope": "research-only; source snapshots supplied by user in ChatGPT Library; no production integration",
+  "audit_date": "2026-11-12",
+  "source_url": "https://www.federalreserve.gov/releases/h10/",
+  "retrieval_timestamp_utc": null,
+  "retrieval_method": "user-provided Library CSV snapshots; exact download timestamp and per-file download URL not supplied",
+  "source_vintage": "observations through 2026-11-06 for daily files; monthly through 2026-10",
+  "raw_archive_library_file_id": "file_00000000d80082118df044084445d454",
+  "raw_archive_name": "fed_h10_library_raw_20261112.zip",
+  "raw_archive_bytes": 15322,
+  "raw_archive_sha256": "59a79209a6602a6cf6bc2022f8361ee7d86a0817e2d01540fc4e8dafbad7421c",
+  "raw_csv_files": [
+    {
+      "name": "FRB_H10(1).csv",
+      "bytes": 813,
+      "sha256": "c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1",
+      "series": [
+        "H10/H10/JRXWTFB_N.B",
+        "H10/H10/JRXWTFN_N.B",
+        "H10/H10/JRXWTFO_N.B"
+      ],
+      "frequency": "daily",
+      "observation_count": 10,
+      "start": "2026-10-26",
+      "end": "2026-11-06",
+      "value_type": "PRICE_INDEX"
+    },
+    {
+      "name": "FRB_H10 (1)(1).csv",
+      "bytes": 3672,
+      "sha256": "cafe63d09de50d3e051f0733f5c6ded7382ebf2194447d128b9f5d28fd5012d9",
+      "series": [
+        "H10/H10/RXI$US_N.B.AL",
+        "H10/H10/RXI$US_N.B.EU",
+        "H10/H10/RXI$US_N.B.NZ",
+        "H10/H10/RXI$US_N.B.UK",
+        "H10/H10/RXI_N.B.BZ",
+        "H10/H10/RXI_N.B.CA",
+        "H10/H10/RXI_N.B.CH",
+        "H10/H10/RXI_N.B.DN",
+        "H10/H10/RXI_N.B.HK",
+        "H10/H10/RXI_N.B.IN",
+        "H10/H10/RXI_N.B.JA",
+        "H10/H10/RXI_N.B.MA",
+        "H10/H10/RXI_N.B.MX",
+        "H10/H10/RXI_N.B.NO",
+        "H10/H10/RXI_N.B.SF",
+        "H10/H10/RXI_N.B.SI",
+        "H10/H10/RXI_N.B.KO",
+        "H10/H10/RXI_N.B.SL",
+        "H10/H10/RXI_N.B.SD",
+        "H10/H10/RXI_N.B.SZ",
+        "H10/H10/RXI_N.B.TA",
+        "H10/H10/RXI_N.B.TH",
+        "H10/H10/RXI_N.B.VES"
+      ],
+      "frequency": "daily",
+      "observation_count": 10,
+      "start": "2026-10-26",
+      "end": "2026-11-06",
+      "value_type": "FX_RATE"
+    },
+    {
+      "name": "FRB_H10 (2)(1).csv",
+      "bytes": 4743,
+      "sha256": "a5d3ee6f459532e76d3df2ca1928d50859919d0fa9ed93ca7e1bbd018b3df23c",
+      "series": [
+        "H10/H10/JRXWTFB_N.M",
+        "H10/H10/JRXWTFN_N.M",
+        "H10/H10/JRXWTFO_N.M"
+      ],
+      "frequency": "monthly",
+      "observation_count": 120,
+      "start": "2016-11",
+      "end": "2026-10",
+      "value_type": "PRICE_INDEX"
+    },
+    {
+      "name": "FRB_H10 (3)(1).csv",
+      "bytes": 24877,
+      "sha256": "06159035f0388750f780444fec30489811717466e5748e1284a981b72210c09a",
+      "series": [
+        "H10/H10/RXI_N.M.IN"
+      ],
+      "frequency": "monthly",
+      "observation_count": 120,
+      "start": "2016-11",
+      "end": "2026-10",
+      "value_type": "FX_RATE",
+      "note": "File contains 23 currency columns; all preserved. Indian Rupee series is explicitly identified as RXI_N.M.IN."
+    }
+  ],
+  "qa": {
+    "csv_width_consistent": true,
+    "duplicate_periods": 0,
+    "missing_numeric_cells": 0,
+    "nonnumeric_observation_cells": 0,
+    "monthly_periods_contiguous": true,
+    "raw_files_sha256_verified": true,
+    "archive_sha256_verified": true
+  },
+  "limitations": [
+    "Library snapshots are not independently proven to have been downloaded directly from the cited Federal Reserve URL.",
+    "Exact source retrieval timestamp and individual file download URLs are UNKNOWN.",
+    "The 10 daily observations are not a full daily historical series.",
+    "Monthly FX and index observations are not flows; do not infer capital movement from them.",
+    "The raw ZIP is retained in the user's Library; this manifest-only repository change does not yet commit the binary ZIP into Git."
+  ],
+  "acceptance": {
+    "library_snapshot_integrity": "PASS",
+    "csv_structural_qa": "PASS",
+    "repository_raw_binary_ingestion": "PENDING",
+    "source_provenance_validation": "PENDING",
+    "observation_panel_build": "PENDING",
+    "production_integration": "PROHIBITED"
+  }
+}
