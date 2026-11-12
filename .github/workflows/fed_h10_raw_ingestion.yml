@@ -1,11 +1,13 @@
-name: Federal Reserve H.10 raw source archive and daily panel
+name: Federal Reserve H.10 and BIS USD-INR raw ingestion
 on:
   pull_request:
     paths:
       - "pipeline/collect_fed_h10_raw.py"
       - "pipeline/parse_fed_h10_xml.py"
+      - "pipeline/collect_bis_usd_inr_raw.py"
       - "qa/test_fed_h10_raw_collector.py"
       - "qa/test_parse_fed_h10_xml.py"
+      - "qa/test_collect_bis_usd_inr_raw.py"
       - ".github/workflows/fed_h10_raw_ingestion.yml"
   workflow_dispatch:
 permissions:
@@ -22,11 +24,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run isolated collector and parser regression tests
-        run: python -m unittest qa.test_fed_h10_raw_collector qa.test_parse_fed_h10_xml -v
+      - name: Run source collector and parser regression tests
+        run: python -m unittest qa.test_fed_h10_raw_collector qa.test_parse_fed_h10_xml qa.test_collect_bis_usd_inr_raw -v
       - name: Download and validate official H.10 raw archive
         run: python pipeline/collect_fed_h10_raw.py --output-dir artifacts/raw/fed_h10
-      - name: Extract and reconcile daily USD indices with USD-INR
+      - name: Extract and reconcile daily USD indices with H.10 USD-INR
         shell: bash
         run: |
           RAW_ZIP="$(find artifacts/raw/fed_h10 -type f -name '*.zip' -print -quit)"
@@ -34,12 +36,15 @@ jobs:
           test -n "$RAW_ZIP"
           test -n "$RAW_MANIFEST"
           python pipeline/parse_fed_h10_xml.py --archive "$RAW_ZIP" --raw-manifest "$RAW_MANIFEST" --output-dir artifacts/processed/fed_h10
-      - name: Upload raw source, SHA-256 manifest and status-preserving panel
+      - name: Download official BIS daily USD-INR SDMX-CSV
+        run: python pipeline/collect_bis_usd_inr_raw.py --output-dir artifacts/raw/bis_usd_inr
+      - name: Upload H.10 and BIS raw sources, manifests and H.10 panel
         uses: actions/upload-artifact@v4
         with:
-          name: fed-h10-raw-and-panel-evidence
+          name: fed-h10-bis-usd-inr-evidence
           path: |
             artifacts/raw/fed_h10/
+            artifacts/raw/bis_usd_inr/
             artifacts/processed/fed_h10/
           if-no-files-found: error
           retention-days: 90
