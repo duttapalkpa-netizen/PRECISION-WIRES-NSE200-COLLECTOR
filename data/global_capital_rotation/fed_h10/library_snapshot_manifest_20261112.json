@@ -114,6 +114,51 @@
     "repository_raw_binary_ingestion": "PENDING",
     "source_provenance_validation": "PENDING",
     "observation_panel_build": "PENDING",
-    "production_integration": "PROHIBITED"
+    "production_integration": "PROHIBITED",
+    "full_history_daily_raw_download": "PASS_26_OF_26",
+    "full_history_raw_sha256_and_schema_qa": "PASS_26_OF_26",
+    "daily_panel_build_and_artifact_digest": "PASS",
+    "nse_session_and_point_in_time_vintage_reconciliation": "PENDING"
+  },
+  "historical_daily_panel": {
+    "workflow_name": "Fed H10 full-history daily dollar and INR panel",
+    "workflow_run_id": 43276577238,
+    "workflow_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43276577238",
+    "workflow_commit": "35c73345fc55c5c6f7e4de24da291061e9d0c19f",
+    "artifact_id": 13970661965,
+    "artifact_name": "fed-h10-full-history-daily-panel-20261112",
+    "artifact_bytes": 3462888,
+    "artifact_sha256": "a6f6af42226ed689ceba8e9c2d843867d82e9aa8f9a7761022c86bd719ef3691",
+    "retrieved_at_utc": "2026-11-12T18:09:04.918538+00:00",
+    "distribution": "FRED public CSV endpoint; source owner Board of Governors of the Federal Reserve System; release H.10 Foreign Exchange Rates",
+    "series_count": 26,
+    "dollar_index_series_count": 3,
+    "bilateral_fx_series_count": 23,
+    "total_observation_rows": 304510,
+    "numeric_observations": 291831,
+    "missing_value_markers": 12679,
+    "date_union": {
+      "unique_dates": 14570,
+      "first": "1971-01-04",
+      "last": "2026-11-06"
+    },
+    "raw_series_files_sha256_verified": 26,
+    "raw_series_manifest_sha256": "f009090fde78a034916a54e3db78a8ccd1276749b1b5f5d96b27e9b610617d3b",
+    "long_panel": {
+      "path": "daily_historical_panel_long.csv",
+      "bytes": 8078212,
+      "sha256": "3f144536ccf1b7e4e5b9f96e0db57eed26cbded7c6ab9a6eff1fd1626afbbb2c"
+    },
+    "wide_panel": {
+      "path": "daily_historical_panel_wide.csv",
+      "bytes": 2199281,
+      "sha256": "04d4b7e7ec1997bdc2e069dbc501c1304ed03a601cce0720c41694f9c6e3c406"
+    },
+    "independent_verification": {
+      "artifact_zip_sha256_matches_github_digest": true,
+      "all_26_raw_file_hashes_recomputed": true,
+      "wide_and_long_output_hashes_recomputed": true
+    },
+    "acceptance_boundary": "Full-history raw downloads and per-series schema/date/hash QA passed for the 3 H.10 dollar indexes and all 23 H.10 bilateral FX series. Does not establish point-in-time vintage availability, exact NSE 200-session intersection, RBI reference-rate equivalence, global capital flows, event-study maturity, or production readiness."
   }
 }
