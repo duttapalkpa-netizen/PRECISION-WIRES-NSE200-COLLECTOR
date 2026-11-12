@@ -58,7 +58,7 @@ jobs:
               assert re.fullmatch(r"sec_bhavdata_full_[0-9]{8}\.csv",name),name
               assert rec["acquisition_status"]=="OK_FULL_BHAVCOPY_DELIVERY" and rec["schema_validation"]=="validated"
               assert rec["successful_response"]["http_status"]==200
-              assert rec["successful_response"]["sha256"]==rec["sha256"]
+              assert rec["successful_response"]["response_sha256"]==rec["sha256"]
               assert rec["successful_response"]["url"]==rec["source_url"]
               assert rec["retrieved_at_utc"]==rec["successful_response"]["retrieved_at_utc"]
               assert rec["source_url"].startswith("https://nsearchives.nseindia.com/")
