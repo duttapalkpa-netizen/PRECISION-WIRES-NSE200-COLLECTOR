@@ -21,6 +21,40 @@ SERIES = {
     "H10/H10/JRXWTFO_N.B": "Nominal Emerging Market Economies Dollar Index",
 }
 MAX_BYTES = 40 * 1024 * 1024
+MAX_ZIP_MEMBERS = 10_000
+MAX_MEMBER_UNCOMPRESSED_BYTES = 128 * 1024 * 1024
+MAX_TOTAL_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
+
+
+def validate_zip_members(zf: ZipFile) -> list[str]:
+    """Bound ZIP metadata and decompression work before CRC-testing any member."""
+    infos = zf.infolist()
+    if not infos or len(infos) > MAX_ZIP_MEMBERS:
+        raise ValueError("ZIP member count is empty or exceeds the safety limit")
+    names = [info.filename for info in infos]
+    if len(set(names)) != len(names):
+        raise ValueError("ZIP contains duplicate member names")
+    total_uncompressed = 0
+    for info in infos:
+        name = info.filename
+        parts = name.split("/")
+        if (
+            not name
+            or "\\\\" in name
+            or name.startswith("/")
+            or (len(name) >= 2 and name[1] == ":")
+            or "\\x00" in name
+            or any(part in ("", ".", "..") for part in parts if part != "" or not name.endswith("/"))
+        ):
+            raise ValueError("ZIP contains an unsafe member path")
+        if info.flag_bits & 0x1:
+            raise ValueError("encrypted ZIP members are not accepted")
+        if info.file_size < 0 or info.file_size > MAX_MEMBER_UNCOMPRESSED_BYTES:
+            raise ValueError("ZIP member exceeds the uncompressed size safety limit")
+        total_uncompressed += info.file_size
+        if total_uncompressed > MAX_TOTAL_UNCOMPRESSED_BYTES:
+            raise ValueError("ZIP total uncompressed size exceeds the safety limit")
+    return sorted(names)
 
 
 def validate_source_url(url: str) -> None:
@@ -68,9 +102,7 @@ def archive(output_dir: Path, retrieved_at: datetime | None = None) -> dict:
     if raw_path.exists() or manifest_path.exists():
         raise FileExistsError("append-only archive target already exists")
     with ZipFile(io.BytesIO(raw)) as zf:
-        members = sorted(zf.namelist())
-        if not members or any(name.startswith("/") or ".." in Path(name).parts for name in members):
-            raise ValueError("ZIP member list is empty or contains unsafe paths")
+        members = validate_zip_members(zf)
         bad_member = zf.testzip()
         if bad_member:
             raise BadZipFile(f"CRC failure in archive member: {bad_member}")
