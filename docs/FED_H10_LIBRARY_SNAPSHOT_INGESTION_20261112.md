@@ -92,9 +92,23 @@ FRED's daily FX list identifies 23 daily currency series; FRED table metadata id
 4. Full-history daily retrieval for all 26 series — PASS.
 5. Per-series schema, date-order, missingness and raw SHA-256 QA — PASS.
 6. Long/wide panel build and independently verified GitHub artifact digest — PASS.
-7. Exact NSE 200-session and point-in-time vintage reconciliation — PENDING.
+7. Exact NSE 200-session calendar join — PASS; point-in-time vintage availability at each historical signal timestamp — UNKNOWN/PENDING.
 8. Repository binary archive / overlay integration and matched diagnostic validation — PENDING.
 
-H.10 panel milestone progress: 6/8 = 75%. The previous 70% figure referred to the Library-ingestion subtask and is superseded for this panel ledger. Global Capital Rotation Overlay remains 62.5% (5/8) because other non-H.10 inputs and cross-layer validation remain incomplete.
+### Exact NSE calendar reconciliation — 2026-11-12
+- Alignment workflow Run ID: 43277569394 (SUCCESS).
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43277569394
+- Artifact ID: 13971506735; artifact ZIP SHA-256: 8192dd5908f5fd4abe3c9bbd72507b0abe6e8216dc064efed0815b181fc1138e.
+- NSE snapshot: ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305; exact 200 sessions from 2026-01-21 through 2026-11-12.
+- 200/200 NSE raw files and 26/26 H.10 raw series files independently verified against their pinned manifests.
+- Every one of the 26 H.10 series has 190 numeric observations across the 200 NSE sessions: 95.00% coverage.
+- Six NSE sessions carry explicit missing-value markers in the source: 2026-02-16, 2026-05-25, 2026-06-19, 2026-07-03, 2026-09-07, 2026-10-12.
+- Four NSE sessions have no source row in the retrieved H.10 vintage: 2026-02-01, 2026-11-09, 2026-11-11, 2026-11-12.
+- Missing values remain blank; no forward-fill, synthetic rows or imputation.
+- Aligned wide panel: 40,508 bytes; SHA-256 cc0781d542a4df89b9535e655b6c2d6c370336465249ad2659db1cf2d11b48f4.
+- Aligned long panel: 192,676 bytes; SHA-256 c4a82d05f1525289d2be43eff4f97a2785f9e648bd0fa631b1b7983ce51d5cf0.
+- The latest H.10 observation remains 2026-11-06. Historical point-in-time publication/vintage availability is not established by this single retrieval snapshot and remains UNKNOWN.
 
-Status: PASS_H10_26_SERIES_FULL_HISTORY_RAW_AND_QA; research-only; no production integration.
+Progress method: 8 equal-weight H.10 acceptance gates; gates 1–6 PASS, gate 7 has 1 of 2 subchecks PASS (exact calendar join PASS; point-in-time vintage UNKNOWN), gate 8 PENDING. Therefore H.10 panel progress = 6.5/8 = 81.25%. This is not the Global Capital Rotation Overlay completion percentage. The broader overlay remains 62.5% (5/8) pending other macro/flow sources and cross-layer validation.
+
+Status: PASS_H10_26_SERIES_FULL_HISTORY_AND_EXACT_NSE_SESSION_JOIN; point-in-time vintage remains UNKNOWN; research-only; no production integration.
