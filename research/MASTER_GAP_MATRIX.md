@@ -272,3 +272,23 @@ The retained NSE 200-session artifact from run \`41589358513\` / artifact \`1321
 - The 27,521-row discrepancy means this artifact is **not** an exact reconstruction of the expired P0 panel. It is rejected for same-snapshot restoration; no row padding, synthetic data, or date substitution is allowed.
 
 This diagnostic closes the attempted recovery path, not the missing-panel acceptance gate. Recover the exact original panel or perform a fresh, fully versioned P0 collection and recompute every dependent audit in one new snapshot.
+
+
+## 12. Macro-Geo P0 fresh same-snapshot rebuild from pinned official NSE evidence (2026-11-12)
+
+- Workflow: Macro Geo P0 fresh same-snapshot rebuild from verified NSE 200-session evidence.
+- Final run 43259234768 — SUCCESS; all workflow steps and artifact upload completed. Duration 108 seconds.
+- Artifact macro-geo-p0-fresh-snapshot-20261112, ID 13963926359, 163,037,121 bytes; ZIP SHA-256 bcc2cfafd25488160bfca68300de07ef06da9a94291083ec70e50445b48b1e02.
+- Pinned upstream NSE run 43245527846 / artifact 13955899352, digest 1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070, source snapshot ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305; all 200 raw file hashes, source URLs and retrieval timestamps rechecked.
+- Canonical NSE panel rebuilt from pinned raw files: 500,400 rows, 2,996 symbols, 200 sessions (2026-01-21 to 2026-11-12); panel SHA-256 91b320094baff93be9982564e5dc175203bc45cb7b03d59afc470bc049900122.
+- Composite downstream snapshot fingerprint (upstream NSE snapshot ID + exact downstream file hash map): 2e57a4f1eae955c8d12793f024b1f2f076dfef68096889d7adb5911ba9371db6.
+- 27 existing regression tests passed (27/27).
+- P0 collection window 2025-12-22 to 2026-11-12; market panel 340 rows / 12 series; 22 unique trusted-publisher media rows.
+- P0 coverage remains INCOMPLETE, 4/8 groups available: benchmark index, sector indices, volatility and geopolitical publisher events. Crude oil and USD/INR are NOT_CONNECTED; FPI/DII has 2 rows on one date only and fails >=60 dates / >=90 days per investor group; corporate events endpoint timed out.
+- Indian benchmark/sector/India VIX series each have only 10 observations (2026-10-29 to 2026-11-12); GLOBAL VIX has 230 rows and is not a substitute for India VIX. GDELT timed out 4/4; Reuters RSS returned 404; AP RSS returned 403; BBC, Al Jazeera and Bloomberg supplied the 22 deduplicated media mentions. Event dates are publication timestamps, not verified occurrence times.
+- Source inventory: 35 groups, 6 generic-available, 29 not connected. Factor Registry: 35 groups, 0 fully available, 7 partial, 28 not connected, 0 unmapped.
+- P0 operational status PASS_WITH_CRITICAL_DATA_GAPS; research status READY_FOR_EXPLORATORY_EVENT_STUDY; Hard Gate NOT CLEARED. This is a successful fresh P0 panel rebuild, not P0 acceptance or research release.
+- Full audit and file hashes: docs/MACRO_GEO_P0_FRESH_SNAPSHOT_REBUILD_AUDIT_20261112.md.
+- Diagnostic failed attempts retained, not counted as PASS: runs 43258574046, 43258838250, 43258942061, 43259070374, 43259089218; each failure and correction is recorded in the audit document. Final successful run: 43259234768.
+- No production selector, RANKING_SCORE, +1 PRESSURE_FADE, or 672-diagnostic changes; no synthetic rows/timestamps, no paid source, no PR merge, no production integration.
+- Next remediation: official Brent spot + USD/INR daily source integration with domain QA; historical official FPI/DII coverage; official NSE corporate events; longer official NSE Indices history; then same-snapshot event/regime and Hard Gate re-audit.
