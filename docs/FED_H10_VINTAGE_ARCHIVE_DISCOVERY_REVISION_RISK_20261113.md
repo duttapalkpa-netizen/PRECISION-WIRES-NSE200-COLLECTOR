@@ -70,3 +70,25 @@ Status update:
 - Exact Aug 12 correction publication time: UNKNOWN.
 - Full required vintage archive acquisition: PENDING.
 - Row-level 26 × 200 point-in-time reconstruction: PENDING.
+
+
+## Follow-up: full-year ALFRED calendar and second 2026 correction notice
+The ALFRED H.10 release calendar for 2026 exposes 52 candidate release/update dates across two pages. It lists weekly dates, including holiday-shifted Tuesdays (Jan 20, Feb 17, May 26, Sep 8, Oct 13) and displays 3:15 p.m. for most entries. The calendar itself warns that source release dates do not necessarily represent when data will be available on ALFRED. The 3:15 p.m. display must not be treated as the Federal Reserve's actual publication timestamp; use it only to enumerate candidate dates and verify the actual Federal Reserve archived release page.
+Sources:
+- https://alfred.stlouisfed.org/releases/calendar?rid=17&y=2026
+- https://alfred.stlouisfed.org/releases/calendar?pageID=2&rid=17&y=2026
+- ALFRED vintage/release-date methodology: https://alfred.stlouisfed.org/help
+
+A second 2026 technical correction notice was found in the Federal Reserve announcement feed: on May 11, 2026, some historical Broad, AFE and EME dollar-index data were corrected following the May 1, 2026 G.5 release. The May 1 G.5 archived page is available at https://www.federalreserve.gov/releases/g5/20260501/. The notice does not identify the exact affected observation dates/values in the feed, and the May 11 G.5 archived page could not be independently retrieved in this audit. Therefore this is a confirmed correction event but its exact overlap with the 26-series daily H.10 panel remains UNKNOWN; do not assert a daily H.10 value change without a direct before/after comparison.
+Official notice: https://www.federalreserve.gov/feeds/H10.html
+
+Correction-event inventory for the 2026 research window:
+- 2026-05-11 correction following 2026-05-01 G.5: CONFIRMED NOTICE; exact affected series/date overlap with daily H.10 panel UNKNOWN.
+- 2026-08-12 correction of 2026-08-10 H.10: CONFIRMED NOTICE; archived H.10 before/after tables directly show Aug 3 values changed for currencies and indexes.
+
+Status update:
+- 2026 ALFRED candidate release-date calendar enumeration: PASS (52 calendar entries; dates only, not publication-time proof).
+- 2026 correction-notice inventory discovery: PASS (two notices found).
+- May 11 correction exact H.10 daily-panel impact: UNKNOWN / requires archived payload diff.
+- Aug 10/Aug 12 H.10 revision values: PASS at archived HTML table level; raw payload hashes pending.
+- Intraday actual publication timestamp evidence for the correction events: PENDING.
