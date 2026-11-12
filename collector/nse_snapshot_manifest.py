@@ -110,12 +110,30 @@ def build_snapshot(raw_dir: Path, expected_sessions: int) -> dict:
                 or datetime.fromtimestamp(path.stat().st_mtime,timezone.utc).isoformat()})
     canonical=''.join(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n' for r in records).encode()
     snapshot_id=hashlib.sha256(canonical).hexdigest()
+    cache_records=[r for r in records if r.get('cache_origin')=='pre-existing-cache' or r.get('acquisition_status')=='CACHED']
+    network_records=[r for r in records if r.get('cache_origin')=='network' and r.get('successful_response')]
+    provenance_limitations=[]
+    if cache_records:
+        provenance_limitations.append(
+            f"{len(cache_records)} of {len(records)} selected session records came from pre-existing cache; "
+            "their original network URL and response evidence are unavailable."
+        )
+        provenance_limitations.append(
+            "For pre-existing-cache records, retrieved_at_utc is a local file-mtime proxy, "
+            "not an authoritative source retrieval or publication timestamp."
+        )
     manifest={'schema_version':2,'snapshot_id':snapshot_id,
         'expected_sessions':expected_sessions,'actual_sessions':len(records),'first_session':records[0]['trade_date'],
-        'last_session':records[-1]['trade_date'],'records':records,'provenance_limitations':[
-        'For pre-existing legacy cache files, the original network source and retrieval time are unavailable.',
-        'Pre-existing legacy cache records have no original URL or authoritative network retrieval timestamp.',
-        'File mtime is recorded as a local retrieval proxy, not as an authoritative server publication timestamp.']}
+        'last_session':records[-1]['trade_date'],'records':records,
+        'provenance_summary':{
+            'total_records':len(records),
+            'network_records_with_successful_http_200_evidence':len(network_records),
+            'preexisting_cache_records':len(cache_records),
+            'records_with_source_url':sum(bool(r.get('source_url')) for r in records),
+            'records_with_response_sha256':sum(bool((r.get('successful_response') or {}).get('response_sha256')) for r in records),
+            'records_with_authoritative_retrieval_timestamp':len(network_records)
+        },
+        'provenance_limitations':provenance_limitations}
     output=raw_dir/f'nse_snapshot_manifest_{snapshot_id[:16]}.json'
     if output.exists():
         existing=json.loads(output.read_text())
