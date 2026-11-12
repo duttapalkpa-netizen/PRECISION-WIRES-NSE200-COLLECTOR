@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.sha }}
+          ref: ${{ github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -28,8 +28,8 @@ jobs:
         run: python -m unittest qa.test_macro_geo_p0_raw_collector qa.test_macro_geo_engine -v
       - name: Verify and restore pinned official NSE 200-session artifact
         env:
-          GH_TOKEN: \${{ github.token }}
-          GH_REPO: \${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           python - <<'PY'
