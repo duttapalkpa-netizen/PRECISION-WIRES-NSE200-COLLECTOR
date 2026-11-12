@@ -25,7 +25,7 @@ jobs:
       - name: Install bounded P0 collector dependencies
         run: python -m pip install --disable-pip-version-check pandas numpy requests
       - name: Test P0 collector and evidence contracts
-        run: python -m unittest qa.test_macro_geo_p0_raw_collector qa.test_macro_geo_engine -v
+        run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_same_snapshot_reconcile -v
       - name: Verify and restore pinned official NSE 200-session artifact
         env:
           GH_TOKEN: ${{ github.token }}
