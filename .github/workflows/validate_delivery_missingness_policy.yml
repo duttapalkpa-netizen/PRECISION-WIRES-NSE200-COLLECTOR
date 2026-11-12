@@ -1,0 +1,31 @@
+name: QA Delivery Missingness Policy Regression
+
+on:
+  pull_request:
+    paths:
+      - "pipeline/walk_forward_backtest.py"
+      - "qa/test_delivery_missingness_policy.py"
+      - "qa/test_delivery_missingness_downstream_counterfactual.py"
+      - ".github/workflows/validate_delivery_missingness_policy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  delivery-missingness-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: python -m pip install numpy pandas
+      - name: Run isolated missingness policy tests
+        run: |
+          PYTHONPATH=. python -m unittest qa.test_delivery_missingness_policy -v
+          PYTHONPATH=. python -m unittest qa.test_delivery_missingness_downstream_counterfactual -v
