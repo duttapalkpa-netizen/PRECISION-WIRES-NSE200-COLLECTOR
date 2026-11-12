@@ -23,36 +23,38 @@ OUT = ROOT / "data/global_capital_rotation/fed_h10"
 RAW = OUT / "raw"
 UA = "PRECISION-WIRES-NSE200-COLLECTOR/1.0 (research-only; public FRED CSV download)"
 SERIES = {
-    "DTWEXBGS": {
-        "name": "Nominal Broad U.S. Dollar Index",
-        "unit": "Index Jan 2006=100",
-        "frequency": "Daily",
-        "h10_code": "H10/H10/JRXWTFB_N.B",
-        "expected_start": "2006-01-02",
-    },
-    "DTWEXAFEGS": {
-        "name": "Nominal Advanced Foreign Economies U.S. Dollar Index",
-        "unit": "Index Jan 2006=100",
-        "frequency": "Daily",
-        "h10_code": "H10/H10/JRXWTFN_N.B",
-        "expected_start": "2006-01-02",
-    },
-    "DTWEXEMEGS": {
-        "name": "Nominal Emerging Market Economies U.S. Dollar Index",
-        "unit": "Index Jan 2006=100",
-        "frequency": "Daily",
-        "h10_code": "H10/H10/JRXWTFO_N.B",
-        "expected_start": "2006-01-02",
-    },
-    "DEXINUS": {
-        "name": "Indian Rupees to U.S. Dollar Spot Exchange Rate",
-        "unit": "Indian Rupees to One U.S. Dollar",
-        "frequency": "Daily",
-        "h10_code": "H10/H10/RXI$US_N.B.IN",
-        "expected_start": "1973-01-02",
-        "note": "Noon buying rate in New York City; not RBI reference rate or DBIE interbank close.",
-    },
+    # Three H.10 nominal dollar indices.
+    "DTWEXBGS": {"name":"Nominal Broad U.S. Dollar Index","unit":"Index Jan 2006=100","frequency":"Daily","h10_code":"H10/H10/JRXWTFB_N.B","expected_start":"2006-01-02","source_type":"PRICE_INDEX"},
+    "DTWEXAFEGS": {"name":"Nominal Advanced Foreign Economies U.S. Dollar Index","unit":"Index Jan 2006=100","frequency":"Daily","h10_code":"H10/H10/JRXWTFN_N.B","expected_start":"2006-01-02","source_type":"PRICE_INDEX"},
+    "DTWEXEMEGS": {"name":"Nominal Emerging Market Economies U.S. Dollar Index","unit":"Index Jan 2006=100","frequency":"Daily","h10_code":"H10/H10/JRXWTFO_N.B","expected_start":"2006-01-02","source_type":"PRICE_INDEX"},
+    # All 23 bilateral daily FX series present in the user's H.10 snapshot.
+    # Unit direction is preserved: four series are USD per foreign currency;
+    # the remaining 19 are foreign-currency units per USD.
+    "DEXUSAL": {"name":"U.S. Dollars to Australian Dollar Spot Exchange Rate","unit":"U.S. dollars per Australian dollar","frequency":"Daily","h10_code":"H10/H10/RXI$US_N.B.AL","source_type":"FX_RATE"},
+    "DEXUSEU": {"name":"U.S. Dollars to Euro Spot Exchange Rate","unit":"U.S. dollars per euro","frequency":"Daily","h10_code":"H10/H10/RXI$US_N.B.EU","source_type":"FX_RATE"},
+    "DEXUSNZ": {"name":"U.S. Dollars to New Zealand Dollar Spot Exchange Rate","unit":"U.S. dollars per New Zealand dollar","frequency":"Daily","h10_code":"H10/H10/RXI$US_N.B.NZ","source_type":"FX_RATE"},
+    "DEXUSUK": {"name":"U.S. Dollars to U.K. Pound Sterling Spot Exchange Rate","unit":"U.S. dollars per pound sterling","frequency":"Daily","h10_code":"H10/H10/RXI$US_N.B.UK","source_type":"FX_RATE"},
+    "DEXBZUS": {"name":"Brazilian Reals to U.S. Dollar Spot Exchange Rate","unit":"Brazilian reals per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.BZ","source_type":"FX_RATE"},
+    "DEXCAUS": {"name":"Canadian Dollars to U.S. Dollar Spot Exchange Rate","unit":"Canadian dollars per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.CA","source_type":"FX_RATE"},
+    "DEXCHUS": {"name":"Chinese Yuan Renminbi to U.S. Dollar Spot Exchange Rate","unit":"Chinese yuan per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.CH","source_type":"FX_RATE"},
+    "DEXDNUS": {"name":"Danish Kroner to U.S. Dollar Spot Exchange Rate","unit":"Danish kroner per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.DN","source_type":"FX_RATE"},
+    "DEXHKUS": {"name":"Hong Kong Dollars to U.S. Dollar Spot Exchange Rate","unit":"Hong Kong dollars per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.HK","source_type":"FX_RATE"},
+    "DEXINUS": {"name":"Indian Rupees to U.S. Dollar Spot Exchange Rate","unit":"Indian rupees per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.IN","expected_start":"1973-01-02","source_type":"FX_RATE","note":"Noon buying rate in New York City; not RBI reference rate or DBIE interbank close."},
+    "DEXJPUS": {"name":"Japanese Yen to U.S. Dollar Spot Exchange Rate","unit":"Japanese yen per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.JA","source_type":"FX_RATE"},
+    "DEXMAUS": {"name":"Malaysian Ringgit to U.S. Dollar Spot Exchange Rate","unit":"Malaysian ringgit per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.MA","source_type":"FX_RATE"},
+    "DEXMXUS": {"name":"Mexican Pesos to U.S. Dollar Spot Exchange Rate","unit":"Mexican pesos per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.MX","source_type":"FX_RATE"},
+    "DEXNOUS": {"name":"Norwegian Kroner to U.S. Dollar Spot Exchange Rate","unit":"Norwegian kroner per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.NO","source_type":"FX_RATE"},
+    "DEXSFUS": {"name":"South African Rand to U.S. Dollar Spot Exchange Rate","unit":"South African rand per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.SF","source_type":"FX_RATE"},
+    "DEXSIUS": {"name":"Singapore Dollars to U.S. Dollar Spot Exchange Rate","unit":"Singapore dollars per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.SI","source_type":"FX_RATE"},
+    "DEXKOUS": {"name":"South Korean Won to U.S. Dollar Spot Exchange Rate","unit":"South Korean won per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.KO","source_type":"FX_RATE"},
+    "DEXSLUS": {"name":"Sri Lankan Rupees to U.S. Dollar Spot Exchange Rate","unit":"Sri Lankan rupees per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.SL","source_type":"FX_RATE"},
+    "DEXSDUS": {"name":"Swedish Kronor to U.S. Dollar Spot Exchange Rate","unit":"Swedish kronor per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.SD","source_type":"FX_RATE"},
+    "DEXSZUS": {"name":"Swiss Francs to U.S. Dollar Spot Exchange Rate","unit":"Swiss francs per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.SZ","source_type":"FX_RATE"},
+    "DEXTAUS": {"name":"Taiwan Dollars to U.S. Dollar Spot Exchange Rate","unit":"Taiwan dollars per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.TA","source_type":"FX_RATE"},
+    "DEXTHUS": {"name":"Thai Baht to U.S. Dollar Spot Exchange Rate","unit":"Thai baht per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.TH","source_type":"FX_RATE"},
+    "DEXVZUS": {"name":"Venezuelan Bolivares to U.S. Dollar Spot Exchange Rate","unit":"Venezuelan bolivares per U.S. dollar","frequency":"Daily","h10_code":"H10/H10/RXI_N.B.VES","source_type":"FX_RATE"},
 }
+
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -121,12 +123,17 @@ def parse_csv(series_id: str, raw: bytes) -> tuple[list[dict], dict]:
         "missing_values": missing,
         "first_observation": rows[0]["DATE"],
         "last_observation": rows[-1]["DATE"],
-        "expected_start_match": rows[0]["DATE"] == SERIES[series_id]["expected_start"],
+        "expected_start_match": (rows[0]["DATE"] == SERIES[series_id]["expected_start"]) if SERIES[series_id].get("expected_start") else None,
     }
 
 def main() -> int:
     RAW.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
+    if len(SERIES) != 26 or sum(1 for x in SERIES.values() if x["source_type"] == "FX_RATE") != 23:
+        raise RuntimeError("H.10 mapping contract must contain 3 dollar indices + 23 bilateral FX series")
+    h10_codes = [x["h10_code"] for x in SERIES.values()]
+    if len(set(h10_codes)) != len(h10_codes):
+        raise RuntimeError("Duplicate H.10 source-series mapping")
     retrieved = datetime.now(timezone.utc).isoformat()
     manifest = {
         "schema_version": "1.0",
