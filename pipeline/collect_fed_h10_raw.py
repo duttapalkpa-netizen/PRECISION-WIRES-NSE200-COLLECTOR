@@ -37,14 +37,14 @@ def validate_zip_members(zf: ZipFile) -> list[str]:
     total_uncompressed = 0
     for info in infos:
         name = info.filename
-        parts = name.split("/")
+        parts = name.rstrip("/").split("/")
         if (
             not name
-            or "\\\\" in name
+            or "\\" in name
+            or "\x00" in name
             or name.startswith("/")
             or (len(name) >= 2 and name[1] == ":")
-            or "\\x00" in name
-            or any(part in ("", ".", "..") for part in parts if part != "" or not name.endswith("/"))
+            or any(part in ("", ".", "..") for part in parts)
         ):
             raise ValueError("ZIP contains an unsafe member path")
         if info.flag_bits & 0x1:
