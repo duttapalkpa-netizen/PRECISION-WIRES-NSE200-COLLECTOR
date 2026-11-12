@@ -51,3 +51,22 @@ Next action must obtain the original archived weekly H.10 release payloads (incl
 
 ## Invariants
 Research-only. ₹0 spend, free official sources only, no paid APIs or external contact. No synthetic values/timestamps, no forward-fill, no backdating, no overwriting vintages. UNKNOWN is neither PASS nor FAIL. No PR merge without explicit user approval. No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 × 12), Engines A–E, or Hard Gate.
+
+
+## Follow-up: date-specific archived release pair located
+A targeted archive-path search located both date-specific Federal Reserve weekly H.10 release pages for the correction case:
+- Original release dated 2026-08-10: https://www.federalreserve.gov/releases/h10/20260810/
+- Corrected release dated 2026-08-12: https://www.federalreserve.gov/releases/h10/20260812/
+
+The two official HTML pages expose the same observation week (Aug 3–7) with materially different Aug 3 values. Example: India INR per USD is 95.9100 in the Aug 10 release and 95.3400 in the Aug 12 corrected release. The Broad Dollar Index is 120.7739 vs 119.6951; AFE is 114.2972 vs 112.8653; EME is 129.0609 vs 128.3599. The remaining Aug 4–7 entries shown in these tables match for these four example series. This confirms a real first-publication/correction vintage difference, not merely a generic theoretical revision risk.
+
+Evidence: official Federal Reserve archived HTML release pages above, plus the official H.10 correction announcement dated Aug 12 at https://www.federalreserve.gov/feeds/H10.html.
+
+Limitations: web inspection established the archived page contents and release dates, but the raw HTML payloads were not downloaded into the research archive in this run; therefore no byte count or SHA-256 is claimed for these two pages. The release dates are explicit, but an exact intraday publication timestamp for the Aug 12 correction has not yet been established. Do not convert the Aug 12 date to a guessed 4:15 p.m. timestamp; keep intraday availability UNKNOWN until independently evidenced.
+
+Status update:
+- Archived page pair discovery for the Aug 10 / Aug 12 correction case: PASS.
+- Direct raw payload acquisition + SHA-256: PENDING.
+- Exact Aug 12 correction publication time: UNKNOWN.
+- Full required vintage archive acquisition: PENDING.
+- Row-level 26 × 200 point-in-time reconstruction: PENDING.
