@@ -43,6 +43,59 @@ class SnapshotManifestTests(unittest.TestCase):
             self.assertEqual(first['snapshot_id'], second['snapshot_id'])
             self.assertEqual(first['sha256'], second['sha256'])
 
+    def test_network_only_snapshot_has_no_legacy_cache_limitation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            raw = self._fixture(Path(tmp))
+            diagnostics = json.loads((raw / 'acquisition_diagnostics.json').read_text())
+            for item in diagnostics['diagnostics']:
+                url = f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{item['date'].replace('-', '')}.csv"
+                item.update({
+                    'status': 'OK_FULL_BHAVCOPY_DELIVERY',
+                    'source_url': url,
+                    'cache_origin': 'network',
+                    'attempts': [{
+                        'url': url,
+                        'attempt': 1,
+                        'retrieved_at_utc': '2026-10-30T10:00:00Z',
+                        'http_status': 200,
+                        'content_type': 'text/csv',
+                        'bytes': 4096,
+                        'response_sha256': 'a' * 64,
+                        'error': None
+                    }]
+                })
+            (raw / 'acquisition_diagnostics.json').write_text(json.dumps(diagnostics))
+            result = build_snapshot(raw, 2)
+            manifest = json.loads((raw / result['manifest']).read_text())
+            self.assertEqual(manifest['provenance_summary']['network_records_with_successful_http_200_evidence'], 2)
+            self.assertEqual(manifest['provenance_summary']['preexisting_cache_records'], 0)
+            self.assertEqual(manifest['provenance_summary']['records_with_source_url'], 2)
+            self.assertEqual(manifest['provenance_limitations'], [])
+
+    def test_mixed_snapshot_limits_legacy_warning_to_cached_records(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            raw = self._fixture(Path(tmp))
+            diagnostics = json.loads((raw / 'acquisition_diagnostics.json').read_text())
+            item = diagnostics['diagnostics'][0]
+            url = f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{item['date'].replace('-', '')}.csv"
+            item.update({
+                'status': 'OK_FULL_BHAVCOPY_DELIVERY',
+                'source_url': url,
+                'cache_origin': 'network',
+                'attempts': [{
+                    'url': url, 'attempt': 1, 'retrieved_at_utc': '2026-10-30T10:00:00Z',
+                    'http_status': 200, 'content_type': 'text/csv', 'bytes': 4096,
+                    'response_sha256': 'b' * 64, 'error': None
+                }]
+            })
+            (raw / 'acquisition_diagnostics.json').write_text(json.dumps(diagnostics))
+            result = build_snapshot(raw, 2)
+            manifest = json.loads((raw / result['manifest']).read_text())
+            self.assertEqual(manifest['provenance_summary']['network_records_with_successful_http_200_evidence'], 1)
+            self.assertEqual(manifest['provenance_summary']['preexisting_cache_records'], 1)
+            self.assertEqual(len(manifest['provenance_limitations']), 2)
+            self.assertIn('1 of 2 selected session records', manifest['provenance_limitations'][0])
+
     def test_rejects_duplicate_sessions(self):
         with tempfile.TemporaryDirectory() as tmp:
             raw = self._fixture(Path(tmp))
