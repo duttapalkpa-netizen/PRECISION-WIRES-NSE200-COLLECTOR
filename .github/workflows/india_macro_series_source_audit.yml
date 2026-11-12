@@ -1,0 +1,46 @@
+name: India Macro Series Official Source Acquisition and QA
+on:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/collect_india_macro_series.py"
+      - "qa/test_india_macro_series.py"
+      - ".github/workflows/india_macro_series_source_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: india-macro-series-source-audit
+  cancel-in-progress: false
+jobs:
+  acquire-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest qa.test_india_macro_series -v
+      - name: Bounded official source acquisition
+        timeout-minutes: 7
+        run: python pipeline/collect_india_macro_series.py
+      - name: Verify report checksum
+        run: cd outputs/macro_geo && sha256sum -c india_macro_series_source_audit.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: india-macro-series-source-audit
+          path: |
+            data/external/macro_series_raw/**
+            data/external/macro_series_observations.csv
+            data/external/macro_indicators.csv
+            data/external/inflation_components.csv
+            data/external/government_capex.csv
+            outputs/macro_geo/macro_series_observation_qa.json
+            outputs/macro_geo/india_macro_series_source_audit.json
+            outputs/macro_geo/india_macro_series_source_audit.sha256
+          if-no-files-found: warn

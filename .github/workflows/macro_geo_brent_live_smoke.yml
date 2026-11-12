@@ -1,0 +1,92 @@
+name: Macro Geo Brent Live Smoke (under 5 minutes)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/macro_geo_crude_oil_collector.py"
+      - "pipeline/macro_geo_source_coverage.py"
+      - ".github/workflows/macro_geo_brent_live_smoke.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-brent-live-smoke
+  cancel-in-progress: true
+
+jobs:
+  brent-live-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded dependencies
+        run: python -m pip install pandas requests
+      - name: Create a minimal observed-session reference panel
+        run: |
+          mkdir -p data/processed
+          printf 'DATE\n2026-10-26\n' > data/processed/nse_eq_200_sessions.csv
+      - name: Collect bounded Brent series (latest session only)
+        run: python pipeline/macro_geo_crude_oil_collector.py
+      - name: Audit date_max and freshness without relaxing the hard gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+          panel = pd.read_csv("data/processed/nse_eq_200_sessions.csv")
+          ref = pd.to_datetime(panel["DATE"], errors="raise").max().normalize()
+          report = json.loads(Path("outputs/macro_geo/crude_oil_collection_report.json").read_text())
+          # The collector reports the exact output path. FRED/EIA spot remains
+          # canonical; Yahoo BZ=F futures proxy is deliberately stored separately.
+          reported_path = Path(report.get("path", ""))
+          allowed_paths = {
+              Path("data/external/brent_crude.csv"),
+              Path("data/external/brent_crude_futures_proxy.csv"),
+          }
+          if reported_path not in allowed_paths or not reported_path.exists():
+              raise SystemExit(f"BLOCKED: collector output path missing or unexpected: {reported_path}")
+          data = pd.read_csv(reported_path)
+          dates = pd.to_datetime(data["DATE"], errors="coerce").dropna()
+          if data.empty or dates.empty:
+              raise SystemExit("BLOCKED: Brent collector produced no usable rows")
+          latest = dates.max().normalize()
+          age = int((ref - latest).days)
+          freshness = "FRESH" if 0 <= age <= 3 else "STALE_OR_FUTURE"
+          evidence = {
+              "reference_market_session": ref.date().isoformat(),
+              "date_min": dates.min().date().isoformat(),
+              "date_max": latest.date().isoformat(),
+              "rows": int(len(data)),
+              "freshness_age_calendar_days": age,
+              "freshness_status": freshness,
+              "collector_status": report.get("status"),
+              "series": report.get("series"),
+              "fallback_from": report.get("fallback_from"),
+              "source_url": report.get("source_url"),
+          }
+          print(json.dumps(evidence, indent=2))
+          Path("outputs/macro_geo").mkdir(parents=True, exist_ok=True)
+          Path("outputs/macro_geo/brent_live_smoke_evidence.json").write_text(json.dumps(evidence, indent=2) + "\n")
+          if latest > ref or freshness != "FRESH":
+              raise SystemExit("BLOCKED: date_max is future-dated or freshness failed")
+          if report.get("status") != "COLLECTED_AND_DOMAIN_QA_PASSED":
+              print("NOTE: transport/schema smoke only; crude_oil remains unapproved for release until domain QA passes.")
+          PY
+      - name: Upload bounded live evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brent-live-smoke-evidence
+          path: |
+            data/external/brent_crude.csv
+            data/external/brent_crude_futures_proxy.csv
+            outputs/macro_geo/crude_oil_collection_report.json
+            outputs/macro_geo/brent_live_smoke_evidence.json

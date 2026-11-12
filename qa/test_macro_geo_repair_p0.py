@@ -16,7 +16,7 @@ class MacroGeoP0WindowTests(unittest.TestCase):
             with patch.object(repair, "EQUITY_PANEL", panel):
                 start, end = repair.p0_window()
             self.assertEqual(start.isoformat(), "2025-12-06")
-            self.assertEqual(end, min(datetime.now(timezone.utc).date(), pd.Timestamp("2026-10-16").date() + timedelta(days=3)))
+            self.assertEqual(end, pd.Timestamp("2026-10-16").date())
 
     def test_p0_window_uses_observed_benchmark_when_equity_panel_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -26,7 +26,7 @@ class MacroGeoP0WindowTests(unittest.TestCase):
                 with patch.object(repair, "BENCHMARK_PANEL", benchmark):
                     start, end = repair.p0_window()
             self.assertEqual(start.isoformat(), "2025-12-06")
-            self.assertEqual(end, min(datetime.now(timezone.utc).date(), pd.Timestamp("2026-10-16").date() + timedelta(days=3)))
+            self.assertEqual(end, pd.Timestamp("2026-10-16").date())
 
     def test_p0_window_blocks_if_both_backbones_missing(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -1,0 +1,223 @@
+name: Macro Geo exact same-snapshot completion
+on:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - "pipeline/reconcile_source_coverage_status.py"
+      - ".github/workflows/macro_geo_same_snapshot_completion.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: macro-geo-same-snapshot-completion
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install bounded audit dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+      - name: Restore the exact canonical NSE panel cache used by P0 run
+        id: panel_cache
+        continue-on-error: true
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+          key: macro-geo-nse200-audit/run145-factor-registry-gap-audit-41274367993
+      - name: Verify exact immutable P0 evidence artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, subprocess
+          repo=os.environ["GH_REPO"]
+          run_id=41283471559
+          artifact_id=13074955372
+          digest="sha256:82352f62a22647ff6d6c4c2a448b73285e092808893f34768b8362e3e1f1dde4"
+          run=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run_id}"],text=True))
+          assert run["conclusion"]=="success" and run["head_sha"]=="8d9197c55623c6d025c2de4ef33ec257e0dcaa97",run
+          artifacts=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run_id}/artifacts"],text=True))["artifacts"]
+          artifact=next((x for x in artifacts if x["id"]==artifact_id),None)
+          assert artifact and artifact["name"]=="macro-geo-p0-event-study"
+          assert artifact["digest"]==digest and not artifact["expired"],artifact
+          print({"p0_run_id":run_id,"artifact_id":artifact_id,"digest":digest,"verified":True})
+          PY
+      - name: Download exact P0 source, factor and event-study snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/p0 data/external outputs
+          gh run download 41283471559 -n macro-geo-p0-event-study -D inputs/p0
+          test -s inputs/p0/data/external/macro_series_observations.csv
+          test -s inputs/p0/outputs/macro_geo/india_macro_series_source_audit.json
+          test -s inputs/p0/outputs/macro_geo/source_coverage.json
+          test -s inputs/p0/outputs/macro_geo/source_coverage.csv
+          cp -a inputs/p0/data/external/. data/external/
+          cp -a inputs/p0/outputs/. outputs/
+      - name: Record exact P0 NSE panel cache availability without substituting another snapshot
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          root=Path("outputs/macro_geo")
+          coverage=json.loads((root/"source_coverage.json").read_text())
+          item=next(x for x in coverage["sources"] if x.get("source")=="nse_daily_equity")
+          panel=Path("data/processed/nse_eq_200_sessions.csv")
+          result={"cache_key":"macro-geo-nse200-audit/run145-factor-registry-gap-audit-41274367993",
+            "source_coverage_rows":int(item["rows"]),"source_coverage_date_min":item["date_min"],
+            "source_coverage_date_max":item["date_max"]}
+          if panel.is_file():
+              import pandas as pd
+              df=pd.read_csv(panel)
+              cols={str(c).strip().upper():c for c in df.columns}
+              assert "DATE" in cols
+              dates=pd.to_datetime(df[cols["DATE"]],errors="coerce").dropna().dt.normalize()
+              unique=sorted(dates.unique())
+              assert len(unique)>=200 and len(df)==int(item["rows"])
+              assert str(unique[0].date())==str(item["date_min"])
+              assert str(unique[-1].date())==str(item["date_max"])
+              result.update({"status":"EXACT_P0_CACHE_PANEL_RESTORED","rows":len(df),
+                "unique_sessions":len(unique),"date_min":str(unique[0].date()),
+                "date_max":str(unique[-1].date()),"panel_sha256":hashlib.sha256(panel.read_bytes()).hexdigest()})
+          else:
+              result.update({"status":"BLOCKED_EXACT_P0_PANEL_CACHE_EXPIRED",
+                "reason":"The original cache key used by P0 run 41283471559 is no longer available. No newer or differently dated NSE panel is substituted.",
+                "required_action":"Recover the exact panel artifact or regenerate the complete P0 snapshot before same-snapshot acceptance."})
+          Path(root/"nse_panel_snapshot_identity.json").write_text(json.dumps(result,indent=2)+"\n")
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Regenerate normalized macro tables from the exact archived P0 source evidence
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          from pipeline.collect_india_macro_series import normalize_release_observations
+          report=json.loads(Path("outputs/macro_geo/india_macro_series_source_audit.json").read_text())
+          assert str(report.get("workflow_run_id"))=="41283471559",report.get("workflow_run_id")
+          expected="80b76c3246033931c4637d7a2895854b33c9a9629c7446ca51f67adaf8cddc3e"
+          normalize_release_observations(report)
+          obs=Path("data/external/macro_series_observations.csv")
+          actual=hashlib.sha256(obs.read_bytes()).hexdigest()
+          assert actual==expected,{"expected":expected,"actual":actual}
+          qa=json.loads(Path("outputs/macro_geo/macro_series_observation_qa.json").read_text())
+          assert qa.get("sha256")==expected and int(qa.get("duplicate_keys",-1))==0,qa
+          for name in ("macro_indicators.csv","inflation_components.csv","government_capex.csv"):
+              p=Path("data/external")/name
+              assert p.is_file() and p.stat().st_size>0,name
+          import pandas as pd
+          macro=pd.read_csv("data/external/macro_indicators.csv")
+          inflation=pd.read_csv("data/external/inflation_components.csv")
+          capex=pd.read_csv("data/external/government_capex.csv")
+          assert len(macro)>0 and macro["RELEASED_AT"].notna().all()
+          assert len(inflation)>0 and inflation["RELEASED_AT"].notna().all()
+          assert "RELEASED_AT" in capex.columns and capex["RELEASED_AT"].isna().all()
+          print({"normalized_observations_sha256":actual,"macro_rows":len(macro),
+                 "inflation_rows":len(inflation),"capex_rows":len(capex),
+                 "capex_release_timestamp_policy":"UNKNOWN_NOT_PROMOTED"})
+          PY
+      - name: Run deterministic source coverage status reconciliation
+        run: |
+          python -m unittest qa.test_reconcile_source_coverage_status -v
+          python pipeline/reconcile_source_coverage_status.py
+      - name: Recompute exact same-snapshot reconciliation
+        run: python pipeline/macro_geo_same_snapshot_reconcile.py
+      - name: Require independent consistency checks and preserve exact panel blocker
+        run: |
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          import pandas as pd
+          root=Path("outputs/macro_geo")
+          report=json.loads((root/"same_snapshot_reconciliation.json").read_text())
+          parity=json.loads((root/"source_coverage_status_reconciliation.json").read_text())
+          coverage=json.loads((root/"source_coverage.json").read_text())
+          factor=json.loads((root/"factor_coverage_audit.json").read_text())
+          hard=json.loads((root/"hard_gate_report.json").read_text())
+          panel=json.loads((root/"nse_panel_snapshot_identity.json").read_text())
+          assert parity["status"]=="PASS_EXACT_SOURCE_KEY_AND_STATUS_PARITY"
+          assert parity["status_mismatches_after_reconciliation"]==0
+          assert parity["json_source_rows"]==35 and parity["csv_source_rows"]==35
+          assert factor["factor_groups"]==35
+          assert hard["status"]=="BLOCKED"
+          assert "FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE" in hard.get("blockers",[])
+          assert report["status"]=="INCOMPLETE_REQUIRED_EVIDENCE_MISSING",report
+          assert report["missing_required_files"]==["data/processed/nse_eq_200_sessions.csv"],report["missing_required_files"]
+          assert panel["status"]=="BLOCKED_EXACT_P0_PANEL_CACHE_EXPIRED"
+          macroqa=json.loads((root/"macro_series_observation_qa.json").read_text())
+          obs_hash=hashlib.sha256(Path("data/external/macro_series_observations.csv").read_bytes()).hexdigest()
+          macro=pd.read_csv("data/external/macro_indicators.csv")
+          inflation=pd.read_csv("data/external/inflation_components.csv")
+          capex=pd.read_csv("data/external/government_capex.csv")
+          non_panel_checks={
+            "macro_source_audit_belongs_to_p0_run":str(coverage.get("macro_series_source_audit_run_id",""))==str(coverage.get("p0_workflow_run_id",""))=="41283471559",
+            "factor_audit_uses_same_source_snapshot":factor.get("source_coverage_as_of")==coverage.get("as_of_utc"),
+            "source_coverage_csv_json_status_parity":parity["status_mismatches_after_reconciliation"]==0,
+            "normalized_observation_hash_matches":macroqa.get("sha256")==obs_hash=="80b76c3246033931c4637d7a2895854b33c9a9629c7446ca51f67adaf8cddc3e",
+            "normalized_duplicate_keys_zero":int(macroqa.get("duplicate_keys",-1))==0,
+            "macro_indicator_release_timestamps_present":len(macro)>0 and macro["RELEASED_AT"].notna().all(),
+            "inflation_component_release_timestamps_present":len(inflation)>0 and inflation["RELEASED_AT"].notna().all(),
+            "capex_unverified_release_times_not_promoted":"RELEASED_AT" in capex.columns and capex["RELEASED_AT"].isna().all(),
+            "factor_group_count_35":int(factor.get("factor_groups",0))==35,
+            "hard_gate_report_present":bool(hard.get("status"))
+          }
+          assert all(non_panel_checks.values()),non_panel_checks
+          (root/"same_snapshot_non_panel_checks.json").write_text(json.dumps({
+            "status":"PASS_WITH_EXACT_NSE_PANEL_DEPENDENCY_BLOCKED",
+            "source_snapshot_as_of_utc":coverage.get("as_of_utc"),
+            "checks":non_panel_checks,
+            "missing_required_file":report["missing_required_files"][0],
+            "hard_gate_status":hard["status"],
+            "hard_gate_blockers":hard.get("blockers",[])
+          },indent=2)+"\n")
+          print({"non_panel_checks":"PASS","checks":non_panel_checks,
+            "same_snapshot_overall":"BLOCKED_PANEL_ARTIFACT_UNAVAILABLE",
+            "factor_groups":factor["factor_groups"],
+            "fully_available_schema_groups":factor["fully_available_schema_groups"],
+            "partial_source_coverage":factor["partial_source_coverage"],
+            "not_connected":factor["not_connected"],"hard_gate":hard["status"],
+            "hard_gate_blockers":hard["blockers"]})
+          PY
+      - name: Upload complete same-snapshot reconciliation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-complete-same-snapshot-reconciliation
+          path: |
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+            data/external/macro_series_observations.csv
+            data/external/macro_indicators.csv
+            data/external/inflation_components.csv
+            data/external/government_capex.csv
+            outputs/macro_geo/source_coverage.csv
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/source_coverage_status_reconciliation.json
+            outputs/macro_geo/source_coverage_status_reconciliation.sha256
+            outputs/macro_geo/same_snapshot_reconciliation.json
+            outputs/macro_geo/same_snapshot_reconciliation.json.sha256
+            outputs/macro_geo/nse_panel_snapshot_identity.json
+            outputs/macro_geo/same_snapshot_non_panel_checks.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+            outputs/macro_geo/macro_series_observation_qa.json
+            outputs/macro_geo/india_macro_series_source_audit.json
+            outputs/macro_geo/event_study_report.json
+            outputs/macro_geo/event_level_window_audit.json
+            outputs/macro_geo/historical_regime_study_report.json
+            outputs/macro_geo/hard_gate_report.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

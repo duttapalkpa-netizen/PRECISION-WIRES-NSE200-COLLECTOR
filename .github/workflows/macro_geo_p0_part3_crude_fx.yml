@@ -1,0 +1,177 @@
+name: P0 Collection Audit - Part 3 Crude Oil and USDINR
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part3_crude_fx.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-p0-part3-crude-fx
+  cancel-in-progress: false
+
+jobs:
+  crude-fx-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Restore validated NSE panel cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-part1-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - name: Collect bounded crude-oil and USDINR smoke samples
+        id: collect
+        env:
+          PYTHONUNBUFFERED: "1"
+        shell: bash
+        run: |
+          mkdir -p data/external outputs/macro_geo
+          python - <<'PY'
+          import csv, json, urllib.parse, urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          panel = Path("data/processed/nse_eq_200_sessions.csv")
+          report = {
+              "part": "P0-3",
+              "task": "bounded crude-oil and USDINR source smoke sample",
+              "checked_at_utc": datetime.now(timezone.utc).isoformat(),
+              "status": "BLOCKED",
+              "network_request_budget": 2,
+              "source_policy": "secondary proxy smoke test only; not proof of official-source coverage",
+              "results": [],
+              "invariants": {
+                  "production_selector_modified": False,
+                  "RANKING_SCORE_modified": False,
+                  "PRESSURE_FADE_modified": False,
+                  "UNKNOWN_treated_as_negative": False
+              }
+          }
+          rows = []
+          try:
+              if not panel.is_file():
+                  raise ValueError("validated 200-session panel cache unavailable; refusing to invent date window")
+              with panel.open("r", encoding="utf-8-sig", newline="") as f:
+                  reader = csv.DictReader(f)
+                  cols = {str(c).strip().upper(): c for c in (reader.fieldnames or [])}
+                  if "DATE" not in cols:
+                      raise ValueError("DATE column missing from cached panel")
+                  dates = sorted({(r.get(cols["DATE"]) or "").strip()[:10] for r in reader if (r.get(cols["DATE"]) or "").strip()})
+              if len(dates) < 200:
+                  raise ValueError(f"expected at least 200 unique panel sessions; got {len(dates)}")
+              start, end = dates[-200], dates[-1]
+              report["panel_window"] = {"first_session": start, "last_session": end, "unique_sessions_in_cache": len(dates)}
+              series = [
+                  {
+                      "group": "crude_oil",
+                      "name": "BRENT FRONT-MONTH FUTURES PROXY",
+                      "symbol": "BZ=F",
+                      "path_symbol": "BZ%3DF",
+                      "identity_note": "Yahoo Finance Brent front-month futures proxy; NOT the official Brent spot series FRED DCOILBRENTEU"
+                  },
+                  {
+                      "group": "usd_inr",
+                      "name": "USD/INR",
+                      "symbol": "USDINR=X",
+                      "path_symbol": "USDINR%3DX",
+                      "identity_note": "Yahoo Finance USD/INR exchange-rate proxy; official-source coverage remains unverified"
+                  }
+              ]
+              p1 = int(datetime.fromisoformat(start).replace(tzinfo=timezone.utc).timestamp())
+              p2 = int(datetime.fromisoformat(end).replace(tzinfo=timezone.utc).timestamp()) + 86400
+              for spec in series:
+                  item = {k: spec[k] for k in ("group", "name", "symbol", "identity_note")}
+                  item.update({"status": "UNKNOWN", "source": "Yahoo Finance chart API", "source_url": None, "rows": 0})
+                  try:
+                      query = urllib.parse.urlencode({"period1": p1, "period2": p2, "interval": "1d"})
+                      url = "https://query1.finance.yahoo.com/v8/finance/chart/" + spec["path_symbol"] + "?" + query
+                      item["source_url"] = url
+                      req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+                      with urllib.request.urlopen(req, timeout=7) as response:
+                          payload = json.loads(response.read().decode("utf-8"))
+                          if response.status != 200:
+                              raise RuntimeError("HTTP " + str(response.status))
+                      chart = payload.get("chart", {})
+                      if chart.get("error"):
+                          raise RuntimeError(str(chart["error"]))
+                      results = chart.get("result") or []
+                      if not results:
+                          raise ValueError("empty chart result")
+                      result = results[0]
+                      timestamps = result.get("timestamp") or []
+                      quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
+                      closes = quote.get("close") or []
+                      for ts, close in zip(timestamps, closes):
+                          if close is None:
+                              continue
+                          day = datetime.fromtimestamp(ts, timezone.utc).date().isoformat()
+                          if start <= day <= end:
+                              rows.append({
+                                  "date": day,
+                                  "group": spec["group"],
+                                  "series": spec["name"],
+                                  "symbol": spec["symbol"],
+                                  "close": close,
+                                  "source": "Yahoo Finance chart API",
+                                  "source_url": url,
+                                  "identity_note": spec["identity_note"],
+                                  "observed_at_utc": datetime.now(timezone.utc).isoformat()
+                              })
+                      item["rows"] = sum(1 for r in rows if r["group"] == spec["group"])
+                      item["first_observation"] = min((r["date"] for r in rows if r["group"] == spec["group"]), default=None)
+                      item["last_observation"] = max((r["date"] for r in rows if r["group"] == spec["group"]), default=None)
+                      if item["rows"] > 0:
+                          item["status"] = "PASS"
+                      else:
+                          item["reason"] = "response had no usable dated close observations in the panel window"
+                  except Exception as exc:
+                      item["reason"] = type(exc).__name__ + ": " + str(exc)[:300]
+                  report["results"].append(item)
+              all_pass = len(report["results"]) == 2 and all(x["status"] == "PASS" for x in report["results"])
+              report["status"] = "PASS" if all_pass else "BLOCKED"
+              report["official_series_status"] = {
+                  "FRED_DCOILBRENTEU": "NOT_TESTED; proxy must not be treated as official Brent spot coverage",
+                  "FRED_DEXINUS": "NOT_TESTED; official-source coverage remains UNKNOWN"
+              }
+              report["rows_written"] = len(rows)
+              report["output_csv"] = "data/external/p0_part3_crude_fx_smoke.csv"
+              report["report_json"] = "outputs/macro_geo/p0_part3_crude_fx_report.json"
+          except Exception as exc:
+              report["reason"] = type(exc).__name__ + ": " + str(exc)[:400]
+
+          csv_path = Path("data/external/p0_part3_crude_fx_smoke.csv")
+          with csv_path.open("w", encoding="utf-8", newline="") as f:
+              fields = ["date", "group", "series", "symbol", "close", "source", "source_url", "identity_note", "observed_at_utc"]
+              writer = csv.DictWriter(f, fieldnames=fields)
+              writer.writeheader()
+              writer.writerows(rows)
+          Path("outputs/macro_geo/p0_part3_crude_fx_report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(report, indent=2))
+          with open(__import__("os").environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("status=" + report["status"] + "\n")
+          if report["status"] != "PASS":
+              raise SystemExit(1)
+          PY
+      - name: Upload Part 3 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part3-crude-fx
+          path: |
+            data/external/p0_part3_crude_fx_smoke.csv
+            outputs/macro_geo/p0_part3_crude_fx_report.json
+          if-no-files-found: error

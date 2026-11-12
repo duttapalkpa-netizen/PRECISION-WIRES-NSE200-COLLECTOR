@@ -39,8 +39,9 @@ def p0_window():
  # bounded and does not claim to be the NSE-200 stock universe.
  sessions=sorted(dates.dt.date.unique())
  recent=sessions[-200:]
+ # Never collect future macro observations relative to the observed equity cutoff.
  return (max(pd.Timestamp("1990-01-01").date(), recent[0]-timedelta(days=30)),
-         min(datetime.now(timezone.utc).date(), recent[-1]+timedelta(days=3)))
+         min(datetime.now(timezone.utc).date(), recent[-1]))
 
 def fallback_public_series(series_id,label,outfile,start,end):
  """Use explicitly labelled, auditable public mirrors only when FRED times out."""
@@ -81,13 +82,33 @@ def fallback_public_series(series_id,label,outfile,start,end):
    if pd.notna(dt) and pd.notna(val) and start<=dt.date()<=end:
     rows.append({"DATE":dt.date().isoformat(),"CLOSE":float(val),"SERIES":label,"SOURCE":"Community mirror of RBI/FBIL reference rates (secondary; not direct RBI feed)","SOURCE_SERIES":"USD_INR_REFERENCE","SOURCE_URL":url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
  if not rows: raise RuntimeError(f"No valid fallback rows for {series_id}")
- out=pd.DataFrame(rows).drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
+ out=pd.DataFrame(rows)
+ if out.empty:
+  raise RuntimeError(f"No valid fallback rows for {series_id}")
+ dates=pd.to_datetime(out["DATE"],errors="coerce")
+ values=pd.to_numeric(out["CLOSE"],errors="coerce")
+ if dates.isna().any() or values.isna().any() or (values<=0).any():
+  raise RuntimeError(f"{series_id} fallback has invalid dates or non-positive values")
+ if out["SOURCE_URL"].astype(str).str.strip().eq("").any() or out["SOURCE_SERIES"].astype(str).str.strip().eq("").any():
+  raise RuntimeError(f"{series_id} fallback missing source provenance")
+ if out.duplicated(["DATE","SERIES"]).any():
+  raise RuntimeError(f"{series_id} fallback contains duplicate date/series keys")
+ if dates.min().date()<start or dates.max().date()>end:
+  raise RuntimeError(f"{series_id} fallback contains observations outside requested P0 window")
+ age=(end-dates.max().date()).days
+ if age<0 or age>3:
+  raise RuntimeError(f"{series_id} fallback is stale/future relative to equity cutoff: age={age}")
+ out=out.sort_values(["DATE","SERIES"])
  out.to_csv(RAW/outfile,index=False)
- return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),"source":str(out.SOURCE.iloc[0]),"url":str(out.SOURCE_URL.iloc[0]),"path":str(RAW/outfile)}
+ return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),
+  "source":str(out.SOURCE.iloc[0]),"url":str(out.SOURCE_URL.iloc[0]),"path":str(RAW/outfile),
+  "freshness_status":"FRESH","freshness_age_calendar_days":age,
+  "domain_qa_checks":["source identity","valid positive values","unique date keys",
+    "requested-window bounds","freshness <= 3 calendar days","source URL provenance"]}
 
 def fred(series_id,label,outfile):
  url="https://fred.stlouisfed.org/graph/fredgraph.csv"
- rows=[]; urls=[]; cursor, end_date=p0_window()
+ rows=[]; urls=[]; cursor, end_date=p0_window(); cursor_start=cursor
  sess=requests.Session(); sess.headers.update({"User-Agent":UA,"Accept":"text/csv,*/*","Referer":"https://fred.stlouisfed.org/"})
  while cursor<=end_date:
   chunk_end=min(end_date,cursor+timedelta(days=29))
@@ -116,9 +137,23 @@ def fred(series_id,label,outfile):
  out=pd.DataFrame(rows)
  if not out.empty: out=out.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
  if out.empty: raise RuntimeError("FRED returned zero valid rows")
+ dates=pd.to_datetime(out["DATE"],errors="coerce")
+ values=pd.to_numeric(out["CLOSE"],errors="coerce")
+ if dates.isna().any() or values.isna().any() or (values<=0).any():
+  raise RuntimeError(f"FRED {series_id} has invalid dates or non-positive values")
+ if out.duplicated(["DATE","SERIES"]).any():
+  raise RuntimeError(f"FRED {series_id} contains duplicate date/series keys")
+ if dates.min().date()<cursor_start or dates.max().date()>end_date:
+  raise RuntimeError(f"FRED {series_id} observations outside requested window")
+ age=(end_date-dates.max().date()).days
+ if age<0 or age>3:
+  raise RuntimeError(f"FRED {series_id} stale/future relative to equity cutoff: age={age}")
  out.to_csv(RAW/outfile,index=False)
  return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),
-  "source":"FRED "+series_id,"url":";".join(urls),"path":str(RAW/outfile)}
+  "source":"FRED "+series_id,"url":";".join(urls),"path":str(RAW/outfile),
+  "freshness_status":"FRESH","freshness_age_calendar_days":age,
+  "domain_qa_checks":["source identity","valid positive values","unique date keys",
+    "requested-window bounds","freshness <= 3 calendar days","source URL provenance"]}
 
 def main():
  report={"observed_at_utc":datetime.now(timezone.utc).isoformat(),"groups":{},"p0_window":None,"policy":"Secondary series remain explicitly labelled; no missing values are fabricated. P0 series are bounded to the NSE 200-session panel; longer regime studies are separate."}
