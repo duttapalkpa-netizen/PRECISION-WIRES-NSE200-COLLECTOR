@@ -9,10 +9,12 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 from zipfile import ZipFile, BadZipFile
 
 SOURCE_URL = "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=h10"
+APPROVED_HOST = "www.federalreserve.gov"
 SERIES = {
     "H10/H10/JRXWTFB_N.B": "Nominal Broad Dollar Index",
     "H10/H10/JRXWTFN_N.B": "Nominal Advanced Foreign Economies Dollar Index",
@@ -21,19 +23,36 @@ SERIES = {
 MAX_BYTES = 40 * 1024 * 1024
 
 
+def _is_approved_source_url(url: str) -> bool:
+    """Accept only HTTPS URLs whose parsed origin is exactly the Federal Reserve host."""
+    try:
+        parsed = urlsplit(url)
+        port = parsed.port
+    except (TypeError, ValueError):
+        return False
+    return (
+        parsed.scheme.lower() == "https"
+        and parsed.hostname is not None
+        and parsed.hostname.lower() == APPROVED_HOST
+        and port in (None, 443)
+        and parsed.username is None
+        and parsed.password is None
+    )
+
+
 def retrieve(url: str = SOURCE_URL, timeout: int = 45) -> tuple[bytes, str]:
-    if not url.startswith("https://www.federalreserve.gov/"):
-        raise ValueError("source URL is outside the approved Federal Reserve HTTPS host")
+    if not _is_approved_source_url(url):
+        raise ValueError("source URL is outside the approved Federal Reserve HTTPS origin")
     request = Request(url, headers={"User-Agent": "PRECISION-WIRES-research-archive/1.0"})
     with urlopen(request, timeout=timeout) as response:
         final_url = response.geturl()
-        if not final_url.startswith("https://www.federalreserve.gov/"):
-            raise ValueError("redirect left the approved Federal Reserve host")
+        if not _is_approved_source_url(final_url):
+            raise ValueError("redirect left the approved Federal Reserve HTTPS origin")
         content_type = response.headers.get("Content-Type", "")
         raw = response.read(MAX_BYTES + 1)
     if len(raw) > MAX_BYTES:
         raise ValueError("H.10 archive exceeds 40 MiB safety limit")
-    if not raw.startswith(b"PK\x03\x04") or not ZipFile(io.BytesIO(raw)).namelist():
+    if not raw.startswith(b"PK\\x03\\x04") or not ZipFile(io.BytesIO(raw)).namelist():
         raise ValueError(f"response is not a valid ZIP archive (Content-Type={content_type!r})")
     return raw, content_type
 
@@ -82,7 +101,7 @@ def archive(output_dir: Path, retrieved_at: datetime | None = None) -> dict:
         "status": "RAW_ARCHIVE_ONLY_SCHEMA_AND_OBSERVATION_EXTRACTION_PENDING"
     }
     temp = manifest_path.with_suffix(".manifest.json.tmp")
-    temp.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    temp.write_text(json.dumps(manifest, indent=2) + "\\n", encoding="utf-8")
     os.replace(temp, manifest_path)
     return {"status": manifest["status"], "archive": str(raw_path), "manifest": str(manifest_path),
             "bytes": len(raw), "sha256": digest, "series_count": len(SERIES)}
