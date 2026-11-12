@@ -20,8 +20,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify pinned source runs and artifacts
         env:
-          GH_TOKEN: \${{ github.token }}
-          GH_REPO: \${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           mkdir -p inputs/h10 inputs/nse
@@ -45,8 +45,8 @@ jobs:
           PY
       - name: Download exact pinned source artifacts
         env:
-          GH_TOKEN: \${{ github.token }}
-          GH_REPO: \${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           gh run download 43276577238 -n fed-h10-full-history-daily-panel-20261112 -D inputs/h10
