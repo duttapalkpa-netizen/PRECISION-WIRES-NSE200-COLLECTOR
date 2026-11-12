@@ -47,7 +47,8 @@ jobs:
           mkdir -p data/qa
           date -u +%Y-%m-%dT%H:%M:%SZ | tee data/qa/benchmark_started_at_utc.txt
           python -c "import time; print(time.time_ns())" > data/qa/benchmark_started_epoch_ns.txt
-          echo "CACHE_HIT=${{ steps.raw_cache.outputs.cache-hit }}" | tee data/qa/cache_restore_status.txt\n          echo "CACHE_RESTORED_KEY=${{ steps.raw_cache.outputs.cache-matched-key }}" | tee -a data/qa/cache_restore_status.txt
+          printf 'CACHE_HIT=%s\\n' "${{ steps.raw_cache.outputs.cache-hit }}" | tee data/qa/cache_restore_status.txt
+          printf 'CACHE_RESTORED_KEY=%s\\n' "${{ steps.raw_cache.outputs.cache-matched-key }}" | tee -a data/qa/cache_restore_status.txt
       - name: Repair cache using date-validated incremental collector
         run: python collector/nse_download.py --sessions 200 --lookback-days 500 --out data/raw
       - name: Persist repaired incremental NSE cache
