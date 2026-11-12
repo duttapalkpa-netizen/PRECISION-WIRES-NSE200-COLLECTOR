@@ -204,3 +204,58 @@ This closes the artifact-verification gap only. It does not close matured H+1/H+
 - **Bounded status update:** this exact 2026-11-12 snapshot demonstrates complete URL/retrieval-time/response-hash/local-file-hash provenance for all 200 manifest records, unlike the earlier legacy-cache snapshot. However, the manifest's static `provenance_limitations` array still claims pre-existing legacy cache records lack original URL/retrieval timestamps. This text is inconsistent with the 200 current records and must be reconciled in the manifest-generation/reporting logic before promoting the broader NSE provenance workstream to unconditional PASS. Preserve the warning; do not silently delete it or overstate historical provenance.
 - No production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, or 672-diagnostic changes were made. No PR merge was performed.
 
+
+
+## 11. NSE cache provenance crosswalk — artifact lineage correction and exact-hash confirmation (2026-11-12)
+
+### 11.1 Cache-only candidate semantics
+
+The later cache benchmark artifact is not a fresh network retrieval. Its 200 manifest records have acquisition status \`CACHED\`, cache origin \`pre-existing-cache\`, and no direct source URL or successful-response hash. This is accurately represented as cache-only evidence; local file mtime is not promoted to an authoritative retrieval timestamp.
+
+- Benchmark run: \`43252429755\` — SUCCESS.
+- Artifact: \`nse-200-session-cache-verification-340\`, ID \`13961345601\`.
+- Artifact ZIP SHA-256: \`1fbf6836b26f7cc823f816f26c5cb1f6ff8af48a998b0f5f1566d68400a7016c\`.
+- Snapshot ID: \`250fb46b8d6d1696b9718ecafdf59cee7d80c6a6341e6e29c7d85432d5dd7b39\`.
+- Manifest SHA-256: \`720e44b1bc3ef1df5f55f8a509d9b92bcae3236656fd2de4f02b9339dff55c65\`.
+- 200 selected sessions; warm-cache benchmark 200/200 hits, zero misses, zero network requests, 12.752288 seconds. This is local cache validation only.
+
+### 11.2 Exact-hash inherited provenance crosswalk
+
+The crosswalk was rerun with matching candidate artifact pins and downloads after correcting two workflow defects: the candidate download had pointed to artifact 332 while the report pinned artifact 333, and an escaped GitHub Actions expression caused a bad-credentials failure.
+
+- Workflow correction commit: \`1811620794380f967d0d748be3af6eec4eb1e97d\` (candidate download aligned to run 43249886595 / artifact 13957294024).
+- Token-expression correction commit: \`60d43af7b3f62cd3d6a6f0f8ef287882d14102c8\`.
+- Failed diagnostic run retained: \`43255640632\` — failure caused by literal backslashes in \`GH_TOKEN\` and \`GH_REPO\` expressions; no evidence was promoted from this run.
+- Corrected crosswalk run: \`43255859354\` — SUCCESS.
+- Crosswalk artifact: ID \`13960994076\`, ZIP SHA-256 \`5fb55edcbb06b80f4f612f146d63d9cf5188944ad36080b14e87e43824109733\`.
+- Crosswalk report SHA-256: \`b7d01bb9cf72e3a3c721dc9af5b8a40293855044eeb08b35a2573a557ce1c5fc\`.
+- Reference: run \`43245527846\`, artifact \`13955899352\`, 200 official NSE HTTP 200 records.
+- Candidate: run \`43249886595\`, artifact \`13957294024\`, cache-only snapshot; direct retrieval is explicitly not claimed.
+- Reconciliation: 200/200 trade dates, filenames, byte counts, content SHA-256 values, candidate schema validations, official source URLs, reference HTTP 200 records and reference retrieval timestamps; unmatched records = 0.
+- Result: \`PASS_CONTENT_IDENTICAL_TO_PREVIOUSLY_SOURCE_VERIFIED_SNAPSHOT\`.
+
+A further independent ZIP inspection compared the later artifact 340 with the crosswalk candidate artifact 333: both have the same snapshot ID and manifest SHA-256, and all 200 raw NSE session CSV files have identical SHA-256 values. Therefore artifact 340 has the same exact file content as the already-crosswalked candidate. This is inherited evidence only, not a new NSE retrieval.
+
+### 11.3 Macro-Geo same-snapshot reconciliation — still blocked
+
+- Macro-Geo reconciliation workflow run \`43254145873\` completed SUCCESS as an audit/artifact workflow, artifact ID \`13961036859\`, ZIP SHA-256 \`c8efd6a90c0ae2e571333ef3393e604e37f3f0df3872e21507009cfdbb679ac2\`.
+- The contained \`same_snapshot_reconciliation.json\` is **not PASS**: status \`INCOMPLETE_REQUIRED_EVIDENCE_MISSING\`; missing file: \`data/processed/nse_eq_200_sessions.csv\`.
+- The exact old P0 cache key \`macro-geo-nse200-audit/run145-factor-registry-gap-audit-41274367993\` is unavailable. The workflow correctly refuses to substitute a differently dated NSE panel.
+- The original P0 artifact (run \`41283471559\`, artifact \`13074955372\`) does not contain the missing processed NSE equity panel. The later 200-session NSE archive is a distinct snapshot and must not be silently substituted as the old P0 panel.
+- Source coverage JSON/CSV parity is PASS: 35 source keys each, zero duplicate keys, zero status mismatches. This does not establish full factor coverage.
+- Factor Registry: 35 groups audited; 0 fully available, 22 partial, 13 not connected, 0 unmapped.
+- P0: 8/8 required groups available in the retained audit.
+- Event study: 43 events, 29 eligible, 14 pending; 26 events have matured H+1 and 25 matured H+5 windows.
+- Historical regime study: 11 anchors, 9 with windows, 2 without windows; anchor coverage incomplete.
+- Hard Gate remains \`BLOCKED\` for \`FACTOR_REGISTRY_HAS_INCOMPLETE_SOURCE_COVERAGE\` and \`HISTORICAL_REGIME_ANCHOR_COVERAGE_INCOMPLETE\`. Candidate release remains disallowed.
+
+### 11.4 Next acceptance work
+
+1. Recover or regenerate a fully evidenced NSE equity panel for the Macro-Geo P0 workflow, with its own immutable snapshot identity and explicit date alignment to the market panel; do not substitute the newer cache snapshot without recomputing dependent audits.
+2. Re-run the same-snapshot reconciliation on one exact workflow snapshot and require the NSE panel file, hashes and all reconciliation checks.
+3. Close Factor Registry source gaps and verify the 11 historical regime anchors from primary sources before reconsidering Hard Gate.
+4. Keep matured H+1/H+3/H+5 event windows, rolling backtest and final paper gates separate from operational workflow success.
+
+### 11.5 Production invariants
+
+No production selector, \`RANKING_SCORE\`, \`+1 PRESSURE_FADE\`, or 672-diagnostic changes. No production integration and no PR merge. Research remains ₹0 spend and free official sources only. \`UNKNOWN\` remains neither PASS nor FAIL.
