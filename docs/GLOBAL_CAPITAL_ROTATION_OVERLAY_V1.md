@@ -65,3 +65,26 @@ Official/free first: CDSL/NSDL/SEBI for FPI; RBI for FX/BOP/reserves; Federal Re
 This overlay's schema, parser, categorical diagnostics and tests exist on PR #20. This does **not** mean live collection, full global-flow coverage, predictive validation or production integration is complete. Current evidence confirms a short-window India FPI equity inflow alongside a negative YTD position; broad global rotation is unconfirmed because official global EM flow, DXY/yields, FX, relative-return and sector-specific exposure inputs are incomplete.
 
 No named hedge-fund real-time holdings are inferred. Public 13F filings are delayed and US-centric. India daily FPI data are depository/custodian-derived and lagged. Missing/stale/unverified values remain UNKNOWN.
+
+
+## H.10 historical FX / dollar panel recovery update — 2026-11-12
+A research-only full-history daily panel was successfully acquired from the public FRED CSV distribution route for the three modern Board H.10 dollar indices and all 23 bilateral daily FX series identified in the H.10 Library snapshot.
+
+Evidence:
+- Collector workflow run: 43276577238 (SUCCESS)
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43276577238
+- Artifact ID: 13970661965
+- Artifact ZIP SHA-256: a6f6af42226ed689ceba8e9c2d843867d82e9aa8f9a7761022c86bd719ef3691
+- 26/26 raw series files SHA-256 verified; artifact ZIP digest independently recomputed and matched.
+- 304,510 total dated observation rows; 291,831 numeric observations; 12,679 missing-value markers retained without forward-fill.
+- Date union: 1971-01-04 to 2026-11-06 (14,570 unique dates).
+- H.10 panel acceptance ledger: 6/8 = 75%. The remaining gates are exact NSE 200-session and point-in-time vintage reconciliation, plus repository binary archive / overlay integration and matched diagnostic validation.
+
+Measurement boundaries:
+- The three Federal Reserve dollar indexes are broad/AFE/EME trade-weighted indices, not ICE DXY and not portfolio flows.
+- The 23 bilateral FX series preserve source quote direction. Four are USD per foreign currency; the remaining 19 are foreign currency per USD.
+- DEXINUS is the Federal Reserve H.10 noon buying rate in New York, not RBI reference fixing or DBIE interbank close.
+- Missing observations remain missing. No forward-fill, synthetic observations, or unverified vintage claims.
+- This is FX/rate evidence, not proof that capital flowed from one country to another.
+
+Global Capital Rotation Overlay progress remains 62.5% (5/8) pending completion of the broader synchronized macro/flow panel, exact NSE-calendar joins, relative-attraction and sector bridge, and matured validation. H.10 subpanel progress must not be substituted for overall overlay completion. Production integration remains prohibited; selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E are unchanged.
