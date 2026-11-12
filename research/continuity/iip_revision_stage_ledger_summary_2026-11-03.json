@@ -1,0 +1,38 @@
+{
+  "input_observation_rows": 125220,
+  "joined_observation_rows": 125220,
+  "unique_vintage_ids": 39,
+  "observation_stage_counts": {
+    "HISTORICAL_PANEL": 122811,
+    "QUICK": 917,
+    "FINAL": 894,
+    "FIRST_REVISION": 529,
+    "FINAL_TRANSITION_BACKLOG": 69
+  },
+  "revision_difference_rows": 1124,
+  "revision_stage_join_rows": 1124,
+  "revision_stage_pair_counts": {
+    "FIRST_REVISION -> FINAL_TRANSITION_BACKLOG": 13,
+    "HISTORICAL_PANEL -> FINAL": 397,
+    "HISTORICAL_PANEL -> FINAL_TRANSITION_BACKLOG": 15,
+    "QUICK -> FINAL": 271,
+    "QUICK -> FINAL_TRANSITION_BACKLOG": 20,
+    "QUICK -> FIRST_REVISION": 389,
+    "QUICK -> HISTORICAL_PANEL": 19
+  },
+  "revision_methodology_pair_counts": {
+    "LEGACY_BASE_SERIES_METHOD_VINTAGE_NOT_RETAGGED -> LEGACY_BASE_SERIES_METHOD_VINTAGE_NOT_RETAGGED": 1056,
+    "OUTPUT_PPI_SUPERSEDING_SERIES -> OUTPUT_PPI_SUPERSEDING_SERIES": 68
+  },
+  "unjoined_revision_rows": 0,
+  "policy_stage_aligned_candidate_transitions_not_certified": 693,
+  "unresolved_historical_panel_or_out_of_window_transitions": 431,
+  "unknown_observation_stage_rows": 0,
+  "hard_gate": "BLOCKED",
+  "interpretation": "Policy-derived stage labels are not a replacement for source-release documents. Methodology break is kept distinct. This sidecar does not certify any revision or change the source audit status.",
+  "inputs_sha256": {
+    "source_artifact_zip": "e59d98dfe75e1c298b7a46d7304b44ce152d6a3363103238bfd1c466911a141c",
+    "iip_revision_stage_join_csv": "4c97f1e1ba949d633b98d2cfb4894be0de44333661ec82a7c4f1ce756e933d1d",
+    "iip_observation_estimate_stage_ledger_csv": "bac0330f82e568065369692fbc6e86f3c57e864f6096c8043ad8ca7afa71e062"
+  }
+}

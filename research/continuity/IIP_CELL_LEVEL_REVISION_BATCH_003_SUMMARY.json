@@ -1,0 +1,14 @@
+{
+  "batch":"003","reference_period":"2023-04",
+  "previous_vintage":"IIPMFY23049APR","current_vintage":"IIPMFY23054MAY",
+  "candidate_cells":5,"certified_exact_source_matches":5,"mismatches":0,
+  "remaining_candidates_for_pair":0,
+  "source_month_mapping":"PIB Statement IV Apr-23 column; workbook EF column; NIC row descriptions checked.",
+  "cells":["EF24","EF25","EF26","EF27","EF29"],
+  "previous_workbook_sha256":"7cff38f066509e007c980a4267fd1753aa1fcae560438ad3df424d78d49ec30e",
+  "current_workbook_sha256":"6530370f75fa24997f98b760f336b70533a058e1a0a0f464bf1c26a10985425a",
+  "csv_sha256":"175ebc61bb55835a8cd50e7053094ddea56041339dced060a738b7a2ad37d2bc",
+  "official_release_id":1938974,"official_release_timestamp":"2023-07-12 17:30 IST",
+  "official_source_url":"https://www.pib.gov.in/PressReleasePage.aspx?PRID=1938974&lang=2&reg=3",
+  "scope_note":"This batch does not certify the full IIP dataset or Hard Gate."
+}

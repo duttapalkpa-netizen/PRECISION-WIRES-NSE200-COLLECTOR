@@ -1,0 +1,61 @@
+{
+  "audit": "IIP existing certified revision batches 001-005",
+  "date": "2026-11-07",
+  "run_id": 42389793415,
+  "run_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/42389793415",
+  "status": "PASS_WITH_HASH_DRIFT_QUARANTINED",
+  "batches_checked": 5,
+  "certified_rows_in_existing_ledgers": 54,
+  "unique_transition_keys": 54,
+  "batch_rows": {
+    "001": 9,
+    "002": 6,
+    "003": 5,
+    "004": 14,
+    "005": 20
+  },
+  "current_committed_csv_sha256": {
+    "001": "b30e8135bf0f0edc421c3fa6bd7e78bdbc5d023f33be8bf8f609dac35172e97c",
+    "002": "ebd2bd03ddbd5ef1a62c95ed95f5297ba2cbcd981436d00cea6e288a725b1c9a",
+    "003": "5a92bfa5797d495537de440f881bb06bb4a081b8c610f4860f0c48b7efbdb4e1",
+    "004": "67834af5b169471d9ab604978c64b7913250f59e2ac6925bb2a67604578b914b",
+    "005": "9dc9cd46df57f4969a4081085a7f561ad28e0721be28087d0bcaa170f4948a65"
+  },
+  "hash_drift_quarantined": [
+    {
+      "batch": "001",
+      "legacy_declared_sha256": "334bda7be9fdb441fcbdb217fb4ed861724b33e1bc3edda6b7fe2bfbc122d165",
+      "current_committed_sha256": "b30e8135bf0f0edc421c3fa6bd7e78bdbc5d023f33be8bf8f609dac35172e97c"
+    },
+    {
+      "batch": "003",
+      "legacy_declared_sha256": "175ebc61bb55835a8cd50e7053094ddea56041339dced060a738b7a2ad37d2bc",
+      "current_committed_sha256": "5a92bfa5797d495537de440f881bb06bb4a081b8c610f4860f0c48b7efbdb4e1"
+    },
+    {
+      "batch": "004",
+      "legacy_declared_sha256": "a34b3e634c36e11bb213372235d9d7f76d63672b7d901d2348e3bbabd8e301f9",
+      "current_committed_sha256": "67834af5b169471d9ab604978c64b7913250f59e2ac6925bb2a67604578b914b"
+    },
+    {
+      "batch": "005",
+      "legacy_declared_sha256": "338a2bc02919b5b4907a817a4061df72e3c0866fabd9906a1cf54eb1142712ea",
+      "current_committed_sha256": "9dc9cd46df57f4969a4081085a7f561ad28e0721be28087d0bcaa170f4948a65"
+    }
+  ],
+  "batch_002_declared_hash": "not present in summary; current committed hash recorded",
+  "guardrails": {
+    "no_rows_promoted": true,
+    "no_historical_hash_overwritten": true,
+    "hard_gate": "BLOCKED",
+    "production_selector_changed": false,
+    "ranking_score_changed": false,
+    "pressure_fade_changed": false,
+    "core_672_changed": false
+  },
+  "limitations": [
+    "This validates committed ledger structure, counts, unique transition keys, workbook hash format and arithmetic; it does not re-download/re-certify source workbooks or PIB statements.",
+    "Four historical summary CSV hashes differ from current committed ledger bytes. The discrepancy is quarantined; its cause is not inferred.",
+    "The workflow exit-code propagation was fixed with pipefail; the final run succeeded under the corrected workflow."
+  ]
+}

@@ -1,0 +1,49 @@
+name: Next-Day Radar Static QA
+on:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - "pipeline/next_day_performance_radar.py"
+      - ".github/workflows/next_day_radar_static_qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile radar and dependency modules
+        run: python -m py_compile pipeline/next_day_performance_radar.py pipeline/walk_forward_backtest.py
+      - name: Verify immutable architecture contracts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("pipeline/next_day_performance_radar.py").read_text()
+          wf=Path(".github/workflows/nse_collector.yml").read_text()
+          assert "pipeline/final_selection.py" in wf
+          assert "pipeline/next_day_performance_radar.py" in wf
+          assert '"selector_changed":False' in p
+          assert '"ranking_score_changed":False' in p
+          assert '"pressure_fade_changed":False' in p
+          assert '"core_672_changed":False' in p
+          assert "UNKNOWN_INSUFFICIENT_CALIBRATION" in p
+          assert "SIGNAL_ONLY_NOT_PROBABILITY" in p
+          assert "latest_official_daily" in p
+          assert "MIN_DAILY_EQ_ROWS = 1000" in p
+          assert "Latest EQ source has blank or duplicate symbols" in p
+          assert "Latest model date does not equal verified raw NSE date" in p
+          assert "Eligible latest-session coverage mismatch" in p
+          assert "UNKNOWN_INSUFFICIENT_HISTORY" in p
+          assert 'unknown_rows["PROBABILITY_STATUS"]="UNKNOWN_INSUFFICIENT_HISTORY"' in p
+          assert 'unknown_rows["RADAR_RANK_BASIS"]="INSUFFICIENT_HISTORY"' in p
+          assert 'unknown_rows["HISTORY_DEPTH_AT_T"]' in p
+          assert "unknown_probability_rows" in p
+          assert "raw_source_sha256" in p
+          assert "WINNER_PROBABILITY" not in p or "_calibrated_probability" in p
+          print("STATIC_QA_PASS: supplemental radar, no selector mutation, unknown preserved")
+          PY

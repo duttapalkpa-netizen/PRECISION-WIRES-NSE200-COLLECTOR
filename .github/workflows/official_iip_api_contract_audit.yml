@@ -1,0 +1,50 @@
+name: Official e-Sankhyiki IIP API Contract Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - "pipeline/audit_official_iip_api_contract.py"
+      - "pipeline/probe_iip_api_apr2026.py"
+      - "pipeline/verify_iip_api_may2026_against_pib.py"
+      - "pipeline/verify_iip_api_apr2026_against_pib.py"
+      - ".github/workflows/official_iip_api_contract_audit.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: official-iip-api-contract-audit
+  cancel-in-progress: false
+jobs:
+  contract-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/iip-41-vintage-audit-clean
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install YAML parser
+        run: pip install pyyaml
+      - name: Fetch official IIP API contract and fingerprint it
+        run: python pipeline/audit_official_iip_api_contract.py
+      - name: Query official IIP API for April 2026 2022-23 records
+        run: python pipeline/probe_iip_api_apr2026.py
+      - name: Cross-check May 2026 API rows against official Output-PPI PIB release
+        run: python pipeline/verify_iip_api_may2026_against_pib.py
+      - name: Cross-check April 2026 API rows against latest official PIB revision
+        run: python pipeline/verify_iip_api_apr2026_against_pib.py
+      - name: Upload official contract and schema audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-iip-api-contract-${{ github.run_number }}
+          path: |
+            artifacts/iip_api_contract/
+            artifacts/iip_api_apr2026/
+            artifacts/iip_api_pib_crosscheck_2026_05/
+            artifacts/iip_api_pib_crosscheck_2026_04/
+          if-no-files-found: error
+          retention-days: 90

@@ -1,0 +1,44 @@
+name: IIP September 2026 Release Metrics QA
+on:
+  push:
+    branches:
+      - fix/iip-41-vintage-audit-clean
+    paths:
+      - 'research/data/iip_new_series_release_2026_09_official_metrics.csv'
+      - 'research/data/iip_2026_09_manufacturing_nic2_statement_IIA.csv'
+      - 'pipeline/validate_iip_2026_09_release_metrics.py'
+      - 'pipeline/validate_iip_2026_09_manufacturing_nic2.py'
+      - '.github/workflows/iip_2026_09_release_metrics_qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: iip-2026-09-release-metrics-qa
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/iip-41-vintage-audit-clean
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate release-level source-attributed metrics
+        run: python pipeline/validate_iip_2026_09_release_metrics.py
+      - name: Validate complete NIC-2 manufacturing table
+        run: python pipeline/validate_iip_2026_09_manufacturing_nic2.py
+      - name: Upload exact inputs and QA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iip-2026-09-release-metrics-qa-${{ github.run_number }}
+          path: |
+            research/data/iip_new_series_release_2026_09_official_metrics.csv
+            research/data/iip_2026_09_manufacturing_nic2_statement_IIA.csv
+            artifacts/iip_release_qa/
+          if-no-files-found: error
+          retention-days: 90

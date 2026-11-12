@@ -1,0 +1,69 @@
+{
+  "audit_status": "PASS_43_OF_43_OFFICIAL_API_ROWS_MATCH_LATEST_PIB_RELEASE",
+  "hard_gate": "BLOCKED_NATIVE_CATALOGUE_XLSX_NOT_RECOVERED",
+  "reference_period": "2026-04",
+  "base_year": "2022-23",
+  "classification": "NIC-2025 / official sectoral + use-based categories",
+  "source_type": "official MoSPI/e-Sankhyiki JSON API",
+  "operation": "GET https://api.mospi.gov.in/api/iip/getIIPData",
+  "request_parameters": {
+    "frequency": "Monthly",
+    "base_year": "2022-23",
+    "year": "2026",
+    "month_code": "4",
+    "type": "All",
+    "viz_req": "true"
+  },
+  "retrieved_at_utc": "2026-11-07T11:19:49.576191+00:00",
+  "http_status": 200,
+  "content_type": "application/json; charset=utf-8",
+  "response_bytes": 8129,
+  "raw_response_sha256": "ba0ee42f7fb7809483a86dcbfe53057d401c51af67e28638c6603fcedcdca71a",
+  "records_returned": 43,
+  "record_breakdown": {
+    "general": 1,
+    "sectoral": 36,
+    "use_based": 6
+  },
+  "invalid_filter_rows": 0,
+  "missing_expected_fields": 0,
+  "duplicates": 0,
+  "official_latest_comparison": {
+    "release_id": 2329475,
+    "release_date": "2026-10-28",
+    "url": "https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2329475",
+    "tables": [
+      "Statement I: sectoral April 2026 column",
+      "Statement III: use-based April 2026 row",
+      "Statement IV: NIC-2025 and sector/sub-sector April-2026 column"
+    ],
+    "expected_records": 43,
+    "matched_records": 43,
+    "mismatches": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "comparison_policy": "Compare API index values rounded to one decimal against official PIB values published to one decimal. Do not recompute published growth rates."
+  },
+  "ppi_series_identity": {
+    "status": "CORROBORATED",
+    "official_supersession_release_id": 2278961,
+    "release_date": "2026-06-29",
+    "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2278961&lang=1&reg=3",
+    "evidence": "MoSPI states the entire 2022-23 IIP series was revised with Output PPI, superseding the 2022-23 WPI-based series, with updated source-agency data incorporated since April 2022.",
+    "cross_validation": "The same official 2022-23 IIP API returned 43/43 May-2026 values matching the latest 2026-10-28 PIB release after revisions; April-2026 API values also match 43/43 against that release.",
+    "caveat": "The API row schema does not contain an explicit deflator field. PPI series identity is established by the official series-level supersession notice and direct row-level match to the latest official IIP release, not by a per-row deflator field."
+  },
+  "output_csv": "data/macro/iip_apr2026_mospi_api_records.csv",
+  "output_csv_sha256": "192267b76af8cc0bc524d33a86461d0d70906a96a34eadfdccea12b2245a82ee",
+  "output_csv_rows": 43,
+  "output_csv_columns": 8,
+  "original_june_1_pib_crosswalk": "Retained as separate supplemental evidence for the superseded WPI-based initial release; not overwritten or relabelled.",
+  "native_xlsx_recovered": false,
+  "data_api_artifact": {
+    "run_id": 42367705456,
+    "artifact_id": 13572745125,
+    "artifact_zip_sha256": "01c5b8d28fff2049cc3e706b01cb841da550bbdbc40acf58a3f461eae58c6ecc",
+    "retention_days": 90
+  },
+  "production_impact": "No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or hard-gate logic was changed. This is source evidence only."
+}

@@ -1,0 +1,28 @@
+{
+  "catalogue_vintage_rows": 40,
+  "official_pib_release_pages_verified": 40,
+  "unknown_official_release_pages": 0,
+  "unknown_vintages": [],
+  "source_workbook_downloads_successful": 39,
+  "source_workbook_http_404": 1,
+  "april_2026_official_quick_release_pdf_verified": true,
+  "april_2026_catalogue_xlsx_recovered": false,
+  "revision_differences_total": 1124,
+  "policy_aligned_candidate_transitions": 693,
+  "historical_panel_or_out_of_window_transitions": 431,
+  "certified_revision_rows": 9,
+  "hard_gate": "BLOCKED",
+  "ledger_csv_sha256": "21c3b9bac0a1263ecf4b341c8cd8295cfbcd8daff3e90ac906551d69ee0d97b9",
+  "source_artifact_zip_sha256": "e59d98dfe75e1c298b7a46d7304b44ce152d6a3363103238bfd1c466911a141c",
+  "interpretation": "All 40 unique catalogue vintages now have verified official PIB release pages. The April 2026 catalogue XLSX remains HTTP 404; the official Quick Estimate PDF is retained as a distinct source. The 693 policy-aligned rows are candidates, not certified cell-level revisions. No source gaps are promoted to PASS.",
+  "remaining_policy_aligned_candidates_not_certified": 684,
+  "cell_level_revision_batch_001": {
+    "period": "2023-04",
+    "previous_pib_prid": "1931708",
+    "current_pib_prid": "1938974",
+    "certified_rows": 9,
+    "mismatches": 0,
+    "ledger_csv_sha256": "334bda7be9fdb441fcbdb217fb4ed861724b33e1bc3edda6b7fe2bfbc122d165",
+    "summary_sha256": "43ffa411a06cf3db1bc18326782f5fe1be650bdf84afd64124c17de27b5f25fa"
+  }
+}

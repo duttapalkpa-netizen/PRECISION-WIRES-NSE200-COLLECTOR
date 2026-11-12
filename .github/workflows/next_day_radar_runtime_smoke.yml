@@ -1,0 +1,98 @@
+name: Next-Day Radar Bounded Runtime Smoke QA
+on:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - ".github/workflows/next_day_radar_runtime_smoke.yml"
+      - "pipeline/next_day_performance_radar.py"
+      - "collector/nse_download.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  runtime-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install bounded runtime dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Restore preserved 200-session source artifact (no recollection)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 42216720465 --repo ${{ github.repository }} --name precision-wires-adaptive-97 --dir /tmp/pw-history
+          test -s /tmp/pw-history/data/processed/nse_eq_200_sessions.csv
+          mkdir -p data/processed data/reference outputs/finalists data/raw
+          cp /tmp/pw-history/data/processed/nse_eq_200_sessions.csv data/processed/
+          cp /tmp/pw-history/data/reference/security_master.csv data/reference/ 2>/dev/null || true
+          cp /tmp/pw-history/outputs/finalists/v11_3_candidates.csv outputs/finalists/ 2>/dev/null || true
+      - name: Fetch exact official 06-Nov NSE UDiFF source and normalize
+        run: |
+          python - <<'PY'
+          import hashlib, requests
+          from pathlib import Path
+          from collector.nse_download import UDIFF, HEADERS, normalize_udiff
+          s=requests.Session(); s.headers.update(HEADERS)
+          for home in ("https://www.nseindia.com/","https://www.nseindia.com/all-reports"):
+              try: s.get(home,timeout=(10,20))
+              except requests.RequestException: pass
+          url=UDIFF.format(yyyymmdd="20261106")
+          r=s.get(url,timeout=(15,40))
+          r.raise_for_status()
+          assert r.content[:2]==b"PK", "Official NSE response is not a ZIP"
+          digest=hashlib.sha256(r.content).hexdigest()
+          expected="339e3f07bb00acb27d0200ea5bfa748de71d9b3f779b956d1069f2168c8c9904"
+          assert digest==expected, f"Official source hash mismatch: {digest}"
+          assert normalize_udiff(r.content,"06112026",Path("data/raw")), "Official NSE normalization failed"
+          print("OFFICIAL_SOURCE_HASH_MATCH",digest)
+          PY
+      - name: Execute latest hardened Radar runner
+        run: python pipeline/next_day_performance_radar.py
+      - name: Assert full-universe runtime outputs and immutable contracts
+        run: |
+          python - <<'PY'
+          import json, pandas as pd
+          from pathlib import Path
+          p=Path("outputs/finalists")
+          csv=p/"next_day_performance_radar.csv"
+          js=p/"next_day_performance_radar_summary.json"
+          assert csv.is_file() and js.is_file()
+          d=pd.read_csv(csv); s=json.loads(js.read_text())
+          assert s["as_of"]=="2026-11-06"
+          assert len(s["raw_source_sha256"])==64
+          assert s["raw_eq_rows"]==2746 and s["raw_unique_symbols"]==2746
+          assert s["eligible_symbols"]==2690
+          assert s["history_insufficient_symbols"]==56
+          assert len(d)==2746 and d.SYMBOL.nunique()==2746
+          scored=d[d.PROBABILITY_STATUS=="CALIBRATED_OUT_OF_SAMPLE"]
+          unknown=d[d.PROBABILITY_STATUS=="UNKNOWN_INSUFFICIENT_HISTORY"]
+          assert len(scored)==2690 and len(unknown)==56
+          assert unknown[["P5_H1","P10_H3","P20_H5"]].isna().all().all()
+          assert unknown["RADAR_SCORE"].isna().all()
+          assert s["unknown_probability_rows"]==56
+          assert s["selector_changed"] is False
+          assert s["ranking_score_changed"] is False
+          assert s["pressure_fade_changed"] is False
+          assert s["core_672_changed"] is False
+          assert s["hard_gate"]=="UNCHANGED"
+          assert s["output_sha256"]
+          print(json.dumps(s,indent=2))
+          PY
+      - name: Upload isolated runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-day-radar-runtime-smoke-${{ github.run_number }}
+          path: |
+            outputs/finalists/next_day_performance_radar.csv
+            outputs/finalists/next_day_performance_radar_summary.json
+            data/raw/sec_bhavdata_full_06112026.csv
+          if-no-files-found: warn

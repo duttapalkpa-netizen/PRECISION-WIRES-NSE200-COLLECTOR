@@ -1,0 +1,65 @@
+name: Portfolio Two-Stock Rolling Swing Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [fix/iip-41-vintage-audit-clean]
+    paths:
+      - "pipeline/portfolio_rolling_audit.py"
+      - "collector/nse_download.py"
+      - "collector/build_200_sessions.py"
+      - "collector/security_master.py"
+      - ".github/workflows/portfolio_two_stock_rolling_audit.yml"
+  schedule:
+    # 17:00 IST on weekdays; scheduled workflows run only from the default branch.
+    - cron: "30 11 * * 1-5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-two-stock-rolling-audit
+  cancel-in-progress: false
+
+jobs:
+  portfolio-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy requests
+      - name: Restore rolling NSE history cache
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: portfolio-nse-200-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            portfolio-nse-200-${{ runner.os }}-
+      - name: Acquire official NSE security master
+        run: python collector/security_master.py
+      - name: Acquire 200 official NSE cash-market sessions
+        run: python collector/nse_download.py --sessions 200 --lookback-days 500
+      - name: Build normalized 200-session dataset
+        run: python collector/build_200_sessions.py
+      - name: Run isolated portfolio rolling audit
+        run: python pipeline/portfolio_rolling_audit.py
+      - name: Upload daily and rolling audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-two-stock-rolling-audit-${{ github.run_number }}
+          path: |
+            data/raw/sessions.txt
+            data/raw/acquisition_diagnostics.json
+            data/reference/NSE_EQUITY_L_source.csv
+            data/reference/security_master.csv
+            data/reference/security_master_manifest.json
+            data/processed/nse_eq_200_sessions.csv
+            outputs/portfolio/
+          if-no-files-found: warn
