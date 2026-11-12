@@ -118,7 +118,10 @@
     "full_history_daily_raw_download": "PASS_26_OF_26",
     "full_history_raw_sha256_and_schema_qa": "PASS_26_OF_26",
     "daily_panel_build_and_artifact_digest": "PASS",
-    "nse_session_and_point_in_time_vintage_reconciliation": "PENDING"
+    "nse_session_and_point_in_time_vintage_reconciliation": "PENDING",
+    "exact_nse_200_session_calendar_join": "PASS_200_SESSIONS_95_PERCENT_OBSERVED_PER_SERIES",
+    "point_in_time_vintage_availability": "UNKNOWN",
+    "overlay_integration_and_matched_diagnostic_validation": "PENDING"
   },
   "historical_daily_panel": {
     "workflow_name": "Fed H10 full-history daily dollar and INR panel",
@@ -160,5 +163,50 @@
       "wide_and_long_output_hashes_recomputed": true
     },
     "acceptance_boundary": "Full-history raw downloads and per-series schema/date/hash QA passed for the 3 H.10 dollar indexes and all 23 H.10 bilateral FX series. Does not establish point-in-time vintage availability, exact NSE 200-session intersection, RBI reference-rate equivalence, global capital flows, event-study maturity, or production readiness."
+  },
+  "nse_session_alignment": {
+    "workflow_run_id": 43277569394,
+    "workflow_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43277569394",
+    "workflow_commit": "bdf7ff311301e83ff338a07a1cf2cff02d28eb09",
+    "artifact_id": 13971506735,
+    "artifact_name": "fed-h10-nse-200-session-alignment-20261112",
+    "artifact_bytes": 47824,
+    "artifact_sha256": "8192dd5908f5fd4abe3c9bbd72507b0abe6e8216dc064efed0815b181fc1138e",
+    "independent_artifact_digest_check": true,
+    "nse_snapshot_id": "ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305",
+    "nse_manifest_sha256": "ab37d0e14458aceaa13b7684e5739d9486c27e4b3f04d2667e1911abd568a17a",
+    "nse_sessions": 200,
+    "nse_raw_files_sha256_verified": 200,
+    "h10_series_count": 26,
+    "h10_raw_files_sha256_verified": 26,
+    "observed_values_per_series": 190,
+    "coverage_pct_per_series": 95,
+    "source_missing_marker_dates": [
+      "2026-02-16",
+      "2026-05-25",
+      "2026-06-19",
+      "2026-07-03",
+      "2026-09-07",
+      "2026-10-12"
+    ],
+    "no_source_row_dates": [
+      "2026-02-01",
+      "2026-11-09",
+      "2026-11-11",
+      "2026-11-12"
+    ],
+    "missing_values_filled": 0,
+    "forward_fill": false,
+    "wide_panel": {
+      "path": "h10_nse_200_session_wide.csv",
+      "bytes": 40508,
+      "sha256": "cc0781d542a4df89b9535e655b6c2d6c370336465249ad2659db1cf2d11b48f4"
+    },
+    "long_panel": {
+      "path": "h10_nse_200_session_long.csv",
+      "bytes": 192676,
+      "sha256": "c4a82d05f1525289d2be43eff4f97a2785f9e648bd0fa631b1b7983ce51d5cf0"
+    },
+    "point_in_time_vintage_status": "UNKNOWN_NOT_VERIFIED"
   }
 }
