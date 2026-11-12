@@ -33,7 +33,7 @@ jobs:
           repo=os.environ["GH_REPO"]
           pins={
             43245527846:(13955899352,"nse-200-session-cache-verification-331","sha256:1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070"),
-            43248356512:(13957867109,"nse-200-session-cache-verification-332","sha256:74923fac8aacb60ac82fba0bd955cae018847adae08294babfec1daf5d7375c0")
+            43249886595:(13957294024,"nse-200-session-cache-verification-333","sha256:fa0ba14a4d5f9806ab4aa34ca047487b52018e64fe48d2957a11b45e3ddfb336")
           }
           for run_id,(artifact_id,name,digest) in pins.items():
             run=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run_id}"],text=True))
