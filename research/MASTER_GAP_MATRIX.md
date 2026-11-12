@@ -259,3 +259,16 @@ A further independent ZIP inspection compared the later artifact 340 with the cr
 ### 11.5 Production invariants
 
 No production selector, \`RANKING_SCORE\`, \`+1 PRESSURE_FADE\`, or 672-diagnostic changes. No production integration and no PR merge. Research remains ₹0 spend and free official sources only. \`UNKNOWN\` remains neither PASS nor FAIL.
+
+
+### 11.6 Rejected substitute-panel recovery attempt — evidence preserved
+
+The retained NSE 200-session artifact from run \`41589358513\` / artifact \`13210110022\` was inspected as a possible recovery source for the expired Macro-Geo P0 panel.
+
+- Artifact ZIP SHA-256: \`d1f78e86d175c3348851dd4b19f88d2f346f70f7f18ed8c61779ed44eff04cdc\`.
+- Its manifest spans 200 sessions from 2026-01-09 through 2026-11-02.
+- Restricting its raw NSE files to the historical P0 panel date range 2026-01-20 through 2026-10-30 yields 193 dates and 480,877 EQ symbol-date rows when processed with the archived \`collector/build_200_sessions.py\` row-selection/deduplication logic.
+- The original P0 source-coverage record reports 508,398 rows over 2026-01-20 through 2026-10-30.
+- The 27,521-row discrepancy means this artifact is **not** an exact reconstruction of the expired P0 panel. It is rejected for same-snapshot restoration; no row padding, synthetic data, or date substitution is allowed.
+
+This diagnostic closes the attempted recovery path, not the missing-panel acceptance gate. Recover the exact original panel or perform a fresh, fully versioned P0 collection and recompute every dependent audit in one new snapshot.
