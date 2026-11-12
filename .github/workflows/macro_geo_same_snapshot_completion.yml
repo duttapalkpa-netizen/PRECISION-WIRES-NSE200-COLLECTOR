@@ -28,6 +28,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check -r requirements.txt
       - name: Restore the exact canonical NSE panel cache used by P0 run
         id: panel_cache
+        continue-on-error: true
         uses: actions/cache/restore@v4
         with:
           path: |
