@@ -79,7 +79,7 @@ class TestFedH10RawCollector(unittest.TestCase):
                 collector.archive(Path(tmp))
 
     def test_rejects_zip_member_paths_that_escape_or_confuse_platforms(self):
-        for name in ("../escape.xml", "folder/../escape.xml", r"folder\\escape.xml",
+        for name in ("../escape.xml", "folder/../escape.xml", r"folder\escape.xml",
                      "C:/escape.xml", "/absolute.xml", "folder//double.xml"):
             with self.subTest(name=name):
                 fake = SimpleNamespace(infolist=lambda: [
