@@ -1,3 +1,4 @@
+
 name: NSE 200-session exact provenance crosswalk
 on:
   push:
@@ -24,8 +25,8 @@ jobs:
           python-version: "3.12"
       - name: Verify immutable source artifact identities
         env:
-          GH_TOKEN: \${{ github.token }}
-          GH_REPO: \${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -46,7 +47,7 @@ jobs:
           PY
       - name: Download the two exact immutable snapshots
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p inputs/reference inputs/candidate
