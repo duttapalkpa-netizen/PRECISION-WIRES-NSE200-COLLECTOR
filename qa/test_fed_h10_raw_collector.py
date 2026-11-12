@@ -43,8 +43,32 @@ class TestFedH10RawCollector(unittest.TestCase):
             self.assertFalse(manifest["observation_panel_created"])
             self.assertEqual(len(manifest["series"]), 3)
 
-    def test_rejects_non_federal_responses(self):
+    def test_rejects_lookalike_hostname_before_request(self):
+        with patch.object(collector, "urlopen") as mocked:
+            with self.assertRaises(ValueError):
+                collector.retrieve("https://www.federalreserve.gov.attacker.example/file.zip")
+            mocked.assert_not_called()
+
+    def test_rejects_http_and_nonstandard_port_before_request(self):
+        with patch.object(collector, "urlopen") as mocked:
+            for url in (
+                "http://www.federalreserve.gov/file.zip",
+                "https://www.federalreserve.gov:8443/file.zip",
+                "https://user@www.federalreserve.gov/file.zip",
+            ):
+                with self.subTest(url=url), self.assertRaises(ValueError):
+                    collector.retrieve(url)
+            mocked.assert_not_called()
+
+    def test_rejects_non_federal_redirect(self):
         with patch.object(collector, "urlopen", return_value=FakeResponse(zip_bytes(), "https://example.com/file.zip")):
+            with tempfile.TemporaryDirectory() as tmp, self.assertRaises(ValueError):
+                collector.archive(Path(tmp))
+
+    def test_rejects_lookalike_redirect(self):
+        with patch.object(collector, "urlopen", return_value=FakeResponse(
+            zip_bytes(), "https://www.federalreserve.gov.attacker.example/file.zip"
+        )):
             with tempfile.TemporaryDirectory() as tmp, self.assertRaises(ValueError):
                 collector.archive(Path(tmp))
 
