@@ -1,0 +1,35 @@
+name: Fed H10 full-history daily dollar and INR panel
+on:
+  push:
+    branches: [research/fed-h10-library-ingestion-20261112]
+    paths:
+      - "pipeline/fed_h10_full_history_collector.py"
+      - ".github/workflows/fed_h10_full_history_panel.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fed-h10-full-history-panel
+  cancel-in-progress: false
+jobs:
+  collect-and-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile collector
+        run: python -m py_compile pipeline/fed_h10_full_history_collector.py
+      - name: Download full history and verify raw bytes and rows
+        timeout-minutes: 5
+        run: timeout 280s python pipeline/fed_h10_full_history_collector.py
+      - name: Upload immutable H10 daily panel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fed-h10-full-history-daily-panel-\${{ github.sha }}
+          path: data/global_capital_rotation/fed_h10/
+          if-no-files-found: error
+          retention-days: 90
