@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: fed-h10-raw-ingestion-\${{ github.event.pull_request.number || github.ref }}
+  group: fed-h10-raw-ingestion
   cancel-in-progress: false
 jobs:
   archive:
