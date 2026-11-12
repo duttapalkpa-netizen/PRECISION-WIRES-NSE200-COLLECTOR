@@ -48,10 +48,34 @@ class TestFedH10RawCollector(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp, self.assertRaises(ValueError):
                 collector.archive(Path(tmp))
 
+    def test_rejects_lookalike_initial_host(self):
+        with patch.object(collector, "urlopen") as mocked:
+            with self.assertRaises(ValueError):
+                collector.retrieve("https://www.federalreserve.gov.attacker.example/file.zip")
+            mocked.assert_not_called()
+
+    def test_rejects_lookalike_redirect_host(self):
+        response = FakeResponse(zip_bytes(), "https://www.federalreserve.gov.attacker.example/file.zip")
+        with patch.object(collector, "urlopen", return_value=response):
+            with self.assertRaises(ValueError):
+                collector.retrieve()
+
+    def test_rejects_non_https_redirect(self):
+        response = FakeResponse(zip_bytes(), "http://www.federalreserve.gov/file.zip")
+        with patch.object(collector, "urlopen", return_value=response):
+            with self.assertRaises(ValueError):
+                collector.retrieve()
+
+    def test_rejects_nonstandard_port(self):
+        with patch.object(collector, "urlopen") as mocked:
+            with self.assertRaises(ValueError):
+                collector.retrieve("https://www.federalreserve.gov:444/file.zip")
+            mocked.assert_not_called()
+
     def test_rejects_non_zip_payload(self):
         with patch.object(collector, "urlopen", return_value=FakeResponse(b"not a zip")):
-            with tempfile.TemporaryDirectory() as tmp, self.assertRaises(ValueError):
-                collector.archive(Path(tmp))
+            with self.assertRaises(ValueError):
+                collector.retrieve()
 
     def test_append_only_collision_fails(self):
         raw = zip_bytes()
