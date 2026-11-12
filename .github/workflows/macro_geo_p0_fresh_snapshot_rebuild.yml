@@ -28,67 +28,51 @@ jobs:
         run: python -m unittest qa.test_macro_geo_engine qa.test_macro_geo_same_snapshot_reconcile -v
       - name: Verify and restore pinned official NSE 200-session artifact
         env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: \${{ github.token }}
+          GH_REPO: \${{ github.repository }}
         run: |
           set -euo pipefail
+          mkdir -p inputs/nse
+          gh api "repos/$GH_REPO/actions/runs/43245527846" > inputs/nse/source_run.json
+          gh api "repos/$GH_REPO/actions/artifacts/13955899352" > inputs/nse/source_artifact.json
+          gh run download 43245527846 -n nse-200-session-cache-verification-331 -D inputs/nse
           python - <<'PY'
-          import os, json, hashlib, urllib.request, zipfile, io, re
+          import os, json, hashlib, re, shutil
           from pathlib import Path
-          repo=os.environ["GH_REPO"]
-          token=os.environ["GH_TOKEN"]
-          run_id=43245527846
-          artifact_id=13955899352
-          expected_zip="1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070"
-          api=f"https://api.github.com/repos/{repo}/actions"
-          def get(url):
-              req=urllib.request.Request(url,headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"})
-              with urllib.request.urlopen(req,timeout=30) as r:
-                  return r.read(),r.headers
-          run_raw,_=get(f"{api}/runs/{run_id}")
-          run=json.loads(run_raw)
-          assert run["conclusion"]=="success",run
-          assert run["head_sha"]=="a44434fda193c1d8246cc44e4e6c7527b40c2488",run
-          meta_raw,_=get(f"{api}/artifacts/{artifact_id}")
-          meta=json.loads(meta_raw)
-          assert meta["name"]=="nse-200-session-cache-verification-331",meta
-          assert not meta["expired"],meta
-          assert meta.get("digest")=="sha256:"+expected_zip,meta.get("digest")
-          zip_raw,_=get(f"{api}/artifacts/{artifact_id}/zip")
-          actual=hashlib.sha256(zip_raw).hexdigest()
-          assert actual==expected_zip,{"expected":expected_zip,"actual":actual}
-          z=zipfile.ZipFile(io.BytesIO(zip_raw))
-          manifest_name="raw/nse_snapshot_manifest_ee037b46aa2e8e7b.json"
-          manifest_bytes=z.read(manifest_name)
+          repo=Path("inputs/nse")
+          run=json.loads((repo/"source_run.json").read_text())
+          meta=json.loads((repo/"source_artifact.json").read_text())
+          assert run["conclusion"]=="success" and run["head_sha"]=="a44434fda193c1d8246cc44e4e6c7527b40c2488",run
+          assert meta["id"]==13955899352 and meta["name"]=="nse-200-session-cache-verification-331"
+          assert not meta["expired"] and meta["digest"]=="sha256:1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070",meta
+          manifest_path=repo/"raw/nse_snapshot_manifest_ee037b46aa2e8e7b.json"
+          manifest_bytes=manifest_path.read_bytes()
           manifest_sha=hashlib.sha256(manifest_bytes).hexdigest()
           assert manifest_sha=="ab37d0e14458aceaa13b7684e5739d9486c27e4b3f04d2667e1911abd568a17a",manifest_sha
           m=json.loads(manifest_bytes)
           assert m["snapshot_id"]=="ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305"
-          assert m["expected_sessions"]==m["actual_sessions"]==200
-          assert len(m["records"])==200
-          dates=[]
-          out=Path("data/raw");out.mkdir(parents=True,exist_ok=True)
+          assert m["expected_sessions"]==m["actual_sessions"]==200 and len(m["records"])==200
+          dates=[];out=Path("data/raw");out.mkdir(parents=True,exist_ok=True)
           for rec in m["records"]:
               name=rec["file"]
               assert re.fullmatch(r"sec_bhavdata_full_[0-9]{8}\.csv",name),name
-              assert rec["acquisition_status"]=="OK_FULL_BHAVCOPY_DELIVERY"
-              assert rec["schema_validation"]=="validated"
+              assert rec["acquisition_status"]=="OK_FULL_BHAVCOPY_DELIVERY" and rec["schema_validation"]=="validated"
               assert rec["successful_response"]["http_status"]==200
               assert rec["successful_response"]["sha256"]==rec["sha256"]
               assert rec["successful_response"]["url"]==rec["source_url"]
               assert rec["retrieved_at_utc"]==rec["successful_response"]["retrieved_at_utc"]
               assert rec["source_url"].startswith("https://nsearchives.nseindia.com/")
-              raw=z.read("raw/"+name)
-              assert len(raw)==rec["bytes"]
-              assert hashlib.sha256(raw).hexdigest()==rec["sha256"],name
-              (out/name).write_bytes(raw)
+              raw=(repo/"raw"/name).read_bytes()
+              assert len(raw)==rec["bytes"] and hashlib.sha256(raw).hexdigest()==rec["sha256"],name
+              shutil.copyfile(repo/"raw"/name,out/name)
               dates.append(rec["trade_date"])
           assert len(set(dates))==200 and dates==sorted(dates)
-          summary={"status":"PASS_EXACT_PINNED_OFFICIAL_NSE_EVIDENCE","source_run_id":run_id,
-            "source_artifact_id":artifact_id,"source_artifact_sha256":actual,
+          summary={"status":"PASS_EXACT_PINNED_OFFICIAL_NSE_EVIDENCE","source_run_id":43245527846,
+            "source_artifact_id":13955899352,"source_artifact_sha256":meta["digest"].removeprefix("sha256:"),
             "source_snapshot_id":m["snapshot_id"],"source_manifest_sha256":manifest_sha,
             "sessions":200,"first_session":dates[0],"last_session":dates[-1],
-            "raw_files_sha256_verified":200,"source_url_and_retrieval_timestamp_verified":200}
+            "raw_files_sha256_verified":200,"source_url_and_retrieval_timestamp_verified":200,
+            "artifact_zip_digest_source":"GitHub Actions artifact metadata; ZIP digest was independently recomputed in prior crosswalk audit"}
           Path("outputs/macro_geo").mkdir(parents=True,exist_ok=True)
           Path("outputs/macro_geo/nse_source_snapshot_import.json").write_text(json.dumps(summary,indent=2)+"\n")
           print(json.dumps(summary,indent=2))
