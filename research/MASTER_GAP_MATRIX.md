@@ -189,3 +189,18 @@ Both source workflow runs have GitHub conclusion SUCCESS. Their exact run/artifa
 The 118 superseded revisions and 6 blocked disclosures remain explicit non-current/non-verified records; they are not promoted to valid feature rows. The artifact proves 1,864 computed feature rows from source-linked XBRL facts, not 1,988 fully verified metric rows. The ZIP's evidence inventory contains XBRL files only and no PDF files, so this artifact does not establish PDF-table metric extraction. Further PDF extraction or treatment of the six blocked records requires a separately scoped, source-backed task and must preserve their current blocked status until independently verified.
 
 This closes the artifact-verification gap only. It does not close matured H+1/H+3/H+5 event study, rolling backtest, overall Factor Registry, Macro-Geo, Step 6 same-snapshot reconciliation, Hard Gate, or Final Research Paper acceptance.
+
+
+## 10. NSE 200-session provenance refresh — independently inspected artifact (2026-11-12)
+
+- Workflow Run `43245527846` — SUCCESS on the PR #13 head commit `a44434fda193c1d8246cc44e4e6c7527b40c2488`; job completed successfully. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43245527846
+- Artifact `nse-200-session-cache-verification-331`, ID `13955899352`; GitHub ZIP digest `sha256:1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070`. Downloaded and independently recomputed ZIP SHA-256; exact match.
+- Artifact contains 212 files. Snapshot manifest `raw/nse_snapshot_manifest_ee037b46aa2e8e7b.json`: 200 expected and actual sessions, 200 unique trade dates and files, 2026-01-21 through 2026-11-12.
+- Snapshot ID: `ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305`; manifest file SHA-256: `ab37d0e14458aceaa13b7684e5739d9486c27e4b3f04d2667e1911abd568a17a`.
+- Independently checked every one of the 200 manifest records: all have a source URL, retrieval timestamp, 64-character SHA-256, schema_validation=`validated`, cache_origin=`network`, acquisition_status=`OK_FULL_BHAVCOPY_DELIVERY`, successful HTTP 200 response, matching successful-response URL, present local file, and exact local-file SHA-256 match. Result: **200/200 record-level source/hash matches**.
+- Acquisition diagnostics contain 213 calendar-date checks: 200 `OK_FULL_BHAVCOPY_DELIVERY` and 13 `MISS` (non-session/lookback dates); no failed session is silently counted as one of the 200 valid sessions.
+- Warm-cache QA: 200/200 hits, 0 misses, 0 network requests, 16.770754 seconds, 11.926 sessions/sec. This is a local warm-cache benchmark, not an acquisition-speed benchmark.
+- `qa/snapshot_manifest_result.json` reports 200 sessions and the same snapshot ID. Artifact ZIP digest and snapshot manifest SHA-256 independently recomputed and matched.
+- **Bounded status update:** this exact 2026-11-12 snapshot demonstrates complete URL/retrieval-time/response-hash/local-file-hash provenance for all 200 manifest records, unlike the earlier legacy-cache snapshot. However, the manifest's static `provenance_limitations` array still claims pre-existing legacy cache records lack original URL/retrieval timestamps. This text is inconsistent with the 200 current records and must be reconciled in the manifest-generation/reporting logic before promoting the broader NSE provenance workstream to unconditional PASS. Preserve the warning; do not silently delete it or overstate historical provenance.
+- No production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, or 672-diagnostic changes were made. No PR merge was performed.
+
