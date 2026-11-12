@@ -1,0 +1,31 @@
+name: Federal Reserve H.10 raw source archive
+on:
+  pull_request:
+    paths:
+      - "pipeline/collect_fed_h10_raw.py"
+      - ".github/workflows/fed_h10_raw_ingestion.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fed-h10-raw-ingestion-\${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download and validate official H.10 raw archive
+        run: python pipeline/collect_fed_h10_raw.py --output-dir artifacts/raw/fed_h10
+      - name: Upload immutable raw archive and SHA-256 manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: fed-h10-raw-source-archive
+          path: artifacts/raw/fed_h10/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
