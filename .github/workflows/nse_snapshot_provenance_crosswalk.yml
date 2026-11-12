@@ -24,8 +24,8 @@ jobs:
           python-version: "3.12"
       - name: Verify immutable source artifact identities
         env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: \${{ github.token }}
+          GH_REPO: \${{ github.repository }}
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -46,12 +46,12 @@ jobs:
           PY
       - name: Download the two exact immutable snapshots
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: \${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p inputs/reference inputs/candidate
           gh run download 43245527846 -n nse-200-session-cache-verification-331 -D inputs/reference
-          gh run download 43248356512 -n nse-200-session-cache-verification-332 -D inputs/candidate
+          gh run download 43249886595 -n nse-200-session-cache-verification-333 -D inputs/candidate
       - name: Run provenance crosswalk regression tests
         run: python -m unittest qa.test_reconcile_nse_snapshot_provenance -v
       - name: Reconcile every session, byte count and content hash
