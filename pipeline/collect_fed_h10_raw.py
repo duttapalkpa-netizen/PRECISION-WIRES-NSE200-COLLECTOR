@@ -9,26 +9,77 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 from zipfile import ZipFile, BadZipFile
 
 SOURCE_URL = "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=h10"
+APPROVED_HOST = "www.federalreserve.gov"
 SERIES = {
     "H10/H10/JRXWTFB_N.B": "Nominal Broad Dollar Index",
     "H10/H10/JRXWTFN_N.B": "Nominal Advanced Foreign Economies Dollar Index",
     "H10/H10/JRXWTFO_N.B": "Nominal Emerging Market Economies Dollar Index",
 }
 MAX_BYTES = 40 * 1024 * 1024
+MAX_ZIP_MEMBERS = 10_000
+MAX_MEMBER_UNCOMPRESSED_BYTES = 128 * 1024 * 1024
+MAX_TOTAL_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
+
+
+def validate_zip_members(zf: ZipFile) -> list[str]:
+    """Bound ZIP metadata and decompression work before CRC-testing any member."""
+    infos = zf.infolist()
+    if not infos or len(infos) > MAX_ZIP_MEMBERS:
+        raise ValueError("ZIP member count is empty or exceeds the safety limit")
+    names = [info.filename for info in infos]
+    if len(set(names)) != len(names):
+        raise ValueError("ZIP contains duplicate member names")
+    total_uncompressed = 0
+    for info in infos:
+        name = info.filename
+        parts = name.rstrip("/").split("/")
+        if (
+            not name
+            or "\\" in name
+            or "\x00" in name
+            or name.startswith("/")
+            or (len(name) >= 2 and name[1] == ":")
+            or any(part in ("", ".", "..") for part in parts)
+        ):
+            raise ValueError("ZIP contains an unsafe member path")
+        if info.flag_bits & 0x1:
+            raise ValueError("encrypted ZIP members are not accepted")
+        if info.file_size < 0 or info.file_size > MAX_MEMBER_UNCOMPRESSED_BYTES:
+            raise ValueError("ZIP member exceeds the uncompressed size safety limit")
+        total_uncompressed += info.file_size
+        if total_uncompressed > MAX_TOTAL_UNCOMPRESSED_BYTES:
+            raise ValueError("ZIP total uncompressed size exceeds the safety limit")
+    return sorted(names)
+
+
+def validate_source_url(url: str) -> None:
+    """Require the exact approved HTTPS origin; reject lookalike hosts and credentials."""
+    try:
+        parsed = urlsplit(url)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("source URL has an invalid authority or port") from exc
+    if (
+        parsed.scheme != "https"
+        or parsed.hostname != APPROVED_HOST
+        or port not in (None, 443)
+        or parsed.username is not None
+        or parsed.password is not None
+    ):
+        raise ValueError("source URL is outside the approved Federal Reserve HTTPS origin")
 
 
 def retrieve(url: str = SOURCE_URL, timeout: int = 45) -> tuple[bytes, str]:
-    if not url.startswith("https://www.federalreserve.gov/"):
-        raise ValueError("source URL is outside the approved Federal Reserve HTTPS host")
+    validate_source_url(url)
     request = Request(url, headers={"User-Agent": "PRECISION-WIRES-research-archive/1.0"})
     with urlopen(request, timeout=timeout) as response:
         final_url = response.geturl()
-        if not final_url.startswith("https://www.federalreserve.gov/"):
-            raise ValueError("redirect left the approved Federal Reserve host")
+        validate_source_url(final_url)
         content_type = response.headers.get("Content-Type", "")
         raw = response.read(MAX_BYTES + 1)
     if len(raw) > MAX_BYTES:
@@ -51,9 +102,7 @@ def archive(output_dir: Path, retrieved_at: datetime | None = None) -> dict:
     if raw_path.exists() or manifest_path.exists():
         raise FileExistsError("append-only archive target already exists")
     with ZipFile(io.BytesIO(raw)) as zf:
-        members = sorted(zf.namelist())
-        if not members or any(name.startswith("/") or ".." in Path(name).parts for name in members):
-            raise ValueError("ZIP member list is empty or contains unsafe paths")
+        members = validate_zip_members(zf)
         bad_member = zf.testzip()
         if bad_member:
             raise BadZipFile(f"CRC failure in archive member: {bad_member}")
