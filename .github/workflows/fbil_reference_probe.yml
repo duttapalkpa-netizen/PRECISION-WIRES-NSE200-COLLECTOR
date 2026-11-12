@@ -1,0 +1,145 @@
+name: FBIL reference-rate live probe
+
+on:
+  push:
+    branches:
+      - research/global-capital-rotation-overlay-v1
+    paths:
+      - ".github/workflows/fbil_reference_probe.yml"
+      - "qa/validate_fbil_reference_payload.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fbil-reference-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+
+      - name: Probe rolling Mumbai-local dates and historical control
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p probe-output
+          python - <<'PY'
+          import hashlib, json, urllib.request, urllib.error
+          from datetime import date, datetime, timedelta, timezone
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          out = Path("probe-output")
+          ist = ZoneInfo("Asia/Kolkata")
+          windows = [("historical_control", date(2026, 10, 15), date(2026, 10, 16))]
+          retrieved_at = datetime.now(timezone.utc)
+          today_ist = retrieved_at.astimezone(ist).date()
+
+          # Probe the previously unexamined gap (17 Oct through 4 Nov 2026)
+          # as individual Mumbai-local calendar dates, preserving weekends/holidays.
+          gap_start = date(2026, 10, 17)
+          gap_end = date(2026, 11, 4)
+          probe_date = gap_start
+          while probe_date <= gap_end:
+              windows.append((f"gap_{probe_date.isoformat().replace('-', '')}", probe_date, probe_date))
+              probe_date += timedelta(days=1)
+
+          # Retain the rolling seven-day window for ongoing freshness monitoring.
+          for offset in range(6, -1, -1):
+              probe_date = today_ist - timedelta(days=offset)
+              windows.append((f"rolling_{probe_date.isoformat().replace('-', '')}", probe_date, probe_date))
+
+          for label, start, end in windows:
+              url = (
+                  "https://www.fbil.org.in/wasdm/refrates/fetchfiltered"
+                  f"?fromDate={start.isoformat()}&toDate={end.isoformat()}&authenticated=false"
+              )
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": "PRECISION-WIRES-V11.3-research/1.0",
+                      "Accept": "application/json",
+                  },
+              )
+              status_code = None
+              response_headers = {}
+              transport_error = None
+              try:
+                  with urllib.request.urlopen(req, timeout=25) as response:
+                      raw = response.read()
+                      status_code = response.status
+                      response_headers = dict(response.headers.items())
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read()
+                  status_code = exc.code
+                  response_headers = dict(exc.headers.items()) if exc.headers else {}
+              except Exception as exc:
+                  raw = b""
+                  transport_error = repr(exc)
+
+              (out / f"{label}_raw.json").write_bytes(raw)
+              metadata = {
+                  "request_url": url,
+                  "from_date": start.isoformat(),
+                  "to_date": end.isoformat(),
+                  "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                  "retrieved_at_ist": datetime.now(ist).isoformat(),
+                  "http_status": status_code,
+                  "content_type": response_headers.get("Content-Type"),
+                  "raw_bytes": len(raw),
+                  "raw_sha256": hashlib.sha256(raw).hexdigest(),
+              }
+              if transport_error:
+                  metadata["transport_error"] = transport_error
+              try:
+                  obj = json.loads(raw)
+                  metadata["json_root_type"] = type(obj).__name__
+                  metadata["record_count"] = len(obj) if isinstance(obj, list) else None
+                  metadata["json_status"] = (
+                      "PASS_NONEMPTY_ARRAY" if isinstance(obj, list) and obj
+                      else "EMPTY_ARRAY" if isinstance(obj, list)
+                      else "INVALID_ROOT"
+                  )
+              except Exception as exc:
+                  metadata["json_status"] = "INVALID_JSON"
+                  metadata["json_error"] = str(exc)
+              (out / f"{label}_metadata.json").write_text(
+                  json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+              )
+              print(label, json.dumps(metadata, sort_keys=True))
+          PY
+
+      - name: Validate each non-empty response independently
+        shell: bash
+        run: |
+          set -euo pipefail
+          for metadata in probe-output/*_metadata.json; do
+            [ -f "$metadata" ] || continue
+            label="$(basename "$metadata" _metadata.json)"
+            if grep -q '"json_status": "PASS_NONEMPTY_ARRAY"' "$metadata"; then
+              from_date="$(python -c "import json,sys; print(json.load(open(sys.argv[1]))['from_date'])" "$metadata")"
+              to_date="$(python -c "import json,sys; print(json.load(open(sys.argv[1]))['to_date'])" "$metadata")"
+              python qa/validate_fbil_reference_payload.py \
+                --raw "probe-output/${label}_raw.json" \
+                --from-date "$from_date" \
+                --to-date "$to_date" \
+                --csv-out "probe-output/${label}_validated.csv"
+            else
+              echo "NO INGESTION: $label did not return a non-empty JSON array."
+            fi
+          done
+
+      - name: Upload raw responses and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fbil-reference-probes-${{ github.run_id }}
+          path: probe-output/
+          if-no-files-found: warn
+          retention-days: 30

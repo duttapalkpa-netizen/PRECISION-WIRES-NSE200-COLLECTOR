@@ -1,0 +1,11 @@
+date,indicator,value,unit,source,source_url,published_at,as_of_date,quality_status
+2026-11-02,india_fpi_equity_inr_cr,4457.80,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-02,VERIFIED_OFFICIAL
+2026-11-03,india_fpi_equity_inr_cr,3352.12,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-03,VERIFIED_OFFICIAL
+2026-11-04,india_fpi_equity_inr_cr,7052.74,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-04,VERIFIED_OFFICIAL
+2026-11-05,india_fpi_equity_inr_cr,7830.40,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-05,VERIFIED_OFFICIAL
+2026-11-06,india_fpi_equity_inr_cr,16277.99,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-06,VERIFIED_OFFICIAL
+2026-11-09,india_fpi_equity_inr_cr,14767.73,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-09,VERIFIED_OFFICIAL
+2026-11-09,india_fpi_equity_mtd_inr_cr,53738.78,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-09,VERIFIED_OFFICIAL
+2026-11-09,india_fpi_equity_ytd_inr_cr,-241407.13,INR_crore,CDSL Daily Trends FII FPI archive,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-09,VERIFIED_OFFICIAL
+2026-11-09,india_fpi_debt_inr_cr,2578.19,INR_crore,CDSL Daily Trends FII FPI archive General+VRR+FAR,https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx,2026-11-10,2026-11-09,VERIFIED_OFFICIAL
+2026-09-18,us_h1b_policy_event_direction,-1,restrictiveness_direction_(-1_tighter_+1_easier),White House Proclamation 11069,https://www.whitehouse.gov/presidential-actions/2026/09/restriction-on-entry-of-certain-nonimmigrant-workers-faad/,2026-11-10,2026-09-18,VERIFIED_OFFICIAL
