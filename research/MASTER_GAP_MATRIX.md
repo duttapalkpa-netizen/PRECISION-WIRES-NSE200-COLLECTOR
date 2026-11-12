@@ -143,3 +143,49 @@ Do not rerun Steps 1–4. Close the remaining Step 5 QA evidence gap with isolat
 - Fix is isolated on branch `fix/source-coverage-status-reconcile`: one shared status override updates both JSON and CSV. Also corrected selectolax import to maintained Lexbor backend after Run `41340507789` exposed the deprecated Modest import.
 - Run `41340560881` SUCCESS; artifact `13097271838` inspected; 6/6 tests pass in 0.006 sec, including CSV/JSON parity.
 - Step 6 remains BLOCKED until a full same-workflow artifact is regenerated and inspected with `source_coverage_csv_json_statuses_match=true`, all other reconciliation checks true, and a non-null immutable snapshot ID. This bounded unit test is not represented as a full Step 6 PASS.
+
+
+## 9. Quarterly Results XBRL metric extraction — artifact recovery and verification (2026-11-12)
+
+This addendum updates the earlier `ARTIFACT_UNVERIFIED / UNKNOWN` state for the **separate XBRL financial-metric extraction workstream**. It does not alter the earlier Step 1 endpoint/schema PASS (1,767 disclosures) or Step 2 five-field metadata PASS (1,767 disclosures); those are separate acceptance scopes.
+
+### Verified source batches
+
+| Batch | Run ID | Artifact ID | Source disclosures | Artifact SHA-256 |
+|---|---:|---:|---:|---|
+| Batch 1 | `41585837753` | `13207184371` | 1,000 | `0b8b07e6bbc59bcc87016ed3b96cf54ad01d5b2dfeb3a7fa8f5f748489b25829` |
+| Batch 2 | `41587465930` | `13209235865` | 988 | `7bee96713ea6d1f85fd9ea7b79316cca1a18747d2c176b5ad25121b1434bc415` |
+
+Both source workflow runs have GitHub conclusion SUCCESS. Their exact run/artifact IDs and digests were rechecked against the GitHub Actions API.
+
+### Global reconciliation
+
+- Workflow: `Quarterly Metric Batches Global Reconciliation`
+- Run ID: `41588275108`; conclusion SUCCESS; commit `e60d749b5df5df9e7230c4a92545a5ac55f519d0`.
+- Artifact: `quarterly-metric-batches-global-reconciliation`; ID `13209151475`; 24,098,158 bytes.
+- GitHub artifact ZIP SHA-256: `f0f53e610f8e0ae53f93a9c46f2246e82324538dca252556df0a70f60a230997`.
+- Artifact was downloaded again and its ZIP SHA-256 independently recomputed; it matches GitHub's digest.
+- ZIP contains 1,920 files, including 1,911 XBRL evidence files; no PDF evidence files were present in this artifact.
+- Source disclosure rows: 1,988; merged ledger rows: 1,988; unique source URLs: 1,988; evidence-file SHA-256 checks verified: 1,988.
+- Final global status counts: `SOURCE_LINKED_XBRL_FACTS=1864`, `SUPERSEDED_BY_LATER_DISCLOSURE=118`, `BLOCKED_NO_VERIFIED_XBRL_METRICS=6`.
+- Computed feature rows: 1,864; symbols: 1,021; exact duplicate feature rows removed: 0; consensus rows: 0.
+- No ambiguous latest-period-basis blocker was accepted by the workflow assertion.
+- Production invariants all false for change: selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, and diagnostics 672.
+
+### Recomputed artifact file hashes
+
+| File | SHA-256 |
+|---|---|
+| `data/raw/quarterly_financial_metrics.csv` | `8687356bd833ac78d2dd01e7eb356d32043cc4045f75baba8a02d6174a74d561` |
+| `outputs/quarterly_results/quarterly_financial_features.csv` | `7dd5766e5879165fbce6790a43895f737feab2cc9e23f901ce55e14d2be3142d` |
+| `outputs/quarterly_results/quarterly_metric_batches_reconciliation.json` | `aedd23722e74df233ece11299f318368a24ab78bf4305cf07faa2bf5a844a0af` |
+| `outputs/quarterly_results/quarterly_metric_batch_manifest.json` | `3c004b77076285a7b66248686c28630ed9fc025fb3661bf732667df630864963` |
+| Batch 1 source disclosures CSV | `1f95e41758e397191294d4843601588eeb0b73c8ce7b4ef79913817fd0b7a7d7` |
+
+### Reconciled status and remaining limits
+
+**Status: ARTIFACT VERIFIED — PASS WITH EXPLICIT BLOCKERS.** The previous UNKNOWN/ARTIFACT_UNVERIFIED label is superseded for this exact 1,988-disclosure extraction and global-reconciliation artifact. Do not rerun the two extraction batches or the successful global reconciliation workflow merely to refresh the status.
+
+The 118 superseded revisions and 6 blocked disclosures remain explicit non-current/non-verified records; they are not promoted to valid feature rows. The artifact proves 1,864 computed feature rows from source-linked XBRL facts, not 1,988 fully verified metric rows. The ZIP's evidence inventory contains XBRL files only and no PDF files, so this artifact does not establish PDF-table metric extraction. Further PDF extraction or treatment of the six blocked records requires a separately scoped, source-backed task and must preserve their current blocked status until independently verified.
+
+This closes the artifact-verification gap only. It does not close matured H+1/H+3/H+5 event study, rolling backtest, overall Factor Registry, Macro-Geo, Step 6 same-snapshot reconciliation, Hard Gate, or Final Research Paper acceptance.
