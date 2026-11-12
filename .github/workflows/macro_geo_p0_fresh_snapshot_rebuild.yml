@@ -1,0 +1,178 @@
+name: Macro Geo P0 fresh same-snapshot rebuild from verified NSE 200-session evidence
+on:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_fresh_snapshot_rebuild.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: macro-geo-p0-fresh-snapshot-rebuild
+  cancel-in-progress: false
+jobs:
+  rebuild-p0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bounded P0 collector dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy requests
+      - name: Test P0 collector and evidence contracts
+        run: python -m unittest qa.test_macro_geo_p0_raw_collector qa.test_macro_geo_engine -v
+      - name: Verify and restore pinned official NSE 200-session artifact
+        env:
+          GH_TOKEN: \${{ github.token }}
+          GH_REPO: \${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, json, hashlib, urllib.request, zipfile, io, re
+          from pathlib import Path
+          repo=os.environ["GH_REPO"]
+          token=os.environ["GH_TOKEN"]
+          run_id=43245527846
+          artifact_id=13955899352
+          expected_zip="1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070"
+          api=f"https://api.github.com/repos/{repo}/actions"
+          def get(url):
+              req=urllib.request.Request(url,headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"})
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  return r.read(),r.headers
+          run_raw,_=get(f"{api}/runs/{run_id}")
+          run=json.loads(run_raw)
+          assert run["conclusion"]=="success",run
+          assert run["head_sha"]=="a44434fda193c1d8246cc44e4e6c7527b40c2488",run
+          meta_raw,_=get(f"{api}/artifacts/{artifact_id}")
+          meta=json.loads(meta_raw)
+          assert meta["name"]=="nse-200-session-cache-verification-331",meta
+          assert not meta["expired"],meta
+          assert meta.get("digest")=="sha256:"+expected_zip,meta.get("digest")
+          zip_raw,_=get(f"{api}/artifacts/{artifact_id}/zip")
+          actual=hashlib.sha256(zip_raw).hexdigest()
+          assert actual==expected_zip,{"expected":expected_zip,"actual":actual}
+          z=zipfile.ZipFile(io.BytesIO(zip_raw))
+          manifest_name="raw/nse_snapshot_manifest_ee037b46aa2e8e7b.json"
+          manifest_bytes=z.read(manifest_name)
+          manifest_sha=hashlib.sha256(manifest_bytes).hexdigest()
+          assert manifest_sha=="ab37d0e14458aceaa13b7684e5739d9486c27e4b3f04d2667e1911abd568a17a",manifest_sha
+          m=json.loads(manifest_bytes)
+          assert m["snapshot_id"]=="ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305"
+          assert m["expected_sessions"]==m["actual_sessions"]==200
+          assert len(m["records"])==200
+          dates=[]
+          out=Path("data/raw");out.mkdir(parents=True,exist_ok=True)
+          for rec in m["records"]:
+              name=rec["file"]
+              assert re.fullmatch(r"sec_bhavdata_full_[0-9]{8}\.csv",name),name
+              assert rec["acquisition_status"]=="OK_FULL_BHAVCOPY_DELIVERY"
+              assert rec["schema_validation"]=="validated"
+              assert rec["successful_response"]["http_status"]==200
+              assert rec["successful_response"]["sha256"]==rec["sha256"]
+              assert rec["successful_response"]["url"]==rec["source_url"]
+              assert rec["retrieved_at_utc"]==rec["successful_response"]["retrieved_at_utc"]
+              assert rec["source_url"].startswith("https://nsearchives.nseindia.com/")
+              raw=z.read("raw/"+name)
+              assert len(raw)==rec["bytes"]
+              assert hashlib.sha256(raw).hexdigest()==rec["sha256"],name
+              (out/name).write_bytes(raw)
+              dates.append(rec["trade_date"])
+          assert len(set(dates))==200 and dates==sorted(dates)
+          summary={"status":"PASS_EXACT_PINNED_OFFICIAL_NSE_EVIDENCE","source_run_id":run_id,
+            "source_artifact_id":artifact_id,"source_artifact_sha256":actual,
+            "source_snapshot_id":m["snapshot_id"],"source_manifest_sha256":manifest_sha,
+            "sessions":200,"first_session":dates[0],"last_session":dates[-1],
+            "raw_files_sha256_verified":200,"source_url_and_retrieval_timestamp_verified":200}
+          Path("outputs/macro_geo").mkdir(parents=True,exist_ok=True)
+          Path("outputs/macro_geo/nse_source_snapshot_import.json").write_text(json.dumps(summary,indent=2)+"\n")
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Rebuild canonical NSE panel from exact verified raw sessions
+        run: |
+          set -euo pipefail
+          python collector/build_200_sessions.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          import pandas as pd
+          p=Path("data/processed/nse_eq_200_sessions.csv")
+          assert p.is_file() and p.stat().st_size>0
+          d=pd.read_csv(p,usecols=lambda c:str(c).strip().upper()=="DATE")
+          dates=pd.to_datetime(d.iloc[:,0],errors="coerce").dropna().dt.normalize()
+          unique=sorted(dates.unique())
+          assert len(unique)==200,{"unique_sessions":len(unique)}
+          result={"status":"PASS_CANONICAL_PANEL_REBUILT_FROM_PINNED_RAW","rows":len(d),
+            "unique_sessions":len(unique),"date_min":str(unique[0].date()),"date_max":str(unique[-1].date()),
+            "panel_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "source_snapshot_id":"ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305",
+            "security_master_policy":"If absent, listing date remains first-observed-session proxy; not promoted to official listing date."}
+          Path("outputs/macro_geo/nse_panel_rebuild_result.json").write_text(json.dumps(result,indent=2)+"\n")
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Collect P0 market series and timestamped media evidence within a hard time budget
+        timeout-minutes: 6
+        run: timeout 350s python pipeline/macro_geo_collect_p0.py
+      - name: Reconcile source coverage and 35-factor coverage from this exact snapshot
+        run: |
+          set -euo pipefail
+          python pipeline/macro_geo_source_coverage.py
+          python pipeline/macro_geo_factor_coverage_audit.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          files=[
+            "data/processed/nse_eq_200_sessions.csv",
+            "data/external/market_panel.csv",
+            "data/external/events.csv",
+            "outputs/macro_geo/p0_collection_manifest.json",
+            "outputs/macro_geo/source_coverage.json",
+            "outputs/macro_geo/source_coverage.csv",
+            "outputs/macro_geo/factor_coverage_audit.json"
+          ]
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          missing=[p for p in files if not Path(p).is_file()]
+          assert not missing,{"missing":missing}
+          p0=json.loads(Path(files[3]).read_text())
+          cov=json.loads(Path(files[4]).read_text())
+          fac=json.loads(Path(files[6]).read_text())
+          panel=Path(files[0])
+          report={
+            "status":"P0_FRESH_SNAPSHOT_BUILT_WITH_EXPLICIT_SOURCE_GAPS",
+            "source_nse_snapshot_id":"ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305",
+            "nse_source_import":json.loads(Path("outputs/macro_geo/nse_source_snapshot_import.json").read_text()),
+            "nse_panel_rebuild":json.loads(Path("outputs/macro_geo/nse_panel_rebuild_result.json").read_text()),
+            "p0_operational_status":p0.get("operational_status"),
+            "p0_research_status":p0.get("research_status"),
+            "p0_window":{"start":p0.get("window_start"),"end":p0.get("window_end")},
+            "market_panel":p0.get("market_panel"),"event_collection":p0.get("event_collection"),
+            "p0_coverage":p0.get("p0_coverage"),
+            "source_coverage":{k:cov.get(k) for k in ("status","sources_total","available","not_connected","schema_fail","quality_warn","read_error","p0_coverage")},
+            "factor_coverage":{k:fac.get(k) for k in ("status","factor_groups","fully_available_schema_groups","partial_source_coverage","not_connected","unmapped")},
+            "files":{p:{"sha256":sha(p),"bytes":Path(p).stat().st_size} for p in files},
+            "production_invariants":{"selector_changed":False,"RANKING_SCORE_changed":False,"PRESSURE_FADE_changed":False,"diagnostics_changed":False},
+            "hard_gate":"NOT_CLEARED_BY_THIS_P0_REBUILD",
+            "interpretation":"A successful build/QA workflow does not imply all source groups are available or the Hard Gate is cleared. Secondary sources and media publication timestamps remain labelled; missing inputs remain UNKNOWN."
+          }
+          Path("outputs/macro_geo/p0_fresh_snapshot_rebuild_manifest.json").write_text(json.dumps(report,indent=2)+"\n")
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Upload complete P0 snapshot and provenance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-p0-fresh-snapshot-20261112
+          path: |
+            data/raw/sec_bhavdata_full_*.csv
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+            data/external/
+            outputs/macro_geo/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
