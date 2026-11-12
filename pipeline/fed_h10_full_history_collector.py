@@ -157,7 +157,7 @@ def main() -> int:
             raw_path = RAW / f"{sid}.csv"
             raw_path.write_bytes(raw)
             rows, qa = parse_csv(sid, raw)
-            if not qa["expected_start_match"]:
+            if qa["expected_start_match"] is False:
                 raise ValueError(f"{sid}: unexpected first observation {qa['first_observation']}")
             manifest["series"][sid] = {
                 **spec,
