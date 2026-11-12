@@ -20,7 +20,11 @@ OUT = ROOT / "outputs/quarterly_results"
 CANONICAL = ROOT / "data/raw/quarterly_financial_metrics.csv"
 FEATURES = OUT / "quarterly_financial_features.csv"
 SHA_RE = re.compile(r"^[0-9a-f]{64}$")
-VALID = {"SOURCE_LINKED_XBRL_FACTS", "SOURCE_LINKED_PDF_TABLE_FACTS"}
+VALID = {
+    "SOURCE_LINKED_XBRL_FACTS",
+    "SOURCE_LINKED_PDF_TABLE_FACTS",
+    "SOURCE_LINKED_NSE_HTML_TABLE_FACTS",
+}
 
 def sha256_file(path):
     h = hashlib.sha256()
@@ -39,7 +43,13 @@ def restore_prior_superseded(rows):
         timestamp = pd.notna(pd.to_datetime(row.get("DISCLOSED_AT", ""), errors="coerce", utc=True))
         if metrics and provenance and timestamp:
             ctype = str(row.get("SOURCE_CONTENT_TYPE", "")).lower()
-            d.at[idx, "EXTRACTION_STATUS"] = "SOURCE_LINKED_PDF_TABLE_FACTS" if "pdf" in ctype else "SOURCE_LINKED_XBRL_FACTS"
+            if "pdf" in ctype:
+                restored = "SOURCE_LINKED_PDF_TABLE_FACTS"
+            elif "html" in ctype:
+                restored = "SOURCE_LINKED_NSE_HTML_TABLE_FACTS"
+            else:
+                restored = "SOURCE_LINKED_XBRL_FACTS"
+            d.at[idx, "EXTRACTION_STATUS"] = restored
         else:
             d.at[idx, "EXTRACTION_STATUS"] = "BLOCKED_SUPERSEDED_ROW_WITH_INCOMPLETE_EVIDENCE"
             d.loc[idx, ["REVENUE", "PAT", "EPS"]] = ""
@@ -124,7 +134,7 @@ def main():
         "unique_source_urls": int(rows["SOURCE_URL"].nunique()),
         "feature_report": feature_report,
         "feature_rows": int(len(features)),
-        "policy": "Prior superseded statuses were restored only when source URL, SHA-256, disclosure timestamp and all three metric facts were present; global latest-revision policy then re-applied across both batches. Blocked rows remain blocked.",
+        "policy": "Prior superseded statuses are restored only when source URL, SHA-256, disclosure timestamp and all three metric facts are present. Source type is restored from content type (XBRL, PDF table, or NSE HTML table); global latest-revision policy is then reapplied. Blocked rows remain blocked.",
         "production_invariants": {
             "production_selector_changed": False,
             "ranking_score_changed": False,
