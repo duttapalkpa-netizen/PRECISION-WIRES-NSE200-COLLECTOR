@@ -1,8 +1,11 @@
-name: Federal Reserve H.10 raw source archive
+name: Federal Reserve H.10 raw source archive and daily panel
 on:
   pull_request:
     paths:
       - "pipeline/collect_fed_h10_raw.py"
+      - "pipeline/parse_fed_h10_xml.py"
+      - "qa/test_fed_h10_raw_collector.py"
+      - "qa/test_parse_fed_h10_xml.py"
       - ".github/workflows/fed_h10_raw_ingestion.yml"
   workflow_dispatch:
 permissions:
@@ -11,7 +14,7 @@ concurrency:
   group: fed-h10-raw-ingestion
   cancel-in-progress: false
 jobs:
-  archive:
+  archive-and-parse:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -19,13 +22,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Run isolated collector and parser regression tests
+        run: python -m unittest qa.test_fed_h10_raw_collector qa.test_parse_fed_h10_xml -v
       - name: Download and validate official H.10 raw archive
         run: python pipeline/collect_fed_h10_raw.py --output-dir artifacts/raw/fed_h10
-      - name: Upload immutable raw archive and SHA-256 manifest
+      - name: Extract and reconcile daily USD indices with USD-INR
+        shell: bash
+        run: |
+          RAW_ZIP="$(find artifacts/raw/fed_h10 -type f -name '*.zip' -print -quit)"
+          RAW_MANIFEST="$(find artifacts/raw/fed_h10 -type f -name '*.manifest.json' -print -quit)"
+          test -n "$RAW_ZIP"
+          test -n "$RAW_MANIFEST"
+          python pipeline/parse_fed_h10_xml.py --archive "$RAW_ZIP" --raw-manifest "$RAW_MANIFEST" --output-dir artifacts/processed/fed_h10
+      - name: Upload raw source, SHA-256 manifest and status-preserving panel
         uses: actions/upload-artifact@v4
         with:
-          name: fed-h10-raw-source-archive
-          path: artifacts/raw/fed_h10/
+          name: fed-h10-raw-and-panel-evidence
+          path: |
+            artifacts/raw/fed_h10/
+            artifacts/processed/fed_h10/
           if-no-files-found: error
           retention-days: 90
           compression-level: 0
