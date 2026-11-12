@@ -78,7 +78,9 @@ Evidence:
 - 26/26 raw series files SHA-256 verified; artifact ZIP digest independently recomputed and matched.
 - 304,510 total dated observation rows; 291,831 numeric observations; 12,679 missing-value markers retained without forward-fill.
 - Date union: 1971-01-04 to 2026-11-06 (14,570 unique dates).
-- H.10 panel acceptance ledger: 6/8 = 75%. The remaining gates are exact NSE 200-session and point-in-time vintage reconciliation, plus repository binary archive / overlay integration and matched diagnostic validation.
+- H.10 panel acceptance ledger: 6.5/8 = 81.25% using eight equal-weight gates; exact NSE 200-session join is PASS, while point-in-time vintage availability remains UNKNOWN/PENDING. Repository binary archive / overlay integration and matched diagnostic validation remain pending.
+- Exact pinned NSE calendar: 200 sessions (2026-01-21 to 2026-11-12); 200/200 NSE raw files and 26/26 H.10 raw series hashes verified.
+- Every H.10 series has 190/200 numeric observations (95.00%); six explicit source-missing markers and four no-source-row dates are preserved as blank. No forward-fill.
 
 Measurement boundaries:
 - The three Federal Reserve dollar indexes are broad/AFE/EME trade-weighted indices, not ICE DXY and not portfolio flows.
