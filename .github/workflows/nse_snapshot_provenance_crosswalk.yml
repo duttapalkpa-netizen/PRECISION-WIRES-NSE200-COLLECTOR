@@ -1,0 +1,70 @@
+name: NSE 200-session exact provenance crosswalk
+on:
+  push:
+    branches: [fix/factor-registry-same-snapshot-reconcile]
+    paths:
+      - "pipeline/reconcile_nse_snapshot_provenance.py"
+      - "qa/test_reconcile_nse_snapshot_provenance.py"
+      - ".github/workflows/nse_snapshot_provenance_crosswalk.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nse-snapshot-provenance-crosswalk
+  cancel-in-progress: false
+jobs:
+  crosswalk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify immutable source artifact identities
+        env:
+          GH_TOKEN: \${{ github.token }}
+          GH_REPO: \${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,subprocess
+          repo=os.environ["GH_REPO"]
+          pins={
+            43245527846:(13955899352,"nse-200-session-cache-verification-331","sha256:1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070"),
+            43248356512:(13957867109,"nse-200-session-cache-verification-332","sha256:74923fac8aacb60ac82fba0bd955cae018847adae08294babfec1daf5d7375c0")
+          }
+          for run_id,(artifact_id,name,digest) in pins.items():
+            run=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run_id}"],text=True))
+            assert run["conclusion"]=="success", (run_id,run.get("conclusion"))
+            artifacts=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/runs/{run_id}/artifacts"],text=True))["artifacts"]
+            artifact=next((x for x in artifacts if x["id"]==artifact_id),None)
+            assert artifact is not None and artifact["name"]==name and artifact["digest"]==digest,(run_id,artifact)
+            assert not artifact["expired"],(run_id,"artifact expired")
+            print({"run_id":run_id,"artifact_id":artifact_id,"name":name,"digest":digest,"verified":True})
+          PY
+      - name: Download the two exact immutable snapshots
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/reference inputs/candidate
+          gh run download 43245527846 -n nse-200-session-cache-verification-331 -D inputs/reference
+          gh run download 43248356512 -n nse-200-session-cache-verification-332 -D inputs/candidate
+      - name: Run provenance crosswalk regression tests
+        run: python -m unittest qa.test_reconcile_nse_snapshot_provenance -v
+      - name: Reconcile every session, byte count and content hash
+        run: |
+          python pipeline/reconcile_nse_snapshot_provenance.py \
+            --reference-dir inputs/reference \
+            --candidate-dir inputs/candidate \
+            --output-dir outputs/nse_provenance_crosswalk
+      - name: Upload exact-hash provenance crosswalk evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-200-session-provenance-crosswalk
+          path: outputs/nse_provenance_crosswalk/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
