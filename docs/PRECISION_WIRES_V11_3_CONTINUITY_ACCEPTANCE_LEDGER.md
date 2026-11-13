@@ -221,3 +221,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Remediation recommendation only: decide shared-vs-frozen V11.3 helper contract; fail closed for absent/unreadable/stale/invalid calibration; embed and validate producer/run/data provenance. No code change applied pending explicit policy approval.
 - Protected invariants unchanged; no workflow run, PR, merge, production integration, synthetic data or spend.
 - Project Hard Gate remains BLOCKED; overall research percentage NOT_CALCULABLE.
+
+
+## 15. Missing delivery evidence propagation / ablation impact audit — 2026-11-14
+
+- Read-only report: `docs/DELIVERY_UNKNOWN_FEATURE_PROPAGATION_ABLATION_AUDIT_20261114.md`.
+- Source inspected: `pipeline/walk_forward_backtest.py`, blob `d085f7a2d35a88b4c4eaba65144a429a06961b09`; existing issue #27 records two GSEC10ABSL missing delivery observations in Run 110 (2026-09-11 and 2026-09-14).
+- Confirmed: missing DELIV_GAP contributes 0 delivery points in ABSORPTION because NaN >= 0 is False; the same missing value is neutralized to 0 gap / 50-point subcomponent in REPRICING_PRESSURE; `_winner_interaction_score` propagates NaN because it has no missing-value branch.
+- Current inspected walk-forward `RANKING_SCORE` excludes WINNER_INTERACTION_SCORE; counterfactual ablation variants still include it, so missing delivery can contaminate non-current ablation comparisons. Historical affected-row count and metric delta remain UNKNOWN pending exact Run 110 replay.
+- Policy remains UNRESOLVED; no silent UNKNOWN→PASS/FAIL/neutral conversion approved. No code change, imputation, workflow run, PR or production integration.
+- Protected invariants unchanged. Project Hard Gate remains BLOCKED; overall research percentage NOT_CALCULABLE.
