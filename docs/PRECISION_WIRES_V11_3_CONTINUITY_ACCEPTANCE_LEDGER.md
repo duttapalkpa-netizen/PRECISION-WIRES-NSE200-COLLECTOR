@@ -363,3 +363,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - A third-party article describes a possible NSE page JSON endpoint, but no NSE-published API contract was found in the official page evidence. Treat only as an unverified lead; do not request it by guessed parameters or promote to collector source. Need capture exact official page network request/response or NSE-published specification, including schema/pagination/date semantics, before implementation.
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_RSS_LIVE_VISIBLE_ROW_RECONCILIATION_20261114.md`.
 - Corporate Events P0 remains BLOCKED; all-13 reconciliation UNKNOWN/NOT COMPLETE; no code/workflow/production change, no paid service, no PR/merge, no synthetic data. Protected production selector/ranking/CORE-672 invariants unchanged.
+
+
+## 29. Official NSE Announcement XBRL surface discovery — 2026-11-14
+
+- Verified official NSE page `https://www.nseindia.com/companies-listing/corporate-filings-announcements-xbrl` exposes Announcement Type, Company, Events/Subject, From/To filters, CSV download affordance and pagination (20 of 958 records; 48 pages) in current rendered retrieval.
+- Visible columns: SYMBOL, COMPANY NAME, Event/Subject, DETAILS, ATTACHMENT, TYPE OF SUBMISSION, BROADCAST DATE/TIME; expanded row text also separates Exchange Dissemination Time and Time Taken. This provides a richer official structured surface than the basic five-row Latest Announcements widget.
+- Scope is Announcement XBRL only. Do not assume it covers every general RSS announcement. Visible sample dates are 28–29 Oct 2026, outside the RSS 13–14 Nov window. No RSS item-level match claimed.
+- Official page/schema/UI CSV affordance VERIFIED; exact browser request URL, date-filtered CSV bytes/hash and pagination contract NOT CAPTURED. Next step is capture the official page's own CSV export request/response for an overlapping date range, then test issuer/subject matching while keeping XBRL subset distinct.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_OFFICIAL_XBRL_SURFACE_DISCOVERY_20261114.md`.
+- General announcement completeness UNKNOWN; Corporate Events P0 remains BLOCKED. No code/workflow/production change, no paid service, no PR/merge, no synthetic data. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
