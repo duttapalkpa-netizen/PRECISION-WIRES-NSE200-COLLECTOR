@@ -265,3 +265,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - CI Run 43377552716: SUCCESS; job 131727465554; 37 tests passed in 0.019s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43377552716 .
 - Branch compare after this work: 75 commits ahead, 0 behind main; research-only branch. No PR opened or merged.
 - CI validates the fail-closed documentary guard, not actual issuer membership, CDSL raw report bytes, a machine-readable panel or predictive performance.
+
+
+## 21. NSE Indices issuer-classification source and bulk-membership gap — 2026-11-13
+- Opened official NSE Industry Classification page https://www.nseindia.com/static/products-services/industry-classification . It documents four levels and says assignment is primarily based on audited consolidated annual revenue; classification is reviewed annually and may change after significant corporate events. It is methodology, not a dated complete membership file.
+- BSE common taxonomy PDF https://www.bseindices.com/Downloads/India_Industry_Classification_Structure.pdf contains hierarchy codes and definitions, not issuer identifier membership rows.
+- Official-source search found individual issuer disclosures containing classifications, but no complete machine-readable effective-dated issuer roster or API contract. Individual issuer reports cannot be scraped into an assumed complete universe; missing issuers cannot be inferred.
+- Required minimum bridge fields: stable identifier (prefer ISIN plus exchange symbol/security code), classification codes, valid_from/valid_to or dated snapshot, publication/vintage timestamp, and universe coverage. NSE/BSE roster equivalence remains UNKNOWN.
+- Source register section 21 commit c9e88e11d4cd4b87d86828f68293f40399822c80, blob 035e0f972c500838963da46b02993e9e6434ed34.
+- QA fail-closed regression commit 17e98314f3c39f4372a1ff6d531c053f83500281, blob e9c80c9bc1ff9a0183668dfd1884893a900d3716.
+- Acceptance: NSE methodology = VERIFIED; BSE hierarchy = VERIFIED; complete issuer membership = NOT LOCATED/NOT ACQUIRED; historical effective-dated roster = NOT LOCATED/NOT ACQUIRED; CDSL sector-to-issuer bridge = UNKNOWN. No issuer mappings constructed, no synthetic join, no ingestion, no production use.
+- Defined source/methodology/coverage-gap qualification = 100% pending CI. Complete issuer roster acquisition = 0%; historical point-in-time mapping = 0%; CDSL panel bridge = 0%; predictive validation = NOT DONE.
+- No production changes, no PR/merge, no protected invariants changed. Overall V11.3 progress remains NOT CALCULABLE pending full weighted acceptance-ledger reconciliation.
