@@ -92,3 +92,30 @@ Status update:
 - May 11 correction exact H.10 daily-panel impact: UNKNOWN / requires archived payload diff.
 - Aug 10/Aug 12 H.10 revision values: PASS at archived HTML table level; raw payload hashes pending.
 - Intraday actual publication timestamp evidence for the correction events: PENDING.
+
+
+## Follow-up: direct official page evidence and DDP access-path transition
+A fresh official Federal Reserve web retrieval independently returned both date-specific H.10 pages with full weekly tables:
+- 2026-08-10 original: https://www.federalreserve.gov/releases/h10/20260810/
+- 2026-08-12 corrected: https://www.federalreserve.gov/releases/h10/20260812/
+
+Both pages cover Aug 3–7. The Federal Reserve correction notice states the Aug 10 release had incorrect Aug 3 values for all currencies and dollar indexes and that it was corrected Aug 12. The paired tables confirm the corrected INR/USD Aug 3 value changed from 95.9100 to 95.3400; Broad 120.7739 to 119.6951; AFE 114.2972 to 112.8653; EME 129.0609 to 128.3599. Other Aug 4–7 values shown in the two tables are unchanged. This establishes that the correction affected the Aug 3 observation across the H.10 table, rather than a blanket rewrite of the full week.
+
+Important correction to prior phrasing: the announcement says all currencies and indexes were affected for the Aug 3 values; do not describe all five days as changed. Only the Aug 3 column is confirmed changed by the before/after table comparison.
+
+The Federal Reserve current H.10 index explicitly lists the release archive and states the weekly publication rule (Monday 4:15 p.m. ET, moved to next business day for Monday federal holidays). It also notes the weekly H.10 release ceased from May 22, 2006 to January 2009; historical data for that gap are available through DDP, not weekly release pages. This gap matters only if any requested research history spans that interval; do not assume weekly archive coverage exists there.
+Source: https://www.federalreserve.gov/Releases/H10/
+
+DDP access-path change discovered: the current Federal Reserve H.10 DDP page says the Build Your Package feature was retired in the week of Nov 9, 2026; the preformatted package feature is planned for retirement March 31, 2027 and the DDP page for July 1, 2027. The page says XML remains available on Board statistical release pages. Therefore future free official acquisition must use date-specific release-page XML where available or documented FRED/ALFRED routes; do not build a new workflow around the retired package builder.
+Source: https://www.federalreserve.gov/datadownload/Choose.aspx?rel=H10
+
+Acquisition execution attempt: direct raw HTML download from the research runtime failed due to outbound DNS/network unavailability. No local HTML file, byte count, or SHA-256 was produced. Browser/web page retrieval is evidence of page content only and is not raw-byte archival integrity evidence. This is recorded as an environment access blocker, not a source failure.
+
+Status update:
+- Official date-specific page pair and Aug 3 before/after values: PASS (web-visible source evidence).
+- Exact correction scope: Aug 3 values across currencies and indexes; Aug 4–7 shown values unchanged.
+- Raw HTML bytes + SHA-256: BLOCKED (runtime outbound DNS unavailable; no hash claimed).
+- H.10 release schedule and 2006–Jan 2009 weekly-publication gap: VERIFIED from official H.10 index.
+- DDP Build Your Package retirement and XML fallback: VERIFIED from official DDP page.
+- Exact intraday publication time of Aug 12 correction: UNKNOWN.
+- Full historical vintage acquisition and 26 × 200 reconstruction: PENDING.
