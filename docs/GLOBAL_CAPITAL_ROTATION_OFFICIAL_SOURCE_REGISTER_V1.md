@@ -315,3 +315,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Character-code inspection found the candidate delimiter remained a literal backslash+t sequence. Replaced it with `chr(9)` to ensure an actual tab delimiter.
 - Validator commit `86edc76f30a04fc78408cc45af2c46d1456a9c7e` (blob `a625908d5701f5f95a717582dcf10913f1cbbb08`).
 - Existing QA tab regression uses a Python `\t` escape and yields an actual tab at runtime; no new test method added. Full suite remains NOT RUN and CI NOT VERIFIED.
+
+ 
+## 2026-11-13 — Logical-record CSV delimiter inference
+- Replaced physical-line delimiter sampling with strict CSV parsing over logical records, supporting valid quoted fields containing embedded newlines while preserving ragged-row detection and fail-closed malformed quoting.
+- Validator commit `fa65175e011c36711b94193513a0b7507c2cae72` (blob `b97516e076c60a0b4e659ccc0fd7606c0c79fb80`).
+- Added quoted multiline-field regression test: QA commit `1db674e9ce57e20953432c0a622a00336a2bb074` (blob `7260b5210b5171a6facdb132b0b2470e9fd78520`).
+- Full test suite and CI remain NOT RUN / NOT VERIFIED. Official Python CSV docs: https://docs.python.org/3/library/csv.html .
