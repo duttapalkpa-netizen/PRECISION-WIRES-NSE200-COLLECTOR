@@ -97,6 +97,14 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("not an observed-only sum of country-reported flows",content)
         self.assertIn("cannot serve as a 1–5 trading-day trigger",content)
         self.assertIn("raw BOP_AGG workbook/table bytes",content)
+
+    def test_bop_agg_vintage_and_download_access_are_not_overstated(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("2026 vintage NOT VERIFIED",content)
+        self.assertIn("19 November 2025",content)
+        self.assertIn("API portal redirects to a sign-in page",content)
+        self.assertIn("raw workbook/table, exact URL, retrieval timestamp",content)
     def test_imf_bop_spec_pins_public_dsd_but_keeps_data_unknown(self):
         spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
         content=spec.read_text(encoding="utf-8")
