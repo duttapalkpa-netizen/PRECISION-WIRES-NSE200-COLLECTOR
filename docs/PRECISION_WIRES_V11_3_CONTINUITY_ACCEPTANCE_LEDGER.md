@@ -115,3 +115,50 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Safety determination PASS: do not collapse 4-digit concordance into IIP 2-digit divisions by prefix, row count or class count. The mapping has partial splits and cross-division aggregations; NIC concordance alone is not an IIP item-group/weight bridge.
 - Full 463-row machine-readable extraction remains NOT_COMPLETED; IIP-specific item-group/weight correspondence remains UNKNOWN/BLOCKED. A source table continuation fragment exists (NIC-2025 4772 row continues with 4799(p) in next table block); future parser must preserve and deterministically join such fragments or fail closed.
 - No workflow rerun, no PR merge, no production changes, no changes to protected V11.3 invariants.
+
+
+## 11. Continuity delta reconciliation — 2026-11-14 (research-only)
+
+This appendix records verified work added after the ledger's 2026-11-08 reconciliation. It does not promote UNKNOWN/BLOCKED evidence to PASS and does not modify production.
+
+### 11.1 CDSL FPI official-source audit — daily, FY, derivatives and fortnightly
+
+- Daily cash/derivatives and date-alignment work is recorded in:
+  - 11-Nov cash arithmetic: commit `940fff57a820afd8a5deb44059e5e72e9d8150d4`, file `docs/CDSL_DAILY_CONFIRMED_FPI_20261111_ARITHMETIC_QA.md`.
+  - 11-Nov USD cross-check: commit `c47907225a59b377fe34a7c37a765c14902301a9`, file `docs/CDSL_FPI_20261111_FX_AND_SUBTOTAL_CROSSCHECK.md`.
+  - 12-Nov derivatives OI delta: commit `ed68ee12dc9c73d9cadbc7dbf7383e424ae90076`, file `docs/CDSL_FPI_DERIVATIVES_20261112_OI_DELTA_QA.md`.
+  - 13-Nov cash + derivatives: commit `5ae4d16e7febee293a1f7a8d0b1b0d46b85e2b22`, file `docs/CDSL_FPI_DAILY_20261113_CASH_DERIVATIVES_QA.md`.
+  - 13-Nov USD/INR reconciliation: commit `00aad92706288707e98c863f0ccf5aa24f12da23`, file `docs/CDSL_FPI_20261113_USD_CATEGORY_INR_RECONCILIATION.md`.
+  - Date alignment: commit `49ebca293172d5e8eb2924fd2830e7aff712fe55`, file `docs/CDSL_DAILY_FPI_DATE_ALIGNMENT_LEDGER_20261113.md`.
+  - 12-Nov independent validation and mixed-vintage proof: commits `205ac42f20d8217b6592f6f5aa96fc5587e696ad` and `406b9e67841e25485c9b058eceb9d6886a2af0f9`.
+- 11-Nov and 13-Nov daily cash totals passed their recorded arithmetic checks; 12-Nov cash remains UNKNOWN because the legacy daily page's cash section was stale while derivatives were dated 12-Nov. Do not fill that gap from FY/fortnightly data.
+- 13-Nov daily USD reconciliation recorded USD components 1037.4148 Mn versus displayed 1037.4150 Mn (rounding residual -0.0002 Mn), and converted INR cash total ₹9,727.3217475 Cr, rounding to ₹9,727.32 Cr.
+- FY series and route-vintage checks are documented in commits `6d479dcfb832b5eda33fd565ae0a4ea2a14bcc0b`, `20b59372739ca7ab3543f4e619fc84dc5377e39d`, `1bb2f0e02dd8a52bfe664110914a451caa8df1d3`, `342fc20b39dc642036879f1a1da44749402f419c`, and `552f0af71b7eef51f5fae497787b6d8b0660c314`. FY 2026-27 snapshots and daily totals reconcile for the recorded dates; the undated search-index value is not a current dated observation.
+- Fortnightly sector-wise 31-Oct extraction and display/FX/frequency audits are recorded in commits `746d42d492e7b2c60d6a3cae84f42778c2c22edb`, `97a389e83b6e2029c8de252794c9ab0adb3b7d92`, and `ffa110e739e524f3975d66dd4fb7157bd2fedca4`.
+- **Critical remaining blocker:** CDSL daily raw archive bytes are NOT_ACQUIRED. MIME, byte count, raw SHA-256, raw schema and archival validation remain UNKNOWN. The daily factor is not eligible for full acceptance until raw evidence is acquired and reconciled. No daily gap may be silently imputed.
+
+### 11.2 NSE CM-MII security-master source semantics and raw acquisition blocker
+
+- Official source discovery: commit `673b6b109238c91235a52edbfa5de9997109adca`, file `docs/NSE_SECURITY_MASTER_OFFICIAL_SOURCE_DISCOVERY_20261113.md`.
+- Lineage contract: commit `7ecc6a59a45e7b4c8888bef02ce199c64ad1c9f7`, file `docs/NSE_CM_MII_SECURITY_MASTER_SOURCE_LINEAGE_CONTRACT_20261113.md`.
+- Variant-scope semantics: commit `ce509ca302dee9cc032515ed52fb5b67592815da`, file `docs/NSE_CM_MII_VARIANT_SCOPE_SEMANTICS_AUDIT_20261113.md`.
+- 11-Nov download-resolution update: commit `c339e8c2894e131650e5b3476ae26e5920d15321`, file `docs/NSE_CM_MII_11NOV2026_DOWNLOAD_RESOLUTION_CHECK_20261114.md`.
+- Official NSE circular NSE/MSD/67344 (28-Mar-2025) distinguishes the NSE-listed-only master from the NSE-listed + BSE-exclusive master. In the combined variant, BSE-exclusive status is not equivalent to ordinary NSE tradability; preserve original symbol including any `$` suffix and raw `PrtdToTrad` field. Missing or unrecognized values remain UNKNOWN. Do not infer an alternative-venue invocation without a dated official event.
+- Official All Reports evidence lists two 11-Nov-2026 entries with the same displayed filename `NSE_CM_security_11112026.csv.gz` but different displayed sizes (1.22 MB and 1.49 MB). The extracted page did not expose the two row-specific hrefs. The 12-Nov captured list did not show these MII entries. Neither fact authorizes inventing an archive URL or substituting CM-UDiFF/Full Bhavcopy.
+- **Critical remaining blocker:** 11-Nov two raw MII variants are NOT_ACQUIRED; exact row hrefs, HTTP metadata, bytes, SHA-256, gzip integrity, schema, row counts and cross-variant comparison remain UNKNOWN/NOT_STARTED. Previously uploaded 08-Nov/09-Nov archives do not substitute for 11-Nov.
+
+### 11.3 IIP October-2026 schedule reconciliation — corrected interpretation
+
+- The initial research note incorrectly called 28-Nov versus 30-Nov a conflict. This has been corrected in research branch `research/iip-oct2026-release-date-conflict-20261114`, latest commit `d7ea2ff00f0107f69a6394b448f52f1a22bf496d`, file `docs/IIP_OCTOBER_2026_RELEASE_DATE_CONFLICT_AUDIT_20261114.md`, blob `bc09c1785e407818c62fd1399cdf480762315161`.
+- MoSPI's updated 2026-27 Advance Release Calendar lists 28-Nov-2026; PIB's 28-Oct-2026 September IIP release explicitly says October IIP will be released Monday 30-Nov-2026 and states the standard 28th-or-next-working-day rule. 28-Nov-2026 is Saturday; therefore 30-Nov is the operational expected date, subject to any subsequent official change.
+- Official sources: MoSPI calendar PDF https://www.mospi.gov.in/uploads/documents/releaseCalender/1793948871564-ARC%202026-27%20updated%20till%20October%202026.pdf ; PIB release https://www.pib.gov.in/PressReleasePage.aspx?PRID=2329475&lang=2&reg=48 .
+- Schedule reconciliation: PASS. October-2026 raw data: NOT_YET_DUE / NOT_ACQUIRED as of 14-Nov-2026. When released, acquire original source bytes, publication timestamp, reference period, MIME/byte count, SHA-256, schema and row-count QA. Do not substitute September data.
+
+### 11.4 Consolidated acceptance state — no promotion
+
+- CDSL daily raw archive: BLOCKED / NOT_ACQUIRED.
+- NSE 11-Nov MII raw variants: BLOCKED / NOT_ACQUIRED.
+- IIP October-2026: scheduled for 30-Nov-2026; raw vintage not yet due/acquired.
+- Project Hard Gate remains BLOCKED until all required source coverage, factor registry, historical regimes and matured H+1/H+3/H+5 event-study evidence are satisfied.
+- Overall research percentage remains NOT_CALCULABLE until the complete weighted acceptance ledger is reconciled.
+- No workflow run was started, no PR merged, no production integration performed, and no changes made to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E or Hard Gate.
