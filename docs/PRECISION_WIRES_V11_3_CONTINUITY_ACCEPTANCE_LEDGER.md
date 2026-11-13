@@ -382,3 +382,17 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - The 958/48 count is a current UI snapshot only, not a historical coverage denominator. CSV control visible but no CSV bytes, exact request URL/headers, date-filter execution or pagination contract captured. Current sample is 27–29 Oct 2026, outside RSS 13–14 Nov window. No row-level RSS match claimed.
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_XBRL_FRESH_REVALIDATION_TAXONOMY_20261114.md`.
 - Corporate Events P0 remains BLOCKED; date-window export and full RSS reconciliation pending. No code/workflow/production change, no paid service, no PR/merge, no synthetic data. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
+
+
+## 31. Official NSE XBRL category-route inventory and coverage boundary — 2026-11-14
+
+- Fresh official NSE retrievals identify distinct route surfaces:
+  - General Announcement XBRL: `/companies-listing/corporate-filings-announcements-xbrl`, displayed 958 records / 48 pages.
+  - Trading Window Disclosure: `/companies-listing/corporate-filings-announcements-xbrl-trading-window-disclosure`, displayed 390 records / 20 pages.
+  - Loss of Share: `/companies-listing/corporate-filings-announcements-xbrl-loss-share`, displayed 8 records / 1 page.
+  - Official XBRL Filing Information catalog: `/static/companies-listing/xbrl-information`, a filing-form catalog, not an event feed.
+- Evidence refs: `turn937329search0`, `turn937329search1`, `turn937329search3`, `turn937329search8`.
+- Route-specific counts are current UI snapshots, not additive totals, and specialized routes must not be double-counted without source-native identity reconciliation. XBRL form catalog files are not event rows. Para A→Para B effective 20-Jun-2026 taxonomy migration remains time-versioned.
+- Samples are 27–30 Oct 2026, not RSS 13–14 Nov; no RSS row-level match claimed. Cross-route dedup, complete route inventory, date-window CSV bytes/hash and 13-item reconciliation NOT RUN/UNKNOWN.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_XBRL_CATEGORY_ROUTE_INVENTORY_20261114.md`.
+- Corporate Events P0 remains BLOCKED. No code/workflow/production change, paid service, PR/merge or synthetic data. Protected production selector/ranking/CORE-672 invariants unchanged.
