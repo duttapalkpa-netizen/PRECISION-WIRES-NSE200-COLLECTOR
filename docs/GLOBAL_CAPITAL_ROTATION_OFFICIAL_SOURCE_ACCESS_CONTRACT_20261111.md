@@ -58,3 +58,42 @@ No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56
 
 ## Research interpretation note
 IMF PIP is semi-annual/annual positions data. The Federal Reserve H.10 dollar indices are FX indices, not flows. BIS bilateral exchange rates are rates, not flows. FRB country-level long-term holdings are positions. These can support a macro/structural context layer, but none independently establishes contemporaneous capital rotation into India. Any flow claim requires transaction/flow evidence at a matching frequency and coverage.
+
+
+## High-value source addition: U.S. Treasury TIC monthly transaction files (2026-11-13)
+Decision: add Treasury International Capital (TIC) Securities A as a candidate TRANSACTION/FLOW source family. This is a materially different evidence class from H.10 FX indices and IMF/Federal Reserve position/holdings series, so it advances the overlay without repeating the H.10 vintage-discovery loop.
+
+Official source page:
+https://home.treasury.gov/data/treasury-international-capital-tic-system-home-page/tic-forms-instructions/securities-a-us-transactions-with-foreign-residents-in-long-term-securities
+
+Official monthly country files listed by Treasury:
+- Net U.S. sales of U.S. long-term securities by month, global country file; current SLT-era data begin February 2023; HTML and tab-delimited text formats.
+- Net U.S. purchases of foreign long-term securities by month, global country file; current SLT-era data begin February 2023; HTML and tab-delimited text formats.
+- Gross purchases and sales by country and country groups also published.
+
+Treasury states the new expanded SLT-based series began with February 2023 data and introduced a structural break from legacy Form S data ending January 2023. The new data are presented from the U.S. point of view. For U.S. purchases/sales of foreign securities, the new country breakdown identifies the country that issued the securities, unlike legacy S-form data which identified the transaction counterparty/country. Do not concatenate the two regimes without an explicit break flag and semantic mapping.
+
+Critical interpretation constraints:
+1. These are U.S.-reported cross-border transactions in long-term securities, not global all-market capital flows and not direct India FPI net flows into NSE.
+2. The country attribution semantics differ across the Feb-2023 break; legacy Form S suffered transaction bias, with financial centers receiving outsized attribution. Do not treat pre-2023 country allocations as directly comparable to post-2023 issuer-country data.
+3. Do not infer foreign investor residence from issuer-country fields or vice versa. Preserve field-level definitions from the downloaded file.
+4. Do not combine net U.S. sales of U.S. securities with net U.S. purchases of foreign securities into a single flow without retaining direction and asset geography.
+5. Treasury FAQ notes TIC data are U.S.-centric and limitations make precise conclusions about country-specific changes in foreign holdings difficult. Use as a global liquidity/cross-border transaction context feature only; no India-directed rotation claim without India-specific corroboration.
+6. Release cadence is monthly and delayed; signal availability must use the actual dated Treasury release, not observation month. Historical release archive must be used for point-in-time backtests; current revised/download files alone are not sufficient to prove what was known at earlier dates.
+
+Evidence:
+- Securities A file inventory and February 2023 start: https://home.treasury.gov/data/treasury-international-capital-tic-system-home-page/tic-forms-instructions/securities-a-us-transactions-with-foreign-residents-in-long-term-securities
+- Structural break and attribution change notice: same page, notices dated 2023-03-15 and 2023-03-31.
+- TIC data scope and timing: https://home.treasury.gov/data/treasury-international-capital-tic-system-home-page/frequently-asked-questions-regarding/ticfaq2
+- Monthly release archive: https://home.treasury.gov/archives-of-tic-monthly-data-releases
+
+Status:
+- Official source identity and monthly country-file availability: VERIFIED.
+- Transaction-vs-position classification: VERIFIED as transaction data.
+- Feb-2023 structural break and country attribution change: VERIFIED.
+- Raw country-file download, byte size, retrieval timestamp, SHA-256: NOT ACQUIRED.
+- Schema/field/India-country row audit: PENDING.
+- Release-vintage/available_at reconstruction: PENDING.
+- India-specific inference: PROHIBITED until independently corroborated.
+
+Next bounded execution task: acquire the two current official monthly country files (HTML/TXT) once, preserve exact raw bytes and SHA-256, then perform schema/period/country/duplicate/missingness checks. Do not re-run H.10 archive discovery, ALFRED calendar enumeration, or already-passed source identity audits unless new contradictory evidence appears.
