@@ -89,6 +89,14 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("UNKNOWN / NOT DONE",content)
         self.assertIn("SDMX 2.1/3.0 API route VERIFIED",content)
         self.assertIn("BOP DSD V2.6.0",content)
+
+    def test_bop_agg_methodology_is_context_only_and_estimation_is_not_observed_flow(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("financial-account transaction gaps, IMF says WEO data are used",content)
+        self.assertIn("not an observed-only sum of country-reported flows",content)
+        self.assertIn("cannot serve as a 1–5 trading-day trigger",content)
+        self.assertIn("raw BOP_AGG workbook/table bytes",content)
     def test_imf_bop_spec_pins_public_dsd_but_keeps_data_unknown(self):
         spec=Path(__file__).resolve().parents[1]/"docs"/"IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md"
         content=spec.read_text(encoding="utf-8")
