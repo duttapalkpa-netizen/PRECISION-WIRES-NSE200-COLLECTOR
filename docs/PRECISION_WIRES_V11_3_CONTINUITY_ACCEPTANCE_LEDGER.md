@@ -396,3 +396,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Samples are 27–30 Oct 2026, not RSS 13–14 Nov; no RSS row-level match claimed. Cross-route dedup, complete route inventory, date-window CSV bytes/hash and 13-item reconciliation NOT RUN/UNKNOWN.
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_XBRL_CATEGORY_ROUTE_INVENTORY_20261114.md`.
 - Corporate Events P0 remains BLOCKED. No code/workflow/production change, paid service, PR/merge or synthetic data. Protected production selector/ranking/CORE-672 invariants unchanged.
+
+
+## 32. Official NSE XBRL taxonomy crosswalk + filing scope rules — 2026-11-14
+
+- Revalidated official XBRL catalog: NSE describes structured compliance filing through NEAPS with taxonomy and instance-document downloads; catalog includes distinct Regulation 30 event categories, Regulation 29 prior intimation, Regulation 33 results, Regulation 44 voting results, shareholding, investor complaints, credit rating, default history and Para B. Evidence `turn649111search1`.
+- General Announcement XBRL page currently displays 958 records / 48 pages and fields SYMBOL, COMPANY NAME, Event/Subject, DETAILS, ATTACHMENT, TYPE OF SUBMISSION, BROADCAST DATE/TIME; Para B migration notice effective 20-Jun-2026 remains. Evidence `turn649111search0`.
+- Trading Window XBRL is a specialized route (390 records / 20 pages), not an additive count absent identity-level dedup. Evidence `turn649111search4`.
+- General Corporate Filings page indexed snapshots differ (9/14/420 and 7/26/535 across announcement/action/meeting counts); these are time-varying snapshots, not stable totals or RSS coverage denominators. Separate Broadcast Date, Ex-Date, Meeting Date, Period Ended and As-on Date semantics. Evidence `turn649111search2`, `turn649111search3`.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_XBRL_TAXONOMY_CROSSWALK_SCOPE_RULES_20261114.md`.
+- No date-window CSV bytes or exact export request captured; cross-route identity audit and 13-item RSS exact reconciliation NOT RUN. Corporate Events P0 remains BLOCKED. No code/workflow/production change, paid service, PR/merge or synthetic data; protected production selector/ranking/CORE-672 invariants unchanged.
