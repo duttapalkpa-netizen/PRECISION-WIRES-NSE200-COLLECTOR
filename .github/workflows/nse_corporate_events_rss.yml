@@ -34,7 +34,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nse-corporate-announcements-rss-\${{ github.run_id }}
+          name: nse-corporate-announcements-rss-${{ github.run_id }}
           path: outputs/corporate_events/rss/
           if-no-files-found: warn
           retention-days: 30
