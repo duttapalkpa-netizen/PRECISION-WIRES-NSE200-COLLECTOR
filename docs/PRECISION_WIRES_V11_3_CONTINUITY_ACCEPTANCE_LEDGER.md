@@ -299,3 +299,17 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 22
 - CI Run 43378544793: SUCCESS; job 131730665642; 39 tests passed in 0.021s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43378544793 .
 - CI validates source/identifier-boundary regression only. It does not download the NSE/BSE master files, hash them, reconcile ISINs or create industry membership.
+
+
+
+## 23. BSE 2026 security-master schema change and NSE dated MII report-scope verification — 2026-11-13
+- BSE Notice 20260422-15 (22-Apr-2026) revises Field 24 to CAS Indicator (Char(1), ISO `ElgbltyClsgAuctnSsn`, 0/1) and renames Field 59 ISO tag from `Rsyd01` to `XchgExclsv` while retaining BSE Exclusive flag and Char(1) type. Effective end-of-day 31-Jul-2026. Do not assume raw CSV header/position beyond the notice; raw-file parser validation remains required.
+- NSE All Reports catalogue inspected 13-Nov-2026 lists two distinct MII universes: NSE Listed only and NSE Listed + BSE Exclusive. Latest displayed example `NSE_CM_security_11112026.csv.gz` for each has different displayed sizes (1.22 MB vs 1.49 MB). Do not conflate them.
+- NSE EQUITY_L.csv direct download attempt failed; separate HTTPS attempt failed at DNS resolution in the execution environment. No bytes/hash acquired. This does not establish source absence.
+- No current official BSE dated master download URL/bytes acquired; no guessed URL or third-party provider used.
+- Source register section 23 appended; QA fail-closed regression added. CI verification pending.
+- Acceptance: BSE schema change/effective date and NSE report-universe distinction = VERIFIED; raw NSE/BSE bytes/hash = NOT ACQUIRED; BSE parser compatibility = NOT TESTED; ISIN reconciliation = NOT DONE; issuer classification roster = NOT ACQUIRED; CDSL sector-to-stock bridge = UNKNOWN.
+- Defined schema/report-scope qualification = 100% pending CI; raw acquisition = 0%; parser validation = 0%; cross-exchange reconciliation = 0%; issuer roster = 0%; CDSL bridge UNKNOWN.
+- No ingestion, inferred mapping, predictive claim, production integration, PR or merge. Protected invariants unchanged; overall V11.3 progress remains NOT CALCULABLE.
+
+Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.aspx?attachedId=20260422-15 ; https://avantiscdnprodstorage.blob.core.windows.net/legalupdatedocs/55077/BSE-issued-a-notification-regarding-an-update-in-the-enhancement-in-the-Scrip-Master-File-format-April232026.pdf ; https://www.nseindia.com/all-reports ; https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv .
