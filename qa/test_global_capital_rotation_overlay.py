@@ -294,7 +294,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"sample.csv"
-            raw=b"Symbol,ISIN,Series\\nABC,INE000A01001,EQ\\nXYZ,INE000A01001,BE\\n"
+            raw=b"Symbol,ISIN,Series\nABC,INE000A01001,EQ\nXYZ,INE000A01001,BE\n"
             p.write_bytes(raw)
             out=inspect_security_master(p)
         self.assertEqual(out["raw_sha256"],hashlib.sha256(raw).hexdigest())
@@ -308,7 +308,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"master.bin"
-            raw=gzip.compress(b"Symbol,ISIN\\nABC,INE000A01001\\n")
+            raw=gzip.compress(b"Symbol,ISIN\nABC,INE000A01001\n")
             p.write_bytes(raw)
             out=inspect_security_master(p)
         self.assertTrue(out["gzip_by_magic_bytes"])
@@ -318,14 +318,14 @@ class TestSecurityMasterIntake(unittest.TestCase):
     def test_gz_extension_without_magic_is_rejected(self):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
-            p=Path(d)/"false.gz"; p.write_bytes(b"a,b\\n1,2\\n")
+            p=Path(d)/"false.gz"; p.write_bytes(b"a,b\n1,2\n")
             with self.assertRaisesRegex(ValueError,"gzip magic"):
                 inspect_security_master(p)
 
     def test_ragged_rows_are_fail_closed(self):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
-            p=Path(d)/"ragged.csv"; p.write_text("A,B,C\\n1,2,3\\n4,5\\n6,7,8\\n",encoding="utf-8")
+            p=Path(d)/"ragged.csv"; p.write_text("A,B,C\n1,2,3\n4,5\n6,7,8\n",encoding="utf-8")
             out=inspect_security_master(p)
         self.assertEqual(out["row_width_error_count"],1)
         self.assertEqual(out["acceptance"],"FAIL_ROW_WIDTH")
@@ -335,10 +335,33 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"pipe.txt"
-            p.write_text("Symbol|ISIN|Series\\nABC|INE000A01001|EQ\\nXYZ|INE000A01002|BE\\n",encoding="utf-8")
+            p.write_text("Symbol|ISIN|Series\nABC|INE000A01001|EQ\nXYZ|INE000A01002|BE\n",encoding="utf-8")
             out=inspect_security_master(p)
         self.assertEqual(out["delimiter"],"|")
         self.assertEqual(out["data_row_count"],2)
         self.assertEqual(out["row_width_error_count"],0)
+
+
+    def test_tab_delimited_master_is_detected_and_reported(self):
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"tab.txt"
+            p.write_text("Symbol\\tISIN\\tSeries\\nABC\\tINE000A01001\\tEQ\\nXYZ\\tINE000A01002\\tBE\\n",encoding="utf-8")
+            out=inspect_security_master(p)
+        self.assertEqual(out["delimiter"],"\\t")
+        self.assertEqual(out["data_row_count"],2)
+        self.assertEqual(out["row_width_error_count"],0)
+
+    def test_delimiter_report_is_returned_for_each_supported_format(self):
+        from pipeline.security_master_intake import inspect_security_master
+        cases=[(",", "comma.csv"), ("|", "pipe.txt"), (";", "semi.txt"), ("\\t", "tab.txt")]
+        with tempfile.TemporaryDirectory() as d:
+            for delimiter,name in cases:
+                with self.subTest(delimiter=repr(delimiter)):
+                    p=Path(d)/name
+                    p.write_text(delimiter.join(["A","B","C"])+"\\n"+delimiter.join(["1","2","3"])+"\\n"+delimiter.join(["4","5","6"])+"\\n",encoding="utf-8")
+                    out=inspect_security_master(p)
+                    self.assertEqual(out["delimiter"],delimiter)
+                    self.assertEqual(out["data_row_count"],2)
 
 if __name__=="__main__": unittest.main()
