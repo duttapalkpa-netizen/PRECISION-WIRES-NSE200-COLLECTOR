@@ -202,3 +202,12 @@ A clean candidate branch was created from `main`: `research/global-capital-rotat
 - No PR was opened, no workflow was dispatched, no merge was performed, and no production selector/ranking/hard-gate code was changed. Runtime CI for this candidate remains NOT RUN / UNKNOWN until a PR check or authorized workflow run is available.
 
 Candidate branch is ready for owner review as a narrowly scoped alternative to PR #20. It is not approved for merge or production use until CI passes and the owner authorizes the next step.
+
+
+## Publication timestamp ordering correction (2026-11-13)
+A targeted code review identified that ISO-8601 timestamps carrying different UTC offsets were compared lexicographically without first normalizing offsets. This can select an earlier publication vintage as the "latest" one, which would compromise point-in-time vintage selection. Corrected `_published_key` to normalize timestamps to UTC before comparison; timezone-naive ISO dates/timestamps are explicitly interpreted as UTC for deterministic compatibility.
+- Parser commit: `2f2b8a1b3aef30ff039a3deb9974c4cc33e4608d`; parser blob: `4cdc762578fe38b7659492e533040cf2718b2f8e`.
+- QA commit: `74ad6c2465e5e8ada9808640f49b8a0824f55a81`; QA blob: `ba599ab9163573e808ee6373f41289cce2501a60`.
+- Added regression coverage for chronological ordering across offsets and duplicate-vintage detection for equivalent instants expressed with different offsets.
+- Runtime GitHub Actions and complete unit-suite execution: NOT RUN / UNKNOWN. No CI PASS is claimed.
+- No production selector, ranking score, pressure-fade, CORE-672, engine, or Hard Gate changes. No PR opened and no merge performed.
