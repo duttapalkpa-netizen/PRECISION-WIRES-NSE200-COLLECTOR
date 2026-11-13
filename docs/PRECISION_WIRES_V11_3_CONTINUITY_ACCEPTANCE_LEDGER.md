@@ -162,3 +162,28 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Project Hard Gate remains BLOCKED until all required source coverage, factor registry, historical regimes and matured H+1/H+3/H+5 event-study evidence are satisfied.
 - Overall research percentage remains NOT_CALCULABLE until the complete weighted acceptance ledger is reconciled.
 - No workflow run was started, no PR merged, no production integration performed, and no changes made to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E or Hard Gate.
+
+
+## 12. CDSL daily FPI archive fallback discovery — 2026-11-14
+
+### Official route map verified
+- SEBI's official FPI curation page explicitly lists both NSDL and CDSL source routes for Daily Trends (latest date), Current Month, Trends Archive, Calendar-year and Financial-year summaries. Official curator: https://www.sebi.gov.in/curation/fpi.html
+- SEBI exposes a date-range archive UI titled Daily Trends in FII Investments with From/To date fields: https://www.sebi.gov.in/statistics/fpi-investment/archive/1999-till-date.html . The opened page exposes date inputs and a GO control, but this review did not obtain a dated result payload or raw download. This is discovery evidence only, not an acquired dataset.
+- NSDL official Latest route linked by SEBI resolves to https://pilot.fpi.nsdl.co.in/Reports/Latest_chart.aspx . Its visible page states Website updated as on: 05 Oct 2020 and does not expose a current dated data table in the captured page. It is not accepted as a current raw-data fallback without a dated response and provenance.
+- CDSL current daily route https://www.cdslindia.com/eservices/publications/fiidaily has latest indexed content dated 11-Nov-2026; it is not evidence for 12-Nov or 13-Nov daily cash raw rows.
+- CDSL legacy archive route https://www.cdslindia.com/Publications/FIITrends.aspx has indexed metadata saying last updated 20-May-2020; no modern dated raw archive payload was captured.
+
+### Source-boundary decision
+- SEBI curation establishes an official source directory; it does not prove every underlying route provides downloadable raw data for every date.
+- Do not substitute monthly, FY, calendar-year, fortnightly or third-party aggregates for missing daily cash observations.
+- Do not promote NSDL values to CDSL raw-archive acceptance without documenting measure, reporting date, trade-date convention, category coverage and vintage equivalence.
+- Do not treat the NSDL Latest chart page as current merely because SEBI still links it.
+- The SEBI date-range form is a candidate bounded test for exact dates 12-Nov-2026 and 13-Nov-2026. Record response URL/status/content type/bytes and compare only like-for-like fields. If no dated payload is returned, preserve UNKNOWN and stop; do not reverse-engineer unsupported endpoints.
+
+### Status
+- Official fallback route discovery: PASS.
+- SEBI date-range archive result payload/raw file: UNKNOWN / NOT_ACQUIRED.
+- NSDL current raw daily response: UNKNOWN; visible Latest page has stale update metadata.
+- CDSL 12-Nov daily cash: UNKNOWN; existing 13-Nov page arithmetic audit remains separate, while raw archive bytes remain NOT_ACQUIRED.
+- CDSL daily raw-archive acceptance: BLOCKED.
+- No production changes, workflow runs, PR merges, paid sources or external contact.
