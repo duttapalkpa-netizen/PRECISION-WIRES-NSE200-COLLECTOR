@@ -195,3 +195,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Source register commits `76fc10d6fc260b898f441645905f239ef81c2ab4` (initial) and `24a35e171796377256f379771d3fdcb9ea337e67` (numeric display removal/correction); final blob `73d342e2c067d182cda3a47a77791a5cc26be03e`.
 - QA guard commit `2b044df94d855230c35d80318a8781295ccc8483`, blob `de6ae8e3b3fea88a89d8af9fd4edec9014ebd7a6`.
 - Defined source qualification, reporting-lag and bucket semantics work package = 100% pending CI. Raw file/period mapping/historical panel = 0% or UNKNOWN. No observations or signal imported.
+
+
+### Final CI verification for section 16
+- CI Run `43374624974`: SUCCESS; 33 tests passed in 0.021s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43374624974 .
+- Section 16 source qualification + methodology/lag/bucket QA + CI = 100%. Raw export/hash and exact trade-date mapping remain NOT ACQUIRED/UNKNOWN.
