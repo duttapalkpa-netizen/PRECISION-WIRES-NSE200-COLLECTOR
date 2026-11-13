@@ -179,4 +179,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"decision_at UTC date"):
             classify(load_observations(self.make([])),"2026-11-07",decision_at="2026-11-08T00:00:00Z")
 
+    def test_weo_october_2026_candidate_is_separate_and_estimates_are_gated(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("IMF WEO October 2026 country-group portfolio-flow candidate",content)
+        self.assertIn("at least 90% of group weights",content)
+        self.assertIn("actual/projection flags",content)
+        self.assertIn("not a BOP_AGG replacement",content)
+        self.assertIn("workbook/raw data and exact portfolio series mapping PENDING",content)
+
 if __name__=="__main__": unittest.main()
