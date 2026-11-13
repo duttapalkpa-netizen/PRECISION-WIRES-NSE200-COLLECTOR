@@ -61,8 +61,11 @@ def load_observations(path: Path):
             grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
     return grouped
 
-def latest(grouped,key):
+def latest(grouped,key,decision_at=None):
     rows=grouped.get(key,[])
+    if decision_at is not None:
+        cutoff=_published_key(decision_at)
+        rows=[r for r in rows if r["_published_key"] <= cutoff]
     if not rows: return None
     # Deterministic vintage selection: freshest observation, then latest publication.
     chosen=max(rows,key=lambda x:(x["as_of_date"],x["date"],x["_published_key"]))
@@ -72,10 +75,14 @@ def latest(grouped,key):
         raise ValueError(f"{key}: conflicting values share the same observation and publication vintage")
     return chosen
 
-def classify(grouped,as_of_date=None):
+def classify(grouped,as_of_date=None,decision_at=None):
     asof=date.fromisoformat(as_of_date) if as_of_date else date.today()
+    if decision_at is not None:
+        decision_date=datetime.fromisoformat(_published_key(decision_at)).date()
+        if decision_date > asof:
+            raise ValueError("decision_at UTC date is after as_of_date")
     keys=list(MAX_AGE_DAYS)
-    x={k:latest(grouped,k) for k in keys}
+    x={k:latest(grouped,k,decision_at) for k in keys}
     stale={}
     for k,row in x.items():
         if row:
@@ -139,8 +146,9 @@ def main():
     p.add_argument("--input",required=True,help="long-format provenance CSV")
     p.add_argument("--output",default="global_capital_rotation_dashboard.json")
     p.add_argument("--as-of-date",help="ISO date for reproducible freshness checks; defaults to system date")
+    p.add_argument("--decision-at",help="ISO instant for point-in-time publication cutoff; strongly required for backtests")
     a=p.parse_args()
-    result=classify(load_observations(Path(a.input)),a.as_of_date)
+    result=classify(load_observations(Path(a.input)),a.as_of_date,a.decision_at)
     Path(a.output).write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"status":result["status"],"output":a.output,"global_em_flow":result["global_em_flow"],"india_fpi_equity":result["india_fpi_equity"],"excluded_stale":len(result["stale_observations_excluded"])},indent=2))
 if __name__=="__main__": main()
