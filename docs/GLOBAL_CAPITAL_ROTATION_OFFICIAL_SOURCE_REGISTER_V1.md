@@ -62,3 +62,14 @@ The page text extraction does not expose the actual CSV hrefs; its generic extra
 Detailed immutable-ingestion schema and acceptance checks: `docs/NSE_FII_DII_DAILY_ACTIVITY_INGESTION_CONTRACT_V1.md`.
 
 Current state: official source page and series semantics VERIFIED; exact CSV URL UNKNOWN; raw bytes/hash NOT DONE; daily DII panel NOT DONE; matched DII/FPI panel NOT DONE; predictive validation NOT DONE; production use NOT AUTHORIZED. Do not use displayed sample rows or third-party mirrors as raw observations.
+
+
+## IMF BOP observation-access requalification — 2026-11-13
+The DSD metadata file and its schema-validation evidence are already archived; this is not an outstanding DSD download task. The remaining blocker is dissemination linkage and observation access:
+- IMF:BOP DSD 2.6.0 structure file SHA-256: 4f5102b4a36a93fa1d60c7dc29fdfcbfa4296e3b1e42325c413fc8daeca64771; schema-validation manifest records 18 dimensions, 15 attributes, 22 embedded codelists and SDMX-ML 2.1 validation PASS.
+- IMF SDMX Central registers IMF:BOP6(1.0) for provider IMF:IMF, but its registered URL is a sample compact XML file (last updated 2023-09-22); this does not establish an IMF global observation feed or a link to BOP DSD 2.6.0.
+- Official constraints distinguish BOP6[1.0] from BOP_BPM6[1.0]; ESTAT:BPM6_BOP_Q/M are different ESTAT dataflows. Do not substitute them.
+- Exact BOP6-to-DSD structure probe was blocked before an HTTP response; no endpoint failure is inferred. IMF Data API documentation confirms SDMX 2.1/3.0 but its Swagger explorer requires beta-portal sign-in.
+- India BOP observation rows accepted: 0. Global EM flow extraction and aggregation: NOT DONE. em_portfolio_flow_usd_bn remains UNKNOWN. No guessed key, sample payload, positions series or third-party source is promoted.
+
+Official references: https://sdmxcentral.imf.org/data/overview.html ; https://sdmxcentral.imf.org/data/registrations.html ; https://sdmxcentral.imf.org/data/constraints.html ; https://data.imf.org/en/Resource-Pages/IMF-API . Detailed checkpoint: docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md.
