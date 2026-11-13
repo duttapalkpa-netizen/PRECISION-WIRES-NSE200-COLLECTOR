@@ -188,4 +188,12 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("not a BOP_AGG replacement",content)
         self.assertIn("workbook/raw data and exact portfolio series mapping PENDING",content)
 
+    def test_weo_country_group_actual_projection_metadata_is_unknown(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("does NOT provide this actual/projection metadata for WEO country-group data",content)
+        self.assertIn("NOT_POINT_IN_TIME_VERIFIED",content)
+        self.assertIn("transfer failed before any file bytes were obtained",content)
+        self.assertIn("This correction supersedes any contrary implication",content)
+
 if __name__=="__main__": unittest.main()
