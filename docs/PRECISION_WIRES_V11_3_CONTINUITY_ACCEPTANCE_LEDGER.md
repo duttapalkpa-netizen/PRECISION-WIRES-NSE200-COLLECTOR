@@ -187,3 +187,24 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - CDSL 12-Nov daily cash: UNKNOWN; existing 13-Nov page arithmetic audit remains separate, while raw archive bytes remain NOT_ACQUIRED.
 - CDSL daily raw-archive acceptance: BLOCKED.
 - No production changes, workflow runs, PR merges, paid sources or external contact.
+
+
+## 13. Bounded official archive endpoint probe — 2026-11-14
+
+### Exact routes tested
+- SEBI date-range UI: https://www.sebi.gov.in/statistics/fpi-investment/archive/1999-till-date.html . Retrieved page contains only date input labels (DD-MM-YYYY), To field and GO control; no result table, response payload, downloadable file, or dated observations were exposed in this retrieval. Exact 12-Nov-2026 and 13-Nov-2026 query submission was therefore NOT_EXECUTED; do not claim these dates were searched.
+- NSDL Archive route published by SEBI: https://www.fpi.nsdl.co.in/web/Reports/Archive.aspx returned retrieval failure 502 in this review. No payload acquired.
+- NSDL Current Month route published by SEBI: https://www.fpi.nsdl.co.in/web/Reports/Monthly.aspx returned retrieval failure 502 in this review. No payload acquired.
+- CDSL Current Month route published by SEBI: https://www.cdslindia.com/Publications/FIIMonthlyData.aspx displayed an internal-error page (ticket 393899); no dated monthly payload acquired.
+- CDSL current daily route remains indexed with reporting date 11-Nov-2026; it does not supply 12-Nov daily cash evidence in this retrieval.
+
+### Outcome and fail-closed handling
+- Official route existence: PASS (SEBI curation directory).
+- SEBI archive UI structure observed: PASS; actual dated query: NOT_EXECUTED because the retrieval surface cannot submit form values.
+- NSDL Archive and Current Month payload access: BLOCKED (502 retrieval failure).
+- CDSL Current Month payload access: BLOCKED (site internal error).
+- CDSL 12-Nov daily cash: UNKNOWN; no source payload obtained.
+- CDSL 13-Nov daily cash arithmetic audit remains as previously recorded; raw daily archive bytes remain NOT_ACQUIRED.
+- No NSDL/SEBI/CDSL values promoted, no monthly-to-daily substitution, no third-party source used for acceptance.
+- Next admissible step requires an actual interactive form submission or official downloadable raw response; absent that, preserve UNKNOWN. No guessed API endpoints or fabricated HTTP metadata.
+- No workflow run, production change, PR merge, or spend.
