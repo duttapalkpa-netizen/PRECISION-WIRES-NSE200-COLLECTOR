@@ -245,4 +245,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("their net investment from 15-Sep-2024",content)
         self.assertIn("Raw report file bytes/SHA-256 = NOT ACQUIRED",content)
 
+    def test_bse_industry_hierarchy_is_not_issuer_membership_or_verified_sector_bridge(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("BSE industry-classification hierarchy qualification for CDSL fortnightly sector bridge",content)
+        self.assertIn("taxonomy dictionary, not by itself a dated issuer-to-code membership file",content)
+        self.assertIn("issuer membership file + effective dates = NOT ACQUIRED",content)
+        self.assertIn("sector-to-issuer bridge = UNKNOWN",content)
+        self.assertIn("No synthetic mapping, no inferred company assignments",content)
+
 if __name__=="__main__": unittest.main()
