@@ -282,3 +282,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 21
 - CI Run 43378035122: SUCCESS; job 131729029308; 38 tests passed in 0.021s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43378035122 .
 - This verifies only the fail-closed source/coverage guard. It does not create the missing official issuer roster or a CDSL-to-stock bridge.
+
+
+## 22. Official NSE/BSE security-master identifier bridge candidate — 2026-11-13
+- NSE official equity availability catalogue exposes exact CSV target https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv; CSV retrieval refused text/csv content type, so no bytes/schema/row count/hash acquired. Catalogue page updated 09-Nov-2026; not assumed to be file vintage.
+- NSE All Reports distinguishes MII security gzip for NSE-listed-only versus NSE-listed + BSE-exclusive universes. NSE master spec identifies daily security.txt header/version/date, token, symbol, series; token is symbol-series scoped, not permanent issuer key.
+- BSE Standardised Security Master format specifies dated BSE_EQ_SCRIP_DDMMYYYY.csv with Scrip Code, Instrument Code, Scrip Name and ISIN. No industry classification or classification validity interval in inspected schema.
+- ISIN is a security-level join candidate; names/symbols alone prohibited. Token/Scrip Code are exchange-local. ISIN alone may not unify issuer across multiple securities/share classes without separate issuer relation.
+- Source register section 22 commit 97acf8360e91e5da34b4f016664bcfb6aabca08a, blob b26cfcc1901713a2f87ab7327f8efe42166fcc5e.
+- QA fail-closed regression commit d0deba9549fe56bc260882a32fbb4f228d39407e, blob c4cc1b13bb1bc98148d538d54f5339e535805f8a.
+- Acceptance: NSE/BSE security-master schemas = VERIFIED at documentation level; raw file bytes/hash/schema = NOT ACQUIRED; cross-exchange ISIN reconciliation = NOT DONE; issuer-to-industry membership = NOT ACQUIRED; CDSL sector-to-stock bridge = UNKNOWN. No data ingestion or inferred mapping.
+- Defined identity-schema/source-boundary qualification = 100% pending CI. Raw NSE/BSE master acquisition = 0%; cross-exchange identifier reconciliation = 0%; issuer classification roster = 0%; CDSL sector bridge = 0%; predictive validation = NOT DONE.
+- No production changes, no PR/merge, no protected invariants changed. Overall V11.3 progress remains NOT CALCULABLE pending complete weighted acceptance ledger.
