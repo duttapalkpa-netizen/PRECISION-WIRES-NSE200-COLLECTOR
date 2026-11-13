@@ -375,3 +375,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Added malformed-quote regression test and corrected its test fixture to use actual line breaks. Final QA commit: `eedbee83b9afc019aaf9ec84b13fee4403fc4195`; blob: `86d82597c511f286a173cbda4625d59b2d728a25`.
 - Final source files were re-fetched from the research branch; strict parsing and regression fixture are present. Test execution is still NOT RUN here; GitHub Actions result remains NOT VERIFIED because the available connector exposes only PR-triggered commit runs and has no workflow-dispatch/list-push-run action.
 - No raw NSE/BSE file bytes acquired; no exchange schema certification, cross-exchange reconciliation, PR, merge, or production change.
+
+ 
+### 2026-11-13 follow-up — QA execution boundary and repository visibility check
+- Rechecked current repository metadata: GitHub reports `visibility=public`. This conflicts with the previously recorded user requirement to keep the research repository private. No visibility-change action is exposed by the connected GitHub tools; no change is claimed. User action required in GitHub repository Settings → General → Danger Zone → Change repository visibility → Make private. This should be treated as an urgent governance item. Making the repository private does not revoke existing clones or forks.
+- Rechecked combined commit status for latest Source Register commit `5a978c7bb7ce4561eb036a40e2e3977c92335e74`: no status entries returned. This is NOT a test pass.
+- Available GitHub connector does not expose a workflow dispatch or repository-wide push-run listing action. `fetch_commit_workflow_runs` is explicitly PR-triggered-only; no run ID or CI conclusion can be verified. Full test suite remains NOT RUN / NOT VERIFIED.
+- The latest validator and QA source files are persisted: validator blob `75246bc91d84da293100532bb4061d4b69523dfb`; QA blob `86d82597c511f286a173cbda4625d59b2d728a25`. No test outcome is inferred from source presence.
