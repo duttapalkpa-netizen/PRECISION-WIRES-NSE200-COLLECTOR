@@ -82,7 +82,7 @@ def inspect_security_master(path: str | Path) -> dict:
         "gzip_by_magic_bytes": is_gzip,
         "decompressed_byte_size": len(payload),
         "encoding": "utf-8-sig",
-        "delimiter": dialect.delimiter,
+        "delimiter": delimiter,
         "header": header,
         "data_row_count": data_rows,
         "blank_row_count": blank_rows,
