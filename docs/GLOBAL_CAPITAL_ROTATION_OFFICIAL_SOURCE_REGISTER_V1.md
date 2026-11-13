@@ -119,3 +119,20 @@ This checkpoint resolves the publication-timing and access status without invent
 - Next permitted acquisition path: use the official IMF dashboard/table download UI if a direct downloadable file can be obtained without account/API restrictions; capture the exact generated URL, final URL, UTC retrieval time, headers, raw bytes and SHA-256. If it requires sign-in, stop and retain NOT ACQUIRED; do not bypass access controls or use a mirror.
 
 Official references: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG ; https://data.imf.org/en/dashboards/bopsy%20dashboard ; https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf .
+
+
+## IMF WEO October 2026 country-group portfolio-flow candidate — qualification only (2026-11-13)
+Official IMF WEO page identifies an October 2026 vintage and exposes an official Excel dataset with three sheets: Countries, Country Groups, Commodity Prices. The page says data/projections are available from 1980 to present, with projections for most series for five years. Direct Excel target exposed by the official page: `https://data.imf.org/-/media/iData/External-Storage/Documents/0FA3DC49A04D446E9D69DBEB29979E1C/en/WEOOct2026all.xlsx`. The web document viewer returned an unsupported XLSX content-type and the direct file transfer attempt did not retrieve bytes in this run. Therefore exact workbook bytes, retrieval timestamp, size and SHA-256 remain NOT ACQUIRED.
+
+The official October 2026 WEO Database Appendix (31 pages) supplies strong qualification metadata:
+- Estimates/projections are based on statistical information available through 30 September 2026 (Appendix pp.1–2); this is a cutoff, not a promise that each series is updated to that date.
+- Historical results vs IMF staff projections are distinguished by shading in the workbook (p.3); do not merge projection values with actual outturns.
+- For some economies, 2025 and earlier can still be estimates rather than actual outturns; latest actual outturns are documented in country-information notes (p.3). Thus year alone cannot classify an observation as actual.
+- Country-group composites are normally computed only when at least 90% of group weights are represented (p.3 and p.9). Missingness/coverage metadata is therefore a hard gate; a group aggregate must not be assumed complete.
+- External-sector composites are sums of individual country data converted to USD at average market exchange rates for the relevant years (p.9). This differs from WEO domestic aggregates and must be preserved in series metadata.
+- WEO October 2026 EMDE classification and regional membership are vintage-specific; Appendix lists Emerging and Developing Economies and regional groups, including Emerging and Developing Asia (pp.6–8). Do not borrow BOPSY group membership or a current external classification.
+- WEO methodology documents BPM6 net portfolio investment and other net financial account series at group level as available (historical methodology note, p.24), but exact October 2026 workbook series code, unit, coverage, country group rows, actual/projection flags and value semantics have NOT been verified because the workbook bytes were not acquired.
+
+Decision: register WEO October 2026 as a **separate candidate macro context source**, not a BOP_AGG replacement and not an observed-only flow source. It is annual and may include staff estimates/projections; it cannot trigger 1–5 day trades. No WEO value is ingested or used. Acceptance remains metadata qualification PASS; workbook/raw data and exact portfolio series mapping PENDING; point-in-time trading use NOT AUTHORIZED.
+
+Official references: https://data.imf.org/Datasets/WEO ; https://data.imf.org/-/media/iData/External-Storage/Documents/C4182C5C54794FC48892DE8F6C74FF82/en/October-2026-WEO-Database-Appendix.pdf .
