@@ -369,7 +369,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"bad_quotes.csv"
-            p.write_text('A,B,C\\n"unterminated,2,3\\n4,5,6\\n',encoding="utf-8")
+            p.write_text('A,B,C\n"unterminated,2,3\n4,5,6\n',encoding="utf-8")
             with self.assertRaises(csv.Error):
                 inspect_security_master(p)
 
