@@ -289,3 +289,11 @@ A code review identified that the research-only overlay selected the latest publ
 - QA commit `4fb7d3b8036acc0a3db9edeae72a8ac4523c9df1`; QA blob `366226ebd5b59917b05839c7df288e871c689922`.
 - This is an opt-in research-only safeguard, NOT a complete fail-closed H.10 ingestion adapter: omitting `--decision-at` retains legacy behavior. Any point-in-time backtest must supply the cutoff; source timestamps must be independently evidenced, not manufactured from scheduled H.10 release times. Actual runtime unit suite has NOT been executed; code/test commit existence does not establish CI PASS.
 - No production selector, ranking score, pressure-fade, CORE-672, engine or Hard Gate changes. No PR opened or merged.
+
+
+## Mandatory point-in-time cutoff — fail-closed enforcement (2026-11-13)
+Closed the prior optional-cutoff gap in the research-only overlay. `classify(...)` now raises `ValueError` if `decision_at` is omitted; the CLI now declares `--decision-at` required. The cutoff is normalized to UTC and later-published vintages are excluded before latest-vintage selection. Existing QA classification calls now supply an explicit decision instant; a negative regression test asserts omission fails closed. Added test covers future-only observations remaining UNKNOWN, timezone-offset equivalence, cutoff/as-of mismatch, and exclusion of future publications.
+- Parser commit `696f4c855ec2a2e6f46e9577afdde883d919e9c0`; blob `3851c084e2acebc9860342b5bbac02b32e58c1e9`.
+- QA commit `9d94097a2f2d19a8b15d33df11bd0e2910331c4b`; blob `750ef132e41b81b1b4035dbe5f452cd011e8e9ea`.
+- Static re-fetch verification is not runtime test execution. GitHub Actions unit suite remains NOT RUN / UNKNOWN until dispatched and completed. The safeguard only enforces the timestamp supplied by the caller; it does not authenticate or manufacture source publication timestamps. H.10 actual publication timestamp/raw-vintage provenance remains UNKNOWN/PENDING.
+- Research-only overlay. No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate changes. No PR opened or merged.
