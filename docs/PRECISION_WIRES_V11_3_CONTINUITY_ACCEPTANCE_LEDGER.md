@@ -319,3 +319,15 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Implementation files are committed only on research branch `research/corporate-events-rss-collector-v1-20261114`; no default-branch change, PR or merge.
 - Execution status: NOT RUN. The available GitHub connector has no workflow-dispatch operation; no claim of tests passing or raw XML acquisition. Unit tests are committed but require execution in GitHub Actions. DNS/network reachability and source XML validity remain UNKNOWN.
 - Corporate Events P0 remains BLOCKED until the manual Actions run produces raw XML + manifest and item-level coverage/replay checks pass. No source data promoted, no synthetic values, no paid service, no production selector/ranking/CORE-672 changes.
+
+
+## 25. Corporate Events P0 — first verified official NSE RSS raw acquisition — 2026-11-14
+
+- GitHub Actions run #1 / run ID `43489286657`, head `daf88704dd0f7464e0258ce4b5b9a082e7f86dfa`, completed SUCCESS. Checkout, Python setup, 4 parser unit tests, one bounded official fetch and artifact upload all PASS. Runtime under 1 minute; configured timeout 8 minutes.
+- Official URL requested and final URL both `https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml`; HTTP 200; content-type `application/xml`; 6,270 response bytes; retrieval `2026-11-13T19:08:23Z`–`19:08:24Z`.
+- Raw XML SHA-256 `21de2c9b2d1f39cad81600cdca22556e813d2854eeee28d5082c913ec95aa1a4`.
+- 13 RSS items parsed; title/link/pubDate/description present 13/13. GUID present 0/13; no GUID synthesized. 13 unique links and 13 unique original pubDate strings in this snapshot. pubDate has no timezone suffix; original string retained; do not normalize/assume UTC.
+- Artifact ID `14069815552`, name `nse-corporate-announcements-rss-43489286657`, ZIP SHA-256 `624617b0e9ef1de4220d5672c5fcb9f4fd97a7bae15b35600602e128b63fb966`, size 4,273 bytes, retention until 2026-12-13. Members XML, JSONL, manifest. JSONL SHA-256 `b918f872cabca6b6d053e4f5eeb12850e1086233d27e2dbb8f79ffdc902a6511`; manifest SHA-256 `7fd9fd4236ab223a8988095a4644cae4c48e88ce6438ad24bbd08d2c28fb287b`.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_RSS_FIRST_RAW_ACQUISITION_AUDIT_20261114.md`.
+- Endpoint single-snapshot reachability and parser path PASS. Historical completeness, repeat snapshot overlap, item-level official page reconciliation, pubDate timezone semantics, symbol identity and retention/replay remain UNKNOWN/NOT RUN. Corporate Events P0 remains BLOCKED.
+- No PR/merge, no production integration, no synthetic data, no symbol/GUID/timezone inference, no paid source. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
