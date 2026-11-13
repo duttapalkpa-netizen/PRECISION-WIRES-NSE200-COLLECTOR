@@ -322,3 +322,11 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Validator commit `fa65175e011c36711b94193513a0b7507c2cae72` (blob `b97516e076c60a0b4e659ccc0fd7606c0c79fb80`).
 - Added quoted multiline-field regression test: QA commit `1db674e9ce57e20953432c0a622a00336a2bb074` (blob `7260b5210b5171a6facdb132b0b2470e9fd78520`).
 - Full test suite and CI remain NOT RUN / NOT VERIFIED. Official Python CSV docs: https://docs.python.org/3/library/csv.html .
+
+
+## 2026-11-13 — Security-master intake CI defect closure
+- Latest 50-test run `43438875821` (head `b24395ac514d88ffb116d74bb9939ca1f98241a0`) completed SUCCESS; 50 tests in 0.083s. The two prior failures were isolated to blank-only precheck ordering and an incorrectly escaped multiline fixture.
+- Validator correction `ad5037a9825313422f3faf7dc8aa89aa8ee0237f` (blob `2e2f48eeeab3d9a05b0e7f5e5499ae8c3c326cbf`): explicit whitespace-only guard before delimiter inference.
+- QA fixture correction `b24395ac514d88ffb116d74bb9939ca1f98241a0` (blob `c7a72386f9633b09841e0f1630fa3e2ae24bd01d`): actual embedded newline escapes; both regression tests pass.
+- CI run `43438865632` failed on validator-only commit before the fixture correction; superseded by successful run `43438875821`.
+- Structural validator test success does not establish official source acquisition or exchange-specific schema certification. Raw NSE/BSE master bytes/hash, source authentication, ISIN reconciliation and issuer/industry bridge remain NOT ACQUIRED / UNKNOWN.
