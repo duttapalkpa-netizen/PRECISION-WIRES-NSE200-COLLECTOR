@@ -137,3 +137,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - QA regression commit `72f3c6261239b0152c95214db1e64f1b789b10fa`, blob `a593790e7b86e2f5ce0bc42a011a51ab29bce965`.
 - Defined work package (official page/date/access-path reconciliation and QA guard) = 100% pending CI; raw data acquisition/HTTP provenance/SHA-256 = 0%; 2026 vintage = NOT VERIFIED. No third-party mirror or synthetic observation used.
 - Production and project-wide completion percentages remain unchanged; total V11.3 percentage NOT CALCULABLE pending weighted master-ledger reconciliation.
+
+
+### Final CI verification for section 12
+- CI Run `43372403935`: SUCCESS; 29 tests passed in 0.013s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43372403935 .
+- Work-package completion including documentation and CI = 100%. Data acquisition remains 0% because the IMF anonymous download route is not verified and no raw file was acquired.
