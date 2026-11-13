@@ -330,4 +330,15 @@ class TestSecurityMasterIntake(unittest.TestCase):
         self.assertEqual(out["row_width_error_count"],1)
         self.assertEqual(out["acceptance"],"FAIL_ROW_WIDTH")
 
+
+    def test_pipe_delimited_master_is_detected_without_assuming_csv_comma(self):
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"pipe.txt"
+            p.write_text("Symbol|ISIN|Series\\nABC|INE000A01001|EQ\\nXYZ|INE000A01002|BE\\n",encoding="utf-8")
+            out=inspect_security_master(p)
+        self.assertEqual(out["delimiter"],"|")
+        self.assertEqual(out["data_row_count"],2)
+        self.assertEqual(out["row_width_error_count"],0)
+
 if __name__=="__main__": unittest.main()
