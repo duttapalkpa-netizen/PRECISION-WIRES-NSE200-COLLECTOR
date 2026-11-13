@@ -119,3 +119,19 @@ Status update:
 - Full-file row counts, all country-period coverage, duplicate/missingness and sign QA: PENDING.
 - Table2 full semantic/sign mapping: PENDING.
 - No direct India FPI/NSE flow interpretation: remains PROHIBITED.
+
+
+## Bounded release-calendar gate (2026-11-13)
+Treasury's official 2026 release calendar lists the next monthly TIC release for **2026-11-18 at 4:00 p.m. Washington, D.C. time**. The monthly release is scheduled to report data for **September 2026** (the month before last). This is a planned release date, not proof that the release or India observations are already available. Verify the actual press release and archive after publication before acquisition.
+
+Execution rule to avoid repeated work:
+1. Do not poll or re-download the same current table1/table2 files before the release solely to seek newer India rows.
+2. On/after 2026-11-18, make one bounded check of the official release page and archive; record actual publication timestamp and release vintage.
+3. Acquire the two raw text files once per release vintage, preserving bytes and calculating SHA-256 before parsing.
+4. Run one consolidated QA pass: schema/header, full country-period coverage, India code 42102 coverage, duplicate keys, missing/nonnumeric values, units, sign semantics, and Table 1/2 direction separation.
+5. If release is delayed or India rows remain stale/missing, record UNKNOWN/BLOCKED with exact evidence; do not repeat unchanged discovery or invent observations.
+6. Historical backtests must use the release publication timestamp (available_at), not merely the reference month. No production feature admission until raw-byte and full QA gates pass.
+
+Official release calendar: https://home.treasury.gov/data/treasury-international-capital-tic-system/release-dates-of-tic-data
+Official monthly archive: https://home.treasury.gov/archives-of-tic-monthly-data-releases
+Status: release date / expected reference month VERIFIED from official calendar; November release publication and September 2026 India rows NOT YET VERIFIED; raw bytes/hash and full QA NOT DONE.
