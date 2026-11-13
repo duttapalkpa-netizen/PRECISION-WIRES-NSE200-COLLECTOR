@@ -33,6 +33,8 @@ def inspect_security_master(path: str | Path) -> dict:
         text = payload.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise ValueError("not valid UTF-8/UTF-8-BOM; encoding must be established separately") from exc
+    if not text.strip():
+        raise ValueError("no nonblank CSV records")
     # Infer delimiter by parsing logical CSV records, not physical lines:
     # quoted fields may legally contain delimiters and embedded newlines.
     candidates = []
