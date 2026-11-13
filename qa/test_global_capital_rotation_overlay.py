@@ -243,6 +243,6 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("BSE common industry classification",content)
         self.assertIn("end-of-period RBI reference rate",content)
         self.assertIn("their net investment from 15-Sep-2024",content)
-        self.assertIn("raw report file bytes/SHA-256 = NOT ACQUIRED",content)
+        self.assertIn("Raw report file bytes/SHA-256 = NOT ACQUIRED",content)
 
 if __name__=="__main__": unittest.main()
