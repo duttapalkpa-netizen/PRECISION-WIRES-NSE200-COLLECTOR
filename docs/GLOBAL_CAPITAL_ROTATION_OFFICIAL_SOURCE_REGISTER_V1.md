@@ -83,3 +83,17 @@ A separate official IMF dataset was identified: `IMF.STA:BOP_AGG`, titled “Bal
 Current evidence boundary: public dataset page confirms title, annual frequency, November release cadence, BPM6 basis, and estimation caveat. No BOP_AGG table or observation file has yet been downloaded, checksum-verified, or reconciled. Thus source identification = VERIFIED; raw data acquisition = NOT DONE; specific EM group series coverage = UNKNOWN; production use = NOT AUTHORIZED. IMF API link routes to a sign-in page in this inspection; no anonymous observation endpoint is claimed.
 
 Official source references: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG ; https://data.imf.org/en/Resource-Pages/IMF-API .
+
+
+## BOP_AGG methodology and reporting-vintage gate — 2026-11-13
+The official IMF November 2025 BOPSY Explanatory Notes were inspected directly (31-page PDF). They add material details that must be retained in any later BOP_AGG use:
+
+1. **Nonreporter estimates are part of the published group aggregate.** For financial-account transaction gaps, IMF says WEO data are used. For other BOP components, its documented procedures include WEO gross/net substitutions and carry-forward adjustments. Therefore the aggregate is not an observed-only sum of country-reported flows. Do not interpret a BOP_AGG group value as a clean real-time foreign portfolio flow observation.
+2. **Global discrepancies are explicit quality diagnostics.** The notes explain that global financial-account discrepancies compare net acquisition of financial assets with net incurrence of liabilities. Preserve this diagnostic separately; do not force assets and liabilities to balance or silently net away the discrepancy.
+3. **Group membership is vintage-defined.** The November 2025 notes list Emerging and Developing Economies by regional group (Emerging and Developing Asia, Europe, Middle East and Central Asia, and Sub-Saharan Africa). Do not import a current WEO/MSCI/World Bank classification or treat the membership as invariant across vintages. If a country-level aggregate is ever independently reconstructed, store the exact membership list and edition.
+4. **Country reporting coverage is heterogeneous.** In the November 2025 reporting overview, India’s last reported BOP period is 2024 and IIP period is 2024. This is annual macro coverage, not a timely 2026 daily/weekly flow input. Country-level reported data may be combined with group-level estimates; maintain a reported-vs-estimated flag only where the source actually exposes one. Do not infer a per-country estimate flag from the aggregate total.
+5. **Frequency/timing gate:** BOP_AGG is annual and released each November. It is context-only for long-horizon regime description and cannot serve as a 1–5 trading-day trigger or point-in-time daily overlay.
+
+Official evidence: IMF BOPSY Explanatory Notes, November 2025, sections 1, 2 and 3, especially PDF pages 3–5 and 11–13: https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf . IMF dataset page: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG .
+
+**Current acceptance:** methodology inspection = PASS; raw BOP_AGG workbook/table bytes, publication vintage, retrieval timestamp and SHA-256 = NOT ACQUIRED; machine-readable EMDE membership artifact = NOT CREATED; observed-only EMDE flow reconstruction = NOT AUTHORIZED; daily trigger suitability = FAIL. No value or observation was fabricated or downloaded in this checkpoint.
