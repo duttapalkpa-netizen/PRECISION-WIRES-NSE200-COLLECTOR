@@ -263,4 +263,15 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("NSE/BSE roster equivalence = UNKNOWN",content)
         self.assertIn("No scraping of individual issuer reports to fabricate a complete list",content)
 
+    def test_official_nse_bse_security_masters_are_identity_only_not_industry_membership(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("Official NSE/BSE security-master identifier bridge candidate",content)
+        self.assertIn("https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",content)
+        self.assertIn("raw CSV bytes, row count, schema, file vintage, retrieval timestamp and SHA-256 NOT ACQUIRED",content)
+        self.assertIn("BSE_EQ_SCRIP_DDMMYYYY.csv",content)
+        self.assertIn("NSE Token and BSE Scrip Code are exchange-local keys",content)
+        self.assertIn("do NOT provide missing four-tier industry membership",content)
+        self.assertIn("CDSL sector-to-stock bridge = UNKNOWN",content)
+
 if __name__=="__main__": unittest.main()
