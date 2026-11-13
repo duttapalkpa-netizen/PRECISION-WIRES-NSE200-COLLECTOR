@@ -289,3 +289,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Direct GET to `https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml` with browser-like headers and 15s timeout failed at DNS resolution in this runtime. No HTTP response, bytes, MIME, redirect chain or SHA-256 obtained. Web reader's `application/xml` limitation is not an HTTP status.
 - Report: `docs/CORPORATE_EVENTS_P0_RSS_OPERATIONAL_SIGNAL_20261114.md`.
 - Operational signal: SECONDARY SUPPORT ONLY. Raw feed acquisition/schema/GUID/timezone/retention/completeness: UNKNOWN/NOT RUN. Corporate Events P0 remains BLOCKED. No code/workflow change, PR merge or production integration.
+
+
+## 22. Corporate Events P0 — official filings vs RSS freshness cross-check — 2026-11-14
+
+- Official NSE Corporate Filings snapshot exposes 7 Corporate Announcements, 26 Corporate Actions and 535 Board Meetings; latest announcement table fields are Symbol, Subject, Broadcast Date. Five displayed rows are YATRA, GICHSGFIN, TARSONS, ONIDA and RUBYMILLS, all dated 13-Nov-2026. Corporate Actions use Ex-Date; Board Meetings use Meeting Date. Keep families/date semantics distinct.
+- NSE page disclaimer states issuer-submitted information is displayed without exchange verification of adequacy, accuracy or veracity; raw issuer provenance and independent verification status must remain explicit.
+- Two Feeder RSS reader listings report the same feed working but disagree on freshness and post-rate (~1,011/day vs ~1,427/day); these are secondary reader signals, not coverage denominators. Their displayed latest items do not overlap the five displayed official rows, but the page is only a limited latest-row sample and raw XML is unavailable; no missing-event conclusion or item-level reconciliation is valid.
+- Report: `docs/CORPORATE_EVENTS_P0_OFFICIAL_RSS_FRESHNESS_CROSSCHECK_20261114.md`.
+- Official page field semantics/snapshot and disclaimer: PASS. RSS reader signals: secondary only, inconsistent. Raw XML/GUID/item-level matching/retention/completeness: NOT ACQUIRED / NOT RUN. Corporate Events P0 remains BLOCKED.
