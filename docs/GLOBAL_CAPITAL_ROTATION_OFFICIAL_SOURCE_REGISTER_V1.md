@@ -288,3 +288,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Local focused check: comma CSV with row widths 3,3,2,3 now selects comma and exposes the single malformed row; a pipe-delimited sample selects pipe; a two-row comma sample remains detectable. This is a focused algorithm check, not GitHub CI.
 - Parser hardening commit: `7f61ac0d29fcef6426988c2d73deef7245f8e6eb`, blob `7ba5a000e82d6174cda98f9bfbc13ad477eb20af`.
 - CI remains PENDING / NOT VERIFIED. No raw NSE/BSE file acquired; no exchange-specific schema certification or issuer/industry mapping inferred.
+
+ 
+## 2026-11-13 — Generic security-master intake validator correction
+- Code review found that the structural intake report attempted to read an undefined `dialect` object after successful parsing; the report now returns the locally inferred delimiter.
+- Tab-delimited detection now tests the actual tab character. QA fixture line endings were corrected, and regression cases cover tab format plus delimiter reporting for comma, pipe, semicolon, and tab.
+- Validator commit `95b106d04a084c9ba2833cfa6ea66eb84cd55816` (blob `5cae180e1f279215e6926a538e8be799896c98eb`); QA commit `28d642007055e4f621327ca864d85d95cabd06b9` (blob `623e561da19816ddf293eeeceb6fee719b422b84`).
+- Full suite/CI remain unverified. This remains a generic structural parser only; no exchange schema semantics or source provenance are certified.
