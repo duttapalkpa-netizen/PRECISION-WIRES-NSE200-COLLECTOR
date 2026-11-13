@@ -287,4 +287,47 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("CDSL sector-to-stock bridge = UNKNOWN",content)
 
 
+
+class TestSecurityMasterIntake(unittest.TestCase):
+    def test_csv_hash_and_duplicate_isin_are_reported_without_issuer_inference(self):
+        import hashlib
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"sample.csv"
+            raw=b"Symbol,ISIN,Series\\nABC,INE000A01001,EQ\\nXYZ,INE000A01001,BE\\n"
+            p.write_bytes(raw)
+            out=inspect_security_master(p)
+        self.assertEqual(out["raw_sha256"],hashlib.sha256(raw).hexdigest())
+        self.assertEqual(out["data_row_count"],2)
+        self.assertEqual(out["duplicate_isin_occurrence_count"],1)
+        self.assertEqual(out["acceptance"],"PASS_STRUCTURAL_ONLY")
+        self.assertTrue(any("issuer aggregation" in x for x in out["limitations"]))
+
+    def test_gzip_is_detected_by_magic_and_hashes_original_bytes(self):
+        import gzip, hashlib
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"master.bin"
+            raw=gzip.compress(b"Symbol,ISIN\\nABC,INE000A01001\\n")
+            p.write_bytes(raw)
+            out=inspect_security_master(p)
+        self.assertTrue(out["gzip_by_magic_bytes"])
+        self.assertEqual(out["raw_sha256"],hashlib.sha256(raw).hexdigest())
+        self.assertEqual(out["data_row_count"],1)
+
+    def test_gz_extension_without_magic_is_rejected(self):
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"false.gz"; p.write_bytes(b"a,b\\n1,2\\n")
+            with self.assertRaisesRegex(ValueError,"gzip magic"):
+                inspect_security_master(p)
+
+    def test_ragged_rows_are_fail_closed(self):
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"ragged.csv"; p.write_text("A,B,C\\n1,2\\n",encoding="utf-8")
+            out=inspect_security_master(p)
+        self.assertEqual(out["row_width_error_count"],1)
+        self.assertEqual(out["acceptance"],"FAIL_ROW_WIDTH")
+
 if __name__=="__main__": unittest.main()
