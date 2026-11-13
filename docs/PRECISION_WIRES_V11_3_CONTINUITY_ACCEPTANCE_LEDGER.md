@@ -367,3 +367,11 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Overall V11.3 progress remains NOT CALCULABLE; Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, 56×12=672 diagnostics, Engines A–E, and Hard Gate logic unchanged.
 
 - Follow-up QA inspection caught and corrected escaped fixture literals in the newly added tab/delimiter regression cases so test inputs contain actual tab characters and actual line breaks (not backslash sequences). Corrective QA commit: `23698e40feb62b2b8a6f188cfb9626f8db646d38`; blob: `0407fee5edadb44459144b3f52f4cab2f28f9bb7`. This correction is recorded separately; no test execution is implied.
+
+ 
+### Section 24 follow-up — strict CSV quoting (2026-11-13)
+- Additional fail-closed review found Python's default CSV reader is permissive about malformed quoted records. Both delimiter sampling and full-row parsing now use `strict=True`; malformed quoted CSV raises `csv.Error` rather than being structurally accepted.
+- Validator commit: `7206989479284205bcee24afbfd9c4923c8d2e30`; blob: `75246bc91d84da293100532bb4061d4b69523dfb`.
+- Added malformed-quote regression test and corrected its test fixture to use actual line breaks. Final QA commit: `eedbee83b9afc019aaf9ec84b13fee4403fc4195`; blob: `86d82597c511f286a173cbda4625d59b2d728a25`.
+- Final source files were re-fetched from the research branch; strict parsing and regression fixture are present. Test execution is still NOT RUN here; GitHub Actions result remains NOT VERIFIED because the available connector exposes only PR-triggered commit runs and has no workflow-dispatch/list-push-run action.
+- No raw NSE/BSE file bytes acquired; no exchange schema certification, cross-exchange reconciliation, PR, merge, or production change.
