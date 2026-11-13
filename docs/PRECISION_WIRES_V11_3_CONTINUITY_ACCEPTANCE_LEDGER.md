@@ -354,3 +354,14 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Overall V11.3 progress remains NOT CALCULABLE; Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics, Engines A–E and Hard Gate logic unchanged.
 
 - Added an explicit pipe-delimited regression test to ensure the parser does not silently assume comma-separated input. QA commit: `f0224936f09d1ca26656535191064651ea11d863`, blob `28f35489af9a409d2a4fe676c77646acda56e865`. Workflow trigger should execute on this QA push; run result remains unverified with the available connector.
+
+ 
+### Section 24 follow-up — validator runtime defect correction (2026-11-13)
+- Reinspection of the persisted generic security-master intake validator exposed two implementation defects missed by earlier focused delimiter checks: the return payload referenced undefined `dialect.delimiter` although delimiter inference used a local `delimiter` variable; the tab candidate was written as a literal backslash-plus-t rather than the actual tab character.
+- Corrected both defects. Validator commit: `95b106d04a084c9ba2833cfa6ea66eb84cd55816`; blob: `5cae180e1f279215e6926a538e8be799896c98eb`.
+- Added tab-delimited and cross-format delimiter-report regression tests; repaired existing intake QA fixtures that encoded literal backslash-n sequences instead of actual line breaks. QA commit: `28d642007055e4f621327ca864d85d95cabd06b9`; blob: `623e561da19816ddf293eeeceb6fee719b422b84`.
+- Updated workflow path filters to include `pipeline/security_master_intake.py`, so future validator-only changes trigger this research QA workflow.
+- Important correction: earlier focused delimiter checks did not exercise the complete report-return path; they must not be interpreted as validator PASS. Full unittest suite and GitHub Actions result remain PENDING / NOT VERIFIED until an actual run and logs are retrieved.
+- No NSE/BSE raw master bytes acquired; no publisher authentication, exchange-specific schema certification, or cross-exchange ISIN reconciliation. No production integration, PR, or merge.
+- Section 24 progress: identified/corrected code defects 100%; QA regression definitions persisted 100%; workflow path coverage updated 100%; full test-suite execution 0% pending; GitHub CI verification 0%; official raw-file acquisition 0%; exchange-specific schema certification 0%.
+- Overall V11.3 progress remains NOT CALCULABLE; Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, 56×12=672 diagnostics, Engines A–E, and Hard Gate logic unchanged.
