@@ -387,7 +387,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"multiline.csv"
-            p.write_text('Symbol,ISIN,Note\\nABC,INE000A01001,"first line\\nsecond line"\\nXYZ,INE000A01002,"plain"\\n',encoding="utf-8")
+            p.write_text('Symbol,ISIN,Note\nABC,INE000A01001,"first line\nsecond line"\nXYZ,INE000A01002,"plain"\n',encoding="utf-8")
             out=inspect_security_master(p)
         self.assertEqual(out["delimiter"],",")
         self.assertEqual(out["data_row_count"],2)
