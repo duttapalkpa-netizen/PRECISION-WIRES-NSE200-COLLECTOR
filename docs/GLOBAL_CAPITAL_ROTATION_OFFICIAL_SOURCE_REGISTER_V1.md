@@ -309,3 +309,9 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Validator commit `64aad36ed09688716dcf7b5c30cdffedf9dfcbd8` (blob `bb15dd80ccba3933f147967b5df6b995c5ec923a`).
 - Added blank-only regression and corrected fixture to actual whitespace/newline characters. QA commit `69fb2a1bb6c5f670f144d9135b3f2c2c5801e0a8` (blob `f929f8b6a0f4225577d2306dd6c2a69b148983fa`).
 - Test suite and CI remain NOT RUN / NOT VERIFIED; source persistence is not test evidence.
+
+ 
+## 2026-11-13 — Final tab delimiter source-encoding audit
+- Character-code inspection found the candidate delimiter remained a literal backslash+t sequence. Replaced it with `chr(9)` to ensure an actual tab delimiter.
+- Validator commit `86edc76f30a04fc78408cc45af2c46d1456a9c7e` (blob `a625908d5701f5f95a717582dcf10913f1cbbb08`).
+- Existing QA tab regression uses a Python `\t` escape and yields an actual tab at runtime; no new test method added. Full suite remains NOT RUN and CI NOT VERIFIED.
