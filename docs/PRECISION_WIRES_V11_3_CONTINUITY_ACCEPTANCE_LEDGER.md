@@ -231,3 +231,15 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Current inspected walk-forward `RANKING_SCORE` excludes WINNER_INTERACTION_SCORE; counterfactual ablation variants still include it, so missing delivery can contaminate non-current ablation comparisons. Historical affected-row count and metric delta remain UNKNOWN pending exact Run 110 replay.
 - Policy remains UNRESOLVED; no silent UNKNOWN→PASS/FAIL/neutral conversion approved. No code change, imputation, workflow run, PR or production integration.
 - Protected invariants unchanged. Project Hard Gate remains BLOCKED; overall research percentage NOT_CALCULABLE.
+
+
+## 16. Run 110 exact artifact replay — missing delivery evidence — 2026-11-14
+
+- Retrieved exact Run #110 artifact ID `13678590181` (`precision-wires-adaptive-110`), run ID `42622884559`; job `collect-and-test` concluded success.
+- ZIP size 61,442,608 bytes; SHA-256 `02422a83c781e28dde568574e6f65a71d311a871b88c7095ed1169bd7c8dc8c7`, matching issue #27 evidence.
+- Archived input `data/processed/nse_eq_200_sessions.csv`: 500,808 × 21; SHA-256 `51bb6875fe1ec4474c73feefd99e49c37c9eaacec7735f18b34f72f639040a4c`. Walk-forward output: 249,473 universe predictions, 100 cutoff dates.
+- Recomputed delivery rolling fields over 255,082 cutoff-universe rows: exactly 2 raw DELIV_PER missing rows, both GSEC10ABSL on 2026-09-11 and 2026-09-14; separately 1,269 rows had current DELIV_PER present but DELIV20 baseline unavailable due rolling(20,min_periods=5); total DELIV_GAP NaN = 1,271. Do not conflate raw missingness with insufficient rolling history.
+- For the two raw missing rows: ABSORPTION delivery component = 0; REPRICING_PRESSURE delivery subcomponent = neutral 50 (weighted contribution 10 before outer clip); archived WINNER_INTERACTION_SCORE = NaN; archived current RANKING_SCORE finite (7.0868191099 and 8.3152488958), consistent with inspected formula excluding WINNER_INTERACTION_SCORE. Both archived H+3 outcomes were below +10% (+0.212333% and 0.000000%).
+- Full exact artifact replay report: `docs/RUN110_DELIVERY_UNKNOWN_EXACT_ARTIFACT_REPLAY_20261114.md`.
+- Artifact/data integrity and missingness/downstream reconciliation: PASS. Counterfactual performance impact: NOT_RUN / UNKNOWN. UNKNOWN-delivery policy remains UNRESOLVED pending owner approval. No imputation, code change, workflow rerun, PR, merge or production integration.
+- Protected invariants unchanged; Hard Gate BLOCKED; overall research percentage NOT_CALCULABLE.
