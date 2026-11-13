@@ -280,3 +280,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - URL resolution: PASS (candidate NSE-hosted endpoint, independently corroborated). Raw acquisition/schema/GUID/pubDate/timezone/retention/coverage: NOT ACQUIRED / NOT RUN. Corporate Events P0 remains BLOCKED.
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_ANNOUNCEMENTS_RSS_URL_RESOLUTION_20261114.md`.
 - No guessed query parameters, synthetic data, paid service, code/workflow change, PR merge or production integration.
+
+
+## 21. Corporate Events P0 — RSS operational signal and bounded acquisition — 2026-11-14
+
+- Official NSE RSS page confirms the Announcements first-party feed and instructs users to obtain the exact feed URL via its RSS icon; it warns third-party reader/provider delays may occur.
+- Two independent Feeder directory listings currently report the NSE-hosted Announcements feed as working with recent items. This is secondary availability evidence only, not authoritative data or proof of raw NSE endpoint health/completeness. A recent third-party technical article reports a 10-Nov sample, but is not adopted as official source evidence.
+- Direct GET to `https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml` with browser-like headers and 15s timeout failed at DNS resolution in this runtime. No HTTP response, bytes, MIME, redirect chain or SHA-256 obtained. Web reader's `application/xml` limitation is not an HTTP status.
+- Report: `docs/CORPORATE_EVENTS_P0_RSS_OPERATIONAL_SIGNAL_20261114.md`.
+- Operational signal: SECONDARY SUPPORT ONLY. Raw feed acquisition/schema/GUID/timezone/retention/completeness: UNKNOWN/NOT RUN. Corporate Events P0 remains BLOCKED. No code/workflow change, PR merge or production integration.
