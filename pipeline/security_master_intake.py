@@ -36,8 +36,10 @@ def inspect_security_master(path: str | Path) -> dict:
     # Infer delimiter from repeated field-count consistency, not Sniffer's
     # all-lines heuristic: a single malformed row must remain measurable.
     sample_lines = [line for line in text.splitlines()[:40] if line.strip()]
+    if not sample_lines:
+        raise ValueError("no nonblank CSV records found")
     candidates = []
-    for delimiter in (",", "|", ";", "\\t"):
+    for delimiter in (",", "|", ";", "\t"):
         counts = [len(next(csv.reader([line], delimiter=delimiter, strict=True))) for line in sample_lines]
         widths = {}
         for width in counts:
