@@ -234,4 +234,15 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("Historical daily coverage after 04-Apr-2025 = NOT VERIFIED",content)
         self.assertIn("Exact trade-date mapping = UNKNOWN",content)
 
+    def test_cdsl_fortnightly_sector_report_is_not_daily_or_issuer_flow(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("CDSL fortnightly sector-wise FPI report — frequency and measurement qualification",content)
+        self.assertIn("AUC is a stock/position, not transaction flow",content)
+        self.assertIn("NOT a daily/1–5 day trigger",content)
+        self.assertIn("BSE common industry classification",content)
+        self.assertIn("end-of-period RBI reference rate",content)
+        self.assertIn("Debt-FAR, Mutual Funds and AIF net investment from 15-Sep-2024",content)
+        self.assertIn("raw report file bytes/SHA-256 = NOT ACQUIRED",content)
+
 if __name__=="__main__": unittest.main()
