@@ -179,3 +179,17 @@ CDSL monthly calendar page separately states its monthly net investment data are
 Acceptance: CDSL official daily source and semantics VERIFIED; reporting-date/previous-trade-day lag gate VERIFIED; asset-bucket/route split VERIFIED; direct raw file and checksum NOT ACQUIRED; exact trade-date mapping UNKNOWN; no daily signal or production use authorized.
 
 Official references: https://www.cdslindia.com/eservices/publications/fiidaily ; https://www.cdslindia.com/eservices/Publications/FIICalendar ; https://pilot.fpi.nsdl.co.in/Reports/ReportsListing.aspx .
+
+
+## CDSL daily report arithmetic reconciliation — live display snapshot 12-NOV-2026 (2026-11-13 audit)
+A point-in-time read of the official CDSL daily page on 13-Nov-2026 displayed reporting date 12-NOV-2026. This is a live-page QA snapshot only, not a downloaded immutable raw file and not a backfilled observation. Independently recalculated the published component subtotals against the grand total:
+- Equity subtotal: INR +14,693.72 crore (Stock Exchange +14,678.72; Primary market & others +15.00).
+- Debt-General: +445.65; Debt-VRR: -173.22; Debt-FAR: +1,022.81; Hybrid: +34.86; Mutual Funds: +9.59; AIFs: -5.20 (all INR crore).
+- Sum of asset-bucket subtotals = INR +16,028.21 crore, matching published Total +16,028.21.
+- Sum of gross purchases across asset buckets = INR 36,138.01 crore, matching published gross purchases; gross sales sum = INR 20,109.80 crore, matching published gross sales.
+- Sum of USD net figures across displayed buckets = USD 1,708.6278 million, rounding to published USD 1,708.628 million.
+- Arithmetic reconciliation PASS within published precision. This validates internal arithmetic only; it does not validate trade-date mapping, custodian completeness, raw-file immutability, or predictive value.
+- Keep equity cash flow as Equity subtotal only; never use grand total as equity. The reporting-date lag note on the page remains applicable: custodians report on reporting date, covering trades on/up to previous trading day(s).
+- The live page currently has a 12-NOV-2026 report. No raw file bytes or checksum acquired; do not ingest this displayed snapshot into historical panel.
+
+Official source: https://www.cdslindia.com/eservices/publications/fiidaily . Snapshot evidence: page reporting date and bucket rows; published rounding note says aggregate discrepancies may be due to rounding.
