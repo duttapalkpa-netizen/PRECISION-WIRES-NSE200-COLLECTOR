@@ -124,4 +124,31 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("SHA-256: NOT AVAILABLE",content)
         self.assertIn("not evidence that this audit successfully retrieved the response",content)
         self.assertIn("Observation extraction requires a separately verified",content)
+    def test_decision_cutoff_excludes_future_publication(self):
+        rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T20:00:00Z"),
+              self.row("india_fpi_equity_inr_cr",-20,published="2026-11-07T02:00:00Z")]
+        grouped=load_observations(self.make(rows))
+        early=classify(grouped,"2026-11-07",decision_at="2026-11-06T21:00:00Z")
+        late=classify(grouped,"2026-11-07",decision_at="2026-11-07T03:00:00Z")
+        self.assertEqual(early["india_fpi_equity"],"FPI_EQUITY_NET_BUY")
+        self.assertEqual(late["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
+
+    def test_decision_cutoff_all_future_remains_unknown(self):
+        rows=[self.row("usd_inr_change_pct_20d",-1,published="2026-11-07T03:00:00Z")]
+        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T02:00:00Z")
+        self.assertIsNone(out["latest_observations"]["usd_inr_change_pct_20d"])
+        self.assertEqual(out["fx_transmission"],"UNKNOWN")
+
+    def test_decision_cutoff_normalizes_timezone_offsets(self):
+        rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T04:00:00+05:30")]
+        grouped=load_observations(self.make(rows))
+        before=classify(grouped,"2026-11-07",decision_at="2026-11-06T22:29:59Z")
+        after=classify(grouped,"2026-11-07",decision_at="2026-11-06T22:30:00Z")
+        self.assertEqual(before["india_fpi_equity"],"UNKNOWN")
+        self.assertEqual(after["india_fpi_equity"],"FPI_EQUITY_NET_BUY")
+
+    def test_rejects_decision_cutoff_after_asof_utc_date(self):
+        with self.assertRaisesRegex(ValueError,"decision_at UTC date"):
+            classify(load_observations(self.make([])),"2026-11-07",decision_at="2026-11-08T00:00:00Z")
+
 if __name__=="__main__": unittest.main()
