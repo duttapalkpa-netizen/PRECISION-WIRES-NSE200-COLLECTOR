@@ -209,3 +209,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Source register commit `af62d3a9144c0e0c0222aa939af236faa4f9a4cf`, blob `e021dd9db60dac765be4034304e8218042e1171a`.
 - Decimal arithmetic regression commit `9d465a4af307760aba6043b25a5cbe9ceb4ff370`, blob `93e2d70bfcf324dcceeaa3e47ec6b4c6540dec90`.
 - Work package (snapshot arithmetic reconciliation + exact-decimal regression) = 100% pending CI. Raw export/archive/hash and exact underlying trade-date mapping remain NOT ACQUIRED/UNKNOWN.
+
+
+### Final CI verification for section 17
+- CI Run `43374862590`: SUCCESS; 34 tests passed in 0.035s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43374862590 .
+- Section 17 snapshot arithmetic and exact-decimal regression = 100%. Raw source file/hash and trade-date mapping remain pending.
