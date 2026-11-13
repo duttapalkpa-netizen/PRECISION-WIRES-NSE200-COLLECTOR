@@ -247,3 +247,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Corrected the assertion to match the exact persisted register wording. Final CI Run `43375956310`: SUCCESS; 36 tests passed in 0.030s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43375956310 .
 - Final QA commit: `d76ef4ef7e52df7a81c4cd0e665aedfc1d5cbad6`, blob `52e38336169ba879505c01c13781f7697e34e088`.
 - This CI PASS verifies the fail-closed documentary guard only; it does not acquire CDSL raw XLS bytes, validate the raw report, create a sector panel or validate predictive edge.
+
+
+## 20. BSE industry-classification hierarchy qualification for CDSL fortnightly sector bridge — 2026-11-13
+- Inspected official BSE Industry Classification Structure PDF: https://www.bseindia.com/Downloads1/India_Industry_Classification_Structure.pdf . It defines MEI_CODE, SECT_CODE, IND_CODE, BASIC_IND_CODE and definitions. It is a taxonomy hierarchy/dictionary, not an issuer membership list.
+- BSE legacy Industry_Classification.aspx page returned 403 to this retrieval. No dated issuer-to-code membership file, stable identifier mapping, effective dates, or NSE/BSE security master join acquired. Do not interpret 403 as proof no such file exists.
+- CDSL 31-Oct-2026 report route renders an HTML sector aggregate; retrieved HTML page exposes no separate binary download link. Raw report binary/hash remain NOT ACQUIRED.
+- CDSL 23 named sectors + Others cannot be assigned to issuer securities from taxonomy labels alone. Others must not be redistributed. Similar names are not a verified crosswalk.
+- Source register section 20 commit f9945a35f104379e83f4ce3717a90d013a5e44cd, blob d2ff913ae02d74bdeea95bbe5f7c5201fc2f0297.
+- QA fail-closed regression commit 8cd3694c83164d09415ff6e296754294385fc1d1, blob 53ade65378b2294944908ebe75cb89717b2d6892.
+- Acceptance: official BSE hierarchy dictionary = VERIFIED; issuer membership + effective dates = NOT ACQUIRED; CDSL raw binary export = NOT ACQUIRED; sector-to-issuer bridge = UNKNOWN; taxonomy crosswalk = PARTIAL/NOT VALIDATED; NSE security mapping = UNKNOWN. No synthetic mapping/data ingestion/predictive use/production authorization.
+- Defined source hierarchy and bridge-boundary qualification = 100% pending CI. Actual issuer bridge = 0%; CDSL raw file/hash = 0%; sector-panel extraction = 0%; predictive validation = NOT DONE.
+- No production changes, no PR/merge, no protected invariant changes. Overall V11.3 progress remains NOT CALCULABLE pending full weighted acceptance-ledger reconciliation.
