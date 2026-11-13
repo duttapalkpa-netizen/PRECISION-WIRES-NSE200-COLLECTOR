@@ -93,7 +93,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def test_bop_agg_methodology_is_context_only_and_estimation_is_not_observed_flow(self):
         register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
         content=register.read_text(encoding="utf-8")
-        self.assertIn("financial-account transaction gaps, IMF says WEO data are used",content)
+        self.assertIn("For financial-account transaction gaps, IMF says WEO data are used",content)
         self.assertIn("not an observed-only sum of country-reported flows",content)
         self.assertIn("cannot serve as a 1–5 trading-day trigger",content)
         self.assertIn("raw BOP_AGG workbook/table bytes",content)
