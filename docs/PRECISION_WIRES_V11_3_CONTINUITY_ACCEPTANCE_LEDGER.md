@@ -277,3 +277,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance: NSE methodology = VERIFIED; BSE hierarchy = VERIFIED; complete issuer membership = NOT LOCATED/NOT ACQUIRED; historical effective-dated roster = NOT LOCATED/NOT ACQUIRED; CDSL sector-to-issuer bridge = UNKNOWN. No issuer mappings constructed, no synthetic join, no ingestion, no production use.
 - Defined source/methodology/coverage-gap qualification = 100% pending CI. Complete issuer roster acquisition = 0%; historical point-in-time mapping = 0%; CDSL panel bridge = 0%; predictive validation = NOT DONE.
 - No production changes, no PR/merge, no protected invariants changed. Overall V11.3 progress remains NOT CALCULABLE pending full weighted acceptance-ledger reconciliation.
+
+
+### Final CI verification for section 21
+- CI Run 43378035122: SUCCESS; job 131729029308; 38 tests passed in 0.021s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43378035122 .
+- This verifies only the fail-closed source/coverage guard. It does not create the missing official issuer roster or a CDSL-to-stock bridge.
