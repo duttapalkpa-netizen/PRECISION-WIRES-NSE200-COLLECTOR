@@ -43,14 +43,14 @@ def load_observations(path: Path):
                 observed=date.fromisoformat(row["date"])
                 asof=date.fromisoformat(row["as_of_date"])
                 published=_published_key(row["published_at"])
-                duplicate_key=(row["indicator"],row["date"],row["as_of_date"],published,row["source"],row["source_url"])
-                if duplicate_key in seen_keys:
-                    raise ValueError("duplicate observation key within the same source publication vintage")
-                seen_keys.add(duplicate_key)
                 value=float(row["value"])
                 if not math.isfinite(value): raise ValueError("non-finite value")
             except (TypeError,ValueError):
                 raise ValueError(f"row {n}: invalid date, publication timestamp, or finite numeric value")
+            duplicate_key=(row["indicator"],row["date"],row["as_of_date"],published,row["source"],row["source_url"])
+            if duplicate_key in seen_keys:
+                raise ValueError(f"row {n}: duplicate observation key within the same source publication vintage")
+            seen_keys.add(duplicate_key)
             if observed > asof:
                 raise ValueError(f"row {n}: observation date is after as_of_date")
             if not row["source_url"].startswith("https://"):
