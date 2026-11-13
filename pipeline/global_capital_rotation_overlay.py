@@ -76,6 +76,8 @@ def latest(grouped,key,decision_at=None):
     return chosen
 
 def classify(grouped,as_of_date=None,decision_at=None):
+    if decision_at is None:
+        raise ValueError("decision_at is required for point-in-time classification")
     asof=date.fromisoformat(as_of_date) if as_of_date else date.today()
     if decision_at is not None:
         decision_date=datetime.fromisoformat(_published_key(decision_at)).date()
@@ -146,7 +148,7 @@ def main():
     p.add_argument("--input",required=True,help="long-format provenance CSV")
     p.add_argument("--output",default="global_capital_rotation_dashboard.json")
     p.add_argument("--as-of-date",help="ISO date for reproducible freshness checks; defaults to system date")
-    p.add_argument("--decision-at",help="ISO instant for point-in-time publication cutoff; strongly required for backtests")
+    p.add_argument("--decision-at",required=True,help="Required ISO instant for point-in-time publication cutoff")
     a=p.parse_args()
     result=classify(load_observations(Path(a.input)),a.as_of_date,a.decision_at)
     Path(a.output).write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
