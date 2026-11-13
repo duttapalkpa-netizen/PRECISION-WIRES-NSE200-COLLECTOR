@@ -179,3 +179,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Source register commit `f80ad3a19f984b45b85cc1d5367f5604c829f2b4`, blob `18c7e21cb8850568f380abc8d4799309240672e5`.
 - QA guard commit `2aff3cba3292f53c7e121a48676cbd35e40eece7`, blob `d89721d5bf9381b802192c6086a19874fd006d88`.
 - Work package (official semantics/download-control reconciliation + regression) = 100% pending CI; exact href/raw bytes/history panel/final FPI reconciliation = 0% / UNKNOWN. No production use.
+
+
+### Final CI verification for section 15
+- CI Run `43374184518`: SUCCESS; 32 tests passed in 0.027s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43374184518 .
+- Section 15 defined work package (official NSE page semantics + download-control audit, register, QA and CI) = 100%. Actual CSV acquisition and historical panel = 0%; exact CSV URLs remain UNKNOWN.
