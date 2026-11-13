@@ -271,3 +271,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - RSS is a plausible official discovery/fallback channel, but exact XML feed href could not be resolved from the page's extracted link text. No feed URL guessed. Raw XML, MIME/bytes/SHA, GUID/pubDate/timezone/schema/retention and historical coverage remain UNKNOWN/NOT ACQUIRED.
 - Report: `docs/CORPORATE_EVENTS_P0_OFFICIAL_NSE_RSS_CHANNEL_EVALUATION_20261114.md`.
 - Source discovery and semantic separation: PASS. RSS ingestion readiness: NOT ESTABLISHED. Corporate Events P0 remains BLOCKED. No code/workflow change, paid source, third-party vendor, guessed URL, PR merge or production integration.
+
+
+## 20. Corporate Events P0 — NSE announcements RSS URL resolution — 2026-11-14
+
+- Official NSE RSS page explicitly lists the Announcements feed and instructs subscribers to open its RSS icon. An independent feed directory corroborates the NSE-hosted announcements URL `https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml`; related NSE-hosted Corporate Actions, Board Meetings and Financial Results feeds are separately listed.
+- Direct XML open produced an unsupported-content-type response (`application/xml`) in the web reader, not an HTML page. This does not establish HTTP status or valid XML. Raw download from the execution environment failed at DNS resolution; no bytes or SHA-256 were obtained.
+- URL resolution: PASS (candidate NSE-hosted endpoint, independently corroborated). Raw acquisition/schema/GUID/pubDate/timezone/retention/coverage: NOT ACQUIRED / NOT RUN. Corporate Events P0 remains BLOCKED.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_ANNOUNCEMENTS_RSS_URL_RESOLUTION_20261114.md`.
+- No guessed query parameters, synthetic data, paid service, code/workflow change, PR merge or production integration.
