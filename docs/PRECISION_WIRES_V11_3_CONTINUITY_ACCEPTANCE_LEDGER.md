@@ -352,3 +352,5 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - CI result remains PENDING / NOT VERIFIED. The available GitHub run-list connector does not expose push-triggered workflow runs; no run ID or conclusion is asserted. No external paid service, data download, PR or merge.
 - Section 24 progress: parser implementation 100%; QA regression fixture persisted 100%; local delimiter-focused checks 100%; full test-suite execution 0% pending; GitHub CI verification 0%; raw NSE/BSE file acquisition 0%; exchange-specific schema certification 0%.
 - Overall V11.3 progress remains NOT CALCULABLE; Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics, Engines A–E and Hard Gate logic unchanged.
+
+- Added an explicit pipe-delimited regression test to ensure the parser does not silently assume comma-separated input. QA commit: `f0224936f09d1ca26656535191064651ea11d863`, blob `28f35489af9a409d2a4fe676c77646acda56e865`. Workflow trigger should execute on this QA push; run result remains unverified with the available connector.
