@@ -243,3 +243,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Full exact artifact replay report: `docs/RUN110_DELIVERY_UNKNOWN_EXACT_ARTIFACT_REPLAY_20261114.md`.
 - Artifact/data integrity and missingness/downstream reconciliation: PASS. Counterfactual performance impact: NOT_RUN / UNKNOWN. UNKNOWN-delivery policy remains UNRESOLVED pending owner approval. No imputation, code change, workflow rerun, PR, merge or production integration.
 - Protected invariants unchanged; Hard Gate BLOCKED; overall research percentage NOT_CALCULABLE.
+
+
+## 17. Macro-Geo P0 Run 210 exact artifact provenance reconciliation — 2026-11-14
+
+- Retrieved Run #210 ID `40898379422`; job `macro-geo-p0` SUCCESS; artifact ID `12908992135`, 96,946 bytes; ZIP SHA-256 `8c2de588aaf79697578a1343f7c88c9fd9bd383cbd6e2866d51e97eb5fadcb48`.
+- Exact archived `data/external/brent_crude.csv`: 213 rows, 2025-12-22..2026-10-26; US EIA RBRTE daily Brent spot, source URL `https://www.eia.gov/dnav/pet/hist_xls/RBRTEd.xls`; SHA-256 `203b886a538a18c4631b4d21f4a91d44f0bdf41986ef026ea7e9d800cf3810b8`. `p0_repair_report.json` agrees on path, source, rows, dates and URL.
+- `crude_oil_collection_report.json` separately reports Yahoo BZ=F futures proxy at `data/external/brent_crude_futures_proxy.csv`, 212 rows; explicitly not spot. That proxy CSV is absent from the ZIP, so proxy payload retention remains UNKNOWN; do not claim it was archived. The canonical EIA spot was not overwritten in this artifact.
+- Exact artifact hard gate BLOCKED: P0 7/8 (corporate_events blocked); Factor Registry 0/35 fully available, 21 not connected; event study 48 rows, 26 eligible, 22 pending, exploratory; regime anchors 9/11; FPI 101 and DII 100 dates over 147 days; market/equity panels aligned through 2026-10-26. Selector, RANKING_SCORE and +1 PRESSURE_FADE unchanged.
+- Report: `docs/MACRO_GEO_RUN210_EXACT_ARTIFACT_PROVENANCE_RECONCILIATION_20261114.md`.
+- Canonical EIA spot provenance reconciliation: PASS. Proxy payload packaging: UNKNOWN. Hard Gate remains BLOCKED. No code change, workflow rerun, PR, merge, imputation, paid API or external contact.
