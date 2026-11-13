@@ -33,12 +33,25 @@ def inspect_security_master(path: str | Path) -> dict:
         text = payload.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise ValueError("not valid UTF-8/UTF-8-BOM; encoding must be established separately") from exc
-    sample = text[:8192]
-    try:
-        dialect = csv.Sniffer().sniff(sample, delimiters=",|;\t")
-    except csv.Error as exc:
-        raise ValueError("CSV delimiter is ambiguous; no parser assumption permitted") from exc
-    reader = csv.reader(io.StringIO(text, newline=""), dialect)
+    # Infer delimiter from repeated field-count consistency, not Sniffer's
+    # all-lines heuristic: a single malformed row must remain measurable.
+    sample_lines = [line for line in text.splitlines()[:40] if line.strip()]
+    candidates = []
+    for delimiter in (",", "|", ";", "\\t"):
+        counts = [len(next(csv.reader([line], delimiter=delimiter))) for line in sample_lines]
+        widths = {}
+        for width in counts:
+            widths[width] = widths.get(width, 0) + 1
+        best_width, best_count = max(widths.items(), key=lambda item: item[1])
+        if best_width >= 2 and best_count >= 2:
+            candidates.append((best_count, best_width, delimiter))
+    if not candidates:
+        raise ValueError("CSV delimiter is ambiguous; no parser assumption permitted")
+    candidates.sort(reverse=True)
+    if len(candidates) > 1 and candidates[0][:2] == candidates[1][:2]:
+        raise ValueError("CSV delimiter is ambiguous; no parser assumption permitted")
+    delimiter = candidates[0][2]
+    reader = csv.reader(io.StringIO(text, newline=""), delimiter=delimiter)
     try:
         header = next(reader)
     except StopIteration:
