@@ -391,3 +391,12 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Re-fetched source confirms actual tab candidate and blank-only guard. Workflow path filter includes `pipeline/security_master_intake.py`. Full suite has NOT been executed; no test or CI pass is claimed.
 - Earlier assertions that tab detection was fixed are superseded by this correction; previous persisted test fixture itself also required correction. Do not mark tab parsing PASS until the actual suite executes.
 - No raw NSE/BSE master bytes acquired; schema certification, cross-exchange ISIN reconciliation and issuer/industry bridge remain pending/unknown. No production change, PR or merge.
+
+ 
+### Section 24 correction — final tab-candidate encoding audit (2026-11-13)
+- A source-character audit (not visual inspection) showed the prior parser line still contained the two literal characters backslash and `t`, not a tab. Earlier progress statements claiming the tab candidate was fully fixed were therefore premature. Corrected the candidate list to use `chr(9)`, eliminating source-escaping ambiguity.
+- Validator commit `86edc76f30a04fc78408cc45af2c46d1456a9c7e`; blob `a625908d5701f5f95a717582dcf10913f1cbbb08`.
+- Existing QA tab test uses Python's `\t` escape in source, which produces a real tab at runtime; test definitions remain 49. QA blob `f929f8b6a0f4225577d2306dd6c2a69b148983fa`.
+- Re-fetched source confirms candidate line uses `chr(9)`. This is source verification only; full QA execution and CI are still NOT RUN / NOT VERIFIED.
+- Official Python CSV documentation confirms `csv.reader` supports a one-character delimiter and that `strict=True` raises `csv.Error` on malformed CSV; see https://docs.python.org/3/library/csv.html. This documents the parser contract, not test execution.
+- No raw NSE/BSE bytes, schema certification, cross-exchange reconciliation or issuer bridge acquired. No production changes, PR or merge.
