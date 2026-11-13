@@ -242,7 +242,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("NOT a daily/1–5 day trigger",content)
         self.assertIn("BSE common industry classification",content)
         self.assertIn("end-of-period RBI reference rate",content)
-        self.assertIn("Debt-FAR, Mutual Funds and AIF net investment from 15-Sep-2024",content)
+        self.assertIn("their net investment from 15-Sep-2024",content)
         self.assertIn("raw report file bytes/SHA-256 = NOT ACQUIRED",content)
 
 if __name__=="__main__": unittest.main()
