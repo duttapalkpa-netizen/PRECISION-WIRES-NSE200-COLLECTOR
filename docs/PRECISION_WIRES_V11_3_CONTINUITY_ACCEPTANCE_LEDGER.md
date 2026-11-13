@@ -438,3 +438,13 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, 56x12=672 diagnostics, Engines A-E, or Hard Gate logic changed. No PR opened/merged; no spend, paid API, synthetic data or external contact.
 - Work-package progress: CI run discovery 100%; job/step status verification 100%; full test-log inspection 100%; 50-test suite execution 100%; documentation persistence follows this entry. Raw NSE/BSE acquisition 0%; exchange-specific raw schema certification 0%; cross-exchange ISIN reconciliation 0%; issuer classification roster 0%; CDSL bridge UNKNOWN.
 - Overall V11.3 progress remains NOT CALCULABLE because full weighted acceptance ledger has not been reconciled. Hard Gate remains BLOCKED.
+
+
+## 27. NSE active securities CM and debt source discovery — 2026-11-13
+- Selected a new official NSE source candidate after checking the Continuity Ledger and Source Register to avoid repeating the prior EQUITY_L.csv/MII security-file audits.
+- Official NSE page separately lists “List of Active Securities CM And Debt (.csv)” (displayed 373 KB; page updated 09-Nov-2026). Exact target: https://nsearchives.nseindia.com/content/equities/List_of_Active_Securities_CM_DEBT.csv . A single official link retrieval attempt failed at the gateway with HTTP 400 / unsupported content-type text/csv.
+- The active-security list is distinct from the already catalogued Equity-segment available-for-trading CSV and MII security-file universes. Its actual row population and semantics are not yet established. Page display size is not a downloaded byte count.
+- Raw bytes, payload schema, row count, ISIN coverage, embedded vintage, successful retrieval timestamp and SHA-256: NOT ACQUIRED / UNKNOWN. No parser, mapping, ingestion or source promotion performed. Identity/universe candidate only; not issuer-industry membership evidence.
+- Work-package progress: official page reinspection 100% PASS; distinct catalogue-item identification 100% PASS; exact link resolution 100% PASS; bounded retrieval attempt 100% PASS (access failed); raw payload acquisition 0% BLOCKED; schema/ISIN QA 0% PENDING; historical validity and cross-exchange reconciliation 0% PENDING; issuer-industry bridge UNKNOWN.
+- No repeated gateway retries or unofficial mirrors. Reattempt only with official browser download or original user-provided payload; preserve original bytes and SHA-256 before parsing. No spend, paid API, synthetic data, external contact, production change, PR or merge. All invariants remain unchanged.
+- Overall V11.3 progress remains NOT CALCULABLE: this single source-discovery checkpoint does not reconcile the full weighted acceptance ledger. Hard Gate remains BLOCKED.
