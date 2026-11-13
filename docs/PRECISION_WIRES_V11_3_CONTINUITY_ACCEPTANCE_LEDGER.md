@@ -448,3 +448,12 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Work-package progress: official page reinspection 100% PASS; distinct catalogue-item identification 100% PASS; exact link resolution 100% PASS; bounded retrieval attempt 100% PASS (access failed); raw payload acquisition 0% BLOCKED; schema/ISIN QA 0% PENDING; historical validity and cross-exchange reconciliation 0% PENDING; issuer-industry bridge UNKNOWN.
 - No repeated gateway retries or unofficial mirrors. Reattempt only with official browser download or original user-provided payload; preserve original bytes and SHA-256 before parsing. No spend, paid API, synthetic data, external contact, production change, PR or merge. All invariants remain unchanged.
 - Overall V11.3 progress remains NOT CALCULABLE: this single source-discovery checkpoint does not reconcile the full weighted acceptance ledger. Hard Gate remains BLOCKED.
+
+
+## 28. NSE FII/FPI–DII page freshness and scope checkpoint — 2026-11-13
+- Performed a new page-freshness audit using the official NSE report page; did not repeat the previously blocked generic CSV download-link click.
+- Retrieved page snapshot exposes NSE-only sample date 09-Oct-2026 and combined NSE+BSE+MSEI sample date 30-Oct-2026. Relative to 13-Nov-2026 these are 35 and 14 calendar days old. Treat as stale rendered examples, not current daily data and not immutable raw observations.
+- Official page preserves separate NSE-only and combined scopes and states provisional/custodial caveats. DII is based on trading-member codes and client category, not unique beneficial-owner holdings. Preserve scope and provisional labels; no merge with final CDSL/NSDL data.
+- CSV controls exist, but exact distinct final URLs remain unexposed in the link map. No repeated generic click and no raw CSV acquired. URLs, bytes, retrieval timestamps, sizes, hashes, full daily coverage and arithmetic QA remain UNKNOWN / NOT DONE.
+- Work-package progress: official page reinspection 100% PASS; scope distinction/semantics verification 100% PASS; visible sample freshness comparison 100% PASS; CSV endpoint resolution 0% PENDING; raw CSV acquisition 0% PENDING; date/schema/arithmetic/calendar QA 0% PENDING; historical matched-panel/event study 0% PENDING.
+- No production use, no synthetic data, no paid source, no external contact, no PR/merge. All protected invariants unchanged. Overall V11.3 progress remains NOT CALCULABLE pending full weighted acceptance-ledger reconciliation; Hard Gate BLOCKED.
