@@ -400,3 +400,11 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Re-fetched source confirms candidate line uses `chr(9)`. This is source verification only; full QA execution and CI are still NOT RUN / NOT VERIFIED.
 - Official Python CSV documentation confirms `csv.reader` supports a one-character delimiter and that `strict=True` raises `csv.Error` on malformed CSV; see https://docs.python.org/3/library/csv.html. This documents the parser contract, not test execution.
 - No raw NSE/BSE bytes, schema certification, cross-exchange reconciliation or issuer bridge acquired. No production changes, PR or merge.
+
+ 
+### Section 24 follow-up — logical-record CSV delimiter inference (2026-11-13)
+- Adversarial review identified a remaining parser limitation: delimiter voting split physical lines, so a valid quoted field containing an embedded newline could be treated as multiple records or cause delimiter sampling to fail. Python's official CSV documentation confirms quoted fields may contain newlines and that readers should consume a file-like stream opened with `newline=''`.
+- Replaced physical-line sampling with per-candidate `csv.reader(io.StringIO(text, newline=''), strict=True)` over logical records. It counts up to 40 nonblank records, retains ragged-row visibility, and rejects ambiguity; malformed quoting remains fail-closed.
+- Validator commit `fa65175e011c36711b94193513a0b7507c2cae72`; blob `b97516e076c60a0b4e659ccc0fd7606c0c79fb80`.
+- Added quoted multiline-field regression test. QA commit `1db674e9ce57e20953432c0a622a00336a2bb074`; blob `7260b5210b5171a6facdb132b0b2470e9fd78520`. Test definition is persisted; full suite has not been executed.
+- Source Register/ledger updates pending this entry; no source-data acquisition, schema certification, production integration, PR or merge.
