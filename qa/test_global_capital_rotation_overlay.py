@@ -274,4 +274,17 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("do NOT provide missing four-tier industry membership",content)
         self.assertIn("CDSL sector-to-stock bridge = UNKNOWN",content)
 
+    def test_bse_2026_security_master_schema_change_and_nse_mii_universes_are_explicit(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("BSE 2026 security-master schema change and NSE dated MII report-scope verification",content)
+        self.assertIn("ElgbltyClsgAuctnSsn",content)
+        self.assertIn("XchgExclsv",content)
+        self.assertIn("31-Jul-2026",content)
+        self.assertIn("NSE Listed securities",content)
+        self.assertIn("NSE Listed and BSE Exclusive securities",content)
+        self.assertIn("raw master bytes, sizes, schemas and SHA-256 = NOT ACQUIRED",content)
+        self.assertIn("CDSL sector-to-stock bridge = UNKNOWN",content)
+
+
 if __name__=="__main__": unittest.main()
