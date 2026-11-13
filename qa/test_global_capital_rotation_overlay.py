@@ -204,4 +204,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("provisional exchange-reported trading activity",content)
         self.assertIn("NOT ACQUIRED",content)
 
+    def test_cdsl_confirmed_fpi_flow_keeps_reporting_lag_and_asset_buckets_separate(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("CDSL custodian-confirmed FPI daily flow qualification",content)
+        self.assertIn("reporting_date` as publication/reporting date",content)
+        self.assertIn("do not use grand Total as equity or as FPI-only",content)
+        self.assertIn("Primary market & others` includes multiple non-secondary-market events",content)
+        self.assertIn("direct raw-file export URL/bytes, retrieval timestamp, file size and SHA-256 were not acquired",content)
+
 if __name__=="__main__": unittest.main()
