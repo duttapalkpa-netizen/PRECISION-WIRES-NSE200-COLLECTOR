@@ -97,3 +97,25 @@ Status:
 - India-specific inference: PROHIBITED until independently corroborated.
 
 Next bounded execution task: acquire the two current official monthly country files (HTML/TXT) once, preserve exact raw bytes and SHA-256, then perform schema/period/country/duplicate/missingness checks. Do not re-run H.10 archive discovery, ALFRED calendar enumeration, or already-passed source identity audits unless new contradictory evidence appears.
+
+
+## Follow-up: official TIC country-file schema and India-row spot-check (2026-11-13)
+The two official Treasury tab-delimited files were opened directly from the official Securities A page (content inspection only; raw-byte download/hash not performed in this step):
+- Table 1: https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table1.txt
+- Table 2: https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table2.txt
+
+Table 1 header exposes country, country_code, date and instrument-specific holdings, net transaction, and valuation-change fields (USD millions). For total U.S. securities the fields include for_lt_total_pos, for_lt_total_net, for_lt_total_valchg; corresponding Treasury, agency, corporate/other bond, and equity fields are also present. The file header says positive net U.S. sales to foreigners denotes an increase in a foreign position. India is present as country_code 42102. The inspected India rows in this file extend through 2026-03 (latest India row seen), with net transaction and valuation change separate. This separation is valuable: do not treat holdings change as transaction flow where the file supplies both.
+
+Table 2 contains U.S. holdings and net U.S. purchases of foreign long-term securities by country of issuer. India country_code 42102 is present and inspected rows extend through 2026-06 (latest India row seen). Its header and definitions must be retained independently from Table 1; never merge Table 1 and Table 2 as though they describe the same direction or resident side.
+
+The files contain later monthly dates for some other countries than the latest India rows found. Do not claim full current-month coverage for India based on the file's global maximum date. India-specific row coverage is currently Table 1 through 2026-03 and Table 2 through 2026-06 in the inspected text response; this is a spot-check, not a complete coverage audit.
+
+Status update:
+- Official table1/table2 endpoints and column schemas: VERIFIED at text-preview level.
+- India row exists, country code 42102: VERIFIED.
+- Latest India row in inspected table1/table2 preview: 2026-03 / 2026-06 respectively (spot-check only).
+- Separate net transaction and valuation-change fields in table1: VERIFIED.
+- Raw bytes, byte size, retrieval timestamp, SHA-256: NOT ACQUIRED.
+- Full-file row counts, all country-period coverage, duplicate/missingness and sign QA: PENDING.
+- Table2 full semantic/sign mapping: PENDING.
+- No direct India FPI/NSE flow interpretation: remains PROHIBITED.
