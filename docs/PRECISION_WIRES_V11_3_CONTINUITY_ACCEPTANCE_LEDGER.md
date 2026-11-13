@@ -373,3 +373,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Official page/schema/UI CSV affordance VERIFIED; exact browser request URL, date-filtered CSV bytes/hash and pagination contract NOT CAPTURED. Next step is capture the official page's own CSV export request/response for an overlapping date range, then test issuer/subject matching while keeping XBRL subset distinct.
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_OFFICIAL_XBRL_SURFACE_DISCOVERY_20261114.md`.
 - General announcement completeness UNKNOWN; Corporate Events P0 remains BLOCKED. No code/workflow/production change, no paid service, no PR/merge, no synthetic data. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
+
+
+## 30. NSE Announcement XBRL fresh revalidation + taxonomy migration — 2026-11-14
+
+- Fresh retrieval of official NSE Announcement XBRL page confirms UI controls (Announcement Type, Company, Events/Subject, From/To, GO, CSV download), current displayed 1–20 of 958 records / 48 pages, and columns SYMBOL, COMPANY NAME, Event/Subject, DETAILS, ATTACHMENT, TYPE OF SUBMISSION, BROADCAST DATE/TIME. Expanded row includes Exchange Dissemination Time and Time Taken. Evidence ref: `turn423980search0`.
+- Newly recorded source-published taxonomy notice: an event has been merged into Para B; data available under Para B dropdown effective 20-Jun-2026. Treat this as a time-versioned taxonomy transition; preserve original source labels and effective date, do not silently rewrite historical labels.
+- The 958/48 count is a current UI snapshot only, not a historical coverage denominator. CSV control visible but no CSV bytes, exact request URL/headers, date-filter execution or pagination contract captured. Current sample is 27–29 Oct 2026, outside RSS 13–14 Nov window. No row-level RSS match claimed.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_XBRL_FRESH_REVALIDATION_TAXONOMY_20261114.md`.
+- Corporate Events P0 remains BLOCKED; date-window export and full RSS reconciliation pending. No code/workflow/production change, no paid service, no PR/merge, no synthetic data. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
