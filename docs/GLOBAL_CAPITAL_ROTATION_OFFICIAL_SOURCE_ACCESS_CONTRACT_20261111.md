@@ -135,3 +135,18 @@ Execution rule to avoid repeated work:
 Official release calendar: https://home.treasury.gov/data/treasury-international-capital-tic-system/release-dates-of-tic-data
 Official monthly archive: https://home.treasury.gov/archives-of-tic-monthly-data-releases
 Status: release date / expected reference month VERIFIED from official calendar; November release publication and September 2026 India rows NOT YET VERIFIED; raw bytes/hash and full QA NOT DONE.
+
+
+## Branch integrity and CI acceptance gate (2026-11-13)
+A repository-state check after the duplicate-observation guard commits found:
+- Global Capital Rotation PR #20 remains OPEN and DRAFT, head `research/global-capital-rotation-overlay-v1` at `5bcffa040477d3a5850305467f6c6e9446d34a2c`, base `main` at the inspected PR snapshot.
+- GitHub reports PR #20 `mergeable=false` and `mergeable_state=dirty`.
+- Branch comparison reports `main` vs overlay branch as `diverged`, overlay branch 104 commits ahead and 18 commits behind; merge base `1b61bea4cfbadc456775fdfb626f7788f1bd36fb`.
+- The newest known successful overlay test run is `43204879661`, for older head `7bc769b002c9c4bb26aa3bb464888e962944e580`. No completed workflow run or check status was found for the newer duplicate-guard head `5bcffa040477d3a5850305467f6c6e9446d34a2c`; commit status currently reports pending with zero statuses. Therefore the new duplicate regression test is committed but NOT runtime-verified.
+
+Required resolution before any merge consideration:
+1. Reconcile the 18 commits on `main` with the overlay branch using a non-force, reviewed integration strategy; preserve all branch history and unrelated research artifacts.
+2. Re-run the bounded `global_capital_rotation_overlay_tests.yml` workflow against the reconciled PR head; require success and inspect test logs.
+3. Re-fetch PR mergeability and verify changed-file scope; do not merge without explicit owner approval.
+
+No branch rebase, force-push, PR retarget, or merge was performed in this audit. This is an acceptance blocker, not a claim that the source code itself has a merge conflict in every file. Keep the PR draft and production integration prohibited until the gates pass.
