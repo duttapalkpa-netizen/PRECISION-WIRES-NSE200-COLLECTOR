@@ -150,3 +150,11 @@ Required resolution before any merge consideration:
 3. Re-fetch PR mergeability and verify changed-file scope; do not merge without explicit owner approval.
 
 No branch rebase, force-push, PR retarget, or merge was performed in this audit. This is an acceptance blocker, not a claim that the source code itself has a merge conflict in every file. Keep the PR draft and production integration prohibited until the gates pass.
+
+
+## Duplicate-guard exception-path correction (2026-11-13)
+A follow-up code inspection found the first duplicate-key guard raised `ValueError` inside a parsing `try` block whose broad `except ValueError` converted it into the generic invalid-row error. The regression test expected the specific duplicate-key message, so the original implementation would not satisfy that assertion. Corrected by moving duplicate-key detection after the date/timestamp/numeric parsing exception handler. The duplicate-specific failure now remains distinguishable and includes the CSV row number.
+- Fix commit: `99e374373bc5e21f71aafff9700c039f01da8f74`
+- Parser blob: `aad350327cbd68bdff87bca424aad3530450c151`
+- The file was re-fetched from the branch and the guard's placement after the parsing exception handler was verified.
+- GitHub Actions has not produced a run for this new head at audit time; runtime test status remains UNKNOWN/PENDING, not PASS.
