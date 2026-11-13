@@ -306,3 +306,16 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - `nse_collector.yml` blob `8860fd4f7bb43164ad1b514c884f5e9adf750973`: `contents: read`, 60-minute timeout, full multi-stage collector/backtest/selection workflow; unsuitable for isolated sub-10-minute RSS acquisition. `prospective_watchlist_tracking.yml` blob `850b7c266bfa29e01f70722dbf342988730fc351`: `contents: write`, 120-minute timeout; exclude.
 - Readiness recommendation: isolated workflow with `contents: read`, 8-minute timeout, manual trigger, exact official RSS URL allowlist, immutable raw XML + manifest/hash, safe XML parser, item retention and explicit error accounting; no secrets, write permissions, push or PR. Specification is in `docs/CORPORATE_EVENTS_P0_RSS_COLLECTOR_IMPLEMENTATION_READINESS_20261114.md`.
 - No code/workflow edit or run was performed. GitHub Actions outbound DNS and official raw XML availability remain UNKNOWN until a bounded runner test. Corporate Events P0 remains BLOCKED.
+
+
+## 24. Corporate Events P0 — isolated read-only RSS collector v1 implementation — 2026-11-14
+
+- Official NSE RSS catalogue lists Announcements among its RSS feeds; NSE cautions that reader/provider refresh delays may occur. Source page: https://www.nseindia.com/static/rss-feed.
+- Added `collector/nse_announcements_rss.py`: one bounded request to the previously identified NSE announcements RSS URL; 15-second socket timeout; 10 MiB response cap; records requested/final URL, HTTP status, content type, byte count, SHA-256 and UTC retrieval interval; raw XML preserved before parsing; original title/link/GUID/isPermaLink/pubDate/description and raw item XML retained in JSONL; rejects DTD/entity declarations and unexpected XML roots; writes failure manifest on network/HTTP/parse errors. Standard-library only.
+- Added `qa/test_nse_announcements_rss.py`: four tests for original pubDate/GUID preservation, missing GUID retention, DTD/entity rejection and unexpected root rejection.
+- Added `.github/workflows/nse_corporate_events_rss.yml`: manual-only, isolated branch checkout, `contents: read`, `persist-credentials: false`, 8-minute job timeout, 30-day diagnostic artifact upload, no push/PR/secrets.
+- GitHub blob SHAs: collector `217d4c11ce5f070341447f7c01bfd03b41c19a93`; tests `81e7f906f77f8c2abe2fd2a4e175743e00838a69`; workflow final `b2fefaa9f9a6f89ea537f385cbfc17f03068f31e`.
+- Workflow file was fetched again after correcting its artifact-name expression; verified final expression is `${{ github.run_id }}`.
+- Implementation files are committed only on research branch `research/corporate-events-rss-collector-v1-20261114`; no default-branch change, PR or merge.
+- Execution status: NOT RUN. The available GitHub connector has no workflow-dispatch operation; no claim of tests passing or raw XML acquisition. Unit tests are committed but require execution in GitHub Actions. DNS/network reachability and source XML validity remain UNKNOWN.
+- Corporate Events P0 remains BLOCKED until the manual Actions run produces raw XML + manifest and item-level coverage/replay checks pass. No source data promoted, no synthetic values, no paid service, no production selector/ranking/CORE-672 changes.
