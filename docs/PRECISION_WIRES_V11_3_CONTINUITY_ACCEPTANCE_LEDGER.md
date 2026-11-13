@@ -127,3 +127,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Defined work-package progress: methodology/source qualification + documentation + regression guard = 100% complete. Separate raw BOP_AGG download/vintage/SHA-256 QA = 0% complete (not acquired). BOP6 country-level observation access remains UNKNOWN/BLOCKED; no observation or EM aggregate created.
 - Candidate branch at verification: 37 commits ahead, 0 behind `main`; no PR opened or merge performed. No production selector, ranking, pressure-fade, diagnostics, engines or Hard Gate changes.
 - Project-wide progress: NOT_CALCULABLE until the full weighted acceptance ledger across all V11.3 layers, data coverage, matured event studies and backtests is reconciled. Do not substitute branch commit count or this work-package percentage for total project completion.
+
+
+## 12. IMF BOP_AGG 2026 vintage and raw-download access gate (2026-11-13)
+- Official IMF dataset page and linked BOPSY Dashboard inspected. Dataset is annual/November; dashboard page publication date is 19 November 2025. As at 13 November 2026, no 2026 BOP_AGG publication date/vintage is exposed by the inspected official pages. State is 2026 vintage NOT VERIFIED, not proof of non-publication.
+- IMF API link redirects to sign-in. Dataset page's visible VIEW DATA / DOWNLOAD controls do not expose a direct static file URL in the retrieved page text. No official workbook/table bytes acquired.
+- November 2025 notes show India latest reported BOP and IIP period = 2024; retain reporting lag distinct from publication vintage.
+- Source register commit `12f6bca6682b74eac48eae5e51228a4df890030f`, blob `453e50f74e346257f03a32e3dbd22a91418e960f`.
+- QA regression commit `72f3c6261239b0152c95214db1e64f1b789b10fa`, blob `a593790e7b86e2f5ce0bc42a011a51ab29bce965`.
+- Defined work package (official page/date/access-path reconciliation and QA guard) = 100% pending CI; raw data acquisition/HTTP provenance/SHA-256 = 0%; 2026 vintage = NOT VERIFIED. No third-party mirror or synthetic observation used.
+- Production and project-wide completion percentages remain unchanged; total V11.3 percentage NOT CALCULABLE pending weighted master-ledger reconciliation.
