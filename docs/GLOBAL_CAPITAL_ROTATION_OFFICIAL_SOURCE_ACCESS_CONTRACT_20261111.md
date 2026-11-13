@@ -305,3 +305,12 @@ A second reproducibility gap remained after the mandatory publication cutoff: om
 - QA commit: `8fee904d666d58f8dc4688ab076d08228a32b7d6`; QA blob: `54a8400965208100c681e5e530488b3d863fec90`.
 - Added regression tests for missing and malformed `as_of_date`. Static source changes are committed; runtime test execution and GitHub Actions CI remain NOT RUN / UNKNOWN. Do not treat test definitions as a test pass.
 - This remains a research-only overlay. No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate changes. No PR opened or merged.
+
+
+## Candidate-branch runtime verification — mandatory date and point-in-time gates (2026-11-13)
+Enabled a branch-scoped `push` trigger for the existing bounded overlay test workflow so the candidate branch can be tested without opening a PR or merging. The workflow retains its five-minute job timeout and read-only contents permission; the push trigger is restricted to `research/global-capital-rotation-overlay-mainline-20261113` and the overlay's existing path filters.
+- Workflow change commit: `69cee2a7dee9c277004b5a0fd7561bdecf4f47cb`; workflow blob: `82600a2a89025803a7f7ecd386d541d809dcd7cc`.
+- GitHub Actions run: `43370022907`; event: `push`; head SHA: `69cee2a7dee9c277004b5a0fd7561bdecf4f47cb`; conclusion: `success`; job `tests`: `success`; run time approximately 8 seconds.
+- Exact executed command: `python -m unittest qa.test_global_capital_rotation_overlay -v`; result: **27 tests passed**, 0 failures/errors; unittest runtime 0.012 seconds. Logs explicitly show the missing/malformed `as_of_date` tests and mandatory `decision_at` / future-publication tests passing.
+- This verifies the overlay unit suite on the candidate branch only. It does not validate external source authenticity, live ingestion, full Macro-Geo P0/Factor Registry coverage, rolling event study, or production readiness.
+- No PR opened, no merge performed, no production code touched. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and Hard Gate remain unchanged.
