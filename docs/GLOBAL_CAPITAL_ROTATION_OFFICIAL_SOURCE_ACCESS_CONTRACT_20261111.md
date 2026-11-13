@@ -189,3 +189,16 @@ The ten proposed overlay paths were checked individually against `main` before c
 | `qa/test_global_capital_rotation_overlay.py` | Yes | Same path, different blob; main blob `b65f49329ae639deed900007ea1bc0f9be5f4b60`, overlay blob `95aecafbeb24ee83c878e1b128d322392376276b` |
 
 Decision: **do not create or populate an overlay-only branch yet**. Eight paths are cleanly additive or identical, but the source register and QA test are divergent same-path files. Blindly copying the overlay versions would overwrite main-branch work; keeping main versions could leave the overlay pipeline/test contract inconsistent. These two files require a line-level three-way reconciliation against merge base `1b61bea4cfbadc456775fdfb626f7788f1bd36fb` before extraction. No branch was created and no main-branch file was modified. This is a concrete, verified extraction blocker, not a test failure.
+
+
+## Mainline overlay candidate reconciliation outcome (2026-11-13)
+A clean candidate branch was created from `main`: `research/global-capital-rotation-overlay-mainline-20261113`.
+- The source register on the overlay branch was compared line-by-line with `main`: every `main` line is retained; 17 overlay-only lines are the NSE DII source qualification addendum. No main-only line was detected.
+- The overlay QA test file was compared line-by-line with `main`: every `main` line is retained; five overlay-only lines add `test_duplicate_same_source_observation_key_fails_closed`. No main-only line was detected.
+- `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md` has the same blob SHA on both branches and was not copied.
+- Seven overlay paths absent on `main` were added to the candidate branch. The two existing divergent paths were updated with the verified superset versions above.
+- GitHub compare `main...candidate` now reports `ahead` by 9 commits, `behind` by 0, with exactly 9 changed paths: seven additions and two modifications. The 10th proposed path (IMF specification) is unchanged and therefore correctly absent from the diff.
+- Re-fetch verification confirms the candidate contains the NSE DII addendum, duplicate regression test, duplicate parser guard, and bounded test workflow (`timeout-minutes: 5`).
+- No PR was opened, no workflow was dispatched, no merge was performed, and no production selector/ranking/hard-gate code was changed. Runtime CI for this candidate remains NOT RUN / UNKNOWN until a PR check or authorized workflow run is available.
+
+Candidate branch is ready for owner review as a narrowly scoped alternative to PR #20. It is not approved for merge or production use until CI passes and the owner authorizes the next step.
