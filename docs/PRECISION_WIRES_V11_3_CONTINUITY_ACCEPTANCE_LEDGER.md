@@ -184,3 +184,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 15
 - CI Run `43374184518`: SUCCESS; 32 tests passed in 0.027s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43374184518 .
 - Section 15 defined work package (official NSE page semantics + download-control audit, register, QA and CI) = 100%. Actual CSV acquisition and historical panel = 0%; exact CSV URLs remain UNKNOWN.
+
+
+## 16. CDSL custodian-confirmed FPI daily flow qualification (2026-11-13)
+- Official CDSL daily page inspected; reporting date 12-NOV-2026. CDSL says daily values are based on reports submitted to depositories by custodians on reporting date and represent trades on/up to previous trading day(s). Treat reporting date as publication date, not same-day trade date; exact underlying date window UNKNOWN.
+- Daily table separates Equity, Debt-General, Debt-VRR, Debt-FAR, Hybrid, Mutual Funds, AIFs and Stock Exchange vs Primary market & others. For equity cash flow, use the Equity subtotal only after verifying route components; do not use grand Total (includes non-equity buckets, Mutual Funds and AIFs). Primary market & others includes corporate-action and non-secondary-market items; keep separate. Hybrid includes REITs/InvITs.
+- CDSL conversion uses RBI reference rate for trading day (previous working day for bank holiday); preserve INR crore raw value and conversion metadata. Derivatives report is separate and must not be mixed with cash equity flow.
+- CDSL explicitly distinguishes exchange provisional trading-member data from custodian-confirmed trades submitted to depositories. Preferred official validation/reference route; not zero-lag signal. CDSL public daily view accessible; raw downloadable file URL/bytes/size/retrieval time/SHA-256 not acquired. No display values ingested.
+- NSDL listing has stale website-updated marker (05-Oct-2020) and a reproduction/redistribution restriction; do not scrape or redistribute without current terms review. CDSL preferred for this checkpoint.
+- Source register commits `76fc10d6fc260b898f441645905f239ef81c2ab4` (initial) and `24a35e171796377256f379771d3fdcb9ea337e67` (numeric display removal/correction); final blob `73d342e2c067d182cda3a47a77791a5cc26be03e`.
+- QA guard commit `2b044df94d855230c35d80318a8781295ccc8483`, blob `de6ae8e3b3fea88a89d8af9fd4edec9014ebd7a6`.
+- Defined source qualification, reporting-lag and bucket semantics work package = 100% pending CI. Raw file/period mapping/historical panel = 0% or UNKNOWN. No observations or signal imported.
