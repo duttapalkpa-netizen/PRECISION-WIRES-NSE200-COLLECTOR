@@ -41,3 +41,13 @@ Previously supplied 08-Nov and 09-Nov payloads remain the only verified raw MII 
 
 ## Result
 This check confirms the two official 11-Nov report-list entries and documents why the raw-acquisition gate cannot safely be closed from the currently exposed page text. The next decisive input is the exact official per-row download target (or the two raw files supplied directly); once available, byte-level validation and cross-variant comparison can proceed without repeating scope-semantics work.
+
+
+## Independent official-page recheck (2026-11-14)
+A fresh retrieval of the official NSE All Reports page independently returned the date-scoped section "Reports for 11-Nov-2026" and explicitly listed both CM-MII rows with their separate displayed sizes (1.22 MB and 1.49 MB) and the shared displayed basename. The same date-scoped section also listed the Full Bhavcopy/Security Deliverable and CM-UDiFF Bhavcopy reports; these are distinct report products and are not substitutes for the MII master files.
+
+The official page's extracted representation still exposes no row-specific href or download response for either MII row. A direct browser retrieval attempt against the candidate archive URL
+`https://nsearchives.nseindia.com/content/cm/NSE_CM_security_11112026.csv.gz`
+returned an inaccessible/internal-error result. This does not establish whether the URL is invalid, blocked, or variant-ambiguous; it establishes only that this retrieval channel did not obtain the payload or HTTP metadata.
+
+Updated decision: official listing confirmation strengthened by an independent fresh page retrieval; exact per-row link and raw payload remain UNKNOWN / NOT_ACQUIRED. Do not promote this to raw-source PASS.
