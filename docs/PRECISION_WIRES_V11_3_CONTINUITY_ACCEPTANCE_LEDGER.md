@@ -334,3 +334,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Workflow is configured to trigger on QA/source-register push. CI run ID and result have not been retrieved; status PENDING / NOT VERIFIED. Do not claim tests passed until run output is inspected.
 - Work-package progress: validator implementation/persistence 100%; regression test authoring/persistence 100%; CI execution verification 0% pending run inspection; raw NSE/BSE file acquisition 0%; exchange-specific schema certification 0%; ISIN reconciliation 0%; issuer/industry bridge 0%.
 - Overall project progress: NOT CALCULABLE; the full weighted acceptance ledger has not been reconciled. Hard Gate remains BLOCKED. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, 56×12=672 diagnostics, Engines A–E or Hard Gate logic changed. No PR/merge, no paid API, no spend, no synthetic rows/timestamps.
+
+
+### Section 24 QA fixture correction — 2026-11-13
+- Review of the newly added ragged-row test found its original two-record fixture could make Python's `csv.Sniffer` reject the delimiter before row-width validation. This was a test-fixture weakness, not a production-parser defect.
+- Replaced the fixture with a consistent three-column header, two well-formed rows and one ragged row, allowing delimiter detection to succeed and the intended row-width rejection to be exercised.
+- Corrective QA commit: `e793033ded8863276aedc163ee729e34971cd110`, blob `1ce4a4f98d5fbb1fd3d20c7dc2de7e8d3129eb72`.
+- CI result remains PENDING / NOT VERIFIED; the GitHub connector's commit-workflow-runs action returns PR-triggered runs only and returned no runs for the QA commit. No run ID has been verified. No CI PASS claim.
