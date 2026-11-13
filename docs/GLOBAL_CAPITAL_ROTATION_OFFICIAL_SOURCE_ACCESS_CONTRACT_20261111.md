@@ -211,3 +211,14 @@ A targeted code review identified that ISO-8601 timestamps carrying different UT
 - Added regression coverage for chronological ordering across offsets and duplicate-vintage detection for equivalent instants expressed with different offsets.
 - Runtime GitHub Actions and complete unit-suite execution: NOT RUN / UNKNOWN. No CI PASS is claimed.
 - No production selector, ranking score, pressure-fade, CORE-672, engine, or Hard Gate changes. No PR opened and no merge performed.
+
+
+## H.10 monthly FX panel anomaly quarantine — Library QA (2026-11-13)
+A review of the user-uploaded Federal Reserve H.10 monthly bilateral FX extract `FRB_H10 (3)(1).csv` (Library file ID `libfile_401a2df83d488191addec415a39ac51a`, reported size 24,877 bytes) identified a material discontinuity in the Venezuela series:
+- Series identifier: `H10/H10/RXI_N.M.VE`; currency label in metadata: VEB.
+- The series is approximately 9.9750 through 2018-01, then jumps to 21,089.7750 in 2018-02 and 2,495,016.1501 in 2018-08, later falls to 4.4848 in 2021-11, and rises again to 877.1246 by 2026-10.
+- These values indicate a material unit/redenomination/series-regime discontinuity or source transformation issue that has not yet been resolved from primary series metadata. The current inspection is a QA anomaly flag, not a confirmed explanation.
+- Decision: quarantine the Venezuela monthly series from cross-country level comparisons, percentage-change calculations spanning the discontinuity, and any FX feature aggregation until the exact source definition, currency redenomination treatment, multiplier and vintage are independently verified. Preserve raw values unchanged; do not smooth, rescale, or splice the series.
+- The file's parsed Library representation is available, but exact raw-byte SHA-256 and retrieval provenance for this uploaded copy were not established in this QA step.
+- Other currency series are not automatically cleared by this finding; they require their own schema, unit, missingness and regime-break QA.
+- No production integration, no PR opened, no merge, and no change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, or Hard Gate.
