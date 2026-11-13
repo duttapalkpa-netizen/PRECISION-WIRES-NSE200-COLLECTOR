@@ -382,3 +382,12 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Rechecked combined commit status for latest Source Register commit `5a978c7bb7ce4561eb036a40e2e3977c92335e74`: no status entries returned. This is NOT a test pass.
 - Available GitHub connector does not expose a workflow dispatch or repository-wide push-run listing action. `fetch_commit_workflow_runs` is explicitly PR-triggered-only; no run ID or CI conclusion can be verified. Full test suite remains NOT RUN / NOT VERIFIED.
 - The latest validator and QA source files are persisted: validator blob `75246bc91d84da293100532bb4061d4b69523dfb`; QA blob `86d82597c511f286a173cbda4625d59b2d728a25`. No test outcome is inferred from source presence.
+
+ 
+### Section 24 follow-up — tab delimiter and blank-only input correction (2026-11-13)
+- Reinspection of the persisted parser found the tab delimiter candidate still encoded as the two-character sequence backslash+t, despite the tab regression test expecting an actual tab. This is now corrected to the actual tab character. A separate guard now rejects whitespace-only payloads with a controlled `ValueError` instead of leaking `max() arg is an empty sequence`.
+- Validator commit `64aad36ed09688716dcf7b5c30cdffedf9dfcbd8`; blob `bb15dd80ccba3933f147967b5df6b995c5ec923a`.
+- Added blank-only input regression; corrected its fixture after review to use actual whitespace/newline characters. Final QA commit `69fb2a1bb6c5f670f144d9135b3f2c2c5801e0a8`; blob `f929f8b6a0f4225577d2306dd6c2a69b148983fa`. QA file currently contains 49 test methods.
+- Re-fetched source confirms actual tab candidate and blank-only guard. Workflow path filter includes `pipeline/security_master_intake.py`. Full suite has NOT been executed; no test or CI pass is claimed.
+- Earlier assertions that tab detection was fixed are superseded by this correction; previous persisted test fixture itself also required correction. Do not mark tab parsing PASS until the actual suite executes.
+- No raw NSE/BSE master bytes acquired; schema certification, cross-exchange ISIN reconciliation and issuer/industry bridge remain pending/unknown. No production change, PR or merge.
