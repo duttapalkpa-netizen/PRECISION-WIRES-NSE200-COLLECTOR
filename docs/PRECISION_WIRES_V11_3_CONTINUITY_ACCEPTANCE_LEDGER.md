@@ -200,3 +200,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 16
 - CI Run `43374624974`: SUCCESS; 33 tests passed in 0.021s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43374624974 .
 - Section 16 source qualification + methodology/lag/bucket QA + CI = 100%. Raw export/hash and exact trade-date mapping remain NOT ACQUIRED/UNKNOWN.
+
+
+## 17. CDSL daily report arithmetic reconciliation — 12-NOV-2026 live snapshot (2026-11-13)
+- Official CDSL page opened on 13-Nov-2026; displayed report date 12-NOV-2026. Recalculated bucket totals using exact decimal arithmetic: equity +14,693.72; debt-general +445.65; debt-VRR -173.22; debt-FAR +1,022.81; hybrid +34.86; mutual funds +9.59; AIF -5.20 (INR crore). Sum = +16,028.21, matching published Total.
+- Gross purchases bucket sum = INR 36,138.01 crore; gross sales sum = INR 20,109.80 crore; both match published grand totals. USD net sum = 1,708.6278m, rounds to published 1,708.628m. Arithmetic PASS within published precision.
+- This is a live page snapshot arithmetic QA only, not immutable raw-file provenance, trade-date verification, custodian completeness proof, or predictive validation. Do not ingest it as historical panel data. Reporting date still covers previous trading day(s), not necessarily same-day trades.
+- Source register commit `af62d3a9144c0e0c0222aa939af236faa4f9a4cf`, blob `e021dd9db60dac765be4034304e8218042e1171a`.
+- Decimal arithmetic regression commit `9d465a4af307760aba6043b25a5cbe9ceb4ff370`, blob `93e2d70bfcf324dcceeaa3e47ec6b4c6540dec90`.
+- Work package (snapshot arithmetic reconciliation + exact-decimal regression) = 100% pending CI. Raw export/archive/hash and exact underlying trade-date mapping remain NOT ACQUIRED/UNKNOWN.
