@@ -353,3 +353,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Full 13-item row-level reconciliation, symbol/ISIN mapping and attachment URL cross-check remain NOT POSSIBLE from visible page sample / UNKNOWN. Need the complete official page-linked request/response captured from official browser network behavior; do not adopt undocumented third-party query parameters as official contract.
 - Report: `docs/CORPORATE_EVENTS_P0_RSS_OFFICIAL_FILINGS_VISIBLE_SAMPLE_CROSSCHECK_20261114.md`.
 - Corporate Events P0 remains BLOCKED; no code/workflow/production change, no paid service, no PR/merge, no synthetic values. Protected selector/ranking/CORE-672 invariants unchanged.
+
+
+## 28. NSE RSS live visible-row reconciliation + endpoint discovery boundary — 2026-11-14
+
+- Re-read official NSE Corporate Filings page on 2026-11-14. The page showed 9 Corporate Announcements and five visible Latest Announcements rows (all Broadcast Date 14-Nov-2026): RELIGARE / Analyst/Investor Meet Para A-XBRL; FUSIONCX / Dividend; RELIGARE / Analysts/Institutional Investor Meet/Con. Call Update; FUSIONCX / Record Date; RELIGARE / Monitoring Agency Report. Official NSE symbol links resolve to Religare Enterprises Limited and Fusion CX Limited.
+- Cross-check against the existing 13-item RSS JSONL (two previously verified identical snapshots): RELIGARE has 3/3 subject-level matches in visible rows; FUSIONCX has 2/3 visible subject-level matches (its Outcome of Board Meeting RSS item is not in the five-row slice). This is a bounded visible-row result, not full 9-row reconciliation and not a missing-event conclusion. Exact attachment URL equality not tested.
+- RSS pubDate timezone-naive; official Broadcast Date date-only. No timestamp equivalence or normalization asserted.
+- A third-party article describes a possible NSE page JSON endpoint, but no NSE-published API contract was found in the official page evidence. Treat only as an unverified lead; do not request it by guessed parameters or promote to collector source. Need capture exact official page network request/response or NSE-published specification, including schema/pagination/date semantics, before implementation.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_RSS_LIVE_VISIBLE_ROW_RECONCILIATION_20261114.md`.
+- Corporate Events P0 remains BLOCKED; all-13 reconciliation UNKNOWN/NOT COMPLETE; no code/workflow/production change, no paid service, no PR/merge, no synthetic data. Protected production selector/ranking/CORE-672 invariants unchanged.
