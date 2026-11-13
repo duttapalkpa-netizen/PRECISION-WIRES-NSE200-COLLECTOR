@@ -295,3 +295,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Tab-delimited detection now tests the actual tab character. QA fixture line endings were corrected, and regression cases cover tab format plus delimiter reporting for comma, pipe, semicolon, and tab.
 - Validator commit `95b106d04a084c9ba2833cfa6ea66eb84cd55816` (blob `5cae180e1f279215e6926a538e8be799896c98eb`); QA commit `28d642007055e4f621327ca864d85d95cabd06b9` (blob `623e561da19816ddf293eeeceb6fee719b422b84`).
 - Full suite/CI remain unverified. This remains a generic structural parser only; no exchange schema semantics or source provenance are certified.
+
+ 
+## 2026-11-13 — Strict malformed-quote rejection in security-master intake
+- Both delimiter sample parsing and full CSV record parsing now enable Python CSV strict mode. Unclosed/malformed quoted records fail closed with `csv.Error`.
+- Validator commit `7206989479284205bcee24afbfd9c4923c8d2e30` (blob `75246bc91d84da293100532bb4061d4b69523dfb`).
+- Regression test and fixture correction final QA commit `eedbee83b9afc019aaf9ec84b13fee4403fc4195` (blob `86d82597c511f286a173cbda4625d59b2d728a25`).
+- Full test suite and GitHub Actions are not verified; no source-data/schema status promoted.
