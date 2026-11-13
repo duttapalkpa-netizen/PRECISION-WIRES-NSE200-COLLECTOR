@@ -115,3 +115,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Safety determination PASS: do not collapse 4-digit concordance into IIP 2-digit divisions by prefix, row count or class count. The mapping has partial splits and cross-division aggregations; NIC concordance alone is not an IIP item-group/weight bridge.
 - Full 463-row machine-readable extraction remains NOT_COMPLETED; IIP-specific item-group/weight correspondence remains UNKNOWN/BLOCKED. A source table continuation fragment exists (NIC-2025 4772 row continues with 4799(p) in next table block); future parser must preserve and deterministically join such fragments or fail closed.
 - No workflow rerun, no PR merge, no production changes, no changes to protected V11.3 invariants.
+
+
+## 11. IMF BOP_AGG estimation-methodology and vintage gate (2026-11-13)
+- Official source inspected: IMF BOPSY Explanatory Notes, November 2025 (31-page PDF), https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf . Dataset page: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG .
+- New source-register addendum records the critical quality boundary: IMF uses WEO data to fill gaps in financial-account transactions for world/country-group aggregates; other components may use WEO substitutions and carry-forward adjustments. BOP_AGG group values therefore are not observed-only country-reported flow sums.
+- The explanatory notes also document global financial-account discrepancies, vintage-specific Emerging and Developing Economies regional membership, and country reporting-year heterogeneity. India’s November-2025 overview reports BOP and IIP through 2024; this annual data cannot time a 2026 daily signal.
+- Source register updated: `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md`, commit `1cba3087696aaad9f51f519979f7a6493051a91e`, blob `2110d623a7ce27cc91e9d352231181963473b52d`.
+- QA regression added to `qa/test_global_capital_rotation_overlay.py`; final assertion correction commit `0f2d0069e7b91f1bb7c2176349a3915959e497a6`, blob `ba9f4708c966b7cbba1b492d4c1c92217e394e53`.
+- CI Run `43372002545`: SUCCESS; 28 tests passed in 0.011s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43372002545 .
+- Defined work-package progress: methodology/source qualification + documentation + regression guard = 100% complete. Separate raw BOP_AGG download/vintage/SHA-256 QA = 0% complete (not acquired). BOP6 country-level observation access remains UNKNOWN/BLOCKED; no observation or EM aggregate created.
+- Candidate branch at verification: 37 commits ahead, 0 behind `main`; no PR opened or merge performed. No production selector, ranking, pressure-fade, diagnostics, engines or Hard Gate changes.
+- Project-wide progress: NOT_CALCULABLE until the full weighted acceptance ledger across all V11.3 layers, data coverage, matured event studies and backtests is reconciled. Do not substitute branch commit count or this work-package percentage for total project completion.
