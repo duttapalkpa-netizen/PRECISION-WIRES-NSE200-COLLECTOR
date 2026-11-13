@@ -128,6 +128,14 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"decision_at is required"):
             classify(load_observations(self.make([])),"2026-11-07")
 
+    def test_asof_date_is_mandatory(self):
+        with self.assertRaisesRegex(ValueError,"as_of_date is required"):
+            classify(load_observations(self.make([])),decision_at="2026-11-07T23:59:59Z")
+
+    def test_asof_date_must_be_iso_date(self):
+        with self.assertRaisesRegex(ValueError,"as_of_date must be an ISO date"):
+            classify(load_observations(self.make([])),"07-11-2026",decision_at="2026-11-07T23:59:59Z")
+
     def test_decision_cutoff_excludes_future_publication(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T20:00:00Z"),
               self.row("india_fpi_equity_inr_cr",-20,published="2026-11-07T02:00:00Z")]
