@@ -39,7 +39,7 @@ def inspect_security_master(path: str | Path) -> dict:
     if not sample_lines:
         raise ValueError("no nonblank CSV records found")
     candidates = []
-    for delimiter in (",", "|", ";", "\t"):
+    for delimiter in (",", "|", ";", chr(9)):
         counts = [len(next(csv.reader([line], delimiter=delimiter, strict=True))) for line in sample_lines]
         widths = {}
         for width in counts:
