@@ -294,3 +294,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance: NSE/BSE security-master schemas = VERIFIED at documentation level; raw file bytes/hash/schema = NOT ACQUIRED; cross-exchange ISIN reconciliation = NOT DONE; issuer-to-industry membership = NOT ACQUIRED; CDSL sector-to-stock bridge = UNKNOWN. No data ingestion or inferred mapping.
 - Defined identity-schema/source-boundary qualification = 100% pending CI. Raw NSE/BSE master acquisition = 0%; cross-exchange identifier reconciliation = 0%; issuer classification roster = 0%; CDSL sector bridge = 0%; predictive validation = NOT DONE.
 - No production changes, no PR/merge, no protected invariants changed. Overall V11.3 progress remains NOT CALCULABLE pending complete weighted acceptance ledger.
+
+
+### Final CI verification for section 22
+- CI Run 43378544793: SUCCESS; job 131730665642; 39 tests passed in 0.021s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43378544793 .
+- CI validates source/identifier-boundary regression only. It does not download the NSE/BSE master files, hash them, reconcile ISINs or create industry membership.
