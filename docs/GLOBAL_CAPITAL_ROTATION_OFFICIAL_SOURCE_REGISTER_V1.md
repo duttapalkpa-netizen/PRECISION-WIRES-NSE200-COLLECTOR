@@ -302,3 +302,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Validator commit `7206989479284205bcee24afbfd9c4923c8d2e30` (blob `75246bc91d84da293100532bb4061d4b69523dfb`).
 - Regression test and fixture correction final QA commit `eedbee83b9afc019aaf9ec84b13fee4403fc4195` (blob `86d82597c511f286a173cbda4625d59b2d728a25`).
 - Full test suite and GitHub Actions are not verified; no source-data/schema status promoted.
+
+ 
+## 2026-11-13 — Tab-delimiter and blank-only input fail-closed correction
+- Fixed parser's tab candidate to an actual tab character; whitespace-only files now fail with a controlled no-nonblank-record error.
+- Validator commit `64aad36ed09688716dcf7b5c30cdffedf9dfcbd8` (blob `bb15dd80ccba3933f147967b5df6b995c5ec923a`).
+- Added blank-only regression and corrected fixture to actual whitespace/newline characters. QA commit `69fb2a1bb6c5f670f144d9135b3f2c2c5801e0a8` (blob `f929f8b6a0f4225577d2306dd6c2a69b148983fa`).
+- Test suite and CI remain NOT RUN / NOT VERIFIED; source persistence is not test evidence.
