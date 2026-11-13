@@ -298,3 +298,11 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Two Feeder RSS reader listings report the same feed working but disagree on freshness and post-rate (~1,011/day vs ~1,427/day); these are secondary reader signals, not coverage denominators. Their displayed latest items do not overlap the five displayed official rows, but the page is only a limited latest-row sample and raw XML is unavailable; no missing-event conclusion or item-level reconciliation is valid.
 - Report: `docs/CORPORATE_EVENTS_P0_OFFICIAL_RSS_FRESHNESS_CROSSCHECK_20261114.md`.
 - Official page field semantics/snapshot and disclaimer: PASS. RSS reader signals: secondary only, inconsistent. Raw XML/GUID/item-level matching/retention/completeness: NOT ACQUIRED / NOT RUN. Corporate Events P0 remains BLOCKED.
+
+
+## 23. Corporate Events P0 — RSS collector implementation readiness — 2026-11-14
+
+- Complete GitHub main recursive tree returned 49 entries, not truncated; no tracked path matches RSS/corporate/announcement/event. No dedicated RSS collector, parser, QA, manifest or workflow exists.
+- `nse_collector.yml` blob `8860fd4f7bb43164ad1b514c884f5e9adf750973`: `contents: read`, 60-minute timeout, full multi-stage collector/backtest/selection workflow; unsuitable for isolated sub-10-minute RSS acquisition. `prospective_watchlist_tracking.yml` blob `850b7c266bfa29e01f70722dbf342988730fc351`: `contents: write`, 120-minute timeout; exclude.
+- Readiness recommendation: isolated workflow with `contents: read`, 8-minute timeout, manual trigger, exact official RSS URL allowlist, immutable raw XML + manifest/hash, safe XML parser, item retention and explicit error accounting; no secrets, write permissions, push or PR. Specification is in `docs/CORPORATE_EVENTS_P0_RSS_COLLECTOR_IMPLEMENTATION_READINESS_20261114.md`.
+- No code/workflow edit or run was performed. GitHub Actions outbound DNS and official raw XML availability remain UNKNOWN until a bounded runner test. Corporate Events P0 remains BLOCKED.
