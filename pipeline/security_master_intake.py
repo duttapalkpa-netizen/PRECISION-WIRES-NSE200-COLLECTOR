@@ -38,7 +38,7 @@ def inspect_security_master(path: str | Path) -> dict:
     sample_lines = [line for line in text.splitlines()[:40] if line.strip()]
     candidates = []
     for delimiter in (",", "|", ";", "\\t"):
-        counts = [len(next(csv.reader([line], delimiter=delimiter))) for line in sample_lines]
+        counts = [len(next(csv.reader([line], delimiter=delimiter, strict=True))) for line in sample_lines]
         widths = {}
         for width in counts:
             widths[width] = widths.get(width, 0) + 1
@@ -51,7 +51,7 @@ def inspect_security_master(path: str | Path) -> dict:
     if len(candidates) > 1 and candidates[0][:2] == candidates[1][:2]:
         raise ValueError("CSV delimiter is ambiguous; no parser assumption permitted")
     delimiter = candidates[0][2]
-    reader = csv.reader(io.StringIO(text, newline=""), delimiter=delimiter)
+    reader = csv.reader(io.StringIO(text, newline=""), delimiter=delimiter, strict=True)
     try:
         header = next(reader)
     except StopIteration:
