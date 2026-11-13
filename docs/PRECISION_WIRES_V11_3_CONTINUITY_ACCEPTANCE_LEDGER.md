@@ -343,3 +343,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_RSS_TWO_SNAPSHOT_OVERLAP_AUDIT_20261114.md`.
 - Two-snapshot replay/overlap audit PASS for the observed short interval. Longer-horizon coverage, historical completeness, pubDate timezone semantics, official filings cross-check and GUID identity remain UNKNOWN/NOT RUN. Corporate Events P0 remains BLOCKED.
 - No PR/merge, no production integration, no synthetic values, no paid services. Protected production selector/ranking/diagnostic invariants unchanged.
+
+
+## 27. Corporate Events P0 — RSS vs official NSE visible filings sample cross-check — 2026-11-14
+
+- Official NSE Corporate Filings page snapshot exposes 7 Corporate Announcements and latest table fields Symbol, Subject, Broadcast Date. Five visible rows: YATRA, GICHSGFIN, TARSONS, ONIDA, RUBYMILLS, each broadcast 13-Nov-2026. Corporate Actions use Ex-Date; Board Meetings use Meeting Date; date semantics kept separate.
+- Compared the 13-item identical RSS snapshot (runs 43489286657 and 43490004265). RSS company titles cover Religare Enterprises (3), Fusion CX (3), Kothari Petrochemicals (2), Viaz Tyres (1), Transteel Seating Technologies (2), Optivalue Tek Consulting (1), Senco Gold (1). None exactly matches the five visible rows. This is only a non-overlap against a five-row rendered sample; it is not a failed reconciliation or evidence of missing events.
+- RSS lacks GUID, explicit symbol and ISIN. Its pubDate strings are timezone-naive (14-Nov 00:00–00:35); official page sample only shows date-level broadcast dates (13-Nov). No symbol inferred from names or filename prefixes; no date normalization assumed.
+- Full 13-item row-level reconciliation, symbol/ISIN mapping and attachment URL cross-check remain NOT POSSIBLE from visible page sample / UNKNOWN. Need the complete official page-linked request/response captured from official browser network behavior; do not adopt undocumented third-party query parameters as official contract.
+- Report: `docs/CORPORATE_EVENTS_P0_RSS_OFFICIAL_FILINGS_VISIBLE_SAMPLE_CROSSCHECK_20261114.md`.
+- Corporate Events P0 remains BLOCKED; no code/workflow/production change, no paid service, no PR/merge, no synthetic values. Protected selector/ranking/CORE-672 invariants unchanged.
