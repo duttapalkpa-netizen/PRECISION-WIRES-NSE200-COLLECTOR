@@ -2,6 +2,13 @@ name: NSE Corporate Announcements RSS — isolated read-only acquisition
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - research/corporate-events-rss-collector-v1-20261114
+    paths:
+      - "collector/nse_announcements_rss.py"
+      - "qa/test_nse_announcements_rss.py"
+      - ".github/workflows/nse_corporate_events_rss.yml"
 
 permissions:
   contents: read
