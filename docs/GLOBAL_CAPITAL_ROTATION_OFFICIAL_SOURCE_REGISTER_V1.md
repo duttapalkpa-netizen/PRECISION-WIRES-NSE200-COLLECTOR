@@ -73,3 +73,13 @@ The DSD metadata file and its schema-validation evidence are already archived; t
 - India BOP observation rows accepted: 0. Global EM flow extraction and aggregation: NOT DONE. em_portfolio_flow_usd_bn remains UNKNOWN. No guessed key, sample payload, positions series or third-party source is promoted.
 
 Official references: https://sdmxcentral.imf.org/data/overview.html ; https://sdmxcentral.imf.org/data/registrations.html ; https://sdmxcentral.imf.org/data/constraints.html ; https://data.imf.org/en/Resource-Pages/IMF-API . Detailed checkpoint: docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md.
+
+
+## IMF BOP/IIP World and Country-Group Aggregates qualification — 2026-11-13
+A separate official IMF dataset was identified: `IMF.STA:BOP_AGG`, titled “Balance of Payments and International Investment Position Statistics (BOP/IIP), World and Country Group Aggregates” (historically BOPSY). Official dataset page: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG . It is an annual November publication under BPM6. IMF states that country-group aggregates (other than Euro Area) combine reported country data with estimates for nonreporting economies, drawing on sources including WEO and External Wealth of Nations; country-level data are reported to IMF or obtained from National Summary Data Pages, with certain IMF-account transactions replaced from Fund Accounts.
+
+**Research-use decision:** register this as a distinct official annual aggregate benchmark candidate, NOT as the missing IMF.STA:BOP country-level transaction panel and NOT as a daily/weekly trading trigger. Estimated nonreporter coverage and group construction must be retained as dataset semantics. Do not use BOP_AGG to backfill missing country observations, infer daily flows, or claim a clean observed-only EM flow sum. Its annual frequency makes it unsuitable for 1–5 trading-day signal timing; it may only support low-frequency macro regime/context after vintage, table, series definition, and download provenance are independently verified.
+
+Current evidence boundary: public dataset page confirms title, annual frequency, November release cadence, BPM6 basis, and estimation caveat. No BOP_AGG table or observation file has yet been downloaded, checksum-verified, or reconciled. Thus source identification = VERIFIED; raw data acquisition = NOT DONE; specific EM group series coverage = UNKNOWN; production use = NOT AUTHORIZED. IMF API link routes to a sign-in page in this inspection; no anonymous observation endpoint is claimed.
+
+Official source references: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG ; https://data.imf.org/en/Resource-Pages/IMF-API .
