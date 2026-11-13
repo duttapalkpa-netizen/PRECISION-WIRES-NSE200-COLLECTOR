@@ -1,0 +1,45 @@
+name: NSE Corporate Announcements RSS — isolated read-only acquisition
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nse-corporate-events-rss-readonly
+  cancel-in-progress: false
+
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/corporate-events-rss-collector-v1-20261114
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Parser safety and lossless-field tests
+        run: python -m unittest discover -s qa -p "test_nse_announcements_rss.py" -v
+      - name: One bounded official NSE RSS acquisition
+        id: acquire
+        continue-on-error: true
+        run: python collector/nse_announcements_rss.py
+      - name: Upload raw XML, parsed items and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-corporate-announcements-rss-\${{ github.run_id }}
+          path: outputs/corporate_events/rss/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Enforce acquisition result after preserving diagnostics
+        if: always() && steps.acquire.outcome == 'failure'
+        run: |
+          echo "Official RSS acquisition or XML parsing did not pass. Inspect manifest artifact."
+          exit 1
