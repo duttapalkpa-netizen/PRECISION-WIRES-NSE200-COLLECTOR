@@ -97,3 +97,25 @@ The official IMF November 2025 BOPSY Explanatory Notes were inspected directly (
 Official evidence: IMF BOPSY Explanatory Notes, November 2025, sections 1, 2 and 3, especially PDF pages 3–5 and 11–13: https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf . IMF dataset page: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG .
 
 **Current acceptance:** methodology inspection = PASS; raw BOP_AGG workbook/table bytes, publication vintage, retrieval timestamp and SHA-256 = NOT ACQUIRED; machine-readable EMDE membership artifact = NOT CREATED; observed-only EMDE flow reconstruction = NOT AUTHORIZED; daily trigger suitability = FAIL. No value or observation was fabricated or downloaded in this checkpoint.
+
+
+## BOP_AGG 2026 publication-vintage and download-route checkpoint — 2026-11-13
+This checkpoint resolves the publication-timing and access status without inventing a data download.
+
+### Official page inspection
+- IMF BOP_AGG dataset page identifies the dataset as annual, released each November, BPM6-based; its current latest-update listing links the BOPSY Dashboard and November 2025 Explanatory Notes. The linked dashboard page itself reports publication date 19 November 2025.
+- As at 13 November 2026, the official dashboard page inspected still identifies 19 November 2025 as its publication date. No 2026 dashboard/release date or 2026 BOP_AGG vintage is exposed by the inspected official pages. This is **2026 vintage NOT VERIFIED**, not proof that no unpublished or separately posted release exists. Do not label the November 2025 vintage as 2026.
+- The dataset page exposes an API link, but the linked API portal redirects to a sign-in page. The dataset page's visible VIEW DATA / DOWNLOAD controls do not expose a direct static workbook URL in the text response. The 2025 explanatory notes say users can customize and download tables, naming Global Discrepancies, Summary of International Transactions and Positions, World and Regional Tables—USD, and World and Regional Tables—Percent of GDP. No actual workbook/table bytes were retrieved in this checkpoint.
+- The November 2025 notes list India's latest reported BOP period as 2024 and IIP period as 2024. This is a clear reporting-lag constraint for India and must be retained separately from the release publication year.
+
+### Acceptance and handling
+- Official dataset identity and annual cadence: VERIFIED.
+- 19-Nov-2025 dashboard publication vintage: VERIFIED.
+- 2026 release vintage as of 13-Nov-2026: NOT VERIFIED / PENDING.
+- Public anonymous API download route: NOT VERIFIED (API portal sign-in redirect).
+- Static downloadable BOP_AGG raw workbook/table, exact URL, retrieval timestamp, HTTP headers, byte count and SHA-256: NOT ACQUIRED.
+- India latest reporting year in Nov-2025 overview: BOP 2024; IIP 2024.
+- No BOP_AGG observation rows or aggregate values are imported from third-party mirrors. Do not use search-engine snippets, DBnomics, Subsets, or other redistributors as official raw evidence.
+- Next permitted acquisition path: use the official IMF dashboard/table download UI if a direct downloadable file can be obtained without account/API restrictions; capture the exact generated URL, final URL, UTC retrieval time, headers, raw bytes and SHA-256. If it requires sign-in, stop and retain NOT ACQUIRED; do not bypass access controls or use a mirror.
+
+Official references: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG ; https://data.imf.org/en/dashboards/bopsy%20dashboard ; https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf .
