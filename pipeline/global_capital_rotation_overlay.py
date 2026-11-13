@@ -3,7 +3,7 @@
 from __future__ import annotations
 import argparse, csv, json, math
 from collections import defaultdict
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 REQUIRED = {"date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"}
@@ -20,12 +20,14 @@ MAX_AGE_DAYS = {
 
 def _published_key(value):
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).isoformat()
-    except (TypeError, ValueError):
-        try:
-            return date.fromisoformat(value).isoformat()
-        except (TypeError, ValueError):
-            raise ValueError("published_at must be an ISO date or datetime")
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (AttributeError, TypeError, ValueError):
+        raise ValueError("published_at must be an ISO date or datetime")
+    # Treat timezone-naive source dates/timestamps as UTC; normalize offsets
+    # before ordering vintages so lexical ordering is chronological.
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc).isoformat()
 
 def load_observations(path: Path):
     grouped=defaultdict(list)
