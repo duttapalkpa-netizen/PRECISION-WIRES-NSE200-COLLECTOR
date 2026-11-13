@@ -239,3 +239,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - QA guard commit 65552bb726eb89737f18d59898f24a66236843c9, blob 2d4a14d90941c5a90428f10e88e3a15b325158a5. CI pending.
 - Defined source/methodology/frequency qualification = 100% pending CI. Raw report bytes/hash and machine-readable extraction = 0%; sector-to-stock bridge = UNKNOWN; predictive validation = NOT DONE; production use = NOT AUTHORIZED.
 - No production changes, no PR/merge, no protected invariant changes. Overall V11.3 progress remains NOT CALCULABLE.
+
+
+### Final CI verification for section 19
+- First run `43375757182` on the source-register change: SUCCESS, before the new regression assertion was added.
+- The first regression run `43375779011` failed on an overly exact wording expectation; correction attempt `43375867329` still failed because the assertion did not preserve the source's capitalization. These were test-assertion defects, not source-data failures.
+- Corrected the assertion to match the exact persisted register wording. Final CI Run `43375956310`: SUCCESS; 36 tests passed in 0.030s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43375956310 .
+- Final QA commit: `d76ef4ef7e52df7a81c4cd0e665aedfc1d5cbad6`, blob `52e38336169ba879505c01c13781f7697e34e088`.
+- This CI PASS verifies the fail-closed documentary guard only; it does not acquire CDSL raw XLS bytes, validate the raw report, create a sector panel or validate predictive edge.
