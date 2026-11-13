@@ -193,3 +193,15 @@ A point-in-time read of the official CDSL daily page on 13-Nov-2026 displayed re
 - The live page currently has a 12-NOV-2026 report. No raw file bytes or checksum acquired; do not ingest this displayed snapshot into historical panel.
 
 Official source: https://www.cdslindia.com/eservices/publications/fiidaily . Snapshot evidence: page reporting date and bucket rows; published rounding note says aggregate discrepancies may be due to rounding.
+
+
+## 18. CDSL historical Daily Trends archive route and coverage boundary — 2026-11-13
+
+- Re-inspected the official archive landing page: https://www.cdslindia.com/Publications/ForeignPortInvestor.html . Its page metadata says last updated 05-Nov-2026. The **Daily Trends in FII/FPI Investments (New Format)** archive exposes dated report links from 02-Sep-2024 through 04-Apr-2025; the newest listed daily file is 04-Apr-2025. This archive coverage is not continuous to the current live daily page.
+- Followed the official 04-Apr-2025 archive item. The resolved official file target is `https://www.cdslindia.com/downloads/Publications/Latest/latest_04042025.xls`. The browser retrieval refused the XLS response as unsupported content type (HTTP-like 400 in the retrieval wrapper); an independent direct file-transfer attempt also failed before bytes were obtained. Therefore the URL is confirmed from the official archive link, but **raw XLS bytes were NOT ACQUIRED**; byte count, HTTP headers, retrieval timestamp, file hash, workbook sheet/schema and report contents remain UNKNOWN.
+- The official current daily page remains a separate live view (observed search snapshot dated 11-NOV-2026). It does not prove that the archive is populated for dates after 04-Apr-2025. Do not backfill the gap using live page snapshots, search snippets, monthly/fortnightly/quarterly totals or inferred filenames.
+- Archive list dates are report labels, not independently verified underlying trade dates. CDSL daily semantics remain: custodian reports submitted on reporting date represent trades on and up to previous trading day(s); exact trade-date mapping remains UNKNOWN until a raw report and its internal metadata/notes are inspected.
+- Acceptance: official archive page + one exact dated XLS link + visible archive coverage boundary = VERIFIED. Raw bytes/SHA-256 = NOT ACQUIRED. Historical daily coverage after 04-Apr-2025 = NOT VERIFIED. Exact trade-date mapping = UNKNOWN. No data rows ingested; no production use.
+- Next permitted path: obtain the official XLS through an accessible browser/download session or user-provided original file, then hash and inspect it before any ingestion. If the binary remains inaccessible, stop; do not use mirrors or fabricate an export.
+
+Official references: https://www.cdslindia.com/Publications/ForeignPortInvestor.html ; https://www.cdslindia.com/eservices/publications/fiidaily ; https://www.cdslindia.com/downloads/Publications/Latest/latest_04042025.xls .
