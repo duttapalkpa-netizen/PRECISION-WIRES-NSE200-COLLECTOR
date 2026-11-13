@@ -33,21 +33,32 @@ def inspect_security_master(path: str | Path) -> dict:
         text = payload.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise ValueError("not valid UTF-8/UTF-8-BOM; encoding must be established separately") from exc
-    # Infer delimiter from repeated field-count consistency, not Sniffer's
-    # all-lines heuristic: a single malformed row must remain measurable.
-    sample_lines = [line for line in text.splitlines()[:40] if line.strip()]
-    if not sample_lines:
-        raise ValueError("no nonblank CSV records found")
+    # Infer delimiter by parsing logical CSV records, not physical lines:
+    # quoted fields may legally contain delimiters and embedded newlines.
     candidates = []
-    for delimiter in (",", "|", ";", chr(9)):
-        counts = [len(next(csv.reader([line], delimiter=delimiter, strict=True))) for line in sample_lines]
-        widths = {}
-        for width in counts:
-            widths[width] = widths.get(width, 0) + 1
-        best_width, best_count = max(widths.items(), key=lambda item: item[1])
-        if best_width >= 2 and best_count >= 2:
-            candidates.append((best_count, best_width, delimiter))
+    parse_errors = []
+    for candidate in (",", "|", ";", chr(9)):
+        sample_reader = csv.reader(io.StringIO(text, newline=""), delimiter=candidate, strict=True)
+        widths = []
+        try:
+            for row in sample_reader:
+                if row and any(cell.strip() for cell in row):
+                    widths.append(len(row))
+                if len(widths) >= 40:
+                    break
+        except csv.Error as exc:
+            parse_errors.append(exc)
+            continue
+        counts = {}
+        for width in widths:
+            counts[width] = counts.get(width, 0) + 1
+        if counts:
+            best_width, best_count = max(counts.items(), key=lambda item: item[1])
+            if best_width >= 2 and best_count >= 2:
+                candidates.append((best_count, best_width, candidate))
     if not candidates:
+        if parse_errors and len(parse_errors) == 4:
+            raise parse_errors[0]
         raise ValueError("CSV delimiter is ambiguous; no parser assumption permitted")
     candidates.sort(reverse=True)
     if len(candidates) > 1 and candidates[0][:2] == candidates[1][:2]:
