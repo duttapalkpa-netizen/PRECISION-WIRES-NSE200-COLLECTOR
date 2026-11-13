@@ -224,4 +224,14 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         usd=[Decimal("1566.3694"),Decimal("47.5069"),Decimal("-18.4655"),Decimal("109.0329"),Decimal("3.7161"),Decimal("1.0223"),Decimal("-0.5543")]
         self.assertEqual(sum(usd).quantize(Decimal("0.001")),Decimal("1708.628"))
 
+    def test_cdsl_daily_archive_exact_link_and_coverage_boundary_do_not_imply_raw_acquisition(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("CDSL historical Daily Trends archive route and coverage boundary",content)
+        self.assertIn("02-Sep-2024 through 04-Apr-2025",content)
+        self.assertIn("https://www.cdslindia.com/downloads/Publications/Latest/latest_04042025.xls",content)
+        self.assertIn("raw XLS bytes were NOT ACQUIRED",content)
+        self.assertIn("Historical daily coverage after 04-Apr-2025 = NOT VERIFIED",content)
+        self.assertIn("Exact trade-date mapping = UNKNOWN",content)
+
 if __name__=="__main__": unittest.main()
