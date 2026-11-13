@@ -408,3 +408,12 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Validator commit `fa65175e011c36711b94193513a0b7507c2cae72`; blob `b97516e076c60a0b4e659ccc0fd7606c0c79fb80`.
 - Added quoted multiline-field regression test. QA commit `1db674e9ce57e20953432c0a622a00336a2bb074`; blob `7260b5210b5171a6facdb132b0b2470e9fd78520`. Test definition is persisted; full suite has not been executed.
 - Source Register/ledger updates pending this entry; no source-data acquisition, schema certification, production integration, PR or merge.
+
+
+### Section 24 follow-up — CI failure diagnosis and verified correction (2026-11-13)
+- Push CI run `43436158714` on `be176e05a753afbbf84c588fdb0ca4903615e457` executed all 50 tests: 48 passed, 1 failed, 1 errored. Logs identified (1) blank-only whitespace input reached delimiter ambiguity instead of the controlled `no nonblank CSV records` error, and (2) multiline regression fixture encoded literal backslash-n text rather than actual newline characters.
+- Corrected validator to reject `not text.strip()` before delimiter inference: commit `ad5037a9825313422f3faf7dc8aa89aa8ee0237f`, blob `2e2f48eeeab3d9a05b0e7f5e5499ae8c3c326cbf`.
+- Corrected multiline test fixture to use actual newline escapes: commit `b24395ac514d88ffb116d74bb9939ca1f98241a0`, blob `c7a72386f9633b09841e0f1630fa3e2ae24bd01d`.
+- Latest CI run `43438875821` on QA commit `b24395ac514d88ffb116d74bb9939ca1f98241a0`: `python -m unittest qa.test_global_capital_rotation_overlay -v` ran 50 tests in 0.083s; both previously failing cases are `ok`; workflow conclusion SUCCESS.
+- The earlier run `43438865632` on validator-only commit failed because it started before the corrected QA fixture commit; it is superseded by successful run `43438875821`.
+- These are validator unit tests only. No raw NSE/BSE security-master bytes were acquired; publisher authentication, exchange schema certification, cross-exchange ISIN reconciliation and issuer/industry bridge remain NOT ACQUIRED / UNKNOWN. No production selector/ranking/pressure-fade/672-diagnostic changes, no PR and no merge.
