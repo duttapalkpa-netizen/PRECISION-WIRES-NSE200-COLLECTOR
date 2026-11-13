@@ -170,3 +170,22 @@ Fresh GitHub compare (`main...research/global-capital-rotation-overlay-v1`) and 
 - The latest known successful test run remains `43204879661` on older commit `7bc769b002c9c4bb26aa3bb464888e962944e580`; commit `5c78fec7d9dc929b660fbdcf97ea0dc6dc4d980a` has zero commit statuses and no associated PR workflow run at inspection.
 
 Decision: do not merge PR #20 as currently scoped. A safer next integration path is a separately reviewed, overlay-only candidate branch based on the current `main`, carrying only the ten overlay paths listed above (after confirming each path is absent or reconciling any existing main-branch counterpart), then run its CI. This audit did not create that branch or PR and did not alter PR #20.
+
+
+## Main-branch path-collision audit for overlay-only extraction (2026-11-13)
+The ten proposed overlay paths were checked individually against `main` before creating any candidate branch:
+
+| Path | On `main`? | Finding |
+|---|---:|---|
+| `.github/workflows/global_capital_rotation_overlay_tests.yml` | No | New path on overlay branch |
+| `data/global_capital_rotation/2026-11-07_seed_observations.csv` | No | New path on overlay branch |
+| `data/global_capital_rotation/2026-11-10_seed_observations.csv` | No | New path on overlay branch |
+| `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_ACCESS_CONTRACT_20261111.md` | No | New path on overlay branch |
+| `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md` | Yes | Same path, different blob; main blob `5df9fa2bb3507039c677db554d4cd3d2033307d3`, overlay blob `c89cbda07fe0973f09b26709cfd733e9bf29dc40` |
+| `docs/GLOBAL_CAPITAL_ROTATION_OVERLAY_V1.md` | No | New path on overlay branch |
+| `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md` | Yes | Identical blob on both branches: `1d37270a01446347c0423213da0ed238ea52c743` |
+| `docs/NSE_FII_DII_DAILY_ACTIVITY_INGESTION_CONTRACT_V1.md` | No | New path on overlay branch |
+| `pipeline/global_capital_rotation_overlay.py` | No | New path on overlay branch |
+| `qa/test_global_capital_rotation_overlay.py` | Yes | Same path, different blob; main blob `b65f49329ae639deed900007ea1bc0f9be5f4b60`, overlay blob `95aecafbeb24ee83c878e1b128d322392376276b` |
+
+Decision: **do not create or populate an overlay-only branch yet**. Eight paths are cleanly additive or identical, but the source register and QA test are divergent same-path files. Blindly copying the overlay versions would overwrite main-branch work; keeping main versions could leave the overlay pipeline/test contract inconsistent. These two files require a line-level three-way reconciliation against merge base `1b61bea4cfbadc456775fdfb626f7788f1bd36fb` before extraction. No branch was created and no main-branch file was modified. This is a concrete, verified extraction blocker, not a test failure.
