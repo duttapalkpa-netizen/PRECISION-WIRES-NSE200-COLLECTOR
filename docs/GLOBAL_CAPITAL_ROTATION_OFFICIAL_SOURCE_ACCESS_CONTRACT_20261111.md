@@ -281,3 +281,11 @@ Rechecked the Federal Reserve Board's current H.10 release page, official DDP pa
 - Ingestion requirement: for each future vintage, capture actual retrieval timestamp in UTC, response URL, HTTP metadata where available, raw bytes and SHA-256; separately capture a source-published timestamp only if the source explicitly supplies it. If exact source publication time is not exposed, keep `published_at` UNKNOWN and gate use until conservative availability is established; never fabricate it from the scheduled 4:15 p.m. time.
 - No production integration, synthetic timestamps, PR, or merge. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and Hard Gate unchanged.
 - Official references: `https://www.federalreserve.gov/Releases/H10/`; `https://www.federalreserve.gov/datadownload/Choose.aspx?rel=H10`; `https://www.federalreserve.gov/feeds/h10.html`; `https://www.federalreserve.gov/datadownload/Build.aspx?rel=H10`.
+
+
+## Research overlay point-in-time publication cutoff implementation (2026-11-13)
+A code review identified that the research-only overlay selected the latest publication vintage without excluding rows published after the decision instant. Added an optional explicit `decision_at` ISO timestamp to `latest`/`classify` and CLI `--decision-at`: when supplied, observations with normalized UTC `published_at` later than the cutoff are excluded *before* vintage selection. A UTC decision date after `as_of_date` is rejected. Added four regression tests for future-vintage exclusion, all-future UNKNOWN, timezone normalization, and cutoff/as-of mismatch.
+- Parser commit `8316ca4b35db4ce6328bd8a50609182a0c2a7ccb`; parser blob `d04dc523dc1f93b9d0a75bc3d1f46d9e1e793740`.
+- QA commit `4fb7d3b8036acc0a3db9edeae72a8ac4523c9df1`; QA blob `366226ebd5b59917b05839c7df288e871c689922`.
+- This is an opt-in research-only safeguard, NOT a complete fail-closed H.10 ingestion adapter: omitting `--decision-at` retains legacy behavior. Any point-in-time backtest must supply the cutoff; source timestamps must be independently evidenced, not manufactured from scheduled H.10 release times. Actual runtime unit suite has NOT been executed; code/test commit existence does not establish CI PASS.
+- No production selector, ranking score, pressure-fade, CORE-672, engine or Hard Gate changes. No PR opened or merged.
