@@ -297,3 +297,11 @@ Closed the prior optional-cutoff gap in the research-only overlay. `classify(...
 - QA commit `9d94097a2f2d19a8b15d33df11bd0e2910331c4b`; blob `750ef132e41b81b1b4035dbe5f452cd011e8e9ea`.
 - Static re-fetch verification is not runtime test execution. GitHub Actions unit suite remains NOT RUN / UNKNOWN until dispatched and completed. The safeguard only enforces the timestamp supplied by the caller; it does not authenticate or manufacture source publication timestamps. H.10 actual publication timestamp/raw-vintage provenance remains UNKNOWN/PENDING.
 - Research-only overlay. No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate changes. No PR opened or merged.
+
+
+## Mandatory as-of date — deterministic freshness evaluation (2026-11-13)
+A second reproducibility gap remained after the mandatory publication cutoff: omitting `as_of_date` caused classification to fall back to the machine's current date. That made stale-input decisions depend on execution day and prevented exact replay. The research-only overlay now requires an explicit ISO `as_of_date` in `classify(...)` and the CLI `--as-of-date` argument; malformed dates fail closed. Together with required `decision_at`, both the freshness reference date and publication cutoff are explicit inputs. No source timestamp is inferred or generated.
+- Parser commit: `9907f385369cec108b62510034b4ff7c580ba65a`; parser blob: `3009306ad59e8efd75bf2d8a3a6f4859afee1ece`.
+- QA commit: `8fee904d666d58f8dc4688ab076d08228a32b7d6`; QA blob: `54a8400965208100c681e5e530488b3d863fec90`.
+- Added regression tests for missing and malformed `as_of_date`. Static source changes are committed; runtime test execution and GitHub Actions CI remain NOT RUN / UNKNOWN. Do not treat test definitions as a test pass.
+- This remains a research-only overlay. No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate changes. No PR opened or merged.
