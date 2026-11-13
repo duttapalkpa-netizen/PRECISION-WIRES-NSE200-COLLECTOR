@@ -373,4 +373,13 @@ class TestSecurityMasterIntake(unittest.TestCase):
             with self.assertRaises(csv.Error):
                 inspect_security_master(p)
 
+
+    def test_blank_only_payload_fails_with_controlled_error(self):
+        from pipeline.security_master_intake import inspect_security_master
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"blank.csv"
+            p.write_text("  \\n\\t\\n",encoding="utf-8")
+            with self.assertRaisesRegex(ValueError,"no nonblank CSV records"):
+                inspect_security_master(p)
+
 if __name__=="__main__": unittest.main()
