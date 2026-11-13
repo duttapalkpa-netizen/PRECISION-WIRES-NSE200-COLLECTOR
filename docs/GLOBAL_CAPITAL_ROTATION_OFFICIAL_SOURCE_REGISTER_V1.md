@@ -280,3 +280,11 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Regression tests cover original-byte SHA-256, gzip magic detection, duplicate ISIN reporting without issuer inference, false gzip extension rejection and ragged-row failure. CI is triggered by the QA-file push; final run status must be checked before claiming PASS.
 - Acceptance: intake code persisted = PASS; test definitions persisted = PASS; executed CI result = PENDING / NOT VERIFIED; official NSE/BSE raw file acquisition = NOT DONE; exchange-specific schema validation = NOT DONE; cross-exchange ISIN reconciliation = NOT DONE; issuer/industry membership = NOT ACQUIRED; production ingestion = NOT AUTHORIZED.
 - This is a reusable intake control, not a substitute for the missing raw exchange files. No synthetic data, guessed source URL, paid source, external contact, production integration, PR or merge. Protected invariants unchanged.
+
+
+### Section 24 parser hardening — delimiter detection with isolated malformed rows
+- Review/testing exposed a deeper issue: Python `csv.Sniffer` may fail to infer a delimiter when the sample includes a ragged row, preventing the validator from reporting the row-width defect it is designed to detect. A first QA fixture adjustment alone was insufficient.
+- Replaced the Sniffer heuristic with conservative repeated-field-count voting over up to 40 nonblank lines and four explicit delimiter candidates (comma, pipe, semicolon, tab). Requires at least two records agreeing on a multi-column width and rejects ties/ambiguous layouts. Parsing then counts all row-width deviations; it does not silently discard malformed rows.
+- Local focused check: comma CSV with row widths 3,3,2,3 now selects comma and exposes the single malformed row; a pipe-delimited sample selects pipe; a two-row comma sample remains detectable. This is a focused algorithm check, not GitHub CI.
+- Parser hardening commit: `7f61ac0d29fcef6426988c2d73deef7245f8e6eb`, blob `7ba5a000e82d6174cda98f9bfbc13ad477eb20af`.
+- CI remains PENDING / NOT VERIFIED. No raw NSE/BSE file acquired; no exchange-specific schema certification or issuer/industry mapping inferred.
