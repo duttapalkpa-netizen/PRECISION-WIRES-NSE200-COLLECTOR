@@ -365,3 +365,5 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - No NSE/BSE raw master bytes acquired; no publisher authentication, exchange-specific schema certification, or cross-exchange ISIN reconciliation. No production integration, PR, or merge.
 - Section 24 progress: identified/corrected code defects 100%; QA regression definitions persisted 100%; workflow path coverage updated 100%; full test-suite execution 0% pending; GitHub CI verification 0%; official raw-file acquisition 0%; exchange-specific schema certification 0%.
 - Overall V11.3 progress remains NOT CALCULABLE; Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, 56×12=672 diagnostics, Engines A–E, and Hard Gate logic unchanged.
+
+- Follow-up QA inspection caught and corrected escaped fixture literals in the newly added tab/delimiter regression cases so test inputs contain actual tab characters and actual line breaks (not backslash sequences). Corrective QA commit: `23698e40feb62b2b8a6f188cfb9626f8db646d38`; blob: `0407fee5edadb44459144b3f52f4cab2f28f9bb7`. This correction is recorded separately; no test execution is implied.
