@@ -156,3 +156,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 13
 - CI Run `43372686084`: SUCCESS; 30 tests passed in 0.022s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43372686084 .
 - WEO metadata/source-qualification work package including register, QA guard and CI = 100%. Actual workbook acquisition and exact series mapping = 0% / PENDING; no observations used.
+
+
+## 14. WEO country-group actual/projection metadata correction and download attempt (2026-11-13)
+- Official IMF WEO FAQ (last updated October 2026) states individual country-series can expose `Latest Actual Annual Data`, but explicitly says this metadata is NOT provided for WEO country-group data; for groups, publication year is assumed to start the forecast period. The prior appendix-only note about shading/forecast years was insufficient for classifying group values. Group actual-vs-estimate state is now UNKNOWN / NOT_POINT_IN_TIME_VERIFIED; do not infer from year, shading or country metadata.
+- FAQ confirms WEO database has no monthly/quarterly observations; historical data may include IMF staff estimates when country source data are incomplete; WEO group compositions are restated using publication-vintage membership across historical periods. These restrictions make WEO unsuitable as observed-only EM portfolio flow panel or short-horizon trigger.
+- Direct IMF-hosted Excel download attempted; transfer failed before bytes were obtained. No local workbook, response headers, byte count, retrieval timestamp or SHA-256. No third-party checksum adopted.
+- Corrective source register commit `8503ec835126b77cce63d57d019c5b546264ec31`, blob `fabf8f49495e429ff99de1ac095c0f9c46d6f59e`.
+- Regression guard commit `8c1fb2fa24799d807787f1e79f44375445297a17`, blob `b92022c74ef903f4926871255d486c0147646b2b`.
+- Work package (official FAQ reconciliation, correction, regression guard) = 100% pending CI. Raw workbook acquisition/series mapping = 0%. No values used. Overall V11.3 progress remains NOT CALCULABLE.
