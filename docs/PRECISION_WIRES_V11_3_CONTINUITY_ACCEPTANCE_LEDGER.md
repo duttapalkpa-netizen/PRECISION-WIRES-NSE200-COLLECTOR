@@ -170,3 +170,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 14
 - CI Run `43373473191`: SUCCESS; 31 tests passed in 0.022s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43373473191 .
 - Section 14 source/metadata correction + QA + CI = 100%. Actual workbook download and exact series mapping remain 0%; no raw data acquired.
+
+
+## 15. NSE FII/FPI–DII official download-control and provisional-semantics audit (2026-11-13)
+- Re-inspected official NSE FII/DII report page. It exposes two distinct CSV controls: NSE-only Capital Market and combined NSE+BSE+MSEI Capital Market. Browser extraction and generic link click do not reveal actual CSV href/final URL; exact URLs remain UNKNOWN. No CSV bytes or SHA-256 acquired.
+- Official page confirms provisional data; FII/FPI activity is PAN-based from NSDL, may change after custodial confirmation/modifications, and can include expiry-day physical settlement obligations. DII classification is based on Trading Member-entered trading codes and client category uploaded with UCC details. It is not a depository-confirmed holdings/flow measure. NSE points to NSDL/CDSL for final FPI data.
+- Page-rendered examples dated 09-Oct-2026 (NSE-only) and 30-Oct-2026 (combined) are display snapshots only; NOT ingested as raw observations.
+- Source register commit `f80ad3a19f984b45b85cc1d5367f5604c829f2b4`, blob `18c7e21cb8850568f380abc8d4799309240672e5`.
+- QA guard commit `2aff3cba3292f53c7e121a48676cbd35e40eece7`, blob `d89721d5bf9381b802192c6086a19874fd006d88`.
+- Work package (official semantics/download-control reconciliation + regression) = 100% pending CI; exact href/raw bytes/history panel/final FPI reconciliation = 0% / UNKNOWN. No production use.
