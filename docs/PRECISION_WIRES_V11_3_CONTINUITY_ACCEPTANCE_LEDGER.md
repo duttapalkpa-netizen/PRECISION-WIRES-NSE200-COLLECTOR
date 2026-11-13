@@ -341,3 +341,14 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Replaced the fixture with a consistent three-column header, two well-formed rows and one ragged row, allowing delimiter detection to succeed and the intended row-width rejection to be exercised.
 - Corrective QA commit: `e793033ded8863276aedc163ee729e34971cd110`, blob `1ce4a4f98d5fbb1fd3d20c7dc2de7e8d3129eb72`.
 - CI result remains PENDING / NOT VERIFIED; the GitHub connector's commit-workflow-runs action returns PR-triggered runs only and returned no runs for the QA commit. No run ID has been verified. No CI PASS claim.
+
+
+### Section 24 delimiter-inference defect correction — 2026-11-13
+- Additional adversarial review found the original use of `csv.Sniffer` could fail on the very ragged-row input the intake validator must diagnose. The earlier fixture correction alone did not eliminate this parser-level weakness.
+- Replaced Sniffer with conservative repeated-field-count voting over up to 40 nonblank lines and comma/pipe/semicolon/tab candidates. It requires at least two consistent multi-column records and rejects ambiguous ties; malformed rows remain visible to the row-width counter.
+- Focused local checks: (1) comma CSV widths 3,3,2,3 selects comma and reveals one malformed row; (2) pipe-delimited three-column sample selects pipe; (3) two-row comma CSV selects comma. These are local focused checks, not full suite or GitHub CI.
+- Parser hardening commit: `7f61ac0d29fcef6426988c2d73deef7245f8e6eb`, blob `7ba5a000e82d6174cda98f9bfbc13ad477eb20af`.
+- Source Register follow-up: `28b3ef2dfb04bbf41e40595cedc6f3694ccf9eab`, blob `3440a77a41a03cccbfeed78582bb5c7b33de3d80`.
+- CI result remains PENDING / NOT VERIFIED. The available GitHub run-list connector does not expose push-triggered workflow runs; no run ID or conclusion is asserted. No external paid service, data download, PR or merge.
+- Section 24 progress: parser implementation 100%; QA regression fixture persisted 100%; local delimiter-focused checks 100%; full test-suite execution 0% pending; GitHub CI verification 0%; raw NSE/BSE file acquisition 0%; exchange-specific schema certification 0%.
+- Overall V11.3 progress remains NOT CALCULABLE; Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics, Engines A–E and Hard Gate logic unchanged.
