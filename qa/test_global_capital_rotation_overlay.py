@@ -378,7 +378,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"blank.csv"
-            p.write_text("  \\n\\t\\n",encoding="utf-8")
+            p.write_text("  \n\t\n",encoding="utf-8")
             with self.assertRaisesRegex(ValueError,"no nonblank CSV records"):
                 inspect_security_master(p)
 
