@@ -330,3 +330,11 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - QA fixture correction `b24395ac514d88ffb116d74bb9939ca1f98241a0` (blob `c7a72386f9633b09841e0f1630fa3e2ae24bd01d`): actual embedded newline escapes; both regression tests pass.
 - CI run `43438865632` failed on validator-only commit before the fixture correction; superseded by successful run `43438875821`.
 - Structural validator test success does not establish official source acquisition or exchange-specific schema certification. Raw NSE/BSE master bytes/hash, source authentication, ISIN reconciliation and issuer/industry bridge remain NOT ACQUIRED / UNKNOWN.
+
+
+## 2026-11-13 — CDSL daily FPI archive retrieval retry and date-boundary reconciliation
+- Re-opened official CDSL archive landing page: metadata last updated 05-Nov-2026; New Format Daily Trends dated links range from 02-Sep-2024 through 04-Apr-2025. Latest listed daily report remains 04-Apr-2025 despite separate live page data in November 2026.
+- Re-followed official 04-Apr-2025 link (landing-page link 24) and retried exact target `https://www.cdslindia.com/downloads/Publications/Latest/latest_04042025.xls`. Browser open/click rejects XLS as unsupported `application/vnd.ms-excel`; direct file-download attempt also failed. Raw bytes, file size, successful-transfer timestamp, workbook schema/content and SHA-256 remain NOT ACQUIRED/UNKNOWN.
+- Current Daily Trends snapshot displays reporting date 11-NOV-2026. CDSL's own note states custodian-confirmed data reflect trades on and up to previous trading day(s); reporting date is not automatically an exact trade date.
+- Coverage decision: dated archive boundary VERIFIED (02-Sep-2024–04-Apr-2025); daily completeness within that boundary NOT MACHINE-RECONCILED; post-04-Apr-2025 daily archive coverage NOT VERIFIED; exact trade-date mapping UNKNOWN. No inferred files, synthetic rows, mirror sources, or fortnightly/monthly substitution.
+- No ingestion or production authorization. Next acceptable acquisition route is an official browser download or original user-provided CDSL XLS; then preserve original bytes and compute SHA-256 before parsing.
