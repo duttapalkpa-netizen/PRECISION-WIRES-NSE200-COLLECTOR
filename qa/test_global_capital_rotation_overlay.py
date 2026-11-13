@@ -254,4 +254,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("sector-to-issuer bridge = UNKNOWN",content)
         self.assertIn("No synthetic mapping, no inferred company assignments",content)
 
+    def test_nse_classification_methodology_does_not_imply_complete_effective_dated_roster(self):
+        register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
+        content=register.read_text(encoding="utf-8")
+        self.assertIn("NSE Indices issuer-classification source and bulk-membership gap",content)
+        self.assertIn("official bulk, machine-readable, effective-dated issuer-to-classification roster",content)
+        self.assertIn("official complete issuer membership dataset = NOT LOCATED/NOT ACQUIRED",content)
+        self.assertIn("NSE/BSE roster equivalence = UNKNOWN",content)
+        self.assertIn("No scraping of individual issuer reports to fabricate a complete list",content)
+
 if __name__=="__main__": unittest.main()
