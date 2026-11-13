@@ -313,3 +313,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - No ingestion, inferred mapping, predictive claim, production integration, PR or merge. Protected invariants unchanged; overall V11.3 progress remains NOT CALCULABLE.
 
 Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.aspx?attachedId=20260422-15 ; https://avantiscdnprodstorage.blob.core.windows.net/legalupdatedocs/55077/BSE-issued-a-notification-regarding-an-update-in-the-enhancement-in-the-Scrip-Master-File-format-April232026.pdf ; https://www.nseindia.com/all-reports ; https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv .
+
+
+### Section 23 repository persistence and CI status
+- Source Register commit: `efe85124d2fa7bcc3c5a1195f5c059a890ad3d6e`; blob `10c7b107c02d1129436a3b2bc4cc10f678845739`.
+- QA regression commit: `88b1f75426062236f4eabe1108c171b0e39fc19a`; blob `c255e76ee67b97d025ff7dd578f3fe4f6ff6f259`.
+- Ledger section 23 commit: `9ad44c5035bbe5b5dab928b2d35090b9ad7ababa`; blob `c413524e5733d393c4a64ed29f52e3b92c7a34c6`.
+- The workflow is configured for push to this research branch when the QA file or source register changes, with a 5-minute timeout. The QA push should trigger it; run ID/result was not accessible through the available GitHub Actions read actions in this session. Therefore CI status = PENDING / NOT VERIFIED; do not mark section 23 CI PASS until a run result is inspected.
+- No PR opened or merged; no production selector/ranking/pressure-fade/672-diagnostic changes.
