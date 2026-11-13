@@ -165,3 +165,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Corrective source register commit `8503ec835126b77cce63d57d019c5b546264ec31`, blob `fabf8f49495e429ff99de1ac095c0f9c46d6f59e`.
 - Regression guard commit `8c1fb2fa24799d807787f1e79f44375445297a17`, blob `b92022c74ef903f4926871255d486c0147646b2b`.
 - Work package (official FAQ reconciliation, correction, regression guard) = 100% pending CI. Raw workbook acquisition/series mapping = 0%. No values used. Overall V11.3 progress remains NOT CALCULABLE.
+
+
+### Final CI verification for section 14
+- CI Run `43373473191`: SUCCESS; 31 tests passed in 0.022s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43373473191 .
+- Section 14 source/metadata correction + QA + CI = 100%. Actual workbook download and exact series mapping remain 0%; no raw data acquired.
