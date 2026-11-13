@@ -142,3 +142,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 12
 - CI Run `43372403935`: SUCCESS; 29 tests passed in 0.013s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43372403935 .
 - Work-package completion including documentation and CI = 100%. Data acquisition remains 0% because the IMF anonymous download route is not verified and no raw file was acquired.
+
+
+## 13. IMF WEO October 2026 country-group flow candidate qualification (2026-11-13)
+- Official WEO October 2026 page lists a complete Excel dataset with Countries, Country Groups and Commodity Prices sheets. Official workbook target URL recorded in source register; workbook bytes were not retrieved (web viewer unsupported XLSX content-type; direct transfer attempt failed). Size, retrieval time and SHA-256 NOT ACQUIRED.
+- Official October 2026 Database Appendix confirms data cutoff 2026-09-30; workbook shading distinguishes historical results vs IMF staff projections; some 2025 and earlier values may be estimates; country-group composites generally require at least 90% weighted coverage; external-account composites are sums converted to USD at average market exchange rates; WEO EMDE membership is vintage-specific. Exact net portfolio investment series code/unit and actual/projection flags remain unverified until workbook parsed.
+- Register commit `6bb4d5cf1977f5bb3b1e14bb56f25afefa85adc0`, blob `4ae97039db62231966e1550dd09631cf05341729`.
+- QA regression commit `d00db490cd9c3aa86f6c52bbc17e365a1ec50dc9`, blob `6ac5bedd77ba3241f6a127cb50e971d93e271725`.
+- Decision: separate WEO candidate for low-frequency macro context only; not a BOP_AGG replacement, not an observed-only flow source, and not a 1–5 day trigger. No WEO values ingested. Metadata qualification pending CI; workbook acquisition/series mapping 0%.
+- Overall V11.3 progress remains NOT CALCULABLE; production unchanged; no PR/merge.
