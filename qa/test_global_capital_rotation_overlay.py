@@ -12,25 +12,25 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
         return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q)
     def test_unknowns_stay_unknown(self):
-        out=classify(load_observations(self.make([])),"2026-11-07")
+        out=classify(load_observations(self.make([])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN"); self.assertEqual(out["fx_transmission"],"UNKNOWN")
     def test_em_outflow_can_coexist_with_india_fpi_buy(self):
         rows=[self.row("em_portfolio_flow_usd_bn",-33.8,asof="2026-10-31"),self.row("india_fpi_equity_inr_cr",16277.99)]
-        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"EM_NET_OUTFLOW"); self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_BUY")
     def test_fx_requires_both_inputs_and_uses_explicit_direction(self):
         rows=[self.row("dxy_change_pct_20d",-1.2)]
-        self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07")["fx_transmission"],"UNKNOWN")
+        self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")["fx_transmission"],"UNKNOWN")
         rows.append(self.row("usd_inr_change_pct_20d",-0.4))
-        self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07")["fx_transmission"],"USD_WEAKENING_INR_STRENGTHENING")
+        self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")["fx_transmission"],"USD_WEAKENING_INR_STRENGTHENING")
     def test_unknown_quality_rows_are_not_used(self):
-        out=classify(load_observations(self.make([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")])),"2026-11-07")
+        out=classify(load_observations(self.make([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
     def test_bad_quality_fails_closed(self):
         with self.assertRaises(ValueError): load_observations(self.make([self.row("em_portfolio_flow_usd_bn",1,"GUESSED")]))
     def test_stale_fpi_is_excluded(self):
         row=self.row("india_fpi_equity_inr_cr",999,asof="2026-10-01")
-        out=classify(load_observations(self.make([row])),"2026-11-07")
+        out=classify(load_observations(self.make([row])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_equity"],"UNKNOWN")
         self.assertIn("india_fpi_equity_inr_cr",out["stale_observations_excluded"])
     def test_rejects_nan_and_infinity(self):
@@ -50,24 +50,24 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
     def test_conflicting_same_vintage_fails_closed(self):
         rows=[self.row("em_portfolio_flow_usd_bn",1),self.row("em_portfolio_flow_usd_bn",-1)]
-        with self.assertRaises(ValueError): classify(load_observations(self.make(rows)),"2026-11-07")
+        with self.assertRaises(ValueError): classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
     def test_latest_publication_wins_deterministically(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T00:00:00Z"),
               self.row("india_fpi_equity_inr_cr",-5,published="2026-11-07T01:00:00Z")]
-        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
 
     def test_short_term_fpi_inflow_does_not_hide_ytd_outflow(self):
         rows=[self.row("india_fpi_equity_mtd_inr_cr",53738.78),
               self.row("india_fpi_equity_ytd_inr_cr",-241407.13)]
-        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_horizon_divergence"],"SHORT_TERM_INFLOW_LONG_TERM_OUTFLOW")
 
     def test_latest_publication_orders_equivalent_instants_in_utc(self):
         # 01:00 at UTC+02 is 23:00Z on the prior day; 00:30Z is later.
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T01:00:00+02:00"),
               self.row("india_fpi_equity_inr_cr",-5,published="2026-11-07T00:30:00Z")]
-        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
 
     def test_equivalent_timezone_instants_are_duplicate_vintages(self):
@@ -124,6 +124,10 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("SHA-256: NOT AVAILABLE",content)
         self.assertIn("not evidence that this audit successfully retrieved the response",content)
         self.assertIn("Observation extraction requires a separately verified",content)
+    def test_decision_cutoff_is_mandatory(self):
+        with self.assertRaisesRegex(ValueError,"decision_at is required"):
+            classify(load_observations(self.make([])),"2026-11-07")
+
     def test_decision_cutoff_excludes_future_publication(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T20:00:00Z"),
               self.row("india_fpi_equity_inr_cr",-20,published="2026-11-07T02:00:00Z")]
