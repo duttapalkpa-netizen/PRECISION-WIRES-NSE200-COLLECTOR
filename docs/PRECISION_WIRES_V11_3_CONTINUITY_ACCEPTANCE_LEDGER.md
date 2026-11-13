@@ -262,3 +262,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Defined raw-first, immutable, fail-closed event schema and acquisition QA contract in `docs/CORPORATE_EVENTS_P0_OFFICIAL_SOURCE_CONTRACT_20261114.md`.
 - Official page/field semantics contract: PASS. Live API request shape/pagination: UNKNOWN; raw payload/hash/MIME/bytes: NOT ACQUIRED; symbol/series/ISIN validation and duplicate/timestamp/coverage QA: NOT RUN. Corporate Events P0 remains BLOCKED.
 - No guessed API parameters, paid source, third-party scraper, synthetic rows/timestamps, code/workflow change, PR merge or production integration. Hard Gate BLOCKED; protected invariants unchanged.
+
+
+## 19. Corporate Events P0 — official NSE RSS channel evaluation — 2026-11-14
+
+- Identified first-party NSE RSS page `https://www.nseindia.com/static/rss-feed` (legacy `/rss-feed` redirects). It enumerates separate feeds for Announcements, Corporate Actions, Board Meetings and other disclosure classes; NSE describes RSS as a timely update channel, while warning reader/provider delays may occur.
+- NSE filings application separately exposes announcement Symbol/Subject/Broadcast Date, corporate action Symbol/Purpose/Ex-Date, and board meeting Symbol/Purpose/Meeting Date. Keep these source families and date semantics separate.
+- RSS is a plausible official discovery/fallback channel, but exact XML feed href could not be resolved from the page's extracted link text. No feed URL guessed. Raw XML, MIME/bytes/SHA, GUID/pubDate/timezone/schema/retention and historical coverage remain UNKNOWN/NOT ACQUIRED.
+- Report: `docs/CORPORATE_EVENTS_P0_OFFICIAL_NSE_RSS_CHANNEL_EVALUATION_20261114.md`.
+- Source discovery and semantic separation: PASS. RSS ingestion readiness: NOT ESTABLISHED. Corporate Events P0 remains BLOCKED. No code/workflow change, paid source, third-party vendor, guessed URL, PR merge or production integration.
