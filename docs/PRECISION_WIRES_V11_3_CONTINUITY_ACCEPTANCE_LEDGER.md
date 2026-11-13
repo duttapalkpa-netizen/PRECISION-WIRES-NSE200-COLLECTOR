@@ -226,3 +226,16 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Defined work package (official archive route + one exact file link + visible coverage boundary + fail-closed QA guard) = 100% after CI. Raw XLS acquisition/hash = 0%; historical daily coverage after 04-Apr-2025 = NOT VERIFIED; trade-date mapping = UNKNOWN; historical panel = 0%.
 - No production changes, no PR/merge, no change to selector, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics, engines or Hard Gate.
 - Overall V11.3 progress remains NOT CALCULABLE until full weighted acceptance ledger is reconciled.
+
+
+## 19. CDSL fortnightly sector-wise FPI report — frequency and measurement qualification (2026-11-13)
+- Official CDSL archive lists fortnightly sector reports through 31-Oct-2026; separate New Format Daily Trends archive list ends 04-Apr-2025. Fortnightly reports do not establish daily continuity.
+- Opened official 31-Oct-2026 report: https://www.cdslindia.com/publications/FII/FortnightlySecWisePages/Oct%2031%202026.html . It explicitly separates AUC at 15-Oct, net investment 01–15 Oct, net investment 16–31 Oct, and AUC at 31-Oct. AUC is stock/position, not flow.
+- Table contains 23 sector rows plus Others and Grand Total; sector taxonomy is BSE common industry classification adopted by NSE/BSE from 30-Apr-2022; unclassified issuers outside approximately 4,800 classified issuers are Others. No issuer-level flow inference or automatic mapping to NIFTY indices.
+- Coverage breaks: Debt-VRR net investment/AUC included from 30-Apr-2020; Debt-FAR, Mutual Funds and AIF AUC from 31-Aug-2024; their net investment from 15-Sep-2024.
+- Fortnightly USD conversion uses end-of-period RBI reference rate; keep INR crore primary and do not compare USD values directly with daily conversion basis.
+- Official monthly calendar page displays 2026 monthly net investments and the custodian/DDP previous-trading-day(s) caveat, but footer still says last updated 20-May-2020. Treat footer as page metadata, not current observation vintage. No monthly raw export or bytes obtained.
+- Source register commit 7a792d40818d5a28e490a0e125fa6852b3733fc8, blob 2d5ff874de9d6875dd0ec05faf462f6997f01768.
+- QA guard commit 65552bb726eb89737f18d59898f24a66236843c9, blob 2d4a14d90941c5a90428f10e88e3a15b325158a5. CI pending.
+- Defined source/methodology/frequency qualification = 100% pending CI. Raw report bytes/hash and machine-readable extraction = 0%; sector-to-stock bridge = UNKNOWN; predictive validation = NOT DONE; production use = NOT AUTHORIZED.
+- No production changes, no PR/merge, no protected invariant changes. Overall V11.3 progress remains NOT CALCULABLE.
