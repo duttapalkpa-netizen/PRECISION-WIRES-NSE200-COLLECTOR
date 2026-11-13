@@ -43,6 +43,11 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def test_rejects_non_https_source(self):
         row=self.row("em_portfolio_flow_usd_bn",1); row["source_url"]="http://example.org"
         with self.assertRaises(ValueError): load_observations(self.make([row]))
+    def test_duplicate_same_source_observation_key_fails_closed(self):
+        row=self.row("india_fpi_equity_inr_cr",25)
+        with self.assertRaisesRegex(ValueError,"duplicate observation key"):
+            load_observations(self.make([row,row]))
+
     def test_conflicting_same_vintage_fails_closed(self):
         rows=[self.row("em_portfolio_flow_usd_bn",1),self.row("em_portfolio_flow_usd_bn",-1)]
         with self.assertRaises(ValueError): classify(load_observations(self.make(rows)),"2026-11-07")
