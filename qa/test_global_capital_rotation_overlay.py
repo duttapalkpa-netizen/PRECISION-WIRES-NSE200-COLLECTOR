@@ -346,20 +346,20 @@ class TestSecurityMasterIntake(unittest.TestCase):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"tab.txt"
-            p.write_text("Symbol\\tISIN\\tSeries\\nABC\\tINE000A01001\\tEQ\\nXYZ\\tINE000A01002\\tBE\\n",encoding="utf-8")
+            p.write_text("Symbol\tISIN\tSeries\nABC\tINE000A01001\tEQ\nXYZ\tINE000A01002\tBE\n",encoding="utf-8")
             out=inspect_security_master(p)
-        self.assertEqual(out["delimiter"],"\\t")
+        self.assertEqual(out["delimiter"],"\t")
         self.assertEqual(out["data_row_count"],2)
         self.assertEqual(out["row_width_error_count"],0)
 
     def test_delimiter_report_is_returned_for_each_supported_format(self):
         from pipeline.security_master_intake import inspect_security_master
-        cases=[(",", "comma.csv"), ("|", "pipe.txt"), (";", "semi.txt"), ("\\t", "tab.txt")]
+        cases=[(",", "comma.csv"), ("|", "pipe.txt"), (";", "semi.txt"), ("\t", "tab.txt")]
         with tempfile.TemporaryDirectory() as d:
             for delimiter,name in cases:
                 with self.subTest(delimiter=repr(delimiter)):
                     p=Path(d)/name
-                    p.write_text(delimiter.join(["A","B","C"])+"\\n"+delimiter.join(["1","2","3"])+"\\n"+delimiter.join(["4","5","6"])+"\\n",encoding="utf-8")
+                    p.write_text(delimiter.join(["A","B","C"])+"\n"+delimiter.join(["1","2","3"])+"\n"+delimiter.join(["4","5","6"])+"\n",encoding="utf-8")
                     out=inspect_security_master(p)
                     self.assertEqual(out["delimiter"],delimiter)
                     self.assertEqual(out["data_row_count"],2)
