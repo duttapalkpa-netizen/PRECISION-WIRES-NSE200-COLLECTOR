@@ -406,3 +406,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - General Corporate Filings page indexed snapshots differ (9/14/420 and 7/26/535 across announcement/action/meeting counts); these are time-varying snapshots, not stable totals or RSS coverage denominators. Separate Broadcast Date, Ex-Date, Meeting Date, Period Ended and As-on Date semantics. Evidence `turn649111search2`, `turn649111search3`.
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_XBRL_TAXONOMY_CROSSWALK_SCOPE_RULES_20261114.md`.
 - No date-window CSV bytes or exact export request captured; cross-route identity audit and 13-item RSS exact reconciliation NOT RUN. Corporate Events P0 remains BLOCKED. No code/workflow/production change, paid service, PR/merge or synthetic data; protected production selector/ranking/CORE-672 invariants unchanged.
+
+
+## 33. Official NSE general Announcements CSV UI surface identified — 2026-11-14
+
+- Fresh inspection of official `https://www.nseindia.com/companies-listing/corporate-filings-announcements` (web ref `turn687576view0`, lines 139–166) identified a dedicated **Announcements** panel with Company (name/symbol), Subject keyword, Search By selector, date presets (1D/1W/1M/3M/1Y/Custom/Clear), Play Announcements, Download (.csv), Convert XBRL into Excel and Refresh.
+- This is a stronger official UI candidate for RSS comparison than the previously examined XBRL-only page or the five-row Latest Announcements widget. The page is a multi-panel filing dashboard; other filing panels have distinct filters and must not be merged into the Announcements dataset.
+- UI control labels verified, but Search By option values, exact custom-date format, request URL, response schema, pagination, CSV bytes and SHA-256 are not exposed by static page retrieval. No UI interaction/download was performed and no endpoint guessed.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_GENERAL_ANNOUNCEMENTS_CSV_UI_CONTRACT_20261114.md`.
+- Next bounded step: use the official page UI, verify the Search By publication/broadcast date option, set Custom 13–14 Nov 2026, download CSV and capture exact network request/response metadata and raw bytes before parsing/reconciliation.
+- Corporate Events P0 remains BLOCKED; 13-item row-level reconciliation NOT RUN. No code/workflow/production change, paid API, PR/merge or synthetic data. Protected production selector/ranking/CORE-672 invariants unchanged.
