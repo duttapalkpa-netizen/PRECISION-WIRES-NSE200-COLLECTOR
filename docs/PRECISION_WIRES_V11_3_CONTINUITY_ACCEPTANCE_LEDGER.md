@@ -321,3 +321,16 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Ledger section 23 commit: `9ad44c5035bbe5b5dab928b2d35090b9ad7ababa`; blob `c413524e5733d393c4a64ed29f52e3b92c7a34c6`.
 - The workflow is configured for push to this research branch when the QA file or source register changes, with a 5-minute timeout. The QA push should trigger it; run ID/result was not accessible through the available GitHub Actions read actions in this session. Therefore CI status = PENDING / NOT VERIFIED; do not mark section 23 CI PASS until a run result is inspected.
 - No PR opened or merged; no production selector/ranking/pressure-fade/672-diagnostic changes.
+
+
+## 24. Exchange security-master raw-file intake validator — 2026-11-13
+- Next-step selection: raw NSE/BSE master downloads were already attempted and failed; no duplicate network/download attempt was made. Built a reusable local intake validator so the next uploaded/acquired raw file can be audited reproducibly without assuming exchange schema.
+- Added `pipeline/security_master_intake.py`: exact-byte SHA-256 and byte size before decompression; gzip magic detection and integrity check; UTF-8-BOM handling; delimiter detection; header checks; row count, blank rows, row-width errors, explicit ISIN-column duplicate counts. Structural status is not source authentication or schema certification.
+- Added QA regression tests for raw-byte hashing, gzip magic, duplicate ISIN counts, false .gz rejection and ragged-row failure.
+- Repository commits:
+  - Validator: `0d20a9eb04baeb7fac23a42c301ee18ff72f7ceb`.
+  - QA tests: `584b3d1f3f97dbf4c0bbd9a76e7f9a19dbc62a47`, blob `6af3ff745e1b0eed76ae275e790aac04c1c31aa9`.
+  - Source register: `15a2cf1f525cfd5653fe1b1ef7ddbc2aae54ccfc`, blob `1beafb41dd55026b96bbc22f2c4d557fff227930`.
+- Workflow is configured to trigger on QA/source-register push. CI run ID and result have not been retrieved; status PENDING / NOT VERIFIED. Do not claim tests passed until run output is inspected.
+- Work-package progress: validator implementation/persistence 100%; regression test authoring/persistence 100%; CI execution verification 0% pending run inspection; raw NSE/BSE file acquisition 0%; exchange-specific schema certification 0%; ISIN reconciliation 0%; issuer/industry bridge 0%.
+- Overall project progress: NOT CALCULABLE; the full weighted acceptance ledger has not been reconciled. Hard Gate remains BLOCKED. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, 56×12=672 diagnostics, Engines A–E or Hard Gate logic changed. No PR/merge, no paid API, no spend, no synthetic rows/timestamps.
