@@ -141,7 +141,7 @@ Status: release date / expected reference month VERIFIED from official calendar;
 A repository-state check after the duplicate-observation guard commits found:
 - Global Capital Rotation PR #20 remains OPEN and DRAFT, head `research/global-capital-rotation-overlay-v1` at `5bcffa040477d3a5850305467f6c6e9446d34a2c`, base `main` at the inspected PR snapshot.
 - GitHub reports PR #20 `mergeable=false` and `mergeable_state=dirty`.
-- Branch comparison reports `main` vs overlay branch as `diverged`, overlay branch 104 commits ahead and 18 commits behind; merge base `1b61bea4cfbadc456775fdfb626f7788f1bd36fb`.
+- Branch comparison reports `main` vs overlay branch as `diverged`, overlay branch 107 commits ahead and 18 commits behind; merge base `1b61bea4cfbadc456775fdfb626f7788f1bd36fb`.
 - The newest known successful overlay test run is `43204879661`, for older head `7bc769b002c9c4bb26aa3bb464888e962944e580`. No completed workflow run or check status was found for the newer duplicate-guard head `5bcffa040477d3a5850305467f6c6e9446d34a2c`; commit status currently reports pending with zero statuses. Therefore the new duplicate regression test is committed but NOT runtime-verified.
 
 Required resolution before any merge consideration:
@@ -158,3 +158,15 @@ A follow-up code inspection found the first duplicate-key guard raised `ValueErr
 - Parser blob: `aad350327cbd68bdff87bca424aad3530450c151`
 - The file was re-fetched from the branch and the guard's placement after the parsing exception handler was verified.
 - GitHub Actions has not produced a run for this new head at audit time; runtime test status remains UNKNOWN/PENDING, not PASS.
+
+
+## PR #20 changed-scope reconciliation snapshot (2026-11-13)
+Fresh GitHub compare (`main...research/global-capital-rotation-overlay-v1`) and PR metadata were re-read after the parser fix:
+- Compare status: `diverged`; `main` head `bae1ee47cea62b145cde090a997e65248f9cc721`; overlay head `5c78fec7d9dc929b660fbdcf97ea0dc6dc4d980a`; merge base `1b61bea4cfbadc456775fdfb626f7788f1bd36fb`.
+- Overlay branch is 107 commits ahead and 18 commits behind `main` (107 commits in compare range).
+- Compare reports 46 changed paths, all additions relative to merge base. The change set is broader than the overlay: it includes CPI-2024-back reconciliation documents, FBIL reference-rate workflows/data, RBI DBIE/USDINR audits, macro source matrices, and the global-capital-rotation overlay files. Thus PR #20 is not a narrowly scoped overlay-only change set.
+- PR #20 remains OPEN and DRAFT, 107 commits, 46 changed files, `mergeable=false`, `mergeable_state=dirty`. No evidence from the compare response establishes that every file has a textual conflict; `dirty` is the current GitHub mergeability state and requires a reviewed reconciliation.
+- The overlay's relevant paths in this compare are: `.github/workflows/global_capital_rotation_overlay_tests.yml`, `data/global_capital_rotation/2026-11-07_seed_observations.csv`, `data/global_capital_rotation/2026-11-10_seed_observations.csv`, `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_ACCESS_CONTRACT_20261111.md`, `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md`, `docs/GLOBAL_CAPITAL_ROTATION_OVERLAY_V1.md`, `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md`, `docs/NSE_FII_DII_DAILY_ACTIVITY_INGESTION_CONTRACT_V1.md`, `pipeline/global_capital_rotation_overlay.py`, and `qa/test_global_capital_rotation_overlay.py`.
+- The latest known successful test run remains `43204879661` on older commit `7bc769b002c9c4bb26aa3bb464888e962944e580`; commit `5c78fec7d9dc929b660fbdcf97ea0dc6dc4d980a` has zero commit statuses and no associated PR workflow run at inspection.
+
+Decision: do not merge PR #20 as currently scoped. A safer next integration path is a separately reviewed, overlay-only candidate branch based on the current `main`, carrying only the ten overlay paths listed above (after confirming each path is absent or reconciling any existing main-branch counterpart), then run its CI. This audit did not create that branch or PR and did not alter PR #20.
