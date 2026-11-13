@@ -253,3 +253,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Exact artifact hard gate BLOCKED: P0 7/8 (corporate_events blocked); Factor Registry 0/35 fully available, 21 not connected; event study 48 rows, 26 eligible, 22 pending, exploratory; regime anchors 9/11; FPI 101 and DII 100 dates over 147 days; market/equity panels aligned through 2026-10-26. Selector, RANKING_SCORE and +1 PRESSURE_FADE unchanged.
 - Report: `docs/MACRO_GEO_RUN210_EXACT_ARTIFACT_PROVENANCE_RECONCILIATION_20261114.md`.
 - Canonical EIA spot provenance reconciliation: PASS. Proxy payload packaging: UNKNOWN. Hard Gate remains BLOCKED. No code change, workflow rerun, PR, merge, imputation, paid API or external contact.
+
+
+## 18. Corporate Events P0 official source contract and failure diagnosis — 2026-11-14
+
+- Revisited exact Run #210 evidence: `corporate_events` BLOCKED, 0 accepted rows; reason requires symbol, subject, publication timestamp and source URL; prior `https://www.nseindia.com/api/corporate-announcements` attempt timed out after 6 seconds. Zero rows indicates acquisition/normalization failure, not absence of events.
+- Inspected official NSE Corporate Filings application, Corporate Actions page and investor-relations Announcements page. The filings application separates announcements (Symbol, Subject, Broadcast Date) from corporate actions (Symbol, Purpose, Ex-Date); these time fields must remain distinct.
+- Defined raw-first, immutable, fail-closed event schema and acquisition QA contract in `docs/CORPORATE_EVENTS_P0_OFFICIAL_SOURCE_CONTRACT_20261114.md`.
+- Official page/field semantics contract: PASS. Live API request shape/pagination: UNKNOWN; raw payload/hash/MIME/bytes: NOT ACQUIRED; symbol/series/ISIN validation and duplicate/timestamp/coverage QA: NOT RUN. Corporate Events P0 remains BLOCKED.
+- No guessed API parameters, paid source, third-party scraper, synthetic rows/timestamps, code/workflow change, PR merge or production integration. Hard Gate BLOCKED; protected invariants unchanged.
