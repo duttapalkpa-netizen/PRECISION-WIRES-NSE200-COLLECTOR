@@ -149,3 +149,15 @@ A stricter read of the official WEO FAQ (last updated October 2026) changes the 
 Revised decision: October 2026 WEO country-group series is unsuitable as an observed-only EM portfolio-flow series and cannot be used as a point-in-time flow trigger. It remains at most a low-frequency published-vintage macro context series, with group-level actual-vs-estimate state UNKNOWN. Do not infer net portfolio investment series availability or semantics until the official workbook is locally acquired and parsed. This correction supersedes any contrary implication in the immediately preceding WEO qualification addendum.
 
 Official evidence: IMF WEO FAQ, October 2026, especially questions “How do I know if data are actual, preliminary, or projected?”, “Do you have higher frequency data?”, “What explains differences between WEO and IFS?”, and country group composition; https://data.imf.org/Datasets/WEO/Frequently-Asked-Questions . IMF WEO dataset page: https://data.imf.org/Datasets/WEO .
+
+
+## NSE FII/FPI–DII official report page live semantics and download-control audit — 2026-11-13
+A fresh inspection of the official NSE FII/DII page confirms two distinct downloadable CSV controls: (1) NSE-only Capital Market Segment and (2) combined NSE+BSE+MSEI Capital Market Segment. The page also renders sample/current table rows, but the browser text extraction exposes only the generic download-control link and does not reveal either CSV's actual href, final URL, or bytes. A click on the generic link resolves back to the same page, so it is not a verified file URL. Exact CSV URL remains UNKNOWN; do not infer it from the page route or from a third-party scraper.
+
+The official page's own definitions and caveats are explicit: both series are collated from trades executed by FIIs/FPIs and DIIs; FII/FPI data are based on PANs provided by NSDL; the page data are provisional and may change due to custodial confirmation/modifications; expiry-day physical-settlement obligations may be included. DII classification uses trading codes entered by Trading Members and the client-category classification they supply via unique-client-code upload. Therefore this NSE DII series is provisional exchange-reported trading activity, not depository-confirmed DII holdings/flows. NSE directs users to NSDL/CDSL for final FPI data. Keep NSE-only and combined exchange scopes separate and do not treat either provisional FPI field as final custodian data.
+
+Visible sample snapshot in the official page inspection: NSE-only table dated 09-Oct-2026; combined table dated 30-Oct-2026. These are page-rendered sample rows only, not a complete archive or acquired CSV, and are NOT ingested as raw observations. No retrieval timestamp, byte count, raw file or SHA-256 created.
+
+Acceptance: official page + series semantics + provisional caveats VERIFIED; separate download controls VERIFIED; exact CSV hrefs/raw bytes/hash UNKNOWN/NOT ACQUIRED; historical daily panel NOT DONE; final FPI reconciliation NOT DONE; predictive validation NOT DONE; production use NOT AUTHORIZED.
+
+Official source: https://www.nseindia.com/reports/fii-dii .
