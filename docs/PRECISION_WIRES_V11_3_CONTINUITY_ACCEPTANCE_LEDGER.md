@@ -214,3 +214,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### Final CI verification for section 17
 - CI Run `43374862590`: SUCCESS; 34 tests passed in 0.035s; 0 failures/errors. https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43374862590 .
 - Section 17 snapshot arithmetic and exact-decimal regression = 100%. Raw source file/hash and trade-date mapping remain pending.
+
+
+## 18. CDSL historical Daily Trends archive route and coverage boundary — 2026-11-13
+- Official archive landing page inspected: https://www.cdslindia.com/Publications/ForeignPortInvestor.html (page metadata: last updated 05-Nov-2026). The New Format Daily Trends list exposes dated report links from 02-Sep-2024 through 04-Apr-2025; latest listed daily item = 04-Apr-2025.
+- Followed official 04-Apr-2025 link; exact resolved XLS target: https://www.cdslindia.com/downloads/Publications/Latest/latest_04042025.xls . Browser retrieval refused the XLS content type; direct transfer attempt also failed before bytes were obtained. URL verified; raw XLS bytes, size, headers, retrieval timestamp, SHA-256 and workbook contents NOT ACQUIRED.
+- Current live daily page is a separate view and does not prove historical archive coverage after 04-Apr-2025. No live snapshots, search snippets, monthly/fortnightly/quarterly values, mirrors or guessed filenames used as backfill.
+- Archive labels are report dates; exact underlying trade-date mapping remains UNKNOWN because CDSL daily reports cover trades on and up to previous trading day(s), and raw file notes/metadata were not inspected.
+- Source register: commit ebd24cdc15fd2b05287256c93b2a74aef24c930c; blob e3ff04d629cfc3c1be9847930c65f4a43953dfe1.
+- QA regression: commit 10b8ee7d442369006e9149ab9eec10db72da019c; blob 688312e06d25e6d77f8730d6108351adcde91d48. CI pending at ledger write.
+- Defined work package (official archive route + one exact file link + visible coverage boundary + fail-closed QA guard) = 100% after CI. Raw XLS acquisition/hash = 0%; historical daily coverage after 04-Apr-2025 = NOT VERIFIED; trade-date mapping = UNKNOWN; historical panel = 0%.
+- No production changes, no PR/merge, no change to selector, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics, engines or Hard Gate.
+- Overall V11.3 progress remains NOT CALCULABLE until full weighted acceptance ledger is reconciled.
