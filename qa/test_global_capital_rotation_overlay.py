@@ -325,7 +325,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
     def test_ragged_rows_are_fail_closed(self):
         from pipeline.security_master_intake import inspect_security_master
         with tempfile.TemporaryDirectory() as d:
-            p=Path(d)/"ragged.csv"; p.write_text("A,B,C\\n1,2\\n",encoding="utf-8")
+            p=Path(d)/"ragged.csv"; p.write_text("A,B,C\\n1,2,3\\n4,5\\n6,7,8\\n",encoding="utf-8")
             out=inspect_security_master(p)
         self.assertEqual(out["row_width_error_count"],1)
         self.assertEqual(out["acceptance"],"FAIL_ROW_WIDTH")
