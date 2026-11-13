@@ -331,3 +331,15 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_RSS_FIRST_RAW_ACQUISITION_AUDIT_20261114.md`.
 - Endpoint single-snapshot reachability and parser path PASS. Historical completeness, repeat snapshot overlap, item-level official page reconciliation, pubDate timezone semantics, symbol identity and retention/replay remain UNKNOWN/NOT RUN. Corporate Events P0 remains BLOCKED.
 - No PR/merge, no production integration, no synthetic data, no symbol/GUID/timezone inference, no paid source. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
+
+
+## 26. Corporate Events P0 — two-snapshot official RSS overlap audit — 2026-11-14
+
+- Second isolated workflow run #2 / ID `43490004265`, head `d4f89dc34e9f0199e1c567c5a851ba97cd575598`, completed SUCCESS. Four parser tests PASS, bounded fetch PASS, artifact upload PASS.
+- Snapshot 2: HTTP 200, 6,270 bytes, retrieved `2026-11-13T19:12:42Z`; raw XML SHA-256 `ee92888d16048899cffe4da9f57a6c246a7d4db2e133822e223e0674722bdaf0`; RSS lastBuildDate `Sat, 14 Nov 2026 00:41:41 +0530`.
+- Snapshot 2 artifact ID `14068698333`, ZIP size 4,275 bytes, SHA-256 `302a080ad812d577e64694d0230bc7b09b7d2f46d27b088aa1b17225c38dce96`, expiry 2026-12-13T19:12:42Z.
+- Compared downloaded artifacts from both runs: parsed JSONL byte-identical (13/13 exact same records; 0 added, 0 removed, 0 changed); JSONL SHA-256 `b918f872cabca6b6d053e4f5eeb12850e1086233d27e2dbb8f79ffdc902a6511`. Raw XML differs only in `lastBuildDate` (00:38:09 +0530 to 00:41:41 +0530); replacing that single element with a neutral token makes full XML byte streams identical. Raw XML SHA-256s differ as expected.
+- Both snapshots: GUID 0/13; no GUID synthesized. pubDate strings have no timezone; original values retained. Snapshot interval 4m18s; no item delta in this interval.
+- Report: `docs/CORPORATE_EVENTS_P0_NSE_RSS_TWO_SNAPSHOT_OVERLAP_AUDIT_20261114.md`.
+- Two-snapshot replay/overlap audit PASS for the observed short interval. Longer-horizon coverage, historical completeness, pubDate timezone semantics, official filings cross-check and GUID identity remain UNKNOWN/NOT RUN. Corporate Events P0 remains BLOCKED.
+- No PR/merge, no production integration, no synthetic values, no paid services. Protected production selector/ranking/diagnostic invariants unchanged.
