@@ -222,3 +222,14 @@ A review of the user-uploaded Federal Reserve H.10 monthly bilateral FX extract 
 - The file's parsed Library representation is available, but exact raw-byte SHA-256 and retrieval provenance for this uploaded copy were not established in this QA step.
 - Other currency series are not automatically cleared by this finding; they require their own schema, unit, missingness and regime-break QA.
 - No production integration, no PR opened, no merge, and no change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, or Hard Gate.
+
+
+## H.10 monthly bilateral FX panel — bounded raw-file QA (2026-11-13)
+Inspected the exact uploaded raw CSV `FRB_H10 (3).csv` (24,877 bytes; SHA-256 `06159035f0388750f780444fec30489811717466e5748e1284a981b72210c09a`).
+- Parsed 120 monthly observations from 2016-11 through 2026-10 across 23 bilateral currency series; 24 columns including period; zero duplicate periods; all 23 series have 120 finite numeric observations in this file (no missing/non-finite values detected).
+- Venezuela `RXI_N.M.VE` remains quarantined: extreme level discontinuities across 2018–2021 remain unresolved. Raw values preserved; no rescaling or splicing.
+- Sri Lanka `RXI_N.M.SL`: large consecutive changes (+25.06% from 2022-02 to 2022-03; +26.79% from 2022-03 to 2022-04). Flag as a regime/event review item, not automatically invalid and not eligible for unqualified cross-regime return interpretation until official metadata and economic event treatment are verified.
+- Mexico `RXI_N.M.MX`: +18.77% change from 2020-02 to 2020-03. Flag as an event review item; not automatically invalid. Confirm monthly averaging/convention and event context before treating as a continuous structural FX signal.
+- UK reciprocal series metadata declares multiplier `0.00999999978` while the displayed monthly values are near 1.2–1.4. This is a metadata/value-scaling ambiguity requiring confirmation against the official series endpoint/export contract; do not apply the multiplier a second time or alter the observed values without that confirmation.
+- The 120-observation completeness result applies only to this uploaded monthly panel, not to daily observations, all H.10 vintages, or source-wide coverage. The monthly index companion panel is a separate series family and is not a bilateral FX rate.
+- QA outcome: structural parsing/completeness PASS for this file; Venezuela quarantine PASS; Sri Lanka and Mexico event flags PENDING; UK multiplier semantics PENDING; daily-to-NSE session alignment PENDING. No production integration, PR, or merge.
