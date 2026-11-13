@@ -164,3 +164,30 @@ This is an independently documented alternate endpoint family, but the exact BOP
 ### Important source boundary
 
 The IMF SDMX Central guide describes the Structure Web Service for metadata (Dataflows, Codelists, Concepts and Data Structures). Do not mistake successful DSD retrieval for access to actual BOP observations. Observation extraction requires a separately verified IMF Data Portal data endpoint and dataset vintage. The IMF Data API page documents SDMX 2.1/3.0 access, while its Swagger explorer requires beta-portal sign-in. No observation API request is asserted as tested here.
+
+
+## Dataflow registration reconciliation checkpoint — 2026-11-13
+A subsequent official-catalogue check and Library-artifact reconciliation narrowed the remaining blocker. This is a negative/qualification result, not an observation extraction.
+
+### Confirmed metadata facts
+- The uploaded IMF:BOP DSD 2.6.0 structure file is already archived in the Library: 1,041,117 bytes; SHA-256 `4f5102b4a36a93fa1d60c7dc29fdfcbfa4296e3b1e42325c413fc8daeca64771`. Its separately audited manifest records 18 dimensions, 15 attributes, one measure, 22 embedded codelists, 4,097 embedded codes, and SDMX-ML 2.1 XSD validation PASS. This DSD validation does not establish a dissemination dataflow or observation endpoint.
+- IMF SDMX Central's current official registrations page lists `IMF:BOP6(1.0)` with provider `IMF:IMF`, registered URL `http://dsbb.imf.org/xml/IMF/sample/compact/IMF_BOP6_C.xml`, last updated 2023-09-22. The word `sample` in the registered URL is material: this registration is not evidence of a complete IMF country-observation API.
+- The official Reporting Constraints catalogue associates `BOP6_CONSTRAINT` with `BOP6[1.0]` and `BOP_BP6_CONSTRAINT` with the distinct `BOP_BPM6[1.0]`. `BOP5_COLLECTION[1.0]` is legacy BPM5 and is rejected for this BPM6 extraction.
+- The current SDMX Central dataflow overview displays `ESTAT:BPM6_BOP_Q(2.6.0)` and `ESTAT:BPM6_BOP_M(2.6.0)`; these are ESTAT dataflows, not IMF-owned BOP6 and cannot be silently substituted.
+
+### Explicit unresolved gates
+- The exact BOP6 dataflow-to-DSD reference was probed using the documented SDMX Central Structure Web Service request `/structure/dataflow/IMF/BOP6/1.0/?references=datastructure&format=sdmx-2.1`. The web retrieval returned inaccessible/internal error and the local execution environment could not resolve the host; no HTTP status or response body was obtained. Mark `PROBE_BLOCKED`, not endpoint failure and not PASS.
+- IMF Data Portal confirms SDMX 2.1/3.0 APIs, but its Swagger explorer requires beta-portal sign-in. No anonymous public observation query route is verified in this checkpoint.
+- India `REF_AREA=IN` observation rows accepted: 0. Portfolio transaction factor candidate codes remain unapproved until the exact target dataflow's DSD linkage, permitted key and observation payload are independently verified.
+- Do not query or promote the BOP6 sample registration as an India or global observation panel. Do not substitute ESTAT dataflows, IMF PIP/CPIS positions, third-party national-provider sample registrations, or guessed keys.
+
+### Evidence references
+- IMF Data Portal BOP dataset: https://data.imf.org/Datasets/BOP
+- IMF Data API documentation: https://data.imf.org/en/Resource-Pages/IMF-API
+- IMF SDMX Central dataflow overview: https://sdmxcentral.imf.org/data/overview.html
+- IMF SDMX Central registrations: https://sdmxcentral.imf.org/data/registrations.html
+- IMF SDMX Central reporting constraints: https://sdmxcentral.imf.org/data/constraints.html
+- Official IMF SDMX Central Web Services Guide: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf
+
+### Decision
+The DSD metadata gate is PASS from the archived, schema-validated structure file; the BOP dissemination dataflow/DSD linkage and observation access gates remain UNKNOWN / BLOCKED. No country observations were extracted, no EM aggregate calculated, and no signal is eligible. Next legitimate route is a public IMF Data Portal API specification/metadata response that identifies the BOP dataflow and query dimensions, or a documented authenticated API session supplied/authorized by the account owner. Do not repeat the same blocked URL probe without new transport evidence.
