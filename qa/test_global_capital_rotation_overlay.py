@@ -1,4 +1,5 @@
 import csv, tempfile, unittest
+from decimal import Decimal
 from pathlib import Path
 from pipeline.global_capital_rotation_overlay import load_observations, classify
 FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"]
@@ -212,5 +213,15 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("do not use grand Total as equity or as FPI-only",content)
         self.assertIn("Primary market & others` includes multiple non-secondary-market events",content)
         self.assertIn("direct raw-file export URL/bytes, retrieval timestamp, file size and SHA-256 were not acquired",content)
+
+    def test_cdsl_12nov2026_live_snapshot_bucket_arithmetic_reconciles(self):
+        buckets=[Decimal("14693.72"),Decimal("445.65"),Decimal("-173.22"),Decimal("1022.81"),Decimal("34.86"),Decimal("9.59"),Decimal("-5.20")]
+        self.assertEqual(sum(buckets),Decimal("16028.21"))
+        purchases=[Decimal("32902.51"),Decimal("717.30"),Decimal("44.73"),Decimal("2368.61"),Decimal("95.23"),Decimal("9.63"),Decimal("0.00")]
+        sales=[Decimal("18208.79"),Decimal("271.65"),Decimal("217.95"),Decimal("1345.80"),Decimal("60.37"),Decimal("0.04"),Decimal("5.20")]
+        self.assertEqual(sum(purchases),Decimal("36138.01"))
+        self.assertEqual(sum(sales),Decimal("20109.80"))
+        usd=[Decimal("1566.3694"),Decimal("47.5069"),Decimal("-18.4655"),Decimal("109.0329"),Decimal("3.7161"),Decimal("1.0223"),Decimal("-0.5543")]
+        self.assertEqual(sum(usd).quantize(Decimal("0.001")),Decimal("1708.628"))
 
 if __name__=="__main__": unittest.main()
