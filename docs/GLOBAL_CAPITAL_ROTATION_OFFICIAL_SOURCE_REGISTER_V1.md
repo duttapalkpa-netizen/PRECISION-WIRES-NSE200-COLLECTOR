@@ -338,3 +338,12 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Current Daily Trends snapshot displays reporting date 11-NOV-2026. CDSL's own note states custodian-confirmed data reflect trades on and up to previous trading day(s); reporting date is not automatically an exact trade date.
 - Coverage decision: dated archive boundary VERIFIED (02-Sep-2024–04-Apr-2025); daily completeness within that boundary NOT MACHINE-RECONCILED; post-04-Apr-2025 daily archive coverage NOT VERIFIED; exact trade-date mapping UNKNOWN. No inferred files, synthetic rows, mirror sources, or fortnightly/monthly substitution.
 - No ingestion or production authorization. Next acceptable acquisition route is an official browser download or original user-provided CDSL XLS; then preserve original bytes and compute SHA-256 before parsing.
+
+
+## 26. Research QA CI execution evidence — 2026-11-13
+- GitHub Actions run 43443062681; branch research/global-capital-rotation-overlay-mainline-20261113; head 218119c4d8c549579b06904a655ba9d0ea5d2238; push event; job 131945376329 SUCCESS.
+- Retrieved full job log. Exact command: python -m unittest qa.test_global_capital_rotation_overlay -v. Result: 50 tests in 0.240s; OK; zero failures/errors.
+- Tests include fail-closed source/date/vintage boundaries, CDSL reporting/archive semantics, NSE/BSE security-master identity boundaries, industry-roster coverage boundaries and generic intake validator regressions.
+- CI PASS verifies this research QA suite only. It does not verify or acquire raw exchange payloads, authenticate source bytes, certify raw exchange schema, build an issuer membership roster, reconcile ISINs, or create a CDSL sector-to-issuer bridge.
+- Earlier CI PENDING notes for Section 23/24 are superseded only for this verified head/run; retain all underlying raw-data and mapping gaps unchanged. No production changes, PR/merge, paid sources, synthetic data or external contact.
+- Latest branch run and log evidence: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43443062681 .
