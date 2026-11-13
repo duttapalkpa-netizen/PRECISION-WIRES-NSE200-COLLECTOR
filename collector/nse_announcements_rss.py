@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Bounded, raw-first NSE announcements RSS acquisition. Standard library only."""
+# Snapshot replay: each workflow run archives an independent immutable artifact.
 from __future__ import annotations
 import hashlib, json, re, sys
 from datetime import datetime, timezone
