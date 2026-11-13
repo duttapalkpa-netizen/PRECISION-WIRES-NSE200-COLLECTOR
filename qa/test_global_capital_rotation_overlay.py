@@ -63,6 +63,19 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         out=classify(load_observations(self.make(rows)),"2026-11-07")
         self.assertEqual(out["india_fpi_horizon_divergence"],"SHORT_TERM_INFLOW_LONG_TERM_OUTFLOW")
 
+    def test_latest_publication_orders_equivalent_instants_in_utc(self):
+        # 01:00 at UTC+02 is 23:00Z on the prior day; 00:30Z is later.
+        rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T01:00:00+02:00"),
+              self.row("india_fpi_equity_inr_cr",-5,published="2026-11-07T00:30:00Z")]
+        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
+
+    def test_equivalent_timezone_instants_are_duplicate_vintages(self):
+        first=self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T01:00:00+02:00")
+        second=self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T23:00:00Z")
+        with self.assertRaisesRegex(ValueError,"duplicate observation key"):
+            load_observations(self.make([first,second]))
+
     def test_non_government_iif_seed_is_not_promoted_to_official_flow(self):
         seed=Path(__file__).resolve().parents[1]/"data"/"global_capital_rotation"/"2026-11-07_seed_observations.csv"
         grouped=load_observations(seed)
