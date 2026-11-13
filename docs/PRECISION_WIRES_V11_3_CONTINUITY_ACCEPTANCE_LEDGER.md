@@ -208,3 +208,16 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - No NSDL/SEBI/CDSL values promoted, no monthly-to-daily substitution, no third-party source used for acceptance.
 - Next admissible step requires an actual interactive form submission or official downloadable raw response; absent that, preserve UNKNOWN. No guessed API endpoints or fabricated HTTP metadata.
 - No workflow run, production change, PR merge, or spend.
+
+
+## 14. V11.3 Behavioral DNA calibration provenance audit — 2026-11-14
+
+- Read-only audit report: `docs/V11_3_BEHAVIORAL_DNA_CALIBRATION_PROVENANCE_AUDIT_20261114.md`.
+- Inspected default-branch source blobs: walk-forward producer `d085f7a2d35a88b4c4eaba65144a429a06961b09`; V11.3 consumer `34ad08f130254a0e8c5f09ae5a0e2d93590757df`; workflow `8860fd4f7bb43164ad1b514c884f5e9adf750973`; final selection `8bf216c866030d92f8066e9183c9636880577910`; diagnostics `af0a8ddc17d72024509167533585713600a4b845`.
+- Confirmed V11.3 imports feature helpers from V11.4-labelled walk-forward module. Workflow executes walk-forward producer before V11.3 consumer and uploads backtest outputs.
+- Confirmed critical fallback: missing/unreadable/empty calibration JSON becomes `{}`; absent state rate and max rate fall back to zero; calibration component becomes 50/100, i.e. 5 composite score points from its 10% weight. A valid all-zero library can produce the same value. Missing artifact is therefore not distinguishable from a valid zero-rate state in the score.
+- Calibration JSON does not embed producer commit, workflow run ID, artifact ID, source-data digest/date range, schema version or checksum. Historical run-level binding remains UNKNOWN pending artifact retrieval.
+- Static audit acceptance: producer-consumer ordering PASS; shared dependency CONFIRMED; silent fallback ambiguity FAIL; embedded provenance FAIL; intentional cross-version contract UNKNOWN; historical artifact binding UNKNOWN.
+- Remediation recommendation only: decide shared-vs-frozen V11.3 helper contract; fail closed for absent/unreadable/stale/invalid calibration; embed and validate producer/run/data provenance. No code change applied pending explicit policy approval.
+- Protected invariants unchanged; no workflow run, PR, merge, production integration, synthetic data or spend.
+- Project Hard Gate remains BLOCKED; overall research percentage NOT_CALCULABLE.
