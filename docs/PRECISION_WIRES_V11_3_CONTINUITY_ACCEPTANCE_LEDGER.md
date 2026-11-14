@@ -477,3 +477,11 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Direct open attempt to official archive URL returned an internal error (ticket 604935). No raw downloadable file bytes, content type, byte count, exact download URL or hash could be captured. This is a retrieval limitation, not evidence of zero data. No guessed URL or reconstructed archive created.
 - Full daily historical coverage, archive pagination/download contract, raw SHA-256 manifest, same-date NSE/ CDSL reconciliation and rolling sector impact study remain UNKNOWN / NOT RUN. Hard Gate remains BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged; no paid service, PR/merge or production integration.
 - Evidence: official CDSL archive indexed result `turn496926search0`; official CDSL daily `turn496926search1`; archive open error `turn468255view0`.
+
+
+## 40. SEBI-listed NSDL alternate FPI/DII historical archive route identified — 2026-11-14
+
+- Recovered an alternate official route after CDSL archive internal-error response. SEBI's FPI curation catalog lists NSDL and CDSL in parallel for latest, current-month and archive FPI trends, plus sector-wise, AUC, trade-wise and ODI data (web evidence `turn323022search5`).
+- NSDL official FPI portal exposes separate FPI Archive and DII Archive. FPI archive has To Date, View Report and Export to Excel controls (web evidence `turn627844view0` lines 21–29; `turn329375view0` lines 20–25). DII archive resolves to date-entry form; default static extraction shows Please Select Date / No Data Found, not a valid zero-history conclusion (web evidence `turn945792view0` lines 22–27).
+- No date was selected and no workbook bytes/export response/hash were captured; raw acquisition and coverage remain NOT ACQUIRED / NOT VERIFIED. This is an actionable official UI route, not a claimed data acquisition. Report updated: `docs/CDSL_FPI_HISTORICAL_ARCHIVE_ACCESS_AND_COVERAGE_AUDIT_20261114.md`; updated report blob `82e16be2c67cc60b4550f99e8f79fdacb0643540`.
+- Next bounded task: exact-date NSDL FPI archive export and raw workbook SHA-256, then separately DII archive date export; reconcile to CDSL only where source dates, route and scope align. No guessed query parameters, no synthetic values/timestamps, no paid API, PR/merge or production change. Hard Gate remains BLOCKED.
