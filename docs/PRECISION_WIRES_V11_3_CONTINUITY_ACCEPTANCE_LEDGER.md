@@ -579,3 +579,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Official registry overview confirms constraint cascade across DSD, Dataflow, Provision Agreement and Provider.
 - Report updated: `11545f9f4dd3eeeab7f1a835dd33b8df2a01b4a3`.
 - Gate: registry-page cross-check PASS; exact target Dataflow/references NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — Critical IMF SDMX namespace correction
+
+- Live IMF SDMX Central REST UI Agency selector visibly offers `IMF`, not `IMF.STA`; live DSD catalogue lists `IMF:BOP` latest version `2.6.0`, "Balance of Payments and International Investment Position".
+- The earlier `IMF.STA/BOP/21.0.0` target is therefore invalid as a confirmed selection in the SDMX Central UI. It is marked SUPERSEDED / INVALID FOR THAT UI only; this does not establish the dataset identifier itself is invalid.
+- A separate public IMF Data Portal service catalogue lists `https://api.imf.org/external/sdmx/2.1` and `.../3.0`, distinct from SDMX Central `https://sdmxcentral.imf.org/sdmx/v2/`. Dataset identifiers must not be transplanted between services.
+- Next: query SDMX Central `IMF:BOP(2.6.0)` DSD with References=All and separately resolve IMF Data Portal dataset through its own catalogue. Follow provider/provision references only when actually returned.
+- Report updated: `f8e2d260664f62ecc1175b2266ffaa6d298364b0`.
+- Gate: namespace/catalogue cross-check PASS; IMF:BOP(2.6.0) DSD response NOT_RETRIEVED; separate IMF Data Portal structure response NOT_RETRIEVED; constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
