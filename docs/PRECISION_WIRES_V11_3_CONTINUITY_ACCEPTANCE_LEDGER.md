@@ -699,3 +699,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Bounded audit progress 100%; IMF BOP workstream 5/7=71.4%; October PDF package 25%; overall V11.3 project progress NOT_CALCULABLE.
 - Updated audit report commit: 2989920fbfeddbfff129cc89d993a36eb033f240.
 - No credentials, paid services, synthetic data/timestamps, external contact, PR merge or production changes.
+
+## 2026-11-15 — IMF BOP response provenance sidecar schema V1
+
+- Created `schemas/imf_bop_response_provenance.schema.json` (JSON Schema 2020-12) and `docs/IMF_BOP_RESPONSE_PROVENANCE_SIDECAR_V1.md` on `research/imf-bop-access-audit-v1`.
+- Mandatory fields: exact requested/final URL, GET, exact series key, HTTP 200, Content-Type, actual UTC retrieval timestamp, positive response byte count, SHA-256 of exact raw response-body bytes, explicit vintage status and research controls.
+- Vintage statuses distinguish SOURCE_PROVIDED / NOT_EXPOSED_BY_SOURCE / NOT_VERIFIED. Null release date/ID required when source does not expose vintage or verification is incomplete. Retrieval timestamp must never substitute for release vintage.
+- One sidecar per independently retrieved raw response. Reject non-200/empty responses, missing provenance, malformed hash, schema violations and inconsistent vintage status.
+- Existing India 110-row CSV/manifest remain unchanged and are not retroactively compliant. No fabricated timestamps/vintage or new observations created.
+- Schema and documentation creation completed; remote file re-fetch verified. Live sidecar instance validation against a new real IMF response NOT_DONE; revision-aware panel gate remains NOT_READY.
+- No credentials, paid source, synthetic data, production change or PR merge.
+- Report update commit: 0f48d414d9c5ca99f26248c75a0ec754b1b49099.
