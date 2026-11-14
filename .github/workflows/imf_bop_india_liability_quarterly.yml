@@ -1,0 +1,104 @@
+name: IMF BOP India liability and quarterly portfolio series acquisition
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_india_liability_quarterly.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-india-liability-quarterly
+  cancel-in-progress: false
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Acquire three narrow metadata-confirmed India series
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-india-liability-quarterly
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,math
+          from pathlib import Path
+          from datetime import datetime,timezone
+          from urllib.parse import urlencode
+          out=Path("imf-bop-india-liability-quarterly")
+          base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/"
+          cases=[
+            {"name":"india_portfolio_liabilities_usd_annual_2015_2025","key":"IND.L_NIL_T.P_F.USD.A","period":"ge:2015-A1+le:2025-A1","expected":{"COUNTRY":"IND","BOP_ACCOUNTING_ENTRY":"L_NIL_T","INDICATOR":"P_F","UNIT":"USD","FREQUENCY":"A"}},
+            {"name":"india_portfolio_assets_usd_quarterly_2015_2025","key":"IND.A_NFA_T.P_F.USD.Q","period":"ge:2015-Q1+le:2025-Q4","expected":{"COUNTRY":"IND","BOP_ACCOUNTING_ENTRY":"A_NFA_T","INDICATOR":"P_F","UNIT":"USD","FREQUENCY":"Q"}},
+            {"name":"india_portfolio_liabilities_usd_quarterly_2015_2025","key":"IND.L_NIL_T.P_F.USD.Q","period":"ge:2015-Q1+le:2025-Q4","expected":{"COUNTRY":"IND","BOP_ACCOUNTING_ENTRY":"L_NIL_T","INDICATOR":"P_F","UNIT":"USD","FREQUENCY":"Q"}}
+          ]
+          summaries=[]
+          def parse_body(body, expected):
+            obj=json.loads(body)
+            ds=obj["data"]["dataSets"][0]
+            st=obj["data"]["structures"][0]
+            dims=st.get("dimensions",{})
+            sd=dims.get("series",[])
+            od=dims.get("observation",[])
+            ids=[x.get("id") for x in sd]
+            if ids != ["COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY"]:
+              raise ValueError("Unexpected series dimension order: "+repr(ids))
+            if [x.get("id") for x in od] != ["TIME_PERIOD"]:
+              raise ValueError("Unexpected observation dimension order")
+            rows=[]
+            for sk,so in ds.get("series",{}).items():
+              ix=[int(x) for x in sk.split(":") if x!=""]
+              if len(ix)!=len(sd): raise ValueError("Series key arity mismatch")
+              row={sd[i]["id"]:sd[i]["values"][ix[i]].get("id",sd[i]["values"][ix[i]].get("value")) for i in range(len(ix))}
+              if row != expected: raise ValueError("Returned series key does not equal requested key: "+repr(row))
+              obsdefs=st.get("attributes",{}).get("observation",[])
+              for ok,ov in so.get("observations",{}).items():
+                oi=int(ok)
+                if oi>=len(od[0]["values"]): raise ValueError("Observation index out of range")
+                if not ov or ov[0] is None: raise ValueError("Null OBS_VALUE")
+                try:
+                  numeric=float(ov[0])
+                  if not math.isfinite(numeric): raise ValueError("Non-finite OBS_VALUE")
+                except Exception as e: raise ValueError("Invalid OBS_VALUE: "+repr(ov[0])) from e
+                period=od[0]["values"][oi].get("value")
+                attrs={obsdefs[i].get("id",str(i)):ov[i+1] if i+1<len(ov) else None for i in range(len(obsdefs))}
+                rows.append({**row,"TIME_PERIOD":period,"OBS_VALUE":ov[0],"OBSERVATION_ATTRIBUTES_RAW":attrs})
+            periods=[r["TIME_PERIOD"] for r in rows]
+            if len(periods)!=len(set(periods)): raise ValueError("Duplicate TIME_PERIOD")
+            if not rows: raise ValueError("No observations returned")
+            return {"ok":True,"series_dimension_ids":ids,"observation_dimension_ids":[x.get("id") for x in od],"observation_count":len(rows),"time_periods":sorted(periods),"observations":rows,"structure_attribute_ids":{k:[a.get("id") for a in v] for k,v in st.get("attributes",{}).items()},"dataset_attribute_ids":{k:[a.get("id") for a in v] for k,v in ds.get("attributes",{}).items()}}
+          for case in cases:
+            q=urlencode({"c[TIME_PERIOD]":case["period"],"dimensionAtObservation":"TIME_PERIOD","attributes":"all","detail":"dataonly","limit":"1000"})
+            url=base+case["key"]+"?"+q
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.data+json;version=2.0.0"})
+            try:
+              with urllib.request.urlopen(req,timeout=90) as r:
+                status=r.status; headers=dict(r.headers.items()); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; headers=dict(e.headers.items()) if e.headers else {}; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; headers={}; final=url; body=b""; err=type(e).__name__+": "+str(e)
+            (out/(case["name"]+".body")).write_bytes(body)
+            parsed={"ok":False,"observation_count":0,"error":None}
+            if status==200 and "json" in headers.get("Content-Type","").lower():
+              try: parsed=parse_body(body,case["expected"])
+              except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+            record={"name":case["name"],"requested_url":url,"series_key":case["key"],"period_filter":case["period"],"expected_series_dimensions":case["expected"],"accept":"application/vnd.sdmx.data+json;version=2.0.0","status":status,"content_type":headers.get("Content-Type"),"headers":headers,"final_url":final,"transport_error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
+            (out/(case["name"]+".json")).write_text(json.dumps(record,indent=2,ensure_ascii=False)+"\n")
+            summaries.append(record)
+          summary={"dataset_urn":"IMF.STA:BOP(21.0.0)","dsd_ref":"IMF.STA:DSD_BOP(24.0.0)","retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"series_results":[{"name":x["name"],"status":x["status"],"bytes":x["bytes"],"sha256":x["sha256"],"observation_count":x["parse"].get("observation_count"),"periods":x["parse"].get("time_periods"),"parse_error":x["parse"].get("error")} for x in summaries],"acceptance":{"all_three_http_200_parseable":all(x["status"]==200 and x["parse"].get("ok") for x in summaries),"all_requested_keys_exact":all(x["parse"].get("ok") for x in summaries),"all_rows_nonnull_finite_and_unique_period":all(x["parse"].get("ok") for x in summaries)},"scope":"Three India series only: annual liabilities and quarterly assets/liabilities. Raw OBS_VALUE and raw attribute indices retained. No scaling, currency conversion, aggregation, EMDE panel, or production integration."}
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps(summary,indent=2,ensure_ascii=False))
+          if not summary["acceptance"]["all_three_http_200_parseable"]:
+            raise SystemExit("At least one series did not pass the narrow acquisition checks")
+          PY
+      - name: Upload raw responses, parsed rows and provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-india-liability-quarterly-${{ github.run_id }}
+          path: imf-bop-india-liability-quarterly/
+          if-no-files-found: error
+          retention-days: 90
