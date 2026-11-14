@@ -1,0 +1,145 @@
+name: IMF BOP exact Portal DSD and reporter constraints audit
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_portal_dsd24_ifs_flag_constraints.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-portal-dsd24-ifs-constraints
+  cancel-in-progress: false
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve exact Portal DSD, referenced codelists and constraints
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-dsd24-ifs-audit
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from datetime import datetime,timezone
+          from urllib.parse import quote
+          out=Path("imf-bop-dsd24-ifs-audit")
+          base="https://api.imf.org/external/sdmx/2.1"
+          headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+xml;version=2.1"}
+          probes={
+            "portal_dataflow":base+"/dataflow/IMF.STA/BOP/21.0.0?references=all",
+            "portal_dsd24":base+"/datastructure/IMF.STA/DSD_BOP/24.0.0?references=all",
+            "portal_contentconstraints":base+"/contentconstraint/IMF.STA/all/latest?references=all"
+          }
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          def ref(e):
+            return {k:e.attrib.get(k) for k in ("agencyID","id","version","class") if e.attrib.get(k) is not None}
+          results={}
+          bodies={}
+          for name,url in probes.items():
+            req=urllib.request.Request(url,headers=headers)
+            try:
+              with urllib.request.urlopen(req,timeout=45) as r:
+                status=r.status; hs=dict(r.headers.items()); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; hs=dict(e.headers.items()) if e.headers else {}; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; hs={}; final=url; body=b""; err=type(e).__name__+": "+str(e)
+            (out/(name+".xml")).write_bytes(body)
+            rec={"requested_url":url,"final_url":final,"http_status":status,"content_type":hs.get("Content-Type"),"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"transport_error":err,"xml_parse_ok":False,"root":None}
+            if status==200 and body.lstrip().startswith(b"<"):
+              try:
+                root=ET.fromstring(body); rec["xml_parse_ok"]=True; rec["root"]=local(root); bodies[name]=root
+              except Exception as e: rec["parse_error"]=type(e).__name__+": "+str(e)
+            results[name]=rec
+          # Verify the exact Portal dataflow-to-DSD reference independently.
+          flow_refs=[]
+          if "portal_dataflow" in bodies:
+            for e in bodies["portal_dataflow"].iter():
+              if local(e)=="Dataflow":
+                flow_refs += [ref(x) for x in e.iter() if local(x)=="Ref" and x.attrib.get("class")=="DataStructure"]
+          # Inspect the exact DSD's direct components and representations.
+          dsd_inventory={"identity":None,"dimensions":[],"attributes":[],"measures":[],"codelist_refs":[],"concept_refs":[],"all_component_ids":[]}
+          if "portal_dsd24" in bodies:
+            root=bodies["portal_dsd24"]
+            for e in root.iter():
+              if local(e)=="DataStructure":
+                dsd_inventory["identity"]={k:e.attrib.get(k) for k in ("agencyID","id","version")}
+              if local(e) in ("Dimension","TimeDimension","PrimaryMeasure","Attribute"):
+                par=e
+                concept=None; rep=None; attachment=None; assignment=None
+                for x in e.iter():
+                  if local(x)=="ConceptIdentity":
+                    for y in x.iter():
+                      if local(y)=="Ref": concept=ref(y)
+                  if local(x)=="LocalRepresentation":
+                    for y in x.iter():
+                      if local(y)=="Ref" and y.attrib.get("class")=="Codelist": rep=ref(y)
+                  if local(x)=="AttributeRelationship":
+                    attachment=",".join(local(y) for y in x.iter() if y is not x)
+                item={"id":e.attrib.get("id"),"concept":concept,"codelist":rep,"attachment":attachment,"mandatory":e.attrib.get("assignmentStatus")}
+                typ=local(e)
+                key="dimensions" if typ in ("Dimension","TimeDimension") else ("attributes" if typ=="Attribute" else "measures")
+                dsd_inventory[key].append(item)
+                if item["id"]: dsd_inventory["all_component_ids"].append(item["id"])
+                if rep: dsd_inventory["codelist_refs"].append(rep)
+                if concept: dsd_inventory["concept_refs"].append(concept)
+          # Inventory every codelist and count items in the exact DSD response.
+          codelists=[]
+          for root in bodies.values():
+            for e in root.iter():
+              if local(e)=="Codelist":
+                codes=[x for x in e.iter() if local(x)=="Code"]
+                codelists.append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"code_count":len(codes)})
+          # Inventory content constraints and their target structure references / cube regions.
+          constraints=[]
+          if "portal_contentconstraints" in bodies:
+            for e in bodies["portal_contentconstraints"].iter():
+              if local(e)=="ContentConstraint":
+                refs=[ref(x) for x in e.iter() if local(x)=="Ref"]
+                components=[]
+                for x in e.iter():
+                  if local(x) in ("CubeRegion","Member","KeyValue","Attribute"):
+                    components.append({"element":local(x),"id":x.attrib.get("id"),"include":x.attrib.get("include")})
+                constraints.append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"references":refs,"components":components})
+          # Check whether IFS_FLAG/IMF_FLAG is a real direct DSD attribute or only a returned data annotation.
+          flag_ids=[x for x in dsd_inventory["attributes"] if (x.get("id") or "").upper() in ("IFS_FLAG","IMF_FLAG")]
+          codelist_ref_keys={(x.get("agencyID"),x.get("id"),x.get("version")) for x in dsd_inventory["codelist_refs"]}
+          codelist_found=[x for x in codelists if (x["agency"],x["id"],x["version"]) in codelist_ref_keys]
+          summary={
+            "dataset":"IMF.STA:BOP(21.0.0)",
+            "expected_dsd":{"agencyID":"IMF.STA","id":"DSD_BOP","version":"24.0.0"},
+            "dataflow_dsd_refs":flow_refs,
+            "dsd_inventory":dsd_inventory,
+            "ifs_flag_direct_attribute_matches":flag_ids,
+            "codelists_in_returned_responses":codelists,
+            "direct_referenced_codelists_found_in_responses":codelist_found,
+            "content_constraints":constraints,
+            "acceptance":{
+              "dataflow_exact_dsd_ref":any(x.get("agencyID")=="IMF.STA" and x.get("id")=="DSD_BOP" and x.get("version")=="24.0.0" for x in flow_refs),
+              "exact_dsd_identity":dsd_inventory["identity"]=={"agencyID":"IMF.STA","id":"DSD_BOP","version":"24.0.0"},
+              "dsd_xml_parsed":results["portal_dsd24"]["xml_parse_ok"],
+              "ifs_flag_component_in_dsd":bool(flag_ids),
+              "constraint_response_parsed":results["portal_contentconstraints"]["xml_parse_ok"],
+              "reporter_specific_eligibility_proven":False,
+              "no_constraint_found_means_no_eligibility_constraint_in_inspected_artifacts_only":len(constraints)==0
+            },
+            "interpretation":"No observation queries, no aggregation. A missing constraint in this response is not proof that a reporter is eligible; it means only that no relevant constraint was found in the inspected artefacts."
+          }
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({"probes":results,"summary":summary},indent=2,ensure_ascii=False))
+          if not summary["acceptance"]["dataflow_exact_dsd_ref"] or not summary["acceptance"]["exact_dsd_identity"] or not summary["acceptance"]["dsd_xml_parsed"]:
+            raise SystemExit("Exact Portal DSD retrieval or dataflow reference failed; preserve response and fail closed")
+          PY
+      - name: Upload exact metadata evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd24-ifs-audit-${{ github.run_id }}
+          path: imf-bop-dsd24-ifs-audit/
+          if-no-files-found: error
+          retention-days: 90
