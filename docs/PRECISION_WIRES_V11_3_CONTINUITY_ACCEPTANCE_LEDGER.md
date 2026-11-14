@@ -609,3 +609,14 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Pre-registered 0.22% total round-trip cost formula: net=(1+gross)*(1−0.0022)−1. If the original project convention means per-side rather than round-trip, resolve that from canonical project specification before backtest; do not double-subtract by assumption.
 - Scoped methodology clarification: 100% complete. No CSV or historical returns acquired in this step; empirical return panel/backtest remains 0% executed / NOT RUN. Overall project NOT CALCULABLE; Hard Gate BLOCKED. Production invariants unchanged; no PR/merge.
 - Updated report commit 8ad4ead22ff186d9248bfd17e237e393d79dcd3f, blob cb49c4aaba8f3220880f0f46d2dac2803663b241.
+
+
+## 53. Official NSE historical index/TRI output schema and interface state verified — 2026-11-14
+
+- Re-opened official NSE Indices Historical Data page (turn100955view0 lines 383–432, 561–567). Confirmed separate Historical Index Data and Total Returns Index Values groups.
+- Price index output schema is Date + OHLC; TRI output is Date + Total Returns Index + Net Total Return Index. TRI does not expose OHLC in the page's displayed schema; do not fabricate it.
+- Confirmed directory taxonomy Broad Based / Sectoral / Thematic / Strategy and revalidated candidate names (turn100955view0 lines 9–16, 59–89, 112–129). Navigation directory alone does not prove category/methodology or constituent equivalence.
+- Blank unselected state “Select an Index and Time Period” / “No Data Found” is not evidence of no historical data (lines 417–422, 465–471, 554–567). CSV controls exist, but static inspection returned no selected data payload.
+- No CSV bytes, row counts, byte size, response metadata or SHA-256 acquired. No undocumented POST endpoints or third-party reverse-engineered API adopted as official contract.
+- Scoped official interface/schema audit: 100% complete. Actual historical CSV acquisition/validation: 0% in this step / NOT RUN. Overall project NOT CALCULABLE; Hard Gate BLOCKED. Production invariants unchanged; no PR/merge.
+- Updated report commit 5306dff767ef9c739311217967b9b547ecc8a1f3, blob 2bd703c4988f75211208947bc371aecf9db345b2.
