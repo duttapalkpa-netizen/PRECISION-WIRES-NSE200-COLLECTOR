@@ -1,0 +1,107 @@
+name: IMF BOP India combined CSV integrity and annual-quarterly reconciliation
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - "data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv"
+      - ".github/workflows/imf_bop_combined_csv_integrity.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-combined-csv-integrity
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify committed CSV, row counts, period coverage and annual-quarterly sums
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-combined-csv-integrity
+          python - <<'PY'
+          import csv,hashlib,json,math
+          from decimal import Decimal
+          from collections import defaultdict,Counter
+          from pathlib import Path
+          from datetime import datetime,timezone
+          p=Path("data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv")
+          raw=p.read_bytes()
+          digest=hashlib.sha256(raw).hexdigest()
+          expected_sha="260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9"
+          if digest!=expected_sha: raise SystemExit("CSV SHA-256 mismatch: "+digest)
+          rows=list(csv.DictReader(raw.decode("utf-8-sig").splitlines()))
+          if len(rows)!=110: raise SystemExit("Expected 110 data rows, got "+str(len(rows)))
+          groups=defaultdict(list)
+          for r in rows:
+            key=(r["COUNTRY"],r["BOP_ACCOUNTING_ENTRY"],r["INDICATOR"],r["UNIT"],r["FREQUENCY"])
+            groups[key].append(r)
+            if r["COUNTRY"]!="IND" or r["INDICATOR"]!="P_F" or r["UNIT"]!="USD": raise SystemExit("Unexpected series key")
+            if r["SCALE"]!="6" or r["METHODOLOGY"]!="BPM6" or r["PRECISION"]!="6" or r["DERIVATION_TYPE"]!="O" or r["ACCESS_SHARING_LEVEL"]!="PUBLIC_OPEN" or r["SECURITY_CLASSIFICATION"]!="PUB": raise SystemExit("Unexpected decoded metadata")
+            if not math.isfinite(float(r["OBS_VALUE"])): raise SystemExit("Non-finite OBS_VALUE")
+          expected={
+            ("IND","A_NFA_T","P_F","USD","A"):11,
+            ("IND","L_NIL_T","P_F","USD","A"):11,
+            ("IND","A_NFA_T","P_F","USD","Q"):44,
+            ("IND","L_NIL_T","P_F","USD","Q"):44
+          }
+          if {k:len(v) for k,v in groups.items()}!=expected: raise SystemExit("Series row counts/key set mismatch")
+          periods={}
+          for k,rs in groups.items():
+            ps=[r["TIME_PERIOD"] for r in rs]
+            if len(ps)!=len(set(ps)): raise SystemExit("Duplicate periods for "+repr(k))
+            if k[-1]=="A":
+              wanted=[str(y) for y in range(2015,2026)]
+            else:
+              wanted=[f"{y}-Q{q}" for y in range(2015,2026) for q in range(1,5)]
+            if sorted(ps)!=wanted: raise SystemExit("Period coverage mismatch for "+repr(k))
+            periods[".".join(k)]=[min(ps),max(ps),len(ps)]
+          annual={}
+          quarterly=defaultdict(lambda:Decimal(0))
+          for r in groups[("IND","A_NFA_T","P_F","USD","A")]: annual[r["TIME_PERIOD"]]=Decimal(r["OBS_VALUE"])
+          for r in groups[("IND","A_NFA_T","P_F","USD","Q")]: quarterly[r["TIME_PERIOD"][:4]]+=Decimal(r["OBS_VALUE"])
+          asset_diffs={y:abs(quarterly[y]-annual[y]) for y in annual}
+          annual={}
+          quarterly=defaultdict(lambda:Decimal(0))
+          for r in groups[("IND","L_NIL_T","P_F","USD","A")]: annual[r["TIME_PERIOD"]]=Decimal(r["OBS_VALUE"])
+          for r in groups[("IND","L_NIL_T","P_F","USD","Q")]: quarterly[r["TIME_PERIOD"][:4]]+=Decimal(r["OBS_VALUE"])
+          liability_diffs={y:abs(quarterly[y]-annual[y]) for y in annual}
+          tol=Decimal("0.00001")
+          if max(asset_diffs.values())>tol: raise SystemExit("Asset annual-quarterly tolerance failed")
+          if max(liability_diffs.values())>tol: raise SystemExit("Liability annual-quarterly tolerance failed")
+          expected_sources={
+            "85cca14cabf7a674ba37c00f88e3140f562480130bdde57d4902562fa6e0e23a":11,
+            "6eba68f8779efa5636afea8d4a9de4ce26478c67150144c1e4f128e4f6d3a4e4":11,
+            "aff39180e21eec8f71308ac269f9191eb0138b5471808bfa710c6a582be1d24f":44,
+            "6ebe3c2eabd7f9019ffd80d51e01de359bc1f64aee66c8609877654ad4558ccc":44
+          }
+          sources=Counter(r["SOURCE_RESPONSE_SHA256"] for r in rows)
+          if dict(sources)!=expected_sources: raise SystemExit("Source response hash distribution mismatch")
+          summary={
+            "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
+            "csv_path":str(p),"csv_bytes":len(raw),"csv_sha256":digest,"rows":len(rows),
+            "series":periods,
+            "source_hash_counts":dict(sources),
+            "reconciliation":{
+              "asset_max_abs_difference":str(max(asset_diffs.values())),
+              "liability_max_abs_difference":str(max(liability_diffs.values())),
+              "tolerance":str(tol),"years_checked":11,
+              "asset":"PASS_WITH_TOLERANCE","liability":"PASS_WITH_TOLERANCE"
+            },
+            "acceptance":"PASS"
+          }
+          Path("imf-bop-combined-csv-integrity/summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Upload integrity summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-combined-csv-integrity-${{ github.run_id }}
+          path: imf-bop-combined-csv-integrity/
+          if-no-files-found: error
+          retention-days: 90
