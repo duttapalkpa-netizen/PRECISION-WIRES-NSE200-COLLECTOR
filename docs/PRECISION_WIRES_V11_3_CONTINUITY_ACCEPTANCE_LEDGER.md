@@ -834,3 +834,30 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 ### Report reference
 - `docs/NSE_RSS_ISSUER_COHORT_AND_SYMBOL_CANDIDATE_AUDIT_20261114.md`
 - Report commit: `d3f30ea6fe1a029efd0c15d27314cfab95e17e3e`
+
+
+## 60. NSE RSS 35 linked-attachment inventory audit — 2026-11-14
+
+### Source
+- Run `43558025207`, artifact `14098814399`.
+- `announcements.jsonl` SHA-256: `fa17c0c89ebc10321821aa54fe5f5eaf7c488ddbd2e3a4d32ac0aa2e49c9b60d`.
+
+### Inventory result
+- 35/35 non-empty RSS link rows inventoried, preserving exact original URL and filename strings.
+- 35 distinct URLs; 33 PDF and 2 XML links.
+- 20 distinct issuer-title strings; repeated disclosures retained as separate rows.
+- CSV `NSE_RSS_35_linked_attachment_inventory_20261114.csv`: 15,648 bytes; SHA-256 `ba60e2859990be59f5f1a573ffccb4dfab6f498e5042d3bb5ab5ec8c4ad066ef`.
+
+### Validation boundary
+- All links are original RSS strings under `nsearchives.nseindia.com/corporate/`; this establishes only source-domain provenance.
+- Retrieval attempts for 2 XMLs, Coal India PDF, and Oriana PDF did not yield usable attachment bytes through the retrieval path (the latter was rejected as 12,488,688 bytes). These are not interpreted as broken links.
+- No attachment HTTP status/redirect/MIME/bytes/hash/content validation is claimed; all 35 content states remain NOT VALIDATED.
+- No symbol is promoted from filename tokens; authoritative issuer-symbol mapping remains UNKNOWN.
+- Next: isolated bounded acquisition for all 35 exact URLs, per-file response metadata/hash/parse; then legal issuer and dated MII composite-key reconciliation.
+- Inventory: 100%; live acquisition/content validation: 0%; symbol mapping: 0%; event-price join: 0% / BLOCKED.
+- No code/data/selector/ranking/diagnostic/workflow/production changes; no PR/merge.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED.
+
+### Report reference
+- `docs/NSE_RSS_35_LINKED_ATTACHMENT_INVENTORY_AUDIT_20261114.md`
+- Report commit: `9e83a8208a7ac93e58ed613e68fef0eb7f4360e8`
