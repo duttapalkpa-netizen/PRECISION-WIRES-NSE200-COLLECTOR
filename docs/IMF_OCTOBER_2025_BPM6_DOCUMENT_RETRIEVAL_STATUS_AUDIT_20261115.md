@@ -117,3 +117,28 @@ Official sources:
 - https://sdmxcentral.imf.org/data/overview.html
 
 Status: API contract and reproducible query specification PASS; actual target Dataflow response NOT_RETRIEVED; target Provision Agreement/Provider/Constraint UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 10. Registry live-page cross-check and non-transferability finding (2026-11-15)
+
+Fresh inspection of the live IMF SDMX Central pages established:
+
+1. The Dataflow overview is a paginated registry list (216 entries; visible first page shows CBSL and ESTAT entries including ESTAT BPM6_BOP_M and BPM6_BOP_Q). This is not a complete list of IMF entries and does not establish absence of an IMF.STA:BOP flow.
+2. The Reporting Constraints page visibly lists:
+   - `IMF:BOP6_CONSTRAINT` → `BOP6[1.0]`
+   - `IMF:BOP_BP6_CONSTRAINT` → `BOP_BPM6[1.0]`
+   Both are Dataflow cube-region constraints. Neither visible row names `IMF.STA:BOP(21.0.0)` or `IMF.STA:DSD_BOP(24.0.0)`; no equivalence or applicability is assumed.
+3. The Provision Agreements page is also paginated (1,001 entries). Its visible first page includes country-specific agreements such as `IMF:AT_BOP` and `IMF:BE_BOP`, but no exact target reference for the IMF.STA BOP dataset is established. A text find on the opened rendered page returned no BOP match because the detail table is dynamically populated; this is not evidence of absence.
+4. The Registrations page is a separate registry view with Dataflow, Data Provider and registered URL columns. A search-result extract lists provider registrations for `IMF:BOP6(1.0)`, `IMF:BOP_BPM6(1.0)` and `IMF:BOP_GBPM6` flows. Those are not automatically the target `IMF.STA:BOP(21.0.0)`; provider identity cannot be transferred between them.
+5. The REST Web Service UI explicitly offers Structure Type, Agency, Structure ID, Version, References and Download controls. This confirms the exact reproducible UI route: select Structure Type=Dataflow; Agency=IMF.STA only if the selector actually offers it; Structure ID=BOP; Version=21.0.0; References=All; select SDMX-ML v2.1 (or retain supported default only if documented); inspect generated Query URL; use Download; preserve untouched response and SHA-256. If Agency/ID/version are not offered or query returns a formal SDMX error, preserve the response and do not substitute IMF:BOP6 or IMF:BOP_BPM6.
+6. Official registry overview explains constraints can attach to DSD, Dataflow, Provision Agreement or Data Provider and cascade. The exact target chain must be followed only from returned references.
+
+Sources:
+- Dataflow overview: https://sdmxcentral.imf.org/data/overview.html
+- Reporting constraints: https://sdmxcentral.imf.org/data/constraints.html
+- Provision Agreements: https://sdmxcentral.imf.org/data/provisionAgreements.html
+- Registrations: https://sdmxcentral.imf.org/data/registrations.html
+- REST Web Service UI: https://sdmxcentral.imf.org/webservice/structure.html
+- Registry constraint semantics: https://sdmxcentral.imf.org/overview.html
+
+Gate: live registry page cross-check PASS; exact target Dataflow and its references NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
