@@ -676,3 +676,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - No-repeat: do not repeat IMF item 1792656603400855000 metadata search, April 2025 six-country inventory review, 39-country annual audits, or successful 110-row India acquisition/reconciliation without new evidence/code. Next action is direct PDF file target resolution through official document-item download action; if inaccessible, log limitation and pivot to another unresolved gate.
 - No new country-level evidence from this reconciliation. No credentials, paid services, synthetic data, external contact or production changes.
 - Updated audit report commit: cfa2cd8f6a7f71ba16b6525354d4b252fa61bd92.
+
+## 2026-11-15 — India 110-row vintage/revision readiness audit
+
+- Read committed CSV and JSON manifest directly; no API reacquisition or data mutation.
+- CSV has 110 rows; four exact series counts 11/11/44/44; zero duplicate series-period keys. Manifest declares 110 rows, matching four response hashes and series row counts.
+- Header has 20 columns and no vintage/revision/release/retrieval/publication timestamp field. SOURCE, STATUS, ACCESS_SHARING_NOTES and OVERLAP are null in all 110 rows. IFS_FLAG true on 55 asset rows and null on 55 liability rows (null remains UNKNOWN). SCALE=6, PRECISION=6, DERIVATION_TYPE=O, ACCESS_SHARING_LEVEL=PUBLIC_OPEN, SECURITY_CLASSIFICATION=PUB across 110 rows.
+- Response SHA is one archived response per series, not a revision timeline. Do not infer values were never revised or treat this as first-release data.
+- Bounded audit completion: 100% of defined structural checks; outcome for revision/vintage gate is NOT_READY / NOT_ESTABLISHED. Next action: find official public IMF vintage/revision endpoint or reproducible release archive; absent that, keep revision acceptance UNKNOWN and restrict scope to current archived values.
+- IMF BOP accepted gates remain 5/7 (71.4%). October 2025 PDF retrieval package remains 25% (1/4). Full project progress remains NOT_CALCULABLE.
+- No new observation values, no credentials, paid services, synthetic data, external contact, PR merge or production changes.
+- Updated audit report commit: e743e93ac6ae1f7f15aad13fe92a7b1925d56ee3.
