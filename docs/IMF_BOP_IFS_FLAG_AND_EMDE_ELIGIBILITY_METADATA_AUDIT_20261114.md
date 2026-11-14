@@ -64,3 +64,13 @@ Next highest-value action: inspect the exact archived DSD_BOP(24.0.0) structure 
 ## 6. Invariants
 
 ₹0 spend; official public sources only; no paid APIs, credentials, authentication bypass, external contact, synthetic data/timestamps, PR merge or production integration. Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672, engines A–E and Hard Gate unchanged.
+
+
+## 7. Archived metadata artifact scope check (important limitation)
+
+The previously archived metadata artifacts were opened and inspected before treating them as evidence for the Portal DSD:
+
+- Artifact `14111193621` contains the IMF global SDMx BOP DSD `IMF:BOP(2.6.0)` (raw XML SHA-256 `19d3dc2d341eaef68b95b6c011c4c5db6a3f25336f5967806a728c7f5dd394a5`) and its referenced global codelists. Its component inventory uses the global DSD vocabulary (for example `FLOW_STOCK_ENTRY`, `ACCOUNTING_ENTRY`, `INT_ACC_ITEM`, `UNIT_MEASURE`, `CURRENCY_DENOM`, `TIME_PERIOD`) and does not contain `IFS_FLAG`, `IMF_FLAG`, `BOP_ACCOUNTING_ENTRY`, or `INDICATOR`. It is not the Portal's exact `IMF.STA:DSD_BOP(24.0.0)`.
+- Artifact `14112042284` contains a metadata audit of the public dataset page and IMF SDMX Central global dataflows/DSD. Its dataflow request is `https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/all/latest/`; it is not a capture of the exact Portal DSD 24.0.0 structure/constraints. The metadata summary explicitly labels the structure inventory as counts-only/manual reconciliation required.
+- Therefore neither artifact can be substituted for the exact Portal DSD 24.0.0 when deciding reporter eligibility. No reporter eligibility decision is made from these mismatched global artefacts. This reinforces the 39-country eligibility result as UNKNOWN and the need to retrieve the exact Portal DSD structure/constraint artefacts or another official exact-scope metadata source.
+- This artifact-scope check reuses prior downloaded files; no data API query was repeated.
