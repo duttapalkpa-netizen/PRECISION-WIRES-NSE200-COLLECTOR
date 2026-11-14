@@ -687,3 +687,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - IMF BOP accepted gates remain 5/7 (71.4%). October 2025 PDF retrieval package remains 25% (1/4). Full project progress remains NOT_CALCULABLE.
 - No new observation values, no credentials, paid services, synthetic data, external contact, PR merge or production changes.
 - Updated audit report commit: e743e93ac6ae1f7f15aad13fe92a7b1925d56ee3.
+
+## 2026-11-15 — India panel extraction-contract compliance matrix
+
+- Compared Section 3/5 required fields in `IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md` against committed 110-row CSV and manifest. All 16 defined elements reviewed (bounded audit 100% complete); no data re-acquisition or mutation.
+- Present: IND country, frequency/period, BPM6, Portal dataflow/version in manifest, exact dimensions, A_NFA_T/L_NIL_T direction, P_F total-portfolio indicator, USD/SCALE metadata, OBS_VALUE, source-response hashes and combined CSV hash.
+- Partial: instrument scope (P_F total only, no equity/debt split); observation status/confidentiality (DERIVATION_TYPE=O and public flags present but STATUS null and no OBS_STATUS/CONF_STATUS); source URL/dataset id is in companion provenance, not row-level; key uniqueness checked only within one captured snapshot because vintage dimension absent.
+- Missing: per-response retrieval timestamp UTC and publication/release vintage. Do not fabricate them or use audit date as substitute.
+- Outcome: revision-aware extraction contract PARTIAL / NOT_READY. Keep current 110-row data as one archived snapshot; do not claim first-release or revision-complete observations.
+- Next distinct action: design a separate research-only provenance sidecar schema for future pulls, recording actual timestamp, final URL, HTTP status, Content-Type, bytes, SHA-256 and source-supplied release vintage; unknown vintage stays null/UNKNOWN. Do not mutate existing CSV or production.
+- Bounded audit progress 100%; IMF BOP workstream 5/7=71.4%; October PDF package 25%; overall V11.3 project progress NOT_CALCULABLE.
+- Updated audit report commit: 2989920fbfeddbfff129cc89d993a36eb033f240.
+- No credentials, paid services, synthetic data/timestamps, external contact, PR merge or production changes.
