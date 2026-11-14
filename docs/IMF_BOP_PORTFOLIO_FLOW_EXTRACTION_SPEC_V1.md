@@ -191,3 +191,73 @@ Service boundary clarification: IMF SDMX Central's documented Structure REST API
 The Portal dataset URN `IMF.STA:BOP(21.0.0)` is still not mapped to either IMF:BOP_GBPM6(2.0), IMF:BPM6_BOP_Q(1.5), or DSD 2.6.0. No observation endpoint, dimension key for the Portal dataset, or country observation is yet verified. India code verification in the public codelists is not proof of reporter observations.
 
 Current status: DSD and codelist metadata retrieval PASS; Portal dataset-to-dataflow crosswalk UNKNOWN; public observation access BLOCKED pending a verifiable official Download/View Data route or an authorized beta-portal API schema. No aggregation permitted.
+
+
+## 9. 2026-11-14 — Portal-owned Dataflow crosswalk and India public observation acquisition
+
+This section supersedes the earlier UNKNOWN/blocked status for the Portal-to-registry crosswalk and the absence of an observation route. It does not supersede the distinct SDMX Central registry-vintage findings in Sections 8 and prior addenda.
+
+### Exact Portal-owned mapping
+
+The correct SDMX-REST 1.x route is:
+`https://api.imf.org/external/sdmx/2.1/dataflow/IMF.STA/BOP/21.0.0?references=all`
+
+The path does not include a `/structure/` prefix. The latter returned 404 (“No such artefact type: *”). The standard resource path returned HTTP 200, SDMX-ML 2.1, and an explicit Dataflow object:
+- IMF.STA:BOP(21.0.0)
+- DSD reference IMF.STA:DSD_BOP(24.0.0)
+
+This is the Portal-owned dataflow and DSD mapping. It is not the same object as SDMX Central's separate IMF:BOP_GBPM6(2.0) or IMF:BOP(2.6.0).
+
+### DSD 24.0.0 key schema
+
+Direct DSD component parsing yields 6 dimensions, 45 attributes and OBS_VALUE:
+- COUNTRY
+- BOP_ACCOUNTING_ENTRY
+- INDICATOR
+- UNIT
+- FREQUENCY
+- TIME_PERIOD (observation time dimension)
+
+The 5-part series key order is COUNTRY.BOP_ACCOUNTING_ENTRY.INDICATOR.UNIT.FREQUENCY. ConceptScheme/codelist references and exact labels were checked:
+- IND = India
+- A_NFA_T = Assets, Net acquisition of financial assets
+- P_F = Portfolio investment, Total financial assets/liabilities
+- USD = US dollar
+- A = Annual; Q = Quarterly
+
+The first attempted indicator P exists in CL_BOP_INDICATOR as “Portfolio investment”, but the India dataflow group inventory did not contain a matching India asset-side aggregate group for that key. The correct aggregate code for the series requested here is P_F. The query was corrected using the official codelist label and the dataflow response's actual group inventory. Preserve the first attempt as a diagnostic; do not rewrite it as a success.
+
+### Actual observation route and narrow India sample
+
+Official Data Portal SDMX 3.0 data route:
+`https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/{key}`
+
+Exact series key:
+`IND.A_NFA_T.P_F.USD.A`
+
+Period filter: 2015-A1 through 2025-A1. The route returned HTTP 200 in SDMX-JSON 2.0.0 and SDMX-ML 3.0.0. It returned 11 observations for 2015–2025. This verifies public unauthenticated access for this exact series only; it does not complete the full India BOP panel.
+
+Raw response hashes:
+- Full JSON (49,654,152 bytes): `844f253263c00e77b7d0ee572a47dd01dc258c7b3eb0bc4b5f1eba9daac59a25`
+- Full XML (122,045,648 bytes): `ca4676dbccb82383b7e549922169729c40084ec0d1c3eec4208f4ae4b1c25471`
+- Compact data-only JSON (7,845 bytes): `85cca14cabf7a674ba37c00f88e3140f562480130bdde57d4902562fa6e0e23a`
+
+The compact profile `dimensionAtObservation=TIME_PERIOD&attributes=all&detail=dataonly&limit=100` preserved all 11 observations and the series/observation attributes while reducing the response from 49,654,152 bytes to 7,845 bytes (99.9842% smaller). Use this profile for narrow future pulls unless an attribute or structural requirement proves otherwise.
+
+Parser correction: in compact data-only SDMX-JSON, observations are nested under `dataSets[0].series[*].observations`, with time values in the observation dimension. The first compact parser looked only at `dataSets[0].observations` and reported zero. The raw body showed the 11 rows; the parser was corrected and the subsequent compact `attributes=all` run parsed 11/11 rows. Retain the initial parser diagnostic.
+
+### Observation metadata
+
+Series attributes: SCALE=6; METHODOLOGY=BPM6.
+Observation attributes: PRECISION=6; DERIVATION_TYPE=O (Reported official data); ACCESS_SHARING_LEVEL=PUBLIC_OPEN (Public/Unrestricted); SECURITY_CLASSIFICATION=PUB (Public/Unrestricted). STATUS, ACCESS_SHARING_NOTES and SOURCE are null at observation level. Preserve nulls; do not infer values. SCALE is retained as a source attribute; no scaling transformation is applied.
+
+### Stored outputs and evidence
+
+- CSV: `data/research/imf_bop_india_portfolio_assets_usd_annual_2015_2025.csv`, 11 rows, SHA-256 `60e557c922763f145284c6243e4612d6c05c0ce756c6f2d8846e0ea2fc7c8697`, commit `47bc2c83bc60aec0bfebb4cb765f5884af84dbd7`.
+- Provenance manifest: `data/research/imf_bop_india_portfolio_assets_usd_annual_2015_2025.manifest.json`, final commit `4c6d19533ce8c57564376f6fadf5e3055a67d42a`.
+- Audit report: `docs/IMF_BOP_PORTAL_DATAFLOW_AND_INDIA_OBSERVATION_AUDIT_20261114.md`, commit `e01607a6d03c3a3ed511082de79ec9af17fa7c2b`.
+- Dataflow probe Run `43615378167` SUCCESS; artifact `14122440301`; ZIP SHA-256 `2411f5837d7145ed6450a1423b17282f240cda6b7b6d61d842e4c18a6e88c125`.
+- Full India sample Run `43615740505` SUCCESS; artifact `14121942694`; ZIP SHA-256 `e9d2b920a658870f0f4eb9abf60bc82815ed945b4ef0d9f1a96e3bc66c00d666`.
+- Compact data-only Run `43616059985` SUCCESS; artifact `14122421554`; ZIP SHA-256 `cc951e2655dc4592ab82d848e0beebc43970132de1f4f3edc5c3ef8b56aaed23`.
+
+Current gates: Portal crosswalk PASS; narrow India annual portfolio asset series PASS (11/11); full India panel, liabilities, quarterly series and revision reconciliation NOT DONE; EMDE reporter coverage NOT DONE; EM aggregate BLOCKED. The IMF BOP workstream is 5/7 accepted gates (71.4%); the narrow sample does not complete the full India panel gate. Project-wide progress remains NOT_CALCULABLE pending full workstream ledger reconciliation.
