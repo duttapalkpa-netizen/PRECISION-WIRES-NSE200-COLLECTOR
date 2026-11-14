@@ -682,3 +682,36 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Corrective code change and unit tests: 0% / NOT RUN (no approval requested or applied).
 - Re-run of H+3/H+5 event study/backtest: 0% / BLOCKED pending correction.
 - Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No PR/merge; all production invariants unchanged.
+
+
+## 56. Walk-forward immature-horizon label propagation defect — 2026-11-14
+
+### Scope
+- Distinct read-only downstream-label audit of `pipeline/walk_forward_backtest.py`; source blob SHA `d085f7a2d35a88b4c4eaba65144a429a06961b09`.
+- This does not repeat or replace Appendix 55's forward-window alignment defect.
+
+### Confirmed finding
+- In `main()`, each label is formed by comparing `FUT{h}_HIGH_PCT` with its threshold and immediately calling `.astype(int)`.
+- A missing/NaN outcome compared with a numeric threshold evaluates False; `.astype(int)` converts it to 0. The subsequent `dropna` on integer labels cannot restore missingness.
+- Therefore, even after full-horizon handling is added as designed in Appendix 55, immature per-symbol outcomes can be silently relabelled as non-winners unless label construction preserves missingness.
+- A global last-five-date cutoff does not guarantee h future observations for every symbol with sparse/newly listed/missing-session histories.
+- No dataset was loaded; affected row counts and empirical impact are NOT MEASURED.
+
+### Impact and safe remediation (not applied)
+- False negative training labels can contaminate model fitting/calibration and bias target probabilities.
+- Build labels as nullable/missing until a finite, full-horizon outcome exists; assign 1/0 only to mature outcomes.
+- Filter each target's training rows by its own mature label; do not force unavailable horizons into class 0.
+- Add regression tests for NaN preservation, H+1/H+3/H+5, symbol-specific terminal rows, sparse histories and no missing-to-negative conversion.
+- Audit metric/calibration denominators to exclude immature outcomes from both winner and non-winner populations.
+- Recompute only after Appendix 55 forward alignment and this label propagation correction both pass tests.
+
+### Status
+- Scoped source/logic audit: 100% complete.
+- Dataset-level impact count: NOT RUN.
+- Corrective code/tests: 0% / NOT RUN.
+- Refit/backtest rerun: 0% / BLOCKED pending approved research-only corrections.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No code/data/selector/ranking/diagnostic/workflow/production changes; no PR/merge.
+
+### Report reference
+- `docs/WALK_FORWARD_IMMATURE_HORIZON_LABEL_AUDIT_20261114.md`
+- Report commit: `0a4d5e77c594e7fc5f4759a43e41bc11443bba56`
