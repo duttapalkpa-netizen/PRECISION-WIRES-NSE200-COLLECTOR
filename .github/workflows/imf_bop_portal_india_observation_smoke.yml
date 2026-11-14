@@ -28,7 +28,7 @@ jobs:
           from datetime import datetime,timezone
           from urllib.parse import urlencode
           out=Path("imf-bop-india-observation-smoke")
-          base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/IND.A_NFA_T.P.USD.A"
+          base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/IND.A_NFA_T.P_F.USD.A"
           q=urlencode({"c[TIME_PERIOD]":"ge:2015-A1+le:2025-A1","dimensionAtObservation":"AllDimensions","attributes":"all","detail":"full","includeHistory":"true","limit":"100"})
           url=base+"?"+q
           probes={
@@ -79,7 +79,7 @@ jobs:
             rec={"requested_url":target,"accept":accept,"status":status,"content_type":headers.get("Content-Type"),"headers":headers,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
             results[key]=rec
             (out/(key+"_result.json")).write_text(json.dumps(rec,indent=2,ensure_ascii=False)+"\n")
-          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"dataset_urn":"IMF.STA:BOP(21.0.0)","dataflow":{"agency":"IMF.STA","id":"BOP","version":"21.0.0"},"dsd":{"agency":"IMF.STA","id":"DSD_BOP","version":"24.0.0"},"key":{"COUNTRY":"IND","BOP_ACCOUNTING_ENTRY":"A_NFA_T","INDICATOR":"P","UNIT":"USD","FREQUENCY":"A"},"period_filter":"2015-A1 through 2025-A1","results":results,"acceptance":{"any_HTTP_200_parseable_response":any(v["status"]==200 and v["parse"]["ok"] for v in results.values()),"actual_observation_rows_returned":any(v["status"]==200 and v["parse"]["observation_count"]>0 for v in results.values())},"scope":"One India annual portfolio-investment asset-side series only. No other countries, no aggregation, no synthetic values, no authentication or bypass."}
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"dataset_urn":"IMF.STA:BOP(21.0.0)","dataflow":{"agency":"IMF.STA","id":"BOP","version":"21.0.0"},"dsd":{"agency":"IMF.STA","id":"DSD_BOP","version":"24.0.0"},"key":{"COUNTRY":"IND","BOP_ACCOUNTING_ENTRY":"A_NFA_T","INDICATOR":"P_F","UNIT":"USD","FREQUENCY":"A"},"period_filter":"2015-A1 through 2025-A1","results":results,"acceptance":{"any_HTTP_200_parseable_response":any(v["status"]==200 and v["parse"]["ok"] for v in results.values()),"actual_observation_rows_returned":any(v["status"]==200 and v["parse"]["observation_count"]>0 for v in results.values())},"scope":"One India annual portfolio-investment asset-side series only. No other countries, no aggregation, no synthetic values, no authentication or bypass."}
           (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
           print(json.dumps({"acceptance":summary["acceptance"],"results":{k:{"status":v["status"],"content_type":v["content_type"],"bytes":v["bytes"],"sha256":v["sha256"],"final_url":v["final_url"],"error":v["error"],"parse":v["parse"]} for k,v in results.items()}},indent=2,ensure_ascii=False))
           PY
