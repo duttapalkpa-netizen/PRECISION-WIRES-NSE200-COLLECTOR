@@ -106,7 +106,6 @@ jobs:
             "the gambia":"gambia",
             "the bahamas":"bahamas",
             "kyrgyz republic":"kyrgyzstan",
-            "lao p d r":"lao people s democratic republic",
             "micronesia":"micronesia federated states of",
             "russia":"russian federation",
             "syria":"syrian arab republic",
@@ -114,12 +113,7 @@ jobs:
             "moldova":"moldova republic of",
             "venezuela":"venezuela bolivarian republic",
             "tanzania":"tanzania united republic of",
-            "cabo verde":"cape verde",
-            "eswatini":"kingdom of eswatini",
-            "st kitts and nevis":"saint kitts and nevis",
-            "st lucia":"saint lucia",
-            "st vincent and the grenadines":"saint vincent and the grenadines",
-            "vietnam":"viet nam"
+            "west bank and gaza":"palestine state of"
           }
           records=[]; unmapped=[]; ambiguous=[]
           for name in weo_names:
