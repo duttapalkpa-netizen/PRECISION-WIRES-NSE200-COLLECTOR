@@ -154,3 +154,23 @@ This entry supersedes the immediately preceding 153/154 partial-mapping status a
 - This membership PASS does NOT establish BOP observation coverage for all 154 economies and does NOT authorize any EM flow aggregate. No BOP observations or aggregate were created.
 - Project-wide verified overall progress remains NOT_CALCULABLE pending reconciliation of the full multi-workstream acceptance ledger and current gate weights.
 - Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 diagnostics, engines and Hard Gate were not modified. ₹0 spend; free official sources only; no synthetic observations or timestamps.
+
+
+## 2026-11-14 — IMF BOP Portal-to-SDMX registry crosswalk audit
+
+- New public-source audit Run ID: 43600890212 — SUCCESS; all workflow and artifact-upload steps completed.
+- Workflow commit: `1f6be23493e78cbf2c4a4fced7a810b0313597f7`.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43600890212
+- Artifact ID: 14115559741.
+- Artifact ZIP SHA-256: `2ef0f095cc0e0d2b7b1a29a86591ced09bda2d1100b44043c493c18cd005c716`; downloaded again and local digest independently matched.
+- Official IMF SDMX Central IMF/all/latest dataflow catalogue: HTTP 200, 101 dataflow objects, raw SHA-256 `547fa36a26e2859301013ea52d05fcbfd99f2cd068afa619696e412bc4760693`.
+- Thirteen BOP-related IMF dataflows were inventoried. BOP_GBPM6(2.0) references IMF:BOP(2.0); BPM6_BOP_Q(1.5) references IMF:BOP(1.5); BOP6(1.1) and BOP_BPM6(1.0) reference IMF:ECOFIN_DSD(1.0); other related flows reference DSD versions 1.0, 1.1, 1.2, or 2.0. No BOP-related IMF dataflow in this catalogue references IMF:BOP(2.6.0).
+- Official Portal dataset page confirms URN IMF.STA:BOP(21.0.0), HTTP 200, raw SHA-256 `434df7a013e62fa1d0db95d216809f17976480d8c3fc91ca2e0413d96106d9b3`.
+- Official IMF API help page confirms SDMX 2.1 and 3.0 APIs, but states Swagger explorer requires beta-portal sign-in. API help raw SHA-256 `7004a1655ea132ea2fe9e39cc11406656dae080d4bbc5d67ecb20e715114855b`.
+- Request to https://portal.api.imf.org/apis returned HTTP 200 only after redirect to https://portal.api.imf.org/signin?returnUrl=%2Fapis; captured page SHA-256 `eb094d79d1f431a2020e77b80a3e1aff00e9dfb7a47fe29b7ce8ba0a35324e99`. This is not a public schema or data endpoint. No sign-in or bypass was attempted.
+- Crosswalk conclusion remains UNKNOWN: Portal dataset URN IMF.STA:BOP(21.0.0) is not proven to be any listed SDMX Central dataflow. The BOP DSD 2.6.0 registry object is not referenced by any BOP-related IMF dataflow in the captured 101-flow catalogue. Do not infer equivalence from similar names.
+- Observation API access remains BLOCKED pending an authorized beta-portal session or an IMF-published public mapping/endpoint. No observations acquired; no EM aggregate calculated.
+- Evidence report: `docs/IMF_BOP_PORTAL_TO_SDMX_REGISTRY_CROSSWALK_AUDIT_20261114.md`, report commit `101e631955d9bcb6ab6ab34e0834f47f86cdfdc7`.
+- IMF BOP workstream remains 4/7 accepted gates (57%) on the existing rubric: dataset identity, DSD/codelists, direct component inventory and WEO membership mapping are PASS. Portal-to-registry crosswalk UNKNOWN; India observation acquisition BLOCKED/NOT_DONE; EM aggregation BLOCKED.
+- The full PRECISION-WIRES V11.3 project percentage remains NOT_CALCULABLE until all workstream gates and weights are reconciled. No current project-wide percentage is asserted.
+- No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines or Hard Gate. ₹0 spend; no paid services; no synthetic values/timestamps; no PR merge.
