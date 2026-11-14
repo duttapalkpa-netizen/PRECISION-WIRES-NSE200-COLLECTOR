@@ -45,3 +45,28 @@ This is an evidence crosswalk for research ingestion and future event studies. I
 - Timestamped historical event-to-NSE-session panel: NOT BUILT.
 - Production integration: NOT AUTHORIZED / NOT DONE.
 - This document does not satisfy Macro-Geo P0 coverage by itself and does not unblock the Hard Gate.
+
+
+## Fresh official dated market snapshots (retrieved for 2026-11-14 review)
+
+### CDSL FPI daily trend — reporting date 12-Nov-2026
+- Equity: gross purchases ₹32,887.51 crore; gross sales ₹18,208.79 crore; net exchange investment ₹14,678.72 crore; primary/other net ₹15.00 crore; subtotal net ₹14,693.72 crore.
+- Debt-General subtotal net ₹445.65 crore; Debt-VRR subtotal net −₹173.22 crore; Debt-FAR stock-exchange net ₹1,022.81 crore.
+- Conversion rate shown by CDSL: ₹93.8075/USD.
+- CDSL notes the report is compiled from exchange/depository reports and represents the previous trading day's FII/FPI trading/position. Preserve its reporting-date semantics; do not conflate debt routes or treat the subtotal as a full independent capital-flow measure.
+- Source: https://www.cdslindia.com/eservices/publications/fiidaily
+
+### NSE reference / market snapshot — 13-Nov-2026
+- NSE reference rate at 13:00 IST: USD/INR ₹94.1997 (previous day ₹93.7650); 26-Nov USDINR futures LTP 94.3800, +0.2523% at the displayed snapshot.
+- NSE market statistics at 12:51 IST: 3,577 stocks traded; advances 1,264; declines 2,199; unchanged 114; 93 stocks at 52-week high and 25 at 52-week low. This is an intraday breadth snapshot, not closing breadth.
+- Source: https://www.nseindia.com/
+
+### RBI National Summary Data Page — published 13-Nov-2026; several series latest 12-Nov-2026
+- USD/INR ₹93.77 on 12-Nov versus ₹88.64 in the comparison period shown; Nifty 50 25,299 versus 25,876 (-2.23%) and Sensex 81,911 versus 84,467 (-3.03%) in the page's comparison columns.
+- 1-year MCLR range 8.45–8.90% latest 06-Nov; T-bill rates 5.8681% latest 11-Nov; broad money M3 ₹337,684.2bn latest 31-Oct.
+- Source: https://www.rbi.org.in/SCRIPTs/BS_NSDPDisplay.aspx
+
+### Interpretation guardrails
+- The CDSL 12-Nov net equity inflow and the NSE 13-Nov intraday rupee/breadth snapshots are distinct time stamps and source definitions. Do not combine them into a same-session causal claim.
+- A positive one-day FPI equity figure can coexist with weak breadth or a weaker rupee; this is not contradictory because the observations differ in timestamp, universe, and measurement. Require a multi-session panel before asserting persistence or predictive value.
+- These snapshots enrich the factor register but do not estimate betas, causal effects, or 1–5 day return probabilities. They are not a substitute for the full official historical panel.
