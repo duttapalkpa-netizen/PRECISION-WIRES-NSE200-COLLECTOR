@@ -1,0 +1,133 @@
+name: IMF BOP metadata-first access audit
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_metadata_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-metadata-audit
+  cancel-in-progress: false
+jobs:
+  metadata-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve official metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-audit
+          python - <<'PY'
+          import hashlib, json, urllib.request, urllib.error
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          out = Path("imf-bop-audit")
+          requests = {
+              "bop_dsd_2_6_0": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true&saveAs=IMF_BOP_DSD_2_6_0",
+              "imf_dataflows": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/all/latest/?format=sdmx-2.1&references=children&detail=full",
+              "imf_bop_dataset_page": "https://data.imf.org/en/datasets/IMF.STA%3ABOP"
+          }
+          summary = {
+              "audit_date": datetime.now(timezone.utc).isoformat(),
+              "scope": "metadata-only; no observation query or aggregation",
+              "requests": {}
+          }
+
+          def local(tag):
+              return tag.rsplit("}", 1)[-1]
+
+          for name, url in requests.items():
+              item = {"request_url": url, "retrieved_at_utc": datetime.now(timezone.utc).isoformat()}
+              req = urllib.request.Request(url, headers={
+                  "User-Agent": "PRECISION-WIRES-V11.3-research-metadata-audit/1.0",
+                  "Accept": "application/vnd.sdmx.structure+xml;version=2.1, application/xml, text/html;q=0.8, */*;q=0.5"
+              })
+              raw = b""
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      raw = response.read()
+                      item.update({
+                          "http_status": response.status,
+                          "content_type": response.headers.get("Content-Type"),
+                          "final_url": response.geturl(),
+                          "raw_bytes": len(raw),
+                          "raw_sha256": hashlib.sha256(raw).hexdigest()
+                      })
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read()
+                  item.update({
+                      "http_status": exc.code,
+                      "content_type": exc.headers.get("Content-Type") if exc.headers else None,
+                      "final_url": exc.geturl(),
+                      "raw_bytes": len(raw),
+                      "raw_sha256": hashlib.sha256(raw).hexdigest(),
+                      "transport_error": "HTTPError"
+                  })
+              except Exception as exc:
+                  item.update({
+                      "http_status": None,
+                      "raw_bytes": len(raw),
+                      "raw_sha256": hashlib.sha256(raw).hexdigest(),
+                      "transport_error": type(exc).__name__ + ": " + str(exc)
+                  })
+              (out / (name + "_raw.bin")).write_bytes(raw)
+              if raw:
+                  try:
+                      root = ET.fromstring(raw)
+                      tags = [local(node.tag) for node in root.iter()]
+                      item["xml_parse"] = "PASS"
+                      item["root_element"] = local(root.tag)
+                      item["data_structure_count"] = tags.count("DataStructure")
+                      item["dataflow_count"] = tags.count("Dataflow")
+                      item["dimension_component_count"] = tags.count("Dimension")
+                      item["attribute_component_count"] = tags.count("Attribute")
+                      item["primary_measure_count"] = tags.count("PrimaryMeasure")
+                      item["codelist_reference_count"] = tags.count("Codelist")
+                      item["xml_structure_inventory"] = "COUNTS_ONLY_REQUIRES_MANUAL_RECONCILIATION"
+                  except Exception as exc:
+                      item["xml_parse"] = "NOT_XML_OR_INVALID"
+                      item["parse_error"] = type(exc).__name__ + ": " + str(exc)
+              else:
+                  item["xml_parse"] = "NO_BODY"
+              summary["requests"][name] = item
+              print(name, json.dumps(item, sort_keys=True))
+
+          summary["decision"] = {
+              "dsd_metadata_retrieval": "PASS" if summary["requests"]["bop_dsd_2_6_0"].get("xml_parse") == "PASS" and summary["requests"]["bop_dsd_2_6_0"].get("http_status") == 200 else "BLOCKED",
+              "exact_imf_dataflow_identification": "PASS" if summary["requests"]["imf_dataflows"].get("xml_parse") == "PASS" and summary["requests"]["imf_dataflows"].get("http_status") == 200 else "UNKNOWN",
+              "observation_acquisition": "NOT_ATTEMPTED",
+              "em_aggregation": "BLOCKED_PENDING_OBSERVATIONS_AND_VERSIONED_MEMBERSHIP"
+          }
+          (out / "metadata_audit_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+          PY
+      - name: Validate audit record completeness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("imf-bop-audit/metadata_audit_summary.json")
+          d = json.loads(p.read_text())
+          assert set(d["requests"]) == {"bop_dsd_2_6_0", "imf_dataflows", "imf_bop_dataset_page"}
+          for name, item in d["requests"].items():
+              assert "request_url" in item and "retrieved_at_utc" in item
+              assert "raw_sha256" in item and "raw_bytes" in item
+          print("AUDIT_RECORD_COMPLETENESS_PASS")
+          print(json.dumps(d["decision"], sort_keys=True))
+          PY
+      - name: Upload raw metadata and audit manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-metadata-audit-${{ github.run_id }}
+          path: imf-bop-audit/
+          if-no-files-found: error
+          retention-days: 90
