@@ -549,3 +549,12 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Gate: official catalogue metadata PASS; October 2025 PDF content NOT_RETRIEVED; exact dataflow/provision/provider constraints UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 - Next retrieval must use the actual IMF catalogue item download/content URL for item `1792656603400855000`, then preserve PDF/hash and inspect all pages; separately use SDMX Central Structure UI to retrieve actual Dataflow references and follow returned Provision Agreement/Provider references. Do not guess IDs or reuse similarly named BOP6 constraints.
 - ₹0 spend; no synthetic data, aggregation, annual-to-quarterly conversion, PR merge or production changes. All protected V11.3 invariants unchanged.
+
+
+## 2026-11-15 — SDMX retrieval follow-up
+
+- Fresh official IMF Documents catalogue and BOP dataset page inspection reconfirmed "Economies Reporting on BPM6 Basis October 2025", publication date 14 May 2026, but no PDF download target/body was exposed.
+- IMF SDMX Central REST Web Service page and Web Services Guide confirm the UI can generate structure queries and supports Dataflow and Provision Agreement queries. Registry overview is paginated; visible sample does not establish absence of IMF.STA BOP dataflow.
+- Direct guessed path `/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0` could not be retrieved via web page extraction. This is an access limitation, not evidence of nonexistence.
+- Sources recorded in report `docs/IMF_OCTOBER_2025_BPM6_DOCUMENT_RETRIEVAL_STATUS_AUDIT_20261115.md`; updated report commit `2ce23ed9aabf69eac321864c0f79056af1c9fedd`.
+- Gate remains unchanged: October 2025 PDF table NOT_RETRIEVED; exact Dataflow / Provision Agreement / Provider constraints UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
