@@ -589,3 +589,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next: query SDMX Central `IMF:BOP(2.6.0)` DSD with References=All and separately resolve IMF Data Portal dataset through its own catalogue. Follow provider/provision references only when actually returned.
 - Report updated: `f8e2d260664f62ecc1175b2266ffaa6d298364b0`.
 - Gate: namespace/catalogue cross-check PASS; IMF:BOP(2.6.0) DSD response NOT_RETRIEVED; separate IMF Data Portal structure response NOT_RETRIEVED; constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — Canonical SDMx Global Registry BOP DSD endpoint
+
+- Official SDMx BOP DSD page identifies SDMx Global Registry as the public unauthenticated host for BOP DSD and related dataflows/constraints; BOP DSD v2.6.0, maintenance agency IMF, with SDMX-ML 2.1 and SDMX 3.0 links. Page says DSD versions are maintained annually and older versions may remain valid where backward compatibility is preserved.
+- Exact SDMX-ML 2.1 URL from official link: `https://registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1`.
+- References query prepared: `https://registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=all`.
+- Web retrieval interface could not render XML (unsupported content-type application/xml) and reported references query inaccessible. This is a client limitation, not origin failure, absence, or successful XML inspection. No DSD dimensions, codelists, dataflows or constraints extracted.
+- Do not assume SDMx Global Registry BOP DSD v2.6.0 is equivalent to the original IMF.STA BOP dataset reference. No cross-service equivalence asserted.
+- Updated report: `97e96d40d91c43b789c95bf374cd23d46e3fe074`.
+- Gate: canonical DSD endpoint discovery PASS; XML body/references NOT_RETRIEVED; IMF Data Portal dataset structure NOT_RETRIEVED; exact constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
