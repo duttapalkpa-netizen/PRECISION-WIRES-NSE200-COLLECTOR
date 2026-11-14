@@ -43,36 +43,33 @@ jobs:
               return e.code,e.headers.get("Content-Type") if e.headers else None,e.geturl(),e.read(),"HTTPError"
             except Exception as e:
               return None,None,url,b"",type(e).__name__+": "+str(e)
-          class TableParser(HTMLParser):
-            def __init__(self):
-              super().__init__(); self.in_target=False; self.in_cell=False; self.table_depth=0; self.cell=[]; self.cells=[]; self.target_seen=False
-            def handle_starttag(self,tag,attrs):
-              a=dict(attrs)
-              if tag=="table" and a.get("id")=="e1":
-                self.in_target=True; self.target_seen=True; self.table_depth=1
-              elif self.in_target and tag=="table": self.table_depth+=1
-              if self.in_target and tag=="td" and self.table_depth==1:
-                self.in_cell=True; self.cell=[]
-              elif self.in_target and tag=="br" and self.in_cell: self.cell.append("\n")
-            def handle_endtag(self,tag):
-              if self.in_target and tag=="td" and self.in_cell:
-                self.cells.append("".join(self.cell)); self.in_cell=False
-              elif self.in_target and tag=="table":
-                self.table_depth-=1
-                if self.table_depth==0: self.in_target=False
-            def handle_data(self,data):
-              if self.in_target and self.in_cell: self.cell.append(data)
-          def norm(s):
-            s=unicodedata.normalize("NFKD",s)
-            s="".join(c for c in s if not unicodedata.combining(c))
-            s=s.casefold().replace("&"," and ")
-            s=re.sub(r"[^a-z0-9]+"," ",s)
-            return " ".join(s.split())
-          weo_status,weo_ct,weo_final,weo_raw,weo_err=fetch(sources["weo_appendix"],"text/html,application/xhtml+xml,*/*")
-          (out/"weo_april_2026_appendix_raw.html").write_bytes(weo_raw)
-          assert weo_status==200 and weo_raw, f"WEO appendix retrieval failed: {weo_status} {weo_err}"
-          parser=TableParser(); parser.feed(weo_raw.decode("utf-8",errors="replace"))
-          assert parser.target_seen, "WEO table id=e1 not found; refusing to infer membership from search snippets"
+          # IMF hosts this April 2026 appendix resource as a PDF (Content-Type may vary).
+          # Parse the PDF's own page text; do not rely on search-engine HTML extraction.
+          try:
+            from pypdf import PdfReader
+          except ImportError:
+            raise SystemExit("pypdf dependency unavailable")
+          import io
+          pdf=PdfReader(io.BytesIO(weo_raw))
+          assert len(pdf.pages)>=5, f"Unexpected WEO PDF page count: {len(pdf.pages)}"
+          page_text=None
+          for page in pdf.pages:
+            t=page.extract_text() or ""
+            if "Emerging and Developing Economies" in t:
+              page_text=t
+              break
+          assert page_text is not None, "WEO EMDE heading not found in official PDF text"
+          lines=page_text.splitlines()
+          heading=next(i for i,x in enumerate(lines) if "Emerging and Developing Economies" in x)
+          weo_names=[]
+          for raw_line in lines[heading+1:]:
+            if "International Monetary Fund" in raw_line: break
+            if not raw_line.strip(): continue
+            if raw_line[:1].isspace() and weo_names:
+              weo_names[-1] += " " + raw_line.strip()
+            else:
+              name=" ".join(raw_line.split()).strip()
+              if name and name not in {"DATABASE APPENDIX"}: weo_names.append(name)
           weo_names=[]
           for cell in parser.cells:
             for line in cell.splitlines():
