@@ -774,3 +774,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - No login, bypass, undocumented endpoint probing, data mutation, or gate promotion.
 - Next safe step: use existing archived exact-version responses/manifest as the extraction contract; only pursue a public metadata/export endpoint if officially exposed.
 - Audit report update commit: ba131d01dcfc0e0764b578db46553c12b35ad802.
+
+## 2026-11-15 — Historical India provenance sidecar compatibility audit
+
+- Re-fetched V1 JSON Schema, sidecar specification, India CSV and manifest; parsed schema/manifest JSON and checked structure and exact series identity.
+- Schema/manifest JSON valid; seven required schema groups present; four exact India series keys match; all four response hashes have valid SHA-256 syntax and positive response byte counts.
+- CSV has 110 rows, 20 columns, 11/11/44/44 series rows and 110 unique series-period keys. Per-row source-response hash column exists.
+- Historical CSV/manifest do not contain retrieval UTC timestamps, requested/final URLs, HTTP status, Content-Type, or query-parameter objects. Exact raw response body bytes are not present in the audited archive paths; hash+byte count cannot reconstruct them.
+- Existing V1 sidecar instances therefore REJECTED / NOT_READY for all four historical responses. Do not fabricate fields or retro-create incomplete sidecars. Vintage status remains NOT_VERIFIED / UNKNOWN; revision-aware eligibility NOT_READY.
+- Existing CSV, manifest and historical hashes untouched. New compliant sidecar only during a future real HTTP GET capturing exact raw body bytes and transport metadata at acquisition time.
+- No new IMF pull, spend, production change, PR merge, or acceptance-gate promotion.
+- Audit report update commit: 57c6478aa4cfc5bc396ab1b9def717616a4f1dd9.
