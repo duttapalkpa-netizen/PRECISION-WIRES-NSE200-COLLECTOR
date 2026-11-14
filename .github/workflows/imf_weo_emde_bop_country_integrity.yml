@@ -1,0 +1,61 @@
+name: IMF WEO EMDE to BOP COUNTRY crosswalk integrity
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - "data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv"
+      - ".github/workflows/imf_weo_emde_bop_country_integrity.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-weo-emde-bop-country-crosswalk-integrity
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify 154-row crosswalk integrity and critical country disambiguations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-weo-emde-bop-country-integrity
+          python - <<'PY'
+          import csv,hashlib,json
+          from pathlib import Path
+          from collections import Counter
+          from datetime import datetime,timezone
+          p=Path("data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv")
+          raw=p.read_bytes()
+          sha=hashlib.sha256(raw).hexdigest()
+          expected="62ad409cc71c1056994a418e55b5e2a9367bd04c844a6bb5957bda5f0b0dd815"
+          if sha!=expected: raise SystemExit("CSV SHA-256 mismatch: "+sha)
+          rows=list(csv.DictReader(raw.decode("utf-8-sig").splitlines()))
+          if len(rows)!=154: raise SystemExit("Expected 154 members")
+          names=[r["WEO_EMDE_NAME"] for r in rows]
+          codes=[r["BOP_COUNTRY_CODE"] for r in rows]
+          if len(set(names))!=154: raise SystemExit("Duplicate WEO member names")
+          if len(set(codes))!=154: raise SystemExit("Duplicate BOP country codes")
+          if any(r["MAPPING_STATUS"]!="MAPPED" for r in rows): raise SystemExit("Unmapped row present")
+          methods=Counter(r["MAPPING_METHOD"] for r in rows)
+          if methods!={"EXACT_NORMALIZED":109,"EXPLICIT_REVIEWED_ALIAS":45}: raise SystemExit("Mapping method count mismatch: "+repr(methods))
+          by={r["WEO_EMDE_NAME"]:r["BOP_COUNTRY_CODE"] for r in rows}
+          if by.get("Micronesia")!="FSM": raise SystemExit("Micronesia must map to country code FSM")
+          if "U057" in codes: raise SystemExit("Regional aggregate U057 must not be mapped as country")
+          if by.get("West Bank and Gaza")!="WBG": raise SystemExit("BOP-specific West Bank and Gaza mapping mismatch")
+          if by.get("Namibia")!="NAM": raise SystemExit("Namibia mapping mismatch")
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"csv_path":str(p),"csv_bytes":len(raw),"csv_sha256":sha,"rows":len(rows),"unique_names":len(set(names)),"unique_codes":len(set(codes)),"mapping_methods":dict(methods),"critical_checks":{"Micronesia":"FSM","U057_excluded":True,"West Bank and Gaza":"WBG","Namibia":"NAM"},"acceptance":"PASS"}
+          Path("imf-weo-emde-bop-country-integrity/summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Upload integrity summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-weo-emde-bop-country-integrity-${{ github.run_id }}
+          path: imf-weo-emde-bop-country-integrity/
+          if-no-files-found: error
+          retention-days: 90
