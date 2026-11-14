@@ -376,3 +376,22 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Coverage query and matrix generation PASS; 154/154 asset and liability coverage gates NOT PASS; reasons for absent series UNKNOWN; EM aggregation BLOCKED.
 - Next: targeted historical reach-back 2000-Q1 to 2014-Q4 for the 40 common absent and 3 asymmetric codes; then period-gap analysis and revision/vintage investigation. No fuzzy country matching or synthetic fill.
 - Invariants unchanged: ₹0 spend, free official sources, no paid APIs, credentials/auth bypass, synthetic values/timestamps, external contact, PR merge, or production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
+
+
+## 2026-11-14 — 2000–2014 historical reach-back and 2000–2025 cross-period reconciliation
+
+- Reused exact 43-code priority target list from the prior accepted coverage report (40 common 2015–2025 no-series codes plus DZA, ETH, ZWE); did not repeat the 154-country crosswalk or 2015–2025 query.
+- Historical workflow: `.github/workflows/imf_bop_emde_historical_reachback.yml`; creation commit `126d82d2b04772d09e3d4bf894a45e4cd015c536`; verified workflow blob `5033849aea492da94faed3d4bc25ac124e717c3e`.
+- Run #43626075930 SUCCESS; job 132542048096; artifact ID 14125219608; artifact ZIP SHA-256 `539e34fca42394d5ae53da27d44243f7aea6c79a1631178465f351b5d8bf1157`.
+- Window 2000-Q1 to 2014-Q4 (60 quarters), exact IMF.STA:BOP(21.0.0) portfolio flows P_F, USD, quarterly; assets A_NFA_T and liabilities L_NIL_T; wildcard COUNTRY `*`; HTTP 200 and parser/schema checks PASS for both queries.
+- Assets response 332,012 bytes SHA-256 `93025fe023aac9d301f6799d13ada7b0f04d27703012d8b3e1373db6c5527226`; 143 total series; 100/154 EMDE reporter codes present; 54 absent in this window; 43 non-EMDE codes.
+- Liabilities response 320,793 bytes SHA-256 `78ffa2a1492667cc2979f357acafecb490875a80f609726838f1be5ea44b5d25`; 142 total series; 99/154 EMDE reporter codes present; 55 absent in this window; 43 non-EMDE codes.
+- Among the 43 priority codes, only ETH and HTI appeared historically, for both assets and liabilities. ETH: 28 observations per side, 2003-Q1–2009-Q4, contiguous. HTI: 32 observations per side, 2004-Q4–2012-Q3, contiguous. Remaining 41/43 priority codes had no series returned in 2000–2014 for either side.
+- Reused 2015–2025 run #43624740474 and artifact ID 14125517628; no rerun. DZA assets: 20 contiguous observations 2021-Q1–2025-Q4; ETH assets: 4 contiguous observations 2024-Q1–2024-Q4; ZWE liabilities: 36 contiguous observations 2017-Q1–2025-Q4. No 2015–2025 liabilities series for DZA/ETH; no assets series for ZWE.
+- Combined tested 2000–2025: 4/43 priority codes have any observations (DZA, ETH, HTI, ZWE); 39/43 have no series returned for either side in either tested window. Assets 3/43 (DZA, ETH, HTI); liabilities 3/43 (ETH, HTI, ZWE); 2/43 (ETH, HTI) have both sides represented somewhere, but not necessarily same-quarter overlap or continuous coverage.
+- Key discontinuities: ETH assets has 56 missing quarters between 2009-Q4 and 2024-Q1; ETH liabilities has no returned series after 2009-Q4 through 2025-Q4; HTI both sides only 2004-Q4–2012-Q3; DZA assets only 2021-Q1–2025-Q4; ZWE liabilities only 2017-Q1–2025-Q4. All observed spans are contiguous internally; gaps outside spans remain missing, never filled.
+- Cross-period matrix `data/research/imf_bop_emde_43_cross_period_matrix_20261114.csv`, commit `6e61a25cf19c546ee1df22b8771b3d9c7b9b5921`, SHA-256 `b7f68ddce1c33d2ecc5536baa9082f0dff5b238ad95429ec8d5e4a681dda913b`, 2,313 bytes, 43 rows.
+- Research report `docs/IMF_BOP_EMDE_HISTORICAL_REACHBACK_RECONCILIATION_20261114.md`, commit `19ae265bae206095551f483953cf5db7d75818be`.
+- Work-package status: historical acquisition PASS; cross-period reconciliation PASS; coverage gate NOT PASS; EM aggregation BLOCKED. Absence remains "NO SERIES RETURNED IN THE TESTED WINDOWS", not economic zero or proven permanent non-reporting.
+- Next: inspect exact SDMX series/observation attributes, flags and revision/vintage metadata for ETH, HTI, DZA, ZWE; inspect codelist/dataflow eligibility for the 39 with no observations in either tested window. Keep causes UNKNOWN until evidenced.
+- Invariants unchanged: ₹0 spend, official public sources only, no synthetic values/timestamps, paid API, auth bypass, external contact, PR merge or production integration; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
