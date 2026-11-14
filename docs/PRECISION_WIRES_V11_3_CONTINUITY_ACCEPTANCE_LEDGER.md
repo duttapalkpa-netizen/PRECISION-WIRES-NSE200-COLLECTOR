@@ -460,3 +460,11 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Official source URLs recorded in crosswalk: CDSL daily FPI trends, NSE official homepage market snapshot, RBI NSDP. Evidence refs: `turn862951search0`, `turn862951search1`, `turn862951search2`, `turn862951search4`.
 - Crosswalk blob after update: `ca586d5014005b3a85c72f166eed5cf016298152`; update commit `06b7c56dd1cba2b090e70fcf121f54b4e97e1aac`.
 - Macro-Geo evidence snapshot enrichment: PASS. Historical event-to-session panel, factor sensitivity estimation, 8/8 P0 source coverage, 35-factor coverage and Hard Gate remain NOT PROVEN / BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged. No paid API, PR/merge or production integration.
+
+
+## 38. FPI/DII provisional-versus-custodian source semantics audit — 2026-11-14
+
+- Added `docs/FPI_DII_SOURCE_SEMANTICS_RECONCILIATION_20261114.md`. Official NSE 13-Nov-2026 NSE-only FII/FPI net +₹5,253.98 crore and DII -₹1,970.73 crore; combined NSE+BSE+MSEI FII/FPI +₹5,736.55 crore and DII -₹2,253.58 crore. Four buy-minus-sell arithmetic checks PASS.
+- CDSL official 12-Nov reporting date equity exchange +₹14,678.72 crore plus primary/other +₹15.00 = equity subtotal +₹14,693.72 crore; arithmetic PASS. CDSL is custodian-submitted and includes previous-day(s) trades; NSE trade activity is provisional. Reporting date, exchange universe, routes, finality and publication availability must be separate join keys. No date-only join, duplicate subtotals or look-ahead allowed.
+- Official references: https://www.nseindia.in/reports/fii-dii?os=0 ; https://www.cdslindia.com/eservices/publications/fiidaily ; https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx ; https://www.nseindia.com/static/all-reports/historical-equities-fii-fpi-dii-trading-activity .
+- Scoped source-semantics and snapshot arithmetic audit PASS. Same-date custodian reconciliation, historical raw archive SHA-256, as-of availability panel and rolling impact study NOT RUN. FPI/DII factor coverage and Hard Gate remain BLOCKED / NOT PROVEN. No synthetic data, paid APIs, PR merge or production changes; protected invariants unchanged.
