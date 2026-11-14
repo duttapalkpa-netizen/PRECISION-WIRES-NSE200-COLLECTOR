@@ -152,3 +152,22 @@ Source: official NSDL report, lines 8–32 (web evidence turn381834view0 and tur
 - For a long-only entry/exit round trip, a 0.22% total round-trip cost is applied once to gross forward return: net return = (1 + gross return) × (1 − 0.0022) − 1. If the project's 0.22% convention is instead per-side, the two-sided cost must be explicitly recalculated and documented before results are produced; never subtract 0.22% twice by assumption.
 - If using simple-return approximation only, net ≈ gross − 0.22 percentage points; exact multiplicative calculation above is preferred.
 - No index CSV or daily return observations were downloaded in this audit. This is a methodology/control correction only; no performance results or predictive edge claimed.
+
+
+
+## Official NSE historical-data interface schema and eligible benchmark inventory — 2026-11-14
+
+### Direct official-page reinspection
+- Re-opened https://www.niftyindices.com/reports/historical-data (web evidence turn100955view0, lines 383–432 and 561–567).
+- Official page separates four report groups: Historical Index Data, Archives of Daily/Monthly Reports, P/E/P/B/Dividend Yield values, and Total Returns Index Values.
+- Historical Index Data output schema shown by the page: Date, Open, High, Low, Close. The TRI output schema is separate and shows Date, Total Returns Index, Net Total Return Index. The TRI section does not show OHLC fields. Do not manufacture TRI OHLC.
+- The same page's navigation classifies Equity index families into Broad Based, Sectoral, Thematic and Strategy (lines 9–16). It lists many candidate names, including NIFTY AUTO, CAPITAL GOODS, CEMENT, CHEMICALS, COMMERCIAL & TRANSPORT SERVICES, CONSTRUCTION, CONSUMER DURABLES, CONSUMER SERVICES, FINANCIAL SERVICES, FMCG, HEALTHCARE, IT, MEDIA, METAL, OIL AND GAS INDEX, PHARMA, POWER, REALTY, TELECOMMUNICATIONS and SERVICES SECTOR (lines 59–89, 112–129).
+- This page's navigation is an index directory, not by itself evidence of the selected index's subcategory or methodology. Category membership must be established from index-specific factsheet/methodology and dated constituents; navigation presence alone does not upgrade a mapping.
+- Page currently shows “Select an Index and Time Period to view data” and “No Data Found” before user selects index/date (lines 417–422, 465–471, 554–567). This is a blank unselected UI state, not proof that historical data is unavailable.
+- Page provides CSV format controls for historical data and TRI sections (lines 426, 452, 521, 561), but no selected index/date or CSV payload was returned in this static inspection. Therefore no raw CSV bytes, row counts, headers, byte size or SHA-256 were acquired.
+
+### Benchmark inventory status (no overclaim)
+- Candidate name inventory revalidated; actual sector mapping still depends on category/methodology and point-in-time constituent overlap.
+- Historical price-index schema is confirmed as OHLC; TRI/NTRI schema is confirmed as date + separate index values only.
+- Empirical return panel remains NOT ACQUIRED. Next step must use the official UI with a selected eligible index and bounded date range, download the CSV, preserve original bytes and metadata, hash it, then validate dates and values.
+- No undocumented POST endpoint or third-party reverse-engineered API specification is adopted as an official source contract.
