@@ -310,3 +310,30 @@ Official sources:
 - https://registry.sdmx.org/webservice/structure.html
 
 No credentials, paid services, external contact, synthetic data or production changes used.
+
+
+## 16. Registry Dataflow inventory cross-check and UI execution boundary (2026-11-15)
+
+### New public catalogue observations
+- The SDMx Global Registry Data Structure Definitions catalogue lists agency IMF, ID `BOP`, name "Balance of Payments and International Investment Position", latest version `2.6.0`.
+- The Registry Concept Scheme catalogue lists agency IMF, ID `CS_BOP`, name "Balance of Payments Concept Scheme", latest version `1.20.0`.
+- The Registry Dataflows overview extraction visibly lists `ESTAT:BPM6_BOP_M(2.6.0)` and `ESTAT:BPM6_BOP_Q(2.6.0)` among the first visible rows. These are ESTAT agency dataflows; they must not be relabelled as IMF dataflows or assumed to be the target IMF Data Portal dataset.
+- The public Data Providers catalogue shows `ESTAT:IMF` = IMF as a provider under the ESTAT agency, distinct from agency `IMF`. This is a provider-catalogue fact only; it does not establish a BOP Provision Agreement, registration or constraint for the target dataflow.
+- Registry home documentation says constraints may attach to DSD, Dataflow, Data Provider or Provision Agreement and cascade. This confirms why a DSD-only check is insufficient.
+
+### Browser/UI execution audit
+- The public Structure References page explicitly provides a selector for report generation, a structure-type/agency/structure selector and Generate Report action. The text extraction exposes controls but not the live populated selector options or generated report bytes.
+- The public Export Reports page documents four XLSX reports (Concept Usage, Codelist Usage, Data Structures, Codelist). The web retrieval exposes the Download controls as labels, not downloadable target URLs or file bytes.
+- Attempts to retrieve the Registry REST SDMX-ML URLs via the text retrieval interface returned inaccessible/internal errors. This is a retrieval-layer limitation only, not proof the Registry origin is unavailable.
+- Therefore no XLSX, generated cross-reference workbook, SDMX-ML payload, or SHA-256 was acquired in this pass.
+
+### Evidence classification
+- IMF:BOP DSD 2.6.0 catalogue presence: VERIFIED.
+- IMF:CS_BOP 1.20.0 catalogue presence: VERIFIED.
+- ESTAT:BPM6_BOP_M and ESTAT:BPM6_BOP_Q catalogue presence: VERIFIED as ESTAT dataflows only.
+- IMF BOP target Dataflow / Provision Agreement / provider registration / constraint chain: UNKNOWN.
+- CS_BOP-to-BOP exact reference and BOP-to-codelist exact references: UNKNOWN.
+- October 2025 PDF body: NOT_RETRIEVED; six-country eligibility UNKNOWN.
+- Quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+No credentials, paid services, external contact, synthetic data or production changes used.
