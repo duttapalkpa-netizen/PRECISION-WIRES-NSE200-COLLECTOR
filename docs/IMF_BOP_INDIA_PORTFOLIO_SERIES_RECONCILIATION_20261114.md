@@ -97,3 +97,13 @@ This is not a full EMDE panel. WEO EMDE membership does not establish that an ec
 ## Invariants
 
 Research-only; ₹0 spend; official free sources only; no paid APIs; no credentials or authentication bypass; no synthetic data/timestamps; no external contact; no PR merge; no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, all five engines and Hard Gate remain unchanged.
+
+
+## Independent committed-file integrity audit
+
+- Run #43623953963 — SUCCESS; workflow commit `577f278c0b57ee2e3c48e6a41c731d1ed33f8efd`; artifact ID `14125201831`.
+- The validator re-read the committed CSV from the checked-out repository, independently computed SHA-256 `260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9`, and verified 110 rows.
+- All four exact series keys and period sets passed: 11 annual asset rows, 11 annual liability rows, 44 quarterly asset rows, 44 quarterly liability rows; zero duplicate periods.
+- The four per-row source-response SHA-256 distributions matched the manifest exactly.
+- Independent Decimal reconciliation again passed at tolerance `0.00001`: assets maximum absolute difference `9E-7`; liabilities `0.000007`.
+- Integrity result: **PASS**. Summary artifact: `14125201831`.
