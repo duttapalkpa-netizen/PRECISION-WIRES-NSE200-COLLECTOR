@@ -548,3 +548,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Preserved Others bucket and methodology: BSE classification of ~4,800 issuers; VRR from 30-Apr-2020; Debt-FAR/MF/AIF AUC from 31-Aug-2024 and net investment from 15-Sep-2024; fortnightly USD conversion uses period-end RBI rate, unlike daily conversion.
 - Scoped full equity table transcription and grand-total arithmetic: DOCUMENTED / PASS. Original file bytes/SHA-256, all-category reconciliation, multi-period panel, issuer/index mapping and rolling predictive test remain NOT ACQUIRED / NOT RUN. Hard Gate BLOCKED. No production changes.
 - Audit report commit 1fb028b71478d30a755e35a1f4588a9588e5a875, blob 33a0d1cd6deac17ce6157c472054c62eac08155e.
+
+
+## 47. NSDL official 31-Oct-2026 fortnightly FPI sector update captured — 2026-11-14
+
+- Added `docs/NSDL_FPI_SECTOR_CROSS_SOURCE_UPDATE_20261114.md` from official NSDL report (turn177159search2).
+- Grand Total equity net flow: −₹47,955cr for 01–15 Oct and +₹13,112cr for 16–31 Oct; derived October fortnight sum −₹34,843cr. Equity AUC at 31-Oct ₹65,25,808cr; 15-Oct ₹65,94,378cr.
+- Auto & Auto Components row: equity flow −₹6,533cr for 01–15 Oct and −₹1,098cr for 16–31 Oct; outflow moderated but did not turn positive. One-row check only.
+- The newer NSDL report extends sector history beyond CDSL's 15-Oct report; not a same-date cross-source discrepancy. Full sector extraction and method reconciliation remain outstanding.
+- Scoped official report/key total/one-row extraction and arithmetic: DOCUMENTED / PASS. Raw file/hash, full sector panel, all-category reconciliation, aligned historical panel, NSE return join and rolling predictive validation remain NOT ACQUIRED / NOT RUN. Hard Gate BLOCKED; no production changes or PR/merge.
+- New report commit: a2e205a40537c3239ceb5f2d2fbf6c56b2e248ef.
