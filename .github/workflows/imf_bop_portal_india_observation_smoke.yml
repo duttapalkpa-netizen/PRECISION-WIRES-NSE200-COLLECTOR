@@ -1,0 +1,93 @@
+name: IMF BOP India portfolio observation public access smoke test
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_portal_india_observation_smoke.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-india-observation-smoke
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Request only one metadata-validated India annual BOP portfolio series
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-india-observation-smoke
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from datetime import datetime,timezone
+          from urllib.parse import urlencode
+          out=Path("imf-bop-india-observation-smoke")
+          base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/IND.A_NFA_T.P.USD.A"
+          q=urlencode({"c[TIME_PERIOD]":"ge:2015-A1+le:2025-A1","dimensionAtObservation":"AllDimensions","attributes":"all","detail":"full","includeHistory":"true","limit":"100"})
+          url=base+"?"+q
+          probes={
+            "json20":(url,"application/vnd.sdmx.data+json;version=2.0.0"),
+            "xml30":(url,"application/vnd.sdmx.data+xml;version=3.0.0")
+          }
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          results={}
+          for key,(target,accept) in probes.items():
+            req=urllib.request.Request(target,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":accept})
+            try:
+              with urllib.request.urlopen(req,timeout=30) as r:
+                status=r.status; headers=dict(r.headers.items()); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; headers=dict(e.headers.items()) if e.headers else {}; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; headers={}; final=target; body=b""; err=type(e).__name__+": "+str(e)
+            (out/(key+".body")).write_bytes(body)
+            parsed={"ok":False,"format":None,"observation_count":0,"time_periods":[],"error":None}
+            if status==200:
+              ctype=headers.get("Content-Type","").lower()
+              try:
+                if "json" in ctype or body.lstrip().startswith((b"{",b"[")):
+                  obj=json.loads(body); parsed["format"]="json"
+                  def walk(x):
+                    if isinstance(x,dict):
+                      obs=x.get("observations")
+                      if isinstance(obs,dict): parsed["observation_count"]+=len(obs)
+                      elif isinstance(obs,list): parsed["observation_count"]+=len(obs)
+                      for k,v in x.items():
+                        if k.lower() in ("time_period","timeperiod","period") and isinstance(v,(str,int)): parsed["time_periods"].append(str(v))
+                        walk(v)
+                    elif isinstance(x,list):
+                      for v in x: walk(v)
+                  walk(obj); parsed["top_level_keys"]=list(obj.keys()) if isinstance(obj,dict) else []
+                elif "xml" in ctype or body.lstrip().startswith(b"<"):
+                  root=ET.fromstring(body); parsed["format"]="xml"; parsed["root"]=local(root)
+                  for e in root.iter():
+                    if local(e)=="Obs":
+                      parsed["observation_count"]+=1
+                      for d in e:
+                        if local(d)=="ObsDimension": parsed["time_periods"].append(d.attrib.get("value") or d.text or "")
+                  parsed["time_periods"]=sorted(set(x for x in parsed["time_periods"] if x))
+                else:
+                  parsed["format"]="unrecognized"; parsed["prefix"]=body[:250].decode("utf-8","replace")
+                parsed["ok"]=True
+              except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+            rec={"requested_url":target,"accept":accept,"status":status,"content_type":headers.get("Content-Type"),"headers":headers,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
+            results[key]=rec
+            (out/(key+"_result.json")).write_text(json.dumps(rec,indent=2,ensure_ascii=False)+"\n")
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"dataset_urn":"IMF.STA:BOP(21.0.0)","dataflow":{"agency":"IMF.STA","id":"BOP","version":"21.0.0"},"dsd":{"agency":"IMF.STA","id":"DSD_BOP","version":"24.0.0"},"key":{"COUNTRY":"IND","BOP_ACCOUNTING_ENTRY":"A_NFA_T","INDICATOR":"P","UNIT":"USD","FREQUENCY":"A"},"period_filter":"2015-A1 through 2025-A1","results":results,"acceptance":{"any_HTTP_200_parseable_response":any(v["status"]==200 and v["parse"]["ok"] for v in results.values()),"actual_observation_rows_returned":any(v["status"]==200 and v["parse"]["observation_count"]>0 for v in results.values())},"scope":"One India annual portfolio-investment asset-side series only. No other countries, no aggregation, no synthetic values, no authentication or bypass."}
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({"acceptance":summary["acceptance"],"results":{k:{"status":v["status"],"content_type":v["content_type"],"bytes":v["bytes"],"sha256":v["sha256"],"final_url":v["final_url"],"error":v["error"],"parse":v["parse"]} for k,v in results.items()}},indent=2,ensure_ascii=False))
+          PY
+      - name: Upload exact response bodies and provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-india-observation-smoke-${{ github.run_id }}
+          path: imf-bop-india-observation-smoke/
+          if-no-files-found: error
+          retention-days: 90
