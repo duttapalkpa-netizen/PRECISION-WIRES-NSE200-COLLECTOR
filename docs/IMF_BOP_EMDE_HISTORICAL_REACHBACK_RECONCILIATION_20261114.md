@@ -18,7 +18,7 @@ No synthetic observations, interpolation, forward fill, aggregation, or inferred
 - Period: 2000-Q1 to 2014-Q4 (60 quarterly periods); wildcard COUNTRY key `*`; both requests HTTP 200 and exact SDMX JSON parsing PASS.
 - Assets response: 332,012 bytes; SHA-256 `93025fe023aac9d301f6799d13ada7b0f04d27703012d8b3e1373db6c5527226`; 143 total reporter series, 100/154 EMDE reporter codes present, 54 absent from this query interval, 43 non-EMDE codes.
 - Liabilities response: 320,793 bytes; SHA-256 `78ffa2a1492667cc2979f357acafecb490875a80f609726838f1be5ea44b5d25`; 142 total reporter series, 99/154 EMDE reporter codes present, 55 absent from this query interval, 43 non-EMDE codes.
-- Target set: exact 43 codes carried forward from the prior coverage audit: 40 common no-series codes plus DZA, ETH, ZWE. The historical query found only ETH and HTI within this 43-code set, on both assets and liabilities. Thus 2/43 target reporters present per side (4.65%); 41/43 had no series returned in 2000-Q1 to 2014-Q4 for each side.
+- Target set: exact 43 codes carried forward from the prior coverage audit: 40 common no-series codes plus DZA, ETH, ZWE. The historical query found observations for only ETH and HTI within this 43-code set, on both assets and liabilities. Thus 2/43 target reporters had observations per side (4.65%); 41/43 had no observations in 2000-Q1 to 2014-Q4 for each side. Important raw-response nuance: the historical liabilities response includes a ZWE series key with an empty observations object; this is not an observation and is not counted as reporter coverage.
 - ETH: assets 28 observations, 2003-Q1 to 2009-Q4; liabilities 28 observations, same interval.
 - HTI: assets 32 observations, 2004-Q4 to 2012-Q3; liabilities 32 observations, same interval.
 - Both ETH and HTI observations are contiguous within their first-to-last reported spans; this does not imply coverage outside those spans.
@@ -48,11 +48,11 @@ All four observed spans are contiguous within each stated interval (no internal 
 ## 3. Combined 2000–2025 result for the 43 priority codes
 
 - Only 4/43 target countries have at least one observation in either tested window: DZA, ETH, HTI, ZWE.
-- 39/43 have no series returned for either assets or liabilities in either tested window (2000-Q1–2014-Q4 plus 2015-Q1–2025-Q4).
+- 39/43 have no observations for either assets or liabilities in either tested window (2000-Q1–2014-Q4 plus 2015-Q1–2025-Q4). One zero-observation ZWE liabilities series key exists in the historical raw response; it is preserved as an empty series key, not counted as data.
 - Assets: 3/43 have observations (DZA, ETH, HTI); 40/43 have no series returned.
 - Liabilities: 3/43 have observations (ETH, HTI, ZWE); 40/43 have no series returned.
 - Two countries have both sides represented somewhere in the combined period: ETH and HTI. This does not mean same-quarter overlap or continuous coverage.
-- The 43-row cross-period summary CSV is `data/research/imf_bop_emde_43_cross_period_matrix_20261114.csv`, SHA-256 `b7f68ddce1c33d2ecc5536baa9082f0dff5b238ad95429ec8d5e4a681dda913b` (2,313 bytes). It reports observations by side and time window, without inserting zeros into source data; zero counts mean no observation returned in the exact query.
+- The 43-row cross-period summary CSV is `data/research/imf_bop_emde_43_cross_period_matrix_20261114.csv`, SHA-256 `4d9686c8e0735a1d076c3f6850648bd481b59771beebcb260f0625bd14d405dc` (2,313 bytes). It reports observations by side and time window, without inserting zeros into source data; zero counts mean no observation returned in the exact query; the status wording explicitly distinguishes this from an empty SDMX series key.
 
 ## 4. Interpretation and gate decision
 
@@ -64,10 +64,21 @@ However, 39 of the 43 priority reporters still have no returned observations acr
 
 Do not interpret absent observations as economic zero, non-reporting certainty, or a valid net-flow value. No EMDE portfolio-flow aggregate is eligible.
 
-## 5. Next highest-value action
+## 5. Series and observation attribute inspection
+
+The already acquired raw SDMX responses requested `attributes=all`; no additional API request was needed. The exact DSD attribute order was applied to the series and observation arrays for all four reporters with nonempty observations (ETH, HTI, DZA, ZWE).
+
+- Every observed series reports `SCALE=6` and `METHODOLOGY=BPM6`; `DECIMALS_DISPLAYED` and `OVERLAP` are null.
+- `IFS_FLAG=true` on the observed asset series for ETH, HTI and DZA. It is null on the observed liability series for ETH, HTI and ZWE. The flag's interpretation is not inferred here; its codelist/definition must be verified before use.
+- Every observed quarter has `PRECISION=6`, `DERIVATION_TYPE=O`, `ACCESS_SHARING_LEVEL=PUBLIC_OPEN`, and `SECURITY_CLASSIFICATION=PUB`.
+- Observation-level `STATUS`, `ACCESS_SHARING_NOTES`, and `SOURCE` are null throughout the inspected series. Null is preserved; no flag/status is inferred.
+- Historical ZWE liabilities contains a series key but zero observations. This is the reason the matrix now uses `NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW`, not the overly strong wording “no series returned”.
+- No scale multiplier or unit conversion is applied; SCALE/PRECISION remain metadata.
+
+## 6. Next highest-value action
 
 Before another broad query, inspect the exact SDMX observation attributes and series attributes for the four reporters with returned observations (ETH, HTI, DZA, ZWE), including observation status/confidentiality/estimation flags and any revision/vintage markers exposed by the dataflow. In parallel, use the exact BOP codelist/dataflow metadata to establish whether the 39 no-series countries are eligible for these portfolio flow dimensions and quarterly USD representation. Keep all unresolved causes UNKNOWN. Only after this metadata audit decide whether a narrower older-period query or a different documented series is justified.
 
-## 6. Invariants
+## 7. Invariants
 
 ₹0 spend; free official public sources only; no credentials, authentication bypass, paid APIs, synthetic data/timestamps, external contact, PR merge, or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
