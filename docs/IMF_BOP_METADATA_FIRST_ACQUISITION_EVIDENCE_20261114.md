@@ -137,3 +137,56 @@ Next highest-value work:
 
 ## 10. Invariants
 Research-only; ₹0 spend; official free sources; no paid APIs, no synthetic values/timestamps, no external contact, no PR merge, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 remain unchanged. UNKNOWN is neither PASS nor FAIL.
+
+
+## 11. WEO April 2026 EMDE membership to IMF CL_AREA 2.0.0 crosswalk — 2026-11-14
+
+### Official inputs and raw provenance
+- Classification authority: IMF World Economic Outlook, April 2026 Database Appendix, page 5, “Emerging and Developing Economies”.
+- The official IMF appendix URL returned a PDF (not HTML): HTTP 200, Content-Type application/pdf, 523,673 bytes.
+- Raw PDF SHA-256: b8a538c3158bf0553a3ae45d4797cd5648cbea684eb4be848a52c1d64d994395.
+- PDF was parsed using pinned pypdf 5.9.0; the page heading and 154 unique economy names were extracted from the PDF itself. Wrapped names were joined only when the PDF text line was indented as a continuation.
+- IMF CL_AREA 2.0.0 raw XML: HTTP 200, application/xml, 186,255 bytes; SHA-256: 09b5b44664b7d5ae4d41be132c48de01a9d9dcfbd918b6afb49f143adfdec6d4.
+- 931 English code labels were read from the exact IMF CL_AREA codelist.
+
+### Mapping result
+- WEO April 2026 EMDE membership: 154/154 names extracted; unique names: 154.
+- IMF CL_AREA mappings: 153/154 mapped; 153 unique codes; zero duplicate code assignments; zero ambiguous matches.
+- One unresolved name remains UNKNOWN: “West Bank and Gaza”. The IMF CL_AREA list contains distinct labels such as “Palestine, State of” (PS) and “Gaza and Jericho” (XG). No exact, authoritative one-to-one geography equivalence was established in this run. Do not silently map the WEO label to PS or XG; require an explicit geography crosswalk/source decision.
+- India mapped exactly: WEO “India” -> IMF CL_AREA “India” (IN).
+- Seven other label differences were mapped only through explicit reviewed aliases, not fuzzy matching: Cabo Verde -> Cape Verde (CV); Eswatini -> Kingdom of Eswatini (SZ); Lao P.D.R. -> Lao People's Democratic Republic (LA); St. Kitts and Nevis -> Saint Kitts and Nevis (KN); St. Lucia -> Saint Lucia (LC); St. Vincent and the Grenadines -> Saint Vincent and the Grenadines (VC); Vietnam -> Viet Nam (VN).
+- The resulting membership-to-area crosswalk is PARTIAL_REVIEW_REQUIRED, not fully PASS. The 153 mapped entries are a reproducible preliminary mapping, not an accepted aggregation universe until the remaining geography is resolved or explicitly excluded with rationale.
+
+### GitHub Actions evidence
+- Workflow: IMF WEO EMDE membership to IMF area-code crosswalk.
+- Run #43598281690: SUCCESS (workflow and artifact upload).
+- Commit: daa529172a9b55b66202fea7282a07c9bb54912a.
+- Artifact ID: 14114154484.
+- Artifact ZIP SHA-256: 16b59c4356ba31526c4cbc9f3d8796d1cc6d4e9d8fe7f0c6bec486d917cbbe2c.
+- Artifact contains raw official WEO PDF, raw IMF CL_AREA XML, JSON crosswalk/summary, and CSV membership file.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43598281690
+
+### Failure analysis and corrections preserved
+1. Run #43598079002 failed because the official WEO appendix resource is a PDF, not an HTML page containing a table id=e1. Correction: inspect Content-Type and PDF signature, parse the official PDF page rather than relying on search-index HTML extraction.
+2. Run #43598148417 failed because pypdf was not installed on the hosted runner. Correction: add a pinned dependency install step (pypdf==5.9.0).
+3. Run #43598156963 failed because the parser replacement left stale references to the removed HTML parser and did not initialize the downloaded PDF bytes. Correction: rewrite the acquisition/parser block coherently, explicitly fetch before parsing, and persist raw PDF bytes.
+4. The first successful mapping attempt mapped 146/154. Exact IMF CL_AREA labels were inspected from the captured raw codelist; seven additional well-defined naming aliases were added. West Bank and Gaza remains UNKNOWN because the geography equivalence is not proven.
+5. These failed runs and artifacts are retained as audit history; they are not overwritten or relabelled as PASS.
+
+### Updated membership gate
+| Check | Result |
+|---|---|
+| WEO April 2026 EMDE source and edition | PASS |
+| Raw WEO PDF retrieval, signature, bytes and SHA-256 | PASS |
+| 154 unique EMDE names extracted from page 5 | PASS |
+| IMF CL_AREA 2.0.0 raw XML retrieval and SHA-256 | PASS |
+| 153 unique WEO-to-IMF area-code mappings | PASS (partial mapping) |
+| Duplicate code assignments | 0 |
+| Ambiguous name mappings | 0 |
+| West Bank and Gaza mapping | UNKNOWN |
+| Full 154/154 crosswalk acceptance | BLOCKED / PARTIAL_REVIEW_REQUIRED |
+| BOP observation availability for 153 mapped economies | NOT ESTABLISHED |
+| EM portfolio-flow aggregation | BLOCKED |
+
+### Immediate next step
+Resolve the “West Bank and Gaza” geography using a documented IMF statistical-area crosswalk or explicitly preserve it as an excluded/unmapped member with a versioned rationale. In parallel, verify which of the 153 mapped area codes are actually present as reporting economies in the exact IMF BOP observation dataflow once a lawful public observation route is established. Membership alone is never reporter coverage.
