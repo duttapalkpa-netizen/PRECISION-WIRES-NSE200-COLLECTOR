@@ -558,3 +558,14 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - The newer NSDL report extends sector history beyond CDSL's 15-Oct report; not a same-date cross-source discrepancy. Full sector extraction and method reconciliation remain outstanding.
 - Scoped official report/key total/one-row extraction and arithmetic: DOCUMENTED / PASS. Raw file/hash, full sector panel, all-category reconciliation, aligned historical panel, NSE return join and rolling predictive validation remain NOT ACQUIRED / NOT RUN. Hard Gate BLOCKED; no production changes or PR/merge.
 - New report commit: a2e205a40537c3239ceb5f2d2fbf6c56b2e248ef.
+
+
+## 48. NSDL Grand Total and CDSL/NSDL same-period equity flow cross-check — 2026-11-14
+
+- Official NSDL Grand Total row (turn683882view0 line 32): 01–15 Oct equity net flow −₹47,955cr; 16–31 Oct equity net flow +₹13,112cr; 15-Oct equity AUC ₹65,94,378cr; 31-Oct equity AUC ₹65,25,808cr.
+- NSDL all-category totals differ from equity-only: −₹45,828cr for 01–15 Oct and +₹21,354cr for 16–31 Oct. These include other instrument categories and must not be called equity flow.
+- Aggregate same-period 01–15 Oct equity flow −₹47,955cr matches the CDSL 15-Oct Grand Total equity net flow −₹47,955cr at displayed ₹ crore precision. This is an aggregate consistency check only; not proof of full row-level identity or full-history coverage.
+- Corrected taxonomy: NSDL page contains 22 BSE industry sectors plus Sovereign and Others, not 24 industry sectors. Sovereign is government securities; Others is exposures outside BSE-classified ~4,800 issuer universe.
+- Two-period October equity sum −₹34,843cr. Period-end USD conversion rates differ from daily conversion; INR retained as primary unit.
+- Scoped aggregate same-period cross-source check: MATCH. Raw immutable file acquisition, full history, row-level all-category reconciliation, index mapping and rolling prediction test remain NOT ACQUIRED / NOT RUN. Hard Gate BLOCKED; no production changes.
+- Update report commit 86748460104dc92ab379770946bc964b889790b5, blob 26c72cd52814b9c2c1ed138a4d3ebc4e734d67e3.
