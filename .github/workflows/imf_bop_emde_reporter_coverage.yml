@@ -1,0 +1,116 @@
+name: IMF BOP EMDE reporter coverage by exact dataflow
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_emde_reporter_coverage.yml"
+      - "data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-emde-reporter-coverage
+  cancel-in-progress: false
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Query exact BOP dataflow across all reporting countries for assets and liabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-emde-reporter-coverage
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,csv,math
+          from pathlib import Path
+          from datetime import datetime,timezone
+          from urllib.parse import urlencode
+          out=Path("imf-bop-emde-reporter-coverage")
+          cross=list(csv.DictReader(open("data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv",encoding="utf-8")))
+          emde={r["BOP_COUNTRY_CODE"]:r["WEO_EMDE_NAME"] for r in cross}
+          assert len(emde)==154
+          base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/"
+          cases=[
+            {"name":"assets_quarterly_2015_2025","key":"all.A_NFA_T.P_F.USD.Q","entry":"A_NFA_T"},
+            {"name":"liabilities_quarterly_2015_2025","key":"all.L_NIL_T.P_F.USD.Q","entry":"L_NIL_T"}
+          ]
+          def parse_response(body,expected_entry):
+            obj=json.loads(body)
+            ds=obj["data"]["dataSets"][0]
+            st=obj["data"]["structures"][0]
+            sd=st.get("dimensions",{}).get("series",[])
+            od=st.get("dimensions",{}).get("observation",[])
+            ids=[x.get("id") for x in sd]
+            expected_ids=["COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY"]
+            if ids!=expected_ids: raise ValueError("Unexpected series dimensions: "+repr(ids))
+            if [x.get("id") for x in od]!=["TIME_PERIOD"]: raise ValueError("Unexpected observation dimension")
+            country_values=sd[0].get("values",[])
+            period_values=[x.get("value") for x in od[0].get("values",[])]
+            reporters={}
+            series_map=ds.get("series",{})
+            if not isinstance(series_map,dict): raise ValueError("SDMX series container is not an object")
+            for sk,so in series_map.items():
+              ix=[int(x) for x in sk.split(":") if x!=""]
+              if len(ix)!=len(sd): raise ValueError("Series key arity mismatch")
+              keyvals={sd[i]["id"]:sd[i]["values"][ix[i]].get("id",sd[i]["values"][ix[i]].get("value")) for i in range(len(ix))}
+              if keyvals["BOP_ACCOUNTING_ENTRY"]!=expected_entry or keyvals["INDICATOR"]!="P_F" or keyvals["UNIT"]!="USD" or keyvals["FREQUENCY"]!="Q":
+                raise ValueError("Unexpected returned series key: "+repr(keyvals))
+              country=keyvals["COUNTRY"]
+              obs=so.get("observations",{})
+              periods=[]; n=0
+              for ok,ov in obs.items():
+                oi=int(ok)
+                if oi>=len(period_values): raise ValueError("Observation index out of range")
+                if not ov or ov[0] is None or not math.isfinite(float(ov[0])): raise ValueError("Null/non-finite OBS_VALUE")
+                periods.append(period_values[oi]); n+=1
+              if not periods: continue
+              if len(periods)!=len(set(periods)): raise ValueError("Duplicate period within reporter "+country)
+              reporters[country]={"observation_count":n,"first_period":min(periods),"last_period":max(periods),"periods":sorted(periods)}
+            return {"reporters":reporters,"country_codelist_count":len(country_values),"country_codes_in_dimension": [x.get("id",x.get("value")) for x in country_values],"period_values":period_values,"series_dimension_ids":ids,"observation_dimension_ids":[x.get("id") for x in od]}
+          results=[]
+          for case in cases:
+            query=urlencode({"c[TIME_PERIOD]":"ge:2015-Q1+le:2025-Q4","dimensionAtObservation":"TIME_PERIOD","attributes":"all","detail":"dataonly","limit":"50000"})
+            url=base+case["key"]+"?"+query
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.data+json;version=2.0.0"})
+            try:
+              with urllib.request.urlopen(req,timeout=150) as r:
+                status=r.status; headers=dict(r.headers.items()); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; headers=dict(e.headers.items()) if e.headers else {}; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; headers={}; final=url; body=b""; err=type(e).__name__+": "+str(e)
+            (out/(case["name"]+".body")).write_bytes(body)
+            parsed={"ok":False,"reporters":{},"error":None}
+            if status==200 and "json" in headers.get("Content-Type","").lower():
+              try: parsed={"ok":True,**parse_response(body,case["entry"]),"error":None}
+              except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+            reporter_codes=set(parsed.get("reporters",{}))
+            present=sorted(reporter_codes & set(emde))
+            missing=sorted(set(emde)-reporter_codes)
+            extra=sorted(reporter_codes-set(emde))
+            coverage_rows=[]
+            for code,name in sorted(emde.items(),key=lambda x:x[1]):
+              v=parsed.get("reporters",{}).get(code)
+              coverage_rows.append({"WEO_EMDE_NAME":name,"BOP_COUNTRY_CODE":code,"SERIES":case["entry"],"REPORTER_STATUS":"PRESENT_IN_2015Q1_2025Q4" if v else "NO_SERIES_IN_QUERY_RANGE","OBSERVATION_COUNT":v["observation_count"] if v else 0,"FIRST_PERIOD":v["first_period"] if v else "","LAST_PERIOD":v["last_period"] if v else ""})
+            with open(out/(case["name"]+"_emde_coverage.csv"),"w",newline="",encoding="utf-8") as f:
+              w=csv.DictWriter(f,fieldnames=list(coverage_rows[0].keys()),lineterminator="\n"); w.writeheader(); w.writerows(coverage_rows)
+            record={"name":case["name"],"requested_url":url,"series_key":case["key"],"status":status,"content_type":headers.get("Content-Type"),"final_url":final,"transport_error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse_ok":parsed.get("ok"),"parse_error":parsed.get("error"),"series_dimension_ids":parsed.get("series_dimension_ids"),"observation_dimension_ids":parsed.get("observation_dimension_ids"),"country_codelist_count":parsed.get("country_codelist_count"),"series_count_returned":len(reporter_codes),"emde_members":154,"emde_reporters_present":len(present),"emde_no_series_in_range":len(missing),"non_emde_reporters":len(extra),"present_codes":present,"missing_codes":missing,"extra_reporter_codes":extra,"reporters":parsed.get("reporters",{})}
+            (out/(case["name"]+".json")).write_text(json.dumps(record,indent=2,ensure_ascii=False)+"\n")
+            results.append(record)
+          summary={"dataset":"IMF.STA:BOP(21.0.0)","dsd":"IMF.STA:DSD_BOP(24.0.0)","frequency":"Q","period_range":"2015-Q1 to 2025-Q4","emde_members":154,"results":[{"name":r["name"],"status":r["status"],"bytes":r["bytes"],"sha256":r["sha256"],"parse_ok":r["parse_ok"],"series_count_returned":r["series_count_returned"],"emde_reporters_present":r["emde_reporters_present"],"emde_no_series_in_range":r["emde_no_series_in_range"],"non_emde_reporters":r["non_emde_reporters"],"missing_codes":r["missing_codes"],"parse_error":r["parse_error"]} for r in results],"acceptance":{"both_http_200_and_parsed":all(r["status"]==200 and r["parse_ok"] for r in results),"coverage_is_observation_based":True,"no_aggregation_performed":True}}
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps(summary,indent=2,ensure_ascii=False))
+          if not summary["acceptance"]["both_http_200_and_parsed"]:
+            raise SystemExit("At least one all-country coverage query failed or did not parse")
+          PY
+      - name: Upload raw data responses and coverage matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-emde-reporter-coverage-${{ github.run_id }}
+          path: imf-bop-emde-reporter-coverage/
+          if-no-files-found: error
+          retention-days: 90
