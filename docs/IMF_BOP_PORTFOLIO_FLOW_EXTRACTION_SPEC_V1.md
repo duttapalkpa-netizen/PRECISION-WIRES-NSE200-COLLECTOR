@@ -261,3 +261,26 @@ Observation attributes: PRECISION=6; DERIVATION_TYPE=O (Reported official data);
 - Compact data-only Run `43616059985` SUCCESS; artifact `14122421554`; ZIP SHA-256 `cc951e2655dc4592ab82d848e0beebc43970132de1f4f3edc5c3ef8b56aaed23`.
 
 Current gates: Portal crosswalk PASS; narrow India annual portfolio asset series PASS (11/11); full India panel, liabilities, quarterly series and revision reconciliation NOT DONE; EMDE reporter coverage NOT DONE; EM aggregate BLOCKED. The IMF BOP workstream is 5/7 accepted gates (71.4%); the narrow sample does not complete the full India panel gate. Project-wide progress remains NOT_CALCULABLE pending full workstream ledger reconciliation.
+
+
+## 2026-11-14 — India annual/liability and quarterly assets/liabilities acquisition
+
+The Portal-owned BOP dataflow crosswalk is proven from the Portal's own SDMX 2.1 structure response: `IMF.STA:BOP(21.0.0)` references `IMF.STA:DSD_BOP(24.0.0)`. Do not substitute SDMX Central registry candidate DSDs.
+
+Exact series dimension order: COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, UNIT, FREQUENCY; TIME_PERIOD is the observation dimension. Verified codes: IND=India; A_NFA_T=Assets, Net acquisition of financial assets; L_NIL_T=Liabilities, Net incurrence of liabilities; P_F=Portfolio investment, Total financial assets/liabilities; USD=US dollar; A=Annual; Q=Quarterly.
+
+Acquired using `dimensionAtObservation=TIME_PERIOD&attributes=all&detail=dataonly`:
+- `IND.A_NFA_T.P_F.USD.A`: 11 annual rows, 2015–2025 (previously captured; do not reacquire absent a new source vintage).
+- `IND.L_NIL_T.P_F.USD.A`: 11 annual rows, 2015–2025.
+- `IND.A_NFA_T.P_F.USD.Q`: 44 quarterly rows, 2015-Q1–2025-Q4.
+- `IND.L_NIL_T.P_F.USD.Q`: 44 quarterly rows, 2015-Q1–2025-Q4.
+
+Combined 110-row CSV: `data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv`, SHA-256 `260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9`. Manifest: `data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.manifest.json`. Audit report: `docs/IMF_BOP_INDIA_PORTFOLIO_SERIES_RECONCILIATION_20261114.md`.
+
+Annual/quarterly Decimal reconciliation over all 11 years: assets max absolute difference `0.0000009`; liabilities `0.000007`; both below declared raw-value tolerance `0.00001`. Independent committed-file integrity Run #43623953963 SUCCESS verified 110 rows, four period sets, source-response hash distribution, CSV SHA-256 and both reconciliations. Artifact ID `14125201831`.
+
+Parser correction: Run #43623450125 failed because the validator treated the SDMX dataSet-level ordered attribute array as a mapping. Raw responses were retained. The corrected parser preserves the ordered array and Run #43623518481 passed all three new series. Do not discard the failed run; its failure was in the validator, not the HTTP responses.
+
+Series metadata SCALE=6 and PRECISION=6 are retained without applying a multiplier. METHODOLOGY=BPM6; DERIVATION_TYPE=O; ACCESS_SHARING_LEVEL=PUBLIC_OPEN; SECURITY_CLASSIFICATION=PUB. Null STATUS, ACCESS_SHARING_NOTES and SOURCE remain null. Quarterly asset series carries IFS_FLAG=true; liabilities series IFS_FLAG is null. Do not combine/net assets and liabilities, convert USD, or aggregate EMDE until unit/scale semantics, reporter coverage and vintage/revision checks pass.
+
+Current India acquisition subtask: annual and quarterly asset/liability base series PASS (110 observations). Full India panel remains IN_PROGRESS until revisions/vintage and completeness checks are complete. Full 154-economy EMDE reporter coverage NOT DONE; EM aggregate BLOCKED.
