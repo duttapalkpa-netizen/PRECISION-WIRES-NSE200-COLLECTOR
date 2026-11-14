@@ -52,7 +52,7 @@ All four observed spans are contiguous within each stated interval (no internal 
 - Assets: 3/43 have observations (DZA, ETH, HTI); 40/43 have no series returned.
 - Liabilities: 3/43 have observations (ETH, HTI, ZWE); 40/43 have no series returned.
 - Two countries have both sides represented somewhere in the combined period: ETH and HTI. This does not mean same-quarter overlap or continuous coverage.
-- The 43-row cross-period summary CSV is `data/research/imf_bop_emde_43_cross_period_matrix_20261114.csv`, SHA-256 `4d9686c8e0735a1d076c3f6850648bd481b59771beebcb260f0625bd14d405dc` (2,313 bytes). It reports observations by side and time window, without inserting zeros into source data; zero counts mean no observation returned in the exact query; the status wording explicitly distinguishes this from an empty SDMX series key.
+- The 43-row cross-period summary CSV is `data/research/imf_bop_emde_43_cross_period_matrix_20261114.csv`, SHA-256 `d331ba2f80c253c7d1e95dc2ba0c662fa27d4444aa21f12e9c881e200741704a` (2,547 bytes). It reports observations by side and time window, without inserting zeros into source data; zero counts mean no observation returned in the exact query; the status wording explicitly distinguishes this from an empty SDMX series key.
 
 ## 4. Interpretation and gate decision
 
