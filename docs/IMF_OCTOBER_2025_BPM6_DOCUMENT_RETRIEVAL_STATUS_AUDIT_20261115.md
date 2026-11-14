@@ -496,3 +496,15 @@ Compared the exact required-field contract in `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRA
 Implement a separate research-only provenance sidecar schema for future source pulls that records actual retrieval timestamp (UTC), actual final URL, HTTP status, Content-Type, byte count, response SHA-256 and actual publication/release vintage where the source supplies it. If the source does not supply a release vintage, store null/UNKNOWN rather than the retrieval date. Do not alter the existing 110-row CSV or production pipeline; require a newly acquired source response before creating a new vintage record.
 
 No credentials, paid services, synthetic timestamps, fabricated vintage, external contact, PR merge or production changes.
+
+## 22. Research-only IMF BOP response provenance sidecar schema V1 (2026-11-15)
+
+Created a versioned JSON Schema and capture contract on the research branch:
+- `schemas/imf_bop_response_provenance.schema.json`
+- `docs/IMF_BOP_RESPONSE_PROVENANCE_SIDECAR_V1.md`
+
+The schema requires exact requested/final URL, GET method, exact series key, HTTP 200, Content-Type, actual UTC retrieval timestamp, positive response byte count, SHA-256 over exact raw response-body bytes, explicit vintage status, and research controls. It distinguishes `SOURCE_PROVIDED`, `NOT_EXPOSED_BY_SOURCE`, and `NOT_VERIFIED`. If source vintage is not exposed/not verified, release date and release ID must be null; retrieval time is never substituted for publication vintage.
+
+The documentation defines capture order, rejection conditions, and the rule that every independently retrieved raw response gets its own sidecar. The existing India 110-row CSV and manifest remain untouched and are explicitly not retroactively compliant. No fabricated timestamp, release date, HTTP response, or checksum was added.
+
+Schema/document creation and remote re-fetch verification completed. No new IMF observation response was acquired and no schema-instance validation against a real response was claimed. Thus the sidecar contract implementation milestone is COMPLETE, while live capture validation remains NOT_DONE. Revision-aware panel gate remains NOT_READY.
