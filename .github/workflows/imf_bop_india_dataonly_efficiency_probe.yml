@@ -1,0 +1,73 @@
+name: IMF BOP India JSON data-only response efficiency probe
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_india_dataonly_efficiency_probe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-india-dataonly-efficiency-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test reduced metadata response while preserving the same 11 India observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-india-dataonly
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json
+          from pathlib import Path
+          from datetime import datetime,timezone
+          from urllib.parse import urlencode
+          out=Path("imf-bop-india-dataonly")
+          base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/IND.A_NFA_T.P_F.USD.A"
+          q=urlencode({"c[TIME_PERIOD]":"ge:2015-A1+le:2025-A1","dimensionAtObservation":"TIME_PERIOD","attributes":"none","detail":"dataonly","limit":"100"})
+          url=base+"?"+q
+          req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.data+json;version=2.0.0"})
+          try:
+            with urllib.request.urlopen(req,timeout=45) as r:
+              status=r.status; headers=dict(r.headers.items()); final=r.geturl(); body=r.read(); err=None
+          except urllib.error.HTTPError as e:
+            status=e.code; headers=dict(e.headers.items()) if e.headers else {}; final=e.geturl(); body=e.read(); err="HTTPError"
+          except Exception as e:
+            status=None; headers={}; final=url; body=b""; err=type(e).__name__+": "+str(e)
+          (out/"response.body").write_bytes(body)
+          parsed={"ok":False,"observation_count":0,"dimensions":[],"time_periods":[],"observations":[],"error":None}
+          if status==200:
+            try:
+              obj=json.loads(body); parsed["ok"]=True
+              ds=obj["data"]["dataSets"][0]
+              st=obj["data"]["structures"][0]
+              dims=st.get("dimensions",{}).get("observation",[])
+              parsed["dimensions"]=[x.get("id") for x in dims]
+              vals={x["id"]:x.get("values",[]) for x in dims}
+              for k,v in ds.get("observations",{}).items():
+                ix=[int(x) for x in k.split(":")]
+                row={dims[i]["id"]:dims[i]["values"][ix[i]].get("id",dims[i]["values"][ix[i]].get("value")) for i in range(len(ix))}
+                row["OBS_VALUE"]=v[0]
+                parsed["observations"].append(row)
+              parsed["observation_count"]=len(parsed["observations"])
+              parsed["time_periods"]=[x.get("TIME_PERIOD") for x in parsed["observations"]]
+              parsed["top_level_keys"]=list(obj.keys())
+              parsed["dataset_keys"]=list(ds.keys())
+            except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+          rec={"requested_url":url,"accept":"application/vnd.sdmx.data+json;version=2.0.0","status":status,"content_type":headers.get("Content-Type"),"headers":headers,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
+          (out/"result.json").write_text(json.dumps(rec,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({"status":status,"content_type":headers.get("Content-Type"),"bytes":len(body),"sha256":rec["sha256"],"error":err,"parse":parsed},indent=2,ensure_ascii=False))
+          PY
+      - name: Upload reduced response and parsed observations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-india-dataonly-${{ github.run_id }}
+          path: imf-bop-india-dataonly/
+          if-no-files-found: error
+          retention-days: 90
