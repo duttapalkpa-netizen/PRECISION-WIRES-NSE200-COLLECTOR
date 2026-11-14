@@ -116,3 +116,23 @@ Source: official NSDL report, lines 8–32 (web evidence turn381834view0 and tur
 ### Interpretation
 - The second-half October equity flow is concentrated in Information Technology (+₹10,915cr) and Telecommunication (+₹11,065cr), while many other sectors remain net sellers. This is descriptive allocation concentration, not a sector price-return signal or proof of causal rotation.
 - Full 22-sector 16–31 Oct equity panel: TRANSCRIBED. Displayed row-sum reconciliation: 1 crore residual. No historical NSE index return series has been downloaded or joined. No H+1/H+3/H+5 performance claim.
+
+
+
+## Appendix: NSE sector benchmark methodology revalidation and crosswalk risk correction — 2026-11-14
+
+### Source-level findings
+- NSE Indices Historical Data page provides a selector containing sector/thematic indices, date-range inputs and CSV-format output; it also exposes a separate Total Returns Index Values section (official page https://www.niftyindices.com/reports/historical-data; web evidence turn256653view0 and turn879354search1).
+- The selector includes NIFTY AUTO, CAPITAL GOODS, CEMENT, CHEMICALS, CONSTRUCTION, CONSUMER DURABLES, CONSUMER SERVICES, FINANCIAL SERVICES, FMCG, HEALTHCARE, IT, MEDIA, METAL, OIL AND GAS, POWER, REALTY, TELECOMMUNICATIONS and SERVICES SECTOR (turn256653view0 lines 59–88, 112–129).
+- The March 2026 NSE Indices Equity Index Methodology PDF's sectoral index contents explicitly enumerate Auto, Bank, Chemicals, Consumer Durables, FMCG, IT, Media, Metal, Oil & Gas, Pharma, PSU Bank, Private Bank, Realty, Cement, Financial Services, Healthcare, etc. It does not list NIFTY CONSTRUCTION, NIFTY CAPITAL GOODS, NIFTY POWER or NIFTY TELECOMMUNICATIONS as sectoral indices in its sectoral index contents (turn256653view1 lines 29–56). The same document separately lists thematic indices including Nifty Capital Markets, Commodities, Energy, Infrastructure and Services Sector (lines 57–84).
+- Therefore, a selector-visible index name alone is not sufficient to certify an NSDL BSE sector mapping or a sectoral classification. The previously recorded label-aligned candidates for Capital Goods, Construction, Power and Telecommunications must be downgraded to SELECTOR_VISIBLE_METHODOLOGY_SCOPE_UNVERIFIED pending their own current methodology/factsheet and constituent files. Do not silently call them confirmed sectoral benchmark matches.
+- Construction Materials → NIFTY CEMENT remains PROXY_ONLY; NIFTY CEMENT's presence in sectoral index contents does not prove identical BSE Construction Materials constituents. Healthcare → NIFTY HEALTHCARE also requires constituent overlap validation; methodology PDF lists Nifty Healthcare, while the historical selector uses the label “Nifty HEALTHCARE”. Do not assume name-only equivalence.
+- Methodology document states index reconstitution/rebalancing schedules differ by index; for example, sectoral indices include semiannual reviews and some thematic indices have separate schedules (turn302571view1 lines 1468–1472; turn256653view1 lines 29–84). Historical constituent universe must be point-in-time and effective-date aligned, not current constituents projected backwards.
+- NSE methodology PDF documents free-float weighting and capping rules; constituent weights can drift between rebalances (turn879354search9; turn302571view1). Thus index returns can be used as benchmark observations, but not as proof that NSDL sector classification has matching constituents.
+- Historical-data page has separate historical index price/OHLC and Total Returns Index values. Pre-register TRI as primary performance measure where available, retain price index as a separate series, and never mix them (turn879354search1; turn256653view0).
+
+### Acquisition status and next gate
+- UI/source availability and benchmark taxonomy revalidation: DOCUMENTED.
+- No date-range was submitted and no historical CSV bytes were downloaded in this audit. No file size, response headers, source-file SHA-256 or row-level date continuity is available. This step does not count as index-data acquisition.
+- Next eligible action: obtain each candidate index's own factsheet/methodology and point-in-time constituent file, then acquire date-bounded TRI/price-index CSVs through official interface; hash original bytes and validate session calendar, duplicate dates, missing dates, OHLC constraints and TRI continuity.
+- Do not calculate any FPI-to-sector-return relationship until NSDL publication timestamp, period-end date, next eligible NSE session and index-specific mapping status are verified.
