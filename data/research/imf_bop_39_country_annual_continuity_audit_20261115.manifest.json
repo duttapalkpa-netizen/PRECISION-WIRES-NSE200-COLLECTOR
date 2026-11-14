@@ -1,0 +1,115 @@
+{
+  "audit_date": "2026-11-15",
+  "source_artifact": {
+    "run_id": 43630656519,
+    "artifact_id": 14128182046,
+    "zip_sha256": "058ae62904bec701959175076d3d2aa9de20f402eb3425083bbfad2d36accc12"
+  },
+  "source_dataset": "IMF.STA:BOP(21.0.0)",
+  "dsd": "IMF.STA:DSD_BOP(24.0.0)",
+  "series": {
+    "indicator": "P_F",
+    "unit": "USD",
+    "frequency": "A",
+    "assets": "A_NFA_T",
+    "liabilities": "L_NIL_T",
+    "window_start": 2000,
+    "window_end": 2025
+  },
+  "target_count": 39,
+  "outputs": {
+    "side_matrix": {
+      "file": "IMF_BOP_39_COUNTRY_ANNUAL_CONTINUITY_SIDE_MATRIX_20261115.csv",
+      "rows": 78,
+      "sha256": "69840fa287cf14eb5d50e0ca51465720c315e1fda7b5bf1a594ad3777a7f805e"
+    },
+    "country_summary": {
+      "file": "IMF_BOP_39_COUNTRY_ANNUAL_CONTINUITY_SUMMARY_20261115.csv",
+      "rows": 39,
+      "sha256": "3003f065ed3d1b459c5c932b19ab6882b4be4ccbe8968600d2d0391097842259"
+    },
+    "detailed_json": {
+      "file": "IMF_BOP_39_COUNTRY_ANNUAL_CONTINUITY_AUDIT_20261115.json",
+      "sha256": "090174bf4f89750c5425f779a8dda826345ab51d05f31b94caf281aaf6baa258"
+    }
+  },
+  "raw_response_hashes": {
+    "assets": "711431c957199292cfb37e884a3e9344e7e519e23e9bb4baea2ff9f5523addfc",
+    "liabilities": "a256a5f5baaef80f48e7d3747c39db80d644078b896abe49a5190f21003b60aa"
+  },
+  "continuity": {
+    "assets": {
+      "reporters_with_observations": 33,
+      "complete_26_year_reporters": 9,
+      "latest_year_2025_reporters": 13,
+      "reporters_with_internal_gaps": 3,
+      "interior_missing_years_total": 9,
+      "non_null_observations": 649
+    },
+    "liabilities": {
+      "reporters_with_observations": 31,
+      "complete_26_year_reporters": 9,
+      "latest_year_2025_reporters": 11,
+      "reporters_with_internal_gaps": 6,
+      "interior_missing_years_total": 29,
+      "non_null_observations": 599
+    },
+    "both_sides_complete_26_years": ["ATG", "DMA", "GRD", "KEN", "KNA", "LCA", "MDV", "OMN", "VCT"],
+    "largest_internal_gaps_assets": {"MWI": 5, "COG": 3, "GAB": 1},
+    "largest_internal_gaps_liabilities": {"MHL": 9, "LBY": 8, "COG": 5, "SLE": 4, "GNB": 2, "GAB": 1}
+  },
+  "six_country_no_nonempty_annual_observation_status": {
+    "CAF": {"assets": "EMPTY_SERIES_KEY", "liabilities": "EMPTY_SERIES_KEY"},
+    "ERI": {"assets": "NO_SERIES_KEY_RETURNED", "liabilities": "NO_SERIES_KEY_RETURNED"},
+    "GNQ": {"assets": "EMPTY_SERIES_KEY", "liabilities": "EMPTY_SERIES_KEY"},
+    "SOM": {"assets": "EMPTY_SERIES_KEY", "liabilities": "EMPTY_SERIES_KEY"},
+    "TCD": {"assets": "EMPTY_SERIES_KEY", "liabilities": "EMPTY_SERIES_KEY"},
+    "TKM": {"assets": "EMPTY_SERIES_KEY", "liabilities": "NO_SERIES_KEY_RETURNED"}
+  },
+  "attribute_decode": {
+    "assets": {
+      "observations": 649,
+      "DERIVATION_TYPE": {"O": 649},
+      "ACCESS_SHARING_LEVEL": {"PUBLIC_OPEN": 649},
+      "SECURITY_CLASSIFICATION": {"PUB": 649},
+      "STATUS": {"null": 649},
+      "SOURCE": {"null": 649},
+      "PRECISION": {"6": 558, "null": 91},
+      "series_SCALE": "6",
+      "series_METHODOLOGY": "BPM6",
+      "series_IFS_FLAG": {"true": 33}
+    },
+    "liabilities": {
+      "observations": 599,
+      "DERIVATION_TYPE": {"O": 599},
+      "ACCESS_SHARING_LEVEL": {"PUBLIC_OPEN": 599},
+      "SECURITY_CLASSIFICATION": {"PUB": 599},
+      "STATUS": {"null": 599},
+      "SOURCE": {"null": 599},
+      "PRECISION": {"6": 516, "null": 83},
+      "series_SCALE": "6",
+      "series_METHODOLOGY": "BPM6",
+      "series_IFS_FLAG": {"null": 31}
+    },
+    "note": "SDMX integer attribute indexes were decoded through structure attribute value lists. IFS_FLAG meaning/eligibility is not inferred."
+  },
+  "gate_state": {
+    "annual_continuity_descriptive_audit": "PASS",
+    "26_year_annual_completeness": "PASS_FOR_9_COUNTRIES_ONLY",
+    "quarterly_reporter_eligibility": "UNKNOWN",
+    "quarterly_coverage_acceptance": "NOT_PASS",
+    "emde_aggregation": "BLOCKED"
+  },
+  "invariants": {
+    "spend_inr": 0,
+    "synthetic_data": false,
+    "fill_or_interpolation": false,
+    "annual_to_quarterly_conversion": false,
+    "aggregation": false,
+    "production_selector_changed": false,
+    "ranking_score_changed": false,
+    "pressure_fade_changed": false,
+    "core_672_changed": false,
+    "pr_merge": false
+  }
+}
