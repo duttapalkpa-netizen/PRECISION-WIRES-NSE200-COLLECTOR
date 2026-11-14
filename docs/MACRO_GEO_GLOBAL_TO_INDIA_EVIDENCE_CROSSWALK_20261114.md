@@ -70,3 +70,31 @@ This is an evidence crosswalk for research ingestion and future event studies. I
 - The CDSL 12-Nov net equity inflow and the NSE 13-Nov intraday rupee/breadth snapshots are distinct time stamps and source definitions. Do not combine them into a same-session causal claim.
 - A positive one-day FPI equity figure can coexist with weak breadth or a weaker rupee; this is not contradictory because the observations differ in timestamp, universe, and measurement. Require a multi-session panel before asserting persistence or predictive value.
 - These snapshots enrich the factor register but do not estimate betas, causal effects, or 1–5 day return probabilities. They are not a substitute for the full official historical panel.
+
+
+## 2026-11-14 macro risk transmission refresh — official RBI and dated market evidence
+
+### Verified RBI dashboard snapshot (14-Nov-2026 page update; observations retain their own dates)
+- RBI policy rates: repo 5.50%, SDF 5.25%, MSF/Bank Rate 5.75%; CRR 3.00%, SLR 18.00%.
+- FBIL USD/INR reference: ₹94.1997 as at 13:00 on 13-Nov-2026; GBP ₹124.6140, EUR ₹104.1814, JPY ₹58.9400 per 100 yen.
+- Government security yields as at 12-Nov-2026: 6.20% GS 2029 6.8894%; 6.53% GS 2031 7.0289%; 6.94% GS 2036 7.2430%; 7.06% GS 2041 7.4011%; 7.63% GS 2056 7.7235%.
+- Nifty 50 25,299.35 and Sensex 81,911.01, both as at 12-Nov-2026. These are not 14-Nov live prices.
+- Source: RBI Bulletin/dashboard, https://m.rbi.org.in/scripts/BS_ViewBulletin.aspx?Id=24446 (web evidence `turn459992news3`).
+
+### Current transmission interpretation — hypotheses, not measured coefficients
+- INR weakness + elevated crude can raise imported inflation/current-account and input-cost pressure; the impact is asymmetric across OMCs, upstream energy, aviation, paints, chemicals and exporters. Confirm with company-level exposure and lagged observed data.
+- Higher sovereign yields and hawkish global rate expectations can tighten equity discount rates and funding conditions; rate-sensitive banks/NBFCs, real estate and long-duration growth valuations need separate sector tests.
+- FPI equity inflows can support index liquidity but do not guarantee broad participation; retain breadth, cash-market flow, derivatives positioning and domestic institutional flow as separate features.
+- AI/technology rotation can move global IT valuations independently of Indian domestic demand; do not use Nasdaq/AI headlines as an automatic IT signal without sector-relative returns and issuer guidance.
+- West Asia shipping/geopolitical risk is a conditional oil/freight shock, not a deterministic direction forecast. Cross-check official notices, Brent curve, freight/insurance evidence and Indian sector exposure.
+
+### Fresh market context (not promoted to production feature)
+- 13-Nov reporting described INR near ₹94.24/USD, renewed crude pressure and higher US yields; Nifty fell on the day despite strong November foreign inflows. Treat this as contextual reporting, not an official raw series or executable factor observation. Source: Reuters, https://www.reuters.com/world/india/rupees-faltering-rally-faces-returning-oil-pressure-surging-us-yields-2026-11-13/ (`turn459992news7`); https://www.reuters.com/world/india/indian-shares-likely-open-flat-oil-surge-counters-strong-foreign-inflows-2026-11-13/ (`turn459992news8`).
+- IEA reporting on 13-Nov projected a Q4-2026 oil-market surplus as Gulf exports recover, while also noting continuing shipping/security risks; Brent was reported near $95.71/bbl. This is a scenario input requiring official IEA series and timestamped price validation, not a substitute for raw price acquisition. Source: https://www.reuters.com/business/energy/world-oil-market-is-returning-surplus-gulf-exports-recover-iea-says-2026-11-13/ (`turn459992news10`).
+- RBI October MPC resolution raised repo to 5.50% and shifted stance to calibrated tightening; RBI cited West Asia, energy prices, global yields and domestic inflation risks. GDP projection 7.1%, CPI projection 5.2% for FY2026-27. Source: https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24511 (`turn459992search0`).
+
+### Controls and status
+- Keep observation date, publication timestamp, retrieval timestamp, timezone, source class, universe, route and finality as separate fields.
+- Do not merge RBI dashboard observations, Reuters reporting, CDSL custodian flows, NSE provisional flows or DIPAM snapshots into one same-date row without explicit alignment keys.
+- No numeric factor beta, event coefficient, causal effect or H+1/H+3/H+5 predictive probability is inferred from this snapshot. No synthetic panel or forward-fill created.
+- Macro evidence snapshot refresh: DOCUMENTED. Historical event-to-NSE-session panel, P0 8/8 coverage, 35-factor source coverage, rolling out-of-sample sensitivity and production-parity backtest: NOT PROVEN / NOT RUN. Hard Gate remains BLOCKED.
