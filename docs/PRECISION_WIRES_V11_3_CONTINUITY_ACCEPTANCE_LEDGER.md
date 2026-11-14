@@ -538,3 +538,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Preserved critical caveats: BSE classification of ~4,800 issuers into 22 sectors; Others contains investments outside that issuer set; Debt VRR coverage begins 30-Apr-2020; Debt-FAR/MF/AIF AUC from 31-Aug-2024 and net investment from 15-Sep-2024; fortnightly USD conversion uses period-end RBI reference rates (95.9832 and 95.0691), unlike daily CDSL conversion method.
 - Scoped full sector Equity panel transcription and Grand Total arithmetic: DOCUMENTED / PASS. Original raw file bytes and SHA-256, all-category all-sector reconciliation, NSE sector-index mapping, historical multi-period panel and rolling predictive test remain NOT ACQUIRED / NOT RUN. Hard Gate remains BLOCKED. No synthetic data or production changes.
 - Audit report commit 395a2815ae6c041f12b07766ae95ec40c5080c19, blob 8d10bd449780f247071c0b7781a83e2fd5dca106.
+
+
+## 46. CDSL full fortnightly sector-wise equity flow panel audited — 2026-11-14
+
+- Inspected official CDSL 15-Oct-2026 report full table and methodology (turn177159search0). It covers 22 BSE Common Industry Classification sectors plus Others, with separate period-end AUC and two fortnightly net-investment windows.
+- Grand Total equity net investment −₹21,745cr (16–30 Sep) and −₹47,955cr (01–15 Oct), combined −₹69,700cr; arithmetic PASS.
+- Transcribed all 22 sector Equity flows for both windows into the audit report. Major outflows included Financial Services −₹6,943cr / −₹8,634cr; FMCG −₹972cr / −₹8,172cr; Auto −₹3,542cr / −₹6,533cr; Healthcare +₹3cr / −₹5,497cr; IT −₹38cr / +₹2,599cr. Other sector values are fully enumerated in the report.
+- Preserved Others bucket and methodology: BSE classification of ~4,800 issuers; VRR from 30-Apr-2020; Debt-FAR/MF/AIF AUC from 31-Aug-2024 and net investment from 15-Sep-2024; fortnightly USD conversion uses period-end RBI rate, unlike daily conversion.
+- Scoped full equity table transcription and grand-total arithmetic: DOCUMENTED / PASS. Original file bytes/SHA-256, all-category reconciliation, multi-period panel, issuer/index mapping and rolling predictive test remain NOT ACQUIRED / NOT RUN. Hard Gate BLOCKED. No production changes.
+- Audit report commit 1fb028b71478d30a755e35a1f4588a9588e5a875, blob 33a0d1cd6deac17ce6157c472054c62eac08155e.
