@@ -501,3 +501,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Added export sector context (petroleum products, electronics, gems/jewellery, chemicals, engineering) with explicit guardrail that national export growth is not issuer earnings or stock-return evidence.
 - Scoped official monthly data ingestion/documentation: PASS. Full historical monthly panel, issuer-level mapping, factor coverage and rolling validation remain NOT PROVEN / NOT RUN. No synthetic daily data, no causal coefficient, no production change, no PR/merge. Hard Gate remains BLOCKED.
 - Crosswalk commit `83c7c71cab7950f4cc68838b7726c56b19374acf`, blob `5fb6d5fe9d150f3fdcf817cfff10018736e49217`.
+
+
+## 43. CDSL official archive dated-row re-check and arithmetic PASS — 2026-11-14
+
+- Revisited official CDSL archive indexed snapshot (headed daily trends up to 13-Nov-2026). Extracted 02-Nov-2026 equity stock-exchange gross ₹21,334.02cr minus sales ₹17,015.12cr = net ₹4,318.90cr; Primary & Others +₹138.90cr; equity subtotal +₹4,457.80cr. Arithmetic PASS. Debt stock-exchange net −₹522.18cr plus Primary & Others −₹26.15cr = debt subtotal −₹548.33cr. Arithmetic PASS. Official source https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx (turn593944search2).
+- Separately recorded the 13-Nov-2026 derivatives table snapshot (index futures buy ₹5,266.61cr, sell ₹1,700.53cr, end-date OI ₹32,628.02cr); it is not the same reporting-date record as the 02-Nov cash-equity row.
+- SEBI official FPI catalog confirms NSDL/CDSL parallel daily/monthly/archive routes (turn593944search0); CDSL portal exposes archive, fortnightly sector and trade-wise routes (turn593944search1, turn593944search6).
+- Scoped visible-row arithmetic validation PASS. Raw original workbook/download bytes, full row coverage, SHA-256 manifest, exact pagination/export contract, historical DII panel and rolling impact study remain NOT ACQUIRED / UNKNOWN / NOT RUN. Hard Gate BLOCKED. No synthetic data, no date-only join, no production selector/ranking/CORE-672 change, no PR/merge.
+- Audit report commit 8aa860f036f4cc950b7f04923563394264a32ffc, blob 0cd2d1abac898090880b849859ca98cbc384c6e8.
