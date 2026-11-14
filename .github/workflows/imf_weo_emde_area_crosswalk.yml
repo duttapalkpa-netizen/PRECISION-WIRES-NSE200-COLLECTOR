@@ -113,7 +113,6 @@ jobs:
             "moldova":"moldova republic of",
             "venezuela":"venezuela bolivarian republic",
             "tanzania":"tanzania united republic of",
-            "west bank and gaza":"palestine state of"
           }
           records=[]; unmapped=[]; ambiguous=[]
           for name in weo_names:
