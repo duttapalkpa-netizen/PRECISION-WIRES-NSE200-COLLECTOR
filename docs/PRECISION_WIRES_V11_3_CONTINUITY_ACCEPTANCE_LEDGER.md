@@ -395,3 +395,17 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Work-package status: historical acquisition PASS; cross-period reconciliation PASS; coverage gate NOT PASS; EM aggregation BLOCKED. Absence remains "NO SERIES RETURNED IN THE TESTED WINDOWS", not economic zero or proven permanent non-reporting.
 - Next: inspect exact SDMX series/observation attributes, flags and revision/vintage metadata for ETH, HTI, DZA, ZWE; inspect codelist/dataflow eligibility for the 39 with no observations in either tested window. Keep causes UNKNOWN until evidenced.
 - Invariants unchanged: ₹0 spend, official public sources only, no synthetic values/timestamps, paid API, auth bypass, external contact, PR merge or production integration; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
+
+
+## 2026-11-14 — Addendum: raw SDMX attributes inspected; empty-series wording corrected
+
+- The four already-downloaded raw response bodies from Runs #43626075930 and #43624740474 were inspected directly. No duplicate data acquisition was performed.
+- For every observed series among ETH, HTI, DZA, ZWE: SCALE=6 and METHODOLOGY=BPM6; DECIMALS_DISPLAYED and OVERLAP are null.
+- IFS_FLAG=true on observed asset series ETH, HTI, DZA; IFS_FLAG is null on observed liability series ETH, HTI, ZWE. Meaning of IFS_FLAG remains UNKNOWN pending exact official codelist/definition verification; do not infer from boolean value.
+- Across every observed quarter for these reporters: PRECISION=6, DERIVATION_TYPE=O, ACCESS_SHARING_LEVEL=PUBLIC_OPEN, SECURITY_CLASSIFICATION=PUB. Observation STATUS, ACCESS_SHARING_NOTES and SOURCE are null. Preserve nulls and do not infer missing metadata.
+- Historical liabilities raw response includes a ZWE series key whose observations object is empty. It is not an observed reporter and must not be counted in coverage. Other targeted empty series keys: none. This raw detail corrects the earlier broad phrase “no series returned” to “no observations returned” for 39/43 with no data across both tested windows.
+- Cross-period CSV wording corrected: statuses now say `NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW`; final CSV SHA-256 `4d9686c8e0735a1d076c3f6850648bd481b59771beebcb260f0625bd14d405dc`; correction commit `c94f7a81bc7c71051b16160385c9e7250f8e233e`.
+- Updated report: `docs/IMF_BOP_EMDE_HISTORICAL_REACHBACK_RECONCILIATION_20261114.md`, commit `56da512180eb80c9ea35cb52558cfd293fc50104`.
+- Historical acquisition and cross-period reconciliation remain PASS as research tasks; reporter coverage acceptance remains NOT PASS; EM aggregation remains BLOCKED. IMF BOP accepted gates remain 5/7 (71.4%) on existing rubric; this audit does not promote the incomplete 154-country coverage gate.
+- Next: verify IFS_FLAG definition/codelist and reporter eligibility for the 39 codes with no observations across the tested 2000–2025 windows; no assumption that missing observations equal zero or permanent non-reporting.
+- Project-wide PRECISION-WIRES V11.3 progress remains NOT_CALCULABLE until all workstream gates and weights are reconciled. All production invariants remain unchanged; spend ₹0.
