@@ -428,3 +428,10 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Progress: IFS_FLAG semantic identification 100% (PASS); null semantics 0% (UNKNOWN); 39-country exact series eligibility 0% resolved (UNKNOWN); coverage gate NOT PASS; EM aggregation BLOCKED. IMF BOP accepted-gate score remains 5/7 (71.4%)—no gate promotion. Project-wide progress remains NOT_CALCULABLE.
 - Next: inspect the exact archived DSD_BOP(24.0.0) structure response and referenced codelists/constraints for accounting entry, indicator, unit, frequency, and reporter-specific constraints. If absent, report only “no eligibility constraint found in inspected artefacts”; do not infer eligibility.
 - No API data rerun, no new observations, no aggregation, no production changes, no PR merge. All protected V11.3 invariants remain unchanged; spend ₹0.
+
+
+### Addendum — archived metadata artefact scope correction (2026-11-14)
+- Re-opened prior metadata artifacts #14111193621 and #14112042284. They contain the global SDMx Registry DSD `IMF:BOP(2.6.0)` and global IMF dataflows, not the exact IMF Data Portal `IMF.STA:DSD_BOP(24.0.0)` structure/constraints.
+- The global DSD component inventory does not include Portal-specific `IFS_FLAG` / `IMF_FLAG` or Portal dimension IDs `BOP_ACCOUNTING_ENTRY` / `INDICATOR`; its dimensions use a different vocabulary. It must not be used as a substitute for the Portal DSD.
+- Consequently, 39-country exact series eligibility remains UNKNOWN; no reporter-specific eligibility conclusion is drawn. The next step must obtain the exact Portal DSD 24.0.0 structure and any associated dataflow constraints, or explicitly document that the exact artefact is unavailable.
+- Corrected report: `docs/IMF_BOP_IFS_FLAG_AND_EMDE_ELIGIBILITY_METADATA_AUDIT_20261114.md`. No observation query rerun; no new coverage data; no aggregation or production change.
