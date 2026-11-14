@@ -1,0 +1,94 @@
+{
+  "audit_date": "2026-11-14",
+  "dataset": {
+    "title": "Balance of Payments (BOP)",
+    "urn": "IMF.STA:BOP(21.0.0)",
+    "agency": "IMF.STA",
+    "dataflow_id": "BOP",
+    "dataflow_version": "21.0.0",
+    "dsd_id": "DSD_BOP",
+    "dsd_version": "24.0.0"
+  },
+  "request": {
+    "base_url": "https://api.imf.org/external/sdmx/3.0",
+    "resource": "data/dataflow",
+    "key": "IND.A_NFA_T.P_F.USD.A",
+    "dimensions": {
+      "COUNTRY": "IND",
+      "BOP_ACCOUNTING_ENTRY": "A_NFA_T",
+      "INDICATOR": "P_F",
+      "UNIT": "USD",
+      "FREQUENCY": "A",
+      "TIME_PERIOD": "2015-2025"
+    },
+    "query_parameters": {
+      "c[TIME_PERIOD]": "ge:2015-A1+le:2025-A1",
+      "dimensionAtObservation": "TIME_PERIOD",
+      "attributes": "all",
+      "detail": "dataonly",
+      "limit": "100"
+    },
+    "accept": "application/vnd.sdmx.data+json;version=2.0.0",
+    "authentication": "No login, credentials, or authentication bypass used"
+  },
+  "response": {
+    "http_status": 200,
+    "content_type": "application/vnd.sdmx.data+json;version=2.0.0",
+    "body_bytes": 7845,
+    "body_sha256": "85cca14cabf7a674ba37c00f88e3140f562480130bdde57d4902562fa6e0e23a",
+    "observation_count": 11,
+    "periods": ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
+  },
+  "observation_metadata": {
+    "series_attributes": {
+      "SCALE": "6",
+      "METHODOLOGY": "BPM6"
+    },
+    "observation_attributes": {
+      "PRECISION": "6",
+      "DERIVATION_TYPE": "O",
+      "STATUS": null,
+      "ACCESS_SHARING_LEVEL": "PUBLIC_OPEN",
+      "ACCESS_SHARING_NOTES": null,
+      "SECURITY_CLASSIFICATION": "PUB",
+      "SOURCE": null
+    },
+    "codelist_interpretation": {
+      "DERIVATION_TYPE_O": "Reported official data",
+      "ACCESS_SHARING_LEVEL_PUBLIC_OPEN": "Public (Unrestricted)",
+      "SECURITY_CLASSIFICATION_PUB": "Public or Unrestricted"
+    },
+    "note": "SCALE and PRECISION are preserved as raw metadata attributes. No multiplier or scaling transformation is applied."
+  },
+  "csv": {
+    "path": "data/research/imf_bop_india_portfolio_assets_usd_annual_2015_2025.csv",
+    "rows": 11,
+    "sha256": "60e557c922763f145284c6243e4612d6c05c0ce756c6f2d8846e0ea2fc7c8697"
+  },
+  "github_evidence": {
+    "workflow_run_id": 43616059985,
+    "workflow_run_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43616059985",
+    "workflow_commit": "e6d54ed5507bcc8a6cd4054dd44ecc7c3ceef863",
+    "artifact_id": 14122421554,
+    "artifact_name": "imf-bop-india-dataonly-43615974828",
+    "artifact_zip_sha256": "cc951e2655dc4592ab82d848e0beebc43970132de1f4f3edc5c3ef8b56aaed23"
+  },
+  "scope_and_limits": [
+    "This is one India annual portfolio-investment asset-side series only.",
+    "It is not the liability-side series and not the complete India BOP portfolio panel.",
+    "No EMDE panel or aggregate is calculated.",
+    "No conversion, aggregation, rescaling, or imputation is performed.",
+    "The 11 observations are the returned rows for the exact requested key and period range."
+  ],
+  "invariants": {
+    "research_only": true,
+    "spend_inr": 0,
+    "free_official_source_only": true,
+    "synthetic_data": false,
+    "production_selector_changed": false,
+    "ranking_score_changed": false,
+    "pressure_fade_changed": false,
+    "core_672_changed": false,
+    "pr_merge": false
+  }
+}
