@@ -1,0 +1,133 @@
+# PRECISION-WIRES V11.3 — Continuity & Acceptance Ledger
+Last reconciled: 2026-11-08 (Asia/Kolkata)
+Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR
+
+## 1. Non-negotiable project invariants
+- Production Selector unchanged.
+- RANKING_SCORE unchanged.
+- +1 PRESSURE_FADE unchanged.
+- CORE-672 unchanged: 56 Steps × 12 Filters.
+- Engines A–E and IPO-PLX V2 overlay remain as specified in the approved master architecture.
+- Research-only code is not production integration. No automatic trade trigger.
+- UNKNOWN is neither PASS nor FAIL.
+- No fabricated data, inferred timestamps, synthetic vintage rows, unsupported source promotion, base-year/classification splicing, or relaxed Hard Gate.
+- ₹0 spend; free official sources only; no paid APIs.
+- Retain prior PASS artifacts, Run IDs, manifests and SHA-256 values.
+- No PR merge or production integration without explicit user approval.
+- Keep CI bounded to <10 minutes, ideally 20–60 seconds where feasible.
+
+## 2. IIP audit — verified state
+### April 2026 current-series cross-check
+- PR #23, branch `qa/iip-apr2026-crosscheck-validation`, head `73124e1ac011e4975350330dfe50f11fefb9f09b`, open/draft/unmerged at last recorded check.
+- Run #46 / ID `42491849056`: SUCCESS; 23/23 named NIC-2 manufacturing rows matched two later PIB Statement IV releases.
+- Uploaded portal workbook `iip_62.xlsx`: 90,294 bytes; SHA-256 `31ab1a00ea14b90a21086d3c618cd65456e45b3a02b4ae85251ee1dac9fb189e`.
+- April portal catalogue ID/download timestamp not captured; do not invent them.
+- First-release WPI PDF raw SHA remains pending.
+
+### 41-vintage audit and revision comparison
+- PR #21, branch `fix/iip-41-vintage-audit-mainline-isolated`, open/unmerged; no production merge.
+- Run #245 / ID `42452130606`: audit completed operationally; 37 qualifying records, 36 raw workbooks downloaded/cache-verified and parsed, 1 failed download (April 2026 legacy 2011-12/NIC-2008 file HTTP 404), 116,740 parsed observations, 1,058 snapshot differences.
+- Run #250 / ID `42500736335`: full audit passed, independent validator failed because it incorrectly treated repeated series-period keys across distinct successive vintage pairs as duplicates.
+- Fix: uniqueness key now includes both previous and current vintage IDs.
+- Run #251 / ID `42501079840`: SUCCESS; full 41-vintage audit and independent validator both passed. This validates 1,058 snapshot differences against observation rows, hashes, delta arithmetic and release chronology. It does not prove why MoSPI changed a value.
+- Independent classification: 1,010 differences in 2011-12/NIC-2008 and 48 in 2022-23/NIC-2025. All are snapshot differences, not necessarily corrections or errors.
+- Run #252 / ID `42501277644`: SUCCESS on PIB ingestion sidecar's initial commit (script not yet included in workflow at that commit).
+- Run #253 / ID `42501293659`: FAILED. The new PIB sidecar found the Statement IV table but failed due to a case mismatch: HTML headers were lowercased, while month lookup keys were mixed-case. Exact fix committed as `cc1b8c0ceaf7f7d4bcf0660827534f482357d69f`: normalize target keys to lowercase.
+- Run #254 / ID `42507902637`: SUCCESS; full 41-vintage audit, PIB supplementary snapshot ingestion and independent revision validator all passed. Artifact ID `13628033276`, ZIP SHA-256 `a988e47f6679def45d3fa3316e5d3207040047a847cd19410458a40db1814f3b`.
+- Run #254 PIB sidecar output: exactly 69 rows = 3 periods × 23 NIC codes (10–32), no missing code-period combinations; periods 2025-04, 2025-09, 2026-02; source PRID 2256241, release date 2026-04-28; all rows carry the same non-empty source-page SHA-256 `cf78fee28f487cd152c527d5249de5747316348cbc1fcc646ebcb24b95c9eb2b`; CSV SHA-256 `1199f490ad3003f28628d4fbb6f990d0d0371b277bf4f877b2b1d4c3384c9038`.
+- All 69 rows explicitly labelled `PIB_LATER_RELEASE_SNAPSHOT` and `NOT_ESTABLISHED_FROM_THIS_SNAPSHOT` for first-release status. This is supplementary later-snapshot coverage, not original MoSPI vintage recovery.
+- Independent value cross-check: all 69 values (23 NIC codes × Apr-25, Sep-25, Feb-26) were compared against MoSPI-hosted March-2026 press-release PDF, Statement IV; 69/69 exact matches, 0 mismatches. MoSPI PDF URL: https://www.mospi.gov.in/uploads/latestReleases/latest_release_1777370981972_ac151bbf-29ab-4f2c-a10e-bd727a4d3564_IIP_Press_release_March_2026.pdf . The PDF release is dated 28 Apr 2026 and explicitly provides monthly NIC-2008 values for the last 13 months. Raw PDF bytes/SHA-256 not captured in this session; do not claim a raw-PDF hash.
+- Run #254 artifact ZIP SHA-256: `a988e47f6679def45d3fa3316e5d3207040047a847cd19410458a40db1814f3b`; PIB supplementary CSV SHA-256: `1199f490ad3003f28628d4fbb6f990d0d0371b277bf4f877b2b1d4c3384c9038`; revision differences CSV SHA-256: `51f4036ebd45796a07514295728e018049ec20b4b1c7683d7ee11d246e277f17`; observation CSV SHA-256: `e8cbda9e24d4f1d56aedd9cbd216ce708ee34dac82769da2dbc912ad8193b3b6`; vintage manifest SHA-256: `efeadc05f5a84203e17d3a157e9efadd1055aab6550bbb01cece5e7c83b21d49`.
+- Run #254 revision validator again passed: 116,740 observation rows; 1,058 differences; 0 integrity errors.
+- Run #253 case mismatch root cause was fixed by lowercasing TARGETS keys; no further parser patch was needed after Run #254.
+
+### Missing periods and source boundary
+- Three missing reference periods in the legacy 2011-12/NIC-2008 audit window: 2025-04, 2025-09, 2026-02.
+- Official PIB release PRID 2256241, posted 28 Apr 2026, includes Statement IV with monthly NIC-2008 indices for Mar-25 through Mar-26. This is a later published snapshot, NOT the original MoSPI catalogue release/vintage. It can provide supplementary observation coverage only, not vintage restoration.
+- Official source URL: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2256241&lang=2&reg=48
+- The attempted legacy April 2026 MoSPI workbook request returned HTTP 404 with response SHA-256 `811de0d1fef7c9e0efae9cac56aa62dc5ddeff228cdb572326c97e6079a87030`; response body excerpt `{"error":"File not found"}`.
+- Official MoSPI March-2026 old-series press release (28 Apr 2026) provides old-base 2011-12 NIC-2008 data through March 2026, including Statement IV monthly NIC-2 values. Official PDF: https://www.mospi.gov.in/uploads/latestReleases/latest_release_1777370981972_ac151bbf-29ab-4f2c-a10e-bd727a4d3564_IIP_Press_release_March_2026.pdf
+- MoSPI's first April-2026 release is explicitly the NEW series with base 2022-23, dated 1 Jun 2026. The Ministry states the base year was revised from 2011-12 to 2022-23 and the April release is Part A of the new series. Official PDF: https://www.mospi.gov.in/uploads/latestReleases/latest_release_1780371708887_52b83604-666c-443a-82c6-4411103e2ede_Press_Release_IIP_2022-23f.pdf
+- Therefore April-2026 is not a missing monthly observation in the old 2011-12/NIC-2008 series: the official release boundary is March-2026. The 404 does not establish a lost required vintage; the old-series April catalogue ID/file expectation should be retired as NOT_APPLICABLE unless a separate official catalogue record proves otherwise.
+- Do not replace this old series with the separate 2022-23/NIC-2025 April workbook. Do not splice base years/classifications. Maintain two distinct series with an explicit transition boundary.
+- Legacy 2011-12/NIC-2008 monthly release lineage and new 2022-23/NIC-2025 lineage must remain separate.
+
+## 3. Global Capital Rotation overlay
+- PR #20: research-only overlay; open/unmerged. Engineering implementation and QA reported 100%; live continuous acquisition incomplete; India-vs-US/World historical backtest 0% proven; sector-to-stock transmission validation 0%; production integration 0%.
+- Keep global EM aggregate flow distinct from India FPI; daily Indian FPI does not prove broad EM rotation.
+- Missing/stale source values remain UNKNOWN; no forward-fill.
+- No automatic sector or stock beneficiary inference from political headlines.
+
+## 4. Other known blockers
+- Project-wide Hard Gate remains BLOCKED. Earlier audit: P0 source groups 7/8, factor groups 0/35, historical regime coverage 9/11; revalidate before using as current status.
+- Multi-source acquisition registry commit `bc2f1a12918b19b9bea0b339deef6291bae43427` had sources DISCOVERED_NOT_LIVE_VALIDATED.
+- Full production acceptance ledger and event-study maturity are not complete; no defensible overall project percentage until reconciled.
+
+## 5. Next actions — ordered, do not repeat completed work
+1. Run #254, its 69-row supplementary PIB snapshot validation, and the 69/69 MoSPI PDF Statement IV value cross-check are complete; do not repeat these tasks without new source/code changes.
+2. Close the legacy April-2026 2011-12/NIC-2008 workbook recovery as NOT_APPLICABLE, not NOT_RECOVERED: the official old series ends with March-2026 and April-2026 is the first 2022-23 base release. Retain the 404 response as an audit trail, but do not keep searching for a nonexistent old-series April release unless an official catalogue entry proves one existed.
+3. The next highest-value IIP work is a formal series-transition crosswalk: old base 2011-12/NIC-2008 through Mar-2026, new base 2022-23 from Apr-2026, with overlap/comparability metadata kept separate and no index-level splicing.
+4. Preserve PR #21 open/unmerged and PR #23 evidence separately.
+5. Complete consolidated project acceptance reconciliation before publishing an overall project percentage.
+
+## 6. Progress reporting rules
+Report workstream percentages separately from evidence status. Percentage means completion of the defined work package, not confidence or production readiness. Use PASS / BLOCKED / UNKNOWN explicitly. Overall project percentage must be marked NOT_CALCULABLE until the complete acceptance ledger and weights are reconciled; never invent a percentage.
+
+## 7. User workflow preferences
+- User asks for the single highest-value next task, completed quickly and correctly.
+- Do not repeat completed work. Check prior Run IDs, artifact hashes and commits first.
+- For each task, report progress percentage and evidence status; report overall project percentage only when defensible.
+- Preserve project history and explain fixes learned from earlier CI failures.
+- Respond in Bengali; no spending money.
+
+
+## 8. IIP transition crosswalk v2 — current official series controls (2026-11-08)
+- New durable document: `docs/IIP_SERIES_TRANSITION_CROSSWALK_V2.md`.
+- Commit: `bec01dff8d290948baffe6c0396ae0f872968e1b`.
+- URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/IIP_SERIES_TRANSITION_CROSSWALK_V2.md
+- Important correction from official source reconciliation: current 2022-23 IIP classification is NIC-2025, not NIC-2008. MoSPI September-2026 release explicitly reports manufacturing groups at NIC-2025 two-digit level. Keep legacy `2011-12 / NIC-2008` and current `2022-23 / NIC-2025` separate; no join without official concordance.
+- Important vintage correction: 1 June 2026 new-base release used WPI deflator but was explicitly superseded by MoSPI/PIB on 29 June 2026 with Output PPI-based 2022-23 series. Current IIP pipeline must use Output-PPI vintage; preserve 1 June as superseded first-release vintage only.
+- 29 June 2026 official comparative annual growth-rate bridge was transcribed into the crosswalk (not recomputed from index levels). General: 2022-23 Output-PPI series 6.8%, 5.7%, 4.3% for FY2023-24/2024-25/2025-26 versus legacy 5.9%, 4.0%, 4.1%. Manufacturing: 7.1%, 6.0%, 4.8% versus legacy 5.5%, 4.1%, 5.0%. Official warning: growth rates are not strictly comparable because of coverage, methods, baskets, sector composition and weights.
+- Latest verified monthly vintage in this review: September-2026 quick estimate, PIB PRID 2329475, published 28 Oct 2026; overall IIP growth 6.7%, manufacturing 7.6%, mining -6.2%, electricity & gas 11.2%, water/sewerage/waste management 5.8%. August-2026 final revision also reported. Quick estimates are revisable; retain vintage and response-rate metadata (86.5% for September quick estimate; 92.0% for August final revision).
+- Official source pages: https://www.pib.gov.in/newsite/archiveContent.aspx?lang=2&reg=48&relid=290616 (29 Jun Output-PPI supersession and comparative bridge); https://www.pib.gov.in/PressReleasePage.aspx?PRID=2329475&lang=2&reg=48 (Sep 2026 latest monthly release); https://www.pib.gov.in/PressReleasePage.aspx?PRID=2256241&lang=2&reg=3 (last legacy series release).
+- Earlier IIP transition doc's broad classification description is superseded by this v2 crosswalk where it states the current new-series classification. Do not repeat the earlier assumption that new series is NIC-2008.
+- Crosswalk specification/evidence reconciliation: 100% complete for the defined documentation task; raw-byte SHA-256 capture for all cited release PDFs, a machine-readable official NIC concordance, complete monthly vintage acquisition, IIP 41-vintage gate and all other project gates remain incomplete or UNKNOWN.
+- No production changes, no PR merge, no workflow rerun, and no alteration to protected V11.3 invariants.
+
+
+## 9. NIC concordance applicability audit (2026-11-09)
+- New document: `docs/NIC_CONCORDANCE_IIP_APPLICABILITY_AUDIT.md`.
+- Commit: `810bbb3728d2ad244c3c876bc8b32b6d7007d38c`.
+- URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/NIC_CONCORDANCE_IIP_APPLICABILITY_AUDIT.md
+- Official MoSPI NIC-2025 PDF located: https://www.mospi.gov.in/uploads/publications_reports/publications_reports1763457214315_c3e5d4f3-8e25-4775-85e3-ad42d571652f_NIC_2025_Final.pdf . Concordance is explicitly 4-digit class level, printed pages 232–238; source defines `(p)` as part and `+` as aggregation.
+- Verified examples include 0113 <- 0113+0128(p), 0330 <- 0311(p)+0312(p)+0321(p)+0322(p), 2611/2619 <- 2610(p), 3511/3512/3513 <- 3510(p), and 3101/3102 <- 3100(p). This proves simple prefix/truncation or one-to-one renaming is unsafe.
+- Decision: official concordance source discovery and IIP applicability audit PASS; machine-readable full extraction, forward/reverse multiplicity tests, and IIP-specific item-group/weight mapping remain UNKNOWN/BLOCKED. Do not claim a complete 2-digit bridge or derive IIP weights/index conversion from class concordance.
+- This closes only source discovery and applicability assessment, not the IIP classification bridge, 41-vintage gate or project Hard Gate.
+- No CI rerun, no PR merge, no production changes, no changes to protected V11.3 invariants.
+
+
+## 10. IIP manufacturing NIC crosswalk safety audit (2026-11-09)
+- New document: `docs/IIP_MANUFACTURING_NIC_CROSSWALK_SAFETY_AUDIT.md`.
+- Commit: `5f5a7540dde1a1c814cd959a9ccb3a6c53fcfe46`.
+- URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/IIP_MANUFACTURING_NIC_CROSSWALK_SAFETY_AUDIT.md
+- Official MoSPI source PDF was opened and inspected at printed pages 232–234 / source lines 15228–15475: https://www.mospi.gov.in/sites/default/files/main_menu/national_industrial_classification/NIC_2025Final_18112025.pdf .
+- Manufacturing examples verified include 1103/1104 <- 1103(p); 1512 <- 1512+2220(p); 1811 <- 1811+1313(p); 2520 <- 2520+3030(p); 2611/2619 <- 2610(p); 3101/3102 <- 3100(p); 3511/3512/3513 <- 3510(p); 3530 <- 3530+1104(p).
+- Safety determination PASS: do not collapse 4-digit concordance into IIP 2-digit divisions by prefix, row count or class count. The mapping has partial splits and cross-division aggregations; NIC concordance alone is not an IIP item-group/weight bridge.
+- Full 463-row machine-readable extraction remains NOT_COMPLETED; IIP-specific item-group/weight correspondence remains UNKNOWN/BLOCKED. A source table continuation fragment exists (NIC-2025 4772 row continues with 4799(p) in next table block); future parser must preserve and deterministically join such fragments or fail closed.
+- No workflow rerun, no PR merge, no production changes, no changes to protected V11.3 invariants.
+
+
+## 11. IMF BOP metadata and WEO EMDE membership crosswalk update (2026-11-14; research branch only)
+- Research branch: `research/imf-bop-access-audit-v1`; no merge to main and no PR merge.
+- IMF BOP metadata run #43590032021 SUCCESS; commit `47c2037de3fe4ff06094803a24e96a5aa5ff24fe`; artifact `14112042284`; ZIP SHA-256 `95aa8c3a730704cd1778ae12b7e5321b6e1c373b0d4eea81b0acfd6448fe1822`.
+- IMF BOP DSD/codelist run #43590132930 SUCCESS; commit `8df4589a1171bc74914b577313bd9c65ebc69f02`; artifact `14111193621`; ZIP SHA-256 `60c5485f6dd9538255a1ca364e719a2bc843b68be12d13a7521c5febae84d840`. Direct component inventory: 18 dimensions, 15 attributes, 1 primary measure; 22/22 referenced codelists HTTP 200 + XML parse PASS. First run's recursive XML counts are superseded by the corrected direct-component parser; preserve first run as historical audit.
+- WEO EMDE crosswalk run #43598281690 SUCCESS; commit `daa529172a9b55b66202fea7282a07c9bb54912a`; artifact `14114154484`; ZIP SHA-256 `16b59c4356ba31526c4cbc9f3d8796d1cc6d4e9d8fe7f0c6bec486d917cbbe2c`.
+- WEO April 2026 appendix page 5 parsed from official PDF: 154 unique EMDE names. Raw PDF SHA-256 `b8a538c3158bf0553a3ae45d4797cd5648cbea684eb4be848a52c1d64d994395`.
+- IMF CL_AREA 2.0.0 raw XML SHA-256 `09b5b44664b7d5ae4d41be132c48de01a9d9dcfbd918b6afb49f143adfdec6d4`; 931 English code labels parsed.
+- Mapping result: 153/154 unique mappings; zero duplicate code assignments; zero ambiguous matches. “West Bank and Gaza” remains UNKNOWN; no equivalence to “Palestine, State of” (PS) or “Gaza and Jericho” (XG) assumed. India exact mapping IN PASS. Seven explicit reviewed label aliases documented in evidence report.
+- WEO-to-CL_AREA crosswalk acceptance: PARTIAL_REVIEW_REQUIRED; full membership mapping gate remains BLOCKED/UNKNOWN pending West Bank and Gaza geography crosswalk decision. Mapping membership is not BOP reporter coverage.
+- Failure history preserved: run #43598079002 HTML-table assumption failed because source is PDF; #43598148417 lacked pypdf; #43598156963 stale HTML parser references/uninitialized PDF bytes. Corrected PDF parsing and pinned pypdf 5.9.0; successful run follows.
+- Evidence report: `docs/IMF_BOP_METADATA_FIRST_ACQUISITION_EVIDENCE_20261114.md`, commit `6d12d6b5bbd7cc90ab9683e3257c7d30bc76eed6`.
+- IMF BOP workstream: prior 3/7 gates (43%) now 4/7 gates complete (57%) if counting the WEO source extraction + 153/154 preliminary area mapping as the fourth partially-complete package; strict 154/154 membership gate remains PARTIAL/BLOCKED. Keep this as workstream task progress, not production readiness.
+- Project-wide verified overall progress: NOT_CALCULABLE until complete acceptance ledger and weights are reconciled. Prior project Hard Gate remains BLOCKED; prior Macro-Geo P0 7/8, Factor Registry 0/35 complete available groups, Historical Regime 9/11, Event Study exploratory/not mature must be revalidated before being stated as current.
+- No observation rows acquired; no EM portfolio-flow aggregate calculated; no production integration. Research spend ₹0; no paid API; no synthetic rows or timestamps. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
