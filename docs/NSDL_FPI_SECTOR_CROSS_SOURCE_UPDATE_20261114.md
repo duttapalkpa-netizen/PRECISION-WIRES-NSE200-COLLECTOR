@@ -194,3 +194,30 @@ Source: official NSDL report, lines 8–32 (web evidence turn381834view0 and tur
 - Authoritative 0.22% convention resolution: NOT RESOLVED.
 - Executable net-of-cost backtest and tests: 0% / NOT RUN.
 - Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No PR/merge; no production invariants changed.
+
+
+## 55. Walk-forward forward-outcome horizon alignment defect identified — 2026-11-14
+
+### Scope
+- Read-only audit of `pipeline/walk_forward_backtest.py`, source blob `d085f7a2d35a88b4c4eaba65144a429a06961b09`, function `future_outcomes`, lines 98–105.
+- No code, data, ranking, selector, diagnostic, workflow or production behavior changed.
+
+### Confirmed defect
+- Current implementation uses `x.shift(-1).rolling(h, min_periods=1).max()` for both future HIGH and future CLOSE, for h in {1,3,5}.
+- Pandas rolling is trailing/backward-looking. After shifting by -1, the rolling window at row t for h=3 covers shifted rows t-2..t, which correspond to original observations t-1, t, t+1; it does NOT cover the required future observations t+1, t+2, t+3. h=5 has the same backward-window alignment defect. h=1 is aligned to t+1.
+- Deterministic counterexample: source sequence [10,20,30,40,50], at t=0 and h=3 the current expression returns 20, while the required max of next three observations [20,30,40] is 40. At t=1 it returns 30 instead of max([30,40,50])=50.
+- `min_periods=1` also permits incomplete horizons near each symbol's end-of-history to produce partial-window outcomes instead of an explicit unavailable/matured-window state. The global cutoff guard does not guarantee each symbol has h subsequent observations when symbol histories are sparse, newly listed, or have missing sessions.
+- Both FUT{h}_HIGH_PCT and FUT{h}_CLOSE_PCT are affected for h=3 and h=5. The downstream target labels WIN10_H3 and WIN20_H5, precision/recall/lift, state performance and missed-winner attribution therefore cannot be treated as valid H+3/H+5 empirical results until corrected and rerun. H+1 alignment is not implicated by this specific rolling-window issue.
+
+### Safe remediation design (not applied)
+- Define the forward window explicitly as observations at t+1 through t+h, per SYMBOL in sorted session order; use a forward-aligned/reversed rolling implementation or explicit shift-based max with a full-horizon validity mask.
+- Require all h future observations for a matured target; otherwise leave outcome UNKNOWN/NaN and exclude it from both numerator and denominator. Do not classify immature horizons as non-winners.
+- Add deterministic unit tests for h=1,3,5 using monotonic and non-monotonic sequences, first/middle/last rows, symbol boundaries, missing sessions and insufficient future depth. Verify no cross-symbol leakage and exact next-h observations.
+- Recompute all affected artifacts from the corrected implementation; do not reuse prior H+3/H+5 results. Preserve historical outputs as superseded audit evidence, not silently overwrite or promote them.
+- This audit does not authorize any code patch or production integration. Fix requires explicit user approval and a separate research-only change.
+
+### Status
+- Scoped source inspection and mathematical alignment audit: 100% complete.
+- Corrective code change and unit tests: 0% / NOT RUN (no approval requested or applied).
+- Re-run of H+3/H+5 event study/backtest: 0% / BLOCKED pending correction.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No PR/merge; all production invariants unchanged.
