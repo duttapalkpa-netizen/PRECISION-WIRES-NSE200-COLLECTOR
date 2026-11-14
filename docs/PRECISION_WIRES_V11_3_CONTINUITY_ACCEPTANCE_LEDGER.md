@@ -600,3 +600,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Do not assume SDMx Global Registry BOP DSD v2.6.0 is equivalent to the original IMF.STA BOP dataset reference. No cross-service equivalence asserted.
 - Updated report: `97e96d40d91c43b789c95bf374cd23d46e3fe074`.
 - Gate: canonical DSD endpoint discovery PASS; XML body/references NOT_RETRIEVED; IMF Data Portal dataset structure NOT_RETRIEVED; exact constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — Official service-catalogue and retrieval-channel audit
+
+- SDMX Global Registry Web Service UI confirms unauthenticated REST base `https://registry.sdmx.org/sdmx/v2/`, Data Structure/Dataflow/Provision Agreement types, SDMX-ML v2.1/v3.0, References=All and Download control.
+- Official SDMx BOP page confirms IMF-maintained BOP DSD v2.6.0 and SDMX-ML 2.1/3.0 links. Older DSDs may remain valid when backward compatible; no compatibility conclusion is made for IMF.STA dataset.
+- Public SDMX service catalogue distinguishes IMF Data Portal 2.1/3.0 (`api.imf.org/external/sdmx/2.1`, `.../3.0`) from IMF SDMX Central services. Do not mix IDs across services.
+- IMF API help page says Swagger explorer requires beta portal account sign-in. No credentials requested or used.
+- Direct XML endpoint retrieval attempted; web interface could not render XML media type and container download failed. XML bytes/hash/DSD components/references NOT_RETRIEVED. Official package CIRCABC link returned 404 through retrieval layer; no origin-server conclusion.
+- October 2025 PDF metadata is verified, but PDF body remains NOT_RETRIEVED; no six-country inference.
+- Updated report: `d0f67acf2e09d9b85c148a10a9aabad8a269c533`.
+- Gate: service catalogue + unauthenticated registry route PASS; XML NOT_RETRIEVED; API Swagger requires beta login and was not accessed; exact constraints/provision/provider UNKNOWN; October PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
