@@ -573,3 +573,37 @@ Official sources inspected:
 - Next action: use the BOP_AGG dataset's official View Data/Download route only to determine whether individual country tables can be exported as raw country-level observations with an identifiable release vintage. Accept only if the exact series dimensions and country reporter status can be matched; otherwise reject as non-equivalent.
 
 This is a source-route discovery audit, not a data extraction or revision-comparison PASS. No prior CSV/manifest or acceptance gate was changed.
+
+## 25. BOPSY country-table export affordance audit (2026-11-15)
+
+### Exact official-document finding
+The official BOPSY November 2025 Explanatory Notes PDF was retrieved and inspected (31 pages). It explicitly states:
+- Country-level information is based on actual data reported directly to IMF or obtained from the country's National Summary Data Page, with a stated exception for accounts between individual countries and IMF (PDF pp. 3; lines 21-27).
+- Individual country tables can be found in the "Summary of International Transactions and Positions" table (PDF p. 4; lines 99-104).
+- Users can customize how they view and download data from the database (PDF p. 3; lines 65-73).
+- The country overview lists India BOP last reported period 2024 (PDF p. 8; line 217).
+- The same notes explain estimates for nonreporting economies in world/country-group aggregates, including WEO-based gap filling (PDF pp. 3-4; lines 28-64). These are not to be treated as reporter-level observations.
+
+Official source:
+https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf
+Dataset page:
+https://data.imf.org/en/datasets/IMF.STA:BOP_AGG
+
+### What the page/UI inspection establishes
+The BOP_AGG page exposes a VIEW DATA control and a DOWNLOAD control, and links the November 2025 notes. The notes specify that individual country tables are available within the "Summary of International Transactions and Positions" table. This is a concrete official route to investigate, more precise than treating the entire BOP_AGG aggregate as a single data series.
+
+### Critical non-equivalence / unresolved checks
+The retrieved public page text does not expose the underlying dashboard table's complete schema, data export payload, exact observation dimensions, series keys, or a versioned downloadable country-level raw file. Therefore this audit cannot certify that the country table contains the exact Portal series keys `IND.A_NFA_T.P_F.USD.A` / `IND.L_NIL_T.P_F.USD.A`, nor that its downloadable content is an archived 2025 vintage snapshot.
+The November 2025 country overview's "last reported period 2024" is coverage metadata, not a revision history or proof of the exact P_F portfolio component series.
+No export was downloaded and no vintage comparison performed.
+
+### Decision
+- Official country-table access route documented: PASS.
+- Exact country table export/schema inspected: NOT_DONE.
+- Exact India P_F assets/liabilities mapping: UNKNOWN.
+- Dated 2025 raw country snapshot and second overlapping vintage: NOT_DONE.
+- Revision/vintage readiness: UNKNOWN / NOT_READY.
+- No use of world/group aggregates as substitutes; no synthetic data, inferred keys, or fabricated release timestamps.
+- Next highest-value action: resolve the BOPSY "Summary of International Transactions and Positions" table's actual dashboard/export target from the public page's underlying links/metadata, then test a single India country table export and schema before any bulk retrieval.
+
+This bounded affordance audit is complete; it does not promote a data or revision gate.
