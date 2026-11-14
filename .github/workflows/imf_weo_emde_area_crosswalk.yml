@@ -1,0 +1,189 @@
+name: IMF WEO EMDE membership to IMF area-code crosswalk
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_weo_emde_area_crosswalk.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-weo-emde-area-crosswalk
+  cancel-in-progress: false
+jobs:
+  crosswalk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve IMF WEO appendix and IMF CL_AREA codelist
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p weo-emde-crosswalk
+          python - <<'PY'
+          import hashlib, json, urllib.request, urllib.error, unicodedata, re
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from html.parser import HTMLParser
+          import xml.etree.ElementTree as ET
+
+          out=Path("weo-emde-crosswalk")
+          sources={
+            "weo_appendix":"https://data.imf.org/-/media/iData/External%20Storage/Documents/4AA1F4D0624C46E98F95988F1F83E770/en/April%202026%20WEO%20Database%20Appendix",
+            "cl_area":"https://sdmxcentral.imf.org/sdmx/v2/structure/codelist/IMF/CL_AREA/2.0.0/?format=sdmx-2.1&detail=full"
+          }
+          def fetch(url,accept):
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":accept})
+            try:
+              with urllib.request.urlopen(req,timeout=35) as r:
+                return r.status,r.headers.get("Content-Type"),r.geturl(),r.read(),None
+            except urllib.error.HTTPError as e:
+              return e.code,e.headers.get("Content-Type") if e.headers else None,e.geturl(),e.read(),"HTTPError"
+            except Exception as e:
+              return None,None,url,b"",type(e).__name__+": "+str(e)
+          class TableParser(HTMLParser):
+            def __init__(self):
+              super().__init__(); self.in_target=False; self.in_cell=False; self.table_depth=0; self.cell=[]; self.cells=[]; self.target_seen=False
+            def handle_starttag(self,tag,attrs):
+              a=dict(attrs)
+              if tag=="table" and a.get("id")=="e1":
+                self.in_target=True; self.target_seen=True; self.table_depth=1
+              elif self.in_target and tag=="table": self.table_depth+=1
+              if self.in_target and tag=="td" and self.table_depth==1:
+                self.in_cell=True; self.cell=[]
+              elif self.in_target and tag=="br" and self.in_cell: self.cell.append("\n")
+            def handle_endtag(self,tag):
+              if self.in_target and tag=="td" and self.in_cell:
+                self.cells.append("".join(self.cell)); self.in_cell=False
+              elif self.in_target and tag=="table":
+                self.table_depth-=1
+                if self.table_depth==0: self.in_target=False
+            def handle_data(self,data):
+              if self.in_target and self.in_cell: self.cell.append(data)
+          def norm(s):
+            s=unicodedata.normalize("NFKD",s)
+            s="".join(c for c in s if not unicodedata.combining(c))
+            s=s.casefold().replace("&"," and ")
+            s=re.sub(r"[^a-z0-9]+"," ",s)
+            return " ".join(s.split())
+          weo_status,weo_ct,weo_final,weo_raw,weo_err=fetch(sources["weo_appendix"],"text/html,application/xhtml+xml,*/*")
+          (out/"weo_april_2026_appendix_raw.html").write_bytes(weo_raw)
+          assert weo_status==200 and weo_raw, f"WEO appendix retrieval failed: {weo_status} {weo_err}"
+          parser=TableParser(); parser.feed(weo_raw.decode("utf-8",errors="replace"))
+          assert parser.target_seen, "WEO table id=e1 not found; refusing to infer membership from search snippets"
+          weo_names=[]
+          for cell in parser.cells:
+            for line in cell.splitlines():
+              name=" ".join(line.split()).strip()
+              if name and name.casefold()!="emerging and developing economies": weo_names.append(name)
+          # Remove any header/footnote residue only by exact explicit header exclusion.
+          weo_names=[n for n in weo_names if norm(n)!="emerging and developing economies"]
+          assert len(weo_names)==154, f"Expected 154 WEO EMDE economies; parsed {len(weo_names)}"
+          assert len({norm(n) for n in weo_names})==154, "Duplicate WEO names after conservative normalization"
+          cl_status,cl_ct,cl_final,cl_raw,cl_err=fetch(sources["cl_area"],"application/xml,*/*")
+          (out/"imf_cl_area_2_0_0_raw.xml").write_bytes(cl_raw)
+          assert cl_status==200 and cl_raw, f"CL_AREA retrieval failed: {cl_status} {cl_err}"
+          root=ET.fromstring(cl_raw)
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          codelists=[e for e in root.iter() if local(e)=="Codelist" and e.attrib.get("id")=="CL_AREA" and e.attrib.get("version")=="2.0.0"]
+          assert len(codelists)==1, f"Expected one IMF CL_AREA 2.0.0 codelist, found {len(codelists)}"
+          codes=[]
+          for e in codelists[0].iter():
+            if local(e)=="Code":
+              names=[x.text.strip() for x in e if local(x)=="Name" and x.text and x.attrib.get("{http://www.w3.org/XML/1998/namespace}lang","en")=="en"]
+              if names: codes.append({"code":e.attrib.get("id"),"name":names[0]})
+          assert codes, "No English CL_AREA codes parsed"
+          exact={}
+          for x in codes: exact.setdefault(norm(x["name"]),[]).append(x)
+          # Explicit alias map only. These are name-label equivalences, never fuzzy matches.
+          aliases={
+            "democratic republic of the congo":"congo democratic republic of",
+            "republic of congo":"congo republic of",
+            "the gambia":"gambia",
+            "the bahamas":"bahamas",
+            "kyrgyz republic":"kyrgyzstan",
+            "lao p d r":"lao peoples democratic republic",
+            "lao p d r":"lao pdr",
+            "micronesia":"micronesia federated states of",
+            "russia":"russian federation",
+            "south korea":"korea republic of",
+            "north korea":"korea democratic peoples republic of",
+            "syria":"syrian arab republic",
+            "türkiye":"turkiye",
+            "turkiye":"turkey",
+            "iran":"iran islamic republic of",
+            "moldova":"moldova republic of",
+            "venezuela":"venezuela bolivarian republic of",
+            "tanzania":"tanzania united republic of",
+            "bolivia":"bolivia plurinational state of",
+            "brunei darussalam":"brunei",
+            "cape verde":"cabo verde",
+            "czech republic":"czechia",
+            "ivory coast":"cote d ivoire",
+            "palestine":"west bank and gaza"
+          }
+          records=[]; unmapped=[]; ambiguous=[]
+          for name in weo_names:
+            k=norm(name); matches=exact.get(k,[])
+            if not matches and k in aliases: matches=exact.get(norm(aliases[k]),[])
+            rec={"weo_name":name,"weo_classification":"WEO April 2026 EMDE","mapping_method":None,"imf_area_code":None,"imf_area_name":None,"mapping_status":"UNKNOWN"}
+            if len(matches)==1:
+              rec.update({"mapping_method":"EXACT_NORMALIZED" if exact.get(k) else "EXPLICIT_ALIAS","imf_area_code":matches[0]["code"],"imf_area_name":matches[0]["name"],"mapping_status":"MAPPED"})
+            elif len(matches)>1:
+              rec["mapping_status"]="AMBIGUOUS"; ambiguous.append(name)
+            else: unmapped.append(name)
+            records.append(rec)
+          mapped_codes=[r["imf_area_code"] for r in records if r["imf_area_code"]]
+          summary={
+            "created_at_utc":datetime.now(timezone.utc).isoformat(),
+            "classification_authority":"IMF World Economic Outlook, April 2026 Database Appendix",
+            "classification_scope":"Emerging and Developing Economies (EMDE); analytical WEO classification, not an investibility index",
+            "membership_count":len(weo_names),
+            "weo_source":{"url":sources["weo_appendix"],"http_status":weo_status,"content_type":weo_ct,"final_url":weo_final,"raw_bytes":len(weo_raw),"raw_sha256":hashlib.sha256(weo_raw).hexdigest()},
+            "area_codelist":{"agency":"IMF","id":"CL_AREA","version":"2.0.0","url":sources["cl_area"],"http_status":cl_status,"content_type":cl_ct,"final_url":cl_final,"raw_bytes":len(cl_raw),"raw_sha256":hashlib.sha256(cl_raw).hexdigest(),"english_code_count":len(codes)},
+            "mapped_count":sum(r["mapping_status"]=="MAPPED" for r in records),
+            "unmapped_count":len(unmapped),
+            "ambiguous_count":len(ambiguous),
+            "unique_mapped_code_count":len(set(mapped_codes)),
+            "duplicate_code_assignments":[c for c in sorted(set(mapped_codes)) if mapped_codes.count(c)>1],
+            "unmapped_names":unmapped,
+            "ambiguous_names":ambiguous,
+            "india_check":[r for r in records if norm(r["weo_name"])=="india"],
+            "acceptance":"PASS" if len(weo_names)==154 and len(mapped_codes)==154 and len(set(mapped_codes))==154 and not unmapped and not ambiguous else "PARTIAL_REVIEW_REQUIRED",
+            "critical_boundary":"WEO membership does not imply BOP observation availability or reporter coverage; no flows or aggregate calculated."
+          }
+          (out/"weo_emde_to_imf_area_crosswalk.json").write_text(json.dumps({"summary":summary,"members":records},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+          (out/"weo_emde_membership.csv").write_text("weo_name,imf_area_code,imf_area_name,mapping_method,mapping_status\n"+"".join(",".join('"'+str(r[k]).replace('"','""')+'"' for k in ["weo_name","imf_area_code","imf_area_name","mapping_method","mapping_status"])+"\n" for r in records),encoding="utf-8")
+          print(json.dumps({k:v for k,v in summary.items() if k not in ("weo_source","area_codelist")},ensure_ascii=False,sort_keys=True))
+          PY
+      - name: Validate membership integrity without forcing uncertain matches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("weo-emde-crosswalk/weo_emde_to_imf_area_crosswalk.json").read_text())
+          s=d["summary"]; m=d["members"]
+          assert s["membership_count"]==154 and len(m)==154
+          assert len({x["weo_name"] for x in m})==154
+          assert all(x["mapping_status"] in {"MAPPED","UNKNOWN","AMBIGUOUS"} for x in m)
+          assert len([x for x in m if x["mapping_status"]=="MAPPED"])==s["mapped_count"]
+          assert s["unique_mapped_code_count"]<=s["mapped_count"]
+          assert len(s["india_check"])==1 and s["india_check"][0]["mapping_status"]=="MAPPED"
+          print("WEO_MEMBERSHIP_INTEGRITY_PASS")
+          print("MAPPING_ACCEPTANCE:",s["acceptance"])
+          print("MAPPED:",s["mapped_count"],"UNMAPPED:",s["unmapped_count"],"AMBIGUOUS:",s["ambiguous_count"])
+          if s["acceptance"]!="PASS":
+            print("PARTIAL CROSSWALK: unmatched names remain UNKNOWN; do not use for aggregation.")
+          PY
+      - name: Upload versioned membership, source captures and crosswalk
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-weo-emde-area-crosswalk-${{ github.run_id }}
+          path: weo-emde-crosswalk/
+          if-no-files-found: error
+          retention-days: 90
