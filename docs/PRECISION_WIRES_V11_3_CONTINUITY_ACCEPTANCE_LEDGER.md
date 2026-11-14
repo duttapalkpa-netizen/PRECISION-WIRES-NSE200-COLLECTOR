@@ -589,3 +589,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Scoped full 22-sector panel transcription: 100%. Row-sum QA: 100% completed with 1cr residual identified. Empirical NSE sector-index return panel/backtest remains 0% executed / NOT RUN. Overall project remains NOT CALCULABLE; Hard Gate BLOCKED.
 - No synthetic data, no forced row adjustment, no date-only join, no production selector/ranking/CORE-672 change, no PR/merge.
 - Updated report commit 69e9b702961b98f7fd91b2ad88333b85ba06a0c7, blob 65e45ebe9dd1bb8b19cdcd45b9f3408c18ed5ab6.
+
+
+## 51. NSE sector benchmark methodology revalidation; uncertain candidate mappings downgraded — 2026-11-14
+
+- Rechecked official NSE Indices historical-data selector and March 2026 equity methodology PDF (turn256653view0; turn256653view1).
+- Selector contains NIFTY CAPITAL GOODS, CONSTRUCTION, POWER and TELECOMMUNICATIONS, but the methodology PDF's sectoral index contents does not list these four as sectoral indices; it separately lists thematic families. Downgraded these previous label-aligned candidates to SELECTOR_VISIBLE_METHODOLOGY_SCOPE_UNVERIFIED pending index-specific factsheets/methodologies and dated constituents. This is a correction to prevent name-only false mapping.
+- Construction Materials → NIFTY CEMENT remains proxy only. Healthcare mapping also requires point-in-time constituent overlap. Index methodology has differing review schedules and free-float/capping rules; historical constituents must be effective-date aligned (turn302571view1; turn879354search9).
+- Historical Index Data and Total Returns Index Values are separate official data outputs. TRI should be primary where available; price-index series must remain separate. No date-range submitted and no CSV bytes acquired in this step.
+- Scoped methodology audit/crosswalk correction: 100% complete. Empirical index CSV acquisition and FPI-return panel: 0% executed in this step / NOT RUN. Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No production changes, no PR/merge.
+- Updated report commit fee1d32f870d03226775f6e7a4775438f29120e9, blob f36ca7a26f92b6975a9d32a6992d00975c5ba5e2.
