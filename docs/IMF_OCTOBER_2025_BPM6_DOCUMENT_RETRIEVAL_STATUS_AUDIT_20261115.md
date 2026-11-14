@@ -607,3 +607,26 @@ No export was downloaded and no vintage comparison performed.
 - Next highest-value action: resolve the BOPSY "Summary of International Transactions and Positions" table's actual dashboard/export target from the public page's underlying links/metadata, then test a single India country table export and schema before any bulk retrieval.
 
 This bounded affordance audit is complete; it does not promote a data or revision gate.
+
+## 26. BOPSY dashboard target resolution and export-schema boundary audit (2026-11-15)
+
+### Official dashboard target resolved
+The BOP_AGG dataset page's "DASHBOARD RELEASE Power BI Dashboard" link resolves to the official IMF Data report page:
+https://data.imf.org/en/dashboards/bopsy%20dashboard
+The report page identifies the title "BOPSY Dashboard", publication date 19 November 2025, and dataset association with "Balance of Payments and International Investment Position Statistics (BOP/IIP), World and Country Group Aggregates". The BOP_AGG page also exposes VIEW DATA and DOWNLOAD controls.
+
+### Export/schema inspection result
+The publicly retrievable report-page representation exposes report identity and dataset association only. It does not expose the embedded Power BI report payload, direct Power BI report/embed URL, table visual's query metadata, export action URL, downloadable raw file URL, or country table schema. The IMF Data page's Tables catalogue route also returned only its shell/navigation in the public representation. Thus no exact table/dashboard export endpoint could be verified from the public page response.
+
+### Evidence boundary and decision
+- Official BOPSY Dashboard identity, publication date, and dataset association: PASS.
+- Direct dashboard/embed target and table visual identification: NOT_ESTABLISHED.
+- Country table downloadable raw payload/schema: NOT_DONE.
+- India exact P_F assets/liabilities key mapping: UNKNOWN.
+- Dated raw 2025 India snapshot and a second overlapping snapshot: NOT_DONE.
+- Revision/vintage readiness: UNKNOWN / NOT_READY.
+- This is a bounded public-page inspection result, not evidence that no export exists in the interactive dashboard or an authenticated session. No login, credential, or bypass was attempted.
+- Do not substitute World/Regional aggregates or country overview metadata for raw country observations.
+- Next permissible action: inspect only public browser-visible dashboard interactions / officially exposed downloadable resource links if available; if no unauthenticated public export target is exposed, stop and record access limitation rather than infer endpoints or automate undocumented APIs.
+
+No data files, CSVs, manifests, source captures, or prior acceptance gates were modified.
