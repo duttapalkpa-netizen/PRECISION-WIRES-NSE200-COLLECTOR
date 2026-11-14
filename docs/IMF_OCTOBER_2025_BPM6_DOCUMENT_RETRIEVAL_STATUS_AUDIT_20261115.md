@@ -85,3 +85,35 @@ Sources:
 - SDMX Central Dataflow overview: https://sdmxcentral.imf.org/data/overview.html
 
 Status remains unchanged: October 2025 PDF table NOT_RETRIEVED; exact IMF.STA Dataflow / Provision Agreement / Provider constraints UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 9. SDMX API contract validation and exact query specification (2026-11-15)
+
+The official IMF SDMX Central Web Services Guide (last updated May 2025) was inspected. It confirms:
+- REST entry point: `https://sdmxcentral.imf.org/sdmx/v2/`.
+- Supported structure resources include `dataflow`, `provisionagreement`, `dataproviderscheme`, `contentconstraint`, `actualconstraint`, `allowedconstraint`, and `attachmentconstraint`.
+- The query path has agencyID, structureID, version and optional itemID; the guide's references parameter supports `all`, `children`, `parents`, etc.
+- A Dataflow or Provision Agreement can carry constraints; the registry's own landing page explains that constraints can restrict allowable content beyond the DSD.
+- The SDMX Central Web Service UI allows the query URL to be generated from Structure Type, Agency, ID and Version selectors and downloaded. This is the preferred reproducible manual retrieval route if direct API retrieval is inaccessible.
+
+Exact query template prepared from the documented contract (not evidence that the response exists):
+`https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0?references=all&format=sdmx-2.1`
+
+Follow-up structure query templates, to be populated only from actual returned references:
+`.../structure/provisionagreement/{agency}/{id}/{version}?references=all&format=sdmx-2.1`
+`.../structure/contentconstraint/{agency}/{id}/{version}?format=sdmx-2.1`
+`.../structure/actualconstraint/{agency}/{id}/{version}?format=sdmx-2.1`
+`.../structure/attachmentconstraint/{agency}/{id}/{version}?format=sdmx-2.1`
+
+Direct web retrieval attempts against the exact Dataflow URL, broad IMF Dataflow listing, ContentConstraint listing and ProvisionAgreement listing returned inaccessible through this web retrieval interface. These errors do not establish HTTP status at the origin and do not prove the structures are absent. No response body, artefact ID, provider, or constraint was fabricated.
+
+The IMF SDMX Central registry currently visibly lists IMF:BOP6_CONSTRAINT attached to BOP6[1.0] and IMF:BOP_BP6_CONSTRAINT attached to BOP_BPM6[1.0]. These remain distinct from the target IMF.STA:BOP(21.0.0) flow unless an actual reference establishes a relationship.
+
+Official sources:
+- https://sdmxcentral.imf.org/webservice/schema.html
+- https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf (May 2025 guide; resources and references parameters)
+- https://sdmxcentral.imf.org/ (registry description of Dataflow and Provision Agreement constraints)
+- https://sdmxcentral.imf.org/data/constraints.html
+- https://sdmxcentral.imf.org/data/overview.html
+
+Status: API contract and reproducible query specification PASS; actual target Dataflow response NOT_RETRIEVED; target Provision Agreement/Provider/Constraint UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
