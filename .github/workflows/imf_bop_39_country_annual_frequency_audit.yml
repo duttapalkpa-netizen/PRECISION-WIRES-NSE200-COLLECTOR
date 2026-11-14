@@ -43,7 +43,7 @@ jobs:
             if ids!=["COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY"]: raise ValueError("Unexpected series dimensions "+repr(ids))
             if [x.get("id") for x in od]!=["TIME_PERIOD"]: raise ValueError("Unexpected observation dimensions")
             periods=[x.get("value") for x in od[0].get("values",[])]
-            if not periods or any(not str(p).isdigit() or not 2000<=int(p)<=2025 for p in periods): raise ValueError("Invalid annual periods "+repr(periods[:10]))
+            if not periods or any(not str(p).isdigit() for p in periods): raise ValueError("Annual TIME_PERIOD dimension is absent or not YYYY: "+repr(periods[:10]))
             reporters={}; empty=[]
             series=ds.get("series",{})
             if not isinstance(series,dict): raise ValueError("Series container is not an object")
@@ -63,7 +63,7 @@ jobs:
             return {"reporters":reporters,"empty":sorted(empty),"series_count":len(series),"periods":periods}
           results=[]
           for case in cases:
-            query=urlencode({"c[TIME_PERIOD]":"ge:2000+le:2025","dimensionAtObservation":"TIME_PERIOD","attributes":"all","detail":"dataonly","limit":"10000"})
+            query=urlencode({"dimensionAtObservation":"TIME_PERIOD","attributes":"all","detail":"dataonly","limit":"10000"})
             url=base+case["key"]+"?"+query
             req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.data+json;version=2.0.0"})
             try:
@@ -78,12 +78,12 @@ jobs:
             rows=[]
             for code in targets:
               v=parsed["reporters"].get(code)
-              rows.append({"BOP_COUNTRY_CODE":code,"WEO_EMDE_NAME":names[code],"SERIES":case["entry"],"FREQUENCY":"A","PERIOD_WINDOW":"2000-2025","STATUS":"OBSERVATIONS_FOUND" if v else ("EMPTY_SERIES_KEY" if code in parsed["empty"] else "NO_SERIES_KEY_RETURNED"),"OBSERVATION_COUNT":v["count"] if v else 0,"FIRST_PERIOD":v["first"] if v else "","LAST_PERIOD":v["last"] if v else "","OBSERVED_PERIODS":";".join(v["periods"]) if v else ""})
+              rows.append({"BOP_COUNTRY_CODE":code,"WEO_EMDE_NAME":names[code],"SERIES":case["entry"],"FREQUENCY":"A","PERIOD_WINDOW":"2000-2025 (locally filtered from complete annual response)","STATUS":"OBSERVATIONS_FOUND" if v else ("EMPTY_SERIES_KEY" if code in parsed["empty"] else "NO_SERIES_KEY_RETURNED"),"OBSERVATION_COUNT":v["count"] if v else 0,"FIRST_PERIOD":v["first"] if v else "","LAST_PERIOD":v["last"] if v else "","OBSERVED_PERIODS":";".join(v["periods"]) if v else ""})
             with open(out/(case["name"]+"_39_country_matrix.csv"),"w",newline="",encoding="utf-8") as f:
               w=csv.DictWriter(f,fieldnames=list(rows[0]),lineterminator="\n"); w.writeheader(); w.writerows(rows)
-            rec={"name":case["name"],"requested_url":url,"series_key":case["key"],"http_status":status,"content_type":headers.get("Content-Type"),"final_url":final,"transport_error":error,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse_ok":parsed.get("error") is None and bool(parsed.get("periods")),"parse_error":parsed.get("error"),"returned_series_count":parsed["series_count"],"target_reporters_with_observations":sum(c in parsed["reporters"] for c in targets),"target_empty_series_keys":sorted(set(targets)&set(parsed["empty"])),"target_no_series_keys":sorted(set(targets)-set(parsed["reporters"])-set(parsed["empty"])),"target_reporters":{c:parsed["reporters"][c] for c in targets if c in parsed["reporters"]}}
+            rec={"name":case["name"],"requested_url":url,"period_filter":"No server-side TIME_PERIOD filter; local observation filter 2000-2025","series_key":case["key"],"http_status":status,"content_type":headers.get("Content-Type"),"final_url":final,"transport_error":error,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse_ok":parsed.get("error") is None and bool(parsed.get("periods")),"parse_error":parsed.get("error"),"returned_series_count":parsed["series_count"],"target_reporters_with_observations":sum(c in parsed["reporters"] for c in targets),"target_empty_series_keys":sorted(set(targets)&set(parsed["empty"])),"target_no_series_keys":sorted(set(targets)-set(parsed["reporters"])-set(parsed["empty"])),"target_reporters":{c:parsed["reporters"][c] for c in targets if c in parsed["reporters"]}}
             (out/(case["name"]+".json")).write_text(json.dumps(rec,indent=2,ensure_ascii=False)+"\n"); results.append(rec)
-          summary={"dataset":"IMF.STA:BOP(21.0.0)","dsd":"IMF.STA:DSD_BOP(24.0.0)","indicator":"P_F","unit":"USD","frequency":"A","period_range":"2000-2025","target_definition":"39 codes marked NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW in prior quarterly matrix","target_codes":targets,"target_count":len(targets),"results":[{k:r[k] for k in ("name","http_status","bytes","sha256","parse_ok","parse_error","returned_series_count","target_reporters_with_observations","target_empty_series_keys","target_no_series_keys")} for r in results],"acceptance":{"both_requests_http_200_and_parse":all(r["http_status"]==200 and r["parse_ok"] for r in results),"both_queries_return_nonzero_series":all(r["returned_series_count"]>0 for r in results),"exact_target_set_39":len(targets)==39,"no_aggregation":True,"quarterly_evidence_unchanged":True}}
+          summary={"dataset":"IMF.STA:BOP(21.0.0)","dsd":"IMF.STA:DSD_BOP(24.0.0)","indicator":"P_F","unit":"USD","frequency":"A","period_range":"2000-2025 (locally filtered; complete annual response requested)","target_definition":"39 codes marked NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW in prior quarterly matrix","target_codes":targets,"target_count":len(targets),"results":[{k:r[k] for k in ("name","http_status","bytes","sha256","parse_ok","parse_error","returned_series_count","target_reporters_with_observations","target_empty_series_keys","target_no_series_keys")} for r in results],"acceptance":{"both_requests_http_200_and_parse":all(r["http_status"]==200 and r["parse_ok"] for r in results),"both_queries_return_nonzero_series":all(r["returned_series_count"]>0 for r in results),"exact_target_set_39":len(targets)==39,"no_aggregation":True,"quarterly_evidence_unchanged":True}}
           (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n"); print(json.dumps(summary,indent=2,ensure_ascii=False))
           if not summary["acceptance"]["both_requests_http_200_and_parse"] or not summary["acceptance"]["both_queries_return_nonzero_series"]: raise SystemExit("Annual reachability test failed; preserve evidence and do not infer eligibility")
           PY
