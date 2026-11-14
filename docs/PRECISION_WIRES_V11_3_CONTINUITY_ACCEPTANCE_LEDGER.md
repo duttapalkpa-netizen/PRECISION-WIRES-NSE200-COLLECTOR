@@ -620,3 +620,32 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - No CSV bytes, row counts, byte size, response metadata or SHA-256 acquired. No undocumented POST endpoints or third-party reverse-engineered API adopted as official contract.
 - Scoped official interface/schema audit: 100% complete. Actual historical CSV acquisition/validation: 0% in this step / NOT RUN. Overall project NOT CALCULABLE; Hard Gate BLOCKED. Production invariants unchanged; no PR/merge.
 - Updated report commit 5306dff767ef9c739311217967b9b547ecc8a1f3, blob 2bd703c4988f75211208947bc371aecf9db345b2.
+
+
+## 54. Walk-forward transaction-cost implementation audit — 2026-11-14
+
+
+## 54. Walk-forward backtest transaction-cost implementation audit — 2026-11-14
+
+### Scope and exact source
+- Audited branch `research/corporate-events-rss-collector-v1-20261114`, source file `pipeline/walk_forward_backtest.py`.
+- Source blob SHA at audit: `d085f7a2d35a88b4c4eaba65144a429a06961b09`.
+- This is a read-only code audit; no code, selector, ranking, thresholds, dataset or workflow changed.
+
+### Findings
+- Script header identifies the engine as “PRECISION-WIRES V11.4 Walk-Forward Behavioural Validation”; do not silently label this artifact as V11.3 production-parity.
+- Forward outcomes are calculated as `FUT{h}_HIGH_PCT` and `FUT{h}_CLOSE_PCT` from future high/close observations relative to current close. Metrics then evaluate thresholds against `FUT{h}_HIGH_PCT`.
+- Full-file literal scan found no transaction-cost, fee, commission, slippage, 0.22 or 0.0022 implementation in this script.
+- Therefore the currently implemented target/precision/recall/lift calculations are gross-price excursion measures, not verified net-of-cost returns. The 0.22% convention is not implemented in this script.
+- Applying a flat cost to the future-high excursion alone would not establish executable round-trip net return: the high is a maximum excursion, not a defined exit fill. Keep gross excursion targets distinct from executable entry/exit net-return metrics.
+- Do not patch production or this research script in this audit. Before any net-performance claim, resolve whether 0.22% is round-trip or per-side from an authoritative project specification, define entry and exit execution prices (including same-session/next-session convention), then implement a separately labelled net-return metric with tests. Preserve gross target labels for comparability.
+- This finding does not prove that no other project component applies costs; it establishes only that this inspected walk-forward script does not.
+
+### Report reference
+- Report commit: `fa74078fabea97d4018cc39d351d75262bbc2027`; report blob SHA: `80166936c2363bf3a1efe285435949f3368349f6`.
+
+### Status
+- Scoped script inspection and cost-presence audit: 100% complete.
+- Authoritative 0.22% convention resolution: NOT RESOLVED.
+- Executable net-of-cost backtest and tests: 0% / NOT RUN.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No PR/merge; no production invariants changed.
