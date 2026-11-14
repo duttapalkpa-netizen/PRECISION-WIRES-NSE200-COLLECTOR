@@ -142,3 +142,39 @@ Sources:
 - Registry constraint semantics: https://sdmxcentral.imf.org/overview.html
 
 Gate: live registry page cross-check PASS; exact target Dataflow and its references NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 11. Critical namespace and endpoint correction — IMF SDMX Central vs IMF Data Portal (2026-11-15)
+
+A fresh check of the live REST UI and the public SDMX service catalogue found an important namespace distinction that corrects the earlier query plan:
+
+### A. IMF SDMX Central registry
+- The live SDMX Central Structure UI's Agency selector lists `IMF` (International Monetary Fund) and does not list `IMF.STA` among the visible agency choices.
+- The live Data Structure Definitions page lists agency `IMF`, ID `BOP`, latest version `2.6.0`, name "Balance of Payments and International Investment Position".
+- The live UI offers Structure Type, Agency, Structure ID, Version, References, Query URL and Download controls.
+- Therefore the previously prepared SDMX Central query `IMF.STA/BOP/21.0.0` is NOT a valid registry UI selection based on the currently visible agency/DSD catalogue. It must not be submitted as if confirmed. The registry-side query to test next is the DSD `IMF:BOP(2.6.0)` with References=All, then inspect actual returned Dataflow references. This DSD is not automatically equivalent to the IMF Data Portal dataset `IMF.STA:BOP(21.0.0)`.
+
+### B. Separate IMF Data Portal service
+- The public SDMX service catalogue lists a distinct IMF Data Portal service at `https://api.imf.org/external/sdmx/2.1` and `https://api.imf.org/external/sdmx/3.0`, separate from IMF SDMX Central at `https://sdmxcentral.imf.org/sdmx/v2/`.
+- Thus IMF.STA dataset references, if valid in the IMF Data Portal, must be resolved against that separate service and not assumed to be SDMX Central registry identifiers.
+- Opening the two API base paths without a resource returned 404 through the web retrieval interface. This is not a test of a specific structure resource and does not establish endpoint failure. No exact structure response has been retrieved from either service.
+
+### C. Correct next retrieval sequence
+1. In SDMX Central UI select Structure Type = Data Structure; Agency = IMF; Structure ID = BOP; Version = 2.6.0; References = All; inspect generated query URL and download the structure message. Record raw bytes/hash and extract actual Dataflow/constraint references.
+2. Separately, for the original IMF Data Portal target, consult the IMF Data Portal's own SDMX 2.1/3.0 service catalogue and construct the target resource path only from its documented resource patterns and an actual returned agency/ID/version. Do not transplant registry IDs across services.
+3. Follow Provision Agreement and Data Provider only from actual references returned by the relevant service.
+
+### D. Gate
+- Live UI namespace/catalogue cross-check: PASS.
+- Prior IMF.STA/BOP/21.0.0 query as a SDMX Central UI selection: SUPERSEDED / INVALID FOR THAT UI (not evidence that the dataset itself is invalid).
+- IMF:BOP(2.6.0) DSD response: NOT_RETRIEVED.
+- Separate IMF Data Portal target structure response: NOT_RETRIEVED.
+- Exact constraints / provision agreement / provider: UNKNOWN.
+- October 2025 PDF country table: NOT_RETRIEVED.
+- Six-country formal eligibility: UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+Sources:
+- SDMX Central Structure UI: https://sdmxcentral.imf.org/webservice/structure.html
+- SDMX Central DSD catalogue: https://sdmxcentral.imf.org/data/datastructure.html
+- IMF SDMX public service catalogue: https://browser.sdmx.io/agencies/IMF
+- IMF SDMX Central registry overview: https://sdmxcentral.imf.org/
