@@ -278,3 +278,51 @@ Then reconcile coverage, flags, periods, revisions and asset/liability definitio
 ### Invariants re-confirmed
 
 ₹0 spend; free official sources only; no paid APIs; no login or authentication bypass; no synthetic values/timestamps; no external contact; no PR merge; no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, all five engines and Hard Gate unchanged.
+
+
+## 2026-11-14 — India BOP annual/liability and quarterly assets/liabilities completed; reconciliation PASS
+
+This entry supersedes the immediately prior “India liability series NOT DONE / India quarterly assets/liabilities NOT DONE” status. Historical failed runs and prior artifacts remain preserved.
+
+### Accepted acquisition result
+- Portal dataset/dataflow: `IMF.STA:BOP(21.0.0)`; exact DSD reference: `IMF.STA:DSD_BOP(24.0.0)`.
+- Exact series dimension order: COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, UNIT, FREQUENCY; observation dimension TIME_PERIOD.
+- Four India series are now available for 2015–2025:
+  - Annual assets `IND.A_NFA_T.P_F.USD.A`: 11 rows (previously acquired).
+  - Annual liabilities `IND.L_NIL_T.P_F.USD.A`: 11 rows.
+  - Quarterly assets `IND.A_NFA_T.P_F.USD.Q`: 44 rows.
+  - Quarterly liabilities `IND.L_NIL_T.P_F.USD.Q`: 44 rows.
+- Total raw observations: 110. All requests HTTP 200; exact requested series keys matched returned dimensions; periods unique and complete for the requested ranges; OBS_VALUE values non-null and finite.
+- Codes verified from Portal-owned codelists: IND=India; A_NFA_T=Assets, Net acquisition of financial assets; L_NIL_T=Liabilities, Net incurrence of liabilities; P_F=Portfolio investment, Total financial assets/liabilities; USD=US dollar; A=Annual; Q=Quarterly.
+
+### Annual-to-quarterly arithmetic reconciliation
+- Using Decimal arithmetic on raw OBS_VALUE strings, each year's four quarters were summed and compared with the annual value.
+- Assets: 11/11 years; maximum absolute difference 0.0000009; tolerance 0.00001; PASS_WITH_TOLERANCE.
+- Liabilities: 11/11 years; maximum absolute difference 0.000007; tolerance 0.00001; PASS_WITH_TOLERANCE.
+- This is a data arithmetic coherence check only. No scale multiplier, USD conversion, netting, or aggregation was applied.
+
+### Persisted research outputs
+- Combined CSV: `data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv`; 110 rows; SHA-256 `260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9`.
+- Manifest: `data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.manifest.json`.
+- Report: `docs/IMF_BOP_INDIA_PORTFOLIO_SERIES_RECONCILIATION_20261114.md`.
+- Extraction specification updated: `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md`.
+
+### Workflow / artifact evidence
+- Run #43623518481 SUCCESS; commit `111167ff11fbba42b226d8ee33634f111be0a893`; artifact ID 14125515371; ZIP SHA-256 `4127f4b691e46967dc8e0f91d6ff5536e9bc01224de0d488f90e5a4acd13327c`. Contains all three newly acquired raw responses and parsed observations.
+- First parser attempt Run #43623450125 FAILED after the three requests returned HTTP 200. Root cause: validator incorrectly called mapping methods on the ordered dataset-level attribute array. The raw responses were retained (artifact 14125291402; ZIP SHA-256 `20d24b5109a9c44dd485a357687d789d5417ed5215f41b4bdf90ccbfe1c86a87`). Correction: preserve dataset attributes as an ordered array; no query/key changes.
+- Independent committed CSV integrity Run #43623953963 SUCCESS; commit `577f278c0b57ee2e3c48e6a41c731d1ed33f8efd`; artifact ID 14125201831. It recomputed the committed CSV SHA-256, verified 110 rows, all four key/period sets, source hash counts and both annual/quarterly reconciliations.
+- Integrity result SHA-256 verified: `260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9`.
+
+### Metadata and boundaries
+- SCALE=6 and PRECISION=6 are preserved as metadata only; no multiplier applied. METHODOLOGY=BPM6; DERIVATION_TYPE=O; ACCESS_SHARING_LEVEL=PUBLIC_OPEN; SECURITY_CLASSIFICATION=PUB.
+- STATUS, ACCESS_SHARING_NOTES and SOURCE remain null. Quarterly asset series has IFS_FLAG=true; liability series IFS_FLAG is null.
+- India annual/quarterly assets/liabilities base acquisition: PASS (110 observations). Full India panel remains IN_PROGRESS pending vintage/revision and further completeness checks.
+- Full 154-economy EMDE reporter coverage: NOT DONE. WEO membership is not observation coverage.
+- EM portfolio-flow aggregation: BLOCKED. Keep assets/liabilities separate; no aggregate, netting, currency conversion, or forward-fill.
+- IMF BOP workstream accepted-gate score remains 5/7 (71.4%) on the existing rubric; the full India-panel acceptance gate is still partial, so do not increment it yet. Project-wide PRECISION-WIRES V11.3 percentage remains NOT_CALCULABLE pending full workstream and weight reconciliation.
+
+### Next highest-value action
+Run an EMDE reporter-coverage audit against the exact Portal DSD_BOP(24.0.0) using the already verified 154-member WEO April 2026 crosswalk. Determine actual reporter coverage separately from membership, and preserve every absent/unresolved reporter as UNKNOWN. Then investigate revision/vintage availability before any panel aggregation.
+
+### Invariants re-confirmed
+₹0 spend; free official sources only; no paid APIs; no credentials/auth bypass; no synthetic data/timestamps; no external contact; no PR merge; no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
