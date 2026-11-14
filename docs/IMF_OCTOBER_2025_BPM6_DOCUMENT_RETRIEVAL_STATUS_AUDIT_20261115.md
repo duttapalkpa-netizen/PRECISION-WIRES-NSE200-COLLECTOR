@@ -178,3 +178,28 @@ Sources:
 - SDMX Central DSD catalogue: https://sdmxcentral.imf.org/data/datastructure.html
 - IMF SDMX public service catalogue: https://browser.sdmx.io/agencies/IMF
 - IMF SDMX Central registry overview: https://sdmxcentral.imf.org/
+
+
+## 12. SDMx Global Registry canonical BOP DSD endpoint discovery (2026-11-15)
+
+A new official source check found the SDMx Global Registry as the canonical public download location for the IMF-maintained BOP DSD:
+- SDMx official BOP DSD page says structures and related dataflows/constraints are hosted in the SDMx Global Registry and are accessible without authentication.
+- It identifies BOP DSD version 2.6.0, maintenance agency IMF, and provides SDMX-ML 2.1 and SDMX 3.0 download links.
+- The exact SDMX-ML 2.1 endpoint exposed by the official link is:
+  `https://registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1`
+- A second request with `references=all` was constructed from the documented SDMX Central/SDMX REST query contract:
+  `https://registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=all`
+
+Retrieval status must be precise: the web retrieval interface attempted the exact official SDMX-ML endpoint but could not render its XML response (reported unsupported content-type application/xml). The references=all URL was reported inaccessible by the same web interface. This is a client/rendering limitation, not proof of origin HTTP failure, not proof the artefact is absent, and not a successful inspection of XML. No DSD dimensions, code lists, dataflows or constraints have been extracted from this response yet.
+
+This is a different source path from the IMF SDMX Central catalogue UI and the IMF Data Portal APIs. The IMF-maintained BOP DSD v2.6.0 is a structural reference, not automatically the same artefact/version as the earlier IMF.STA BOP dataset reference. No cross-service equivalence is asserted.
+
+Additional verified context: SDMx states that DSD versions are maintained annually and previous versions may remain valid where backward compatibility is preserved; the BOP 2.6.0 package was published December 2025. This does not prove compatibility with the target dataset's earlier version.
+
+Official sources:
+- https://sdmx.org/sdmx-data-structure-definitions-for-balance-of-payments-sdmx-bop/
+- https://registry.sdmx.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1
+- https://sdmxcentral.imf.org/webservice/schema.html
+- https://data.imf.org/en/Resource-Pages/IMF-API
+
+Gate: canonical BOP DSD endpoint discovery PASS; XML body and references NOT_RETRIEVED; IMF Data Portal dataset structure NOT_RETRIEVED; exact target constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
