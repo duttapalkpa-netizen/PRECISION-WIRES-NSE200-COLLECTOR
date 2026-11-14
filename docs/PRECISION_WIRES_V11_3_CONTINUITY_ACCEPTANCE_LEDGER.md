@@ -528,3 +528,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Visible Automobile & Auto Components equity row: AUC ₹4,98,295cr at 30-Sep; net equity investment −₹3,542cr for 16–30 Sep and −₹6,533cr for 01–15 Oct; AUC ₹4,77,593cr at 15-Oct. This is a visible sector example, not full-table reconciliation; AUC change is not equated to flow because valuation/FX and other effects may contribute.
 - Scoped report/schema and one-row extraction: DOCUMENTED. Full machine-readable sector panel, immutable raw download and SHA-256, all-row QA, issuer exposure mapping, multi-period sector-return joins and rolling predictive test remain NOT ACQUIRED / NOT RUN. No production feature/ranking changes; Hard Gate remains BLOCKED.
 - Audit report commit 5685d028baac2b6b4ccb02a1f75e7d3b31c0a7cc, blob fac88582ad8fc004c244e658b700ef96359e9184.
+
+
+## 46. CDSL fortnightly sector-wide FPI flow panel transcribed and audited — 2026-11-14
+
+- Inspected full official 15-Oct-2026 report through Grand Total and methodology notes (turn633522view0 lines 3–63; turn915067view0 lines 25–63). Report has 22 BSE common-industry sectors plus Others.
+- Grand Total equity net investment: −₹21,745cr (16–30 Sep) and −₹47,955cr (01–15 Oct); two-period combined −₹69,700cr. Derived arithmetic PASS.
+- Recorded all 22 sector Equity net flows for both periods in audit report. Major outflows include Financial Services −₹6,943cr / −₹8,634cr, FMCG −₹972cr / −₹8,172cr, Auto −₹3,542cr / −₹6,533cr, Oil/Gas −₹4,469cr / −₹3,680cr, Telecom −₹2,423cr / −₹3,928cr, Metals −₹2,322cr / −₹3,693cr. IT −₹38cr / +₹2,599cr; Consumer Services +₹1,911cr / −₹1,931cr. These are flow observations only, not price-performance claims.
+- Preserved critical caveats: BSE classification of ~4,800 issuers into 22 sectors; Others contains investments outside that issuer set; Debt VRR coverage begins 30-Apr-2020; Debt-FAR/MF/AIF AUC from 31-Aug-2024 and net investment from 15-Sep-2024; fortnightly USD conversion uses period-end RBI reference rates (95.9832 and 95.0691), unlike daily CDSL conversion method.
+- Scoped full sector Equity panel transcription and Grand Total arithmetic: DOCUMENTED / PASS. Original raw file bytes and SHA-256, all-category all-sector reconciliation, NSE sector-index mapping, historical multi-period panel and rolling predictive test remain NOT ACQUIRED / NOT RUN. Hard Gate remains BLOCKED. No synthetic data or production changes.
+- Audit report commit 395a2815ae6c041f12b07766ae95ec40c5080c19, blob 8d10bd449780f247071c0b7781a83e2fd5dca106.
