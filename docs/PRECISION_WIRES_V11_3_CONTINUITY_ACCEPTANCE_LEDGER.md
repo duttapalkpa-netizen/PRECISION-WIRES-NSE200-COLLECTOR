@@ -715,3 +715,39 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 ### Report reference
 - `docs/WALK_FORWARD_IMMATURE_HORIZON_LABEL_AUDIT_20261114.md`
 - Report commit: `0a4d5e77c594e7fc5f4759a43e41bc11443bba56`
+
+
+## 57. Walk-forward matured-outcome metric denominator audit — 2026-11-14
+
+### Scope
+- Distinct downstream evaluation audit of `pipeline/walk_forward_backtest.py`, source blob `d085f7a2d35a88b4c4eaba65144a429a06961b09`, following Appendix 56.
+- Inspected Top-N, universe, state, transition, calibration, separation, diagnostic and missed-winner metric paths.
+
+### Confirmed findings
+- Top-N precision uses `hits / len(pred)`; immature outcomes remain in `pred`, while NaN threshold comparisons evaluate False. The denominator can therefore include immature rows.
+- Universe winner counts omit NaN comparisons, but base-rate denominator `len(all_by_date)` includes immature rows: numerator and denominator use different populations.
+- Recall, precision and lift consequently need a common mature-outcome population and consistent cohort definition.
+- State and transition hit-rate means treat NaN comparisons as False, counting immature outcomes as non-winners.
+- Winner/non-winner separation and diagnostic separation likewise place missing outcomes in the non-winner cohort.
+- Full-universe calibration converts threshold comparisons to integer labels, so missing outcomes become class 0 (same propagation family as Appendix 56, now confirmed in calibration/evaluation).
+- Missed-winner attribution does not explicitly account for immature rows as UNKNOWN.
+- No dataset was loaded; magnitude/direction of empirical distortion is NOT QUANTIFIED.
+
+### Safe remediation (not applied)
+- Define separate full-horizon finite maturity masks for H+1/H+3/H+5.
+- Use mature-only Top-N and universe denominators; keep cutoff/universe definitions consistent for precision, recall and lift.
+- Apply the appropriate maturity mask to all state, transition, diagnostic, calibration, ablation, separation and missed-winner metrics.
+- Report mature and immature counts separately; missing outcomes remain UNKNOWN, never class 0.
+- Add deterministic tests mixing mature winners, mature non-winners and immature rows; assert exact denominator arithmetic for each horizon.
+- Recompute only after Appendix 55 alignment and Appendix 56 label-preservation corrections are implemented and tested.
+
+### Status
+- Scoped source/logic audit: 100% complete.
+- Dataset-level metric impact: NOT RUN.
+- Corrective code/tests: 0% / NOT RUN.
+- Backtest/calibration rerun: 0% / BLOCKED.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No code/data/workflow/selector/ranking/diagnostic/production changes; no PR/merge.
+
+### Report reference
+- `docs/WALK_FORWARD_MATURED_METRIC_DENOMINATOR_AUDIT_20261114.md`
+- Report commit: `bec3ae2634ae042d45df509b5c715a6eccbda3c6`
