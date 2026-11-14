@@ -485,3 +485,23 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Gate state unchanged: 39/43 priority reporters still have no observations in either tested window; eligibility for those 39 remains UNKNOWN; coverage acceptance NOT PASS; EMDE aggregation BLOCKED. No country is classified ineligible from missing values.
 - No new observation API calls, no aggregation, no production change, no PR merge, ₹0 spend. Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672, engines A–E and Hard Gate unchanged.
 - Next: locate explicit official reporter-specific applicability/coverage metadata for the exact BOP series dimensions. If the public source does not expose a country-specific obligation/applicability contract, retain UNKNOWN and document the limitation rather than inferring eligibility.
+
+
+## 2026-11-14 — 39-country annual-frequency exact-series reachability audit
+
+- Target set was loaded programmatically from the prior verified 43-row quarterly cross-period matrix using `CROSS_PERIOD_STATUS == NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW`; exact target count 39, cross-checked against the validated 154-country WEO-to-BOP crosswalk.
+- Workflow: `.github/workflows/imf_bop_39_country_annual_frequency_audit.yml`.
+- Final corrected workflow commit: `f5c535c0c7635b81034f18ad185de37b24479050`.
+- Run #43630656519 SUCCESS; job #132556279712 SUCCESS.
+- Artifact #14128182046; ZIP size 134,541 bytes; SHA-256 `058ae62904bec701959175076d3d2aa9de20f402eb3425083bbfad2d36accc12`.
+- Exact dataset/DSD: `IMF.STA:BOP(21.0.0)` / `IMF.STA:DSD_BOP(24.0.0)`. Series: `P_F`, `USD`, frequency `A`, assets `A_NFA_T`, liabilities `L_NIL_T`. Full annual response requested, then actual observations locally filtered to 2000–2025 inclusive.
+- Assets raw response HTTP 200, 360,608 bytes, SHA-256 `711431c957199292cfb37e884a3e9344e7e519e23e9bb4baea2ff9f5523addfc`; 211 response series. Liabilities raw response HTTP 200, 352,754 bytes, SHA-256 `a256a5f5baaef80f48e7d3747c39db80d644078b896abe49a5190f21003b60aa`; 208 response series.
+- 39-country annual assets matrix: 33 with >=1 non-null finite observation; 5 empty series keys; 1 no series key. Liabilities matrix: 31 with >=1 observation; 4 empty keys; 4 no series key.
+- Cross-side annual result: 31/39 both sides; assets-only `FSM, SSD`; liabilities-only none; neither side has a non-empty annual series `CAF, ERI, GNQ, SOM, TCD, TKM`. 31 codes with both sides: `ARE, ATG, BEN, BFA, BRB, CIV, COG, COM, DMA, GAB, GNB, GRD, IRN, KEN, KNA, LBY, LCA, MDV, MHL, MLI, MWI, NER, NRU, OMN, PLW, SEN, SLE, SYR, TGO, TUV, VCT`.
+- Annual result is frequency-specific reachability only; it does not prove quarterly eligibility/completeness, formal reporting obligation, or full annual continuity. Some reporters have short series or year gaps. No annual-to-quarterly conversion or backtest substitution. Empty series keys are not observations.
+- Matrices inside artifact: assets CSV 7,836 bytes SHA-256 `8c207d852c9a219e1347cd2b035b782dac78cbbdec1ba12ce3c2a74723cfe24e`; liabilities CSV 7,586 bytes SHA-256 `ce1578e8f6574e78a730be7554d5cd616b358b8b9ca7d220219a0d477725460e`.
+- Report: `docs/IMF_BOP_39_COUNTRY_ANNUAL_FREQUENCY_REACHABILITY_AUDIT_20261114.md`, commit `6469ee3f537ed59ae3a5504f77403d816786cb85`.
+- Manifest: `data/research/imf_bop_39_country_annual_frequency_audit_20261114.manifest.json`, commit `9c88048d9dc2a98d6de9fcbfed2abf47f5fb3b28`.
+- Diagnostic history preserved, not counted as final evidence: Run #43630501862 failed closed because server-side annual period filter returned an empty TIME_PERIOD dimension; Run #43630564954 initial parser failed to enforce the intended local year filter and is superseded; Run #43630618730 failed Python syntax validation. Final corrected Run #43630656519 alone supports the 2000–2025 annual counts.
+- Gate decision: annual exact-series acquisition PASS; quarterly reporter eligibility remains UNKNOWN; quarterly coverage acceptance NOT PASS; EMDE aggregation BLOCKED. No quarterly evidence overwritten, no aggregation, no production integration or PR merge.
+- Next: inspect annual year gaps and series attributes for 31 both-side + 2 assets-only reporters; separately investigate six no-nonempty-annual reporters. Keep annual and quarterly classes separate. ₹0 spend; all protected V11.3 invariants unchanged.
