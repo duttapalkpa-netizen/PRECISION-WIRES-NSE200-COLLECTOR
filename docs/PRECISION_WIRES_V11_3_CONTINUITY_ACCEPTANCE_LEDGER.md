@@ -449,3 +449,23 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Report: `docs/IMF_BOP_PORTAL_DSD24_IFS_FLAG_CONSTRAINTS_FIRST_PASS_20261114.md`, report commit `12ad3628d75c96052b23cf384b683eac642e2a99`.
 - Gate state unchanged: IFS_FLAG semantic meaning PASS; IFS_FLAG component existence PASS; 39-country exact-series eligibility UNKNOWN (0% resolved); reporter coverage acceptance NOT PASS; EMDE aggregation BLOCKED; IMF BOP accepted gates remain 5/7 (71.4%); project-wide progress NOT_CALCULABLE.
 - Next: focused parser against the archived exact DSD response; resolve direct codelist references and IFS_FLAG ConceptScheme; inspect ContentConstraint / ProvisionAgreement / DataProvider metadata for BOP dataflow. No observation query rerun, no aggregation, no production changes, no PR merge. All protected invariants unchanged; spend ₹0.
+
+
+## 2026-11-14 — Focused DSD24 component/codelist parser and eligibility endpoint audit
+
+- Workflow: `.github/workflows/imf_bop_dsd24_component_eligibility.yml`; workflow commit `339664040ff7e9338d3c013d9b89d0301de5a973`.
+- Run #43628988259 SUCCESS; job #132551143961 SUCCESS.
+- Artifact #14126994489; artifact ZIP SHA-256 `80b69fb559c22ee3a99641c58c2b1b3f8041c75e923a61aa25aa16e4ec772e28`.
+- Exact DSD dataflow reference PASS; five dimension-to-codelist mappings resolved:
+  - COUNTRY -> IMF.STA:CL_BOP_COUNTRY(1.0.0), 345 codes.
+  - BOP_ACCOUNTING_ENTRY -> IMF.STA:CL_BOP_ACCOUNTING_ENTRY(3.3.0), 97 codes.
+  - INDICATOR -> IMF.STA:CL_BOP_INDICATOR(10.0.0), 979 codes.
+  - UNIT -> IMF:CL_UNIT(2.11.2), 270 codes.
+  - FREQUENCY -> IMF:CL_FREQ(1.2.0), 34 codes.
+- IFS_FLAG exact component PASS: concept `IMF.STA:CS_MASTER(1.0.0).IFS_FLAG`; official English definition says it identifies/marks indicators that were part of the IFS data product; core representation Boolean; assignment status Conditional; attached to COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, FREQUENCY and UNIT. It is not a reporter eligibility or completeness flag.
+- Null/omitted-value semantics remain UNKNOWN: Boolean + Conditional does not define a default. Never coerce missing to false or true.
+- Exact BOP content constraint, agency-wide content constraint, agency-wide provision agreement and agency-wide data provider scheme probes all returned HTTP 204 / zero bytes / empty SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. This is no-content for those probes only, not proof of universal eligibility or absence of all possible restrictions.
+- Reporter-specific eligibility for 39 countries remains UNKNOWN; historical coverage acceptance NOT PASS; EMDE aggregation BLOCKED. No observations rerun; no aggregation.
+- Report: `docs/IMF_BOP_DSD24_COMPONENT_CODELIST_ELIGIBILITY_AUDIT_20261114.md`, report commit `e53c7eaf97fea87accdeb2e91289a3b499b5d5b3`.
+- Previous first-pass audit report remains intact. This focused parser corrects the earlier nested DataStructureComponents/CoreRepresentation extraction gap; no old PASS artifact was deleted or rewritten.
+- Next: resolve the 39-country exact series eligibility only from official reporter-specific applicability evidence or exact country × accounting-entry × indicator × unit × frequency inventory; otherwise retain UNKNOWN. All protected V11.3 invariants unchanged; spend ₹0.
