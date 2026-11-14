@@ -416,3 +416,15 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Report: `docs/CORPORATE_EVENTS_P0_NSE_GENERAL_ANNOUNCEMENTS_CSV_UI_CONTRACT_20261114.md`.
 - Next bounded step: use the official page UI, verify the Search By publication/broadcast date option, set Custom 13–14 Nov 2026, download CSV and capture exact network request/response metadata and raw bytes before parsing/reconciliation.
 - Corporate Events P0 remains BLOCKED; 13-item row-level reconciliation NOT RUN. No code/workflow/production change, paid API, PR/merge or synthetic data. Protected production selector/ranking/CORE-672 invariants unchanged.
+
+
+## 34. RSS zero-item fail-closed guard + fresh 190-item official snapshot QA — 2026-11-14
+
+- QA hardening: collector now rejects syntactically valid RSS with zero items as `RSS_ITEM_COUNT_ZERO`; added unit test `test_rejects_empty_channel_as_non_evidence`. Collector blob `90b0dba02ddaeaa336a4c410a1349337282843ac`; test blob `2234e0eb85669824e3e0ea415a32861d2db1ca4e`.
+- Workflow run 43558025207 (head `244348a2a2e0a78370ed97b1e6e1ecd6e22e9dfd`) completed SUCCESS: parser tests, bounded official acquisition, artifact upload all PASS; run 04:43:06–04:43:21Z (<1 min).
+- Official feed HTTP 200, application/xml, retrieval 2026-11-14T04:43:20Z–04:43:21Z; 74,162-byte raw XML SHA-256 `b76717de6777404a56ded5cae962c922f199b32534364800a96ef059918a9990`; 157,661-byte JSONL SHA-256 `fa17c0c89ebc10321821aa54fe5f5eaf7c488ddbd2e3a4d32ac0aa2e49c9b60d`; 6,251-byte manifest SHA-256 `dc4435c3043f323aa79abfeba4b571184dd44ce0b6935be69f01dc8f0ab7a052`.
+- Artifact ID `14098814399`, 18,730 bytes, ZIP SHA-256 `ca0649032c67fd4519bce66d2dd6cd61805efbd2f9f7f0612fa88b05cedec517`, expires 2026-12-14T04:43:21Z.
+- Structural audit: 190 items; 190/190 GUID absent; only 35/190 non-empty links, 155/190 empty link elements; 35 unique non-empty links, no repeats; 174 unique titles; 16 repeated-title rows; 189 unique descriptions; 190 unique raw item XMLs. All pubDate strings date 14-Nov-2026, source-native 00:00:02–09:54:42, timezone-naive. All 13 links from earlier snapshots occur in this 190-item snapshot. This overlap does not prove historical completeness.
+- Empty-link records preserved; no guessed URLs or symbols. RSS is raw discovery only; item identity and attachment mapping remain incomplete.
+- Report: `docs/CORPORATE_EVENTS_P0_RSS_EMPTY_FEED_GUARD_AND_SNAPSHOT_QA_20261114.md`.
+- Corporate Events P0 remains BLOCKED; official general-announcement CSV and full filing-row reconciliation pending. No paid services, synthetic values, PR/merge or production integration. Protected production selector/ranking/CORE-672 invariants unchanged.
