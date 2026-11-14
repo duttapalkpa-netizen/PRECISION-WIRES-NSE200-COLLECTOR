@@ -1,0 +1,101 @@
+name: IMF BOP DSD component and codelist audit
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_codelist_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-codelist-audit
+  cancel-in-progress: false
+jobs:
+  codelist-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse exact DSD components and retrieve referenced codelists
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-codelists
+          python - <<'PY'
+          import hashlib, json, urllib.request, urllib.error, re
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          out = Path("imf-bop-codelists")
+          base = "https://sdmxcentral.imf.org/sdmx/v2"
+          dsd_url = base + "/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true"
+          def get(url):
+              req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/xml, */*"})
+              try:
+                  with urllib.request.urlopen(req,timeout=25) as r:
+                      return r.status,r.headers.get("Content-Type"),r.geturl(),r.read(),None
+              except urllib.error.HTTPError as e:
+                  return e.code,e.headers.get("Content-Type") if e.headers else None,e.geturl(),e.read(),"HTTPError"
+              except Exception as e:
+                  return None,None,url,b"",type(e).__name__+": "+str(e)
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          status,ctype,final,raw,err=get(dsd_url)
+          (out/"bop_dsd_2_6_0.xml").write_bytes(raw)
+          assert status==200 and raw, f"DSD retrieval failed: {status} {err}"
+          root=ET.fromstring(raw)
+          dsds=[e for e in root.iter() if local(e)=="DataStructure" and e.attrib.get("id")=="BOP" and e.attrib.get("version")=="2.6.0"]
+          assert len(dsds)==1, f"Expected one pinned DSD; found {len(dsds)}"
+          dsd=dsds[0]
+          comp=next(e for e in dsd if local(e)=="DataStructureComponents")
+          dimlist=next(e for e in comp if local(e)=="DimensionList")
+          attrlist=next(e for e in comp if local(e)=="AttributeList")
+          measlist=next(e for e in comp if local(e)=="MeasureList")
+          dims=[{"id":e.attrib.get("id"),"position":int(e.attrib.get("position","0")),"kind":local(e)} for e in dimlist]
+          attrs=[{"id":e.attrib.get("id"),"assignment_status":e.attrib.get("assignmentStatus")} for e in attrlist]
+          measures=[{"id":e.attrib.get("id"),"kind":local(e)} for e in measlist]
+          refs={}
+          for e in dsd.iter():
+              if local(e)=="Ref" and e.attrib.get("class")=="Codelist":
+                  key=(e.attrib.get("agencyID"),e.attrib.get("id"),e.attrib.get("version"))
+                  refs[key]=True
+          codelists=[]
+          for agency,cid,version in sorted(refs):
+              url=f"{base}/structure/codelist/{agency}/{cid}/{version}/?format=sdmx-2.1&detail=full"
+              st,ct,fu,b,er=get(url)
+              name=f"{agency}__{cid}__{version}".replace(".","_")
+              (out/(name+".xml")).write_bytes(b)
+              item={"agency":agency,"id":cid,"version":version,"request_url":url,"http_status":st,"content_type":ct,"final_url":fu,"raw_bytes":len(b),"raw_sha256":hashlib.sha256(b).hexdigest(),"transport_error":er}
+              try:
+                  cr=ET.fromstring(b)
+                  codes=[x for x in cr.iter() if local(x)=="Code"]
+                  item["xml_parse"]="PASS"
+                  item["code_count"]=len(codes)
+                  item["codes"]=[{"id":x.attrib.get("id"),"name":" ".join(t.strip() for t in x.itertext() if t.strip())[:240]} for x in codes]
+              except Exception as e:
+                  item["xml_parse"]="NOT_XML_OR_INVALID"
+                  item["parse_error"]=type(e).__name__+": "+str(e)
+              codelists.append(item)
+              print("CODELIST",agency,cid,version,st,item.get("code_count"),item["raw_sha256"])
+          manifest={
+              "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
+              "dsd":{"agency":"IMF","id":"BOP","version":"2.6.0","http_status":status,"content_type":ctype,"final_url":final,"raw_bytes":len(raw),"raw_sha256":hashlib.sha256(raw).hexdigest()},
+              "components":{"dimensions":dims,"dimension_count":len(dims),"attributes":attrs,"attribute_count":len(attrs),"primary_measures":measures,"primary_measure_count":len(measures)},
+              "codelist_reference_count":len(refs),
+              "codelists":codelists
+          }
+          (out/"dsd_component_inventory.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
+          assert len(dims)==18 and len(attrs)==15 and len(measures)==1, "Pinned BOP 2.6.0 component-count invariant failed"
+          assert all(x["xml_parse"]=="PASS" and x["http_status"]==200 for x in codelists), "At least one codelist did not parse from HTTP 200"
+          print("DSD_COMPONENT_COUNTS_PASS: 18 dimensions, 15 attributes, 1 measure")
+          print("ALL_REFERENCED_CODELISTS_PASS:",len(codelists))
+          PY
+      - name: Upload immutable source metadata and inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd-codelists-${{ github.run_id }}
+          path: imf-bop-codelists/
+          if-no-files-found: error
+          retention-days: 90
