@@ -31,3 +31,45 @@
 - The source page's line 32 displays first-period all-category total −₹45,828cr, while equity-only is −₹47,955cr; second-period all-category total +₹21,354cr, while equity-only is +₹13,112cr. This difference is expected because the totals include debt, hybrid, MF and AIF categories.
 - USD conversion in this report uses period-end RBI rates: 95.0691 for 15-Oct and 95.2492 for 31-Oct; daily FPI net investment USD conversion uses daily RBI reference rate. Preserve INR as the primary comparison unit.
 - Official source: https://pilot.fpi.nsdl.co.in/StaticReports/Fortnightly_Sector_wise_FII_Investment_Data/FIIInvestSector_Oct312026.html (turn199115view0 lines 3–32; turn683882view0 lines 32–63).
+
+
+## NSE sector-index mapping and return-panel specification — 2026-11-14
+
+### Official index inventory
+- NSE's historical reports directory links Historical Index Data to NSE Indices and separately exposes historical India VIX and daily/monthly index report archives (web evidence turn783238view2 lines 187–196).
+- NSE Indices historical-data selector lists sectoral indices including NIFTY AUTO, NIFTY CAPITAL GOODS, NIFTY CHEMICALS, NIFTY CONSTRUCTION, NIFTY CONSUMER DURABLES, NIFTY CONSUMER SERVICES, NIFTY FINANCIAL SERVICES, NIFTY FMCG, NIFTY HEALTHCARE, NIFTY IT, NIFTY MEDIA, NIFTY METAL, NIFTY OIL AND GAS, NIFTY POWER, NIFTY REALTY, NIFTY TELECOMMUNICATIONS and NIFTY SERVICES SECTOR (web evidence turn250731view0 lines 59–88, 112–129). Historical-data page provides date-range selection and CSV format for index observations (lines 383–432).
+- NSE All Reports page separately exposes daily CM-UDiFF bhavcopy, security-wise delivery positions, historical index data and India VIX; the old CM common bhavcopy is marked discontinued since 08-Jul-2024 and replaced by CM-UDiFF (web evidence turn783238view1 lines 169–225; turn783238view2 lines 187–196).
+
+### 22-sector mapping contract (candidate index only; no constituent equivalence implied)
+| NSDL/BSE sector label | Candidate NSE/Nifty index | Mapping status |
+| Automobile and Auto Components | NIFTY AUTO | Label-aligned candidate |
+| Capital Goods | NIFTY CAPITAL GOODS | Label-aligned candidate |
+| Chemicals | NIFTY CHEMICALS | Label-aligned candidate |
+| Construction | NIFTY CONSTRUCTION | Label-aligned candidate |
+| Construction Materials | NIFTY CEMENT | Proxy only; not equivalent |
+| Consumer Durables | NIFTY CONSUMER DURABLES | Label-aligned candidate |
+| Consumer Services | NIFTY CONSUMER SERVICES | Label-aligned candidate |
+| Diversified | None identified | No direct index |
+| Financial Services | NIFTY FINANCIAL SERVICES | Label-aligned candidate; constituent scope may differ |
+| Forest Materials | None identified | No direct index |
+| FMCG | NIFTY FMCG | Label-aligned candidate |
+| Healthcare | NIFTY HEALTHCARE | Label-aligned candidate; not interchangeable with Pharma |
+| Information Technology | NIFTY IT | Label-aligned candidate |
+| Media, Entertainment & Publication | NIFTY MEDIA | Label-aligned candidate |
+| Metals & Mining | NIFTY METAL | Label-aligned candidate |
+| Oil, Gas & Consumable Fuels | NIFTY OIL AND GAS | Label-aligned candidate |
+| Power | NIFTY POWER | Label-aligned candidate |
+| Realty | NIFTY REALTY | Label-aligned candidate |
+| Services | NIFTY SERVICES SECTOR | Broad proxy candidate; classification scope may differ |
+| Telecommunication | NIFTY TELECOMMUNICATIONS | Label-aligned candidate |
+| Textiles | None identified | No direct index |
+| Utilities | None identified | No direct index; do not substitute NIFTY POWER |
+
+### Required validation before any return join
+- Index names above are candidate benchmarks, not proven identical constituent universes. Obtain dated constituent files and methodology effective dates before calculating constituent overlap or assigning a sector return.
+- Keep a separate mapping_status field: LABEL_ALIGNED_CANDIDATE / PROXY_ONLY / NO_DIRECT_INDEX / UNVALIDATED_CONSTITUENTS. Do not force the four no-direct rows or the proxy row into a benchmark.
+- Use Nifty Indices historical CSV for index OHLC and preserve price-index vs total-return-index distinction. NSE historical index page exposes separate historical index data and total-return index values; do not mix them.
+- NSDL flow observation window is 16–31 Oct 2026. It is not a daily observation. A backtest signal is usable only after the report's actual public availability timestamp is established. The first eligible NSE session is the next trading session after that timestamp, not automatically 01-Nov or 31-Oct.
+- For each eligible sector, calculate forward index returns from the next eligible close: H+1, H+3, H+5 trading sessions; apply 0.22% transaction cost consistently. Preserve unadjusted vs total-return benchmark choice and pre-register one primary benchmark per sector.
+- Global controls to be lagged as-of decision time: NIFTY 50 regime, India VIX, USD/INR, Brent, US yields/Fed event, FPI cash flow, domestic institutional flow and sector breadth. These are control variables, not a licence to infer causality.
+- This mapping is a research design deliverable only. No historical return series downloaded or joined in this step; no model performance, predictive edge or trading signal is claimed.
