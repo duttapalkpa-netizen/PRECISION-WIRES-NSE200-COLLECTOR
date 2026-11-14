@@ -655,3 +655,30 @@ However, dataset page identity/frequency alone does not prove exact dimensions, 
 - Next action: inspect BOP page's official metadata and VIEW DATA/DOWNLOAD target to determine exact dataset version, dimensions and India series keys. If it matches the known Portal BOP dataflow, test one small India series retrieval only, with the provenance sidecar rules; no bulk download until key/schema match.
 
 No CSV, manifest, prior India panel, or production logic was changed. No acceptance gate promoted.
+
+## 28. IMF BOP page identifier and public API access boundary revalidation (2026-11-15)
+
+### Identifier resolved from official page
+The official IMF dataset route is:
+`https://data.imf.org/en/datasets/IMF.STA:BOP`
+The dataset page exposes the API link, VIEW DATA and DOWNLOAD controls, and identifies the dataset as "Balance of Payments (BOP)". The URL's dataset identifier is `IMF.STA:BOP`, matching the dataflow family used in the earlier successful India extraction. This corroborates the dataset identity at the portal-page level; it does not independently expose the full versioned dataflow/DSD contract.
+
+### Public API access boundary
+The dataset page's API link resolves to `https://portal.api.imf.org/signin?returnUrl=/apis`. The IMF API documentation says data are served through SDMX 2.1 and SDMX 3.0 APIs and Swagger exploration requires a beta portal account sign-in.
+No sign-in, credential use, access-control bypass, or undocumented endpoint probing was attempted.
+
+### Important source-version distinction
+- Page-level dataset identifier `IMF.STA:BOP`: CONFIRMED.
+- Previously used versioned dataflow `IMF.STA:BOP(21.0.0)` and DSD `IMF.STA:DSD_BOP(24.0.0)`: remain the exact prior extraction contract; the current page itself does not display these version strings in its public page text.
+- Therefore this audit does not claim that the current page proves current DSD version or backward compatibility. Existing prior successful extraction artifacts remain the evidence for the earlier versioned contract.
+
+### Gate decision
+- Official BOP page-to-dataset identifier: PASS.
+- Public API documentation and sign-in requirement: PASS.
+- Anonymous direct API schema/metadata discovery: NOT_AVAILABLE via the documented Swagger route.
+- Exact versioned DSD revalidation from this page: NOT_ESTABLISHED.
+- No new observation retrieval; no revision/vintage evidence; revision readiness remains UNKNOWN / NOT_READY.
+- No change to existing India CSV, manifest, or prior accepted extraction/reconciliation evidence.
+- Next safe step: rely on the already archived successful raw responses and exact versioned manifest for the prior BOP contract; pursue a public non-authenticated metadata/export resource only if IMF officially exposes one. Do not infer hidden endpoints.
+
+This audit distinguishes the page's unversioned identifier from the versioned dataflow/DSD already used in prior research, preventing an accidental version-mismatch promotion.
