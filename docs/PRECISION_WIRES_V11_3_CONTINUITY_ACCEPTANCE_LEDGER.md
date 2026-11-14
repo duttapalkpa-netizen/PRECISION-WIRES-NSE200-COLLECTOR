@@ -428,3 +428,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Empty-link records preserved; no guessed URLs or symbols. RSS is raw discovery only; item identity and attachment mapping remain incomplete.
 - Report: `docs/CORPORATE_EVENTS_P0_RSS_EMPTY_FEED_GUARD_AND_SNAPSHOT_QA_20261114.md`.
 - Corporate Events P0 remains BLOCKED; official general-announcement CSV and full filing-row reconciliation pending. No paid services, synthetic values, PR/merge or production integration. Protected production selector/ranking/CORE-672 invariants unchanged.
+
+
+## 35. NSE RSS empty-link cohort deterministic NAV classification — 2026-11-14
+
+- Re-analysed immutable official RSS run 43558025207 / artifact 14098814399 (ZIP SHA-256 `ca0649032c67fd4519bce66d2dd6cd61805efbd2f9f7f0612fa88b05cedec517`; raw XML SHA-256 `b76717de6777404a56ded5cae962c922f199b32534364800a96ef059918a9990`; JSONL SHA-256 `fa17c0c89ebc10321821aa54fe5f5eaf7c488ddbd2e3a4d32ac0aa2e49c9b60d`).
+- Deterministic cohort check: all 155/155 empty-link items have source subject `Declaration of NAV`, publication timestamp `14-Nov-2026 07:00:00`, fund/ETF scheme titles and AMC/NAV descriptions. Thus the empty-link cohort is a NAV disclosure cohort, not 155 missing equity-company announcement attachments. All rows retained.
+- Any token-like text in descriptions remains unpromoted to listed-equity symbol/issuer ID. No fund-scheme master or exact dated official CSV join was captured; symbol/scheme mapping remains UNKNOWN.
+- Official NSE general-announcements indexed latest-five sample (web evidence turn273059search3) is not a date-window CSV and cannot establish completeness or reconcile the NAV cohort. No CSV bytes/hash, pagination contract or row-level filing join claimed.
+- Report: `docs/CORPORATE_EVENTS_P0_RSS_EMPTY_LINK_NAV_CLASSIFICATION_20261114.md`.
+- Scoped classification PASS 155/155. Equity symbol mapping UNKNOWN; exact General Announcements reconciliation NOT RUN; source completeness UNKNOWN. Corporate Events P0 remains BLOCKED. No code/workflow/production changes, paid service, PR/merge or synthetic values; production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
