@@ -630,3 +630,28 @@ The publicly retrievable report-page representation exposes report identity and 
 - Next permissible action: inspect only public browser-visible dashboard interactions / officially exposed downloadable resource links if available; if no unauthenticated public export target is exposed, stop and record access limitation rather than infer endpoints or automate undocumented APIs.
 
 No data files, CSVs, manifests, source captures, or prior acceptance gates were modified.
+
+## 27. Separate IMF Balance of Payments (BOP) country dataset route identified (2026-11-15)
+
+### Distinct official dataset route
+A new official IMF dataset page was identified: https://data.imf.org/Datasets/BOP
+Title: "Balance of Payments (BOP)".
+The page exposes API, VIEW DATA, DOWNLOAD and Metadata controls, and describes the dataset as transactions between residents and nonresidents, covering goods/services, primary/secondary income, capital and financial accounts. Frequency is Annual and Quarterly. This is distinct in name and purpose from BOP_AGG (World and Country Group Aggregates / BOPSY).
+
+Official page also states relevant metadata/highlights include BPM5, BPM6 Conversion Matrix, and IMF Committee on Balance of Payments Statistics materials.
+The IMF API documentation states data are exposed through SDMX 2.1 and SDMX 3.0 APIs; Swagger exploration requires beta portal account sign-in. No sign-in or bypass was attempted.
+
+### Why this is the correct next route to inspect
+The BOP dataset is the official country-level Balance of Payments dataflow candidate, whereas BOP_AGG is annual World/Country Group Aggregates. The BOP page supports annual and quarterly frequency, matching the frequency class needed for India country series. This makes it a more direct source candidate than BOPSY aggregate dashboard for country-reporter data.
+However, dataset page identity/frequency alone does not prove exact dimensions, exact series-key equivalence, revision/vintage history, or a dated archived download.
+
+### Boundaries and next checks
+- Official BOP dataset page and annual/quarterly frequency: DISCOVERED / PASS.
+- Exact portal dataflow version and DSD mapping for this page: must be revalidated against the already known `IMF.STA:BOP(21.0.0)` and `DSD_BOP(24.0.0)`; do not assume version equivalence solely from page title.
+- Exact India series mapping to `IND.A_NFA_T.P_F.USD.A/Q` and `IND.L_NIL_T.P_F.USD.A/Q`: NOT_REVALIDATED in this route audit.
+- Raw dated country-level download and two overlapping release vintages: NOT_DONE.
+- Vintage/revision readiness remains UNKNOWN / NOT_READY.
+- No use of BOP_AGG world/group aggregates as substitute for BOP country series.
+- Next action: inspect BOP page's official metadata and VIEW DATA/DOWNLOAD target to determine exact dataset version, dimensions and India series keys. If it matches the known Portal BOP dataflow, test one small India series retrieval only, with the provenance sidecar rules; no bulk download until key/schema match.
+
+No CSV, manifest, prior India panel, or production logic was changed. No acceptance gate promoted.
