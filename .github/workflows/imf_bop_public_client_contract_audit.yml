@@ -1,0 +1,69 @@
+name: IMF BOP public client API contract discovery
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_public_client_contract_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-public-client-contract-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect official BOP page client bundles for documented public data contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-client-audit/assets
+          python - <<'PY'
+          import urllib.request, hashlib, json, re
+          from pathlib import Path
+          from datetime import datetime, timezone
+          from urllib.parse import urljoin
+          out=Path("imf-bop-client-audit")
+          page_url="https://data.imf.org/en/datasets/IMF.STA%3ABOP"
+          def get(url):
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"text/html,application/javascript,*/*"})
+            with urllib.request.urlopen(req,timeout=25) as r:
+              return r.status,r.headers.get("Content-Type",""),r.geturl(),r.read()
+          status,ctype,final,body=get(page_url)
+          assert status==200 and "html" in ctype.lower(), f"Unexpected dataset page response: {status} {ctype}"
+          (out/"bop_dataset_page.html").write_bytes(body)
+          text=body.decode("utf-8","replace")
+          scripts=re.findall(r'<script[^>]+src=["\']([^"\']+)',text,re.I)
+          scripts=[urljoin(final,x) for x in scripts if "_next/static/chunks/" in x]
+          results=[]
+          for idx,url in enumerate(scripts):
+            try:
+              st,ct,fu,b=get(url)
+              name=f"assets/{idx:02d}_{url.rsplit('/',1)[-1].split('?')[0]}"
+              (out/name).write_bytes(b)
+              t=b.decode("utf-8","replace")
+              patterns=["portal.api.imf.org","swagger","data-query","dataquery","sdmx","api.imf.org","/api/","dataseturn","dataseturn","download","viewdata","dataflow"]
+              hits={}
+              for p in patterns:
+                found=[m.start() for m in re.finditer(re.escape(p),t,re.I)]
+                if found:
+                  hits[p]=[t[max(0,i-180):min(len(t),i+300)] for i in found[:8]]
+              results.append({"url":url,"http_status":st,"content_type":ct,"final_url":fu,"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest(),"asset":name,"hits":hits})
+            except Exception as e:
+              results.append({"url":url,"error":type(e).__name__+": "+str(e)})
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"dataset_page":{"url":page_url,"http_status":status,"content_type":ctype,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest()},"next_chunk_count":len(scripts),"assets":results,"decision":"Client bundle string matches are discovery leads only. Do not treat a minified internal route as a stable public API contract unless the request is independently documented by IMF and the unauthenticated response is validated."}
+          (out/"client_bundle_contract_inventory.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({"page":summary["dataset_page"],"chunk_count":len(scripts),"assets":[{"url":x["url"],"bytes":x.get("bytes"),"sha256":x.get("sha256"),"hit_terms":list(x.get("hits",{})),"error":x.get("error")} for x in results]},indent=2))
+          PY
+      - name: Upload raw page, client bundles and contract inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-public-client-contract-${{ github.run_id }}
+          path: imf-bop-client-audit/
+          if-no-files-found: error
+          retention-days: 90
