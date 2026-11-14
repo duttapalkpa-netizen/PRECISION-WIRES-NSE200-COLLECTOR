@@ -19,16 +19,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install pinned PDF parser
         run: python -m pip install --disable-pip-version-check pypdf==5.9.0
-      - name: Retrieve IMF WEO appendix and IMF CL_AREA codelist
+      - name: Retrieve official WEO appendix and IMF CL_AREA codelist
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p weo-emde-crosswalk
           python - <<'PY'
-          import hashlib, json, urllib.request, urllib.error, unicodedata, re
+          import hashlib, json, urllib.request, urllib.error, unicodedata, re, io
           from datetime import datetime, timezone
           from pathlib import Path
-          from html.parser import HTMLParser
+          from pypdf import PdfReader
           import xml.etree.ElementTree as ET
 
           out=Path("weo-emde-crosswalk")
@@ -45,13 +45,15 @@ jobs:
               return e.code,e.headers.get("Content-Type") if e.headers else None,e.geturl(),e.read(),"HTTPError"
             except Exception as e:
               return None,None,url,b"",type(e).__name__+": "+str(e)
-          # IMF hosts this April 2026 appendix resource as a PDF (Content-Type may vary).
-          # Parse the PDF's own page text; do not rely on search-engine HTML extraction.
-          try:
-            from pypdf import PdfReader
-          except ImportError:
-            raise SystemExit("pypdf dependency unavailable")
-          import io
+          def norm(s):
+            s=unicodedata.normalize("NFKD",s)
+            s="".join(c for c in s if not unicodedata.combining(c))
+            s=s.casefold().replace("&"," and ")
+            s=re.sub(r"[^a-z0-9]+"," ",s)
+            return " ".join(s.split())
+          weo_status,weo_ct,weo_final,weo_raw,weo_err=fetch(sources["weo_appendix"],"application/pdf,application/octet-stream,*/*")
+          (out/"weo_april_2026_appendix_raw.pdf").write_bytes(weo_raw)
+          assert weo_status==200 and weo_raw.startswith(b"%PDF"), f"Official WEO PDF retrieval invalid: status={weo_status}, content_type={weo_ct}, error={weo_err}"
           pdf=PdfReader(io.BytesIO(weo_raw))
           assert len(pdf.pages)>=5, f"Unexpected WEO PDF page count: {len(pdf.pages)}"
           page_text=None
@@ -71,16 +73,10 @@ jobs:
               weo_names[-1] += " " + raw_line.strip()
             else:
               name=" ".join(raw_line.split()).strip()
-              if name and name not in {"DATABASE APPENDIX"}: weo_names.append(name)
-          weo_names=[]
-          for cell in parser.cells:
-            for line in cell.splitlines():
-              name=" ".join(line.split()).strip()
-              if name and name.casefold()!="emerging and developing economies": weo_names.append(name)
-          # Remove any header/footnote residue only by exact explicit header exclusion.
-          weo_names=[n for n in weo_names if norm(n)!="emerging and developing economies"]
-          assert len(weo_names)==154, f"Expected 154 WEO EMDE economies; parsed {len(weo_names)}"
+              if name and name!="DATABASE APPENDIX": weo_names.append(name)
+          assert len(weo_names)==154, f"Expected 154 WEO EMDE economies; parsed {len(weo_names)}: {weo_names[:5]} ... {weo_names[-5:]}"
           assert len({norm(n) for n in weo_names})==154, "Duplicate WEO names after conservative normalization"
+
           cl_status,cl_ct,cl_final,cl_raw,cl_err=fetch(sources["cl_area"],"application/xml,*/*")
           (out/"imf_cl_area_2_0_0_raw.xml").write_bytes(cl_raw)
           assert cl_status==200 and cl_raw, f"CL_AREA retrieval failed: {cl_status} {cl_err}"
@@ -96,32 +92,22 @@ jobs:
           assert codes, "No English CL_AREA codes parsed"
           exact={}
           for x in codes: exact.setdefault(norm(x["name"]),[]).append(x)
-          # Explicit alias map only. These are name-label equivalences, never fuzzy matches.
+          # Manually declared label equivalences only; never fuzzy-match country names.
           aliases={
-            "democratic republic of the congo":"congo democratic republic of",
-            "republic of congo":"congo republic of",
+            "democratic republic of the congo":"congo the democratic republic of the",
+            "republic of congo":"congo",
             "the gambia":"gambia",
             "the bahamas":"bahamas",
             "kyrgyz republic":"kyrgyzstan",
             "lao p d r":"lao peoples democratic republic",
-            "lao p d r":"lao pdr",
             "micronesia":"micronesia federated states of",
             "russia":"russian federation",
-            "south korea":"korea republic of",
-            "north korea":"korea democratic peoples republic of",
             "syria":"syrian arab republic",
-            "türkiye":"turkiye",
-            "turkiye":"turkey",
             "iran":"iran islamic republic of",
             "moldova":"moldova republic of",
-            "venezuela":"venezuela bolivarian republic of",
+            "venezuela":"venezuela bolivarian republic",
             "tanzania":"tanzania united republic of",
-            "bolivia":"bolivia plurinational state of",
-            "brunei darussalam":"brunei",
-            "cape verde":"cabo verde",
-            "czech republic":"czechia",
-            "ivory coast":"cote d ivoire",
-            "palestine":"west bank and gaza"
+            "west bank and gaza":"palestine"
           }
           records=[]; unmapped=[]; ambiguous=[]
           for name in weo_names:
@@ -154,7 +140,8 @@ jobs:
             "critical_boundary":"WEO membership does not imply BOP observation availability or reporter coverage; no flows or aggregate calculated."
           }
           (out/"weo_emde_to_imf_area_crosswalk.json").write_text(json.dumps({"summary":summary,"members":records},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-          (out/"weo_emde_membership.csv").write_text("weo_name,imf_area_code,imf_area_name,mapping_method,mapping_status\n"+"".join(",".join('"'+str(r[k]).replace('"','""')+'"' for k in ["weo_name","imf_area_code","imf_area_name","mapping_method","mapping_status"])+"\n" for r in records),encoding="utf-8")
+          def csvq(v): return '"'+str(v if v is not None else "").replace('"','""')+'"'
+          (out/"weo_emde_membership.csv").write_text("weo_name,imf_area_code,imf_area_name,mapping_method,mapping_status\n"+"".join(",".join(csvq(r[k]) for k in ["weo_name","imf_area_code","imf_area_name","mapping_method","mapping_status"])+"\n" for r in records),encoding="utf-8")
           print(json.dumps({k:v for k,v in summary.items() if k not in ("weo_source","area_codelist")},ensure_ascii=False,sort_keys=True))
           PY
       - name: Validate membership integrity without forcing uncertain matches
