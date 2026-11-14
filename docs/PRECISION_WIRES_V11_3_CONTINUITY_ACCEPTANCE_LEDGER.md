@@ -438,3 +438,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Official NSE general-announcements indexed latest-five sample (web evidence turn273059search3) is not a date-window CSV and cannot establish completeness or reconcile the NAV cohort. No CSV bytes/hash, pagination contract or row-level filing join claimed.
 - Report: `docs/CORPORATE_EVENTS_P0_RSS_EMPTY_LINK_NAV_CLASSIFICATION_20261114.md`.
 - Scoped classification PASS 155/155. Equity symbol mapping UNKNOWN; exact General Announcements reconciliation NOT RUN; source completeness UNKNOWN. Corporate Events P0 remains BLOCKED. No code/workflow/production changes, paid service, PR/merge or synthetic values; production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
+
+
+## 36. Global-to-India Macro-Geo evidence crosswalk — 2026-11-14
+
+- Added `docs/MACRO_GEO_GLOBAL_TO_INDIA_EVIDENCE_CROSSWALK_20261114.md` as a qualitative, source-grounded crosswalk covering Brent/energy, USD and US yields, Fed liquidity, China demand, industrial metals, precious metals, West Asia/shipping, global equity/AI rotation, yen carry and food/fertiliser channels into Indian sectors.
+- Official DIPAM Market Monitor dated 10-Nov-2026 supplies a single-date cross-check of Indian/global indices, FII/DII, repo, India 10Y yield, USD/INR, FX reserves and Brent futures. These values are explicitly not represented as 14-Nov live values or as a historical series. RBI Bulletin describes elevated AE yields, stronger USD, negative EME portfolio flows and West Asia growth/inflation risks. Reuters 13-Nov report is retained as secondary context, not a substitute for official raw series.
+- No factor coefficients, intuitive weights, fabricated time series, or production signals created. Event-to-NSE session panel, rolling sensitivities and out-of-sample validation remain NOT BUILT / NOT ESTIMATED. Macro-Geo P0 coverage and Hard Gate remain BLOCKED.
+- Report: `docs/MACRO_GEO_GLOBAL_TO_INDIA_EVIDENCE_CROSSWALK_20261114.md`.
+- Official NSE Announcements page re-opened; Company/Subject/Search By/date filters/CSV affordance verified, but exact export request, CSV bytes/hash and pagination contract remain NOT CAPTURED because static retrieval does not execute the page UI. No endpoint guessed.
+- No code, workflow, production selector, RANKING_SCORE, +1 PRESSURE_FADE or CORE-672 change; no paid service, PR/merge or production integration.
