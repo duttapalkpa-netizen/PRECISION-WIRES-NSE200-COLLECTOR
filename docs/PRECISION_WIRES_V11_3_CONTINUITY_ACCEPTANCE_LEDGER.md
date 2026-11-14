@@ -415,3 +415,16 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 
 - The persisted GitHub CSV is the compact 43-row reporter summary (not the separate 86-row local diagnostic matrix). Read-back confirmed 2,547 bytes; correct SHA-256 is `d331ba2f80c253c7d1e95dc2ba0c662fa27d4444aa21f12e9c881e200741704a`. The prior 2,313-byte/hash note referred to a different local intermediate and is superseded. No source observation or status changed.
 - The CSV status label is `NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW`; historical ZWE liabilities has an empty series key but zero observations.
+
+
+
+## 2026-11-14 — IMF IFS_FLAG semantics resolved; exact eligibility remains UNKNOWN
+
+- Official IMF Data Portal “Accessing International Financial Statistics (IFS)” page (published 2025-03-24): https://data.imf.org/en/news/accessing . IMF says former IFS data is reorganized into topic datasets; “IFS, Balance of Payments Indicators” maps to BOP. It documents the “IFS Flag” as downloadable series metadata and identifies API component `IMF_FLAG`, with `c[IFS_Flag]=True` selecting series formerly in IFS.
+- Semantic determination: IFS_FLAG is a former-IFS collection/provenance marker. It is not a quality grade, BPM methodology, completeness, or revision flag.
+- Applied to previously inspected responses only; no reacquisition: asset series ETH/HTI/DZA have IFS_FLAG=true, while liability series ETH/HTI/ZWE have null. Null semantics are not defined by the cited IMF page and remain UNKNOWN; preserve null, do not infer “never IFS”.
+- Exact 39-country eligibility remains UNKNOWN. The 154/154 BOP COUNTRY codelist crosswalk proves dimension-code validity only, not reporter eligibility for the exact P_F + USD + quarterly + A_NFA_T/L_NIL_T combinations. Dataset-level annual/quarterly frequency does not establish each reporter's indicator/unit/frequency availability. No reporter-specific constraint evidence was established in this audit.
+- Report: `docs/IMF_BOP_IFS_FLAG_AND_EMDE_ELIGIBILITY_METADATA_AUDIT_20261114.md`; created on branch `research/imf-bop-access-audit-v1`.
+- Progress: IFS_FLAG semantic identification 100% (PASS); null semantics 0% (UNKNOWN); 39-country exact series eligibility 0% resolved (UNKNOWN); coverage gate NOT PASS; EM aggregation BLOCKED. IMF BOP accepted-gate score remains 5/7 (71.4%)—no gate promotion. Project-wide progress remains NOT_CALCULABLE.
+- Next: inspect the exact archived DSD_BOP(24.0.0) structure response and referenced codelists/constraints for accounting entry, indicator, unit, frequency, and reporter-specific constraints. If absent, report only “no eligibility constraint found in inspected artefacts”; do not infer eligibility.
+- No API data rerun, no new observations, no aggregation, no production changes, no PR merge. All protected V11.3 invariants remain unchanged; spend ₹0.
