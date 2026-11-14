@@ -174,3 +174,20 @@ This entry supersedes the immediately preceding 153/154 partial-mapping status a
 - IMF BOP workstream remains 4/7 accepted gates (57%) on the existing rubric: dataset identity, DSD/codelists, direct component inventory and WEO membership mapping are PASS. Portal-to-registry crosswalk UNKNOWN; India observation acquisition BLOCKED/NOT_DONE; EM aggregation BLOCKED.
 - The full PRECISION-WIRES V11.3 project percentage remains NOT_CALCULABLE until all workstream gates and weights are reconciled. No current project-wide percentage is asserted.
 - No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines or Hard Gate. ₹0 spend; no paid services; no synthetic values/timestamps; no PR merge.
+
+
+## 2026-11-14 — IMF BOP public client API contract discovery and live endpoint probe
+
+- First-party BOP dataset page and 11 Next.js client chunks inspected using read-only retrieval. Client discovery Run #43601835131 SUCCESS; commit `46dfd2f72312ca48e824515ec7b0d3cf2031ce84`; artifact ID `14117155347`; ZIP SHA-256 `31a0d0add766bc66e928624c18979692045fdb09a10c9fea88f83cf704259963`.
+- Official dataset page capture: HTTP 200; 286,324 bytes; SHA-256 `b4c37f5b9bc3013cef59a631acd9d16fd0f828653e1ce75a0361b9c08e63d456`.
+- Main first-party client page bundle SHA-256: `b60dc6bfb92b8989965c33b9e17b54704f5df7092f80ba0e26327455424e8dd9`.
+- Client bundle contains SDMX 3.0 data-query URL template: `https://api.imf.org/external/sdmx/3.0/data/dataflow/{agencyID}/{resourceID}/{version}/{dimensionKey}?c[TIME_PERIOD]=ge:{startDate}+le:{endDate}&dimensionAtObservation=AllDimensions&attributes=all&detail=full&includeHistory=true&limit=100`.
+- Client bundle also constructs structure URL template: `https://api.imf.org/external/sdmx/3.0/structure/dataflow/{agencyID}/{resourceID}/{version}?detail=full&references=all`. This is client source evidence, not a proof of route availability.
+- Candidate URN from the BOP page is IMF.STA:BOP(21.0.0). Treating it as agency/resource/version produces a candidate URL path, not a confirmed active SDMX dataflow.
+- Two live, unauthenticated structure endpoint probes failed with HTTP 400. Run #43601889079: server message “This endpoint does not support json version 3.0”; response SHA-256 `be55c218632cab1444443c40d1ce720cbc7150a5f403d65aa53ecf62f651ccb2`. Run #43601964709: server message “This endpoint does not support xml version 3.0”; response SHA-256 `59bd7d800cf108ce237613c9419e23d6bc269d23a58432984e14dbed866d7195`; artifact ID `14115719310`; ZIP SHA-256 `613883f8b5102a35451b4830fa275001cc5cf8218a7e70fc7b79d521d302d794`.
+- Corrective lesson: a first-party frontend URL template is not proof that the corresponding server route supports the same resource/representation. Test media negotiation before interpreting the response; don't assume a valid data-query route implies a supported structure-query route.
+- No dimension metadata was returned; no data query was attempted; no observation rows acquired. No key/dimension ID/order invented.
+- Evidence report: `docs/IMF_BOP_PUBLIC_CLIENT_API_CONTRACT_DISCOVERY_20261114.md`, commit `c92ee8d5470bc53ecebdc792069fe5bbe006b3a9`.
+- Crosswalk and India observation gates remain UNKNOWN/BLOCKED/NOT_DONE. The IMF BOP workstream remains 4/7 accepted gates (57%) on the existing rubric. The client route discovery does not satisfy the Portal-to-registry mapping gate.
+- Project-wide verified progress remains NOT_CALCULABLE pending full acceptance-ledger and weighting reconciliation.
+- ₹0 spend; official sources only; no sign-in, credential handling, or auth bypass; no synthetic observations/timestamps; no PR merge; no production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engine or Hard Gate changes.
