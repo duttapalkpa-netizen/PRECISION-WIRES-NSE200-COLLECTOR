@@ -191,3 +191,23 @@ This entry supersedes the immediately preceding 153/154 partial-mapping status a
 - Crosswalk and India observation gates remain UNKNOWN/BLOCKED/NOT_DONE. The IMF BOP workstream remains 4/7 accepted gates (57%) on the existing rubric. The client route discovery does not satisfy the Portal-to-registry mapping gate.
 - Project-wide verified progress remains NOT_CALCULABLE pending full acceptance-ledger and weighting reconciliation.
 - ₹0 spend; official sources only; no sign-in, credential handling, or auth bypass; no synthetic observations/timestamps; no PR merge; no production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engine or Hard Gate changes.
+
+
+## 2026-11-14 — IMF BOP SDMX 2.1 candidate flow, DSD and codelist verification
+
+- Run #43608726175 SUCCESS; workflow commit `eabcde2975fb19da9219700c8a08704c34559d2c`; artifact ID `14119193255`; ZIP SHA-256 `ca28bfd7d48b0e304ce2a41176c3ccf1a5ea241cf24eba880c9c5de246551399`.
+- Run #43608839976 SUCCESS; workflow commit `9e8cafda5a878bd7c212b9b3b385ea648e4c3b12`; artifact ID `14119642179`; ZIP SHA-256 `d99c92c23fe8d5f789e4ffd99fdd807f5331c4b261083eb63b0c9fb315ce856d`.
+- Public SDMX 2.1 metadata retrieval: HTTP 200 for IMF:BOP_GBPM6(2.0), IMF:BPM6_BOP_Q(1.5), and IMF:BOP(2.6.0), all parseable XML.
+- BOP_GBPM6(2.0) explicitly references IMF:BOP(2.0), with 18 dimensions, 15 attributes, OBS_VALUE, and 22 unique direct codelist references.
+- BPM6_BOP_Q(1.5) explicitly references IMF:BOP(1.5); direct raw XML parsing shows 17 dimensions (no TYPE_ENTITY), 14 attributes and OBS_VALUE. Do not treat it as schema-identical to BOP 2.0/2.6.0.
+- IMF:BOP(2.6.0) direct and descendant responses both parsed. DSD has 18 ordered dimensions, 15 attributes and OBS_VALUE. It has 22 unique direct component codelist references; descendant payload contains 23 codelist objects including one related extra CL_AREA version 1.17.0.
+- DSD 2.6.0 directly references IMF:CL_AREA(2.0.0) for REF_AREA/COUNTERPART_AREA (931 codes); India is `IN` / `India`. BOP_GBPM6 DSD 2.0 references IMF:CL_AREA(1.14) (885 codes), also with `IN` / `India`.
+- Raw XML hashes: BOP_GBPM6(2.0) descendants `d1698e30516d554740d269db5126487902fc2632131bf0ae3add26aefa7f63c7`; BOP(2.6.0) descendants `0282f8ed931fc1c058c5f612f9b5c5c3ca60fa0590344d059d3ed2f547fd19ea`.
+- Corrective lesson: the initial broad XML parser matched nested Dimension references under attribute relationships and emitted blank component IDs. Raw responses were preserved; a follow-up parser scoped dimensions to DataStructureComponents/DimensionList, attributes to AttributeList and measures to MeasureList. Reported component counts were independently checked against raw XML.
+- Service boundary correction: IMF SDMX Central's public REST endpoint documented in the May 2025 guide is the Structure metadata query service. Its separate public POST endpoints perform validation/transformation/registration; they are not a raw observation GET API. IMF Data Portal's own SDMX 2.1/3.0 APIs are distinct; Swagger requires beta portal sign-in. No unauthorized access was attempted.
+- Crucial unresolved point: IMF Portal dataset URN `IMF.STA:BOP(21.0.0)` remains unproven as a mapping to IMF:BOP_GBPM6(2.0), IMF:BPM6_BOP_Q(1.5), or IMF:BOP(2.6.0). Do not equate similar BOP names or versions.
+- India codelist code validation is metadata-only; no India observation rows acquired. Portal crosswalk UNKNOWN; observation access BLOCKED; EMDE reporter coverage NOT DONE; EM aggregation BLOCKED.
+- Evidence report: `docs/IMF_BOP_SDMX21_CANDIDATE_METADATA_AUDIT_20261114.md`, commit `4080ebbd6fc0cf855415e1871aa54f8da243a6ef`.
+- Extraction specification addendum appended to `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md`, commit `b51d32073fdeaab1307909851adef5d155b7fb2d`.
+- IMF BOP workstream acceptance remains 4/7 (57%) on the existing rubric. Metadata verification adds evidence quality but does not satisfy Portal crosswalk or observation acquisition gates. Project-wide verified progress remains NOT_CALCULABLE pending full ledger reconciliation.
+- ₹0 spend, free official sources only, no paid APIs, no credentials/auth bypass, no synthetic observations/timestamps, no external contact, no PR merge, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines and Hard Gate unchanged.
