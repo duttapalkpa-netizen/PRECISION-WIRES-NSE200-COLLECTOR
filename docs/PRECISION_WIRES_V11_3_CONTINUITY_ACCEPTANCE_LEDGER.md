@@ -579,3 +579,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Defined no-lookahead join contract: NSDL report publication availability timestamp -> next eligible NSE session -> H+1/H+3/H+5 forward index returns, 0.22% transaction cost; lag global controls and keep all missing values UNKNOWN. No historical index series downloaded or joined, no predictive performance claimed.
 - Scoped crosswalk and validation design completion: 100% (documentation deliverable only). Empirical sector-return panel/backtest: 0% executed in this step / NOT RUN. Overall project: NOT CALCULABLE. Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; no PR/merge.
 - Updated sector report commit e1030ebdc82bbf4574f307d7b88ce8b51f82bd2d, blob 059d30cfef2cc2c3ba4c1aaf16c0284ffb6be22e.
+
+
+## 50. NSDL 16–31 Oct full 22-sector equity panel transcribed; ₹1cr row-sum residual recorded — 2026-11-14
+
+- Transcribed all 22 BSE common-industry sector Equity net flows for 16–31 Oct from official NSDL report lines 8–29 (turn381834view0; turn198123view0).
+- Largest displayed sector inflows: Telecommunication +₹11,065cr and Information Technology +₹10,915cr. Remaining sector values are enumerated in the NSDL cross-source report.
+- Row-sum QA: 22 sector rows sum +₹12,519cr; Others equity +₹594cr; Sovereign equity ₹0; combined displayed rows +₹13,113cr vs Grand Total +₹13,112cr. Difference +₹1cr. Recorded as ROUNDING_RESIDUAL_1CR, not exact PASS and not silently allocated to any sector.
+- Scoped full 22-sector panel transcription: 100%. Row-sum QA: 100% completed with 1cr residual identified. Empirical NSE sector-index return panel/backtest remains 0% executed / NOT RUN. Overall project remains NOT CALCULABLE; Hard Gate BLOCKED.
+- No synthetic data, no forced row adjustment, no date-only join, no production selector/ranking/CORE-672 change, no PR/merge.
+- Updated report commit 69e9b702961b98f7fd91b2ad88333b85ba06a0c7, blob 65e45ebe9dd1bb8b19cdcd45b9f3408c18ed5ab6.
