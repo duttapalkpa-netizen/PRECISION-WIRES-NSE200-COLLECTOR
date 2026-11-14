@@ -34,8 +34,8 @@ jobs:
           assert len(emde)==154
           base="https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/"
           cases=[
-            {"name":"assets_quarterly_2015_2025","key":"all.A_NFA_T.P_F.USD.Q","entry":"A_NFA_T"},
-            {"name":"liabilities_quarterly_2015_2025","key":"all.L_NIL_T.P_F.USD.Q","entry":"L_NIL_T"}
+            {"name":"assets_quarterly_2015_2025","key":"*.A_NFA_T.P_F.USD.Q","entry":"A_NFA_T"},
+            {"name":"liabilities_quarterly_2015_2025","key":"*.L_NIL_T.P_F.USD.Q","entry":"L_NIL_T"}
           ]
           def parse_response(body,expected_entry):
             obj=json.loads(body)
