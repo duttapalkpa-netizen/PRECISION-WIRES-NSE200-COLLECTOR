@@ -667,3 +667,12 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Methodology statement VERIFIED; October 2025 PDF bytes/body NOT_RETRIEVED; six-country October inclusion UNKNOWN; quarterly eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 - Updated audit report commit: `b04b09e1ae82847375d0dc333af62004423b6e10`.
 - No data rows created, estimates substituted, credentials/paid services/external contact or production changes.
+
+## 2026-11-15 — Progress accounting and no-repeat control
+
+- October 2025 BPM6 PDF retrieval/country-table package is 25% (1/4 defined milestones): official catalogue metadata PASS; direct PDF download target NOT_DONE; PDF bytes+SHA-256 NOT_DONE; country-table extraction and six-country comparison NOT_DONE. No country eligibility conclusion.
+- IMF BOP workstream acceptance remains 5/7 = 71.4% on the pre-existing rubric. Catalogue metadata re-verification and aggregate methodology safeguard do not add gates or promote acceptance.
+- Full PRECISION-WIRES V11.3 overall progress remains NOT_CALCULABLE: current full-workstream denominators and approved weights are not reconciled, and earlier P0/Factor/Regime/Event Study statuses need revalidation. Never substitute IMF 71.4% for project-wide progress.
+- No-repeat: do not repeat IMF item 1792656603400855000 metadata search, April 2025 six-country inventory review, 39-country annual audits, or successful 110-row India acquisition/reconciliation without new evidence/code. Next action is direct PDF file target resolution through official document-item download action; if inaccessible, log limitation and pivot to another unresolved gate.
+- No new country-level evidence from this reconciliation. No credentials, paid services, synthetic data, external contact or production changes.
+- Updated audit report commit: cfa2cd8f6a7f71ba16b6525354d4b252fa61bd92.
