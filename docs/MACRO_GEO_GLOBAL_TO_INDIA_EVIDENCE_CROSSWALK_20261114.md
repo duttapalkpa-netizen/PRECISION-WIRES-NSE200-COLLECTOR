@@ -98,3 +98,25 @@ This is an evidence crosswalk for research ingestion and future event studies. I
 - Do not merge RBI dashboard observations, Reuters reporting, CDSL custodian flows, NSE provisional flows or DIPAM snapshots into one same-date row without explicit alignment keys.
 - No numeric factor beta, event coefficient, causal effect or H+1/H+3/H+5 predictive probability is inferred from this snapshot. No synthetic panel or forward-fill created.
 - Macro evidence snapshot refresh: DOCUMENTED. Historical event-to-NSE-session panel, P0 8/8 coverage, 35-factor source coverage, rolling out-of-sample sensitivity and production-parity backtest: NOT PROVEN / NOT RUN. Hard Gate remains BLOCKED.
+
+
+## India external-sector shock / export opportunity refresh — official October 2026 trade release
+
+### Ministry of Commerce & Industry / PIB release (published 13-Nov-2026)
+- October 2026 merchandise exports: US$49.47bn; merchandise imports: US$89.35bn; merchandise trade deficit derived by direct subtraction: US$39.88bn. The subtraction is an arithmetic cross-check of the published source values, not an additional observation.
+- October total exports (goods + services): US$89.99bn; total imports: US$110.07bn; reported total trade balance: deficit US$20.09bn. Services October figures are estimates because latest RBI services data in the release is September 2026.
+- April–October FY2026-27 merchandise exports US$309.06bn, imports US$527.21bn, merchandise deficit US$218.15bn; total exports US$568.84bn, imports US$662.19bn, total deficit US$93.35bn.
+- Export growth leaders reported for October include petroleum products +140.21%, electronic goods +62.70%, gems & jewellery +40.06%, organic/inorganic chemicals +36.20%, engineering goods +36.01%. These are year-on-year sector export values, not listed-company revenue growth or stock-return signals.
+- Non-petroleum exports US$40.58bn; non-petroleum imports US$66.53bn. Non-petroleum/non-gems-jewellery exports US$37.38bn and imports US$57.37bn. Preserve the source's category definitions and table notes.
+- Official source: PIB, Ministry of Commerce & Industry, PRID 2335914, https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2335914&lang=2&reg=48 (web evidence `turn935975search0`).
+
+### India equity transmission hypotheses (not measured stock signals)
+- Wider merchandise deficit + higher petroleum imports can increase external financing/INR sensitivity when global crude and freight rise; test with USD/INR, Brent, reserves, current-account data and sector-level import intensity.
+- Export growth in electronics, engineering, chemicals and petroleum products may support relevant listed supply chains only where issuer export mix, margins, capacity and order-book disclosures corroborate. National sector export growth must not be mapped directly to every constituent.
+- Strong services surplus can partially offset goods deficit; October services data are estimated and must not be treated as final RBI-reported actuals.
+- Distinguish commodity-price/volume effects, base effects, gold/seasonal imports, and export unit-value effects before assigning a persistent macro regime.
+
+### Controls / status
+- Keep October trade data as a monthly release with publication timestamp 13-Nov-2026 and reference month October 2026; never align to daily NSE bars by calendar date alone.
+- No synthetic daily values, issuer attribution, beta, causal coefficient or H+1/H+3/H+5 probability inferred. No production selector/ranking/CORE-672 modification.
+- Scoped official trade-release ingestion and arithmetic reconciliation: DOCUMENTED. Full historical monthly panel, issuer-level exposure mapping, Macro-Geo P0 8/8, 35-factor coverage and rolling out-of-sample validation remain NOT PROVEN / NOT RUN. Hard Gate remains BLOCKED.
