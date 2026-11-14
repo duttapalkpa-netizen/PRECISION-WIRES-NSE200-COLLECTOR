@@ -136,3 +136,19 @@ Source: official NSDL report, lines 8–32 (web evidence turn381834view0 and tur
 - No date-range was submitted and no historical CSV bytes were downloaded in this audit. No file size, response headers, source-file SHA-256 or row-level date continuity is available. This step does not count as index-data acquisition.
 - Next eligible action: obtain each candidate index's own factsheet/methodology and point-in-time constituent file, then acquire date-bounded TRI/price-index CSVs through official interface; hash original bytes and validate session calendar, duplicate dates, missing dates, OHLC constraints and TRI continuity.
 - Do not calculate any FPI-to-sector-return relationship until NSDL publication timestamp, period-end date, next eligible NSE session and index-specific mapping status are verified.
+
+
+
+## Return-series definition and transaction-cost convention audit — 2026-11-14
+
+### NSE official return-series distinction
+- NSE Indices historical-data page exposes separate Historical Index Data and Total Returns Index Values outputs; the latter table contains both “Total Returns Index” and “Net Total Return Index” columns (official source https://www.niftyindices.com/reports/historical-data; web evidence turn476755search2).
+- NSE's TRI explainer states a price index captures constituent price movement but excludes dividends; Total Returns Index incorporates dividend receipts and reinvests indexed dividends on ex-dates. NSE says investors should benchmark against TRI rather than price index for actual investment returns (https://www.nseindia.com/static/products-services/indices-total-returns-index; web evidence turn476755search3).
+- Therefore, the earlier phrase “TRI as primary” is refined: acquire and preserve **Price Index**, **TRI**, and **NTRI** as distinct series wherever the official source provides them. Do not relabel NTRI as TRI or combine their levels/returns.
+- Before selecting the primary benchmark, record the exact NSE series definition and availability for each candidate index. For a gross market-performance study, TRI is the dividend-inclusive series explained by NSE; NTRI must remain separately available and its net-return treatment must be confirmed from its own official definition before primary selection. Price-index results remain a sensitivity/price-only comparator.
+- The NSE historical-data page's generic table is OHLC for index price data; its TRI section has Date, Total Returns Index and Net Total Return Index. Do not assume TRI/NTRI has OHLC fields or manufacture them from closes.
+
+### Transaction-cost convention (pre-registration, not a new measured result)
+- For a long-only entry/exit round trip, a 0.22% total round-trip cost is applied once to gross forward return: net return = (1 + gross return) × (1 − 0.0022) − 1. If the project's 0.22% convention is instead per-side, the two-sided cost must be explicitly recalculated and documented before results are produced; never subtract 0.22% twice by assumption.
+- If using simple-return approximation only, net ≈ gross − 0.22 percentage points; exact multiplicative calculation above is preferred.
+- No index CSV or daily return observations were downloaded in this audit. This is a methodology/control correction only; no performance results or predictive edge claimed.
