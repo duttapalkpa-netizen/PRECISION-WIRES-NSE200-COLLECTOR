@@ -754,3 +754,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - No login/bypass, undocumented API inference, aggregate substitution, data mutation, or gate promotion.
 - Next action: inspect only public interactive dashboard controls and officially exposed resource links; if no unauthenticated export target is available, stop at the access boundary.
 - Audit report update commit: 50b8b9e8cae282419ff8b1aaf3e858bab47828b6.
+
+## 2026-11-15 — Separate IMF BOP country dataset route
+
+- Identified official IMF dataset page https://data.imf.org/Datasets/BOP, titled "Balance of Payments (BOP)", with API, VIEW DATA, DOWNLOAD, Metadata; annual and quarterly frequency.
+- This is distinct from BOP_AGG/BOPSY World and Country Group Aggregates. It is the more direct official country-level BOP candidate; do not substitute BOP_AGG group/world aggregates.
+- Official IMF API documentation says SDMX 2.1/3.0; Swagger explorer requires beta portal sign-in. No sign-in or bypass used.
+- Dataset page identity/frequency DISCOVERED; exact page-to-dataflow/DSD mapping, India series-key revalidation, raw dated country download, and two-vintage overlap remain NOT_DONE/UNKNOWN.
+- Next action: inspect official BOP metadata and VIEW DATA/DOWNLOAD targets; confirm exact version/dimensions and India series keys against known IMF.STA:BOP(21.0.0)/DSD_BOP(24.0.0), then one small provenance-sidecar-backed test only.
+- No bulk pull, CSV/manifest mutation, vintage inference, gate promotion, production changes or PR merge.
+- Audit report update commit: eb457df653fe82d10e9caaef6dd8e2ef15c3464c.
