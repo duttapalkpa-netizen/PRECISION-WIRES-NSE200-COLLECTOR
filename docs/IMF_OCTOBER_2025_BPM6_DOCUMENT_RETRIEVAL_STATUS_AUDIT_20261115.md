@@ -337,3 +337,35 @@ No credentials, paid services, external contact, synthetic data or production ch
 - Quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 
 No credentials, paid services, external contact, synthetic data or production changes used.
+
+
+## 17. IMF BOP dataset-page and October 2025 document metadata verification (2026-11-15)
+
+### Official BOP dataset page
+The IMF Data Portal's public BOP dataset page identifies:
+- Dataset title: Balance of Payments (BOP).
+- Publisher: International Monetary Fund; Department: Statistics Department (STA).
+- Frequencies: Annual and Quarterly (catalogue metadata).
+- The page exposes API, View Data, Download and Documents navigation.
+- The October 2025 BPM6 reporting document is listed under this dataset and under IIP.
+
+### October 2025 document metadata (catalogue only)
+The IMF Documents catalogue entry is:
+- Item ID: `1792656603400855000`
+- Title: `Economies Reporting on BPM6 Basis October 2025`
+- Publication date: 14 May 2026
+- Dataset association: Balance of Payments (BOP) and International Investment Position (IIP)
+- Security classification: Public or Unrestricted
+- Content type: Manual
+- Format: PDF
+
+The catalogue confirms that a public October 2025 document exists and is associated with BOP/IIP. It does not expose the PDF body, direct file URL or bytes in the retrieved page content. Therefore the document's country table has not been inspected in this pass and no country-level conclusion is drawn.
+
+### Acceptance boundary
+- BOP dataset catalogue metadata (publisher/department/frequency): VERIFIED.
+- October 2025 document metadata and BOP/IIP association: VERIFIED.
+- October 2025 PDF bytes/body/table: NOT_RETRIEVED.
+- Six-country October 2025 inclusion/exclusion: UNKNOWN.
+- Quarterly reporting eligibility remains UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+No credentials, paid services, external contact, synthetic data or production changes used.
