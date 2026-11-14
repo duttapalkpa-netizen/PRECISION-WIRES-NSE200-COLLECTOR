@@ -30,3 +30,14 @@ Bounded audit of the official CDSL historical FPI archive surface, its date cove
 - Same-date NSE provisional vs CDSL custodian reconciliation: NOT RUN.
 - Rolling FPI/DII-to-sector impact study: NOT RUN.
 - Hard Gate remains BLOCKED. No production selector/ranking/CORE-672 changes, no paid services, no PR/merge.
+
+
+## Alternate official route discovered: SEBI source catalog and NSDL archive UI
+
+- SEBI's official FPI curation page explicitly lists NSDL and CDSL as parallel official sources for latest daily, current-month and archive FPI trends; it also lists yearly/monthly, fortnightly sector-wise, AUC, trade-wise and ODI/PN data routes. Source: https://www.sebi.gov.in/curation/fpi.html
+- NSDL's official FPI portal report listing exposes separate FPI Archive and DII Archive links. Source: https://pilot.fpi.nsdl.co.in/Reports/ReportsListing.aspx
+- Followed official NSDL FPI Archive link. The archive UI exposes a To Date field, View Report, Export to Excel and Print controls: https://pilot.fpi.nsdl.co.in/Reports/Archive.aspx . The page's static extraction does not expose a selected date, returned data rows, exported workbook bytes or request parameters; therefore no data file/hash is claimed.
+- Followed official NSDL DII Archive link. It resolves to a date-entry report form, but static extraction currently shows Please Select Date / No Data Found before any date selection: https://pilot.fpi.nsdl.co.in/Users/DIIGenerateReport.aspx?Rep=A . This is not evidence that historical DII data is empty.
+- CDSL remains the direct custodian source whose archive page is intermittently returning internal error. The SEBI-listed NSDL route provides an independent official path to attempt dated export without guessing a CDSL endpoint.
+- Operational next step: use NSDL archive UI to choose each exact date in the required research window and Export to Excel; preserve original workbook bytes, response metadata, retrieval time and SHA-256. Do not infer dates from reporting date or use UI-exported files as if available before their actual publication timestamp.
+- Status update: alternate official archive UI identified and export affordance verified; raw workbook acquisition and historical coverage remain NOT ACQUIRED / NOT VERIFIED.
