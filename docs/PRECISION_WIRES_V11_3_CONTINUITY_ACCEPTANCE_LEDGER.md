@@ -721,3 +721,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next avenue: official dated BOP publication/download archives; require two dated snapshots overlapping the same India series-period keys before revision comparisons.
 - No login, credential, bypass, data mutation, new gate promotion, production change or PR merge.
 - Audit report update commit: d01e2cb26c6ef6d63e15bbed6bac1030ac4c7141.
+
+## 2026-11-15 — Official IMF BOPSY annual-release archive avenue
+
+- Identified official BOP_AGG dataset page: World and Country Group Aggregates, historically BOPSY, annual publication released each November.
+- Inspected official BOPSY 2025 Explanatory Notes (November 2025), BOP Introductory Notes (November 2024), and IMF BOPCOM annual reports 2024/2025.
+- Evidence establishes BOPSY 2024 country BOP/IIP data through 2023 and BOPSY 2025 through 2024; 2025 notes list India last reported BOP period 2024.
+- Critical source boundary: these notes are not raw observation snapshots for the exact IMF.STA:BOP(21.0.0) India keys. BOP_AGG group/world aggregates may include estimates; do not treat them as reporter observations or exact-series vintages.
+- The SDMX pilot BOP page is last updated 2013 and is not a recent vintage archive.
+- Outcome: annual publication-document lineage PASS; exact India raw snapshot pair NOT_DONE; revision comparison NOT_DONE; revision/vintage readiness UNKNOWN / NOT_READY.
+- Next action: inspect BOP_AGG View Data/Download only to determine whether individual country tables can be exported as raw country observations with an identifiable release vintage. Require exact series/dimension match; otherwise reject as non-equivalent.
+- No data/CSV/manifest mutation, no inferred vintage, no new gate promotion, no production change or PR merge.
+- Report update commit: f83f7b5dadfc7294abc6779a10dff88308f389b6.
