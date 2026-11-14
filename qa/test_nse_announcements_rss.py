@@ -29,5 +29,9 @@ class RSSParserTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "UNEXPECTED_XML_ROOT"):
             mod.parse_rss(b"<html/>")
 
+    def test_rejects_empty_channel_as_non_evidence(self):
+        with self.assertRaisesRegex(ValueError, "RSS_ITEM_COUNT_ZERO"):
+            mod.parse_rss(b"<rss><channel><title>Empty feed</title></channel></rss>")
+
 if __name__ == "__main__":
     unittest.main()
