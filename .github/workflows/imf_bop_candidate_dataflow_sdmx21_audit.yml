@@ -1,0 +1,88 @@
+name: IMF BOP candidate dataflow SDMX 2.1 metadata verification
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_candidate_dataflow_sdmx21_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-candidate-dataflow-sdmx21-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch candidate BOP dataflows and referenced structures using documented SDMX 2.1 registry service
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-sdmx21-metadata
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from datetime import datetime,timezone
+          out=Path("imf-bop-sdmx21-metadata")
+          base="https://sdmxcentral.imf.org/sdmx/v2/structure/"
+          targets={
+            "bop_gbpm6_2_0":base+"dataflow/IMF/BOP_GBPM6/2.0/?format=sdmx-2.1&references=children&detail=full",
+            "bpm6_bop_q_1_5":base+"dataflow/IMF/BPM6_BOP_Q/1.5/?format=sdmx-2.1&references=children&detail=full",
+            "bop_dsd_2_6_0":base+"datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&detail=full"
+          }
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          def fetch(key,url):
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+xml;version=2.1"})
+            try:
+              with urllib.request.urlopen(req,timeout=25) as r:
+                status=r.status; ct=r.headers.get("Content-Type"); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; ct=e.headers.get("Content-Type") if e.headers else None; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; ct=None; final=url; body=b""; err=type(e).__name__+": "+str(e)
+            raw=out/(key+".xml")
+            raw.write_bytes(body)
+            parsed={"ok":False,"root":None,"dataflows":[],"data_structures":[],"codelists":[],"error":None}
+            if status==200:
+              try:
+                root=ET.fromstring(body); parsed["root"]=local(root)
+                for e in root.iter():
+                  tag=local(e)
+                  if tag=="Dataflow":
+                    refs=[]
+                    for x in e.iter():
+                      if local(x)=="Ref" and x.attrib.get("class")=="DataStructure":
+                        refs.append({k:x.attrib.get(k) for k in ("agencyID","id","version")})
+                    names=[x.text.strip() for x in e if local(x)=="Name" and x.text]
+                    parsed["dataflows"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"names":names,"dsd_refs":refs})
+                  elif tag=="DataStructure":
+                    dims=[{"id":x.attrib.get("id"),"tag":local(x)} for x in e.iter() if local(x) in ("Dimension","TimeDimension","MeasureDimension")]
+                    parsed["data_structures"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"components":dims})
+                  elif tag=="Codelist":
+                    codes=[x.attrib.get("id") for x in e.iter() if local(x)=="Code"]
+                    parsed["codelists"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"code_count":len(codes)})
+                parsed["ok"]=True
+              except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+            result={"requested_url":url,"http_status":status,"content_type":ct,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
+            (out/(key+"_inventory.json")).write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n")
+            return result
+          results={k:fetch(k,v) for k,v in targets.items()}
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"targets":results,"acceptance":{
+            "BOP_GBPM6_dataflow_and_children_retrieved":results["bop_gbpm6_2_0"]["http_status"]==200 and results["bop_gbpm6_2_0"]["parse"]["ok"],
+            "BPM6_BOP_Q_dataflow_and_children_retrieved":results["bpm6_bop_q_1_5"]["http_status"]==200 and results["bpm6_bop_q_1_5"]["parse"]["ok"],
+            "BOP_DSD_2_6_0_retrieved":results["bop_dsd_2_6_0"]["http_status"]==200 and results["bop_dsd_2_6_0"]["parse"]["ok"]
+          },"scope_note":"This public SDMX Central service is a structure/metadata registry. Successful retrieval does not prove IMF Data Portal dataset crosswalk and does not supply country observations."}
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({"acceptance":summary["acceptance"],"targets":{k:{"status":v["http_status"],"bytes":v["bytes"],"sha256":v["sha256"],"parse_ok":v["parse"]["ok"],"dataflows":v["parse"]["dataflows"],"dsds":v["parse"]["data_structures"],"codelists":v["parse"]["codelists"]} for k,v in results.items()}},indent=2,ensure_ascii=False))
+          PY
+      - name: Upload raw SDMX 2.1 responses and parsed inventories
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-sdmx21-candidate-metadata-${{ github.run_id }}
+          path: imf-bop-sdmx21-metadata/
+          if-no-files-found: error
+          retention-days: 90
