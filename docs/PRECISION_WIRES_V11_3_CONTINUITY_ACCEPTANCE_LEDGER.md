@@ -326,3 +326,16 @@ Run an EMDE reporter-coverage audit against the exact Portal DSD_BOP(24.0.0) usi
 
 ### Invariants re-confirmed
 ₹0 spend; free official sources only; no paid APIs; no credentials/auth bypass; no synthetic data/timestamps; no external contact; no PR merge; no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
+
+
+## 2026-11-14 — WEO EMDE to Portal BOP COUNTRY codelist crosswalk PASS
+
+- WEO April 2026 EMDE membership (154 names) was mapped directly to the exact Portal-owned `IMF.STA:CL_BOP_COUNTRY(1.0.0)` codelist (345 codes) embedded in the already archived Portal dataflow structure response. This is a dataset-specific BOP COUNTRY crosswalk; it does not depend on or substitute the separate CL_AREA mapping.
+- Result: 154/154 mapped; 154 unique BOP codes; 0 duplicates; 0 UNKNOWN; 0 ambiguous. 109 normalized exact matches + 45 explicit reviewed aliases. No fuzzy matching.
+- Critical correction: WEO “Micronesia” has area code FM / “Micronesia, Federated States of” in the WEO-to-CL_AREA source. The BOP codelist contains both FSM (“Micronesia, Federated States of”) and U057 (“Micronesia”, a regional aggregate). The crosswalk explicitly selects FSM and excludes U057. Do not let a same-name aggregate become a country reporter.
+- WEO “West Bank and Gaza” maps to BOP-specific code WBG by exact codelist label; this is a dataset code mapping, not a geopolitical/legal-status assertion. Namibia maps directly to NAM from the BOP codelist.
+- CSV: `data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv`; 154 rows; SHA-256 `62ad409cc71c1056994a418e55b5e2a9367bd04c844a6bb5957bda5f0b0dd815`.
+- Manifest: `data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.manifest.json`; report: `docs/IMF_WEO_EMDE_TO_BOP_COUNTRY_CROSSWALK_20261114.md`.
+- Integrity Run #43624431543 SUCCESS; commit `60b7a7819048e16c122a0ec760753353d805607c`; artifact ID 14125337955; ZIP SHA-256 `3ae91eae37286936b797719e2e7ae765e53fdba00916974ccbd2f553a4f4b9ee`.
+
+Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. It does not prove observations exist for any country. The actual 154-economy reporter coverage gate remains NOT DONE until exact BOP response series are queried and reporter codes compared separately for assets/liabilities and frequency. EM aggregation remains BLOCKED. No aggregation or production changes.
