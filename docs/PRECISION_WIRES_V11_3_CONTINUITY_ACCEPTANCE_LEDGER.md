@@ -612,3 +612,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - October 2025 PDF metadata is verified, but PDF body remains NOT_RETRIEVED; no six-country inference.
 - Updated report: `d0f67acf2e09d9b85c148a10a9aabad8a269c533`.
 - Gate: service catalogue + unauthenticated registry route PASS; XML NOT_RETRIEVED; API Swagger requires beta login and was not accessed; exact constraints/provision/provider UNKNOWN; October PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — IMF BOP concept scheme and candidate codelist inventory
+
+- SDMx Global Registry Concept Scheme catalogue lists `IMF:CS_BOP(1.20.0)`, "Balance of Payments Concept Scheme".
+- Codelist catalogue visibly lists IMF: `CL_ACCOUNT_ENTRY(1.5.0)`, `CL_ACCOUNTS_ITEM(1.8.0)`, `CL_ADJUSTMENT(1.4)`, `CL_AREA(2.0.0)`, `CL_COMP_METHOD(1.2)`, `CL_CURRENCY(1.6.1)`, `CL_FSENTRY(1.1)`, `CL_FUNCTIONAL_CAT(1.10.1)`, `CL_GFSM_STO(1.0)`, `CL_ORGANISATION(2.1.0)`, `CL_TIME_COLLECT(1.0)`, `CL_UNIT(1.19.0)`.
+- These are candidate dependencies by subject matter only. Without BOP DSD XML, none is asserted to be referenced by BOP DSD 2.6.0 or the earlier IMF.STA BOP dataset.
+- Concept Scheme page is dynamic; full concept items not exposed by retrieved page; direct URN query inaccessible. No concept IDs/representations inferred.
+- Next: retrieve CS_BOP actual export through Global Registry UI, preserve/hash response, then follow only exact references from DSD/concept scheme. Do not assume codelist attachment or cross-service version compatibility.
+- Updated report: `6a0d38844569e320360df2ce8e7a8b91824654ff`.
+- Gate: CS_BOP identity/version and candidate codelist inventory PASS; actual concept content NOT_RETRIEVED; DSD-to-codelist linkage UNKNOWN; target constraints/provision/provider UNKNOWN; October PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
