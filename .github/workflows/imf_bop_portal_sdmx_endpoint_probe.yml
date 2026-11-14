@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - name: Verify exact Portal-URN-derived SDMX 3.0 structure endpoint
+      - name: Retry Portal-URN-derived SDMX 3.0 structure endpoint with XML-only Accept negotiation
         shell: bash
         run: |
           set -euo pipefail
@@ -29,7 +29,7 @@ jobs:
           out=Path("imf-bop-portal-endpoint-probe")
           base="https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?detail=full&references=all"
           def fetch(url):
-            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+json;version=3.0, application/vnd.sdmx.structure+xml;version=3.0, application/xml, application/json"})
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+xml;version=3.0, application/xml"})
             try:
               with urllib.request.urlopen(req,timeout=25) as r:
                 b=r.read()
