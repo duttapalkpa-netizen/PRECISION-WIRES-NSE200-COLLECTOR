@@ -493,3 +493,11 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Added a guarded transmission map for INR/oil/imported inflation, sovereign yields/discount rates, FPI-vs-breadth divergence, AI/IT rotation and West Asia freight/oil risks. Added recent reporting context from Reuters (13-Nov) and RBI October MPC resolution; these are not promoted to raw official market-series observations or model coefficients (`turn459992news7`, `turn459992news8`, `turn459992news10`, `turn459992search0`).
 - Explicit controls retained: no mixed-date joins, no synthetic panel, no forward-fill, no inferred beta/causality, no production selector/ranking/CORE-672 changes. Scoped dated evidence refresh = DOCUMENTED; 8/8 Macro-Geo P0, 35-factor coverage, historical event panel, rolling sensitivity and production-parity backtest remain NOT PROVEN / NOT RUN. Hard Gate remains BLOCKED.
 - Crosswalk update commit: `eab424dfb7184cb0bc0e914e892e8bb99011112b`; new crosswalk blob: `749ccf8c79632d8576d63541040e4a9ece6fe59d`.
+
+
+## 42. Official October 2026 external-sector trade release ingested — 2026-11-14
+
+- Added the Ministry of Commerce & Industry / PIB 13-Nov-2026 October trade release to `docs/MACRO_GEO_GLOBAL_TO_INDIA_EVIDENCE_CROSSWALK_20261114.md`. Official values: merchandise exports US$49.47bn, imports US$89.35bn, merchandise deficit US$39.88bn; total exports US$89.99bn, imports US$110.07bn, total deficit US$20.09bn; April–October merchandise deficit US$218.15bn and total deficit US$93.35bn. October services values are explicitly estimates, as the latest RBI services actual in the release is September. Official source https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2335914&lang=2&reg=48 (web evidence `turn935975search0`).
+- Added export sector context (petroleum products, electronics, gems/jewellery, chemicals, engineering) with explicit guardrail that national export growth is not issuer earnings or stock-return evidence.
+- Scoped official monthly data ingestion/documentation: PASS. Full historical monthly panel, issuer-level mapping, factor coverage and rolling validation remain NOT PROVEN / NOT RUN. No synthetic daily data, no causal coefficient, no production change, no PR/merge. Hard Gate remains BLOCKED.
+- Crosswalk commit `83c7c71cab7950f4cc68838b7726c56b19374acf`, blob `5fb6d5fe9d150f3fdcf817cfff10018736e49217`.
