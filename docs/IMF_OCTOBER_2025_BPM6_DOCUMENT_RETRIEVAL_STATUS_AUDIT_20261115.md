@@ -271,3 +271,42 @@ Official sources:
 - https://registry.sdmx.org/webservice/structure.html
 
 Gate: CS_BOP catalogue identity/version PASS; candidate IMF codelist inventory PASS; actual concept contents NOT_RETRIEVED; BOP DSD-to-codelist linkage UNKNOWN; exact target constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 15. Registry-native cross-reference route and provenance boundary (2026-11-15)
+
+A higher-value route than guessing REST references was confirmed in the live SDMx Global Registry UI:
+
+1. **Structure References** page explicitly supports selecting Structure Type, Agency and a structure, then generating a report. Its description says the report identifies cross-referenced maintainable structures and cross-referenced identifiable components. It also offers an all-structures cross-reference workbook with three worksheets (maintainables and their reference counts; maintainable-to-maintainable references; identifiable-to-identifiable references).
+2. **Export Reports** page explicitly offers:
+   - Concept Usage for All Agencies: which Concept Schemes are referenced by which Data Structures.
+   - Codelist Usage for All Agencies: which Codelists are referenced by which Data Structures.
+   - Data Structures Report for All Agencies.
+   - Codelist Report for All Agencies.
+   These are Excel 2007 XLSX exports.
+3. **Concept Scheme detail** UI offers References, Export SDMX-ML 3.0, Export Excel and View Concept Scheme; its detail grid has Id, Name, Representation and Description. This is the proper source for exact CS_BOP concept inventory once a row is selected.
+4. **REST Structure UI** supports Structure Type, Agency, Structure ID, Version, format, Detail and References selectors, and displays a generated Query URL plus Download. The previous failure to retrieve XML via text/web interface should not be treated as registry failure; the UI provides a browser-native download route.
+
+### Precise next execution sequence
+A. Open Structure References; choose Structure Type = Concept Scheme; Agency = IMF; select `CS_BOP(1.20.0)`; Generate Report. Save the result and record exact structures that reference it.
+B. Choose Structure Type = Data Structure; Agency = IMF; select `BOP(2.6.0)`; Generate Report. Save all exact outgoing and incoming references.
+C. Run the Concept Usage and Codelist Usage XLSX exports; filter locally for `IMF:CS_BOP` and `IMF:BOP` only after download. This establishes exact DSD-to-concept/codelist links, not just candidate lists.
+D. In Concept Scheme details, select `CS_BOP(1.20.0)`, export Excel, and preserve actual concept IDs, names, representations and descriptions.
+E. Follow only exact returned references to Dataflow, Provision Agreement, Data Provider and Constraints. Keep the SDMx Global Registry service namespace separate from IMF Data Portal identifiers.
+
+### Evidence and gate
+- Registry-native cross-reference and export capabilities: VERIFIED.
+- Actual generated reference report/XLSX files and hashes: NOT_YET_DOWNLOADED.
+- Exact CS_BOP-to-BOP DSD link: UNKNOWN.
+- Exact BOP DSD-to-codelist links: UNKNOWN.
+- Exact target dataset constraints/provision/provider: UNKNOWN.
+- October 2025 PDF body: NOT_RETRIEVED; six-country eligibility UNKNOWN.
+- Quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+Official sources:
+- https://registry.sdmx.org/structurereferences/structureReferences.html
+- https://registry.sdmx.org/export-reports.html
+- https://registry.sdmx.org/items/conceptscheme.html
+- https://registry.sdmx.org/webservice/structure.html
+
+No credentials, paid services, external contact, synthetic data or production changes used.
