@@ -1,0 +1,157 @@
+name: IMF BOP DSD24 component and eligibility metadata audit
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_dsd24_component_eligibility.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-dsd24-component-eligibility
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact official Portal structures and parse component references
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-dsd24-component-audit
+          python - <<'PY'
+          import urllib.request, urllib.error, hashlib, json, xml.etree.ElementTree as ET
+          from pathlib import Path
+          from datetime import datetime, timezone
+          out=Path("imf-bop-dsd24-component-audit")
+          base="https://api.imf.org/external/sdmx/2.1"
+          headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+xml;version=2.1"}
+          probes={
+            "dataflow":base+"/dataflow/IMF.STA/BOP/21.0.0?references=all",
+            "dsd":base+"/datastructure/IMF.STA/DSD_BOP/24.0.0?references=all",
+            "contentconstraint_exact":base+"/contentconstraint/IMF.STA/BOP/21.0.0?references=all",
+            "contentconstraint_agency":base+"/contentconstraint/IMF.STA/all/latest?references=all",
+            "provisionagreement_agency":base+"/provisionagreement/IMF.STA/all/latest?references=all",
+            "dataproviderscheme_agency":base+"/dataproviderscheme/IMF.STA/all/latest?references=all"
+          }
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          def get_ref(parent):
+            if parent is None:return None
+            x=next((z for z in parent.iter() if local(z)=="Ref"),None)
+            if x is None:return None
+            return {k:x.attrib.get(k) for k in ("agencyID","id","version","package","class","maintainableParentID","maintainableParentVersion") if x.attrib.get(k) is not None}
+          bodies={}; results={}
+          for name,url in probes.items():
+            try:
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req,timeout=40) as r:
+                status=r.status; body=r.read(); final=r.geturl(); ctype=r.headers.get("Content-Type")
+              err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; body=e.read(); final=e.geturl(); ctype=e.headers.get("Content-Type") if e.headers else None; err="HTTPError"
+            except Exception as e:
+              status=None; body=b""; final=url; ctype=None; err=type(e).__name__+": "+str(e)
+            (out/(name+".xml")).write_bytes(body)
+            parsed=False; root_name=None
+            if status==200 and body.lstrip().startswith(b"<"):
+              try:
+                root=ET.fromstring(body); bodies[name]=root; parsed=True; root_name=local(root)
+              except Exception as e: err="XML parse: "+str(e)
+            results[name]={"url":url,"final_url":final,"http_status":status,"content_type":ctype,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"xml_parse_ok":parsed,"root":root_name,"error":err}
+          if "dsd" not in bodies: raise SystemExit("Exact DSD fetch/parse failed; fail closed")
+          root=bodies["dsd"]
+          dsd=next((x for x in root.iter() if local(x)=="DataStructure" and x.attrib.get("agencyID")=="IMF.STA" and x.attrib.get("id")=="DSD_BOP" and x.attrib.get("version")=="24.0.0"),None)
+          if dsd is None: raise SystemExit("Exact DSD identity mismatch")
+          # Index exact codelists and concepts by their agency/id/version from this returned SDMX structure message.
+          cls={}
+          for x in root.iter():
+            if local(x)=="Codelist":
+              key=(x.attrib.get("agencyID"),x.attrib.get("id"),x.attrib.get("version"))
+              cls[key]=[z.attrib.get("id") for z in x.iter() if local(z)=="Code"]
+          concepts={}
+          for cs in (x for x in root.iter() if local(x)=="ConceptScheme"):
+            ckey=(cs.attrib.get("agencyID"),cs.attrib.get("id"),cs.attrib.get("version"))
+            for c in cs.iter():
+              if local(c)=="Concept":
+                concepts[(ckey[0],ckey[1],ckey[2],c.attrib.get("id"))]=c
+          def component_rows(list_name, allowed):
+            container=next((x for x in dsd.iter() if local(x)==list_name),None)
+            rows=[]
+            if container is None:return rows
+            for c in list(container):
+              if local(c) not in allowed: continue
+              ci=next((x for x in c if local(x)=="ConceptIdentity"),None)
+              cr=get_ref(ci)
+              concept_key=(cr.get("agencyID"),cr.get("maintainableParentID"),cr.get("maintainableParentVersion"),cr.get("id")) if cr else None
+              concept=concepts.get(concept_key) if concept_key else None
+              core=next((x for x in concept if local(x)=="CoreRepresentation"),None) if concept is not None else None
+              enum=next((x for x in core if local(x)=="Enumeration"),None) if core is not None else None
+              code_ref=get_ref(enum)
+              textfmt=next((x for x in core if local(x)=="TextFormat"),None) if core is not None else None
+              cl_key=(code_ref.get("agencyID"),code_ref.get("id"),code_ref.get("version")) if code_ref else None
+              codes=cls.get(cl_key) if cl_key else None
+              relationship=next((x for x in c if local(x)=="AttributeRelationship"),None)
+              attachment=[]
+              if relationship is not None:
+                for z in relationship.iter():
+                  if local(z) in ("Dimension","AttachmentGroup","PrimaryMeasure"):
+                    rr=next((q for q in z if local(q)=="Ref"),None)
+                    attachment.append({"type":local(z),"id":rr.attrib.get("id") if rr is not None else None})
+              rows.append({
+                "component_id":c.attrib.get("id"),"component_type":local(c),
+                "assignment_status":c.attrib.get("assignmentStatus"),
+                "concept_ref":cr,"concept_name":next((n.text for n in concept.iter() if local(n)=="Name" and n.attrib.get("{http://www.w3.org/XML/1998/namespace}lang")=="en"),None) if concept is not None else None,
+                "concept_description":next((n.text for n in concept.iter() if local(n)=="Description" and n.attrib.get("{http://www.w3.org/XML/1998/namespace}lang")=="en"),None) if concept is not None else None,
+                "core_representation":"Enumeration" if enum is not None else (textfmt.attrib if textfmt is not None else None),
+                "codelist_ref":code_ref,"codelist_found_in_exact_response":cl_key in cls if cl_key else None,
+                "codelist_code_count":len(codes) if codes is not None else None,
+                "attribute_relationship":attachment
+              })
+            return rows
+          dims=component_rows("DimensionList",{"Dimension","TimeDimension"})
+          attrs=component_rows("AttributeList",{"Attribute"})
+          measures=component_rows("MeasureList",{"PrimaryMeasure"})
+          # Identify the exact DSD's own dataflow reference.
+          flow=[]
+          if "dataflow" in bodies:
+            for f in bodies["dataflow"].iter():
+              if local(f)=="Dataflow" and f.attrib.get("id")=="BOP":
+                flow=[get_ref(x) for x in f.iter() if local(x)=="Structure" or (local(x)=="Ref" and x.attrib.get("class")=="DataStructure")]
+          ifs=next((x for x in attrs if x["component_id"]=="IFS_FLAG"),None)
+          summary={
+            "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
+            "expected_dsd":{"agencyID":"IMF.STA","id":"DSD_BOP","version":"24.0.0"},
+            "dataflow_dsd_reference":flow,
+            "dimensions":dims,"attributes":attrs,"measures":measures,
+            "ifs_flag":ifs,
+            "codelist_reconciliation":{x["component_id"]:{"reference":x["codelist_ref"],"found":x["codelist_found_in_exact_response"],"codes":x["codelist_code_count"]} for x in dims if x["component_id"] in ("COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY")},
+            "resource_probe_results":results,
+            "findings":{
+              "exact_dataflow_to_dsd_link":any((x or {}).get("agencyID")=="IMF.STA" and (x or {}).get("id")=="DSD_BOP" and (x or {}).get("version")=="24.0.0" for x in flow),
+              "required_dimensions_present":all(any(x["component_id"]==k for x in dims) for k in ("COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY")),
+              "all_required_codelists_resolved":all(any(x["component_id"]==k and x["codelist_found_in_exact_response"] is True and x["codelist_code_count"] is not None for x in dims) for k in ("COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY")),
+              "ifs_flag_component_present":ifs is not None,
+              "ifs_flag_boolean_core_representation":bool(ifs and ifs["core_representation"]=="Enumeration" or ifs and isinstance(ifs["core_representation"],dict) and ifs["core_representation"].get("textType")=="Boolean"),
+              "ifs_flag_assignment_status_conditional":bool(ifs and ifs["assignment_status"]=="Conditional"),
+              "reporter_eligibility_proven":False,
+              "null_semantics_proven":False
+            },
+            "interpretation":"DSD component/codelist structure is not reporter-specific eligibility. A Conditional attribute assignment and Boolean core representation do not establish a missing-value default. HTTP 204/404 for a constraints/provider endpoint is recorded as a response, not as proof of universal eligibility."
+          }
+          (out/"component_audit.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps(summary,indent=2,ensure_ascii=False))
+          # Structural audit passes only if exact DSD, required dimensions and codelists reconcile.
+          if not summary["findings"]["required_dimensions_present"] or not summary["findings"]["all_required_codelists_resolved"] or not summary["findings"]["ifs_flag_component_present"]:
+            raise SystemExit("Component/codelist reconciliation incomplete; fail closed")
+          PY
+      - name: Upload component and eligibility evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd24-component-audit-${{ github.run_id }}
+          path: imf-bop-dsd24-component-audit/
+          if-no-files-found: error
+          retention-days: 90
