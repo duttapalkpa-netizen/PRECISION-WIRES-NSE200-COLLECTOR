@@ -59,3 +59,21 @@ Bounded audit of the official CDSL historical FPI archive surface, its date cove
 - Full daily historical coverage, aligned NSE provisional-vs-CDSL custodian panel, DII historical export and rolling impact study remain UNKNOWN / NOT RUN. Hard Gate remains BLOCKED.
 - Official route inventory is now explicit: SEBI lists NSDL and CDSL parallel daily/monthly/archive FPI routes (https://www.sebi.gov.in/curation/fpi.html; web evidence turn593944search0); CDSL's portal lists archive, fortnightly sector-wise, derivatives and trade-wise equity/debt datasets (web evidence turn593944search1, turn593944search6). These are acquisition leads, not proof of downloaded historical files.
 
+
+
+## CDSL archive 2026 YTD aggregation and archive inventory audit — 2026-11-14
+
+### Official CDSL indexed archive values
+- The official archive page provides an explicit “Total for 2026” aggregation in addition to dated daily rows and cumulative totals since November 1992. As at the page's 13-Nov-2026 compilation, 2026 equity gross purchases ₹3,596,322.95 crore, gross sales ₹3,807,178.21 crore, net −₹210,855.26 crore; primary/other net +₹69,275.84 crore; equity subtotal net −₹141,579.42 crore. Arithmetic check: −210,855.26 + 69,275.84 = −141,579.42 crore. Source https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx (web evidence turn479037search0).
+- 2026 Debt subtotal net +₹57,469.39 crore; Debt-VRR −₹18,196.58 crore; Debt-FAR +₹29,960.14 crore; Hybrid −₹6,715.12 crore; Mutual Fund subtotal +₹10,641.48 crore; AIF −₹3.46 crore. These remain distinct categories/routes.
+- 2026 total net across displayed categories −₹137,699.41 crore. Do not describe this as equity-only flow; the total includes multiple instrument categories.
+- CDSL archive also shows cumulative totals since Nov-1992 to 13-Nov-2026: Equity +₹628,696.11 crore; Debt +₹424,720.10 crore; Hybrid −₹6,836.15 crore; Debt-VRR −₹18,196.58 crore; Debt-FAR +₹29,960.14 crore; MF +₹10,641.48 crore; AIF −₹3.46 crore. Cumulative is not an investable flow window.
+- CDSL's official FPI landing page exposes archive, calendar-year, financial-year, quarterly, fortnightly sector-wise, AUC, derivative, trade-wise equity/debt and ODI/PN categories. The landing page lists fortnightly sector snapshots through 15-Oct-2026 and states derivative data daily since 01-Dec-2010. Source https://www.cdslindia.com/Publications/ForeignPortInvestor.html (web evidence turn479037search2).
+- Daily CDSL page shows 12-Nov-2026 equity subtotal +₹14,693.72 crore, Debt-General +₹445.65 crore, Debt-VRR −₹173.22 crore and Debt-FAR +₹1,022.81 crore; derivative tables separately dated 12-Nov. Source https://www.cdslindia.com/eservices/publications/fiidaily (web evidence turn479037search1).
+
+### Interpretation and control
+- A strongly positive single-day custodian equity observation (12-Nov) can coexist with negative 2026 YTD equity subtotal. These answer different horizons; do not let one day override the YTD regime or vice versa.
+- The 2026 YTD equity subtotal is a better horizon context feature than the all-category total, but still requires a dated historical panel and as-of publication controls before backtest use.
+- Do not treat CDSL archive's 2026 YTD aggregate as daily history. It cannot satisfy the raw daily archive manifest or 200+ session coverage.
+- Official indexed page data is visible, but original downloadable bytes, complete daily rows, response metadata and raw SHA-256 are still NOT ACQUIRED. No search-result text was hashed.
+- Scoped 2026 YTD arithmetic and archive-category inventory: DOCUMENTED / arithmetic PASS. Daily raw archive acquisition, DII historical export, exact coverage calendar, same-date NSE provisional reconciliation and rolling FPI impact study remain NOT ACQUIRED / NOT RUN. Hard Gate remains BLOCKED.
