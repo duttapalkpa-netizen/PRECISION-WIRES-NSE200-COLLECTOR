@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/research/imf-bop-access-audit-v1/schemas/imf_bop_response_provenance.schema.json",
+  "title": "IMF BOP Raw Response Provenance Sidecar",
+  "description": "Research-only provenance for one exact IMF BOP HTTP response. Null release vintage means the source did not provide a verifiable vintage; retrieval time must never be substituted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source",
+    "request",
+    "response",
+    "vintage",
+    "integrity",
+    "research_controls"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publisher", "dataset_urn", "dataflow", "dsd"],
+      "properties": {
+        "publisher": { "const": "International Monetary Fund" },
+        "dataset_urn": { "type": "string", "minLength": 1 },
+        "dataflow": { "type": "string", "minLength": 1 },
+        "dsd": { "type": "string", "minLength": 1 }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested_url", "final_url", "method", "series_key", "query_parameters"],
+      "properties": {
+        "requested_url": { "type": "string", "format": "uri" },
+        "final_url": { "type": "string", "format": "uri" },
+        "method": { "const": "GET" },
+        "series_key": { "type": "string", "minLength": 1 },
+        "query_parameters": {
+          "type": "object",
+          "additionalProperties": { "type": ["string", "number", "boolean", "null"] }
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "content_type", "retrieved_at_utc", "byte_count"],
+      "properties": {
+        "http_status": { "const": 200 },
+        "content_type": { "type": "string", "minLength": 1 },
+        "retrieved_at_utc": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "byte_count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "vintage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "release_date", "release_id", "evidence_url", "notes"],
+      "properties": {
+        "status": { "enum": ["SOURCE_PROVIDED", "NOT_EXPOSED_BY_SOURCE", "NOT_VERIFIED"] },
+        "release_date": { "type": ["string", "null"], "format": "date" },
+        "release_id": { "type": ["string", "null"] },
+        "evidence_url": { "type": ["string", "null"], "format": "uri" },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "SOURCE_PROVIDED" } } },
+          "then": { "properties": { "release_date": { "type": "string", "format": "date" } } }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["NOT_EXPOSED_BY_SOURCE", "NOT_VERIFIED"] } } },
+          "then": { "properties": { "release_date": { "type": "null" }, "release_id": { "type": "null" } } }
+        }
+      ]
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "hash_scope"],
+      "properties": {
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "hash_scope": { "const": "exact_response_body_bytes_before_parsing_or_transformation" }
+      }
+    },
+    "research_controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["research_only", "synthetic_data", "production_changed", "spend_inr"],
+      "properties": {
+        "research_only": { "const": true },
+        "synthetic_data": { "const": false },
+        "production_changed": { "const": false },
+        "spend_inr": { "const": 0 }
+      }
+    }
+  }
+}
