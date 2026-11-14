@@ -450,3 +450,49 @@ Read the committed research CSV and its JSON manifest directly from the research
 - Full PRECISION-WIRES V11.3 project progress remains NOT_CALCULABLE pending reconciled workstream denominators and approved weights.
 
 No new observation values were created or changed. No credentials, paid services, synthetic data, external contact, PR merge or production changes.
+
+## 21. Extraction-contract compliance matrix against committed India 110-row panel (2026-11-15)
+
+### Basis and method
+Compared the exact required-field contract in `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md` (Section 3 and Section 5) against the committed 110-row CSV and its JSON manifest. This is a schema/provenance readiness review, not a new observation acquisition. No source values or files were changed.
+
+### Compliance matrix
+| Required contract element | Evidence in CSV / manifest | Status |
+|---|---|---|
+| Reporting economy code | CSV COUNTRY=IND | PRESENT |
+| Frequency and reference period | CSV FREQUENCY and TIME_PERIOD | PRESENT |
+| BPM standard/version | CSV METHODOLOGY=BPM6; manifest | PRESENT |
+| Dataflow/version | Manifest identifies IMF.STA:BOP(21.0.0) | PRESENT |
+| Official dimension key/values | CSV dimension columns; manifest dimension order | PRESENT |
+| Portfolio instrument classification | INDICATOR=P_F; total portfolio aggregate only | PARTIAL_SCOPE |
+| Asset/liability direction | BOP_ACCOUNTING_ENTRY A_NFA_T / L_NIL_T | PRESENT |
+| Measure/transaction basis | P_F and accounting-entry codes; manifest descriptions | PRESENT |
+| Unit/currency and scale | UNIT=USD, SCALE=6 | PRESENT_AS_SOURCE_METADATA |
+| Numeric value as published | OBS_VALUE | PRESENT |
+| Observation status/confidentiality/estimation flags | DERIVATION_TYPE=O, ACCESS_SHARING_LEVEL=PUBLIC_OPEN, SECURITY_CLASSIFICATION=PUB; STATUS null; no OBS_STATUS/CONF_STATUS columns | PARTIAL |
+| Source URL and dataset identifier | Dataset URN in manifest; per-response hash; exact request URLs documented in companion audit, not row-level | PARTIAL |
+| Retrieval timestamp UTC | Not present in CSV or manifest series records | MISSING |
+| Publication/release vintage | Not present | MISSING |
+| Raw file checksum | Combined CSV hash and four response hashes in manifest | PRESENT |
+| Exact series key uniqueness including vintage | Unique series-period keys checked; vintage dimension absent | PARTIAL |
+
+### Interpretation
+- The panel is structurally reproducible as a single archived response snapshot and has valid period-key uniqueness within the captured four series.
+- It does not satisfy the full extraction contract for revision-aware/vintage-sensitive research because per-response retrieval timestamp and publication/release vintage are absent, and observation status/confidentiality detail is incomplete.
+- `DERIVATION_TYPE=O` is retained as source-reported status evidence, but it does not replace the missing `OBS_STATUS`/`CONF_STATUS` fields specified by the contract.
+- `P_F` is the total portfolio investment indicator. The panel does not split equity/investment-fund shares and debt securities. Do not claim instrument-level coverage beyond the total portfolio aggregate.
+- Existing source URL and dataset identifiers in the companion audit/manifest do not create a per-row retrieval timestamp or release vintage.
+- Preserve the 110-row data as the current archived snapshot; do not fabricate timestamps or backfill release vintage from the audit date.
+
+### Gate outcome and progress
+- This bounded extraction-contract comparison: 100% of the defined 16 contract elements reviewed.
+- Contract compliance for a revision-aware panel: PARTIAL / NOT_READY (not PASS).
+- Vintage/revision readiness remains NOT_READY; no new source vintage or revision series obtained.
+- IMF BOP workstream acceptance remains 5/7 (71.4%) on the pre-existing rubric; this audit does not promote a gate.
+- October 2025 PDF retrieval package remains 25% (1/4).
+- Full PRECISION-WIRES V11.3 project progress remains NOT_CALCULABLE pending full workstream denominator/weight reconciliation.
+
+### Next distinct action
+Implement a separate research-only provenance sidecar schema for future source pulls that records actual retrieval timestamp (UTC), actual final URL, HTTP status, Content-Type, byte count, response SHA-256 and actual publication/release vintage where the source supplies it. If the source does not supply a release vintage, store null/UNKNOWN rather than the retrieval date. Do not alter the existing 110-row CSV or production pipeline; require a newly acquired source response before creating a new vintage record.
+
+No credentials, paid services, synthetic timestamps, fabricated vintage, external contact, PR merge or production changes.
