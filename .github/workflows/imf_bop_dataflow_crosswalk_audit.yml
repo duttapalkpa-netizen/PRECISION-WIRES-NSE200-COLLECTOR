@@ -1,0 +1,89 @@
+name: IMF BOP Portal-to-SDMX registry crosswalk audit
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_dataflow_crosswalk_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-dataflow-crosswalk-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch official public catalogue and portal access metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-dataflow-audit
+          python - <<'PY'
+          import urllib.request, urllib.error, hashlib, json, re
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import xml.etree.ElementTree as ET
+          out=Path("imf-bop-dataflow-audit")
+          urls={
+            "imf_dataflows":"https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/all/latest/?format=sdmx-2.1&references=children&detail=full",
+            "portal_dataset":"https://data.imf.org/en/datasets/IMF.STA%3ABOP",
+            "api_help":"https://data.imf.org/en/Resource-Pages/IMF-API",
+            "portal_api":"https://portal.api.imf.org/apis"
+          }
+          def fetch(url,accept):
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":accept})
+            try:
+              with urllib.request.urlopen(req,timeout=30) as r:
+                return {"status":r.status,"content_type":r.headers.get("Content-Type"),"final_url":r.geturl(),"body":r.read(),"error":None}
+            except urllib.error.HTTPError as e:
+              return {"status":e.code,"content_type":e.headers.get("Content-Type") if e.headers else None,"final_url":e.geturl(),"body":e.read(),"error":"HTTPError"}
+            except Exception as e:
+              return {"status":None,"content_type":None,"final_url":url,"body":b"","error":type(e).__name__+": "+str(e)}
+          results={}
+          for key,url in urls.items():
+            r=fetch(url,"application/xml,*/*" if key=="imf_dataflows" else "text/html,*/*")
+            ext="xml" if key=="imf_dataflows" else "html"
+            (out/(key+"_raw."+ext)).write_bytes(r["body"])
+            results[key]={k:v for k,v in r.items() if k!="body"}
+            results[key].update({"requested_url":url,"bytes":len(r["body"]),"sha256":hashlib.sha256(r["body"]).hexdigest()})
+          assert results["imf_dataflows"]["status"]==200, "Official SDMX Central IMF dataflow catalogue did not return HTTP 200"
+          root=ET.fromstring((out/"imf_dataflows_raw.xml").read_bytes())
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          flows=[]
+          for e in root.iter():
+            if local(e)=="Dataflow":
+              refs=[]
+              for x in e.iter():
+                if local(x)=="Ref" and x.attrib.get("class")=="DataStructure":
+                  refs.append({k:x.attrib.get(k) for k in ("agencyID","id","version")})
+              names=[]
+              for x in e:
+                if local(x)=="Name" and x.text: names.append({"lang":x.attrib.get("{http://www.w3.org/XML/1998/namespace}lang"),"value":x.text.strip()})
+              flows.append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"names":names,"dsd_refs":refs})
+          bop=[x for x in flows if re.search(r"bop|balance.of.payments",str(x),re.I)]
+          summary={
+            "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
+            "sources":results,
+            "imf_dataflow_count":len(flows),
+            "bop_related_imf_dataflows":bop,
+            "portal_dataset_identity":"IMF.STA:BOP (from official dataset page URL/metadata)",
+            "portal_page_has_api_link":bool(re.search(rb'href=[\"\'][^\"\']*portal\.api\.imf\.org', (out/"portal_dataset_raw.html").read_bytes(), re.I)),
+            "api_help_says_sdmx_21_and_30":b"SDMX 2.1" in (out/"api_help_raw.html").read_bytes() and b"SDMX 3.0" in (out/"api_help_raw.html").read_bytes(),
+            "portal_api_requires_signin":("signin" in results["portal_api"]["final_url"].lower() or results["portal_api"]["status"] in (401,403)),
+            "crosswalk_conclusion":"UNRESOLVED: portal dataset identifier/version IMF.STA:BOP is not proven to be any listed SDMX Central IMF dataflow; public API explorer redirects to sign-in, so no authenticated API schema/dataflow metadata is available in this audit."
+          }
+          (out/"imf_bop_dataflow_crosswalk_inventory.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({"imf_dataflow_count":len(flows),"bop_related_imf_dataflows":bop,"portal_dataset":results["portal_dataset"],"api_help":results["api_help"],"portal_api":results["portal_api"],"crosswalk_conclusion":summary["crosswalk_conclusion"]},indent=2,ensure_ascii=False))
+          PY
+      - name: Upload raw public evidence and inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dataflow-crosswalk-${{ github.run_id }}
+          path: imf-bop-dataflow-audit/
+          if-no-files-found: error
+          retention-days: 90
