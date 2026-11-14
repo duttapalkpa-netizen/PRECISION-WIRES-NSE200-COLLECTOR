@@ -71,3 +71,17 @@ Use the official IMF catalogue item's identifier `1792656603400855000` to obtain
 ## 7. Protected invariants
 
 ₹0 spend; official public sources only; no credentials, paid API, external contact, synthetic data, aggregation, annual-to-quarterly conversion, PR merge or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
+
+
+## 8. Follow-up verification (2026-11-15)
+
+A fresh inspection of the official IMF Documents catalogue and BOP dataset page reconfirmed the October 2025 document metadata and publication date (14 May 2026), but neither page extraction exposed the PDF download target or body. The official IMF SDMX Central REST Web Service page and its Web Services Guide confirm that structure queries can be generated through the UI and that the service supports Dataflow and Provision Agreement queries. The registry overview currently exposes only a paginated sample of dataflows; it does not establish the absence of an IMF.STA BOP dataflow. Direct retrieval of the guessed `IMF.STA/BOP/21.0.0` path remains inaccessible through this web retrieval channel. Consequently no negative inference is permitted.
+
+Sources:
+- IMF Documents catalogue: https://data.imf.org/en/Documents
+- IMF BOP dataset: https://data.imf.org/Datasets/BOP
+- IMF SDMX Central REST Web Service: https://sdmxcentral.imf.org/webservice/schema.html
+- IMF SDMX Central Web Services Guide: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf
+- SDMX Central Dataflow overview: https://sdmxcentral.imf.org/data/overview.html
+
+Status remains unchanged: October 2025 PDF table NOT_RETRIEVED; exact IMF.STA Dataflow / Provision Agreement / Provider constraints UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
