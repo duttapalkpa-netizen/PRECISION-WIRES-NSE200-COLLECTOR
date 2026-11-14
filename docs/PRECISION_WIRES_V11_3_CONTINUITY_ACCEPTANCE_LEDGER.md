@@ -623,3 +623,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next: retrieve CS_BOP actual export through Global Registry UI, preserve/hash response, then follow only exact references from DSD/concept scheme. Do not assume codelist attachment or cross-service version compatibility.
 - Updated report: `6a0d38844569e320360df2ce8e7a8b91824654ff`.
 - Gate: CS_BOP identity/version and candidate codelist inventory PASS; actual concept content NOT_RETRIEVED; DSD-to-codelist linkage UNKNOWN; target constraints/provision/provider UNKNOWN; October PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — Registry-native cross-reference route
+
+- Official Structure References UI supports selecting structure type, agency and structure and generating cross-reference reports; the all-structures workbook contains maintainable and identifiable cross-reference worksheets.
+- Official Export Reports UI offers XLSX exports for Concept Usage (Concept Schemes referenced by Data Structures), Codelist Usage (Codelists referenced by Data Structures), Data Structures Report and Codelist Report.
+- Concept Scheme detail UI offers References, Export SDMX-ML 3.0, Export Excel and View Concept Scheme; the detail grid exposes Id, Name, Representation and Description.
+- REST Structure UI exposes type, agency, ID, version, format, detail and references selectors, generated query URL and Download. Browser-native download is the correct next route after web text extraction could not render XML.
+- Next execution: Structure References for IMF:CS_BOP(1.20.0) and IMF:BOP(2.6.0); download cross-reference reports; run Concept Usage and Codelist Usage XLSX; filter exact IMF structures; export CS_BOP concept detail; follow only actual returned refs.
+- Actual reports/XLSX and hashes NOT_YET_DOWNLOADED. Exact CS_BOP-to-BOP DSD link UNKNOWN; DSD-to-codelist links UNKNOWN; target constraints/provision/provider UNKNOWN; October PDF body NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+- Updated report: `8e47f1eb563260fb5c483187cfaa867ab76805e3`.
+- No credentials, paid services, external contact, synthetic data or production changes.
