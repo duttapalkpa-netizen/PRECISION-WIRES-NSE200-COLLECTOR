@@ -435,3 +435,17 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - The global DSD component inventory does not include Portal-specific `IFS_FLAG` / `IMF_FLAG` or Portal dimension IDs `BOP_ACCOUNTING_ENTRY` / `INDICATOR`; its dimensions use a different vocabulary. It must not be used as a substitute for the Portal DSD.
 - Consequently, 39-country exact series eligibility remains UNKNOWN; no reporter-specific eligibility conclusion is drawn. The next step must obtain the exact Portal DSD 24.0.0 structure and any associated dataflow constraints, or explicitly document that the exact artefact is unavailable.
 - Corrected report: `docs/IMF_BOP_IFS_FLAG_AND_EMDE_ELIGIBILITY_METADATA_AUDIT_20261114.md`. No observation query rerun; no new coverage data; no aggregation or production change.
+
+
+## 2026-11-14 — Exact Portal DSD_BOP(24.0.0) and IFS_FLAG first-pass retrieval
+
+- New workflow `.github/workflows/imf_bop_portal_dsd24_ifs_flag_constraints.yml`; workflow commit `5c5ce0b637dce55efc2b6fc125d58f8e084a042e`.
+- Run #43627524825 SUCCESS; artifact ID `14126861311`; artifact ZIP SHA-256 `054249b68772fcf4fde8eeccae6892e18180c3cdbb88f78038b16f268b804c21`.
+- Exact Portal dataflow response HTTP 200, 3,965,650 bytes, SHA-256 `48777f898e943bbb15464bcbe9e99d719f2c94e5284543212d4eb6ec4e583877`; it explicitly references `IMF.STA:DSD_BOP(24.0.0)`.
+- Exact Portal DSD response HTTP 200, 3,964,221 bytes, SHA-256 `82886da6dd396373ec85ffc94430bfe36ba838331ec7c93eb304df265ba2637e`; exact dataflow-to-DSD identity PASS.
+- DSD contains direct `IFS_FLAG` attribute, concept `IMF.STA:IFS_FLAG`, assignmentStatus `Conditional`. Its direct allowed-value representation, null semantics and attachment level remain UNKNOWN pending focused parser extraction.
+- First-pass ContentConstraint request `/contentconstraint/IMF.STA/all/latest?references=all` returned HTTP 204, zero bytes, empty-body SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. This is not proof that no constraints exist in other agencies, provision agreements or data providers.
+- Exact DSD response included codelist structures, but first-pass component-to-codelist extraction was incomplete; do not claim full COUNTRY / BOP_ACCOUNTING_ENTRY / INDICATOR / UNIT / FREQUENCY codelist reconciliation.
+- Report: `docs/IMF_BOP_PORTAL_DSD24_IFS_FLAG_CONSTRAINTS_FIRST_PASS_20261114.md`, report commit `12ad3628d75c96052b23cf384b683eac642e2a99`.
+- Gate state unchanged: IFS_FLAG semantic meaning PASS; IFS_FLAG component existence PASS; 39-country exact-series eligibility UNKNOWN (0% resolved); reporter coverage acceptance NOT PASS; EMDE aggregation BLOCKED; IMF BOP accepted gates remain 5/7 (71.4%); project-wide progress NOT_CALCULABLE.
+- Next: focused parser against the archived exact DSD response; resolve direct codelist references and IFS_FLAG ConceptScheme; inspect ContentConstraint / ProvisionAgreement / DataProvider metadata for BOP dataflow. No observation query rerun, no aggregation, no production changes, no PR merge. All protected invariants unchanged; spend ₹0.
