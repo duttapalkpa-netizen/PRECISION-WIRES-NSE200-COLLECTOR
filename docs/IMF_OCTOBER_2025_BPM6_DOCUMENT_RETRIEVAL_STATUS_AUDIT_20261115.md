@@ -682,3 +682,30 @@ No sign-in, credential use, access-control bypass, or undocumented endpoint prob
 - Next safe step: rely on the already archived successful raw responses and exact versioned manifest for the prior BOP contract; pursue a public non-authenticated metadata/export resource only if IMF officially exposes one. Do not infer hidden endpoints.
 
 This audit distinguishes the page's unversioned identifier from the versioned dataflow/DSD already used in prior research, preventing an accidental version-mismatch promotion.
+
+## 29. Existing India response provenance sidecar compatibility audit (2026-11-15)
+
+### Audit scope and method
+Re-fetched the committed V1 JSON Schema, V1 sidecar specification, India 110-row CSV and companion manifest from the research branch. Parsed the schema and manifest as JSON, checked required schema groups, the four exact series keys, response-hash syntax, positive byte counts, CSV row/column structure, per-series row counts, and availability of the fields required to instantiate a sidecar. No network request or new IMF data pull was made.
+
+### Results
+- Schema JSON valid; manifest JSON valid; all seven required top-level schema groups exist.
+- Manifest contains four expected series keys; all four response SHA-256 strings are 64 lowercase hex characters; all four response byte counts are positive.
+- CSV has 110 data rows and 20 columns; 11/11/44/44 rows by the four expected series; 110 unique series-period keys.
+- CSV includes source-response SHA-256 per row; manifest contains raw response byte counts and hashes.
+- The archived manifest/CSV do NOT contain actual UTC retrieval timestamps, requested URLs, final URLs, HTTP status, Content-Type, or per-response query parameter objects.
+- The manifest contains response byte counts and SHA-256 values but does not contain the exact raw HTTP response body bytes as a sidecar-accessible file in the audited paths. A hash and byte count alone cannot reconstruct or independently validate the raw response body.
+- The original CSV also has blank SOURCE, STATUS and ACCESS_SHARING_NOTES fields across the inspected records; these nulls remain preserved and are not retroactively filled.
+
+### Compatibility matrix
+- Structural schema validity: PASS.
+- Four series identity/key mapping: PASS.
+- Existing snapshot's CSV/manifest integrity references: PRESENT (the previous independent integrity run is retained; this audit did not recalculate the SHA-256 of raw HTTP bodies).
+- V1 sidecar instance readiness for all four historical responses: REJECTED / NOT_READY due to missing required transport provenance and absence of the exact raw response bytes in the audited archive.
+- Vintage status: NOT_VERIFIED / UNKNOWN. Do not label historical responses NOT_EXPOSED_BY_SOURCE because no vintage evidence was inspected at original retrieval time; do not set release_date from audit_date or retrieval date.
+- Revision-aware panel eligibility: NOT_READY.
+
+### Corrective boundary
+Do not backfill timestamps, URLs, HTTP metadata, query parameters, or raw response bodies from commit dates, run dates, artifact IDs, or memory. Do not create four incomplete/invalid sidecar files. Preserve the existing 110-row CSV, manifest and all original hashes unchanged. The next compliant sidecar can only be created during a new real public HTTP GET that captures the exact response body bytes and transport metadata at acquisition time; if public access is unavailable without sign-in, retain the gate as UNKNOWN/NOT_READY.
+
+This audit is a completed compatibility check, not a revision-history PASS and not a new data acquisition.
