@@ -203,3 +203,31 @@ Official sources:
 - https://data.imf.org/en/Resource-Pages/IMF-API
 
 Gate: canonical BOP DSD endpoint discovery PASS; XML body and references NOT_RETRIEVED; IMF Data Portal dataset structure NOT_RETRIEVED; exact target constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 13. Official service-catalogue and retrieval-channel audit (2026-11-15)
+
+### Findings
+1. The SDMX Global Registry's own Web Service UI confirms REST entry URL `https://registry.sdmx.org/sdmx/v2/`, selectable structure types including Dataflow, Data Structure and Provision Agreement, SDMX-ML 2.1/3.0 output, References=All, and a Download control. This is the correct unauthenticated registry route to retrieve the IMF BOP DSD package and references.
+2. SDMx official BOP page confirms BOP DSD v2.6.0 is maintained by IMF, stored in the Global Registry, and has direct SDMX-ML 2.1 / SDMX 3.0 links. Older DSD versions may remain valid when backward-compatible; no compatibility conclusion is made for the earlier IMF.STA dataset.
+3. IMF's public SDMX service catalogue explicitly separates:
+   - IMF Data Portal 2.1: `https://api.imf.org/external/sdmx/2.1`
+   - IMF Data Portal 3.0: `https://api.imf.org/external/sdmx/3.0`
+   - IMF SDMX Central 2.1/3.0 services.
+   These are distinct services, not interchangeable identifiers.
+4. IMF's own API information page says the APIs are SDMX 2.1/3.0 and that the Swagger explorer requires signing in with a beta portal account. No such credentials were used or requested; this route was not tested with authenticated access.
+5. The direct Global Registry XML endpoint was attempted in this environment; the web retrieval layer could not render the XML media type, and the container download attempt failed. Therefore the XML bytes, SHA-256, DSD dimensions and referenced codelists remain NOT_RETRIEVED. The official BOP package link's CIRCABC target returned 404 in the retrieval layer; no claim is made about the origin server's actual status.
+6. IMF Documents catalogue continues to expose the October 2025 BPM6 PDF metadata (item `1792656603400855000`, published 14 May 2026) but the PDF binary/body remains NOT_RETRIEVED. No inference is made about the six countries from the October 2025 edition.
+
+### Correct next action
+Use the unauthenticated Global Registry Web Service UI to select Data Structure → Agency IMF → ID BOP → version 2.6.0 → SDMX-ML v2.1 → References All → Download. If the browser download succeeds, preserve the raw XML and SHA-256, parse the actual returned DSD and reference list, then follow only the returned Dataflow / Provision Agreement / Provider / Constraint identifiers. If not, record the exact UI error and stop; do not use credentials, paid APIs, external contact, or guessed identifiers. Separately, do not access the IMF Data Portal Swagger unless an authorized beta portal account is already available and explicitly approved.
+
+Official sources:
+- https://registry.sdmx.org/webservice/structure.html
+- https://sdmx.org/sdmx-data-structure-definitions-for-balance-of-payments-sdmx-bop/
+- https://browser.sdmx.io/agencies/IMF
+- https://data.imf.org/en/Resource-Pages/IMF-API
+- https://data.imf.org/en/Documents
+- https://data.imf.org/Datasets/BOP
+
+Gate: service-catalogue separation and unauthenticated registry route PASS; XML binary/body NOT_RETRIEVED; IMF Data Portal Swagger requires beta portal sign-in (not accessed); exact target constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
