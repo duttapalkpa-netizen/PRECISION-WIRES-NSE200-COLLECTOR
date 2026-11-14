@@ -394,3 +394,29 @@ The IMF Data Portal page for "Balance of Payments and International Investment P
 - Quarterly country eligibility: UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 
 No data rows created, no estimates substituted, no credentials/paid services/external contact, and no production changes.
+
+## 19. Progress accounting and no-repeat control (2026-11-15)
+
+### Fixed definitions
+Percentages below are completion ratios for explicitly enumerated work packages or already approved acceptance gates. They are not confidence, production readiness, or an estimate of total project effort.
+
+**October 2025 BPM6 PDF retrieval-and-country-table work package: 25% (1/4 milestones).**
+1. Official catalogue identity, publication date, BOP/IIP association, public classification and PDF format verified — PASS.
+2. Direct public PDF download target resolved — NOT_DONE.
+3. PDF bytes acquired, preserved and SHA-256 recorded — NOT_DONE.
+4. Country table extracted and compared with April 2025 inventory for CAF, ERI, GNQ, SOM, TCD, TKM — NOT_DONE.
+
+The 25% reflects only milestone 1 of 4. It does not imply any country eligibility conclusion.
+
+**IMF BOP workstream acceptance: 5/7 = 71.4%**, using the pre-existing seven-gate rubric and last reconciled ledger decision. Do not add a gate for catalogue metadata already included in the existing evidence. The unfinished reporter coverage / full India panel / EM aggregation items remain partial, NOT_DONE or BLOCKED as already recorded. The recent October PDF catalogue re-verification and aggregate methodology safeguard do not promote any gate.
+
+**Full PRECISION-WIRES V11.3 project progress: NOT_CALCULABLE.** The master ledger does not contain a complete current set of all workstream gate denominators and approved weights; prior P0, Factor Registry, historical regime and event-study statuses require revalidation. Do not substitute the IMF 71.4% for the project-wide percentage.
+
+### No-repeat decision
+- Do not repeat catalogue metadata searches for item 1792656603400855000; identity/date/public-PDF metadata is already verified.
+- Do not repeat the April 2025 six-country inventory review or the 39-country annual frequency/continuity audits absent new source evidence.
+- Do not re-run the successful 110-row India annual/quarterly acquisition and arithmetic reconciliation absent code/source changes.
+- Next work should target the unresolved direct PDF file target via the official IMF document item/download action. If the interface cannot expose a download target, record a precise retrieval limitation and move to a distinct unresolved gate; do not re-label the catalogue as the PDF.
+- Continue preserving all prior run failures, fixes, artifacts, commits, hashes and superseding decisions; do not replace historical entries.
+
+No new country-level evidence acquired in this progress reconciliation. No credentials, paid services, synthetic data, external contact or production changes.
