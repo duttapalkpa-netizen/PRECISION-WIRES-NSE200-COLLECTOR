@@ -27,10 +27,12 @@ jobs:
           from pathlib import Path
           from datetime import datetime,timezone
           out=Path("imf-bop-sdmx21-probe")
-          base="https://api.imf.org/external/sdmx/2.1/structure/dataflow/IMF.STA/BOP/21.0.0"
+          base="https://api.imf.org/external/sdmx/2.1"
           probes={
-            "sdmx21_xml":(base+"?references=all", "application/vnd.sdmx.structure+xml;version=2.1"),
-            "sdmx21_json":(base, "application/vnd.sdmx.structure+json;version=1.0.0")
+            "sdmx21_legacy_structure_prefix_xml":(base+"/structure/dataflow/IMF.STA/BOP/21.0.0?references=all", "application/vnd.sdmx.structure+xml;version=2.1"),
+            "sdmx21_legacy_structure_prefix_json":(base+"/structure/dataflow/IMF.STA/BOP/21.0.0", "application/vnd.sdmx.structure+json;version=1.0.0"),
+            "sdmx21_standard_dataflow_path_xml":(base+"/dataflow/IMF.STA/BOP/21.0.0?references=all", "application/vnd.sdmx.structure+xml;version=2.1"),
+            "sdmx21_standard_datastructure_path_xml":(base+"/datastructure/IMF.STA/BOP/21.0.0?references=all", "application/vnd.sdmx.structure+xml;version=2.1")
           }
           def local(e): return e.tag.rsplit("}",1)[-1]
           results={}
@@ -59,7 +61,7 @@ jobs:
             record={"requested_url":url,"accept":accept,"status":status,"headers":headers,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
             results[key]=record
             (out/(key+"_result.json")).write_text(json.dumps(record,indent=2,ensure_ascii=False)+"\n")
-          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"probes":results,"interpretation_rules":{"HTTP_200_XML_with_exact_Dataflow_and_DSD_reference":"metadata candidate retrieved; not proof of observation access or Portal dataset crosswalk without matching official dataset identity","HTTP_400_or_404":"candidate route/representation rejected; retain exact response","scope":"Unauthenticated read-only structure metadata only. No data query and no guessed dimension key."}}
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"probes":results,"interpretation_rules":{"HTTP_200_XML_with_exact_Dataflow_and_DSD_reference":"metadata candidate retrieved; not proof of observation access or Portal dataset crosswalk without matching official dataset identity","HTTP_400_or_404":"candidate route/representation rejected; retain exact response","scope":"Unauthenticated read-only structure metadata only. Includes the initially misconstructed /structure/ path for historical diagnosis and standard SDMX-REST 1.x resource paths without that prefix. No data query and no guessed dimension key."}}
           (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
           print(json.dumps({k:{"status":v["status"],"content_type":v["headers"].get("Content-Type"),"bytes":v["bytes"],"sha256":v["sha256"],"final_url":v["final_url"],"error":v["error"],"parse":v["parse"]} for k,v in results.items()},indent=2,ensure_ascii=False))
           PY
