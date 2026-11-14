@@ -468,3 +468,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - CDSL official 12-Nov reporting date equity exchange +₹14,678.72 crore plus primary/other +₹15.00 = equity subtotal +₹14,693.72 crore; arithmetic PASS. CDSL is custodian-submitted and includes previous-day(s) trades; NSE trade activity is provisional. Reporting date, exchange universe, routes, finality and publication availability must be separate join keys. No date-only join, duplicate subtotals or look-ahead allowed.
 - Official references: https://www.nseindia.in/reports/fii-dii?os=0 ; https://www.cdslindia.com/eservices/publications/fiidaily ; https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx ; https://www.nseindia.com/static/all-reports/historical-equities-fii-fpi-dii-trading-activity .
 - Scoped source-semantics and snapshot arithmetic audit PASS. Same-date custodian reconciliation, historical raw archive SHA-256, as-of availability panel and rolling impact study NOT RUN. FPI/DII factor coverage and Hard Gate remain BLOCKED / NOT PROVEN. No synthetic data, paid APIs, PR merge or production changes; protected invariants unchanged.
+
+
+## 39. CDSL FPI historical archive access and coverage audit — 2026-11-14
+
+- Added `docs/CDSL_FPI_HISTORICAL_ARCHIVE_ACCESS_AND_COVERAGE_AUDIT_20261114.md`.
+- Official CDSL archive indexed snapshot says daily FPI investment data up to 13-Nov-2026, visible extracted daily rows beginning 02-Nov-2026, and cumulative totals since Nov-1992; source states custodian submissions and previous trading day(s) semantics. Official CDSL daily page has 12-Nov-2026 arithmetic already checked in Appendix 38.
+- Direct open attempt to official archive URL returned an internal error (ticket 604935). No raw downloadable file bytes, content type, byte count, exact download URL or hash could be captured. This is a retrieval limitation, not evidence of zero data. No guessed URL or reconstructed archive created.
+- Full daily historical coverage, archive pagination/download contract, raw SHA-256 manifest, same-date NSE/ CDSL reconciliation and rolling sector impact study remain UNKNOWN / NOT RUN. Hard Gate remains BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged; no paid service, PR/merge or production integration.
+- Evidence: official CDSL archive indexed result `turn496926search0`; official CDSL daily `turn496926search1`; archive open error `turn468255view0`.
