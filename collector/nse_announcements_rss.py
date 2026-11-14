@@ -49,6 +49,8 @@ def parse_rss(raw: bytes):
             "description_original": child_text(node, "description"),
             "raw_item_xml": ET.tostring(node, encoding="unicode"),
         })
+    if not items:
+        raise ValueError("RSS_ITEM_COUNT_ZERO")
     return items
 
 def main():
