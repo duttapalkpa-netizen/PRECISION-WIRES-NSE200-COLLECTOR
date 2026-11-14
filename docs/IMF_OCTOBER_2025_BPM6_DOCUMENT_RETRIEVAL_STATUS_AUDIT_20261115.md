@@ -537,3 +537,39 @@ The IMF BPM7 manual defines a data vintage as a data value/dataset released for 
 - Other-dataset "See Vintages" examples are not BOP evidence.
 
 This audit did not change data, the schema, production, or any prior acceptance gate.
+
+## 24. Official IMF BOPSY annual-release archive avenue audit (2026-11-15)
+
+### Official archive route identified
+The official IMF dataset page for `BOP_AGG` identifies the World and Country Group Aggregates as the annual publication historically called BOPSY, released each November. Its 2025 explanatory notes are an official dated November 2025 release document. The IMF's 2024 BOP Introductory Notes are separately dated November 2024. IMF BOPCOM annual reports independently identify annual country BOP data through 2023 in BOPSY 2024 and through 2024 in BOPSY 2025.
+
+Official sources inspected:
+- BOP_AGG dataset page: https://data.imf.org/Datasets/BOP_AGG
+- BOPSY 2025 Explanatory Notes (November 2025): https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf
+- BOP Introductory Notes (November 2024): https://data.imf.org/-/media/iData/External-Storage/Documents/D7E2CE23AF2340EFA7932CF6CD7DD11A/en/BOP-Introductory-Notes-as-of-November-2024.pdf
+- BOPCOM 2025 Annual Report: https://www.imf.org/-/media/files/publications/balance-of-payments-statistics/abpea2025001.pdf
+- BOPCOM 2024 Annual Report: https://www.imf.org/-/media/files/publications/balance-of-payments-statistics/abpea2024001.pdf
+
+### What is established
+- BOPSY is an annual November publication.
+- BOPSY 2024 contains annual BOP/IIP statistics through 2023; BOPSY 2025 contains annual BOP/IIP statistics through 2024.
+- The 2025 notes list India last reported BOP period as 2024.
+- The BOP_AGG page states country-level information is based on actual reported data or National Summary Data Page sources, but World/country-group aggregates can include estimates for nonreporting economies.
+- The November 2024 and November 2025 notes are distinct dated official documents and therefore establish a dated publication-document lineage.
+
+### What is NOT established
+- The two notes PDFs are methodology/country-overview documents, not two archived raw observation snapshots for the four exact India series `IND.A_NFA_T.P_F.USD.A`, `IND.L_NIL_T.P_F.USD.A`, `IND.A_NFA_T.P_F.USD.Q`, and `IND.L_NIL_T.P_F.USD.Q`.
+- The BOP_AGG page's country/group aggregate tables are not automatically equivalent to the Portal BOP dataflow `IMF.STA:BOP(21.0.0)` or its exact 110-row India panel. Group/world aggregates can contain IMF estimates; do not use them as reporter observations or vintage substitutes.
+- No two dated raw BOP observation files with overlapping exact India series-period keys were retrieved in this audit.
+- The legacy IMF SDMX pilot BOP dissemination page is explicitly last updated 9 January 2013; it is not a 2024/2025 revision archive.
+- Therefore the official BOPSY publication-document archive avenue is DISCOVERED, but a usable exact-series vintage archive remains NOT_ESTABLISHED.
+
+### Gate decision
+- Official annual publication archive discovery: PASS (document lineage).
+- Exact India BOP raw snapshot pair: NOT_DONE.
+- Revision comparison: NOT_DONE.
+- India revision/vintage readiness: UNKNOWN / NOT_READY.
+- Do not infer that values changed or did not change from annual report coverage statements, country overview periods, or methodology PDFs.
+- Next action: use the BOP_AGG dataset's official View Data/Download route only to determine whether individual country tables can be exported as raw country-level observations with an identifiable release vintage. Accept only if the exact series dimensions and country reporter status can be matched; otherwise reject as non-equivalent.
+
+This is a source-route discovery audit, not a data extraction or revision-comparison PASS. No prior CSV/manifest or acceptance gate was changed.
