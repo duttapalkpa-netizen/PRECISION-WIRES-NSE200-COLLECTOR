@@ -599,3 +599,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Historical Index Data and Total Returns Index Values are separate official data outputs. TRI should be primary where available; price-index series must remain separate. No date-range submitted and no CSV bytes acquired in this step.
 - Scoped methodology audit/crosswalk correction: 100% complete. Empirical index CSV acquisition and FPI-return panel: 0% executed in this step / NOT RUN. Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No production changes, no PR/merge.
 - Updated report commit fee1d32f870d03226775f6e7a4775438f29120e9, blob f36ca7a26f92b6975a9d32a6992d00975c5ba5e2.
+
+
+## 52. NSE TRI/NTRI distinction and 0.22% transaction-cost convention clarified — 2026-11-14
+
+- Official NSE Indices historical-data page exposes Price Index OHLC separately from Total Returns Index Values, with distinct Total Returns Index and Net Total Return Index columns (turn476755search2).
+- NSE explainer states price index excludes dividends while TRI includes/reinvests dividends and is the appropriate benchmark for actual investment returns (turn476755search3).
+- Corrected prior generic “TRI primary” wording: preserve Price Index, TRI and NTRI as separate fields; do not relabel NTRI as TRI. Confirm NTRI definition from official methodology before selecting it as primary. Do not assume OHLC for TRI/NTRI.
+- Pre-registered 0.22% total round-trip cost formula: net=(1+gross)*(1−0.0022)−1. If the original project convention means per-side rather than round-trip, resolve that from canonical project specification before backtest; do not double-subtract by assumption.
+- Scoped methodology clarification: 100% complete. No CSV or historical returns acquired in this step; empirical return panel/backtest remains 0% executed / NOT RUN. Overall project NOT CALCULABLE; Hard Gate BLOCKED. Production invariants unchanged; no PR/merge.
+- Updated report commit 8ad4ead22ff186d9248bfd17e237e393d79dcd3f, blob cb49c4aaba8f3220880f0f46d2dac2803663b241.
