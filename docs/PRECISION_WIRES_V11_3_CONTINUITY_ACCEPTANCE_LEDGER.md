@@ -861,3 +861,30 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 ### Report reference
 - `docs/NSE_RSS_35_LINKED_ATTACHMENT_INVENTORY_AUDIT_20261114.md`
 - Report commit: `9e83a8208a7ac93e58ed613e68fef0eb7f4360e8`
+
+
+## 61. NSE RSS 35-link timestamp and URL consistency audit — 2026-11-14
+
+### Input
+- 35-row inventory CSV, 15,648 bytes, SHA-256 `ba60e2859990be59f5f1a573ffccb4dfab6f498e5042d3bb5ab5ec8c4ad066ef`.
+- Source parsed RSS JSONL SHA-256 `fa17c0c89ebc10321821aa54fe5f5eaf7c488ddbd2e3a4d32ac0aa2e49c9b60d`.
+
+### Results
+- 35/35 records have title, pubDate, description, URL and filename.
+- 35/35 links use HTTPS and exact host `nsearchives.nseindia.com`; all path basenames match preserved filename; all URLs unique; no query/fragment.
+- 33 PDF + 2 XML.
+- All 35 filename timestamp candidates parsed (33 14-digit timestamp patterns, 2 XML document timestamp patterns with suffix digits).
+- pubDate follows filename timestamp in all 35; difference 1–470 seconds; no negative or >1-hour deltas.
+- This is a string/timestamp consistency check only; does not establish formal timestamp semantics, URL availability, or attachment validity.
+- Derived CSV `NSE_RSS_35_link_timestamp_consistency_20261114.csv`, 6,598 bytes, SHA-256 `e6fa614d2602de4f7849271847c76aec30b3b8fae2f6905c2fa476a013903332`.
+
+### Boundary and status
+- Retrieval path returned inaccessible/internal errors for selected exact PDF/XML URLs; this does not prove broken links.
+- No attachment bytes, HTTP status/redirect/MIME/size/hash, PDF text or XML parse acquired. Content validation 0%.
+- URL/string/timestamp checks: 100%; attachment validation: 0%; symbol mapping: 0% / UNKNOWN; event-price join: 0% / BLOCKED.
+- No code/data/selector/ranking/diagnostic/workflow/production change; no PR/merge.
+- Overall project NOT CALCULABLE; Hard Gate BLOCKED.
+
+### Report reference
+- `docs/NSE_RSS_35_LINK_TIMESTAMP_AND_URL_CONSISTENCY_AUDIT_20261114.md`
+- Report commit: `0a435bd58191e4b7d3d26f9eb03d899d34052a11`
