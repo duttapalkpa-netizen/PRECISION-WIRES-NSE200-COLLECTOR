@@ -369,3 +369,28 @@ The catalogue confirms that a public October 2025 document exists and is associa
 - Quarterly reporting eligibility remains UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 
 No credentials, paid services, external contact, synthetic data or production changes used.
+
+
+## 18. Official BOP/IIP aggregate methodology and nonreporting-economy estimate risk (2026-11-15)
+
+### Official IMF statement
+The IMF Data Portal page for "Balance of Payments and International Investment Position Statistics (BOP/IIP), World and Country Group Aggregates" (historically BOPSY) states:
+- It is an annual publication based on BPM6.
+- Country-level information is based on actual data reported directly to the IMF or obtained from a country's National Summary Data Page, except accounts between individual countries and the IMF, which may be replaced with Fund Accounts data.
+- World and country-group aggregates (other than Euro Area) combine reported country data with estimates for nonreporting economies.
+- Those estimates are derived from additional sources including WEO and External Wealth of Nations databases.
+- Euro Area aggregates are reported by the ECB and represent transactions/positions vis-à-vis the rest of the world.
+
+### Research implication
+1. An IMF-published country-group aggregate is not proof that every member country has directly reported data for the same period.
+2. A published EMDE/world aggregate may include estimates for nonreporting economies; it must not be used as direct evidence of quarterly country-level reporting eligibility or as a substitute for missing reporter observations.
+3. The research must distinguish (a) reporter-level observations, (b) source-reported aggregate values, and (c) IMF estimated contributions for nonreporting economies. If the public source does not expose the decomposition, the aggregate's reporter/nonreporter split is UNKNOWN.
+4. This supports retaining the current hard gate: no EMDE aggregate promotion until reporter-level coverage and provenance are independently proven. No estimate backfill or synthetic row creation is authorized.
+
+### Acceptance boundary
+- Official BOPSY aggregate methodology statement: VERIFIED from IMF Data Portal.
+- October 2025 BPM6 PDF bytes/body/table: NOT_RETRIEVED.
+- Six-country October 2025 inclusion/exclusion: UNKNOWN.
+- Quarterly country eligibility: UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+No data rows created, no estimates substituted, no credentials/paid services/external contact, and no production changes.
