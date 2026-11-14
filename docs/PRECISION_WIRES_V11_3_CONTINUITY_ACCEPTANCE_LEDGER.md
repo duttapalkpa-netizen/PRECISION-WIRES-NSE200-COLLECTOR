@@ -356,3 +356,23 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - India narrow portfolio slice acquisition + annual/quarterly arithmetic reconciliation: PASS. This does not establish full India BOP panel, revisions/vintages, 154-economy EMDE coverage, or EM aggregation. EM aggregate flow remains BLOCKED.
 - Initial failed diagnostic Run #43623450125 is retained as history, not counted as a data-access failure: it returned HTTP 200 for all three requests and the subsequent successful parser-only fix passed.
 - Invariants unchanged: ₹0 spend; official public sources only; no synthetic values/timestamps; no login or bypass; no PR merge or production integration; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
+
+
+## 2026-11-14 — 154-economy EMDE BOP quarterly portfolio reporter coverage audit
+
+- Exact basis: IMF.STA:BOP(21.0.0), DSD IMF.STA:DSD_BOP(24.0.0), WEO April 2026 EMDE membership (154) mapped to dataset-specific CL_BOP_COUNTRY(1.0.0). Existing 154/154 crosswalk PASS is reused; it was not repeated.
+- Query scope: portfolio financial flows P_F, USD, quarterly, 2015-Q1 through 2025-Q4 (44 quarters), exact asset entry A_NFA_T and liability entry L_NIL_T, public unauthenticated SDMX 3.0 wildcard COUNTRY key '*'.
+- Valid coverage Run #43624740474 SUCCESS; commit e2bcf99383c0ddaa54c089ac2a30c2f06e38a45b; job 132537959631; artifact ID 14125517628; ZIP SHA-256 daaedd6c4d186ac87ba6694ff3ae4816b544ba487fd12589b1b128b87f6cc861.
+- Assets raw response 320,788 bytes SHA-256 68f865c2578f5d3dd21a145de71c0cb1f731041bf7b626fb5d1d3cd64e704664. 156 total reporter series, 113/154 EMDE reporters present (73.38%), 41 no series returned in the exact selected query range; 43 returned non-EMDE codes.
+- Liabilities raw response 310,236 bytes SHA-256 b6875e20f20b279b2ce17131a42ba4af320adbc61f9c3bd28e9fb1067e597db1. 155 total reporter series, 112/154 EMDE reporters present (72.73%), 42 no series returned in the exact selected query range; 43 returned non-EMDE codes.
+- 154-row assets coverage CSV SHA-256 5939c155abcbdb5687f41d8f79831f02a75da02a9dda2d85aae9b748d0bc7cdc; liabilities coverage CSV SHA-256 726f4fcfdaa7f41b165bf9d4ff837bf0c3708e472249d2d78f94fea1ea8654cc.
+- Cross-series: 111 EMDE have both sides; DZA and ETH assets-only; ZWE liabilities-only; 40 have no series returned on either side. Union at least one side = 114/154 (74.03%); both sides = 111/154 (72.08%).
+- Completeness: 88 EMDE assets reporters have all 44 quarters; 25 are partial. 84 liabilities reporters have all 44 quarters; 28 are partial. Only 83/154 have both sides complete for all 44 quarters; 28 have both sides but at least one partial. Do not infer continuity from first/last periods alone.
+- The 40 common no-series codes: ARE, ATG, BEN, BFA, BRB, CAF, CIV, COG, COM, DMA, ERI, FSM, GAB, GNB, GNQ, GRD, HTI, IRN, KEN, KNA, LBY, LCA, MDV, MHL, MLI, MWI, NER, NRU, OMN, PLW, SEN, SLE, SOM, SSD, SYR, TCD, TGO, TKM, TUV, VCT.
+- Crucial status wording: NO SERIES RETURNED FOR THIS EXACT FILTER/PERIOD. It does not prove permanent non-reporting. Causes remain UNKNOWN. No aggregation permitted.
+- False-positive lesson: Run #43624650170 queried literal country key `all`; HTTP 200 and valid parse returned zero reporter series, but the old workflow marked it SUCCESS because it did not enforce nonempty result. This is a false-positive diagnostic, not 0/154 coverage. Valid wildcard is `*`, used by Run #43624740474. Run #43624650170 remains preserved and must not be counted.
+- Workflow hardening commit `735f9191317aa578e8cccc8148c1e8ca9482574c`: zero reporter series now raises an error; automatic push trigger disabled to prevent redundant data calls; manual dispatch only.
+- Report: `docs/IMF_BOP_EMDE_QUARTERLY_REPORTER_COVERAGE_20261114.md`, commit `c53a3be32828293306d62a1d1fa6f19dbe006f71`.
+- Coverage query and matrix generation PASS; 154/154 asset and liability coverage gates NOT PASS; reasons for absent series UNKNOWN; EM aggregation BLOCKED.
+- Next: targeted historical reach-back 2000-Q1 to 2014-Q4 for the 40 common absent and 3 asymmetric codes; then period-gap analysis and revision/vintage investigation. No fuzzy country matching or synthetic fill.
+- Invariants unchanged: ₹0 spend, free official sources, no paid APIs, credentials/auth bypass, synthetic values/timestamps, external contact, PR merge, or production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
