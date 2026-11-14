@@ -647,3 +647,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Actual reports/SDMX-ML and hashes NOT_ACQUIRED. Exact IMF target Dataflow/Provision Agreement/provider registration/constraints UNKNOWN; CS_BOP-to-BOP and BOP-to-codelist references UNKNOWN; October 2025 PDF NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 - Updated audit report commit: `e880b697f8abb4a0461110b2383e9852f4b5b583`.
 - No credentials, paid services, external contact, synthetic data or production changes.
+
+
+## 2026-11-15 — IMF BOP dataset and October 2025 document metadata
+
+- Official BOP dataset page identifies IMF Statistics Department (STA), Annual and Quarterly frequency, and API/View Data/Download/Document navigation.
+- Official October 2025 BPM6 reporting document catalogue item `1792656603400855000`: published 14 May 2026; associated with BOP and IIP; Public or Unrestricted; PDF.
+- These are catalogue metadata findings only. PDF body/table bytes were not retrieved; six-country October inclusion/exclusion remains UNKNOWN. No quarterly eligibility or coverage PASS inferred.
+- BOP dataset metadata VERIFIED; document metadata VERIFIED; PDF bytes/body NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+- Audit report commit: `a0f4fb1d8c0132090b1652f25b71507868bbcae1`.
+- No credentials, paid services, external contact, synthetic data or production changes used.
