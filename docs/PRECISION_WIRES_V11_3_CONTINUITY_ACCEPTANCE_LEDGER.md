@@ -744,3 +744,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next action: resolve the official "Summary of International Transactions and Positions" dashboard/export target, then test one India country table export and inspect exact dimensions before any bulk retrieval.
 - No CSV/manifest mutation, no vintage inference, no gate promotion, no production changes, no PR merge.
 - Audit report update commit: 5a2d4187ffef4391234c2f54a9e0f686773953c3.
+
+## 2026-11-15 — BOPSY dashboard target resolution
+
+- Resolved the BOP_AGG dataset's official Dashboard Release link to the IMF Data report page "BOPSY Dashboard", publication date 19 November 2025, associated with the BOP_AGG dataset.
+- Public page representation exposes report identity/date/dataset association but not embedded report payload, direct Power BI embed URL, table visual metadata, export URL, raw downloadable payload, or schema. IMF Tables catalogue page representation likewise exposed only its shell.
+- Dashboard identity/dataset association PASS; direct table/export target NOT_ESTABLISHED; country table raw payload/schema NOT_DONE; India P_F exact mapping UNKNOWN; dated raw snapshot pair NOT_DONE.
+- Revision/vintage readiness remains UNKNOWN / NOT_READY. This bounded inspection does not prove no export exists in the interactive dashboard or authenticated environment.
+- No login/bypass, undocumented API inference, aggregate substitution, data mutation, or gate promotion.
+- Next action: inspect only public interactive dashboard controls and officially exposed resource links; if no unauthenticated export target is available, stop at the access boundary.
+- Audit report update commit: 50b8b9e8cae282419ff8b1aaf3e858bab47828b6.
