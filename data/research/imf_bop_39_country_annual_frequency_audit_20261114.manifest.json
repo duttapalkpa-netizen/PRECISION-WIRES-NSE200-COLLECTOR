@@ -1,0 +1,88 @@
+{
+  "audit_date": "2026-11-14",
+  "dataset": "IMF.STA:BOP(21.0.0)",
+  "dsd": "IMF.STA:DSD_BOP(24.0.0)",
+  "target_set_source": "data/research/imf_bop_emde_43_cross_period_matrix_20261114.csv",
+  "target_set_rule": "CROSS_PERIOD_STATUS == NO_OBSERVATIONS_IN_EITHER_TESTED_WINDOW",
+  "target_count": 39,
+  "series": {
+    "indicator": "P_F",
+    "unit": "USD",
+    "frequency": "A",
+    "assets_accounting_entry": "A_NFA_T",
+    "liabilities_accounting_entry": "L_NIL_T",
+    "local_observation_window": "2000-2025 inclusive",
+    "server_side_time_filter": false
+  },
+  "workflow": {
+    "path": ".github/workflows/imf_bop_39_country_annual_frequency_audit.yml",
+    "commit": "f5c535c0c7635b81034f18ad185de37b24479050",
+    "run_id": 43630656519,
+    "job_id": 132556279712,
+    "conclusion": "SUCCESS",
+    "artifact_id": 14128182046,
+    "artifact_zip_bytes": 134541,
+    "artifact_zip_sha256": "058ae62904bec701959175076d3d2aa9de20f402eb3425083bbfad2d36accc12"
+  },
+  "raw_responses": {
+    "assets": {
+      "http_status": 200,
+      "bytes": 360608,
+      "sha256": "711431c957199292cfb37e884a3e9344e7e519e23e9bb4baea2ff9f5523addfc",
+      "returned_series_count": 211,
+      "matrix_path_in_artifact": "assets_annual_2000_2025_39_country_matrix.csv",
+      "matrix_bytes": 7836,
+      "matrix_sha256": "8c207d852c9a219e1347cd2b035b782dac78cbbdec1ba12ce3c2a74723cfe24e"
+    },
+    "liabilities": {
+      "http_status": 200,
+      "bytes": 352754,
+      "sha256": "a256a5f5baaef80f48e7d3747c39db80d644078b896abe49a5190f21003b60aa",
+      "returned_series_count": 208,
+      "matrix_path_in_artifact": "liabilities_annual_2000_2025_39_country_matrix.csv",
+      "matrix_bytes": 7586,
+      "matrix_sha256": "ce1578e8f6574e78a730be7554d5cd616b358b8b9ca7d220219a0d477725460e"
+    }
+  },
+  "coverage": {
+    "assets_observations_found": 33,
+    "assets_empty_series_keys": 5,
+    "assets_no_series_key": 1,
+    "liabilities_observations_found": 31,
+    "liabilities_empty_series_keys": 4,
+    "liabilities_no_series_key": 4,
+    "both_sides_annual_observations": 31,
+    "assets_only_annual_observations": ["FSM", "SSD"],
+    "liabilities_only_annual_observations": [],
+    "no_nonempty_annual_observations_either_side": ["CAF", "ERI", "GNQ", "SOM", "TCD", "TKM"]
+  },
+  "interpretation_limits": [
+    "Annual observations do not establish quarterly-frequency eligibility or completeness.",
+    "Annual observations are not converted to quarterly values and are not used in quarterly backtests.",
+    "Empty series keys are not observations.",
+    "No series key or no observation is not proof of ineligibility, non-reporting, suppression, or economic zero.",
+    "No aggregation, interpolation, forward-fill, scaling, or synthetic data."
+  ],
+  "diagnostic_runs_preserved": [
+    {"run_id": 43630501862, "conclusion": "FAILURE", "reason": "server-side annual period filter returned empty TIME_PERIOD dimension; fail-closed diagnostic only"},
+    {"run_id": 43630564954, "conclusion": "SUCCESS", "reason": "initial parser did not enforce intended local year filter; superseded and excluded from final counts"},
+    {"run_id": 43630618730, "conclusion": "FAILURE", "reason": "Python syntax error in local period filter; no coverage evidence"}
+  ],
+  "gate_state": {
+    "annual_exact_series_acquisition": "PASS",
+    "quarterly_reporter_eligibility": "UNKNOWN",
+    "quarterly_coverage_acceptance": "NOT_PASS",
+    "emde_aggregation": "BLOCKED"
+  },
+  "invariants": {
+    "spend_inr": 0,
+    "official_free_sources_only": true,
+    "synthetic_data": false,
+    "production_selector_changed": false,
+    "ranking_score_changed": false,
+    "pressure_fade_changed": false,
+    "core_672_changed": false,
+    "pr_merge": false,
+    "aggregation_performed": false
+  }
+}
