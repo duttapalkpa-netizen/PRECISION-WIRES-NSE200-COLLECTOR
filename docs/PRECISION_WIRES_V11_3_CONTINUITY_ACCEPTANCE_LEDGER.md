@@ -569,3 +569,13 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Two-period October equity sum −₹34,843cr. Period-end USD conversion rates differ from daily conversion; INR retained as primary unit.
 - Scoped aggregate same-period cross-source check: MATCH. Raw immutable file acquisition, full history, row-level all-category reconciliation, index mapping and rolling prediction test remain NOT ACQUIRED / NOT RUN. Hard Gate BLOCKED; no production changes.
 - Update report commit 86748460104dc92ab379770946bc964b889790b5, blob 26c72cd52814b9c2c1ed138a4d3ebc4e734d67e3.
+
+
+## 49. NSDL sector-to-NSE index candidate crosswalk and return-panel contract — 2026-11-14
+
+- Added a 22-sector candidate mapping table to `docs/NSDL_FPI_SECTOR_CROSS_SOURCE_UPDATE_20261114.md`, grounded in NSE Indices' official historical-data index inventory (turn250731view0 lines 59–88, 112–129) and NSE historical report directory (turn783238view2 lines 187–196).
+- 17 sector labels have label-aligned candidate indices; Construction Materials → NIFTY CEMENT is proxy-only; Diversified, Forest Materials, Textiles and Utilities have no direct index identified. Services → NIFTY SERVICES SECTOR is broad proxy candidate. NIFTY POWER is not substituted for Utilities. Healthcare is not substituted with Pharma.
+- Mapping is not constituent equivalence. Dated index constituent/methodology files are required before return attribution. Historical Nifty Indices CSV supports date-range OHLC; distinguish price index vs total-return index. NSE All Reports identifies CM-UDiFF as the current bhavcopy format and old common bhavcopy as discontinued (turn783238view1 lines 169–225).
+- Defined no-lookahead join contract: NSDL report publication availability timestamp -> next eligible NSE session -> H+1/H+3/H+5 forward index returns, 0.22% transaction cost; lag global controls and keep all missing values UNKNOWN. No historical index series downloaded or joined, no predictive performance claimed.
+- Scoped crosswalk and validation design completion: 100% (documentation deliverable only). Empirical sector-return panel/backtest: 0% executed in this step / NOT RUN. Overall project: NOT CALCULABLE. Hard Gate BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 unchanged; no PR/merge.
+- Updated sector report commit e1030ebdc82bbf4574f307d7b88ce8b51f82bd2d, blob 059d30cfef2cc2c3ba4c1aaf16c0284ffb6be22e.
