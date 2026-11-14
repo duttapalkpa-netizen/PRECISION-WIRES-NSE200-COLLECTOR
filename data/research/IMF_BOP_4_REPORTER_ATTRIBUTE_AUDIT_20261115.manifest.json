@@ -1,0 +1,30 @@
+{
+  "audit_date":"2026-11-15",
+  "dataset":"IMF.STA:BOP(21.0.0)",
+  "dsd":"IMF.STA:DSD_BOP(24.0.0)",
+  "source_artifacts":[
+    {"run_id":43626075930,"artifact_id":14125219608,"zip_sha256":"539e34fca42394d5ae53da27d44243f7aea6c79a1631178465f351b5d8bf1157"},
+    {"run_id":43624740474,"artifact_id":14125517628,"zip_sha256":"daaedd6c4d186ac87ba6694ff3ae4816b544ba487fd12589b1b128b87f6cc861"}
+  ],
+  "raw_response_sha256":{
+    "assets_2000_2014":"93025fe023aac9d301f6799d13ada7b0f04d27703012d8b3e1373db6c5527226",
+    "liabilities_2000_2014":"78ffa2a1492667cc2979f357acafecb490875a80f609726838f1be5ea44b5d25",
+    "assets_2015_2025":"68f865c2578f5d3dd21a145de71c0cb1f731041bf7b626fb5d1d3cd64e704664",
+    "liabilities_2015_2025":"b6875e20f20b279b2ce17131a42ba4af320adbc61f9c3bd28e9fb1067e597db1"
+  },
+  "derived_csv":{
+    "path":"data/research/IMF_BOP_4_REPORTER_ATTRIBUTE_AUDIT_20261115.csv",
+    "rows":8,
+    "sha256":"cf88ebfd39bd934a16ceac11cb08015426061c00290c4083e74b661d948c5cc1"
+  },
+  "observed_priority_reporters":["DZA","ETH","HTI","ZWE"],
+  "priority_reporters_without_observations_in_both_tested_windows":39,
+  "eligibility_for_39":"UNKNOWN",
+  "coverage_acceptance":"NOT_PASS",
+  "aggregation":"BLOCKED",
+  "no_new_observation_api_queries":true,
+  "synthetic_data":false,
+  "spend_inr":0,
+  "production_changes":false,
+  "pr_merge":false
+}
