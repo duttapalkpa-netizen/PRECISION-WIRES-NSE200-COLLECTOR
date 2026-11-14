@@ -764,3 +764,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next action: inspect official BOP metadata and VIEW DATA/DOWNLOAD targets; confirm exact version/dimensions and India series keys against known IMF.STA:BOP(21.0.0)/DSD_BOP(24.0.0), then one small provenance-sidecar-backed test only.
 - No bulk pull, CSV/manifest mutation, vintage inference, gate promotion, production changes or PR merge.
 - Audit report update commit: eb457df653fe82d10e9caaef6dd8e2ef15c3464c.
+
+## 2026-11-15 — IMF BOP identifier/API boundary revalidation
+
+- Official page URL `https://data.imf.org/en/datasets/IMF.STA:BOP` confirms portal dataset identifier `IMF.STA:BOP`, BOP title, API link, VIEW DATA and DOWNLOAD controls.
+- API link redirects to `portal.api.imf.org/signin?returnUrl=/apis`; IMF API docs specify SDMX 2.1/3.0 and beta portal account sign-in for Swagger exploration.
+- Current public page text does not expose version strings. Keep page-level identifier `IMF.STA:BOP` distinct from the earlier exact versioned extraction contract `IMF.STA:BOP(21.0.0)` / `DSD_BOP(24.0.0)`. Existing successful raw response/manifest evidence remains authoritative for that earlier contract.
+- Page identifier PASS; anonymous direct API schema discovery NOT_AVAILABLE through documented Swagger; current versioned DSD revalidation NOT_ESTABLISHED; no new vintage evidence; revision readiness UNKNOWN / NOT_READY.
+- No login, bypass, undocumented endpoint probing, data mutation, or gate promotion.
+- Next safe step: use existing archived exact-version responses/manifest as the extraction contract; only pursue a public metadata/export endpoint if officially exposed.
+- Audit report update commit: ba131d01dcfc0e0764b578db46553c12b35ad802.
