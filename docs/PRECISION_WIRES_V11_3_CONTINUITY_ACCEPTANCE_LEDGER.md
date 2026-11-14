@@ -469,3 +469,19 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Report: `docs/IMF_BOP_DSD24_COMPONENT_CODELIST_ELIGIBILITY_AUDIT_20261114.md`, report commit `e53c7eaf97fea87accdeb2e91289a3b499b5d5b3`.
 - Previous first-pass audit report remains intact. This focused parser corrects the earlier nested DataStructureComponents/CoreRepresentation extraction gap; no old PASS artifact was deleted or rewritten.
 - Next: resolve the 39-country exact series eligibility only from official reporter-specific applicability evidence or exact country × accounting-entry × indicator × unit × frequency inventory; otherwise retain UNKNOWN. All protected V11.3 invariants unchanged; spend ₹0.
+
+
+## 2026-11-15 — Four-reporter series/observation attribute audit from archived raw responses
+
+- Re-downloaded and re-hashed the exact prior GitHub Actions artifacts; both ZIP SHA-256 values match the previous ledger:
+  - Historical Run #43626075930 / Artifact #14125219608: `539e34fca42394d5ae53da27d44243f7aea6c79a1631178465f351b5d8bf1157`.
+  - Recent Run #43624740474 / Artifact #14125517628: `daaedd6c4d186ac87ba6694ff3ae4816b544ba487fd12589b1b128b87f6cc861`.
+- All four raw response body SHA-256 values reverified against prior coverage reports: historical assets `93025fe023aac9d301f6799d13ada7b0f04d27703012d8b3e1373db6c5527226`; historical liabilities `78ffa2a1492667cc2979f357acafecb490875a80f609726838f1be5ea44b5d25`; recent assets `68f865c2578f5d3dd21a145de71c0cb1f731041bf7b626fb5d1d3cd64e704664`; recent liabilities `b6875e20f20b279b2ce17131a42ba4af320adbc61f9c3bd28e9fb1067e597db1`.
+- Parsed existing `attributes=all` series and observation attribute arrays from those exact raw responses; no new IMF observation API calls. Eight series keys inspected across DZA, ETH, HTI and ZWE; seven keys have 180 non-empty observations total; historical ZWE liabilities key has zero observations.
+- Series attributes: SCALE=6 and METHODOLOGY=BPM6 on all eight keys; DECIMALS_DISPLAYED and OVERLAP null; IFS_FLAG=true on the four observed asset keys, null on three observed liability keys and the empty ZWE liability key. This is a descriptive pattern only; null is not false and does not establish ineligibility.
+- Observation attributes across 180 observations: PRECISION=6 (180/180), DERIVATION_TYPE raw code O (180/180), ACCESS_SHARING_LEVEL=PUBLIC_OPEN (180/180), SECURITY_CLASSIFICATION=PUB (180/180); STATUS, ACCESS_SHARING_NOTES and SOURCE null (180/180). No semantic expansion of O, no interpretation of null, no unit scaling.
+- Derived CSV: `data/research/IMF_BOP_4_REPORTER_ATTRIBUTE_AUDIT_20261115.csv`, 8 rows, SHA-256 `cf88ebfd39bd934a16ceac11cb08015426061c00290c4083e74b661d948c5cc1`. A transcription error in the first draft (ETH recent PUBLIC_OPEN count) was caught by comparing against the parsed artifact and corrected before final validation; the final file now records 4/4, not 28/4.
+- Manifest: `data/research/IMF_BOP_4_REPORTER_ATTRIBUTE_AUDIT_20261115.manifest.json`; report: `docs/IMF_BOP_4_REPORTER_ATTRIBUTE_AUDIT_20261115.md`.
+- Gate state unchanged: 39/43 priority reporters still have no observations in either tested window; eligibility for those 39 remains UNKNOWN; coverage acceptance NOT PASS; EMDE aggregation BLOCKED. No country is classified ineligible from missing values.
+- No new observation API calls, no aggregation, no production change, no PR merge, ₹0 spend. Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672, engines A–E and Hard Gate unchanged.
+- Next: locate explicit official reporter-specific applicability/coverage metadata for the exact BOP series dimensions. If the public source does not expose a country-specific obligation/applicability contract, retain UNKNOWN and document the limitation rather than inferring eligibility.
