@@ -94,6 +94,16 @@
     "null_attributes_preserved": ["STATUS", "ACCESS_SHARING_NOTES", "SOURCE"],
     "no_scaling_or_currency_conversion": true
   },
+  "integrity_audit": {
+    "run_id": 43623953963,
+    "result": "SUCCESS",
+    "artifact_id": 14125201831,
+    "csv_sha256_verified": "260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9",
+    "rows_verified": 110,
+    "period_coverage_verified": true,
+    "source_hash_distribution_verified": true,
+    "annual_quarterly_reconciliation_verified": true
+  },
   "limits": [
     "India-only sample; no 154-economy reporter coverage established.",
     "Assets and liabilities are kept separate; no netting or aggregate calculated.",
