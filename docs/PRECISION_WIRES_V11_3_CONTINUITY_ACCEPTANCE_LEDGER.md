@@ -448,3 +448,15 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - Report: `docs/MACRO_GEO_GLOBAL_TO_INDIA_EVIDENCE_CROSSWALK_20261114.md`.
 - Official NSE Announcements page re-opened; Company/Subject/Search By/date filters/CSV affordance verified, but exact export request, CSV bytes/hash and pagination contract remain NOT CAPTURED because static retrieval does not execute the page UI. No endpoint guessed.
 - No code, workflow, production selector, RANKING_SCORE, +1 PRESSURE_FADE or CORE-672 change; no paid service, PR/merge or production integration.
+
+
+## 37. Official dated Macro-Geo snapshot reconciliation — 2026-11-14
+
+- Updated `docs/MACRO_GEO_GLOBAL_TO_INDIA_EVIDENCE_CROSSWALK_20261114.md` with three separately timestamped official snapshots:
+  - CDSL FPI daily trend, reporting date 12-Nov-2026: equity net subtotal +₹14,693.72 crore; Debt-General +₹445.65 crore; Debt-VRR −₹173.22 crore; Debt-FAR exchange net +₹1,022.81 crore. CDSL source notes reporting/previous-trading-day semantics.
+  - NSE 13-Nov-2026 intraday snapshot: USD/INR reference ₹94.1997 at 13:00 IST; at 12:51 IST advances 1,264, declines 2,199, unchanged 114, 3,577 traded. Intraday only, not close.
+  - RBI NSDP published 13-Nov, series latest dates differ: USD/INR ₹93.77 on 12-Nov; Nifty 50 25,299 vs comparison 25,876 (-2.23%); Sensex 81,911 vs 84,467 (-3.03%); M3 latest 31-Oct; 1Y MCLR latest 06-Nov; T-bill latest 11-Nov.
+- Explicitly kept source timestamps, measurement universes and reporting definitions separate. No same-session causal inference from mixed-date observations; no beta/causal coefficient estimated; no synthetic time series.
+- Official source URLs recorded in crosswalk: CDSL daily FPI trends, NSE official homepage market snapshot, RBI NSDP. Evidence refs: `turn862951search0`, `turn862951search1`, `turn862951search2`, `turn862951search4`.
+- Crosswalk blob after update: `ca586d5014005b3a85c72f166eed5cf016298152`; update commit `06b7c56dd1cba2b090e70fcf121f54b4e97e1aac`.
+- Macro-Geo evidence snapshot enrichment: PASS. Historical event-to-session panel, factor sensitivity estimation, 8/8 P0 source coverage, 35-factor coverage and Hard Gate remain NOT PROVEN / BLOCKED. Production selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged. No paid API, PR/merge or production integration.
