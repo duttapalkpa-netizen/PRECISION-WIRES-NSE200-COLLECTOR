@@ -41,3 +41,21 @@ Bounded audit of the official CDSL historical FPI archive surface, its date cove
 - CDSL remains the direct custodian source whose archive page is intermittently returning internal error. The SEBI-listed NSDL route provides an independent official path to attempt dated export without guessing a CDSL endpoint.
 - Operational next step: use NSDL archive UI to choose each exact date in the required research window and Export to Excel; preserve original workbook bytes, response metadata, retrieval time and SHA-256. Do not infer dates from reporting date or use UI-exported files as if available before their actual publication timestamp.
 - Status update: alternate official archive UI identified and export affordance verified; raw workbook acquisition and historical coverage remain NOT ACQUIRED / NOT VERIFIED.
+
+
+## Official CDSL archive indexed snapshot re-check — 2026-11-14
+
+### Newly surfaced dated record and arithmetic checks
+- Official CDSL archive indexed snapshot now exposes a daily trends table headed “upto 13-Nov-2026”; its extracted first daily row is reporting date 02-Nov-2026. The page states the data is compiled from custodian reports submitted on 13-Nov-2026 and represents trades on and up to previous trading day(s). Do not infer that the extracted first row is the only row in the underlying archive or that the archive starts on 02-Nov; full pagination/coverage is not established. Source: https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx (web evidence turn593944search2).
+- 02-Nov-2026 Equity Stock Exchange gross purchases ₹21,334.02 crore less gross sales ₹17,015.12 crore = net ₹4,318.90 crore; Primary & Others net ₹138.90 crore; Equity subtotal ₹4,457.80 crore. Arithmetic PASS.
+- 02-Nov-2026 Debt Stock Exchange net ₹585.95−₹1,108.13 = −₹522.18 crore; Primary & Others net −₹26.15 crore; Debt subtotal −₹548.33 crore. Arithmetic PASS.
+- 02-Nov-2026 Debt-VRR subtotal net −₹238.70 crore; Debt-FAR subtotal net −₹275.99 crore; Hybrid stock-exchange net −₹9.98 crore. Preserve routes/categories; do not collapse into equity.
+- The same page separately displays FPI derivative activity “upto 13-Nov-2026”, including 13-Nov-2026 INDEX_FUTURES buy amount ₹5,266.61 crore, sell amount ₹1,700.53 crore and end-date open interest ₹32,628.02 crore. This is a separate derivatives table/date semantics and must not be joined as if it were the 02-Nov cash-equity record.
+- CDSL notes confirmed custodian FPI cash data can represent trades on and up to previous trading day(s); exchange provisional data is T-day trading-member PAN based. The two series remain distinct in source finality and as-of availability.
+
+### Coverage / acquisition conclusion
+- New achievement: an actual dated archive row and independent buy-minus-sell arithmetic are now visible in the official indexed archive extraction; this upgrades evidence from “archive UI only” to “at least one dated record visible”.
+- Still NOT acquired: original downloadable archive/workbook bytes, response headers/content type, byte count, exact export URL, complete row set, raw SHA-256 manifest and reproducible pagination/export contract. Do not hash search-result text as if it were the source file.
+- Full daily historical coverage, aligned NSE provisional-vs-CDSL custodian panel, DII historical export and rolling impact study remain UNKNOWN / NOT RUN. Hard Gate remains BLOCKED.
+- Official route inventory is now explicit: SEBI lists NSDL and CDSL parallel daily/monthly/archive FPI routes (https://www.sebi.gov.in/curation/fpi.html; web evidence turn593944search0); CDSL's portal lists archive, fortnightly sector-wise, derivatives and trade-wise equity/debt datasets (web evidence turn593944search1, turn593944search6). These are acquisition leads, not proof of downloaded historical files.
+
