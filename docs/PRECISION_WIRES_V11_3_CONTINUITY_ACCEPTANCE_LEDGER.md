@@ -519,3 +519,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - CDSL daily page 12-Nov-2026 equity subtotal +₹14,693.72cr and debt category figures retained as separate dated snapshot (turn479037search1). Explicitly noted that one-day positive equity flow does not negate negative 2026 YTD equity subtotal.
 - Scoped 2026 YTD aggregation arithmetic and archive inventory: PASS. Original daily archive/workbook bytes, full session history, raw SHA-256 manifest, DII historical export, exact coverage calendar, same-date NSE reconciliation and rolling impact study remain NOT ACQUIRED / NOT RUN. Hard Gate remains BLOCKED. No synthetic data, no date-only joins, no production selector/ranking/CORE-672 changes, no PR/merge.
 - Audit report commit ad9ccd04254f3e1221a2b4855cb3dcf33a41fc3f, blob 6c946f25b3b0cc8b4e4d6ab68e485e580df47310.
+
+
+## 45. CDSL fortnightly sector-wise FPI report inspected — 2026-11-14
+
+- Official CDSL inventory's latest listed fortnightly sector-wise FPI snapshot is 15-Oct-2026; subsequent listed entries are 30-Sep and 15-Sep 2026. No November sector snapshot is visible in the inventory reviewed (turn849696search0).
+- Opened exact official 15-Oct report (turn849696search1). Schema includes sector-wise AUC at 30-Sep, net investment for 16–30 Sep and 01–15 Oct, AUC at 15-Oct, with INR crore/USD million and separate Equity, Debt General, Debt VRR, Debt-FAR, Hybrid, MF and AIF fields.
+- Visible Automobile & Auto Components equity row: AUC ₹4,98,295cr at 30-Sep; net equity investment −₹3,542cr for 16–30 Sep and −₹6,533cr for 01–15 Oct; AUC ₹4,77,593cr at 15-Oct. This is a visible sector example, not full-table reconciliation; AUC change is not equated to flow because valuation/FX and other effects may contribute.
+- Scoped report/schema and one-row extraction: DOCUMENTED. Full machine-readable sector panel, immutable raw download and SHA-256, all-row QA, issuer exposure mapping, multi-period sector-return joins and rolling predictive test remain NOT ACQUIRED / NOT RUN. No production feature/ranking changes; Hard Gate remains BLOCKED.
+- Audit report commit 5685d028baac2b6b4ccb02a1f75e7d3b31c0a7cc, blob fac88582ad8fc004c244e658b700ef96359e9184.
