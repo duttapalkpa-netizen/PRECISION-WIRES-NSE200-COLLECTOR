@@ -1,0 +1,100 @@
+name: IMF BOP DSD 2.6 and candidate dataflow descendant codelist audit
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_dsd26_descendant_codelist_audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-dsd26-descendant-codelist-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve DSD 2.6.0 and BOP_GBPM6 descendant metadata with robust component parsing
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-dsd26-descendants
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from datetime import datetime,timezone
+          out=Path("imf-bop-dsd26-descendants")
+          base="https://sdmxcentral.imf.org/sdmx/v2/structure/"
+          targets={
+            "bop_dsd_2_6_0_descendants":base+"datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=descendants&detail=full",
+            "bop_gbpm6_2_0_descendants":base+"dataflow/IMF/BOP_GBPM6/2.0/?format=sdmx-2.1&references=descendants&detail=full"
+          }
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          def parse_xml(body):
+            root=ET.fromstring(body); outp={"root":local(root),"dataflows":[],"data_structures":[],"codelists":[],"component_references":[]}
+            for e in root.iter():
+              tag=local(e)
+              if tag=="Dataflow":
+                refs=[{k:x.attrib.get(k) for k in ("agencyID","id","version")} for x in e.iter() if local(x)=="Ref" and x.attrib.get("class")=="DataStructure"]
+                outp["dataflows"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"dsd_refs":refs})
+              elif tag=="DataStructure":
+                dimlist=next((x for x in e if local(x)=="DataStructureComponents"),None)
+                dims=[]; attrs=[]; primary=[]
+                if dimlist is not None:
+                  dl=next((x for x in dimlist if local(x)=="DimensionList"),None)
+                  if dl is not None:
+                    for x in dl:
+                      if local(x) in ("Dimension","TimeDimension","MeasureDimension"):
+                        dims.append({"id":x.attrib.get("id"),"position":x.attrib.get("position"),"type":local(x),"concept_refs":[{k:y.attrib.get(k) for k in ("agencyID","id","version","class")} for y in x.iter() if local(y)=="Ref"],"codelist_refs":[{k:y.attrib.get(k) for k in ("agencyID","id","version","class")} for y in x.iter() if local(y)=="Ref" and y.attrib.get("class")=="Codelist"]})
+                  al=next((x for x in dimlist if local(x)=="AttributeList"),None)
+                  if al is not None:
+                    for x in al:
+                      if local(x)=="Attribute":
+                        attrs.append({"id":x.attrib.get("id"),"assignmentStatus":x.attrib.get("assignmentStatus"),"attachment":next((local(y) for y in x if local(y) in ("Dimension","PrimaryMeasure","Group","DataSet")),None),"codelist_refs":[{k:y.attrib.get(k) for k in ("agencyID","id","version","class")} for y in x.iter() if local(y)=="Ref" and y.attrib.get("class")=="Codelist"]})
+                  pm=next((x for x in dimlist if local(x)=="MeasureList"),None)
+                  if pm is not None:
+                    primary=[{"id":x.attrib.get("id"),"type":local(x)} for x in pm]
+                outp["data_structures"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"dimensions":dims,"attributes":attrs,"measures":primary})
+              elif tag=="Codelist":
+                codes=[]
+                for x in e:
+                  if local(x)=="Code":
+                    names=[y.text.strip() for y in x if local(y)=="Name" and y.text]
+                    codes.append({"id":x.attrib.get("id"),"names":names})
+                outp["codelists"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"code_count":len(codes),"codes":codes})
+            for e in root.iter():
+              if local(e)=="Ref" and e.attrib.get("class")=="Codelist":
+                outp["component_references"].append({k:e.attrib.get(k) for k in ("agencyID","id","version","class")})
+            return outp
+          results={}
+          for key,url in targets.items():
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+xml;version=2.1"})
+            try:
+              with urllib.request.urlopen(req,timeout=25) as r:
+                status=r.status; ct=r.headers.get("Content-Type"); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; ct=e.headers.get("Content-Type") if e.headers else None; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; ct=None; final=url; body=b""; err=type(e).__name__+": "+str(e)
+            (out/(key+".xml")).write_bytes(body)
+            parsed={"ok":False,"error":None}
+            if status==200:
+              try: parsed=parse_xml(body); parsed["ok"]=True
+              except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+            results[key]={"url":url,"http_status":status,"content_type":ct,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"parsed":parsed}
+            (out/(key+"_inventory.json")).write_text(json.dumps(results[key],indent=2,ensure_ascii=False)+"\n")
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"results":results,"scope_note":"Metadata only. Descendant references resolve DSD/codelists but do not establish Portal dataset mapping or provide country observations."}
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({k:{"status":v["http_status"],"bytes":v["bytes"],"sha256":v["sha256"],"parse_ok":v["parsed"]["ok"],"dataflows":v["parsed"].get("dataflows"),"dsds":[{"id":d["id"],"version":d["version"],"dimension_count":len(d["dimensions"]),"dimensions":d["dimensions"],"attribute_count":len(d["attributes"]),"attributes":d["attributes"],"measures":d["measures"]} for d in v["parsed"].get("data_structures",[])],"codelist_count":len(v["parsed"].get("codelists",[])),"codelists":[{"agency":c["agency"],"id":c["id"],"version":c["version"],"code_count":c["code_count"]} for c in v["parsed"].get("codelists",[])]} for k,v in results.items()},indent=2,ensure_ascii=False))
+          PY
+      - name: Upload raw descendant metadata and inventories
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd26-descendant-metadata-${{ github.run_id }}
+          path: imf-bop-dsd26-descendants/
+          if-no-files-found: error
+          retention-days: 90
