@@ -1,0 +1,68 @@
+{
+  "audit_date": "2026-11-14",
+  "classification": {
+    "source": "IMF World Economic Outlook, April 2026 Database Appendix",
+    "membership_count": 154,
+    "raw_pdf_sha256": "b8a538c3158bf0553a3ae45d4797cd5648cbea684eb4be848a52c1d64d994395",
+    "source_artifact_id": 14115992695,
+    "source_run_id": 43600131132
+  },
+  "target_codelist": {
+    "agency": "IMF.STA",
+    "id": "CL_BOP_COUNTRY",
+    "version": "1.0.0",
+    "code_count": 345,
+    "raw_source": "IMF.STA:BOP(21.0.0) Portal dataflow structure response with references=all",
+    "response_sha256": "e9414015aaf3480d8254f2935eb4f723f8b50196f104881d7cf29454bfb12ce5",
+    "source_artifact_id": 14122440301,
+    "source_run_id": 43615378167
+  },
+  "mapping": {
+    "csv_path": "data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv",
+    "rows": 154,
+    "csv_sha256": "62ad409cc71c1056994a418e55b5e2a9367bd04c844a6bb5957bda5f0b0dd815",
+    "exact_normalized": 109,
+    "explicit_reviewed_alias": 45,
+    "unique_bop_country_codes": 154,
+    "duplicate_codes": 0,
+    "unknown_names": 0,
+    "ambiguous_names": 0,
+    "fuzzy_matching_used": false
+  },
+  "critical_disambiguations": {
+    "Micronesia": {
+      "selected_code": "FSM",
+      "selected_label": "Micronesia, Federated States of",
+      "excluded_aggregate_code": "U057",
+      "excluded_aggregate_label": "Micronesia",
+      "basis": "The WEO-to-IMF CL_AREA source row identifies Micronesia as area FM / Micronesia, Federated States of. Therefore the country-level BOP code FSM is selected; the same-name regional aggregate U057 is not used."
+    },
+    "West Bank and Gaza": {
+      "selected_code": "WBG",
+      "selected_label": "West Bank and Gaza",
+      "basis": "Exact label in the Portal-owned CL_BOP_COUNTRY codelist. This is a dataset code mapping, not a geopolitical/legal-status assertion."
+    },
+    "Namibia": {
+      "selected_code": "NAM",
+      "selected_label": "Namibia",
+      "basis": "Direct exact match in the Portal-owned CL_BOP_COUNTRY codelist; no CL_AREA crosswalk code is required."
+    }
+  },
+  "limits": [
+    "This maps WEO EMDE membership names to BOP COUNTRY dimension codes only.",
+    "A mapped country code does not prove that the country reports usable observations for a given series or period.",
+    "No BOP observations were acquired by this crosswalk task.",
+    "Actual reporter coverage must be measured from the BOP data response, separately for assets/liabilities and frequency."
+  ],
+  "invariants": {
+    "research_only": true,
+    "spend_inr": 0,
+    "official_free_sources_only": true,
+    "synthetic_data": false,
+    "production_selector_changed": false,
+    "ranking_score_changed": false,
+    "pressure_fade_changed": false,
+    "core_672_changed": false,
+    "pr_merge": false
+  }
+}
