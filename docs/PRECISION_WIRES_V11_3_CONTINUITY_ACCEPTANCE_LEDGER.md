@@ -558,3 +558,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Direct guessed path `/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0` could not be retrieved via web page extraction. This is an access limitation, not evidence of nonexistence.
 - Sources recorded in report `docs/IMF_OCTOBER_2025_BPM6_DOCUMENT_RETRIEVAL_STATUS_AUDIT_20261115.md`; updated report commit `2ce23ed9aabf69eac321864c0f79056af1c9fedd`.
 - Gate remains unchanged: October 2025 PDF table NOT_RETRIEVED; exact Dataflow / Provision Agreement / Provider constraints UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — IMF SDMX API contract validation
+
+- Inspected official IMF SDMX Central Web Services Guide (May 2025). Confirmed REST base `https://sdmxcentral.imf.org/sdmx/v2/`, supported structure resources including dataflow, provisionagreement, dataproviderscheme and content/actual/allowed/attachment constraints, and references query parameter semantics.
+- Exact documented-contract target query prepared: `https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0?references=all&format=sdmx-2.1`. This is a query specification, not a retrieved response.
+- Direct web retrieval attempts for target Dataflow, broad IMF Dataflow listing, ContentConstraint and ProvisionAgreement listing were inaccessible via the retrieval interface. This does not prove absence and is not origin HTTP evidence.
+- IMF:BOP6_CONSTRAINT → BOP6[1.0] and IMF:BOP_BP6_CONSTRAINT → BOP_BPM6[1.0] remain unrelated until an actual reference ties them to IMF.STA:BOP(21.0.0).
+- Updated report: `docs/IMF_OCTOBER_2025_BPM6_DOCUMENT_RETRIEVAL_STATUS_AUDIT_20261115.md`, commit `85c1cee4a9578bddcc6a9d63d9d3c3e82fa6b991`.
+- Gate: API contract/query specification PASS; target Dataflow response NOT_RETRIEVED; target Provision Agreement/Provider/Constraint UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
