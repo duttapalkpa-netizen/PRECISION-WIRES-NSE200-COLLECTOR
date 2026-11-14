@@ -508,3 +508,32 @@ The schema requires exact requested/final URL, GET method, exact series key, HTT
 The documentation defines capture order, rejection conditions, and the rule that every independently retrieved raw response gets its own sidecar. The existing India 110-row CSV and manifest remain untouched and are explicitly not retroactively compliant. No fabricated timestamp, release date, HTTP response, or checksum was added.
 
 Schema/document creation and remote re-fetch verification completed. No new IMF observation response was acquired and no schema-instance validation against a real response was claimed. Thus the sidecar contract implementation milestone is COMPLETE, while live capture validation remains NOT_DONE. Revision-aware panel gate remains NOT_READY.
+
+## 23. Official IMF BOP Portal vintage affordance audit (2026-11-15)
+
+### Direct dataset-page inspection
+Inspected the exact official BOP dataset page: https://data.imf.org/en/datasets/IMF.STA%3ABOP . The rendered page exposes API, VIEW DATA, DOWNLOAD, Metadata, and Documents. It does not expose a visible "See Vintages" action or a vintage-history section in the retrieved page content. The API link redirects to the IMF API developer portal sign-in page. The official IMF API documentation states data are available through SDMX 2.1/3.0 and the Swagger explorer requires a beta portal account to sign in.
+
+This is a bounded page/UI finding only. It does not prove that no authenticated API, internal endpoint, or downloadable release archive supports vintages. No login, credential use, or bypass was attempted.
+
+### Cross-dataset distinction
+The IMF public catalogue does show "See Vintages" for some other datasets (e.g. WEO and selected MFS datasets). That proves the portal has a vintage affordance for some datasets, not that BOP supports it. Do not transfer another dataset's vintage capability to BOP.
+
+### Methodological grounding
+The IMF BPM7 manual defines a data vintage as a data value/dataset released for use at a particular release period; a new vintage exists when the same reference-period data are released again at a different release period. Retrieval timestamp alone is not a vintage. Therefore the sidecar's separation of retrieval timestamp from source-provided release vintage is required.
+
+### Decision
+- BOP public page vintage affordance: NOT EXPOSED on inspected page.
+- Publicly documented BOP vintage endpoint / historical release selector: NOT ESTABLISHED.
+- Revision history for the existing India 110 observations: UNKNOWN / NOT_READY.
+- Do not create a vintage from the page's publication date, today's retrieval time, commit time, or latest data value.
+- Sidecar schema V1 remains useful for recording future actual response provenance, but it cannot create missing historical vintages.
+- Next distinct avenue: investigate official IMF BOP publication/download archive records (dated public releases or dated raw files) and check whether at least two dated snapshots overlap the same India series-period keys. If no official dated snapshots exist, preserve UNKNOWN and keep revision-aware gate closed.
+
+### Evidence
+- Official BOP dataset page: https://data.imf.org/en/datasets/IMF.STA%3ABOP
+- Official IMF API page: https://data.imf.org/en/Resource-Pages/IMF-API
+- BPM7 manual (March 2025, white-cover version), Chapter 20, vintage definitions around printed page 661 / PDF extracted lines near Box 20.2.
+- Other-dataset "See Vintages" examples are not BOP evidence.
+
+This audit did not change data, the schema, production, or any prior acceptance gate.
