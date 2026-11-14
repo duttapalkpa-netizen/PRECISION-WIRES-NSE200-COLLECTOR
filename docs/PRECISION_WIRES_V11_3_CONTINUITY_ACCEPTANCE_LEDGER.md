@@ -568,3 +568,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - IMF:BOP6_CONSTRAINT → BOP6[1.0] and IMF:BOP_BP6_CONSTRAINT → BOP_BPM6[1.0] remain unrelated until an actual reference ties them to IMF.STA:BOP(21.0.0).
 - Updated report: `docs/IMF_OCTOBER_2025_BPM6_DOCUMENT_RETRIEVAL_STATUS_AUDIT_20261115.md`, commit `85c1cee4a9578bddcc6a9d63d9d3c3e82fa6b991`.
 - Gate: API contract/query specification PASS; target Dataflow response NOT_RETRIEVED; target Provision Agreement/Provider/Constraint UNKNOWN; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 2026-11-15 — IMF SDMX live registry page cross-check
+
+- Live Dataflow overview is paginated (216 entries); first visible page contains CBSL/ESTAT entries, including ESTAT BPM6_BOP_M and BPM6_BOP_Q. This is not a complete IMF listing and cannot prove absence of IMF.STA:BOP.
+- Live constraints list explicitly shows `IMF:BOP6_CONSTRAINT` → `BOP6[1.0]` and `IMF:BOP_BP6_CONSTRAINT` → `BOP_BPM6[1.0]`. Neither visible row identifies `IMF.STA:BOP(21.0.0)` or `IMF.STA:DSD_BOP(24.0.0)`; no applicability inferred.
+- Provision Agreements view is paginated (1,001 entries); visible entries include `IMF:AT_BOP`, `IMF:BE_BOP` but no exact target reference established. Registrations view separately exposes Dataflow/Data Provider/URL; registrations for BOP6/BOP_BPM6/BOP_GBPM6 are not transferred to the target IMF.STA flow.
+- REST Web Service UI provides Structure Type, Agency, ID, Version, References and Download. Exact manual procedure recorded in the audit report: select Dataflow, Agency IMF.STA only if actually offered, ID BOP, version 21.0.0, references All; inspect generated URL and download; preserve raw response/hash; do not substitute similarly named flows.
+- Official registry overview confirms constraint cascade across DSD, Dataflow, Provision Agreement and Provider.
+- Report updated: `11545f9f4dd3eeeab7f1a835dd33b8df2a01b4a3`.
+- Gate: registry-page cross-check PASS; exact target Dataflow/references NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
