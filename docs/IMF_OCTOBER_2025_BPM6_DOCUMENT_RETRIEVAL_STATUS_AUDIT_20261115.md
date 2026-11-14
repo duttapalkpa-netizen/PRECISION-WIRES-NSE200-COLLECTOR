@@ -420,3 +420,33 @@ The 25% reflects only milestone 1 of 4. It does not imply any country eligibilit
 - Continue preserving all prior run failures, fixes, artifacts, commits, hashes and superseding decisions; do not replace historical entries.
 
 No new country-level evidence acquired in this progress reconciliation. No credentials, paid services, synthetic data, external contact or production changes.
+
+## 20. IMF India 110-row vintage/revision readiness audit (2026-11-15)
+
+### Scope and reproducibility
+Read the committed research CSV and its JSON manifest directly from the research branch; no new API acquisition or data mutation was performed.
+- CSV: `data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv`
+- Manifest: `data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.manifest.json`
+- Manifest declares 110 rows and combined CSV SHA-256 `260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9`.
+- Re-read CSV contains 110 data rows, four exact series with counts 11/11/44/44, and zero duplicate series-period keys. The manifest's four raw response hashes and row counts align with the four series declarations.
+
+### Actual CSV metadata findings
+- CSV header has 20 columns; none is a vintage, revision, release-date, retrieval-timestamp or publication-timestamp field.
+- `SOURCE`, `STATUS`, `ACCESS_SHARING_NOTES`, `OVERLAP` are null in all 110 rows.
+- `IFS_FLAG` is true on 55 asset rows and null on 55 liability rows; null is preserved as UNKNOWN, not false.
+- `SCALE=6`, `PRECISION=6`, `DERIVATION_TYPE=O`, `ACCESS_SHARING_LEVEL=PUBLIC_OPEN`, `SECURITY_CLASSIFICATION=PUB` each appear on all 110 rows.
+- The source response SHA is carried per series, not per vintage. It identifies the archived response body but does not establish historical revisions or a vintage timeline.
+
+### Decision
+- Committed CSV/manifest structural and key-integrity re-audit: PASS (110/110 rows; four series counts match; no duplicate series-period keys).
+- Revision/vintage readiness: NOT_READY / NOT_ESTABLISHED from this dataset. The acquired 110 observations are one archived response vintage per series; no revision history or source timestamp is represented in the CSV.
+- Do not infer that the values were never revised. Do not use current archived values as original first-release observations. No revision-aware backtest or vintage-sensitive research acceptance can be promoted from this file alone.
+- Next distinct action: identify an official IMF revision/vintage endpoint or a reproducible public release archive; if none is public, explicitly keep revision/vintage acceptance UNKNOWN and scope the India panel to current archived observations only.
+
+### Progress accounting
+- This bounded 110-row vintage-readiness audit: 100% of defined checks completed (header/row count/series counts/duplicate key check/manifest alignment/attribute distributions). Evidence outcome is NOT_READY for revision history; completion of the audit is not acceptance of the revision gate.
+- IMF BOP workstream accepted gates remain 5/7 (71.4%) on the pre-existing rubric.
+- October 2025 PDF retrieval package remains 25% (1/4 milestones); official catalogue metadata PASS, direct file target/PDF bytes/table NOT_DONE.
+- Full PRECISION-WIRES V11.3 project progress remains NOT_CALCULABLE pending reconciled workstream denominators and approved weights.
+
+No new observation values were created or changed. No credentials, paid services, synthetic data, external contact, PR merge or production changes.
