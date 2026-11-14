@@ -48,6 +48,17 @@
       "basis": "Direct exact match in the Portal-owned CL_BOP_COUNTRY codelist; no CL_AREA crosswalk code is required."
     }
   },
+  "integrity_audit": {
+    "run_id": 43624431543,
+    "result": "SUCCESS",
+    "artifact_id": 14125337955,
+    "csv_sha256_verified": "62ad409cc71c1056994a418e55b5e2a9367bd04c844a6bb5957bda5f0b0dd815",
+    "rows_verified": 154,
+    "unique_codes_verified": 154,
+    "exact_normalized_verified": 109,
+    "explicit_reviewed_alias_verified": 45,
+    "micronesia_FSM_and_U057_exclusion_verified": true
+  },
   "limits": [
     "This maps WEO EMDE membership names to BOP COUNTRY dimension codes only.",
     "A mapped country code does not prove that the country reports usable observations for a given series or period.",
