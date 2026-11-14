@@ -94,6 +94,13 @@ jobs:
           for x in codes: exact.setdefault(norm(x["name"]),[]).append(x)
           # Manually declared label equivalences only; never fuzzy-match country names.
           aliases={
+            "cabo verde":"cape verde",
+            "eswatini":"kingdom of eswatini",
+            "lao p d r":"lao people s democratic republic",
+            "st kitts and nevis":"saint kitts and nevis",
+            "st lucia":"saint lucia",
+            "st vincent and the grenadines":"saint vincent and the grenadines",
+            "vietnam":"viet nam",
             "democratic republic of the congo":"congo the democratic republic of the",
             "republic of congo":"congo",
             "the gambia":"gambia",
