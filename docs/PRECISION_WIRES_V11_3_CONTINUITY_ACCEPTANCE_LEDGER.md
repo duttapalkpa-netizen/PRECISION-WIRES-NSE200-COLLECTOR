@@ -524,3 +524,16 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Manifest: `data/research/imf_bop_39_country_annual_continuity_audit_20261115.manifest.json`, commit `01f3bbae00fe237e6ff19a2f772072cacb1bdacc`.
 - Decision: descriptive annual continuity audit PASS; 26-year annual completeness demonstrated only for nine countries; quarterly reporter eligibility remains UNKNOWN; quarterly coverage acceptance NOT PASS; EMDE aggregation BLOCKED.
 - Next: official country-specific IMF reporting metadata / dataflow constraint investigation for CAF, ERI, GNQ, SOM, TCD, TKM. Keep all annual gaps explicit. ₹0 spend; all V11.3 protected invariants unchanged.
+
+
+## 2026-11-15 — Six-country official BPM6 reporting-basis and SDMX constraint cross-check
+
+- Investigated six no-nonempty-annual reporters: CAF, ERI, GNQ, SOM, TCD, TKM.
+- Reviewed IMF public PDF "Availability of Official BPM6 Basis Balance of Payments and International Investment Position Data", April 2025, complete two-page table. The six target countries are not listed in that edition's country table for official own-reported BPM6 BOP start dates. The document footnote states that official BPM6-basis availability reflects own-reported BPM6 data included in the publication; earlier periods and economies not yet providing official BPM6 estimates are IMF-converted BPM5 estimates.
+- Interpretation is bounded to April 2025 publication inventory only. It does not prove formal ineligibility, non-reporting, absence of BPM5 data, or lack of later BPM6 submissions. All six eligibility statuses remain UNKNOWN.
+- A later document "Economies Reporting on BPM6 Basis October 2025" published 2026-05-14 is indexed on IMF BOP Documents, but its PDF body was not retrieved/inspected. It is an explicit next action, not evidence used in current country conclusions.
+- IMF SDMX Central visible Reporting Constraints registry lists `IMF:BOP6_CONSTRAINT` for `BOP6[1.0]` and `IMF:BOP_BP6_CONSTRAINT` for `BOP_BPM6[1.0]`. Neither is demonstrated to target exact `IMF.STA:BOP(21.0.0)` / `DSD_BOP(24.0.0)`; do not transfer these constraints across flows. SDMX Central overview documents that constraints can apply at DSD, Dataflow, Provision Agreement and Data Provider levels, and can define allowed/restricted series/partial series.
+- Official sources reviewed: IMF April 2025 BPM6 availability PDF; IMF BOP dataset page; IMF SDMX Central Reporting Constraints and overview pages. URLs recorded in report.
+- Report: `docs/IMF_BOP_SIX_COUNTRY_OFFICIAL_BPM6_AND_CONSTRAINT_CROSSCHECK_20261115.md`, commit `3112e6ba17daa598fc14ea5825f30c88aa645d94`.
+- Gate: historical publication table review PASS; October 2025 later table NOT_RETRIEVED; exact IMF.STA BOP applicable constraints UNKNOWN; six-country formal eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+- Next: retrieve/inspect October 2025 BPM6 reporting table (published 2026-05-14), then resolve exact BOP dataflow + provision agreement + provider constraint references. Preserve UNKNOWN until exact evidence. ₹0 spend; all V11.3 invariants unchanged.
