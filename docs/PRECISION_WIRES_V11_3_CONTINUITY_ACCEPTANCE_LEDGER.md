@@ -710,3 +710,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Schema and documentation creation completed; remote file re-fetch verified. Live sidecar instance validation against a new real IMF response NOT_DONE; revision-aware panel gate remains NOT_READY.
 - No credentials, paid source, synthetic data, production change or PR merge.
 - Report update commit: 0f48d414d9c5ca99f26248c75a0ec754b1b49099.
+
+## 2026-11-15 — Official IMF BOP Portal vintage affordance audit
+
+- Inspected exact official BOP dataset page. It exposes API, VIEW DATA, DOWNLOAD, Metadata and Documents; retrieved page does not expose a visible "See Vintages" action or vintage-history section.
+- BOP API link redirects to developer-portal sign-in. IMF API documentation confirms SDMX 2.1/3.0 and beta-account sign-in for Swagger exploration.
+- Other IMF datasets (e.g. WEO and selected MFS) show "See Vintages"; this does not prove BOP has the same capability.
+- BPM7 defines vintage by public release period for a data value/dataset; retrieval timestamp is not vintage.
+- Decision: BOP page vintage affordance NOT_EXPOSED; public BOP vintage endpoint/history selector NOT_ESTABLISHED; India panel revision history UNKNOWN / NOT_READY. This is a bounded UI finding, not proof no authenticated/internal/archive capability exists.
+- Next avenue: official dated BOP publication/download archives; require two dated snapshots overlapping the same India series-period keys before revision comparisons.
+- No login, credential, bypass, data mutation, new gate promotion, production change or PR merge.
+- Audit report update commit: d01e2cb26c6ef6d63e15bbed6bac1030ac4c7141.
