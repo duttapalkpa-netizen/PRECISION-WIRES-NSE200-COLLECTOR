@@ -1,0 +1,76 @@
+name: IMF BOP Portal SDMX 3.0 endpoint verification
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_portal_sdmx_endpoint_probe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-portal-sdmx-endpoint-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact Portal-URN-derived SDMX 3.0 structure endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-portal-endpoint-probe
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json
+          from pathlib import Path
+          from datetime import datetime,timezone
+          out=Path("imf-bop-portal-endpoint-probe")
+          base="https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?detail=full&references=all"
+          def fetch(url):
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":"application/vnd.sdmx.structure+json;version=3.0, application/vnd.sdmx.structure+xml;version=3.0, application/xml, application/json"})
+            try:
+              with urllib.request.urlopen(req,timeout=25) as r:
+                b=r.read()
+                return {"status":r.status,"content_type":r.headers.get("Content-Type"),"final_url":r.geturl(),"body":b,"error":None}
+            except urllib.error.HTTPError as e:
+              return {"status":e.code,"content_type":e.headers.get("Content-Type") if e.headers else None,"final_url":e.geturl(),"body":e.read(),"error":"HTTPError"}
+            except Exception as e:
+              return {"status":None,"content_type":None,"final_url":url,"body":b"","error":type(e).__name__+": "+str(e)}
+          r=fetch(base)
+          (out/"portal_bop_dataflow_structure_raw.bin").write_bytes(r["body"])
+          result={k:v for k,v in r.items() if k!="body"}
+          result.update({"requested_url":base,"bytes":len(r["body"]),"sha256":hashlib.sha256(r["body"]).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat()})
+          parse={"parsed":False,"format":None,"dataflow_identity":None,"dimension_ids":[],"error":None}
+          if r["status"]==200:
+            try:
+              import xml.etree.ElementTree as ET
+              root=ET.fromstring(r["body"])
+              def local(e): return e.tag.rsplit("}",1)[-1]
+              ids=[]
+              for e in root.iter():
+                if local(e)=="Dataflow":
+                  parse["dataflow_identity"]={k:e.attrib.get(k) for k in ("agencyID","id","version")}
+                if local(e)=="Dimension":
+                  ids.append(e.attrib.get("id"))
+              parse.update({"parsed":True,"format":"XML","dimension_ids":ids})
+            except Exception as ex:
+              try:
+                obj=json.loads(r["body"])
+                parse.update({"parsed":True,"format":"JSON","json_top_keys":list(obj)[:30]})
+              except Exception as ex2: parse["error"]="XML: "+str(ex)+"; JSON: "+str(ex2)
+          result["parse"]=parse
+          result["decision"]="PASS" if r["status"]==200 and parse["parsed"] else "BLOCKED_OR_NOT_FOUND"
+          (out/"portal_bop_endpoint_probe.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps(result,indent=2,ensure_ascii=False))
+          assert result["decision"]=="PASS", "Portal-derived SDMX 3.0 structure endpoint did not return parseable metadata"
+          PY
+      - name: Upload endpoint response evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-portal-endpoint-probe-${{ github.run_id }}
+          path: imf-bop-portal-endpoint-probe/
+          if-no-files-found: error
+          retention-days: 90
