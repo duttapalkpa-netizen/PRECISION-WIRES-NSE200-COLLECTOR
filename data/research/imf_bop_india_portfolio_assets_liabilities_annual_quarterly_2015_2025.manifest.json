@@ -1,0 +1,114 @@
+{
+  "audit_date": "2026-11-14",
+  "dataset": {
+    "title": "Balance of Payments (BOP)",
+    "urn": "IMF.STA:BOP(21.0.0)",
+    "dataflow": "IMF.STA:BOP(21.0.0)",
+    "dsd": "IMF.STA:DSD_BOP(24.0.0)"
+  },
+  "dimension_order": ["COUNTRY", "BOP_ACCOUNTING_ENTRY", "INDICATOR", "UNIT", "FREQUENCY"],
+  "observation_dimension": "TIME_PERIOD",
+  "code_meanings": {
+    "IND": "India",
+    "A_NFA_T": "Assets, Net acquisition of financial assets",
+    "L_NIL_T": "Liabilities, Net incurrence of liabilities",
+    "P_F": "Portfolio investment, Total financial assets/liabilities",
+    "USD": "US dollar",
+    "A": "Annual",
+    "Q": "Quarterly"
+  },
+  "series": [
+    {
+      "name": "annual_assets",
+      "key": "IND.A_NFA_T.P_F.USD.A",
+      "rows": 11,
+      "periods": "2015-2025",
+      "response_bytes": 7845,
+      "response_sha256": "85cca14cabf7a674ba37c00f88e3140f562480130bdde57d4902562fa6e0e23a",
+      "run_id": 43616059985,
+      "artifact_id": 14122421554,
+      "artifact_zip_sha256": "cc951e2655dc4592ab82d848e0beebc43970132de1f4f3edc5c3ef8b56aaed23"
+    },
+    {
+      "name": "annual_liabilities",
+      "key": "IND.L_NIL_T.P_F.USD.A",
+      "rows": 11,
+      "periods": "2015-2025",
+      "response_bytes": 7846,
+      "response_sha256": "6eba68f8779efa5636afea8d4a9de4ce26478c67150144c1e4f128e4f6d3a4e4",
+      "run_id": 43623518481,
+      "artifact_id": 14125515371,
+      "artifact_zip_sha256": "4127f4b691e46967dc8e0f91d6ff5536e9bc01224de0d488f90e5a4acd13327c"
+    },
+    {
+      "name": "quarterly_assets",
+      "key": "IND.A_NFA_T.P_F.USD.Q",
+      "rows": 44,
+      "periods": "2015-Q1 to 2025-Q4",
+      "response_bytes": 10201,
+      "response_sha256": "aff39180e21eec8f71308ac269f9191eb0138b5471808bfa710c6a582be1d24f",
+      "run_id": 43623518481,
+      "artifact_id": 14125515371,
+      "artifact_zip_sha256": "4127f4b691e46967dc8e0f91d6ff5536e9bc01224de0d488f90e5a4acd13327c"
+    },
+    {
+      "name": "quarterly_liabilities",
+      "key": "IND.L_NIL_T.P_F.USD.Q",
+      "rows": 44,
+      "periods": "2015-Q1 to 2025-Q4",
+      "response_bytes": 10185,
+      "response_sha256": "6ebe3c2eabd7f9019ffd80d51e01de359bc1f64aee66c8609877654ad4558ccc",
+      "run_id": 43623518481,
+      "artifact_id": 14125515371,
+      "artifact_zip_sha256": "4127f4b691e46967dc8e0f91d6ff5536e9bc01224de0d488f90e5a4acd13327c"
+    }
+  ],
+  "combined_csv": {
+    "path": "data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv",
+    "rows": 110,
+    "sha256": "260ccc247ec564737bb3afe0a820c2435e37a58f588603241274537eca99f1b9"
+  },
+  "annual_quarterly_reconciliation": {
+    "method": "Sum four quarterly raw OBS_VALUE strings per year using Decimal arithmetic and compare with the annual raw OBS_VALUE. No scaling or conversion.",
+    "asset_side": {
+      "years": 11,
+      "max_absolute_difference": "0.0000009",
+      "tolerance": "0.00001",
+      "status": "PASS_WITH_TOLERANCE"
+    },
+    "liability_side": {
+      "years": 11,
+      "max_absolute_difference": "0.000007",
+      "tolerance": "0.00001",
+      "status": "PASS_WITH_TOLERANCE"
+    }
+  },
+  "metadata": {
+    "series_attributes": {"SCALE": "6", "METHODOLOGY": "BPM6", "quarterly_asset_IFS_FLAG": "true"},
+    "observation_attributes": {
+      "PRECISION": "6",
+      "DERIVATION_TYPE": "O",
+      "ACCESS_SHARING_LEVEL": "PUBLIC_OPEN",
+      "SECURITY_CLASSIFICATION": "PUB"
+    },
+    "null_attributes_preserved": ["STATUS", "ACCESS_SHARING_NOTES", "SOURCE"],
+    "no_scaling_or_currency_conversion": true
+  },
+  "limits": [
+    "India-only sample; no 154-economy reporter coverage established.",
+    "Assets and liabilities are kept separate; no netting or aggregate calculated.",
+    "SCALE and PRECISION remain metadata; no multiplier is applied.",
+    "No vintage/revision history acquired."
+  ],
+  "invariants": {
+    "research_only": true,
+    "spend_inr": 0,
+    "free_official_sources_only": true,
+    "synthetic_data": false,
+    "production_selector_changed": false,
+    "ranking_score_changed": false,
+    "pressure_fade_changed": false,
+    "core_672_changed": false,
+    "pr_merge": false
+  }
+}
