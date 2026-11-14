@@ -751,3 +751,41 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 ### Report reference
 - `docs/WALK_FORWARD_MATURED_METRIC_DENOMINATOR_AUDIT_20261114.md`
 - Report commit: `bec3ae2634ae042d45df509b5c715a6eccbda3c6`
+
+
+## 58. NSE Corporate Announcements RSS run 43558025207 — artifact integrity and cohort QA — 2026-11-14
+
+### Run and test evidence
+- GitHub Actions run `43558025207`, workflow `NSE Corporate Announcements RSS — isolated read-only acquisition`, head commit `244348a2a2e0a78370ed97b1e6e1ecd6e22e9dfd`: SUCCESS.
+- Parser safety/lossless-field tests: 5/5 PASS.
+- Official NSE RSS acquisition: HTTP 200; `ACQUIRED`; parser `PASS`; synthetic_data=false.
+- Raw XML 74,162 bytes; SHA-256 `b76717de6777404a56ded5cae962c922f199b32534364800a96ef059918a9990`; 190 items.
+- Job step “Enforce acquisition result after preserving diagnostics” was SKIPPED; acquisition log records successful acquisition and parse, so this is not reported as a failed test.
+
+### Artifact integrity
+- Artifact ID `14098814399`; ZIP 18,730 bytes; SHA-256 `ca0649032c67fd4519bce66d2dd6cd61805efbd2f9f7f0612fa88b05cedec517`; expires 2026-12-14T04:43:21Z.
+- ZIP independently downloaded and hashed; digest matches GitHub Actions.
+- `announcements.xml`: 74,162 bytes; SHA-256 matches raw manifest.
+- `announcements.jsonl`: 157,661 bytes; 190 rows; SHA-256 `fa17c0c89ebc10321821aa54fe5f5eaf7c488ddbd2e3a4d32ac0aa2e49c9b60d`.
+- `manifest.json`: 6,251 bytes; SHA-256 `dc4435c3043f323aa79abfeba4b571184dd44ce0b6935be69f01dc8f0ab7a052`.
+
+### Row/cohort QA
+- All 190 rows have title, original description and original pubDate.
+- All 190 rows have no GUID; preserve absence, do not synthesize identifiers.
+- 155 rows have empty links; all 155 are `Declaration of NAV` cohort. These are NAV disclosures, not missing equity-attachment links.
+- 35 rows have links, all on `nsearchives.nseindia.com`.
+- 155 rows carry displayed 07:00:00 publication time; retain original timestamp strings, do not infer greater precision.
+- Repeated issuer titles exist; do not deduplicate on title alone.
+- No symbol mapping, PDF content validation, historical completeness, event-to-price join or return study was performed.
+
+### Status
+- Run/log verification: 100%.
+- Artifact ZIP and member hashes: 100%.
+- 190-row structural/cohort QA: 100%.
+- Symbol mapping and attachment-content verification: 0% / NOT RUN.
+- Event join and matured H+1/H+3/H+5 study: 0% / BLOCKED.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED. No code/data/selector/ranking/diagnostic/workflow/production changes; no PR/merge.
+
+### Report reference
+- `docs/NSE_RSS_RUN_43558025207_ARTIFACT_INTEGRITY_AUDIT_20261114.md`
+- Report commit: `802eb34cc04dd44686c4dbc3d69d867b72cefcb4`
