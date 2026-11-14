@@ -635,3 +635,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Actual reports/XLSX and hashes NOT_YET_DOWNLOADED. Exact CS_BOP-to-BOP DSD link UNKNOWN; DSD-to-codelist links UNKNOWN; target constraints/provision/provider UNKNOWN; October PDF body NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 - Updated report: `8e47f1eb563260fb5c483187cfaa867ab76805e3`.
 - No credentials, paid services, external contact, synthetic data or production changes.
+
+
+## 2026-11-15 — Registry Dataflow inventory cross-check
+
+- Verified catalogue entries: IMF:BOP DSD v2.6.0; IMF:CS_BOP Concept Scheme v1.20.0.
+- Dataflow catalogue visibly lists ESTAT:BPM6_BOP_M v2.6.0 and ESTAT:BPM6_BOP_Q v2.6.0 as ESTAT agency dataflows. They are not IMF agency dataflows and cannot be substituted for the IMF Data Portal BOP target.
+- Data Providers catalogue shows ESTAT:IMF = IMF as a provider under ESTAT agency; this alone does not establish a BOP Provision Agreement, registration or constraint chain.
+- Registry documentation says constraints may be attached to DSD, Dataflow, Data Provider or Provision Agreement and cascade.
+- Structure References and XLSX export pages expose UI controls, but browser text retrieval does not expose populated selectors, generated report bytes, download URLs or payload hashes. Registry REST SDMX-ML retrieval via text interface remains inaccessible; this is not evidence of origin failure.
+- Actual reports/SDMX-ML and hashes NOT_ACQUIRED. Exact IMF target Dataflow/Provision Agreement/provider registration/constraints UNKNOWN; CS_BOP-to-BOP and BOP-to-codelist references UNKNOWN; October 2025 PDF NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+- Updated audit report commit: `e880b697f8abb4a0461110b2383e9852f4b5b583`.
+- No credentials, paid services, external contact, synthetic data or production changes.
