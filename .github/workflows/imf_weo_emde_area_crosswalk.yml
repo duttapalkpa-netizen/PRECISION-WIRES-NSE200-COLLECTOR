@@ -99,7 +99,7 @@ jobs:
             "the gambia":"gambia",
             "the bahamas":"bahamas",
             "kyrgyz republic":"kyrgyzstan",
-            "lao p d r":"lao peoples democratic republic",
+            "lao p d r":"lao people s democratic republic",
             "micronesia":"micronesia federated states of",
             "russia":"russian federation",
             "syria":"syrian arab republic",
@@ -107,13 +107,18 @@ jobs:
             "moldova":"moldova republic of",
             "venezuela":"venezuela bolivarian republic",
             "tanzania":"tanzania united republic of",
-            "west bank and gaza":"palestine"
+            "cabo verde":"cape verde",
+            "eswatini":"kingdom of eswatini",
+            "st kitts and nevis":"saint kitts and nevis",
+            "st lucia":"saint lucia",
+            "st vincent and the grenadines":"saint vincent and the grenadines",
+            "vietnam":"viet nam"
           }
           records=[]; unmapped=[]; ambiguous=[]
           for name in weo_names:
             k=norm(name); matches=exact.get(k,[])
             if not matches and k in aliases: matches=exact.get(norm(aliases[k]),[])
-            rec={"weo_name":name,"weo_classification":"WEO April 2026 EMDE","mapping_method":None,"imf_area_code":None,"imf_area_name":None,"mapping_status":"UNKNOWN"}
+            rec={"weo_name":name,"weo_classification":"WEO April 2026 EMDE","mapping_method":None,"imf_area_code":None,"imf_area_name":None,"mapping_status":"UNKNOWN","review_note":None}
             if len(matches)==1:
               rec.update({"mapping_method":"EXACT_NORMALIZED" if exact.get(k) else "EXPLICIT_ALIAS","imf_area_code":matches[0]["code"],"imf_area_name":matches[0]["name"],"mapping_status":"MAPPED"})
             elif len(matches)>1:
