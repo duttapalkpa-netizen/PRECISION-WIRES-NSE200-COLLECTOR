@@ -56,7 +56,7 @@ jobs:
               for ok,ov in obs.items():
                 oi=int(ok)
                 if oi>=len(periods) or not ov or ov[0] is None or not math.isfinite(float(ov[0])): raise ValueError("Invalid observation value/index")
-                seen.append(str(periods[oi]))
+                period=str(periods[oi])\n                if 2000<=int(period)<=2025: seen.append(period)
               if not seen: empty.append(country); continue
               if len(seen)!=len(set(seen)): raise ValueError("Duplicate annual period "+country)
               reporters[country]={"count":len(seen),"periods":sorted(seen),"first":min(seen),"last":max(seen),"series_attributes":so.get("attributes",[])}
