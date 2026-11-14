@@ -231,3 +231,43 @@ Official sources:
 - https://data.imf.org/Datasets/BOP
 
 Gate: service-catalogue separation and unauthenticated registry route PASS; XML binary/body NOT_RETRIEVED; IMF Data Portal Swagger requires beta portal sign-in (not accessed); exact target constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+
+
+## 14. IMF BOP concept-scheme and candidate codelist inventory (2026-11-15)
+
+### Verified registry catalogue facts
+The SDMx Global Registry's Concept Scheme catalogue lists:
+- Agency: IMF
+- ID: `CS_BOP`
+- Name: Balance of Payments Concept Scheme
+- Latest version: `1.20.0`
+
+The same registry's Codelist catalogue visibly lists these IMF codelists:
+- `CL_ACCOUNT_ENTRY` — Accounting entry code list — 1.5.0
+- `CL_ACCOUNTS_ITEM` — Item classification code list — 1.8.0
+- `CL_ADJUSTMENT` — Adjustment indicator — 1.4
+- `CL_AREA` — Area code list — 2.0.0
+- `CL_COMP_METHOD` — Compilation methodology code list — 1.2
+- `CL_CURRENCY` — Currency of issuance or invoicing code list — 1.6.1
+- `CL_FSENTRY` — Flow or stock entry code list — 1.1
+- `CL_FUNCTIONAL_CAT` — Functional category code list — 1.10.1
+- `CL_GFSM_STO` — Stocks, Transactions, Other Flows — 1.0
+- `CL_ORGANISATION` — Compiling organisation code list — 2.1.0
+- `CL_TIME_COLLECT` — Time period collection code list — 1.0
+- `CL_UNIT` — Unit of measure code list — 1.19.0
+
+These are candidate structural dependencies by subject matter only. The DSD XML body has not been retrieved, so no claim is made that any particular listed codelist is referenced by BOP DSD 2.6.0 or by the earlier IMF.STA BOP dataset. Version compatibility is not assumed.
+
+### Extraction limitation
+The concept-scheme page is a dynamic detail view; the catalogue exposes the CS_BOP identity/version but not its complete concept items in the retrieved page. A direct URN query was inaccessible through the web retrieval interface. No concept IDs, descriptions or representations were copied from inference.
+
+### Correct next step
+Use the Global Registry UI to select Concept Scheme → Agency IMF → ID CS_BOP → version 1.20.0 → View/Export SDMX-ML 3.0 (or supported export), then retrieve and hash the actual response. In parallel select each candidate codelist only when the BOP DSD XML or concept scheme's actual references identify it. Record each exact returned URN/version and compare with the target dataset's own service; do not treat a catalogue listing as proof of DSD attachment.
+
+Official sources:
+- https://registry.sdmx.org/items/conceptscheme.html
+- https://registry.sdmx.org/items/codelist.html
+- https://registry.sdmx.org/data/datastructure.html
+- https://registry.sdmx.org/webservice/structure.html
+
+Gate: CS_BOP catalogue identity/version PASS; candidate IMF codelist inventory PASS; actual concept contents NOT_RETRIEVED; BOP DSD-to-codelist linkage UNKNOWN; exact target constraints/provision/provider UNKNOWN; October 2025 PDF table NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
