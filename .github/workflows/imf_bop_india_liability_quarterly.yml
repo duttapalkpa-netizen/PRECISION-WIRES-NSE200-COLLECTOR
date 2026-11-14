@@ -68,7 +68,7 @@ jobs:
             periods=[r["TIME_PERIOD"] for r in rows]
             if len(periods)!=len(set(periods)): raise ValueError("Duplicate TIME_PERIOD")
             if not rows: raise ValueError("No observations returned")
-            return {"ok":True,"series_dimension_ids":ids,"observation_dimension_ids":[x.get("id") for x in od],"observation_count":len(rows),"time_periods":sorted(periods),"observations":rows,"structure_attribute_ids":{k:[a.get("id") for a in v] for k,v in st.get("attributes",{}).items()},"dataset_attribute_ids":{k:[a.get("id") for a in v] for k,v in ds.get("attributes",{}).items()}}
+            return {"ok":True,"series_dimension_ids":ids,"observation_dimension_ids":[x.get("id") for x in od],"observation_count":len(rows),"time_periods":sorted(periods),"observations":rows,"structure_attribute_ids":{k:[a.get("id") for a in v] for k,v in st.get("attributes",{}).items()},"dataset_attribute_ids":[a.get("id") for a in st.get("attributes",{}).get("dataSet",[])],"dataset_attributes_raw":ds.get("attributes",[])}
           for case in cases:
             q=urlencode({"c[TIME_PERIOD]":case["period"],"dimensionAtObservation":"TIME_PERIOD","attributes":"all","detail":"dataonly","limit":"1000"})
             url=base+case["key"]+"?"+q
