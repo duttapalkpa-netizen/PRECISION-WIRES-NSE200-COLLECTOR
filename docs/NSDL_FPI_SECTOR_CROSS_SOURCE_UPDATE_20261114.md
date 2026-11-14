@@ -73,3 +73,46 @@
 - For each eligible sector, calculate forward index returns from the next eligible close: H+1, H+3, H+5 trading sessions; apply 0.22% transaction cost consistently. Preserve unadjusted vs total-return benchmark choice and pre-register one primary benchmark per sector.
 - Global controls to be lagged as-of decision time: NIFTY 50 regime, India VIX, USD/INR, Brent, US yields/Fed event, FPI cash flow, domestic institutional flow and sector breadth. These are control variables, not a licence to infer causality.
 - This mapping is a research design deliverable only. No historical return series downloaded or joined in this step; no model performance, predictive edge or trading signal is claimed.
+
+
+## Full NSDL 16–31 Oct 2026 equity sector panel and row-sum QA
+
+Source: official NSDL report, lines 8–32 (web evidence turn381834view0 and turn198123view0).
+
+| BSE common-industry sector | Equity net flow 16–31 Oct 2026 (₹ crore) |
+|---|---:|
+| Automobile and Auto Components | −1,098 |
+| Capital Goods | −825 |
+| Chemicals | −862 |
+| Construction | −516 |
+| Construction Materials | −196 |
+| Consumer Durables | −402 |
+| Consumer Services | −662 |
+| Diversified | −16 |
+| Fast Moving Consumer Goods | −1,559 |
+| Financial Services | −883 |
+| Forest Materials | −58 |
+| Healthcare | −57 |
+| Information Technology | +10,915 |
+| Media, Entertainment & Publication | +140 |
+| Metals & Mining | −904 |
+| Oil, Gas & Consumable Fuels | −970 |
+| Power | −765 |
+| Realty | −438 |
+| Services | +658 |
+| Telecommunication | +11,065 |
+| Textiles | −21 |
+| Utilities | −27 |
+
+### Row-sum reconciliation
+- Sum of the 22 industry-sector equity rows above = +₹12,519 crore.
+- NSDL Others-category equity net investment = +₹594 crore.
+- Sovereign-category equity = ₹0 crore.
+- Sum of displayed rows including Others and Sovereign = +₹13,113 crore.
+- NSDL Grand Total equity net investment = +₹13,112 crore.
+- Difference = +₹1 crore (row-sum exceeds displayed Grand Total). Treat as a ₹1 crore displayed-value rounding/reconciliation residual; do not force-adjust any sector or classify it as an error without source precision evidence. The aggregate Grand Total remains the authoritative reported value.
+- This explicit row-sum check improves QA: the table does not reconcile exactly at integer-crore display precision. Keep reconciliation_status = ROUNDING_RESIDUAL_1CR, not PASS_EXACT.
+
+### Interpretation
+- The second-half October equity flow is concentrated in Information Technology (+₹10,915cr) and Telecommunication (+₹11,065cr), while many other sectors remain net sellers. This is descriptive allocation concentration, not a sector price-return signal or proof of causal rotation.
+- Full 22-sector 16–31 Oct equity panel: TRANSCRIBED. Displayed row-sum reconciliation: 1 crore residual. No historical NSE index return series has been downloaded or joined. No H+1/H+3/H+5 performance claim.
