@@ -164,3 +164,30 @@ This is an independently documented alternate endpoint family, but the exact BOP
 ### Important source boundary
 
 The IMF SDMX Central guide describes the Structure Web Service for metadata (Dataflows, Codelists, Concepts and Data Structures). Do not mistake successful DSD retrieval for access to actual BOP observations. Observation extraction requires a separately verified IMF Data Portal data endpoint and dataset vintage. The IMF Data API page documents SDMX 2.1/3.0 access, while its Swagger explorer requires beta-portal sign-in. No observation API request is asserted as tested here.
+
+
+## 8. 2026-11-14 verified SDMX 2.1 metadata addendum
+
+The exact IMF SDMX Central public Structure REST requests were executed and raw responses archived. This supersedes the earlier status in Section 2B that the BOP DSD 2.6.0 XML had not yet been parsed.
+
+- `IMF:BOP_GBPM6(2.0)` was retrieved and its Dataflow explicitly references `IMF:BOP(2.0)`.
+- `IMF:BPM6_BOP_Q(1.5)` was retrieved and its Dataflow explicitly references `IMF:BOP(1.5)`.
+- `IMF:BOP(2.6.0)` was independently retrieved and parsed successfully.
+- DSD 2.6.0 has 18 ordered dimensions (including TIME_PERIOD), 15 attributes and primary measure OBS_VALUE.
+- DSD 2.6.0 has 22 unique direct component codelist references. The descendants response contains 23 codelist objects because it also includes a related CL_AREA(1.17.0) in addition to the directly referenced CL_AREA(2.0.0).
+- The direct REF_AREA/COUNTERPART_AREA codelist for DSD 2.6.0 is IMF:CL_AREA(2.0.0), 931 codes. India is represented by `IN` / `India`.
+- The BOP_GBPM6 DSD 2.0 uses IMF:CL_AREA(1.14), 885 codes, and likewise contains `IN` / `India`.
+- The BPM6_BOP_Q DSD 1.5 has 17 dimensions (no TYPE_ENTITY dimension), 14 attributes and OBS_VALUE. Do not assume its key schema is identical to DSD 2.0/2.6.0.
+- The first inventory parser used broad descendant matching for Dimension nodes and generated blank IDs from nested attachment references. Raw XML was retained. A corrected parser now scopes to DataStructureComponents/DimensionList, AttributeList and MeasureList; counts above were independently checked against the raw XML.
+
+Run/artifact evidence:
+- Run `43608726175` SUCCESS; commit `eabcde2975fb19da9219700c8a08704c34559d2c`; artifact `14119193255`; ZIP SHA-256 `ca28bfd7d48b0e304ce2a41176c3ccf1a5ea241cf24eba880c9c5de246551399`.
+- Run `43608839976` SUCCESS; commit `9e8cafda5a878bd7c212b9b3b385ea648e4c3b12`; artifact `14119642179`; ZIP SHA-256 `d99c92c23fe8d5f789e4ffd99fdd807f5331c4b261083eb63b0c9fb315ce856d`.
+- DSD 2.6.0 descendant raw XML SHA-256 `0282f8ed931fc1c058c5f612f9b5c5c3ca60fa0590344d059d3ed2f547fd19ea`.
+- BOP_GBPM6(2.0) descendant raw XML SHA-256 `d1698e30516d554740d269db5126487902fc2632131bf0ae3add26aefa7f63c7`.
+
+Service boundary clarification: IMF SDMX Central's documented Structure REST API is a public metadata query service. Its separate public POST endpoints cover dataset validation/transformation/registration; they are not a raw country-observation GET API. IMF Data Portal's own SDMX 2.1/3.0 data APIs are separately documented, and its Swagger explorer requires beta-portal sign-in. Do not conflate these services.
+
+The Portal dataset URN `IMF.STA:BOP(21.0.0)` is still not mapped to either IMF:BOP_GBPM6(2.0), IMF:BPM6_BOP_Q(1.5), or DSD 2.6.0. No observation endpoint, dimension key for the Portal dataset, or country observation is yet verified. India code verification in the public codelists is not proof of reporter observations.
+
+Current status: DSD and codelist metadata retrieval PASS; Portal dataset-to-dataflow crosswalk UNKNOWN; public observation access BLOCKED pending a verifiable official Download/View Data route or an authorized beta-portal API schema. No aggregation permitted.
