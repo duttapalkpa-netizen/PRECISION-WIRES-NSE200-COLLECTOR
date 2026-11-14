@@ -1,11 +1,5 @@
 name: IMF BOP EMDE reporter coverage by exact dataflow
 on:
-  push:
-    branches:
-      - research/imf-bop-access-audit-v1
-    paths:
-      - ".github/workflows/imf_bop_emde_reporter_coverage.yml"
-      - "data/research/imf_weo_emde_to_bop_country_crosswalk_2026_04.csv"
   workflow_dispatch:
 permissions:
   contents: read
@@ -69,6 +63,7 @@ jobs:
               if not periods: continue
               if len(periods)!=len(set(periods)): raise ValueError("Duplicate period within reporter "+country)
               reporters[country]={"observation_count":n,"first_period":min(periods),"last_period":max(periods),"periods":sorted(periods)}
+            if not reporters: raise ValueError("Zero reporter series returned; reject empty wildcard/query response rather than reporting 0/154 as valid coverage")
             return {"reporters":reporters,"country_codelist_count":len(country_values),"country_codes_in_dimension": [x.get("id",x.get("value")) for x in country_values],"period_values":period_values,"series_dimension_ids":ids,"observation_dimension_ids":[x.get("id") for x in od]}
           results=[]
           for case in cases:
@@ -100,11 +95,11 @@ jobs:
             record={"name":case["name"],"requested_url":url,"series_key":case["key"],"status":status,"content_type":headers.get("Content-Type"),"final_url":final,"transport_error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse_ok":parsed.get("ok"),"parse_error":parsed.get("error"),"series_dimension_ids":parsed.get("series_dimension_ids"),"observation_dimension_ids":parsed.get("observation_dimension_ids"),"country_codelist_count":parsed.get("country_codelist_count"),"series_count_returned":len(reporter_codes),"emde_members":154,"emde_reporters_present":len(present),"emde_no_series_in_range":len(missing),"non_emde_reporters":len(extra),"present_codes":present,"missing_codes":missing,"extra_reporter_codes":extra,"reporters":parsed.get("reporters",{})}
             (out/(case["name"]+".json")).write_text(json.dumps(record,indent=2,ensure_ascii=False)+"\n")
             results.append(record)
-          summary={"dataset":"IMF.STA:BOP(21.0.0)","dsd":"IMF.STA:DSD_BOP(24.0.0)","frequency":"Q","period_range":"2015-Q1 to 2025-Q4","emde_members":154,"results":[{"name":r["name"],"status":r["status"],"bytes":r["bytes"],"sha256":r["sha256"],"parse_ok":r["parse_ok"],"series_count_returned":r["series_count_returned"],"emde_reporters_present":r["emde_reporters_present"],"emde_no_series_in_range":r["emde_no_series_in_range"],"non_emde_reporters":r["non_emde_reporters"],"missing_codes":r["missing_codes"],"parse_error":r["parse_error"]} for r in results],"acceptance":{"both_http_200_and_parsed":all(r["status"]==200 and r["parse_ok"] for r in results),"coverage_is_observation_based":True,"no_aggregation_performed":True}}
+          summary={"dataset":"IMF.STA:BOP(21.0.0)","dsd":"IMF.STA:DSD_BOP(24.0.0)","frequency":"Q","period_range":"2015-Q1 to 2025-Q4","emde_members":154,"results":[{"name":r["name"],"status":r["status"],"bytes":r["bytes"],"sha256":r["sha256"],"parse_ok":r["parse_ok"],"series_count_returned":r["series_count_returned"],"emde_reporters_present":r["emde_reporters_present"],"emde_no_series_in_range":r["emde_no_series_in_range"],"non_emde_reporters":r["non_emde_reporters"],"missing_codes":r["missing_codes"],"parse_error":r["parse_error"]} for r in results],"acceptance":{"both_http_200_and_parsed":all(r["status"]==200 and r["parse_ok"] for r in results),"both_queries_return_nonzero_reporter_series":all(r["series_count_returned"]>0 for r in results),"coverage_is_observation_based":True,"no_aggregation_performed":True}}
           (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
           print(json.dumps(summary,indent=2,ensure_ascii=False))
-          if not summary["acceptance"]["both_http_200_and_parsed"]:
-            raise SystemExit("At least one all-country coverage query failed or did not parse")
+          if not summary["acceptance"]["both_http_200_and_parsed"] or not summary["acceptance"]["both_queries_return_nonzero_reporter_series"]:
+            raise SystemExit("At least one all-country coverage query failed, did not parse, or returned zero reporters")
           PY
       - name: Upload raw data responses and coverage matrix
         if: always()
