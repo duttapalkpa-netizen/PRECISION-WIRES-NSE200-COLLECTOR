@@ -131,3 +131,26 @@ Report workstream percentages separately from evidence status. Percentage means 
 - IMF BOP acceptance-gate progress remains 3/7 PASS (43%); the WEO membership subtask is 153/154 mapped (99.4% mapping coverage) but is NOT an accepted gate because one geography remains UNKNOWN. Do not count a partial subtask as a fully completed gate. Keep work-package progress separate from gate acceptance and production readiness.
 - Project-wide verified overall progress: NOT_CALCULABLE until complete acceptance ledger and weights are reconciled. Prior project Hard Gate remains BLOCKED; prior Macro-Geo P0 7/8, Factor Registry 0/35 complete available groups, Historical Regime 9/11, Event Study exploratory/not mature must be revalidated before being stated as current.
 - No observation rows acquired; no EM portfolio-flow aggregate calculated; no production integration. Research spend ₹0; no paid API; no synthetic rows or timestamps. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and CORE-672 unchanged.
+
+
+## 2026-11-14 — Superseding update: WEO EMDE to IMF CL_AREA crosswalk
+
+This entry supersedes the immediately preceding 153/154 partial-mapping status above. Prior entries and failed-run evidence remain preserved.
+
+- Final workflow Run ID: 43600131132 — SUCCESS; all six workflow steps completed.
+- Workflow commit: `9db5d4e7bb14ef9b23321db6918e4f91ae9840f8`.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43600131132
+- Artifact ID: 14115992695.
+- Artifact ZIP SHA-256: `2fcdc5dc4e896791875092bae7bb33c3d7e4d3e3df6eb642c16f9f00bd5d5ac9`.
+- Verified final membership: 154 WEO April 2026 EMDE names; 154 unique IMF CL_AREA 2.0.0 codes; 0 unmapped; 0 ambiguous; 0 duplicate code assignments.
+- India maps to IN by exact normalized match.
+- West Bank and Gaza maps to PS using the official IMF CPIS Data Template, which lists PS as “West Bank and Gaza Strip”; current CL_AREA 2.0.0 labels PS “Palestine, State of”. The separate CL_AREA code XG (“Gaza and Jericho”) is not used. The evidence URL is https://data.imf.org/-/media/iData/External-Storage/Documents/00DA1FBD843040C89781AF28C926168F/en/CDIS-Data-Template.pdf. This is a statistical area-code continuity mapping, not a legal-status assertion.
+- Final raw WEO PDF SHA-256: `b8a538c3158bf0553a3ae45d4797cd5648cbea684eb4be848a52c1d64d994395`.
+- Final raw CL_AREA XML SHA-256: `98e3d5368a6d2a8fcb93dc274501bdecab478136d7882b49d5c9a592e18f6391`.
+- Final crosswalk JSON SHA-256: `91fd83c52efaf0f10c1ad2c275c23b343b607ef628bd0408a9b2edc4d4bbdbc8`.
+- Final membership CSV SHA-256: `27f1f996dd84618ce5e7c2137de56b661ce0f4cedb49b2a37677159be6651b85`.
+- Artifact was downloaded again; all four files were inspected and their hashes verified. Evidence report: `docs/IMF_WEO_EMDE_CL_AREA_CROSSWALK_AUDIT_20261114.md`, report commit `6ef3e4561b9de4e09d10693e7858415954f56287`.
+- The WEO membership and IMF area-code mapping gate is now PASS. On the previously defined seven-gate IMF BOP workstream rubric, this advances accepted gates from 3/7 (43%) to 4/7 (57%). The remaining dataflow-to-registry crosswalk, India BOP observation acquisition/reconciliation, and EM aggregation gates are still UNKNOWN/BLOCKED/NOT_DONE as applicable.
+- This membership PASS does NOT establish BOP observation coverage for all 154 economies and does NOT authorize any EM flow aggregate. No BOP observations or aggregate were created.
+- Project-wide verified overall progress remains NOT_CALCULABLE pending reconciliation of the full multi-workstream acceptance ledger and current gate weights.
+- Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 diagnostics, engines and Hard Gate were not modified. ₹0 spend; free official sources only; no synthetic observations or timestamps.
