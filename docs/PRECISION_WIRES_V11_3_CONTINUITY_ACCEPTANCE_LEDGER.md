@@ -339,3 +339,20 @@ Run an EMDE reporter-coverage audit against the exact Portal DSD_BOP(24.0.0) usi
 - Integrity Run #43624431543 SUCCESS; commit `60b7a7819048e16c122a0ec760753353d805607c`; artifact ID 14125337955; ZIP SHA-256 `3ae91eae37286936b797719e2e7ae765e53fdba00916974ccbd2f553a4f4b9ee`.
 
 Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. It does not prove observations exist for any country. The actual 154-economy reporter coverage gate remains NOT DONE until exact BOP response series are queried and reporter codes compared separately for assets/liabilities and frequency. EM aggregation remains BLOCKED. No aggregation or production changes.
+
+
+## 2026-11-14 — India BOP liabilities and quarterly portfolio series; annual/quarterly reconciliation
+
+- Acquisition workflow Run #43623518481 — SUCCESS. Workflow file `.github/workflows/imf_bop_india_liability_quarterly.yml`; initial diagnostic Run #43623450125 FAILED only because the parser incorrectly treated SDMX dataset attributes as a dictionary. Raw responses were retained. The parser was corrected to respect the SDMX ordered attribute-array shape; no endpoint/key changes were made.
+- Fix commit: `111167ff11fbba42b226d8ee33634f111be0a893`.
+- Successful run artifact ID `14125515371`; artifact ZIP SHA-256 `4127f4b691e46967dc8e0f91d6ff5536e9bc01224de0d488f90e5a4acd13327c`.
+- Dataset identity remained IMF.STA:BOP(21.0.0), DSD IMF.STA:DSD_BOP(24.0.0).
+- India annual portfolio liabilities `IND.L_NIL_T.P_F.USD.A`: HTTP 200, 11 observations, 2015–2025, 7,846 bytes, raw SHA-256 `6eba68f8779efa5636afea8d4a9de4ce26478c67150144c1e4f128e4f6d3a4e4`.
+- India quarterly portfolio assets `IND.A_NFA_T.P_F.USD.Q`: HTTP 200, 44 observations, 2015-Q1–2025-Q4, 10,201 bytes, raw SHA-256 `aff39180e21eec8f71308ac269f9191eb0138b5471808bfa710c6a582be1d24f`.
+- India quarterly portfolio liabilities `IND.L_NIL_T.P_F.USD.Q`: HTTP 200, 44 observations, 2015-Q1–2025-Q4, 10,185 bytes, raw SHA-256 `6ebe3c2eabd7f9019ffd80d51e01de359bc1f64aee66c8609877654ad4558ccc`.
+- All three exact series keys were checked; parser verified exact dimension IDs/order and requested key values, unique periods, non-null finite observations. Raw response bodies and parsed observations retained in artifact.
+- Compared quarterly sums to annual observations for 2015–2025. All 11 years reconcile for both asset and liability sides within USD 0.00001. Maximum absolute decimal-string difference: assets USD 0.0000009; liabilities USD 0.0000070. These are representation-level differences; no material mismatch.
+- Reconciliation report committed: `docs/IMF_BOP_INDIA_ANNUAL_QUARTERLY_RECONCILIATION_20261114.md`, commit `8705031c06a9d6dfafd19770541863715b280e17`.
+- India narrow portfolio slice acquisition + annual/quarterly arithmetic reconciliation: PASS. This does not establish full India BOP panel, revisions/vintages, 154-economy EMDE coverage, or EM aggregation. EM aggregate flow remains BLOCKED.
+- Initial failed diagnostic Run #43623450125 is retained as history, not counted as a data-access failure: it returned HTTP 200 for all three requests and the subsequent successful parser-only fix passed.
+- Invariants unchanged: ₹0 spend; official public sources only; no synthetic values/timestamps; no login or bypass; no PR merge or production integration; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and Hard Gate unchanged.
