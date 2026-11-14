@@ -1,0 +1,73 @@
+name: IMF BOP Portal SDMX 2.1 public structure endpoint probe
+on:
+  push:
+    branches:
+      - research/imf-bop-access-audit-v1
+    paths:
+      - ".github/workflows/imf_bop_portal_sdmx21_structure_probe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imf-bop-portal-sdmx21-structure-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe only the documented IMF Data Portal SDMX 2.1 structure resource
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p imf-bop-sdmx21-probe
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from datetime import datetime,timezone
+          out=Path("imf-bop-sdmx21-probe")
+          base="https://api.imf.org/external/sdmx/2.1/structure/dataflow/IMF.STA/BOP/21.0.0"
+          probes={
+            "sdmx21_xml":(base+"?references=all", "application/vnd.sdmx.structure+xml;version=2.1"),
+            "sdmx21_json":(base, "application/vnd.sdmx.structure+json;version=1.0.0")
+          }
+          def local(e): return e.tag.rsplit("}",1)[-1]
+          results={}
+          for key,(url,accept) in probes.items():
+            req=urllib.request.Request(url,headers={"User-Agent":"PRECISION-WIRES-V11.3-research/1.0","Accept":accept})
+            try:
+              with urllib.request.urlopen(req,timeout=25) as r:
+                status=r.status; headers=dict(r.headers.items()); final=r.geturl(); body=r.read(); err=None
+            except urllib.error.HTTPError as e:
+              status=e.code; headers=dict(e.headers.items()) if e.headers else {}; final=e.geturl(); body=e.read(); err="HTTPError"
+            except Exception as e:
+              status=None; headers={}; final=url; body=b""; err=type(e).__name__+": "+str(e)
+            (out/(key+".body")).write_bytes(body)
+            parsed={"xml_ok":False,"root":None,"dataflows":[],"dsds":[],"error":None}
+            if status==200 and ("xml" in headers.get("Content-Type","").lower() or body.lstrip().startswith(b"<")):
+              try:
+                root=ET.fromstring(body); parsed["root"]=local(root)
+                for e in root.iter():
+                  if local(e)=="Dataflow":
+                    refs=[{k:x.attrib.get(k) for k in ("agencyID","id","version")} for x in e.iter() if local(x)=="Ref" and x.attrib.get("class")=="DataStructure"]
+                    parsed["dataflows"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version"),"dsd_refs":refs})
+                  elif local(e)=="DataStructure":
+                    parsed["dsds"].append({"agency":e.attrib.get("agencyID"),"id":e.attrib.get("id"),"version":e.attrib.get("version")})
+                parsed["xml_ok"]=True
+              except Exception as e: parsed["error"]=type(e).__name__+": "+str(e)
+            record={"requested_url":url,"accept":accept,"status":status,"headers":headers,"final_url":final,"error":err,"bytes":len(body),"sha256":hashlib.sha256(body).hexdigest(),"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"parse":parsed}
+            results[key]=record
+            (out/(key+"_result.json")).write_text(json.dumps(record,indent=2,ensure_ascii=False)+"\n")
+          summary={"retrieved_at_utc":datetime.now(timezone.utc).isoformat(),"probes":results,"interpretation_rules":{"HTTP_200_XML_with_exact_Dataflow_and_DSD_reference":"metadata candidate retrieved; not proof of observation access or Portal dataset crosswalk without matching official dataset identity","HTTP_400_or_404":"candidate route/representation rejected; retain exact response","scope":"Unauthenticated read-only structure metadata only. No data query and no guessed dimension key."}}
+          (out/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n")
+          print(json.dumps({k:{"status":v["status"],"content_type":v["headers"].get("Content-Type"),"bytes":v["bytes"],"sha256":v["sha256"],"final_url":v["final_url"],"error":v["error"],"parse":v["parse"]} for k,v in results.items()},indent=2,ensure_ascii=False))
+          PY
+      - name: Upload exact response bodies and probe metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-portal-sdmx21-probe-${{ github.run_id }}
+          path: imf-bop-sdmx21-probe/
+          if-no-files-found: error
+          retention-days: 90
