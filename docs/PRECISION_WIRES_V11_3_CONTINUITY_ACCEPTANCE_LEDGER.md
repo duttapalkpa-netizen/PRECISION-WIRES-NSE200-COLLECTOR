@@ -657,3 +657,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - BOP dataset metadata VERIFIED; document metadata VERIFIED; PDF bytes/body NOT_RETRIEVED; six-country eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
 - Audit report commit: `a0f4fb1d8c0132090b1652f25b71507868bbcae1`.
 - No credentials, paid services, external contact, synthetic data or production changes used.
+
+
+## 2026-11-15 — IMF BOP/IIP aggregate methodology safeguard
+
+- Official IMF BOP/IIP World and Country Group Aggregates page states country-group/world aggregates (except Euro Area) combine reported country data with estimates for nonreporting economies, using sources including WEO and External Wealth of Nations. Country-level information is based on direct IMF reports or National Summary Data Pages, with stated Fund Accounts exception for accounts between economies and IMF.
+- Therefore published EMDE/world aggregates do not prove every member country has directly reported quarterly data. Aggregate values cannot substitute for reporter-level observations or establish eligibility. Where decomposition is not exposed, reporter/nonreporter contribution is UNKNOWN.
+- Preserve hard gate: no EMDE aggregate promotion until reporter-level coverage and provenance are independently established; no estimate backfill or synthetic rows.
+- Methodology statement VERIFIED; October 2025 PDF bytes/body NOT_RETRIEVED; six-country October inclusion UNKNOWN; quarterly eligibility UNKNOWN; quarterly coverage NOT PASS; EMDE aggregation BLOCKED.
+- Updated audit report commit: `b04b09e1ae82847375d0dc333af62004423b6e10`.
+- No data rows created, estimates substituted, credentials/paid services/external contact or production changes.
