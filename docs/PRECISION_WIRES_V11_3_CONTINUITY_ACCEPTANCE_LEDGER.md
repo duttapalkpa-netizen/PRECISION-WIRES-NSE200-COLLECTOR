@@ -789,3 +789,48 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 ### Report reference
 - `docs/NSE_RSS_RUN_43558025207_ARTIFACT_INTEGRITY_AUDIT_20261114.md`
 - Report commit: `802eb34cc04dd44686c4dbc3d69d867b72cefcb4`
+
+
+## 59. NSE RSS issuer cohort and symbol-candidate audit — 2026-11-14
+
+### Exact source
+- GitHub Actions run `43558025207`, artifact ID `14098814399`.
+- ZIP SHA-256 `ca0649032c67fd4519bce66d2dd6cd61805efbd2f9f7f0612fa88b05cedec517`.
+- Parsed JSONL SHA-256 `fa17c0c89ebc10321821aa54fe5f5eaf7c488ddbd2e3a4d32ac0aa2e49c9b60d`.
+
+### Cohort reconciliation
+- 190 total RSS rows.
+- 155 `Declaration of NAV` rows are mutual-fund/ETF scheme NAV disclosures, not listed-company corporate events. Keep in a separate NAV stream; exclude from equity issuer-symbol and equity-return joins.
+- 35 non-NAV rows have official NSE archive links and represent 20 distinct corporate-issuer titles.
+- Repeated events are preserved; e.g. Fusion CX 8, Religare 3, SRIT India 3, Tamilnadu Telecommunication 3, Kothari Petrochemicals 2, Transteel 2.
+
+### Filename tokens
+- Extracted 22 distinct leading filename tokens, but these are candidate source naming strings, not certified NSE symbols: `AJAX123`, `COALINDIA`, `FUSIONCX`, `GOLDIAM`, `HAIQUE`, `KOTHARIPET`, `OPTIVALUETEK`, `ORIANA`, `PARKMEDIWORLD2025`, `REG30_PARA_B_27796_WebXMLFile`, `RELIGARE`, `SAIIM_2677_WebXMLFile`, `SREEL`, `SRIT`, `SUNSHINE123`, `Sencogold`, `TIMESCAN`, `TNTELE`, `TRANSTEEL`, `VATECH`, `VIAZTYRES`, `VIBHOR`.
+- Do not normalize, truncate or promote filename tokens to symbols.
+
+### Official-master evidence boundary
+- NSE official Securities Available for Trading page lists Equity CSV and Changes in Symbols CSV; NSE market-data documentation describes Security Master fields (symbol, ISIN, security code, series).
+- Repository `collector/security_master.py` identifies official `EQUITY_L.csv` source (blob `044e39ceef4dbb05f9e7942514f59aa724efdf9a`).
+- Official CSV bytes were not acquired/hashed here; no dated 14-Nov-2026 master snapshot is in the RSS artifact. Therefore authoritative symbol matches recorded: 0; all symbol mappings remain UNKNOWN pending dated master and issuer evidence.
+
+### Safe join rules
+- Separate NAV disclosures from equity events.
+- Preserve raw title, description, pubDate, link, filename token and event rows.
+- Acquire/hash official dated security master and symbol/company-name change history.
+- Match legal issuer names/ISIN with exact evidence; ambiguous/absent matches remain UNKNOWN.
+- Validate against official announcement attachment/XBRL issuer identifiers before event-to-price joins.
+- Preserve repeated disclosures; do not deduplicate by title.
+
+### Status
+- Snapshot cohort classification: 100%.
+- NAV/equity separation: 100%.
+- Filename token extraction: 100%.
+- Dated official master acquisition/hash: 0%.
+- Authoritative issuer-symbol mapping: 0% / UNKNOWN.
+- Attachment validation/event-price join: 0% / BLOCKED.
+- No code/data/selector/ranking/diagnostic/workflow/production changes; no PR/merge.
+- Overall project: NOT CALCULABLE; Hard Gate BLOCKED.
+
+### Report reference
+- `docs/NSE_RSS_ISSUER_COHORT_AND_SYMBOL_CANDIDATE_AUDIT_20261114.md`
+- Report commit: `d3f30ea6fe1a029efd0c15d27314cfab95e17e3e`
