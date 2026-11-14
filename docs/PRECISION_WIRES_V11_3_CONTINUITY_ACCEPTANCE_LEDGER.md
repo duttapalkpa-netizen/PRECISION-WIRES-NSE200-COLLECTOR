@@ -733,3 +733,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next action: inspect BOP_AGG View Data/Download only to determine whether individual country tables can be exported as raw country observations with an identifiable release vintage. Require exact series/dimension match; otherwise reject as non-equivalent.
 - No data/CSV/manifest mutation, no inferred vintage, no new gate promotion, no production change or PR merge.
 - Report update commit: f83f7b5dadfc7294abc6779a10dff88308f389b6.
+
+## 2026-11-15 — BOPSY country-table export affordance audit
+
+- Retrieved and inspected the complete official 31-page November 2025 BOPSY Explanatory Notes PDF.
+- It states individual country tables are in the "Summary of International Transactions and Positions" table and data can be customized for viewing/download (PDF pp. 3-4). India BOP last reported period is 2024 (PDF p. 8).
+- The notes distinguish reported country-level information from world/group aggregates that can include WEO/EWN estimates for nonreporting economies. Aggregates are not reporter observations.
+- Public BOP_AGG page exposes VIEW DATA and DOWNLOAD controls; underlying table schema/export payload was not available in the retrieved public page text.
+- Exact India P_F series mapping, downloadable dated raw snapshot, and a second overlapping vintage remain UNKNOWN / NOT_DONE. Revision/vintage readiness remains NOT_READY.
+- Next action: resolve the official "Summary of International Transactions and Positions" dashboard/export target, then test one India country table export and inspect exact dimensions before any bulk retrieval.
+- No CSV/manifest mutation, no vintage inference, no gate promotion, no production changes, no PR merge.
+- Audit report update commit: 5a2d4187ffef4391234c2f54a9e0f686773953c3.
