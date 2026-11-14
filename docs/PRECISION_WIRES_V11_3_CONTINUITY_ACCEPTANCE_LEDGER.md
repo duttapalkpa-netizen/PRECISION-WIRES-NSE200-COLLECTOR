@@ -510,3 +510,12 @@ This appendix records verified work added after the ledger's 2026-11-08 reconcil
 - SEBI official FPI catalog confirms NSDL/CDSL parallel daily/monthly/archive routes (turn593944search0); CDSL portal exposes archive, fortnightly sector and trade-wise routes (turn593944search1, turn593944search6).
 - Scoped visible-row arithmetic validation PASS. Raw original workbook/download bytes, full row coverage, SHA-256 manifest, exact pagination/export contract, historical DII panel and rolling impact study remain NOT ACQUIRED / UNKNOWN / NOT RUN. Hard Gate BLOCKED. No synthetic data, no date-only join, no production selector/ranking/CORE-672 change, no PR/merge.
 - Audit report commit 8aa860f036f4cc950b7f04923563394264a32ffc, blob 0cd2d1abac898090880b849859ca98cbc384c6e8.
+
+
+## 44. CDSL 2026 YTD FPI aggregation and source inventory audited — 2026-11-14
+
+- Official CDSL archive “Total for 2026” at compilation 13-Nov-2026: Equity exchange net −₹210,855.26cr plus Primary & Others +₹69,275.84cr = Equity subtotal −₹141,579.42cr; arithmetic PASS. Other subtotals: Debt +₹57,469.39cr; Debt-VRR −₹18,196.58cr; Debt-FAR +₹29,960.14cr; Hybrid −₹6,715.12cr; MF +₹10,641.48cr; AIF −₹3.46cr; all-category total −₹137,699.41cr. Official source https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx (turn479037search0).
+- CDSL official FPI landing page inventory records calendar-year, financial-year, quarterly, fortnightly sector-wise, AUC, derivatives, trade-wise equity/debt and ODI/PN datasets; daily derivative reporting since 01-Dec-2010. Source https://www.cdslindia.com/Publications/ForeignPortInvestor.html (turn479037search2).
+- CDSL daily page 12-Nov-2026 equity subtotal +₹14,693.72cr and debt category figures retained as separate dated snapshot (turn479037search1). Explicitly noted that one-day positive equity flow does not negate negative 2026 YTD equity subtotal.
+- Scoped 2026 YTD aggregation arithmetic and archive inventory: PASS. Original daily archive/workbook bytes, full session history, raw SHA-256 manifest, DII historical export, exact coverage calendar, same-date NSE reconciliation and rolling impact study remain NOT ACQUIRED / NOT RUN. Hard Gate remains BLOCKED. No synthetic data, no date-only joins, no production selector/ranking/CORE-672 changes, no PR/merge.
+- Audit report commit ad9ccd04254f3e1221a2b4855cb3dcf33a41fc3f, blob 6c946f25b3b0cc8b4e4d6ab68e485e580df47310.
