@@ -44,3 +44,10 @@ Missing reporter observations remain UNKNOWN; WEO membership must never be treat
 ## Invariants
 
 Research-only; ₹0 spend; official free sources only; no paid APIs, no credentials/auth bypass, no synthetic data/timestamps, no external contact, no PR merge, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, all five engines and Hard Gate unchanged.
+
+
+## Independent integrity audit
+
+- Run #43624431543 — SUCCESS; workflow commit `60b7a7819048e16c122a0ec760753353d805607c`; artifact ID `14125337955`; artifact ZIP SHA-256 `3ae91eae37286936b797719e2e7ae765e53fdba00916974ccbd2f553a4f4b9ee`.
+- The validator re-read the committed CSV and verified SHA-256 `62ad409cc71c1056994a418e55b5e2a9367bd04c844a6bb5957bda5f0b0dd815`, 154 unique WEO names, 154 unique BOP country codes, 109 exact normalized matches, 45 explicit aliases, no duplicate codes, and the special Micronesia/West Bank and Gaza/Namibia checks.
+- Integrity result: **PASS**.
