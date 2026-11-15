@@ -19,16 +19,27 @@ def _valid_bar(row):
 
 def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
     """Entry next global session OPEN; stop -3%; target intraday HIGH; stop-first on ambiguous OHLC bar."""
-    if cost_pct < 0 or not np.isfinite(cost_pct):
+    if not np.isfinite(cost_pct) or cost_pct < 0:
         raise ValueError("cost_pct must be finite and non-negative")
-    dates=sorted(pd.to_datetime(bars["DATE"]).dropna().unique())
+    if not np.isfinite(target_pct) or target_pct <= 0:
+        raise ValueError("target_pct must be finite and positive")
+    if isinstance(horizon, bool) or int(horizon) != horizon or horizon <= 0:
+        raise ValueError("horizon must be a positive integer")
+    if not REQUIRED.issubset(bars.columns):
+        raise ValueError(f"bars missing required columns: {sorted(REQUIRED-set(bars.columns))}")
+    parsed_dates=pd.to_datetime(bars["DATE"],errors="coerce")
+    if parsed_dates.isna().any():
+        raise ValueError("invalid DATE values")
+    if bars.assign(_DATE=parsed_dates).duplicated(["SYMBOL","_DATE"]).any():
+        raise ValueError("duplicate SYMBOL/DATE keys")
+    dates=sorted(parsed_dates.unique())
     cutoff=pd.Timestamp(cutoff)
     future=[d for d in dates if d>cutoff]
     if len(future)<horizon:
         return _empty(cutoff,symbol,target_pct,horizon,"HORIZON_NOT_MATURED",cost_pct)
     window_dates=future[:horizon]
     indexed=bars.copy()
-    indexed["DATE"]=pd.to_datetime(indexed["DATE"])
+    indexed["DATE"]=parsed_dates
     sym=indexed[indexed["SYMBOL"].astype(str).eq(str(symbol))].set_index("DATE")
     if cutoff not in sym.index:
         return _empty(cutoff,symbol,target_pct,horizon,"CUTOFF_SYMBOL_ROW_MISSING",cost_pct)
