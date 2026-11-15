@@ -984,3 +984,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Bounded official-index cross-check 100% complete; raw DBIE export NOT_RETRIEVED; remaining route interactive DBIE access or user-approved RBI support contact. Avoid repeating same searches.
 - Existing validation 11 quarters / 22 of 22 PASS_WITH_ROUNDING; IMF BOP 5/7=71.4%; vintage NOT_READY; full V11.3 NOT_CALCULABLE.
 - Report commit: edbd600b5f782a292ce1d462de1ebe241697caf5; report blob: 7ed1563e040d7a7189eefc4aa50fef869ef33d94.
+
+
+## 2026-11-15 — Independent MoSPI metadata cross-check and DBIE handoff protocol
+- New official source: MoSPI Compendium of Datasets and Registries in India 2024, Balance of Payments Statistics entry. It identifies RBI as source, quarterly frequency, All-India coverage, availability from 30-Jun-1990, PDF/MS Excel dissemination, and DBIE path Home > Statistics > External Sector > International Trade. https://new.mospi.gov.in/sites/default/files/publication_reports/Compendium_of_Datasets_and_Registries_in_India_2024_1.pdf
+- RBI April 2026 Guide confirms Table 42 quarterly / USD million / BPM6 and DBIE mappings; RBI export guide confirms Excel/PDF/Text/CSV export. https://rbi.org.in/scripts/PublicationsView.aspx?id=24094 ; https://dbieold.rbi.org.in/DBIE/doc/Exporting_report_data_%26_related_options.pdf
+- This is metadata/navigation evidence only; it does not establish current report access or retrieve raw Table 42 values. Exact report ID, schema, quarterly raw export and SHA-256 remain NOT_RETRIEVED.
+- Added non-repeating manual DBIE handoff checklist to the detailed audit report. Do not rerun already exhausted bulletin-index searches absent new access/evidence.
+- 2015-Q2 and 2021-Q2 remain NOT_RETRIEVED; no substitute data, numeric comparison or PASS claimed. Existing 11 quarters / 22/22 PASS_WITH_ROUNDING unchanged.
+- IMF BOP 5/7 = 71.4%; IMF vintage NOT_READY / NOT_VERIFIED; overall V11.3 NOT_CALCULABLE. Raw DBIE export acquisition 0%.
+- No CSV/manifest/sidecar/prior PASS artifact or production logic changed; invariants preserved.
+- Detailed report commit: 212cf0a6b458c7f9e24262c4ef7f596aaa938004; report blob: 62d7b9c63e974ce735f622b95d112513b599fd2d.
