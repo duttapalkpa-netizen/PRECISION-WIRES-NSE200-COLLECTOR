@@ -68,5 +68,48 @@ class CutoffSafeCalibrationTests(unittest.TestCase):
         self.assertIsNone(result["SIGNAL_TIMESTAMP"])
 
 
+
+
+class ForwardOutcomeWindowTests(unittest.TestCase):
+    def test_h3_uses_exact_next_three_rows_not_trailing_window(self):
+        from pipeline.walk_forward_backtest import future_outcomes
+        frame = pd.DataFrame({
+            "SYMBOL": ["A"] * 6,
+            "DATE": pd.date_range("2026-01-01", periods=6),
+            "CLOSE_PRICE": [100.0] * 6,
+            "HIGH_PRICE": [101.0, 102.0, 110.0, 103.0, 104.0, 150.0],
+        })
+        out = future_outcomes(frame)
+        # At T0, only T+1..T+3 are eligible; the 150 at T+5 is excluded.
+        self.assertAlmostEqual(out.loc[0, "FUT3_HIGH_PCT"], 10.0)
+        # At T1, T+1..T+3 = rows 2..4, max 110.
+        self.assertAlmostEqual(out.loc[1, "FUT3_HIGH_PCT"], 10.0)
+
+    def test_h5_requires_all_five_future_rows_and_no_partial_tail(self):
+        from pipeline.walk_forward_backtest import future_outcomes
+        frame = pd.DataFrame({
+            "SYMBOL": ["A"] * 6,
+            "DATE": pd.date_range("2026-01-01", periods=6),
+            "CLOSE_PRICE": [100.0] * 6,
+            "HIGH_PRICE": [101.0, 102.0, 103.0, 104.0, 105.0, 120.0],
+        })
+        out = future_outcomes(frame)
+        self.assertAlmostEqual(out.loc[0, "FUT5_HIGH_PCT"], 20.0)
+        self.assertTrue(out.loc[1:, "FUT5_HIGH_PCT"].isna().all())
+
+    def test_h1_and_close_labels_use_next_session_only(self):
+        from pipeline.walk_forward_backtest import future_outcomes
+        frame = pd.DataFrame({
+            "SYMBOL": ["A"] * 3,
+            "DATE": pd.date_range("2026-01-01", periods=3),
+            "CLOSE_PRICE": [100.0, 105.0, 130.0],
+            "HIGH_PRICE": [101.0, 106.0, 131.0],
+        })
+        out = future_outcomes(frame)
+        self.assertAlmostEqual(out.loc[0, "FUT1_HIGH_PCT"], 6.0)
+        self.assertAlmostEqual(out.loc[0, "FUT1_CLOSE_PCT"], 5.0)
+        self.assertTrue(pd.isna(out.loc[2, "FUT1_HIGH_PCT"]))
+
+
 if __name__ == "__main__":
     unittest.main()
