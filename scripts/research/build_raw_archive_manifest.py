@@ -38,7 +38,10 @@ def main() -> int:
     blockers = []
     for path in files:
         match = re.search(r"(\d{8})$", path.stem)
-        expected = datetime.strptime(match.group(1), "%d%m%Y").date() if match else None
+        try:
+            expected = datetime.strptime(match.group(1), "%d%m%Y").date() if match else None
+        except ValueError:
+            expected = None
         digest = hashlib.sha256()
         with path.open("rb") as stream:
             for chunk in iter(lambda: stream.read(1024 * 1024), b""):
@@ -83,7 +86,10 @@ def main() -> int:
         })
 
     sessions_path = RAW / "sessions.txt"
-    listed_sessions = sorted(x.strip() for x in sessions_path.read_text().splitlines() if x.strip()) if sessions_path.exists() else []
+    listed_sessions = [x.strip() for x in sessions_path.read_text().splitlines() if x.strip()] if sessions_path.exists() else []
+    if len(listed_sessions) != len(set(listed_sessions)):
+        blockers.append("sessions.txt contains duplicate dates")
+    listed_sessions = sorted(listed_sessions)
     file_dates = sorted(r["expected_date"] for r in records if r["expected_date"])
     missing_files = sorted(set(listed_sessions) - set(file_dates))
     unlisted_files = sorted(set(file_dates) - set(listed_sessions))
