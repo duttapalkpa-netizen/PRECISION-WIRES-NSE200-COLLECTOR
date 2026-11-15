@@ -60,7 +60,11 @@ class ParserTests(unittest.TestCase):
 
 
     def test_audit_blocks_count_match_without_source_provenance(self):
-        rows = self.parse("0111 0111")
+        # Keep the table heading marked, but deliberately omit provenance on the row.
+        rows = parse_source_lines([
+            "L10330@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+            "0111 0111",
+        ])
         report = audit(rows, expected_count=1)
         self.assertEqual(report["row_count"], 1)
         self.assertFalse(report["provenance_complete"])
