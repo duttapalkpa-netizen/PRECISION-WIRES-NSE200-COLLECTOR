@@ -17,7 +17,7 @@ def _valid_bar(row):
     o,h,l,c=map(float,vals)
     return h >= max(o,l,c) and l <= min(o,h,c) and float(row["TTL_TRD_QNTY"]) > 0
 
-def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
+def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT, global_dates=None):
     """Entry next global session OPEN; stop -3%; target intraday HIGH; stop-first on ambiguous OHLC bar."""
     if not np.isfinite(cost_pct) or cost_pct < 0:
         raise ValueError("cost_pct must be finite and non-negative")
@@ -32,7 +32,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
         raise ValueError("invalid DATE values")
     if bars.assign(_DATE=parsed_dates).duplicated(["SYMBOL","_DATE"]).any():
         raise ValueError("duplicate SYMBOL/DATE keys")
-    dates=sorted(parsed_dates.unique())
+    dates=sorted(parsed_dates.unique()) if global_dates is None else list(global_dates)
     cutoff=pd.Timestamp(cutoff)
     future=[d for d in dates if d>cutoff]
     if len(future)<horizon:
@@ -98,10 +98,24 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
     if not {"CUT_OFF","SYMBOL"}.issubset(signals.columns): raise ValueError("Signals require CUT_OFF and SYMBOL")
     signals["CUT_OFF"]=pd.to_datetime(signals["CUT_OFF"],errors="coerce")
     if signals["CUT_OFF"].isna().any(): raise ValueError("Invalid signal cutoff")
+    global_dates=sorted(bars["DATE"].drop_duplicates())
+    # Pre-partition once. The prior implementation copied and reparsed the
+    # entire 500k-row universe for every signal, making 6k signals quadratic.
+    # Each replay now scans only that symbol's observed rows while preserving
+    # the global-session calendar for missing-session fail-closed checks.
+    bars_by_symbol={
+        str(symbol): group.reset_index(drop=True)
+        for symbol,group in bars.groupby("SYMBOL",sort=False)
+    }
     rows=[]
     for s in signals[["CUT_OFF","SYMBOL"]].drop_duplicates().itertuples(index=False):
+        symbol=str(s.SYMBOL)
+        symbol_bars=bars_by_symbol.get(symbol)
         for target,horizon in TARGETS:
-            row=simulate_one(bars,s.CUT_OFF,s.SYMBOL,target,horizon,cost_pct)
+            if symbol_bars is None:
+                row=_empty(s.CUT_OFF,symbol,target,horizon,"CUTOFF_SYMBOL_ROW_MISSING",cost_pct)
+            else:
+                row=simulate_one(symbol_bars,s.CUT_OFF,symbol,target,horizon,cost_pct,global_dates)
             row["SOURCE_FILE"]=str(data_path)
             rows.append(row)
     trades=pd.DataFrame(rows)
