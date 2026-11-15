@@ -840,3 +840,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - No changes to existing data, mapping, acceptance gates or vintage status; BOP revision readiness remains UNKNOWN / NOT_READY.
 - Next: only seek an archived official BOP flow country table/raw response matching the exact four keys; keep PIP out of current flow pipeline.
 - Audit report update commit: 3f0559e7ee90ee8b09ba4944493355316e9d6299.
+
+## 2026-11-15 — RBI official BPM6 quarterly BOP parallel-source contract
+
+- Inspected RBI April 2026 *Comprehensive Guide for Current Statistics of the RBI Monthly Bulletin* (page published 8 Oct 2026).
+- RBI Table 42 is Standard Presentation of India BoP as per BPM6, quarterly, US$ million, primary source RBI, revision policy "Data are subject to revision". It includes financial-account functional classification including Portfolio Investment and separate credit/debit/net presentation.
+- RBI Table 43 is same BPM6 presentation in ₹ crore. Table 40 is a different overall BoP presentation; do not conflate. Table 44 is IIP stock positions, not flow.
+- RBI says extended historical time series are available through DBIE in reusable formats; latest data may be provisional and revised.
+- This is an independent official India BOP flow source for parallel-source validation, not an automatic replacement for IMF and not a second IMF vintage.
+- Exact equivalence to IMF P_F / A_NFA_T / L_NIL_T four keys, direction/sign convention and quarter mapping UNKNOWN / NOT_ESTABLISHED. No DBIE export downloaded.
+- Next: inspect DBIE Table 42 actual export/schema and two dated RBI Bulletin snapshots with overlapping quarters. Require exact separate portfolio assets/liabilities and documented sign/frequency mapping before comparison.
+- Existing IMF CSV, manifest, sidecars, raw responses and gates unchanged.
+- Audit report update commit: d0398f3947ace3aea09691d733b98d312347128a.
