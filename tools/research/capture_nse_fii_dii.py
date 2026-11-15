@@ -48,8 +48,20 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 def safe_nse_url(url: str) -> bool:
-    host = (urlparse(url).hostname or "").lower()
-    return host == "nseindia.com" or host.endswith(".nseindia.com") or host == "nseindia.in" or host.endswith(".nseindia.in")
+    try:
+        parsed = urlparse(url)
+        host = (parsed.hostname or "").lower()
+        official_host = (host == "nseindia.com" or host.endswith(".nseindia.com")
+                         or host == "nseindia.in" or host.endswith(".nseindia.in"))
+        return (parsed.scheme == "https" and official_host and not parsed.username
+                and not parsed.password and parsed.port in (None, 443))
+    except ValueError:
+        return False
+
+def manifest_url(url: str) -> str:
+    """Retain host/path provenance without leaking query-string tokens."""
+    parsed = urlparse(url)
+    return parsed.scheme + "://" + parsed.netloc + parsed.path
 
 def write_bytes(path: Path, data: bytes):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -69,7 +81,7 @@ def main():
                             "Referer": REPORT})
     started = datetime.now(timezone.utc).isoformat()
     result = {"status": "ACCESS_BLOCKED", "started_at": started, "report_url": REPORT,
-              "api_url": API, "captures": {}, "errors": []}
+              "api_url": manifest_url(API), "captures": {}, "errors": []}
 
     try:
         page = session.get(REPORT, timeout=TIMEOUT)
@@ -94,6 +106,8 @@ def main():
         for item in choices:
             if item["scope"] in ("nse_only", "combined_nse_bse_msei"):
                 by_scope.setdefault(item["scope"], item)
+        if bool(args.nse_only_csv_url) != bool(args.combined_csv_url):
+            raise RuntimeError("Both CSV URL overrides must be supplied together")
         if args.nse_only_csv_url and args.combined_csv_url:
             supplied = {"nse_only": args.nse_only_csv_url,
                         "combined_nse_bse_msei": args.combined_csv_url}
@@ -128,7 +142,7 @@ def main():
             result["captures"][scope] = write_bytes(out / (scope + suffix), resp.content)
             result.setdefault("csv_http", {})[scope] = {
                 "status": resp.status_code, "content_type": resp.headers.get("Content-Type", ""),
-                "label": item["label"], "url": item["url"]
+                "label": item["label"], "url": manifest_url(item["url"])
             }
 
         result["status"] = "CAPTURED"
