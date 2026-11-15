@@ -38,6 +38,16 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def dynamic_ret20_v11_3(close_group, history_depth: pd.Series) -> pd.Series:
+    """Match V11.3's ret_window=min(20, n-1) at every historical cutoff."""
+    result = pd.Series(np.nan, index=history_depth.index, dtype=float)
+    for window in range(1, 21):
+        candidate = close_group.pct_change(window) * 100
+        mask = history_depth.eq(window + 1) if window < 20 else history_depth.ge(21)
+        result.loc[mask] = candidate.loc[mask]
+    return result
+
+
 def calibration_for_cutoff(date_state: pd.DataFrame, cutoff_idx: int,
                            min_samples: int = MIN_CALIBRATION_SAMPLES):
     """Return cutoff-safe state calibration; only outcomes matured by T count."""
@@ -123,7 +133,7 @@ def build(data_path: str, out_dir: str, min_samples: int = MIN_CALIBRATION_SAMPL
     x["RVOL20_V11_3"] = x["TTL_TRD_QNTY"] / prior_volume.replace(0, np.nan)
     close = g["CLOSE_PRICE"]
     x["CLOSE_LOW20"] = close.transform(lambda s: s.rolling(20, min_periods=1).min())
-    x["RET20_V11_3"] = close.pct_change(20) * 100
+    x["RET20_V11_3"] = dynamic_ret20_v11_3(close, x["HISTORY_DEPTH_AT_T"])
     x["ENERGY_V11_3"] = x["ENERGY"].astype(float)
     x["LEAD_TIME_V11_3"] = np.clip(
         50 + (x["RVOL20_V11_3"] - 1) * 15
