@@ -103,8 +103,10 @@ jobs:
                           if name == "dataflow":
                               refs = []
                               for e in node.iter():
-                                  if local(e.tag) == "DataStructureRef":
-                                      refs.append({k: e.attrib.get(k) for k in ("agencyID", "id", "version")})
+                                  if local(e.tag) == "Structure":
+                                      for ref in e.iter():
+                                          if local(ref.tag) == "Ref":
+                                              refs.append({k: ref.attrib.get(k) for k in ("agencyID", "id", "version")})
                               report["data_structure_refs"] = refs
                               expected_ref = {"agencyID": "IMF", "id": "BOP", "version": "2.6.0"}
                               report["expected_data_structure_ref"] = expected_ref
