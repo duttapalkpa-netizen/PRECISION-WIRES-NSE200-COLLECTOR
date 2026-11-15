@@ -40,7 +40,7 @@ jobs:
           mkdir -p evidence/imf_bop_dsd
           declare -A REQUESTS
           REQUESTS[dataflow]='https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
-          REQUESTS[constraint]='https://sdmxcentral.imf.org/sdmx/v2/structure/constraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          REQUESTS[constraint]='https://sdmxcentral.imf.org/sdmx/v2/structure/contentconstraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
           for ITEM in dataflow constraint; do
             URL="${REQUESTS[$ITEM]}"
             DIR="evidence/imf_bop_dsd/$ITEM"
