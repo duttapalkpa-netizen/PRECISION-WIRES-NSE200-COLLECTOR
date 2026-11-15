@@ -522,3 +522,22 @@ Report workstream percentages separately from evidence status. Percentage means 
 - NOT_VERIFIED: actual exact intraday information-availability timestamp; historical signal timestamp semantics.
 - BLOCKED: strict end-to-end no-lookahead acceptance until timestamp schema is corrected and CI/artifact regenerated. H+3/H+5 separate walk-forward label defect remains unresolved.
 - Next task: research-only timestamp semantic repair in the historical signal generator and cost-aware replay output, with targeted regression tests and a short CI run. Do not change production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or engines A-E.
+
+
+## 2026-11-16 — Research-only timestamp semantic repair committed; CI pending
+- Implemented on source branch `research/nse-raw-manifest-retention-20261115` (PR #37 branch; no merge/production change):
+  - Generator now writes `SIGNAL_AS_OF_DATE=YYYY-MM-DD` and leaves `SIGNAL_TIMESTAMP` null because input contains date-only OHLC and no verified publication/availability clock time.
+  - Cost-aware replay now carries the same date-only as-of key and null timestamp for both executable and excluded trades. Replay input rejects non-null `SIGNAL_TIMESTAMP` values to prevent reuse of fabricated midnight timestamps.
+  - Independent replay audit rejects non-null signal/trade timestamps and checks `SIGNAL_AS_OF_DATE` exactly equals `CUT_OFF`.
+  - Added three regression tests: generator timestamp semantics; executable replay preserves null timestamp/date key; excluded replay preserves null timestamp/date key.
+- Commits on source branch, in order:
+  - generator initial repair `fef1369eebae7ecc4783bbb1bc212e8f5a350ffb`
+  - replay propagation and fail-closed input check `01ff9f90e4df859d09e7667361ba48976fcd44d7`
+  - three timestamp regression tests `8074b203720a67ea3be5688fd0a5a195d193bd19`
+  - independent audit timestamp checks `6d98df1f69eab5b0ece745b3ba285c7d2ff36509`
+  - corrected Python quoting in helper `14c23b8933b70d448c81d267a182f68e12947fd7`
+  - workflow adds audit script trigger, stable pandas/numpy version ranges and disables in-progress cancellation `63c45276c49534a5e469ba219609d85da4f424c9`
+- Workflow retains 10-minute maximum because it also downloads/verifies raw archive, rebuilds the processed dataset and runs historical replay; unit test additions are small. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or A-E production code changed.
+- CI has been triggered by the final workflow commit; runtime conclusion must be fetched before claiming PASS. If workflow does not trigger, inspect branch/PR event wiring; do not infer success from commits.
+- Prior Run #21's 5,880 historical signals and 17,640 trade rows remain immutable historical evidence with misleading midnight timestamps; they are NOT corrected artifacts and must not be reused for final acceptance. New run must regenerate signals/replay and artifact hashes.
+- Status: code edits committed 100%; test source added 100%; independent audit guard added 100%; CI runtime NOT_VERIFIED; regenerated artifact 0%; strict no-lookahead acceptance BLOCKED until CI and new artifact checks pass.
