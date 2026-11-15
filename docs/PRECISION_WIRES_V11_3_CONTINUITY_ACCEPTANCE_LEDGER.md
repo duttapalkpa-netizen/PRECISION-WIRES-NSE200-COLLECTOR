@@ -460,3 +460,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Important interpretation: a symbol-level missing session is reported as a coverage gap but does not automatically fail the whole raw-to-processed key audit, because listings/suspensions/source availability require separate evidence. No missing row is synthesized. The audit is not yet run against the real Actions artifact because artifact ID/bytes are not available in the current connected session.
 - CI status is pending/not verified; source files and tests are committed but no runtime PASS is claimed.
 - Progress: audit utility implementation 100%; five test cases authored 100%; 5-minute workflow wiring 100%; GitHub ledger update 100%; CI runtime 0%/pending; actual artifact download/hash audit 0%; corrected replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
+
+
+### CI runtime update — 2026-11-16
+- The newly wired PR-triggered research workflow has now started: Run #35, ID `43747974395`.
+- Job `research-unit-tests`, job ID `132915404242`. At last inspection, checkout and Python setup completed; dependency installation was in progress; unittest step had not started. No conclusion/PASS yet.
+- The run is recorded as IN_PROGRESS, not PASS. Recheck this run before any replay or acceptance decision.
