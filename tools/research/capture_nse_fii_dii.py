@@ -59,6 +59,8 @@ def write_bytes(path: Path, data: bytes):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-dir", required=True, help="Local output directory; do not commit raw captures")
+    ap.add_argument("--nse-only-csv-url", help="Exact official NSE-only CSV URL copied from the NSE report page")
+    ap.add_argument("--combined-csv-url", help="Exact official NSE+BSE+MSEI CSV URL copied from the NSE report page")
     args = ap.parse_args()
     out = Path(args.out_dir).expanduser().resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -92,8 +94,16 @@ def main():
         for item in choices:
             if item["scope"] in ("nse_only", "combined_nse_bse_msei"):
                 by_scope.setdefault(item["scope"], item)
+        if args.nse_only_csv_url and args.combined_csv_url:
+            supplied = {"nse_only": args.nse_only_csv_url,
+                        "combined_nse_bse_msei": args.combined_csv_url}
+            for scope, url in supplied.items():
+                if not safe_nse_url(url):
+                    raise RuntimeError("CSV URL must use an official NSE domain")
+                by_scope[scope] = {"label": "user-supplied exact URL; verify against NSE page",
+                                   "url": url, "scope": scope}
         if set(by_scope) != {"nse_only", "combined_nse_bse_msei"}:
-            raise RuntimeError("Could not resolve two distinct official CSV links from report HTML; manual review required")
+            raise RuntimeError("Could not resolve two distinct official CSV links; supply exact URLs copied from NSE report page")
         if by_scope["nse_only"]["url"] == by_scope["combined_nse_bse_msei"]["url"]:
             raise RuntimeError("Official report controls resolved to the same URL; refusing ambiguous capture")
         result["official_csv_links"] = by_scope
