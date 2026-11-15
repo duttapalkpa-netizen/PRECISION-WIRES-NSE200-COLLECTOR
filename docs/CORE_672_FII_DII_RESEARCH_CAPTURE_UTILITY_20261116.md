@@ -53,3 +53,12 @@ Replace placeholders only with URLs copied from the two distinct official NSE re
 - Live API and official CSV capture: 0% / NOT_RUN.
 - API-to-table scope reconciliation: BLOCKED.
 - Production integration: 0% / NOT_AUTHORIZED.
+
+
+## 2026-11-16 quality hardening addendum
+- Source review found the first utility version accepted plain HTTP NSE URLs and retained CSV query strings in the local manifest. Hardened `safe_nse_url` to require HTTPS, an exact NSE-owned hostname or subdomain, no embedded username/password, and only default/443 port; malformed URLs return false.
+- Added `manifest_url` and applied it to API and CSV URL fields so query strings/fragments (which may contain tokens) are not written to the manifest. Both CSV URL overrides must be supplied together.
+- Added offline unit tests at `tools/research/tests/test_capture_nse_fii_dii.py`: official-host allowlist, hostile lookalike host rejection, HTTP rejection, credential/port rejection, malformed URL handling, query redaction, SHA-256 known vector, HTML anchor extraction, and byte-write hashing.
+- GitHub source hardening commit: `9e08de5aef60ae876a1fd91e32d4db7796487485`; final manifest-redaction correction commit: `e2876b213826fa951b9cef92c9e1155b1c6da80f`, source blob SHA `b5d59bd284df342927814335ed7e8357f71cf7a0`.
+- Offline test file commit: `66b7330e9b5980c3161f1f75f85eb8c372008a38`.
+- Execution boundary: this environment has no DNS/outbound network (raw GitHub fetch from the shell failed with name-resolution error). Therefore Python compile/test execution and live NSE capture remain NOT_RUN. The test suite is committed but not PASS until run in a Python environment with `requests` installed. No Actions/CI run was triggered.
