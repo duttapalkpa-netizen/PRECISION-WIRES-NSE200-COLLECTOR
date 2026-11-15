@@ -546,3 +546,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 ### CI trigger checkpoint — 2026-11-16
 - Final workflow commit `63c45276c49534a5e469ba219609d85da4f424c9` triggered PR Run #32, ID `43748694785`, event `pull_request`, head SHA matches the workflow commit, current status PENDING at last poll. No jobs had yet been returned by the jobs endpoint. This is pending, not PASS.
 - PR #37 remains OPEN; do not merge. Corrected artifacts and new SHA-256 values are pending the successful run.
+
+
+### Run #32 live checkpoint — 2026-11-16
+- Re-polled GitHub Actions run #32, ID `43748694785`, head SHA `63c45276c49534a5e469ba219609d85da4f424c9`: status IN_PROGRESS; job `historical-signals-and-replay`, ID `132917876701`, IN_PROGRESS.
+- Completed steps: job setup, checkout, Python setup. Current step: `Install minimal research dependencies` IN_PROGRESS. Archive download, manifest verification, dataset rebuild, historical signal generation, replay, independent audit, regression tests and artifact upload are still PENDING.
+- This is a queue/runtime checkpoint only. No CI PASS, no corrected artifact, no new hashes, and no acceptance promotion. Do not start a duplicate run while this one is active.
