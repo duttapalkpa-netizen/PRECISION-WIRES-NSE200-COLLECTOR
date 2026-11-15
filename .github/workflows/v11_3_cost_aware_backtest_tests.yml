@@ -31,4 +31,4 @@ jobs:
       - name: Install minimal numerical dependencies
         run: python -m pip install --disable-pip-version-check pandas numpy
       - name: Run isolated research replay tests
-        run: python -m unittest tests.research.test_v11_3_cost_aware_backtest -v
+        run: python -m unittest discover -s tests/research -p "test_v11_3_cost_aware_backtest.py" -v
