@@ -709,3 +709,39 @@ Re-fetched the committed V1 JSON Schema, V1 sidecar specification, India 110-row
 Do not backfill timestamps, URLs, HTTP metadata, query parameters, or raw response bodies from commit dates, run dates, artifact IDs, or memory. Do not create four incomplete/invalid sidecar files. Preserve the existing 110-row CSV, manifest and all original hashes unchanged. The next compliant sidecar can only be created during a new real public HTTP GET that captures the exact response body bytes and transport metadata at acquisition time; if public access is unavailable without sign-in, retain the gate as UNKNOWN/NOT_READY.
 
 This audit is a completed compatibility check, not a revision-history PASS and not a new data acquisition.
+
+## 30. Historical India raw response artifacts recovered; four V1 provenance sidecars created (2026-11-15)
+
+### Recovery breakthrough
+The previous bounded audit concluded that the CSV/manifest alone did not carry transport metadata or raw body bytes. Rather than fabricate fields, the original GitHub Actions artifacts were located and downloaded:
+- Artifact 14125515371 (run 43623518481): three raw response bodies and per-response JSON capture metadata (annual liabilities, quarterly assets, quarterly liabilities), plus summary.
+- Artifact 14122421554 (run 43616059985): annual assets exact `response.body` and `result.json` capture metadata.
+These are the original acquisition artifacts, not new IMF pulls.
+
+### Exact raw body verification
+For all four series, extracted exact response body bytes from the original workflow ZIP and independently recalculated SHA-256 and byte count. Each matched the original manifest/capture metadata:
+- Annual assets: 7,845 bytes; `85cca14cabf7a674ba37c00f88e3140f562480130bdde57d4902562fa6e0e23a`; retrieval 2026-11-14T16:31:30.767933Z.
+- Annual liabilities: 7,846 bytes; `6eba68f8779efa5636afea8d4a9de4ce26478c67150144c1e4f128e4f6d3a4e4`; retrieval 2026-11-14T17:53:17.958495Z.
+- Quarterly assets: 10,201 bytes; `aff39180e21eec8f71308ac269f9191eb0138b5471808bfa710c6a582be1d24f`; retrieval 2026-11-14T17:53:18.399962Z.
+- Quarterly liabilities: 10,185 bytes; `6ebe3c2eabd7f9019ffd80d51e01de359bc1f64aee66c8609877654ad4558ccc`; retrieval 2026-11-14T17:53:18.632136Z.
+All four capture records show HTTP 200, SDMX JSON content type, exact requested/final IMF API URLs and series-specific query parameters. Hash scope is the exact response body before parsing/transformation.
+
+### Sidecars created
+Four independent V1 JSON sidecars have been committed:
+- `data/research/provenance/india_portfolio_assets_usd_annual_2015_2025.provenance.v1.json`
+- `data/research/provenance/india_portfolio_liabilities_usd_annual_2015_2025.provenance.v1.json`
+- `data/research/provenance/india_portfolio_assets_usd_quarterly_2015_2025.provenance.v1.json`
+- `data/research/provenance/india_portfolio_liabilities_usd_quarterly_2015_2025.provenance.v1.json`
+
+Each sidecar preserves actual acquisition UTC time, requested/final URL, GET, exact series key, query parameters, HTTP 200, Content-Type, byte count and verified raw-body SHA-256. Sidecars deliberately use vintage status `NOT_VERIFIED` with null release date/ID: capture metadata does not establish that source vintage was inspected at acquisition. Retrieval time is not a release vintage.
+
+### Acceptance boundary
+- Historical raw body recovery: PASS (4/4).
+- Exact bytes/hash/byte-count cross-check: PASS (4/4).
+- Transport provenance completeness for V1 required fields: PASS (4/4).
+- Sidecar creation: PASS (4/4).
+- Vintage verification: UNKNOWN / NOT_VERIFIED (not promoted).
+- Revision-aware eligibility: NOT_READY pending actual source vintage evidence and at least two independently dated releases overlapping the same series-period keys.
+- Existing 110-row CSV and manifest unchanged. No new IMF pull, no synthetic data, no production change, no spend, no PR merge, no gate promotion.
+
+This supersedes only the earlier statement that the audited repository paths did not contain raw bodies: the original workflow artifacts have now been recovered. It does not retroactively create source-vintage evidence.
