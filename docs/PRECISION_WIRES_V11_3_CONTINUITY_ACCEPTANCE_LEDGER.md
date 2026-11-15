@@ -923,3 +923,17 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - IMF BOP workstream unchanged at 5/7 (71.4%); overall project progress NOT_CALCULABLE.
 - No source CSV/manifest mutation, no synthetic data, no source promotion, no production changes; all project invariants preserved.
 - Report commit: ce05f8cce05395488b3ac3726edbe94a1550bac8; report blob: a2fdc68e5606587ab302938216631f5a02f80af5.
+
+
+## 2026-11-15 — RBI BPM6 annual spot-check extension (2018–2023)
+- Official RBI sources: 18 Sep 2020 Table 198 (2018-Q2), https://www.rbi.org.in/scripts/PublicationsView.aspx?id=19931 ; 12 Oct 2020 Table 40 (2019-Q2, 2020-Q2), https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=19879 ; 19 Oct 2023 Table 40 (2022-Q2, 2023-Q2), https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=22169 .
+- 2018-Q2: RBI assets comparator -961, IMF -960.621114404864, diff 0.378885595136; liabilities -9106 vs -9105.960000000043, diff 0.039999999957.
+- 2019-Q2: assets +314 vs +313.590331450881, diff 0.409668549119; liabilities +5156 vs +5156.281990468391, diff 0.281990468391.
+- 2020-Q2: assets +456 vs +455.928583274424, diff 0.071416725576; liabilities +1098 vs +1097.593483845092, diff 0.406516154908.
+- 2022-Q2: assets -29 vs -28.778465336278, diff 0.221534663722; liabilities -14659 vs -14658.870488236891, diff 0.129511763109.
+- 2023-Q2: assets +358 vs +358.405859195828, diff 0.405859195828; liabilities +16089 vs +16089.227782268420, diff 0.227782268420.
+- 10/10 PASS_WITH_ROUNDING; 2021-Q2 exact USD-million official row NOT_RETRIEVED.
+- Cumulative checks: 11 quarters, 22/22 side comparisons PASS_WITH_ROUNDING. Q2 annual matrix 7/11 years (63.6%); 2015, 2021, 2024, 2025 not counted in this Q2 design. 2024–25 have separate quarterly checks.
+- RBI raw quarterly DBIE export NOT_RETRIEVED; IMF vintage NOT_READY / NOT_VERIFIED; IMF BOP workstream remains 5/7 (71.4%); whole V11.3 project NOT_CALCULABLE.
+- No CSV/manifest/sidecar changes, source promotion, synthetic data, or production changes.
+- Report commit: 142acef931f9d40257b2055ef607f7e51c08707f; report blob: 69adbb76e456cd19871d290da35c033c9f88eb28.
