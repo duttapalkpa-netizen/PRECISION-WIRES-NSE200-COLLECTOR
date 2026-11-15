@@ -1,11 +1,12 @@
 import csv
 import io
 import unittest
+from datetime import date
 import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from collector.nse_download import normalize_udiff, validate_archived_daily_file, validate_full_delivery
+from collector.nse_download import (iter_candidate_dates, normalize_udiff, validate_archived_daily_file, validate_full_delivery)
 
 
 class FullDeliveryDateIntegrityTests(unittest.TestCase):
@@ -116,6 +117,34 @@ class FullDeliveryDateIntegrityTests(unittest.TestCase):
 
     def test_udiff_rejects_invalid_expected_stamp(self):
         self.assertFalse(self.run_udiff(["14-11-2026"], stamp="invalid"))
+
+
+class BoundedShardDateIteratorTests(unittest.TestCase):
+    def test_inclusive_range_skips_weekends_and_is_newest_first(self):
+        dates = list(iter_candidate_dates(date(2026, 11, 9), date(2026, 11, 15),
+                                           date(2026, 11, 15), 500))
+        self.assertEqual(dates, [date(2026, 11, 13), date(2026, 11, 12),
+                                 date(2026, 11, 11), date(2026, 11, 10),
+                                 date(2026, 11, 9)])
+
+    def test_single_day_range_is_inclusive(self):
+        dates = list(iter_candidate_dates(date(2026, 11, 13), date(2026, 11, 13),
+                                           date(2026, 11, 15), 500))
+        self.assertEqual(dates, [date(2026, 11, 13)])
+
+    def test_weekend_only_range_is_empty(self):
+        dates = list(iter_candidate_dates(date(2026, 11, 14), date(2026, 11, 15),
+                                           date(2026, 11, 15), 500))
+        self.assertEqual(dates, [])
+
+    def test_rejects_reversed_range(self):
+        with self.assertRaises(ValueError):
+            list(iter_candidate_dates(date(2026, 11, 14), date(2026, 11, 13),
+                                      date(2026, 11, 15), 500))
+
+    def test_rejects_one_sided_range(self):
+        with self.assertRaises(ValueError):
+            list(iter_candidate_dates(date(2026, 11, 13), None, date(2026, 11, 15), 500))
 
 
 if __name__ == "__main__":
