@@ -26,6 +26,9 @@ jobs:
       max-parallel: 4
       matrix:
         include:
+          - shard: "00"
+            start: "2026-01-21"
+            end: "2026-02-08"
           - shard: "01"
             start: "2026-02-09"
             end: "2026-02-22"
@@ -119,7 +122,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Download all 20 isolated shard artifacts
+      - name: Download all 21 isolated shard artifacts
         uses: actions/download-artifact@v4
         with:
           pattern: nse-raw-shard-*
