@@ -57,6 +57,18 @@ def audit(data_path, signals_path, trade_path, metrics_path, signal_manifest_pat
     if sha256(metrics_file) != expected_hashes.get(metrics_file.name):
         blockers.append("METRICS_SHA_MISMATCH")
 
+    # Exact clock time is unknown for date-only OHLC inputs. Midnight must never be presented as an observed signal timestamp.
+    for label, frame in [("SIGNAL", signals), ("TRADE", trades)]:
+        if "SIGNAL_TIMESTAMP" not in frame.columns or frame["SIGNAL_TIMESTAMP"].notna().any():
+            blockers.append(f"{label}_TIMESTAMP_MUST_REMAIN_NULL")
+        if "SIGNAL_AS_OF_DATE" not in frame.columns:
+            blockers.append(f"{label}_AS_OF_DATE_MISSING")
+        else:
+            expected_dates = pd.to_datetime(frame["CUT_OFF"], errors="coerce").dt.strftime("%Y-%m-%d")
+            actual_dates = pd.to_datetime(frame["SIGNAL_AS_OF_DATE"], errors="coerce").dt.strftime("%Y-%m-%d")
+            if expected_dates.isna().any() or actual_dates.isna().any() or not expected_dates.equals(actual_dates):
+                blockers.append(f"{label}_AS_OF_DATE_MISMATCH")
+
     if signals.duplicated(["CUT_OFF", "SYMBOL"]).any():
         blockers.append("DUPLICATE_SIGNAL_CUTOFF_SYMBOL")
     if signals.empty:
