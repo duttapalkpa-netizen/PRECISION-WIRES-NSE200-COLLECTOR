@@ -777,3 +777,30 @@ The three response bodies in artifact 14125515371 and annual-assets body in arti
 Seek an independent dated IMF release/archive snapshot that contains the same four exact India series and overlapping reference periods. Compare only after proving both snapshots' exact dataflow/DSD, series keys, release dates/IDs and raw-body hashes. If no second dated snapshot is publicly available, preserve UNKNOWN and keep revision-aware research blocked.
 
 No existing CSV, manifest, sidecar, raw response or accepted gate was modified.
+
+## 31. Dated BOPSY 2024 publication snapshot suitability audit (2026-11-15)
+
+### Official dated publication located
+Located the official IMF PDF, *Balance of Payments Statistics: Introductory Notes, as of November 2024*:
+https://data.imf.org/-/media/iData/External-Storage/Documents/D7E2CE23AF2340EFA7932CF6CD7DD11A/en/BOP-Introductory-Notes-as-of-November-2024.pdf
+
+The document states that the BOPSY electronic release contains individual country data for all available periods and world/regional aggregates for 2005–2023; individual country tables and BOP/IIP metadata are published through the online database. It states the BOPSY data are BPM6-based. The country tables are distinct from the world/regional aggregates, where IMF staff estimates may fill missing country data. India is listed with reporting currency XDC (domestic currency) in Annex IV.
+
+The IMF Committee on BOP Statistics 2024 Annual Report independently states that annual BOP/IIP statistics through 2023 were published in BOPSY 2024, and that 195 economies reported BOP data in that release. This corroborates the existence and period of the dated annual publication, not the contents of India's exact raw series.
+
+### Series mapping context
+The November 2024 Introductory Notes standard presentation identifies portfolio investment assets and liabilities separately, and distinguishes equity/investment fund shares and debt securities. The 2024 release documentation therefore confirms the conceptual availability of portfolio assets/liabilities in country tables. It does not expose an archived raw SDMX response, exact `P_F` indicator mapping, exact `A_NFA_T`/`L_NIL_T` keys, or the four India series values in a machine-readable dated snapshot.
+
+### Vintage suitability decision
+- Dated BOPSY 2024 official publication/document lineage: PASS.
+- India country-table publication availability and reporting currency metadata: PASS at documentation level.
+- Raw India country table file or export for BOPSY 2024: NOT_RETRIEVED.
+- Exact equivalence to `IMF.STA:BOP(21.0.0)` / `DSD_BOP(24.0.0)` and the four India series keys: NOT_ESTABLISHED.
+- A second comparable raw snapshot for the 2015–2025 India series: NOT_ESTABLISHED.
+- BOPSY 2024 is NOT accepted as a second vintage for the existing 110-row panel. Do not substitute BOPSY country-table documentation or aggregate values for exact raw series observations.
+- Revision/vintage readiness remains UNKNOWN / NOT_READY; revision-aware backtest remains blocked.
+
+### Next action
+Use only an officially exposed country-table export/download from the dated BOPSY 2024 release, if the portal exposes it without authentication. Require raw bytes, dated release evidence, exact country and period keys, and a defensible mapping to the existing four series. If the portal only exposes the current live table or aggregate report, stop and preserve NOT_ESTABLISHED. No hidden endpoint guesses or login bypass.
+
+No existing CSV, manifest, sidecar, raw response, or accepted gate changed.
