@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "publisher": "International Monetary Fund",
+    "dataset_urn": "IMF.STA:BOP(21.0.0)",
+    "dataflow": "IMF.STA:BOP(21.0.0)",
+    "dsd": "IMF.STA:DSD_BOP(24.0.0)"
+  },
+  "request": {
+    "requested_url": "https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/IND.L_NIL_T.P_F.USD.Q?c%5BTIME_PERIOD%5D=ge%3A2015-Q1%2Ble%3A2025-Q4&dimensionAtObservation=TIME_PERIOD&attributes=all&detail=dataonly&limit=1000",
+    "final_url": "https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/IND.L_NIL_T.P_F.USD.Q?c%5BTIME_PERIOD%5D=ge%3A2015-Q1%2Ble%3A2025-Q4&dimensionAtObservation=TIME_PERIOD&attributes=all&detail=dataonly&limit=1000",
+    "method": "GET",
+    "series_key": "IND.L_NIL_T.P_F.USD.Q",
+    "query_parameters": {
+      "c[TIME_PERIOD]": "ge:2015-Q1+le:2025-Q4",
+      "dimensionAtObservation": "TIME_PERIOD",
+      "attributes": "all",
+      "detail": "dataonly",
+      "limit": "1000"
+    }
+  },
+  "response": {
+    "http_status": 200,
+    "content_type": "application/vnd.sdmx.data+json;version=2.0.0",
+    "retrieved_at_utc": "2026-11-14T17:53:18.632136Z",
+    "byte_count": 10185
+  },
+  "vintage": {
+    "status": "NOT_VERIFIED",
+    "release_date": null,
+    "release_id": null,
+    "evidence_url": null,
+    "notes": "Original acquisition artifact preserves transport metadata and exact response body bytes, but no source-vintage review is evidenced in the capture metadata. Keep vintage UNKNOWN; do not infer release date from retrieval timestamp."
+  },
+  "integrity": {
+    "sha256": "6ebe3c2eabd7f9019ffd80d51e01de359bc1f64aee66c8609877654ad4558ccc",
+    "hash_scope": "exact_response_body_bytes_before_parsing_or_transformation"
+  },
+  "research_controls": {
+    "research_only": true,
+    "synthetic_data": false,
+    "production_changed": false,
+    "spend_inr": 0
+  }
+}
