@@ -151,7 +151,11 @@ def main():
         result["status"] = "CAPTURED"
     except Exception as exc:
         # Do not serialize request headers/cookies or exception objects that may contain secrets.
-        result["errors"].append(type(exc).__name__ + ": " + str(exc)[:300])
+        # Exception text can contain a full request URL, including query tokens.
+        # Keep the exception class for diagnosis but never serialize its message.
+        result["errors"].append(
+            type(exc).__name__ + ": capture step failed; details omitted to prevent URL/token leakage"
+        )
     finally:
         result["completed_at"] = datetime.now(timezone.utc).isoformat()
         manifest = out / "capture_manifest.json"
