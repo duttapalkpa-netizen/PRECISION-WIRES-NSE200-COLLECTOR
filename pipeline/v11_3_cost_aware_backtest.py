@@ -17,7 +17,7 @@ def _valid_bar(row):
     o,h,l,c=map(float,vals)
     return h >= max(o,l,c) and l <= min(o,h,c) and float(row["TTL_TRD_QNTY"]) > 0
 
-def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
+def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT, global_dates=None):
     """Entry next global session OPEN; stop -3%; target intraday HIGH; stop-first on ambiguous OHLC bar."""
     if not np.isfinite(cost_pct) or cost_pct < 0:
         raise ValueError("cost_pct must be finite and non-negative")
@@ -32,7 +32,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
         raise ValueError("invalid DATE values")
     if bars.assign(_DATE=parsed_dates).duplicated(["SYMBOL","_DATE"]).any():
         raise ValueError("duplicate SYMBOL/DATE keys")
-    dates=sorted(parsed_dates.unique())
+    dates=sorted(parsed_dates.unique()) if global_dates is None else list(global_dates)
     cutoff=pd.Timestamp(cutoff)
     future=[d for d in dates if d>cutoff]
     if len(future)<horizon:
@@ -73,7 +73,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
         exit_price=float(last["CLOSE_PRICE"]); exit_date=window_dates[-1]; reason="HORIZON_CLOSE"
     gross=(exit_price/entry-1)*100
     net=gross-cost_pct
-    return {"CUT_OFF":cutoff.date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":cutoff.isoformat(),
+    return {"CUT_OFF":cutoff.date().isoformat(),"SIGNAL_AS_OF_DATE":cutoff.date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":None,
         "ENTRY_SESSION":window_dates[0].date().isoformat(),"ENTRY_PRICE":entry,"ENTRY_STATUS":"EXECUTED",
         "TARGET_PCT":float(target_pct),"HORIZON_SESSIONS":int(horizon),"EXIT_SESSION":exit_date.date().isoformat(),
         "EXIT_PRICE":float(exit_price),"EXIT_REASON":reason,"GROSS_RETURN_PCT":gross,"COST_PCT":float(cost_pct),
@@ -81,7 +81,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
         "EXECUTABLE":True,"DATA_STATUS":"VERIFIED_OHLC","SOURCE_FILE":"","SOURCE_ROW_OR_KEY":f"{symbol}|{window_dates[0].date()}"}
 
 def _empty(cutoff,symbol,target,horizon,status,cost):
-    return {"CUT_OFF":pd.Timestamp(cutoff).date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":pd.Timestamp(cutoff).isoformat(),
+    return {"CUT_OFF":pd.Timestamp(cutoff).date().isoformat(),"SIGNAL_AS_OF_DATE":pd.Timestamp(cutoff).date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":None,
         "ENTRY_SESSION":None,"ENTRY_PRICE":None,"ENTRY_STATUS":status,"TARGET_PCT":float(target),"HORIZON_SESSIONS":int(horizon),
         "EXIT_SESSION":None,"EXIT_PRICE":None,"EXIT_REASON":status,"GROSS_RETURN_PCT":None,"COST_PCT":float(cost),
         "NET_RETURN_PCT":None,"TARGET_HIT":None,"STOP_HIT":None,"EXECUTABLE":False,"DATA_STATUS":status,
@@ -95,13 +95,29 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
     if bars["DATE"].isna().any(): raise ValueError("Invalid DATE values; refusing implicit date repair")
     if bars.duplicated(["SYMBOL","DATE"]).any(): raise ValueError("Duplicate SYMBOL/DATE keys; fail closed")
     signals=pd.read_csv(signals_path)
-    if not {"CUT_OFF","SYMBOL"}.issubset(signals.columns): raise ValueError("Signals require CUT_OFF and SYMBOL")
+    if not {"CUT_OFF","SYMBOL","SIGNAL_TIMESTAMP"}.issubset(signals.columns): raise ValueError("Signals require CUT_OFF, SYMBOL, and SIGNAL_TIMESTAMP")
+    if signals["SIGNAL_TIMESTAMP"].notna().any():
+        raise ValueError("Non-null SIGNAL_TIMESTAMP is not accepted without verified source availability time; use CUT_OFF as date-only as-of key")
     signals["CUT_OFF"]=pd.to_datetime(signals["CUT_OFF"],errors="coerce")
     if signals["CUT_OFF"].isna().any(): raise ValueError("Invalid signal cutoff")
+    global_dates=sorted(bars["DATE"].drop_duplicates())
+    # Pre-partition once. The prior implementation copied and reparsed the
+    # entire 500k-row universe for every signal, making 6k signals quadratic.
+    # Each replay now scans only that symbol's observed rows while preserving
+    # the global-session calendar for missing-session fail-closed checks.
+    bars_by_symbol={
+        str(symbol): group.reset_index(drop=True)
+        for symbol,group in bars.groupby("SYMBOL",sort=False)
+    }
     rows=[]
     for s in signals[["CUT_OFF","SYMBOL"]].drop_duplicates().itertuples(index=False):
+        symbol=str(s.SYMBOL)
+        symbol_bars=bars_by_symbol.get(symbol)
         for target,horizon in TARGETS:
-            row=simulate_one(bars,s.CUT_OFF,s.SYMBOL,target,horizon,cost_pct)
+            if symbol_bars is None:
+                row=_empty(s.CUT_OFF,symbol,target,horizon,"CUTOFF_SYMBOL_ROW_MISSING",cost_pct)
+            else:
+                row=simulate_one(symbol_bars,s.CUT_OFF,symbol,target,horizon,cost_pct,global_dates)
             row["SOURCE_FILE"]=str(data_path)
             rows.append(row)
     trades=pd.DataFrame(rows)
@@ -111,13 +127,19 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
     metrics=[]
     for (target,horizon),g in trades.groupby(["TARGET_PCT","HORIZON_SESSIONS"]):
         ex=g[g["EXECUTABLE"]]
+        gross=pd.to_numeric(ex["GROSS_RETURN_PCT"],errors="coerce")
         net=pd.to_numeric(ex["NET_RETURN_PCT"],errors="coerce").dropna()
-        metrics.append({"TARGET_PCT":target,"HORIZON_SESSIONS":horizon,"SIGNALS":len(g),
+        target_pct=float(g["TARGET_PCT"].iloc[0]) if len(g) else float(target)
+        gross_hit=(gross >= target_pct - 1e-8) if len(ex) else pd.Series(dtype=bool)
+        target_exit=ex["EXIT_REASON"].eq("TARGET") if len(ex) else pd.Series(dtype=bool)
+        metrics.append({"TARGET_PCT":target_pct,"HORIZON_SESSIONS":int(horizon),"SIGNALS":len(g),
             "EXECUTABLE":len(ex),"EXCLUDED":int((~g["EXECUTABLE"]).sum()),
             "EXCLUSION_REASONS":g.loc[~g["EXECUTABLE"],"DATA_STATUS"].value_counts().to_dict(),
-            "GROSS_HIT_RATE":float((pd.to_numeric(ex["GROSS_RETURN_PCT"])>=target).mean()) if len(ex) else None,
-            "TARGET_EXIT_RATE":float((ex["EXIT_REASON"]=="TARGET").mean()) if len(ex) else None,
-            "NET_PROFITABLE_TARGET_EXIT_RATE":float(((ex["EXIT_REASON"]=="TARGET") & (pd.to_numeric(ex["NET_RETURN_PCT"])>0)).mean()) if len(ex) else None,
+            "GROSS_HIT_COUNT":int(gross_hit.sum()) if len(ex) else 0,
+            "GROSS_HIT_RATE":float(gross_hit.mean()) if len(ex) else None,
+            "TARGET_EXIT_COUNT":int(target_exit.sum()) if len(ex) else 0,
+            "TARGET_EXIT_RATE":float(target_exit.mean()) if len(ex) else None,
+            "NET_PROFITABLE_TARGET_EXIT_RATE":float((target_exit & pd.to_numeric(ex["NET_RETURN_PCT"],errors="coerce").gt(0)).mean()) if len(ex) else None,
             "MEAN_NET_RETURN_PCT":float(net.mean()) if len(net) else None,
             "MEDIAN_NET_RETURN_PCT":float(net.median()) if len(net) else None})
     manifest={"engine":"V11.3_RESEARCH_ONLY_COST_AWARE_OHLC_REPLAY","cost_pct_points":cost_pct,

@@ -1,0 +1,24 @@
+name: NSE Raw Archive Manifest Tests
+
+on:
+  pull_request:
+    paths:
+      - "scripts/research/build_raw_archive_manifest.py"
+      - "tests/research/test_raw_archive_manifest.py"
+      - ".github/workflows/nse_raw_archive_manifest_tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  raw-manifest-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run isolated raw manifest regression tests
+        run: python -m unittest tests/research/test_raw_archive_manifest.py -v

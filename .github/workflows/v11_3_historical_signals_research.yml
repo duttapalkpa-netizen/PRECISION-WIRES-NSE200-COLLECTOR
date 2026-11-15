@@ -1,0 +1,111 @@
+name: V11.3 Research Cutoff-Safe Historical Signals + Cost-Aware Replay
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "pipeline/v11_3_historical_signals_research.py"
+      - "pipeline/v11_3_cost_aware_backtest.py"
+      - "pipeline/walk_forward_backtest.py"
+      - "scripts/research/audit_v11_3_cost_aware_replay.py"
+      - "tests/research/test_v11_3_historical_signals_research.py"
+      - "scripts/research/audit_v11_3_cost_aware_replay.py"
+      - ".github/workflows/v11_3_historical_signals_research.yml"
+  push:
+    branches:
+      - research/nse-raw-manifest-retention-20261115
+    paths:
+      - "pipeline/v11_3_historical_signals_research.py"
+      - "pipeline/v11_3_cost_aware_backtest.py"
+      - "tests/research/test_v11_3_historical_signals_research.py"
+      - ".github/workflows/v11_3_historical_signals_research.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v11-3-historical-research-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  historical-signals-and-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal research dependencies
+        run: python -m pip install --disable-pip-version-check "pandas>=2.2,<3" "numpy>=1.26,<3"
+      - name: Download immutable 200-session raw archive from verified run #4
+        uses: actions/download-artifact@v4
+        with:
+          name: nse-200-session-raw-archive-5
+          run-id: 43734398604
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: data
+      - name: Verify raw archive manifest and session list
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("data/qa/raw_archive_manifest.json").read_text())
+          sessions=[x.strip() for x in Path("data/raw/sessions.txt").read_text().splitlines() if x.strip()]
+          assert m["status"]=="PASS" and not m["blockers"]
+          assert m["raw_file_count"]==200 and m["sessions_listed"]==200
+          assert len(sessions)==200 and len(set(sessions))==200
+          assert sessions[0]=="2026-01-21" and sessions[-1]=="2026-11-13"
+          print({"raw_files":m["raw_file_count"],"sessions":len(sessions),"first":sessions[0],"last":sessions[-1]})
+          PY
+      - name: Build processed dataset only from verified raw archive
+        run: |
+          PYTHONPATH=. python collector/build_200_sessions.py
+          PYTHONPATH=. python qa/validate_dataset.py
+      - name: Enforce exact processed-to-raw session-date equality
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          from pathlib import Path
+          raw=[x.strip() for x in Path("data/raw/sessions.txt").read_text().splitlines() if x.strip()]
+          df=pd.read_csv("data/processed/nse_eq_200_sessions.csv",usecols=["SYMBOL","DATE"])
+          processed=sorted(pd.to_datetime(df["DATE"],errors="raise").dt.strftime("%Y-%m-%d").unique().tolist())
+          assert len(raw)==200 and len(processed)==200 and raw==processed, {
+              "raw_sessions":len(raw),"processed_sessions":len(processed),
+              "raw_only":sorted(set(raw)-set(processed)),
+              "processed_only":sorted(set(processed)-set(raw))
+          }
+          assert not df.duplicated(["SYMBOL","DATE"]).any()
+          print({"rows":len(df),"symbols":df.SYMBOL.nunique(),"sessions":len(processed),"first":processed[0],"last":processed[-1]})
+          PY
+      - name: Run isolated cutoff-safe V11.3 historical signal generation
+        run: PYTHONPATH=. python pipeline/v11_3_historical_signals_research.py --data data/processed/nse_eq_200_sessions.csv --out outputs/backtest/v11_3_historical_signals --min-calibration-samples 100 --top-n 30
+      - name: Run cost-aware H+1 H+3 H+5 replay
+        run: PYTHONPATH=. python pipeline/v11_3_cost_aware_backtest.py --data data/processed/nse_eq_200_sessions.csv --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv --out outputs/backtest/v11_3_cost_aware_replay --cost-pct 0.22
+      - name: Independently reconcile signal, execution, costs, and metrics
+        run: |
+          PYTHONPATH=. python scripts/research/audit_v11_3_cost_aware_replay.py \
+            --data data/processed/nse_eq_200_sessions.csv \
+            --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv \
+            --trades outputs/backtest/v11_3_cost_aware_replay/cost_aware_trade_ledger.csv \
+            --metrics outputs/backtest/v11_3_cost_aware_replay/cost_aware_backtest_metrics.json \
+            --signal-manifest outputs/backtest/v11_3_historical_signals/v11_3_historical_signal_manifest.json \
+            --hashes outputs/backtest/v11_3_cost_aware_replay/cost_aware_output_sha256.json \
+            --out outputs/backtest/v11_3_independent_audit
+      - name: Run cutoff-safe calibration regression tests
+        run: PYTHONPATH=. python -m unittest discover -s tests/research -p "test_v11_3_historical_signals_research.py" -v
+      - name: Upload research-only outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v11-3-cutoff-safe-replay-${{ github.run_number }}
+          path: |
+            data/processed/
+            data/qa/
+            outputs/backtest/v11_3_historical_signals/
+            outputs/backtest/v11_3_cost_aware_replay/
+            outputs/backtest/v11_3_independent_audit/
+          if-no-files-found: error
+          retention-days: 90
