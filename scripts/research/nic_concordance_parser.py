@@ -119,15 +119,24 @@ def audit(rows: list[Row], expected_count: int = 463) -> dict:
     malformed_keys = sorted(k for k in keys if not re.fullmatch(r"\d{4}", k))
     count_ok = len(rows) == expected_count
     unique_ok = len(set(keys)) == len(keys)
+    provenance_complete = all(r.source_lines and r.pdf_pages for r in rows)
+    ordered_rows = all(rows[i].source_lines and rows[i + 1].source_lines and max(rows[i].source_lines) < min(rows[i + 1].source_lines) for i in range(len(rows) - 1))
+    source_bounds_ok = bool(rows) and min((min(r.source_lines) for r in rows if r.source_lines), default=-1) >= 10330 and max((max(r.source_lines) for r in rows if r.source_lines), default=-1) <= 10872
+    terminal_key_ok = bool(keys) and keys[-1] == "9900"
+    acceptance_ok = count_ok and unique_ok and not malformed_keys and provenance_complete and ordered_rows and source_bounds_ok and terminal_key_ok
     return {
         "row_count": len(rows), "expected_row_count": expected_count,
         "row_count_pass": count_ok, "unique_key_count": len(set(keys)),
         "duplicate_keys": duplicates, "unique_keys_pass": unique_ok,
         "malformed_keys": malformed_keys,
+        "provenance_complete": provenance_complete,
+        "source_line_order_pass": ordered_rows,
+        "source_bounds_pass": source_bounds_ok,
+        "terminal_key_9900_pass": terminal_key_ok,
         "forward_mapping_count": len(forward),
         "reverse_mapping_component_count": len(reverse),
         "reverse_multiplicity": {k: len(v) for k, v in sorted(reverse.items())},
-        "acceptance": "PASS" if count_ok and unique_ok and not malformed_keys else "UNKNOWN_BLOCKED",
+        "acceptance": "PASS" if acceptance_ok else "UNKNOWN_BLOCKED",
         "limitations": [
             "Count and uniqueness alone do not prove source completeness.",
             "IIP item-group/weight bridge is outside this parser and remains UNKNOWN until separately evidenced."
