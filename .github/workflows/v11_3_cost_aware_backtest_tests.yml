@@ -11,7 +11,9 @@ on:
   pull_request:
     paths:
       - "pipeline/v11_3_cost_aware_backtest.py"
+      - "pipeline/forward_outcome_integrity.py"
       - "tests/research/test_v11_3_cost_aware_backtest.py"
+      - "tests/research/test_forward_outcome_integrity.py"
       - ".github/workflows/v11_3_cost_aware_backtest_tests.yml"
 
 permissions:
