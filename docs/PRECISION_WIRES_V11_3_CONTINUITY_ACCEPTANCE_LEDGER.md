@@ -394,3 +394,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Research module commit `b7099903939542edd82cc8b7d37f6a34b50718c3`; test commit `cc4d397f25e735e9f7b63d2da74b40baff1aaab9`. New CI Run #6 ID `43696697367` (code commit) and Run #7 ID `43696699661` (test commit) were observed QUEUED; #7 is the run containing both changes and must be used for next verification.
 - Historical replay remains NOT_STARTED pending Run #7 PASS and source/input gate. The previously inspected 200-session artifact does not contain circuit/price-band fields; the replay cannot claim circuit-feasible execution without a separately validated restriction source or an explicit limitation. Existing V11.4 signal file semantics must also be confirmed before treating it as an accepted V11.3 signal set.
 - No production selector, ranking, pressure-fade, CORE-672, collector, or historical source artifact modified.
+
+
+## 2026-11-15 — Run #7 PASS and signal-ledger fail-closed hardening
+- Verified cost-aware research CI Run #7 / ID `43696699661`: job `research-unit-tests` completed SUCCESS on the code + validation-test commits. Run #6 / ID `43696697367` was cancelled; do not repeat it.
+- Review of the accepted simulator found `run()` silently removed duplicate `CUT_OFF,SYMBOL` rows using `drop_duplicates()`, contrary to the fail-closed duplicate-key contract. It also conflated target touch with net profitability in `TARGET_HIT` and accepted infinite volume as a valid positive quantity.
+- Created isolated branch `research/cost-aware-signal-ledger-guard-20261115` from reviewed commit `56a8b63d4f5c286917db9368b96907383388143c`.
+- Hardened research-only simulator to reject duplicate normalized signal keys, make `TARGET_HIT` represent target execution independently of net profitability, and reject non-finite volume. Added focused regression tests for all three cases.
+- Module commit: `d930fa8a2f6d335c9c1682e147180250173a42cb`; module blob: `ec9b4e95c2b06ed98bb057af251f151fe12c36d2`.
+- Test commit: `0c798e0b12f538a46610d733f30c780b0bc479d7`; test blob: `48c6d3f5dfb9dd3f30ee936fa8595aeed9facdaf`.
+- New workflow runtime validation is pending; no PASS claim until its run is fetched. Historical replay remains BLOCKED pending signal-source acceptance and independent input/outcome gates. No production logic or production workflow modified.
