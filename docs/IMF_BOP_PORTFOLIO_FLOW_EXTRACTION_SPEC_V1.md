@@ -272,3 +272,12 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Result: PASS for exact ContentConstraint ID lookup, one CubeRegion, FREQ included value, REF_AREA excluded value, TIME_PERIOD StartPeriod/EndPeriod with inclusive/exclusive flags, and UNIT_MEASURE Attribute value.
 - This validates the fixture's parser assertions locally only. It is not a GitHub Actions run, XSD validation of the live IMF response, or evidence that IMF's live constraint has these exact values.
 - No live acquisition or production change was performed. PR #34 remains unmerged; workflow dispatch is still blocked pending authorized registration on the default branch.
+
+
+## 2J. Independent local execution confirmation of both SDMX 2.1 parser fixtures (2026-11-15)
+
+- Re-fetched workflow blob `e7a6877721cf2282c781bb0e9f12a74d476f3971` and extracted the exact Python source blocks from the committed Dataflow Structure/Ref and ContentConstraint CubeRegion regression steps.
+- Executed both extracted blocks in the local Python runtime without editing the fixture code.
+- Results: Dataflow Structure/Ref fixture PASS; ContentConstraint CubeRegion fixture PASS.
+- This closes the local fixture-execution check for both committed parser examples. It still does not execute the complete GitHub Actions workflow, perform XSD validation, retrieve IMF live XML, or establish live IMF country/frequency coverage.
+- Runtime acquisition remains NOT DONE; no PR merge or production integration was performed.
