@@ -83,19 +83,24 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
             return False
 
         expected_date = _parse_date(stamp)
+        if expected_date is None:
+            print("UDIFF_PARSE invalid expected date", flush=True)
+            return False
         out_rows = []
-        source_dates = set()
 
         for r in rows:
             sym = str(_pick(r, "TckrSymb", "TCKR_SYMB", "SYMBOL")).strip()
             series = str(_pick(r, "SctySrs", "SCTY_SERIES", "SERIES")).strip().upper()
-            if not sym or (series and series != "EQ"):
+            if not sym or series != "EQ":
                 continue
 
             raw_date = _pick(r, "TradDt", "TRADG_DATE", "DATE1", "DATE")
             parsed_date = _parse_date(raw_date)
-            if parsed_date:
-                source_dates.add(parsed_date)
+            # Every eligible EQ source row must carry a valid, exact source date.
+            # Never infer or backfill the date from the requested filename.
+            if parsed_date is None or parsed_date != expected_date:
+                print(f"UDIFF_PARSE invalid/mismatched EQ date expected={expected_date} raw={raw_date!r}", flush=True)
+                return False
 
             def num(*aliases):
                 return _pick(r, *aliases)
@@ -131,16 +136,13 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
             print("UDIFF_PARSE no EQ rows", flush=True)
             return False
 
-        # A valid daily file must identify the requested trade date when the
-        # source exposes a date field. Never accept an unrelated cached date.
-        if expected_date and source_dates and expected_date not in source_dates:
-            print(f"UDIFF_PARSE date mismatch expected={expected_date} source={sorted(source_dates)[:3]}", flush=True)
+        if not out_rows:
+            print("UDIFF_PARSE no eligible EQ rows", flush=True)
             return False
 
         target = out / f"sec_bhavdata_full_{stamp}.csv"
         import pandas as pd
         df = pd.DataFrame(out_rows)
-        df["DATE1"] = df["DATE1"].astype(str).replace({"": stamp})
         # Hard validation of the fields that downstream analysis actually needs.
         for col in ["OPEN_PRICE", "HIGH_PRICE", "LOW_PRICE", "CLOSE_PRICE", "TTL_TRD_QNTY"]:
             vals = pd.to_numeric(df[col], errors="coerce")
