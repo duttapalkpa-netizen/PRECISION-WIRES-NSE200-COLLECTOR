@@ -874,3 +874,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next: seek official technical note/raw quarterly DBIE schema with explicit Credit/Debit-to-assets/liabilities mapping; if absent, retain NOT_ESTABLISHED.
 - Sources: RBI guide https://www.rbi.org.in/scripts/PublicationsView.aspx?Id=24094 ; RBI Table 42 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495 ; RBI BOP Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; IMF BPM6 Guide https://data.imf.org/-/media/iData/External-Storage/Documents/FB1F86C7158646DDB554D0882F1F2A3B/en/3-BPM6-com-guide.pdf ; IMF BOPCOM note https://www.imf.org/external/pubs/ft/bop/2013/13-13.pdf .
 - No paid source, synthetic data, fabricated mapping, data-file mutation, PR merge or production change.
+
+## 2026-11-15 — CORRECTION: RBI official BPM6 sign-convention crosswalk recovered
+- Corrects the immediately preceding audit's claim that no official RBI sign rule was located. RBI Manual paragraphs 1.16 and 1.19 explicitly state: asset credit = decrease assets, asset debit = increase assets; liability credit = increase liabilities, liability debit = decrease liabilities. Financial-account changes are netted separately within each asset/liability type.
+- RBI Working Group report confirms assets must not be netted against liabilities (except possible derivatives treatment).
+- Conditional mapping for separately identified net observations in same functional category/period/unit: IMF net acquisition of assets candidate = Debit − Credit = −RBI asset-side Net; IMF net incurrence of liabilities candidate = Credit − Debit = +RBI liability-side Net. Do not apply to a combined portfolio net or infer side solely from informal labels.
+- RBI April 2026 guide confirms Table 42 quarterly USD million BPM6 functional classification and Credit/Debit/Net presentation.
+- Official sign convention and methodology-level formula PASS. Exact Table 42 raw row mapping, P_F scope equivalence, quarterly DBIE raw export, two dated raw snapshots and vintage metadata remain NOT_ESTABLISHED / NOT_RETRIEVED. No numeric mapping, data merge or IMF vintage promotion.
+- RBI parallel-source readiness NOT_READY. Sign-convention recovery bounded task 100%; IMF BOP 5/7=71.4%; October 2025 IMF PDF 25%; overall V11.3 NOT_CALCULABLE.
+- Sources: RBI BOP Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; RBI Working Group report https://www.rbi.org.in/scripts/PublicationReportDetails.aspx?ID=596 ; RBI 2026 Guide https://www.rbi.org.in/scripts/PublicationsView.aspx?Id=24094 .
+- No data mutation, synthetic values, paid source, credentials, PR merge or production change.
