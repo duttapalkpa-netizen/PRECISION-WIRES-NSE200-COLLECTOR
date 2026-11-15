@@ -39,8 +39,8 @@ def sha256(path: Path) -> str:
 
 
 def signal_time_fields(cutoff):
-    \"\"\"Date-only as-of key; exact availability timestamp is unknown, never midnight.\"\"\"
-    return {\"SIGNAL_AS_OF_DATE\": pd.Timestamp(cutoff).date().isoformat(), \"SIGNAL_TIMESTAMP\": None}
+    """Date-only as-of key; exact availability timestamp is unknown, never midnight."""
+    return {"SIGNAL_AS_OF_DATE": pd.Timestamp(cutoff).date().isoformat(), "SIGNAL_TIMESTAMP": None}
 
 
 def dynamic_ret20_v11_3(close_group, history_depth: pd.Series) -> pd.Series:
