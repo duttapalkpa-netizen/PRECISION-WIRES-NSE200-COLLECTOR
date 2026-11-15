@@ -16,7 +16,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-SOURCE_URL = "https://www.mospi.gov.in/sites/default/files/main_menu/national_industrial_classification/NIC_2025Final_18112025.pdf"
+SOURCE_URL = "https://www.mospi.gov.in/uploads/publications_reports/publications_reports1763457214315_c3e5d4f3-8e25-4775-85e3-ad42d571652f_NIC_2025_Final.pdf"
 ALLOWED_HOSTS = {"mospi.gov.in", "www.mospi.gov.in", "new.mospi.gov.in"}
 PDF_FIRST_PAGE = 256
 PDF_LAST_PAGE = 262
