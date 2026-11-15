@@ -1,4 +1,5 @@
 name: NSE 200-Session Raw Archive Shards
+run-name: NSE raw backfill — 21 bounded shards and exact 200-session gate
 
 on:
   pull_request:
