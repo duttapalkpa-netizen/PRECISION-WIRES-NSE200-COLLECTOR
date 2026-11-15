@@ -365,3 +365,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Important limitations: OHLC daily bars cannot establish intraday event sequence; stop-first is conservative. Circuit/price-band data is not present in the inspected processed OHLC schema, so such constraints are not independently validated by this first implementation. Slippage/market impact are not modelled. Existing walk-forward predictions are reused only as cutoff/symbol signals; their gross outcome fields are ignored by the new simulator. No actual historical replay has been run yet.
 - No production code, selector, ranking, pressure-fade, diagnostic matrix, or production workflow was modified. No collector workflow rerun, no spend, no paid APIs, no PR merge.
 - Scoped progress: policy approval 100%; research module draft 100%; unit-test source 100%; test runtime validation pending; full historical replay 0%; independent trade-ledger reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-15 — CI runtime validation initiated; metrics naming correction
+- Corrected output metric semantics in `pipeline/v11_3_cost_aware_backtest.py`: replaced ambiguous `NET_TARGET_HIT_RATE` (which actually measured positive-net target exits) with explicit `TARGET_EXIT_RATE` and `NET_PROFITABLE_TARGET_EXIT_RATE`. Commit `65b3515e973623325c5928fd4b69c50683249a6f`.
+- Hardened test invocation to `unittest discover -s tests/research -p test_v11_3_cost_aware_backtest.py -v` to avoid namespace-package/module-shadowing ambiguity. Workflow fix commit `dee9a191cbbff6733ca720a297d299a7da548e2d`.
+- GitHub Actions Run #3 / Run ID `43692239851` was observed on commit `dee9a191cbbff6733ca720a297d299a7da548e2d`. At latest check (2026-11-15T07:57:30Z), job `research-unit-tests` was `in_progress`; checkout and Python setup succeeded, dependency installation was in progress, and unit tests had not yet started. Runtime PASS therefore NOT_YET_VERIFIED. No log available yet while job was running.
+- No full 200-session replay started. No production files or collector workflows touched.
