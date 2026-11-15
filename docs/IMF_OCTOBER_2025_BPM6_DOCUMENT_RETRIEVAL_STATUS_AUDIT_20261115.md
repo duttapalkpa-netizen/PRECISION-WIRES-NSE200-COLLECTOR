@@ -831,3 +831,25 @@ The official page also confirms the BOPSY 2024 country coverage window but does 
 Do not retry the same timed-out redirect or repeat BOPSY notes discovery. Search for an independently indexed official IMF document or archived public file for the 20 Nov 2024 Q2 release; accept only if raw content, release date, India country series, exact key mapping and overlapping periods can be verified. If none exists, close this public-link avenue as NOT_RETRIEVED and move to a different official archive source, without hidden endpoint guessing.
 
 No CSV, manifest, sidecar, raw response, or accepted gate changed.
+
+## 33. IMF CPIS/PIP adjacent-dataset non-equivalence audit (2026-11-15)
+
+### Candidate identified and tested
+IMF search results surface a dedicated dataset, "Portfolio Investment Positions by Counterpart Economy (formerly CPIS)", dataset identifier `IMF.STA:PIP`, with a "Foreign Portfolio Investments Breakdown" dashboard. The dataset description says participating economies report holdings of portfolio investment securities, separately for equity/investment fund shares, long-term debt instruments and short-term debt instruments; frequencies are annual and half-yearly/semester.
+Official dataset page: https://data.imf.org/en/Datasets/PIP
+Official dashboard catalogue: https://data.imf.org/en/Dashboards
+
+### Why it is not a valid substitute
+The existing India panel's four series are BOP financial-account transactions: net acquisition of financial assets (A_NFA_T) and net incurrence of liabilities (L_NIL_T), total portfolio investment (P_F), USD, annual/quarterly. These are flow measures.
+The PIP/CPIS dataset is portfolio investment positions/holdings (stocks), organized by counterpart economy and instrument. It is not the same measurement concept, frequency, or series key. A position stock cannot be substituted for a transaction flow or treated as a vintage of the BOP flow panel.
+The IMF BOP Introductory Notes explain that the financial account records net acquisition of financial assets and net incurrence of liabilities as transactions, while IIP records external financial assets/liabilities at a point in time; changes in IIP reflect transactions plus revaluations and other volume changes. This distinction prevents stock-flow conflation.
+
+### Decision
+- Official adjacent dataset discovered: PASS.
+- Exact subject: portfolio investment positions/holdings, not BOP financial-account flows.
+- Equivalence to `IND.A_NFA_T.P_F.USD.A/Q` and `IND.L_NIL_T.P_F.USD.A/Q`: REJECTED / NOT_EQUIVALENT.
+- Use as cross-check only if a separately defined stock/position research task is approved; never use as second BOP vintage, flow backfill, or revision comparator.
+- No change to existing data, series mapping, acceptance gates, or revision/vintage status. BOP revision readiness remains UNKNOWN / NOT_READY.
+
+### Next action
+Continue only with an official archived BOP flow country-table/raw response that matches the exact four flow keys. Keep CPIS/PIP out of the current flow pipeline. No hidden endpoint guesses or login bypass.
