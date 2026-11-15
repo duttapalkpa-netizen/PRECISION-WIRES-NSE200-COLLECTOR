@@ -38,23 +38,45 @@ jobs:
           python-version: "3.12"
       - name: Install minimal research dependencies
         run: python -m pip install --disable-pip-version-check pandas numpy
-      - name: Download immutable processed input from verified run #146
+      - name: Download immutable 200-session raw archive from verified run #4
         uses: actions/download-artifact@v4
         with:
-          name: precision-wires-adaptive-146
-          run-id: 43686440086
+          name: nse-200-session-raw-archive-5
+          run-id: 43734398604
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: .
-      - name: Verify exact processed input bytes
+          path: data
+      - name: Verify raw archive manifest and session list
         run: |
-          echo "00a1b3af4c6be836cf5ad18c9332607701b5418a7057f2a0415c202458d3dbb0  data/processed/nse_eq_200_sessions.csv" | sha256sum --check
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("data/qa/raw_archive_manifest.json").read_text())
+          sessions=[x.strip() for x in Path("data/raw/sessions.txt").read_text().splitlines() if x.strip()]
+          assert m["status"]=="PASS" and not m["blockers"]
+          assert m["raw_file_count"]==200 and m["sessions_listed"]==200
+          assert len(sessions)==200 and len(set(sessions))==200
+          assert sessions[0]=="2026-01-21" and sessions[-1]=="2026-11-13"
+          print({"raw_files":m["raw_file_count"],"sessions":len(sessions),"first":sessions[0],"last":sessions[-1]})
+          PY
+      - name: Build processed dataset only from verified raw archive
+        run: |
+          PYTHONPATH=. python collector/build_200_sessions.py
+          PYTHONPATH=. python qa/validate_dataset.py
+      - name: Enforce exact processed-to-raw session-date equality
+        run: |
           python - <<'PY'
           import pandas as pd
-          p="data/processed/nse_eq_200_sessions.csv"
-          d=pd.read_csv(p,usecols=["SYMBOL","DATE"])
-          assert len(d)>0 and d["SYMBOL"].nunique()==2994 and d["DATE"].nunique()==200
-          assert not d.duplicated(["SYMBOL","DATE"]).any()
-          print({"rows":len(d),"symbols":d.SYMBOL.nunique(),"sessions":d.DATE.nunique()})
+          from pathlib import Path
+          raw=[x.strip() for x in Path("data/raw/sessions.txt").read_text().splitlines() if x.strip()]
+          df=pd.read_csv("data/processed/nse_eq_200_sessions.csv",usecols=["SYMBOL","DATE"])
+          processed=sorted(pd.to_datetime(df["DATE"],errors="raise").dt.strftime("%Y-%m-%d").unique().tolist())
+          assert len(raw)==200 and len(processed)==200 and raw==processed, {
+              "raw_sessions":len(raw),"processed_sessions":len(processed),
+              "raw_only":sorted(set(raw)-set(processed)),
+              "processed_only":sorted(set(processed)-set(raw))
+          }
+          assert not df.duplicated(["SYMBOL","DATE"]).any()
+          print({"rows":len(df),"symbols":df.SYMBOL.nunique(),"sessions":len(processed),"first":processed[0],"last":processed[-1]})
           PY
       - name: Run isolated cutoff-safe V11.3 historical signal generation
         run: PYTHONPATH=. python pipeline/v11_3_historical_signals_research.py --data data/processed/nse_eq_200_sessions.csv --out outputs/backtest/v11_3_historical_signals --min-calibration-samples 100 --top-n 30
@@ -78,6 +100,8 @@ jobs:
         with:
           name: v11-3-cutoff-safe-replay-${{ github.run_number }}
           path: |
+            data/processed/
+            data/qa/
             outputs/backtest/v11_3_historical_signals/
             outputs/backtest/v11_3_cost_aware_replay/
             outputs/backtest/v11_3_independent_audit/
