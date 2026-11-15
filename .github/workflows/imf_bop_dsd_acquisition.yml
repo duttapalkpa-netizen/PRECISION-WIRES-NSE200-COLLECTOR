@@ -34,6 +34,7 @@ jobs:
           sha256sum evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml > evidence/imf_bop_dsd/SHA256SUMS
 
       - name: Acquire official IMF BOP_BPM6 dataflow and constraint metadata
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
