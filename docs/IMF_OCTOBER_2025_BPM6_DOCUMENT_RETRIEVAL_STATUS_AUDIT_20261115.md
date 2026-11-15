@@ -1201,3 +1201,31 @@ Decision and next actionable route:
 - Existing 11-quarter / 22-of-22 PASS_WITH_ROUNDING results remain unchanged.
 - IMF BOP workstream remains 5/7 = 71.4%; IMF vintage NOT_READY / NOT_VERIFIED; overall V11.3 NOT_CALCULABLE.
 - No CSV, manifest, sidecar, production code, or prior PASS artefact changed.
+
+
+## DBIE public-access execution checkpoint (2026-11-15)
+
+Objective: execute the documented RBI DBIE UI path for the quarterly Table 42 time-series export, without undocumented APIs or credentialed access.
+
+Freshly revalidated RBI guide:
+- Official April 2026 Comprehensive Guide (published 08 Oct 2026): https://rbi.org.in/scripts/PublicationsView.aspx?Id=24094
+- Table 42 is explicitly quarterly, US$ million, DEPR/RBI, subject to revision; DBIE mapping is Publication > Time-Series Publications > Monthly RBI Bulletin > External Sector, and Statistics > External Sector > International Trade.
+- Guide states DBIE contains extended historical time series and tables align with the CIMS repository.
+- RBI public DBIE export instructions: https://dbieold.rbi.org.in/DBIE/doc/Exporting_report_data_%26_related_options.pdf . Preformatted reports can be accessed through Statistics > Sector > Sub Sector > Required Report or Publication > Required publication > Required Report/Search Option; export supports Excel, PDF, Text and CSV.
+
+Execution result:
+- Opened official DBIE root https://data.rbi.org.in/ through available public page retrieval. The page returned no readable content or navigable report controls.
+- The old DBIE root timed out in the public retrieval interface. The export-instructions PDF is readable, but it documents UI actions rather than providing a data file.
+- No exact Table 42 quarterly report URL, report identifier, export bytes, or schema was exposed by the accessible public pages in this execution.
+- Therefore no CSV was downloaded, no SHA-256 can be computed, and 2015-Q2 / 2021-Q2 RBI comparator values remain NOT_RETRIEVED.
+- This is a tooling/access boundary, not evidence that RBI data do not exist. No credentials, login, undocumented endpoint, scraping workaround, or external contact used. RBI guide lists dbie@rbi.org.in for queries; no message sent, as external contact requires user approval.
+
+Bounded task status:
+- Public-path execution attempt: 100% complete; outcome BLOCKED at interactive DBIE report access.
+- Raw quarterly CSV/export: 0% acquired / NOT_RETRIEVED.
+- 2015-Q2 and 2021-Q2: NOT_RETRIEVED; no numeric comparisons claimed.
+- Existing 11-quarter / 22/22 PASS_WITH_ROUNDING results unchanged.
+- IMF BOP workstream remains 5/7 = 71.4%; IMF vintage NOT_READY / NOT_VERIFIED; overall PRECISION-WIRES V11.3 NOT_CALCULABLE.
+- No source CSV, manifest, sidecar, prior PASS artifact, production code, selector, ranking score, pressure fade, diagnostic or gate changed.
+
+Next dependency: user-authorized interactive access to the RBI DBIE report/export UI or explicit approval to contact the RBI-listed DBIE support address. Without one of these, repeated public-page fetches will not produce the missing raw export and must not be repeated.
