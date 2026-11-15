@@ -896,3 +896,16 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Bounded 2025-Q2 check 100%; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF 25%; whole V11.3 NOT_CALCULABLE.
 - Sources: RBI 25 Sep 2026 bulletin https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495 ; 23 Oct 2026 https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566 ; RBI BOP Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; archived CSV path data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv .
 - No new data pull, synthetic values, paid source, credentials, data mutation, PR merge or production change.
+
+## 2026-11-15 — Three additional RBI Table 42 vs archived IMF P_F quarterly reconciliations
+- Extended prior 2025-Q2 two-sided comparison to 2024-Q3, 2024-Q4 and 2025-Q1 using RBI Table 42 dated pages (20 Feb, 23 Apr and 22 Jul 2026) and already archived IMF quarterly CSV. No new IMF API pull or data modification.
+- Applied RBI Manual sign bridge: asset candidate = −(Portfolio Investment by India Net); liability candidate = Portfolio Investment in India Net. Fixed tolerance ±0.5 USD million (RBI whole-million displayed values).
+- 2024-Q3: RBI assets −35 vs IMF A_NFA_T −34.990038547 (diff 0.009961453); liabilities +19815 vs IMF L_NIL_T +19815.071031982 (diff 0.071031982).
+- 2024-Q4: RBI assets −63 vs IMF −62.610017414 (diff 0.389982586); liabilities −11435 vs IMF −11434.646504149 (diff 0.353495851).
+- 2025-Q1: RBI assets −136 vs IMF −135.999310934 (diff 0.000689065); liabilities −5995 vs IMF −5994.630947245 (diff 0.369052755).
+- All 6 comparisons PASS_WITH_ROUNDING. Including 2025-Q2 prior result, cumulative four quarters × two sides = 8/8 PASS_WITH_ROUNDING.
+- Strong repeated numeric evidence of tested aggregate mapping, but not full 2015–2025 equivalence. RBI raw quarterly DBIE export/schema not retrieved; no RBI raw-file hashes; IMF vintage remains unverified. Do not merge sources or promote revision/vintage gate.
+- Next: 2015–2025 quarterly spot-check matrix (one quarter/year) with exact RBI pages; stop on any mismatch and do not widen tolerance.
+- Bounded extension 100%; cumulative 8/8; full-period mapping NOT_DONE; RBI export NOT_RETRIEVED; IMF revision/vintage NOT_READY; IMF BOP 5/7=71.4%; October 2025 PDF 25%; full V11.3 NOT_CALCULABLE.
+- Sources: RBI 20 Feb 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24025 ; 23 Apr 2026 https://www.rbi.org.in/scripts/BS_ViewBulletin.aspx?Id=24156 ; 22 Jul 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24352 ; prior 25 Sep 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495 ; RBI Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; archived CSV data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv .
+- No new IMF pull, raw RBI file, data/manifest/sidecar mutation, synthetic data, paid service, credentials, PR merge or production change.
