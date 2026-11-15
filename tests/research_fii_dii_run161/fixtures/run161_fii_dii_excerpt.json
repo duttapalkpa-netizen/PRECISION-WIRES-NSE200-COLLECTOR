@@ -1,0 +1,17 @@
+{
+  "fixture_type": "provenance-pinned excerpt; not synthetic market data",
+  "source_artifact": {
+    "workflow_run_id": 43696699698,
+    "artifact_id": 14154408713,
+    "artifact_name": "precision-wires-adaptive-161",
+    "archive_sha256": "b4623c28d30d04a73d21eb67662caeeab56123b2eba637d9eb652225df0305e8",
+    "member": "data/context/market_context.json",
+    "member_sha256": "83c811be558501bbfed7b2104658f2d3796bfd506b37149800a730384bed5dc8"
+  },
+  "generated_at": "2026-11-15T08:59:46.921319+00:00",
+  "source": "NSE /api/fiidiiTradeReact (category-normalized)",
+  "rows": [
+    {"category":"DII","group":"DII","date":"13-Nov-2026","buy_value":11745.95,"sell_value":13999.53,"net_value":-2253.58},
+    {"category":"FII/FPI","group":"FII_FPI","date":"13-Nov-2026","buy_value":18339.57,"sell_value":12603.02,"net_value":5736.55}
+  ]
+}
