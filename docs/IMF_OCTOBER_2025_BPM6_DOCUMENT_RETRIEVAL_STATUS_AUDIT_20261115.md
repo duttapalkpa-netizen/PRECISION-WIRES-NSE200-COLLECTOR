@@ -997,3 +997,42 @@ Sources:
 - RBI April 2026 Current Statistics Guide, Table 42: https://www.rbi.org.in/scripts/PublicationsView.aspx?Id=24094
 
 Bounded sign-convention recovery task: 100% complete. IMF BOP workstream remains 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 project progress NOT_CALCULABLE. No data mutation, synthetic values, paid source, credentials, PR merge or production change.
+
+## 2026-11-15 — RBI Table 42 vs archived IMF India P_F single-quarter numerical reconciliation (2025-Q2)
+
+### Method and exact source keys
+- Used official RBI Table 42 for Apr–Jun 2025 (quarter 2025-Q2), USD million, Credit/Debit/Net; compared with the already archived IMF India quarterly observations in the existing committed CSV. No new IMF API pull and no data-file modification.
+- IMF exact keys: IND / A_NFA_T / P_F / USD / Q / 2025-Q2 and IND / L_NIL_T / P_F / USD / Q / 2025-Q2. Existing CSV values are in USD units with SCALE=6; converted only for display/comparison by dividing raw OBS_VALUE by 10^6 (metadata scale interpretation already present in the extraction contract).
+- RBI Table 42 rows for same quarter:
+  - 3.2.A Portfolio Investment in India: Credit 145201, Debit 142720, Net +2481 (USD million) → RBI manual says liability-side credit increases liabilities and debit reduces liabilities; net incurrence candidate +2481.
+  - 3.2.B Portfolio Investment by India: Credit 1138, Debit 2011, Net −872 (USD million) → RBI manual says asset-side credit reduces assets and debit increases assets; net acquisition candidate −(Net) = +872.
+- RBI total row 3.2 Portfolio Investment Net +1608 is not used as either asset or liability; it is the combined net balance and must not be mapped to one IMF side.
+
+### Numerical comparison
+- IMF A_NFA_T / P_F / 2025-Q2 raw OBS_VALUE 872453921.9430683; SCALE=6 → USD million 872.4539219430683.
+- RBI asset-side candidate (Portfolio Investment by India) = +872 USD million from displayed Net −872.
+- Absolute difference = 0.4539219431 USD million, within ±0.5 USD million display-rounding interval.
+- IMF L_NIL_T / P_F / 2025-Q2 raw OBS_VALUE 2480700911.919279; SCALE=6 → USD million 2480.700911919279.
+- RBI liability-side candidate (Portfolio Investment in India) = +2481 USD million.
+- Absolute difference = 0.2990880807 USD million, within ±0.5 USD million display-rounding interval.
+- Both independent side comparisons fall within the rounding interval of RBI's whole-million published values. This is a strong single-quarter numerical consistency result, not proof of complete series equivalence or revision/vintage status.
+
+### Validation boundary
+- Official RBI sign rule, directional labels, exact quarter and currency, archived IMF exact series keys, and both rounded numeric comparisons align in this one test.
+- RBI Table 42 published page itself is the source for values, not a raw quarterly DBIE CSV export. DBIE raw export/schema remains NOT_RETRIEVED.
+- One quarter only; multi-quarter independent replication NOT_DONE.
+- IMF raw series capture still lacks a verified release vintage; RBI bulletin date pair does not create an IMF vintage. Revision-aware gate remains NOT_READY.
+- Decision: single-quarter parallel-source numerical check PASS_WITH_ROUNDING for both sides. Conditional sign/direction mapping validated for this quarter only. Do not merge RBI values into IMF panel, do not overwrite IMF data, do not promote revision/vintage gate, and do not generalize across the entire 2015–2025 panel.
+
+### Next action
+Repeat the same two-sided check for three additional non-adjacent quarters already in the archived IMF quarterly series and find corresponding dated RBI Table 42 bulletins. Use the same exact rule and tolerance ±0.5 USD million only when RBI displays whole USD millions. If any quarter fails, investigate period definition, revision status and coverage; do not widen tolerance.
+
+Sources:
+- RBI Table 42, 25 Sep 2026, 2025-Q2: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495
+- RBI Table 42, 23 Oct 2026, 2025-Q2: https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566
+- RBI Manual, paragraphs 1.15–1.16 and 5.20, portfolio investment 5.63–5.68: https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013
+- IMF archived data CSV (existing repo path): data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv
+
+Bounded 2025-Q2 two-sided reconciliation: 100% complete. Result PASS_WITH_ROUNDING (2/2). DBIE quarterly raw export NOT_RETRIEVED; multi-quarter replication NOT_DONE; IMF revision/vintage readiness NOT_READY; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF package 25%; full V11.3 progress NOT_CALCULABLE.
+
+No new data acquisition, data/manifest/sidecar mutation, synthetic values, paid source, credentials, PR merge or production change.
