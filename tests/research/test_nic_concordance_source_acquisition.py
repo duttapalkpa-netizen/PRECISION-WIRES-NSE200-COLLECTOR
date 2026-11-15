@@ -1,6 +1,7 @@
 import hashlib
 import importlib.util
 import tempfile
+import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -8,6 +9,7 @@ from unittest.mock import patch
 SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "research" / "acquire_nic_concordance_source.py"
 SPEC = importlib.util.spec_from_file_location("acquire_nic_concordance_source", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = MODULE
 SPEC.loader.exec_module(MODULE)
 
 
