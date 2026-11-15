@@ -53,8 +53,8 @@ class FullDeliveryDateIntegrityTests(unittest.TestCase):
         output = io.StringIO(newline="")
         writer = csv.writer(output)
         writer.writerow(["SYMBOL", "SERIES", "CLOSE_PRICE", "DATE1"])
-        for i in range(30):
-            writer.writerow([f"TEST{i:02d}", "EQ", "100.0", "14-11-2026"])
+        for i in range(100):  # exceed the validator's production 1,000-byte minimum
+            writer.writerow([f"TEST{i:03d}", "EQ", "100.0", "14-11-2026"])
         self.assertTrue(validate_archived_daily_file(output.getvalue().encode("utf-8"), "14112026"))
 
     def test_archived_daily_rejects_wrong_date(self):
