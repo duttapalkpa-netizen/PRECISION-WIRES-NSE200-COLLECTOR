@@ -281,3 +281,13 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Results: Dataflow Structure/Ref fixture PASS; ContentConstraint CubeRegion fixture PASS.
 - This closes the local fixture-execution check for both committed parser examples. It still does not execute the complete GitHub Actions workflow, perform XSD validation, retrieve IMF live XML, or establish live IMF country/frequency coverage.
 - Runtime acquisition remains NOT DONE; no PR merge or production integration was performed.
+
+
+## 2K. Constraint-to-dataflow attachment and dimension-key acceptance hardening (2026-11-15)
+
+- Standards source reviewed: SDMX-ML 2.1 `SDMXStructureConstraint.xsd` and `SDMXCommonReferences.xsd` at `sdmx-twg/sdmx-ml` ref `v2.1`. The ContentConstraint attachment can reference a Dataflow; its Dataflow reference contains a `Ref` with agency, ID and version fields. CubeRegion KeyValue elements carry required dimension IDs and either Value members or TimeRange.
+- Tightened the live constraint QA: it now requires exactly one attachment reference matching `IMF:BOP_BPM6:1.0`, at least one dimension KeyValue, unique dimension IDs across the inspected regions, and no dimension key lacking an ID or both Value/TimeRange content. The complete region/dimension/attribute inventory remains preserved.
+- Expanded the namespace-qualified regression fixture to include the ConstraintAttachment/Dataflow reference. The exact updated fixture was executed locally and passed all assertions, including exact attachment reference and existing include/exclude, TimeRange and Attribute checks.
+- Research branch workflow commit: `1e8e3cb96e70f7934da68c8f91cd775c882595e3`; workflow blob: `4349a273c43ccfdab4dae0d8dc9fa734d0d0b2a9`.
+- PR #34 branch synchronization commit: `ead54698aa2d553ed2a62ff3a06ab924ea6a8f25`. Both branch copies re-fetched and confirmed byte-identical.
+- This is static QA hardening plus local fixture execution only. Live IMF XML acquisition, GitHub Actions execution, live attachment/coverage verification and milestone acceptance remain NOT DONE. PR #34 remains unmerged; no production changes.
