@@ -143,3 +143,14 @@
 - On the same PR head, raw manifest test run #13 ID `43732684344`: SUCCESS; official-source probe run #12 ID `43732684305`: SUCCESS. These do not prove a 200-session archive.
 - PR #37 remains Draft/Open/Unmerged. No full shard matrix, shard merge, or final 200-session raw artifact has been executed. Full raw archive acceptance remains BLOCKED / 0%.
 - Next: add short per-shard Actions workflow with isolated output/artifacts, deterministic merge validator requiring exactly 200 unique session dates and no filename/content collisions, then independently inspect the final raw artifact. Final count must come from verified files, not inferred holidays.
+
+
+## 2026-11-15 continuation — bounded NSE raw-acquisition shards
+
+- Added inclusive ISO date-range options `--start-date YYYY-MM-DD --end-date YYYY-MM-DD` to `collector/nse_download.py`; existing default `--sessions/--lookback-days` mode remains in place. Bounded mode scans only the supplied date interval (weekends skipped), retains the existing Full Delivery → UDiFF → legacy source order and strict embedded-date checks, and writes `sessions.txt` plus acquisition diagnostics for that shard.
+- Code update commit reported by GitHub contents API: `7c87a2c83eb64d492d3a5124c83878d080717b9d`; subsequent fetch reports the current collector file blob `084c475e05468c4fe962cdd93e7951cd8c93b019`. The contents API commit SHA and fetched blob SHA are distinct identifiers; do not confuse them.
+- Added `tests/test_nse_bounded_shards.py` with four fail-fast CLI argument tests (missing bound, non-ISO date, reversed interval), commit `7b409fa01f0d5ea9aa7fd24b1eafa7114a6edfeb`.
+- Updated `.github/workflows/nse_date_integrity_tests.yml` to run both existing date-integrity tests and the new bounded-shard tests, commit `5e11a11c9fcc85918a5958a0c9e6f36064568371`, workflow blob `a1ae13aebd32dd8879940456015cd39fcd319593`.
+- CI status for these new tests: NOT_YET_VERIFIED. `fetch_commit_workflow_runs` for the workflow update commit returned no PR-triggered runs at check time. Do not claim tests passed until a run is observed.
+- Scope still incomplete: no shard matrix workflow, no artifact merge/200-session exact-coverage manifest, and no final raw archive artifact. Bounded-shard implementation progress is partial; 200-session raw archive acceptance remains BLOCKED / 0% until the merged raw artifact contains exactly 200 unique sessions, source-date reconciliation, and per-file SHA-256 manifest.
+- PR #37 remains Draft/Open/Unmerged; no production merge authorized. Existing production invariants remain unchanged.
