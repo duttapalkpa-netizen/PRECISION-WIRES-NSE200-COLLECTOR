@@ -7,6 +7,23 @@ class ParserTests(unittest.TestCase):
         lines += [f"L{10331+i}@P256: {x}" for i, x in enumerate(body.splitlines())]
         return parse_source_lines(lines)
 
+
+    def test_page_range_marker_retains_provenance_and_stops_at_notes(self):
+        lines = [
+            "L10330@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+            "L10407@P256-257: 1079 1079(p)",
+            "L10408@P257: NIC 2025",
+            "L10409@P257: Code",
+            "L10410@P257: NIC 2008 Code",
+            "L10411@P257: 1080 1080",
+            "L10873@P262: EXPLANATORY NOTES",
+            "L10874@P262: 1. This is explanatory material"
+        ]
+        rows = parse_source_lines(lines)
+        self.assertEqual([r.nic2025_class_4d for r in rows], ["1079", "1080"])
+        self.assertEqual(rows[0].pdf_pages, [256, 257])
+        self.assertEqual(rows[0].source_lines, [10407])
+
     def test_simple_and_partial_aggregation(self):
         rows = self.parse("0113 0113+0128(p)\n0114 0114")
         self.assertEqual(rows[0].components(), [{"code":"0113","partial":False},{"code":"0128","partial":True}])
