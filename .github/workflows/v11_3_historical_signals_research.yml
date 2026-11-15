@@ -7,6 +7,7 @@ on:
     paths:
       - "pipeline/v11_3_historical_signals_research.py"
       - "pipeline/v11_3_cost_aware_backtest.py"
+      - "scripts/research/audit_v11_3_cost_aware_replay.py"
       - "tests/research/test_v11_3_historical_signals_research.py"
       - ".github/workflows/v11_3_historical_signals_research.yml"
   push:
@@ -59,6 +60,16 @@ jobs:
         run: PYTHONPATH=. python pipeline/v11_3_historical_signals_research.py --data data/processed/nse_eq_200_sessions.csv --out outputs/backtest/v11_3_historical_signals --min-calibration-samples 100 --top-n 30
       - name: Run cost-aware H+1 H+3 H+5 replay
         run: PYTHONPATH=. python pipeline/v11_3_cost_aware_backtest.py --data data/processed/nse_eq_200_sessions.csv --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv --out outputs/backtest/v11_3_cost_aware_replay --cost-pct 0.22
+      - name: Independently reconcile signal, execution, costs, and metrics
+        run: |
+          PYTHONPATH=. python scripts/research/audit_v11_3_cost_aware_replay.py \
+            --data data/processed/nse_eq_200_sessions.csv \
+            --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv \
+            --trades outputs/backtest/v11_3_cost_aware_replay/cost_aware_trade_ledger.csv \
+            --metrics outputs/backtest/v11_3_cost_aware_replay/cost_aware_backtest_metrics.json \
+            --signal-manifest outputs/backtest/v11_3_historical_signals/v11_3_historical_signal_manifest.json \
+            --hashes outputs/backtest/v11_3_cost_aware_replay/cost_aware_output_sha256.json \
+            --out outputs/backtest/v11_3_independent_audit
       - name: Run cutoff-safe calibration regression tests
         run: PYTHONPATH=. python -m unittest discover -s tests/research -p "test_v11_3_historical_signals_research.py" -v
       - name: Upload research-only outputs
@@ -69,5 +80,6 @@ jobs:
           path: |
             outputs/backtest/v11_3_historical_signals/
             outputs/backtest/v11_3_cost_aware_replay/
+            outputs/backtest/v11_3_independent_audit/
           if-no-files-found: error
           retention-days: 90
