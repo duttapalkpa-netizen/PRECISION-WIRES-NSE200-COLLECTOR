@@ -420,3 +420,39 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Therefore V11.4 `walk_forward_predictions.csv` is not accepted as a silent substitute for V11.3 selector signals. No compatible archived V11.3 historical `CUT_OFF,SYMBOL` signal ledger has been identified.
 - Decision: full historical cost-aware replay remains BLOCKED / NOT_READY pending a genuine archived V11.3 signal ledger or a separately specified cutoff-safe research adapter. Any adapter must evaluate only information available at each cutoff and define an explicit minimum-sample/fail-closed calibration rule; do not invent a fallback or change production scoring. Protected selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and engines A–E remain unchanged.
 - Scoped progress: V11.3 source/input lineage diagnosis 100%; compatible historical signal ledger 0% / NOT_FOUND; cutoff-safe signal adapter specification 0% / NOT_STARTED; historical replay 0% / NOT_STARTED; independent replay reconciliation 0% / NOT_STARTED. Raw archive remains 100% PASS; replay unit-test gate remains 100% PASS; overall project percentage NOT_CALCULABLE.
+
+
+## 2026-11-15 — Page 29 final historical-signal, replay and selection-quality evidence (supersedes earlier NOT_STARTED checkpoint)
+
+### Verified source lineage
+- Raw archive source: workflow Run #4 / ID `43734398604`, artifact ID `14170166475`, SHA-256 `3c15ceb5cd6cb3270515090eb8393d22f8ca609a6032d0d7e128c5b78fb57494`; manifest PASS, 200 raw files, 200 sessions, 2026-01-21 through 2026-11-13.
+- IMPORTANT REJECTION: processed dataset from earlier Run #146 did not have the same 200-date set as the verified raw archive. It is not accepted as the final replay input. Final workflow now downloads Run #4's raw archive, rebuilds the processed dataset from those exact raw files, and asserts exact raw-session/processed-DATE equality before signals are generated.
+- Final processed dataset: 500,733 rows; 2,997 symbols; 200 sessions; first 2026-01-21; last 2026-11-13; delivery quantity and delivery percentage coverage both 100%; QA PASS, no issues, final-selection data readiness true. SHA-256 `8c433c8163dd5a52faf02ffe29e77571043c5791716c65d8c04cfca98ee857b1`.
+
+### Historical V11.3 research signals
+- Added `pipeline/v11_3_historical_signals_research.py` on the research branch. It evaluates cutoff-causal features and the V11.3 A/B/C/D/E feature/score structure; it does not call or change the production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672, or production workflows.
+- Adaptive RET20 now matches the V11.3 `min(20, history_depth-1)` rule. Calibration uses only H+3 labels whose full three-session window matured before the current cutoff. Minimum 100 matured samples/state is a research-only threshold; below it remains UNKNOWN. Calibration label is next 3 consecutive global-session HIGH excursion >=10% from cutoff CLOSE.
+- Final signal manifest PASS: 484,985 scored cutoff-symbol rows; 5,880 selected signals; 196 cutoffs; max 30 per cutoff. Signal SHA-256 `0e57446e98c372fb832bcfa5a4957791142e88a8f10bacc04e3dc61a945a0df3`; full calibration audit SHA-256 `8ac7fd3f1c1f7727778603f64d52c89261085ded03c55775f5b8a3356d7af435`.
+- Four cutoff-safe regression tests PASS, including adaptive RET20 and UNKNOWN/fail-closed calibration tests.
+
+### Cost-aware replay and independent execution audit
+- Final replay workflow Run #16 / ID `43738312823`, branch commit `6c4432962efa278ec5ea7f8e9aa93c92c31bdbbc`, artifact ID `14171590981`, artifact SHA-256 `c57469193b0f0fb6019202409b819118388a25897f0b698463f25a4e359a1360`.
+- 17,640 trade rows; 17,023 executable; 617 excluded. Per horizon: H+1 5,802 executable / 78 excluded; H+3 5,676 / 204; H+5 5,545 / 335.
+- Execution: next global session OPEN; targets +5/H1, +10/H3, +20/H5; -3% stop; intraday HIGH target; stop-first same-bar ambiguity; no target/stop exits at horizon close; one-time 0.22 percentage-point round-trip cost. Slippage/impact not modelled.
+- Independent audit PASS, blockers=[]; execution reconciliation errors=0; net arithmetic errors=0; exclusion policy errors=0. Trade ledger SHA-256 `05773a572055f7018220ceaf8581cde95bac83b64bb8c6d0005d268563c23670`; metrics SHA-256 `3b813a5b6b825dc4a20c75a46d3e4c468a45bd865500d2c3f6b4bc409e4a7daf`; independent audit JSON SHA-256 `56a00314ab0417fd6b4548dc828319dbc92babbdc60a408d5f793cb072f9cf51`.
+- Base 0.22% cost mean net returns: +5/H1 `-0.8127%`; +10/H3 `-0.8767%`; +20/H5 `-0.9262%`. Mean net returns remain negative at 0.00%, 0.22%, and 0.44% cost. Profitability gate is therefore BLOCKED; no production/trading promotion.
+
+### Full-universe selection-quality and cost-sensitivity audit
+- Audit workflow Run #1 / ID `43738744068`, commit `a07126551632acdc48ed6c49e88fa771b87dd754`, artifact ID `14171208561`, artifact SHA-256 `253295eedd33d6e01df880d2f38e3f0e4be38d7153b31207b58d5c7cc2ddb9aa`; status PASS, blockers=[].
+- H+1: precision 12.87%, recall 2.02%, lift 1.68x, FDR 87.13%, missed winners 36,228.
+- H+3: precision 9.04%, recall 1.91%, lift 1.60x, FDR 90.96%, missed winners 26,317.
+- H+5: precision 2.83%, recall 1.89%, lift 1.59x, FDR 97.17%, missed winners 8,132.
+- Non-overlapping cohort drawdown proxy: H+1 -57.78% (98 cohorts), H+3 -34.56% (49 cohorts), H+5 -25.70% (32 cohorts). This is explicitly a cohort proxy, not a capital-constrained overlapping portfolio drawdown.
+- Selection-quality JSON SHA-256 `79ef94ebcc14c5c465354270c9ab7a71cfa6c99f32102243c886cbe33cf00971`.
+
+### Research report and acceptance state
+- Completed scoped report: `docs/V11_3_HISTORICAL_SIGNAL_COST_AWARE_BACKTEST_RESEARCH_REPORT_20261115.md`, commit `65d6c3352763181b529045cdd044456e56ade530`.
+- Scoped progress: raw-to-processed lineage 100% PASS; research signal generation 100% PASS; replay execution 100% complete; independent execution audit 100% PASS; full-universe quality/cost audit 100% PASS; scope-specific report 100% complete.
+- Profitability acceptance: BLOCKED (negative expectancy, low recall, high false-discovery rate). Full production-selector equivalence: NOT ESTABLISHED. Project-wide final paper/release: BLOCKED by separate Macro-Geo Step 4 / Factor Registry and CORE-672/system-wide acceptance gates; this work package does not close them. Overall project percentage remains NOT_CALCULABLE.
+- Calibration/execution basis mismatch is explicitly retained as a limitation: calibration target is measured from cutoff CLOSE, while replay target is measured from next-session OPEN. Future work must test an execution-aligned matured label without altering production logic.
+- PR #37 remains Draft/Open/Unmerged. No merge or production integration. Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 and engines A–E remain unchanged. Research spend ₹0; no paid APIs or synthetic data.
