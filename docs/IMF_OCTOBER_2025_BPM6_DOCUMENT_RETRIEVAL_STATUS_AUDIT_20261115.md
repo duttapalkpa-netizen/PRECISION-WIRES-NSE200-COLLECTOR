@@ -745,3 +745,35 @@ Each sidecar preserves actual acquisition UTC time, requested/final URL, GET, ex
 - Existing 110-row CSV and manifest unchanged. No new IMF pull, no synthetic data, no production change, no spend, no PR merge, no gate promotion.
 
 This supersedes only the earlier statement that the audited repository paths did not contain raw bodies: the original workflow artifacts have now been recovered. It does not retroactively create source-vintage evidence.
+
+## 30. Archived raw SDMX vintage-attribute inspection (2026-11-15)
+
+### Scope
+Inspected the exact archived raw SDMX-JSON response bodies recovered from the original GitHub Actions artifacts for all four India series:
+- `IND.A_NFA_T.P_F.USD.A`
+- `IND.L_NIL_T.P_F.USD.A`
+- `IND.A_NFA_T.P_F.USD.Q`
+- `IND.L_NIL_T.P_F.USD.Q`
+
+The three response bodies in artifact 14125515371 and annual-assets body in artifact 14122421554 were parsed directly from the ZIPs. No new HTTP request or data pull was made. Previously verified response-body byte counts and SHA-256 values were retained.
+
+### Findings
+- All four raw SDMX bodies contain `meta: {}`; no release/vintage field is present in the response metadata object.
+- The SDMX structure includes dataset-level attributes such as DOI, FULL_DESCRIPTION, PUBLISHER, DEPARTMENT, AUTHOR, CONTACT_POINT, TOPIC_DATASET, KEYWORDS_DATASET, LANGUAGE, PUBLICATION_DATE, UPDATE_DATE, METHODOLOGY_NOTES, source citation and license. It does not define a dedicated vintage/release identifier attribute in the inspected structure.
+- Dataset-level attributes include UPDATE_DATE value `2026-11-07T14:56:50.476461500Z` and a second update timestamp `2026-11-07T14:56:50.532906Z` in the captured SDMX dataset attributes. These are dataset-level update metadata, not a per-response release ID or an explicitly documented publication vintage. They must not be promoted to vintage.
+- Observation attributes retained in the data are PRECISION, DERIVATION_TYPE, STATUS, ACCESS_SHARING_LEVEL, ACCESS_SHARING_NOTES, SECURITY_CLASSIFICATION and SOURCE. No observation-level vintage/release identifier appears. STATUS, ACCESS_SHARING_NOTES and SOURCE are null in the observations.
+- The dataset-level source-methodology text names multiple potential source types, including country authorities, National Summary Data Pages, ECB and IMF Staff Estimates. It does not identify the provenance of each India observation or establish whether an observation is direct-reported versus estimated.
+- Dataset citation text refers to a BOP/IIP dataset page and says "Accessed on [current date]"; this is citation boilerplate, not a vintage field.
+
+### Decision
+- Raw SDMX vintage-field inspection: COMPLETE for all four archived responses.
+- Explicit source-supplied vintage/release identifier: NOT EXPOSED in the inspected raw response structures.
+- Dataset-level UPDATE_DATE: observed but NOT_ACCEPTED as a vintage.
+- Historical observation release vintage: UNKNOWN; the original capture metadata did not establish a vintage at retrieval time.
+- Sidecar vintage status remains `NOT_VERIFIED`, not `NOT_EXPOSED_BY_SOURCE`, because the sidecar status refers to whether vintage evidence was adequately inspected for the original acquisition event; this retrospective inspection does not create a source-supplied per-response vintage.
+- Revision-aware panel eligibility remains NOT_READY. One response snapshot per exact series is still insufficient for revision comparison.
+
+### Next action
+Seek an independent dated IMF release/archive snapshot that contains the same four exact India series and overlapping reference periods. Compare only after proving both snapshots' exact dataflow/DSD, series keys, release dates/IDs and raw-body hashes. If no second dated snapshot is publicly available, preserve UNKNOWN and keep revision-aware research blocked.
+
+No existing CSV, manifest, sidecar, raw response or accepted gate was modified.
