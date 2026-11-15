@@ -253,3 +253,13 @@ Evidence:
 - Workflow blob SHA: `c35b71a2b464cab87a41dac92dbecec1264e5c4f`.
 
 The parser correction and fixture are committed. The GitHub Actions run, live IMF XML, exact live DSD linkage and cube-region values remain NOT DONE until the workflow is registered on the default branch and dispatched.
+
+
+## 2H. SDMX 2.1 ContentConstraint / CubeRegion QA hardening (2026-11-15)
+
+- Official SDMX-ML 2.1 schema source: `sdmx-twg/sdmx-ml`, ref `v2.1`, files `schemas/SDMXStructureConstraint.xsd` and `schemas/SDMXCommon.xsd`.
+- Schema findings: `ContentConstraintType` permits repeated choice members including `CubeRegion`; SDMX 2.1 `CubeRegion` is typed in the common namespace and contains `KeyValue` and `Attribute`; each `KeyValue` has required `id` and can contain either repeated `Value` elements or a `TimeRange`. Include/exclude semantics are carried by the relevant include attributes.
+- Workflow hardening commit: `ffd9a1acb98639ff29e46ec85f4baee0a3eb84b0`; workflow blob `e7a6877721cf2282c781bb0e9f12a74d476f3971`.
+- Added a namespace-qualified SDMX 2.1 regression fixture covering included and excluded dimensions, a TIME_PERIOD TimeRange with inclusive/exclusive boundaries, and an Attribute value.
+- Expanded runtime QA inventory to retain per-region include status, each KeyValue id/include/Value list/TimeRange boundaries, and Attribute id/include/Value list. This avoids treating a mere CubeRegion count as complete dimensional coverage evidence.
+- Verification: branch file re-fetched and confirmed to contain the fixture and expanded inventory; job timeout remains 5 minutes. GitHub Actions runtime has NOT been dispatched; fixture execution and live IMF response validation remain NOT DONE. Do not mark the IMF metadata runtime gate PASS from this static commit alone.
