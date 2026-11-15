@@ -28,12 +28,14 @@ For each eligible historical cutoff date C, and each symbol with valid observati
 The production candidate formula uses a numeric calibration term. A cutoff-safe historical equivalent therefore requires a declared minimum number of matured observations per state and a declared behavior below that minimum.
 
 These policy values are NOT established by the inspected source and must not be invented by implementation:
-- Minimum matured H+3 observations per state: **PENDING EXPLICIT APPROVAL**.
-- Whether counts are per state, pooled, or additionally segmented: **PENDING SOURCE/USER DECISION**.
-- Below-threshold behavior: **UNKNOWN / NOT ELIGIBLE; do not substitute 0, 50, a full-sample rate, or another synthetic value**.
-- Whether a cutoff with any required state below threshold is wholly excluded or only the affected state/symbol is marked UNKNOWN: **PENDING EXPLICIT APPROVAL**.
+- Minimum matured H+3 observations per state: **50 — EXPLICITLY APPROVED BY USER ON 2026-11-15**.
+- Counting unit: one unique, fully matured `CUT_OFF,SYMBOL` observation assigned to that exact state at that cutoff. Duplicate keys, repeated rows, immature outcomes, and synthetic observations do not count.
+- Scope: counts are maintained independently for each state; do not pool observations across states to meet the threshold.
+- Below-threshold behavior: that state remains **UNKNOWN / NOT CALIBRATED / NOT ELIGIBLE**. Do not substitute 0, 50, a pooled rate, a full-sample rate, or another synthetic value.
+- Scope of exclusion: only the affected state’s signal/calibration is UNKNOWN; other states may proceed if they independently satisfy all gates. Any row in an under-threshold state must not receive a calibrated numeric score.
+- Maturity: an H+3 observation counts only after all three subsequent valid exchange sessions and the complete outcome window are available under the approved outcome definition. Missing sessions or incomplete windows do not count.
 
-Until these decisions are approved, the adapter may perform source inspection and tests of date isolation only; it must not emit accepted scored signals or run the cost-aware historical replay.
+The threshold policy is approved, but accepted scored signals and replay remain blocked until the authoritative H+3 outcome calculation, state assignment, and cutoff maturity logic are independently verified. Source inspection and date-isolation tests may proceed.
 
 ## 5. Required inputs and provenance
 - Processed OHLC dataset derived from the accepted 200-session archive; record exact path, SHA-256, row count, date range, schema, and upstream archive artifact ID.
@@ -62,9 +64,9 @@ H. Replay precondition: no replay until all policy decisions are approved, all g
 ## 8. Current decision and progress
 - Existing V11.3 historical signal ledger: NOT_FOUND.
 - V11.4 predictions as substitute: REJECTED.
-- Adapter specification: DRAFTED; approval pending.
+- Adapter specification: UPDATED with approved minimum 50 matured observations per state.
 - Adapter implementation/tests: NOT_STARTED.
-- Historical cost-aware replay: BLOCKED / NOT_STARTED.
+- Historical cost-aware replay: BLOCKED / NOT_STARTED; H+3 outcome/maturity semantics require independent code audit.
 - Independent replay reconciliation: NOT_STARTED.
 
 ## 9. Safety
