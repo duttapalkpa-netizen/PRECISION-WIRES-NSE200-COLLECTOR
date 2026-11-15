@@ -90,3 +90,20 @@ Measurement boundaries:
 - This is FX/rate evidence, not proof that capital flowed from one country to another.
 
 Global Capital Rotation Overlay progress remains 62.5% (5/8) pending completion of the broader synchronized macro/flow panel, exact NSE-calendar joins, relative-attraction and sector bridge, and matured validation. H.10 subpanel progress must not be substituted for overall overlay completion. Production integration remains prohibited; selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E are unchanged.
+
+
+## Verified Fed H.10 broad-dollar diagnostic — 2026-11-15
+
+The previously acquired workflow artifact was downloaded and independently revalidated in this audit:
+- Run: 43276577238 (SUCCESS); artifact ID: 13970661965.
+- Downloaded ZIP size: 3,462,888 bytes.
+- ZIP SHA-256 recomputed: `a6f6af42226ed689ceba8e9c2d843867d82e9aa8f9a7761022c86bd719ef3691` (matches the previously recorded digest).
+- All 26/26 raw series files independently match the byte sizes and SHA-256 values in the embedded manifest.
+- Both derived panel CSV files independently match their manifest byte sizes and SHA-256 values.
+- Federal Reserve H.10 series `DTWEXBGS` (Nominal Broad U.S. Dollar Index) has 5,440 dated rows from 2006-01-02 to 2026-11-06; 5,227 numeric observations and 213 source-missing observations.
+- On the last 21 valid published observations (2026-10-08 to 2026-11-06), the 20-observation interval change is +0.3568637816%.
+- This is a broad trade-weighted USD index, **not ICE DXY**. It is now stored under the distinct key `fed_broad_usd_change_pct_20d`; it must not populate `dxy_change_pct_20d` or satisfy the DXY+USD/INR paired FX diagnostic.
+- Derived research-only observation: `data/global_capital_rotation/fed_h10_derived_observation_2026-11-06.csv`.
+- No missing value was forward-filled. The calculation uses 21 valid observations to measure 20 intervals; source gaps outside those valid endpoints are not imputed.
+
+This adds a verified broad-dollar input only. It does not establish capital flows, an ICE DXY observation, a synchronized USD/INR panel, sector transmission, predictive value, or production readiness.
