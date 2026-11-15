@@ -474,3 +474,26 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Mitigation committed: concurrency now has `cancel-in-progress: false`; CI installs the repository-compatible ranges `pandas>=2.2,<3` and `numpy>=1.26,<3`. Commit `4654f9648b6c018f5d148231e3ce7a8b88a6da4d`.
 - This is a targeted CI reliability fix; no production pipeline or strategy logic changed. A new run was not yet returned by the commit-workflow-run lookup at the time of this ledger update. CI runtime remains NOT_VERIFIED.
 - Updated progress: cancellation diagnosis 100%; mitigation commit 100%; rerun result pending; actual NSE artifact integrity audit 0%; replay 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Research CI PASS + actual 200-session raw/processed artifact reconciliation
+### CI evidence
+- PR workflow Run #40: ID `43748065772`, conclusion SUCCESS; job `research-unit-tests` ID `132915699706` SUCCESS.
+- Job log explicitly reports `Ran 50 tests in 0.094s` and `OK`. This includes the five new raw/processed integrity audit tests, forward-outcome integrity tests, cost-aware replay tests, and existing NIC concordance tests.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43748065772
+### Actual raw archive artifact
+- Located successful NSE raw backfill Run #25: ID `43746369460`; merge job ID `132911365036` SUCCESS; all 21 bounded shard acquisition jobs shown SUCCESS.
+- Downloaded artifact `nse-200-session-raw-archive-25`, artifact ID `14174496957`, size 26,279,303 bytes. GitHub artifact digest and independently computed ZIP SHA-256 both equal `8bd3b32e9efb1ae39086b1fe5901307e17d5f8eb245e615f82c2beb1b7d2f308`.
+- Independently inspected archive and embedded `qa/raw_archive_manifest.json`: status PASS, exactly 200 raw Bhavcopy files / 200 distinct dates, 2026-01-21 through 2026-11-13; 500,733 EQ rows; 2,997 unique symbols; all 200 per-file SHA-256 values and manifest row counts/date fields matched; duplicate raw SYMBOL/DATE key rows = 0.
+### Processed + signals/replay artifact
+- Downloaded successful cutoff-safe replay Run #21 artifact `v11-3-cutoff-safe-replay-21`, artifact ID `14174526631`; GitHub digest and independently computed ZIP SHA-256 both equal `69494bd25d688f7aa48a30f969f154f5f13229b19cac483deb5d5c8077c6573b`.
+- Processed input `data/processed/nse_eq_200_sessions.csv` SHA-256 `8c433c8163dd5a52faf02ffe29e77571043c5791716c65d8c04cfca98ee857b1`. Independently compared all raw EQ SYMBOL/DATE keys against processed dataset: raw rows 500,733; processed rows 500,733; unique symbols 2,997 each; sessions 200 each; duplicate keys raw=0 / processed=0; missing raw-to-processed keys=0; extra processed keys=0; missing/extra session dates=0. Raw-to-processed key reconciliation PASS for this exact artifact pair.
+- Historical signal file SHA-256 `0e57446e98c372fb832bcfa5a4957791142e88a8f10bacc04e3dc61a945a0df3`; 5,880 rows; 196 cutoff dates; exactly 30 rows per cutoff; 0 duplicate cutoff/symbol keys; every signal symbol/cutoff existed in processed input. This is key-presence provenance only, not full feature look-ahead proof.
+- Cost-aware trade ledger: 17,640 rows; zero duplicate cutoff/symbol/target/horizon keys. Embedded independent replay audit says PASS, blockers empty, execution reconciliation errors=0, net arithmetic errors=0, exclusion policy errors=0.
+- Performance evidence is not a profitability PASS: gross target hit rates were 12.87% (5%/H+1), 9.04% (10%/H+3), 2.83% (20%/H+5); mean net returns after 0.22 percentage-point round-trip cost were -0.813%, -0.877%, -0.926% respectively. Median net returns were -1.669%, -3.220%, -3.220%. Slippage not modelled. This historical research-only adapter does not invoke the production selector or production RANKING_SCORE.
+- Historical calibration labels/score construction and strict no-lookahead provenance still require code-level review against the exact signal generation commit. The separate previously identified H+3/H+5 walk-forward label defect remains NOT_VERIFIED until corrected labels are regenerated and independently audited; do not substitute this artifact's simulation outputs for that separate acceptance gate.
+### Current state
+- PASS: 50-test research CI; raw archive per-file hashes/date/row checks; raw-to-processed exact SYMBOL/DATE key reconciliation for the exact two artifacts above; basic signal cutoff-key presence; independent replay arithmetic reconciliation.
+- NOT_VERIFIED: complete calibration-label no-lookahead audit; rerun on corrected forward outcome labels; current-main production collector artifact pairing; price-band/circuit execution; slippage and portfolio sizing/drawdown.
+- BLOCKED: final paper acceptance / claim of profitable scanner.
+- Next step: inspect exact signal-generation source and prove calibration uses only fully matured observations available at each cutoff; then bind the exact processed/signal/replay artifacts to their producing commit and regenerate the H+3/H+5 corrected event labels. Do not repeat the raw-to-processed audit for this exact artifact pair.
