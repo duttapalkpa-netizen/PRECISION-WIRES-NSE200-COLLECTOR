@@ -958,3 +958,42 @@ Official sources:
 Bounded crosswalk audit: 100% complete. Mapping gate remains NOT_ESTABLISHED; RBI raw quarterly export remains NOT_RETRIEVED; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 progress NOT_CALCULABLE.
 
 No paid sources, credentials, synthetic data, fabricated mapping, data-file mutation, PR merge or production change.
+
+## 2026-11-15 — CORRECTION: official RBI BPM6 sign-convention crosswalk recovered
+
+This section supersedes the immediately preceding crosswalk audit's statement that no official RBI sign-conversion rule was located. A targeted search of RBI's official *Balance of Payments Manual for India* and the official Working Group report located the missing convention.
+
+### Exact official rule
+- RBI Manual, paragraphs 1.16 and 1.19 (official 2010 manual): for assets, a positive credit figure represents a decrease in assets and a negative debit figure represents an increase in assets; for liabilities, a positive credit figure represents an increase in liabilities and a negative debit figure represents a decrease in liabilities. Financial-account components are recorded net, separately for each asset or liability category; positive change means decrease in assets or increase in liabilities, and negative change means increase in assets or decrease in liabilities.
+- RBI Working Group report further states that netting is done within the same asset or liability type; changes in financial assets are not netted against changes in liabilities (except possible financial-derivative treatment).
+- Current RBI April 2026 guide confirms Table 42 is quarterly, USD million, BPM6, financial account by functional classification, with Credit/Debit/Net columns and residence principle. It does not restate the detailed sign equation, so the sign equation is sourced from the official RBI Manual, not inferred from Table 42 labels.
+  
+### Conditional mathematical crosswalk (same portfolio functional category, same period, same USD unit)
+Let RBI Net = Credit − Debit, using the RBI Manual's financial-account sign convention:
+- IMF-style net acquisition of financial assets = − (RBI net change on the asset side).
+- IMF-style net incurrence of liabilities = + (RBI net change on the liability side).
+Thus, if RBI Table 42 exposes separate net portfolio asset and liability observations at the same aggregation level, the candidate mapping is:
+  - Assets: IMF A_NFA_T candidate = Debit − Credit = −Net.
+  - Liabilities: IMF L_NIL_T candidate = Credit − Debit = +Net.
+This is a sign-convention bridge, not yet an approved data-series crosswalk. It must be applied only to separate asset-side/liability-side net observations, never to a combined portfolio net balance. The direction must be assigned from the RBI table's explicit asset/liability row labels or an official definition; do not assign it from "in India/by India" labels alone without confirming the table's row definitions.
+
+### Remaining validation before numeric use
+- Exact RBI Table 42 portfolio row split into asset-side and liability-side values at the same total P_F scope: NOT_YET_VERIFIED from raw export.
+- Raw quarterly DBIE Table 42 export, column headers, row labels and metadata: NOT_RETRIEVED.
+- Exact matching coverage/instrument aggregation to IMF P_F: NOT_ESTABLISHED.
+- Two dated raw RBI export snapshots and release/vintage metadata: NOT_RETRIEVED. Previously inspected bulletin pages are human-readable publication snapshots, not raw data-file vintage evidence.
+- Therefore the sign-convention formula is now documented, but no numeric RBI-to-IMF series has been created, merged or promoted. The IMF vintage gate remains unaffected.
+
+### Revised status
+- Official RBI sign-convention rule located: PASS.
+- Conditional assets/liabilities sign bridge: PASS (methodology-level only).
+- Exact Table 42 row mapping and P_F scope equivalence: NOT_ESTABLISHED.
+- Quarterly raw export and dated raw snapshots: NOT_RETRIEVED.
+- RBI parallel-source readiness: NOT_READY pending data-level mapping and raw snapshot validation.
+
+Sources:
+- RBI Balance of Payments Manual for India, especially paragraphs 1.16 and 1.19: https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013
+- RBI Working Group report, sign convention and netting within same asset/liability type: https://www.rbi.org.in/scripts/PublicationReportDetails.aspx?ID=596
+- RBI April 2026 Current Statistics Guide, Table 42: https://www.rbi.org.in/scripts/PublicationsView.aspx?Id=24094
+
+Bounded sign-convention recovery task: 100% complete. IMF BOP workstream remains 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 project progress NOT_CALCULABLE. No data mutation, synthetic values, paid source, credentials, PR merge or production change.
