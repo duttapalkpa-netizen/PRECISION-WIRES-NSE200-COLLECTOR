@@ -56,11 +56,11 @@ jobs:
           print({"rows":len(d),"symbols":d.SYMBOL.nunique(),"sessions":d.DATE.nunique()})
           PY
       - name: Run isolated cutoff-safe V11.3 historical signal generation
-        run: python pipeline/v11_3_historical_signals_research.py --data data/processed/nse_eq_200_sessions.csv --out outputs/backtest/v11_3_historical_signals --min-calibration-samples 100 --top-n 30
+        run: PYTHONPATH=. python pipeline/v11_3_historical_signals_research.py --data data/processed/nse_eq_200_sessions.csv --out outputs/backtest/v11_3_historical_signals --min-calibration-samples 100 --top-n 30
       - name: Run cost-aware H+1 H+3 H+5 replay
-        run: python pipeline/v11_3_cost_aware_backtest.py --data data/processed/nse_eq_200_sessions.csv --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv --out outputs/backtest/v11_3_cost_aware_replay --cost-pct 0.22
+        run: PYTHONPATH=. python pipeline/v11_3_cost_aware_backtest.py --data data/processed/nse_eq_200_sessions.csv --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv --out outputs/backtest/v11_3_cost_aware_replay --cost-pct 0.22
       - name: Run cutoff-safe calibration regression tests
-        run: python -m unittest tests.research.test_v11_3_historical_signals_research -v
+        run: PYTHONPATH=. python -m unittest discover -s tests/research -p "test_v11_3_historical_signals_research.py" -v
       - name: Upload research-only outputs
         if: always()
         uses: actions/upload-artifact@v4
