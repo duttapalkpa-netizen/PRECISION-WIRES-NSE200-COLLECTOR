@@ -73,7 +73,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT, g
         exit_price=float(last["CLOSE_PRICE"]); exit_date=window_dates[-1]; reason="HORIZON_CLOSE"
     gross=(exit_price/entry-1)*100
     net=gross-cost_pct
-    return {"CUT_OFF":cutoff.date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":cutoff.isoformat(),
+    return {"CUT_OFF":cutoff.date().isoformat(),"SIGNAL_AS_OF_DATE":cutoff.date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":None,
         "ENTRY_SESSION":window_dates[0].date().isoformat(),"ENTRY_PRICE":entry,"ENTRY_STATUS":"EXECUTED",
         "TARGET_PCT":float(target_pct),"HORIZON_SESSIONS":int(horizon),"EXIT_SESSION":exit_date.date().isoformat(),
         "EXIT_PRICE":float(exit_price),"EXIT_REASON":reason,"GROSS_RETURN_PCT":gross,"COST_PCT":float(cost_pct),
@@ -81,7 +81,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT, g
         "EXECUTABLE":True,"DATA_STATUS":"VERIFIED_OHLC","SOURCE_FILE":"","SOURCE_ROW_OR_KEY":f"{symbol}|{window_dates[0].date()}"}
 
 def _empty(cutoff,symbol,target,horizon,status,cost):
-    return {"CUT_OFF":pd.Timestamp(cutoff).date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":pd.Timestamp(cutoff).isoformat(),
+    return {"CUT_OFF":pd.Timestamp(cutoff).date().isoformat(),"SIGNAL_AS_OF_DATE":pd.Timestamp(cutoff).date().isoformat(),"SYMBOL":str(symbol),"SIGNAL_TIMESTAMP":None,
         "ENTRY_SESSION":None,"ENTRY_PRICE":None,"ENTRY_STATUS":status,"TARGET_PCT":float(target),"HORIZON_SESSIONS":int(horizon),
         "EXIT_SESSION":None,"EXIT_PRICE":None,"EXIT_REASON":status,"GROSS_RETURN_PCT":None,"COST_PCT":float(cost),
         "NET_RETURN_PCT":None,"TARGET_HIT":None,"STOP_HIT":None,"EXECUTABLE":False,"DATA_STATUS":status,
@@ -95,7 +95,9 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
     if bars["DATE"].isna().any(): raise ValueError("Invalid DATE values; refusing implicit date repair")
     if bars.duplicated(["SYMBOL","DATE"]).any(): raise ValueError("Duplicate SYMBOL/DATE keys; fail closed")
     signals=pd.read_csv(signals_path)
-    if not {"CUT_OFF","SYMBOL"}.issubset(signals.columns): raise ValueError("Signals require CUT_OFF and SYMBOL")
+    if not {"CUT_OFF","SYMBOL","SIGNAL_TIMESTAMP"}.issubset(signals.columns): raise ValueError("Signals require CUT_OFF, SYMBOL, and SIGNAL_TIMESTAMP")
+    if signals["SIGNAL_TIMESTAMP"].notna().any():
+        raise ValueError("Non-null SIGNAL_TIMESTAMP is not accepted without verified source availability time; use CUT_OFF as date-only as-of key")
     signals["CUT_OFF"]=pd.to_datetime(signals["CUT_OFF"],errors="coerce")
     if signals["CUT_OFF"].isna().any(): raise ValueError("Invalid signal cutoff")
     global_dates=sorted(bars["DATE"].drop_duplicates())
