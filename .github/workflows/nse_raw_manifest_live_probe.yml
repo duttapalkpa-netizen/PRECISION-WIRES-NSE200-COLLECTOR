@@ -1,0 +1,41 @@
+name: NSE Raw Manifest Official-Source Probe
+
+on:
+  pull_request:
+    paths:
+      - "scripts/research/build_raw_archive_manifest.py"
+      - ".github/workflows/nse_raw_manifest_live_probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  raw-manifest-live-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download one verified NSE Full Delivery source file
+        run: |
+          mkdir -p data/raw
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 45 \
+            -H "User-Agent: Mozilla/5.0" -H "Referer: https://www.nseindia.com/" \
+            "https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_13112026.csv" \
+            -o data/raw/sec_bhavdata_full_13112026.csv
+          printf "2026-11-13\n" > data/raw/sessions.txt
+          test "$(wc -c < data/raw/sec_bhavdata_full_13112026.csv)" -gt 1000
+      - name: Verify real NSE raw date and SHA-256 manifest
+        run: python scripts/research/build_raw_archive_manifest.py
+      - name: Upload probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-raw-manifest-live-probe-${{ github.run_number }}
+          path: |
+            data/raw/
+            data/qa/raw_archive_manifest.json
+          if-no-files-found: error
