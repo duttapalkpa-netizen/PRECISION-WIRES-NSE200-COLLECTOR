@@ -949,3 +949,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Existing checks remain 11 quarters, 22/22 PASS_WITH_ROUNDING. Annual Q2 matrix remains 7/11 = 63.6%.
 - Bounded retrieval audit 100% complete (search outcome unresolved); IMF BOP 5/7=71.4%; RBI raw export NOT_RETRIEVED; IMF vintage NOT_READY; overall V11.3 NOT_CALCULABLE.
 - Report commit: fcbf043d078cb0011f1d37c3f988ad8720f5ca82; report blob: 8f6f2a4c7fe7858f8c20790e53ecb9650891e5bc.
+
+
+## 2026-11-15 — RBI DBIE Table 42 source-contract verification
+- RBI April 2026 Comprehensive Guide (published 08 Oct 2026): https://www.rbi.org.in/scriptS/PublicationsView.aspx?id=24094
+- Table 42 verified as quarterly, USD million, DEPR/RBI source, subject to revision; BPM6 financial-account portfolio investment, assets/liabilities, credit/debit/net.
+- Official DBIE path: Publication > Time-Series Publications > Monthly RBI Bulletin > External Sector; also Statistics > External Sector > International Trade.
+- RBI guide confirms extended historical time series in DBIE and quarterly BoP frequency. Table 43 is INR-crore BPM6 counterpart; Table 40 is older overall BoP classification, not a substitute.
+- RBI DBIE export guide: preformatted reports via Statistics > Sector > Sub Sector > Required Report or Publication > Required publication > Required Report/Search Option; export as Excel/PDF/Text/CSV.
+- DBIE root public page extraction returned no readable lines. No undocumented endpoint, login, credential or bypass used. Exact quarterly Table 42 export/schema/raw CSV NOT_RETRIEVED.
+- Earlier DBIE page with annual frequency remains rejected for quarterly purpose. 2015-Q2 and 2021-Q2 RBI values remain NOT_RETRIEVED; no comparison claimed.
+- Source-contract/navigation work bounded task 100% complete; raw export acquisition 0% (not retrieved). Existing 11 quarters / 22/22 comparisons unchanged; IMF BOP 5/7=71.4%; IMF vintage NOT_READY; overall V11.3 NOT_CALCULABLE.
+- Report commit: 10c37ad79265ad084f6937d266b17a2b8b9324ca; report blob: 52a6edeac08a97640f47f8a94374755dc42e0c5e.
