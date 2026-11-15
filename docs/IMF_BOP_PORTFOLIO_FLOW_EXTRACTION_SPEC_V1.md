@@ -291,3 +291,13 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Research branch workflow commit: `1e8e3cb96e70f7934da68c8f91cd775c882595e3`; workflow blob: `4349a273c43ccfdab4dae0d8dc9fa734d0d0b2a9`.
 - PR #34 branch synchronization commit: `ead54698aa2d553ed2a62ff3a06ab924ea6a8f25`. Both branch copies re-fetched and confirmed byte-identical.
 - This is static QA hardening plus local fixture execution only. Live IMF XML acquisition, GitHub Actions execution, live attachment/coverage verification and milestone acceptance remain NOT DONE. PR #34 remains unmerged; no production changes.
+
+
+## 2L. Correct dimension-key uniqueness scope across multiple CubeRegions (2026-11-15)
+
+- Review found a false-failure risk in the previous QA: it compared dimension IDs globally across all CubeRegions. SDMX permits the same dimension IDs (for example FREQ and REF_AREA) to recur in separate regions; uniqueness is required within each region, not across the whole constraint.
+- Corrected the validator to audit each CubeRegion independently, reporting per-region key counts and uniqueness, and rejecting missing IDs or keys with neither Value nor TimeRange.
+- Expanded the namespace-qualified regression fixture to contain two CubeRegions reusing FREQ and REF_AREA IDs with different values and region include flags.
+- Executed the updated fixture and the per-region uniqueness assertions locally: PASS. The fixture also retains checks for the exact IMF:BOP_BPM6:1.0 attachment, first-region include/exclude, TIME_PERIOD boundaries and Attribute values.
+- Research workflow commit: `0a6af27fe0f230d3d24826605af8020bbb44eb9a`; PR #34 workflow branch sync commit: `86c132676f467cda788f9e7acbbfb9cd6db6f790`; workflow blob: `9d7ba026b42a50108e4f9fec06e39f687ad26a5e`.
+- Both workflow branch copies re-fetched and confirmed byte-identical. Live IMF XML, GitHub Actions run, and live constraint coverage remain NOT DONE. PR #34 remains unmerged.
