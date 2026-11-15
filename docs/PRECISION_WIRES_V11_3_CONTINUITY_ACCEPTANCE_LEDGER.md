@@ -379,3 +379,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Root cause is test-fixture semantics, not yet evidence of a simulator defect: (1) the stop is correctly 3% below the actual next-session entry price, so a low opening price on the entry session cannot be a stop-gap when that same open defines entry; the gap fixture now places the gap on the following session and uses a 3-session horizon. (2) the missing-symbol-session test removed the date from the entire single-symbol dataset, which also removed it from the inferred global trading calendar; fixture now retains that global date via an OTHER symbol row while omitting ABC for that session.
 - Corrected test commit `4e144b34ce1b8d8aa0dfc5ca43ccb80b8bea3536`. New Run #4 ID `43692345179` observed QUEUED on that commit. Awaiting its actual result; no test PASS claimed.
 - Historical replay remains NOT_STARTED pending CI PASS and additional code review. Production selector, ranking, pressure-fade, CORE-672 and collector unchanged.
+
+
+## 2026-11-15 — Run #4 result and second fixture refinement
+- Run #4 / `43692345179` completed FAILURE. Seven of eight tests passed; only `test_gap_below_stop_fills_open` failed. The failure log shows an earlier entry-session bar hit the +5% target before the later stop-gap bar, so the simulator correctly exited at TARGET. This is a test fixture ordering issue, not a simulator failure.
+- Corrected the fixture to keep the first session below target and introduce the gap on the following session. Commit `c3d5028eafa7e936bdfdd1fd271ce532cf226607`.
+- A fresh CI run is triggered by the push; its result must be checked before any replay. Do not rerun collector or completed unrelated workflows.
+- CI status: Run #3 6/8 tests; Run #4 7/8 tests; latest test correction committed, runtime pending. Historical replay remains NOT_STARTED.
