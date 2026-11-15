@@ -1,0 +1,2 @@
+date,indicator,value,unit,source,source_url,published_at,as_of_date,quality_status
+2026-11-06,fed_broad_usd_change_pct_20d,0.35686378161978727,percent_change_over_20_valid_observation_intervals,Federal Reserve H.10 Nominal Broad U.S. Dollar Index (DTWEXBGS) via FRED public CSV distribution,https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTWEXBGS,2026-11-09T21:16:53Z,2026-11-06,VERIFIED_OFFICIAL
