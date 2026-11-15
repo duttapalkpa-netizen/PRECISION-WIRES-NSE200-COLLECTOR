@@ -46,6 +46,7 @@ def main() -> int:
         eq_rows = 0
         bad_rows = 0
         observed_dates = set()
+        file_error = None
         try:
             with path.open("r", encoding="utf-8-sig", newline="") as stream:
                 reader = csv.DictReader(stream)
@@ -64,7 +65,8 @@ def main() -> int:
                     if expected is None or parsed != expected:
                         bad_rows += 1
         except Exception as exc:
-            blockers.append(f"{path.name}: {type(exc).__name__}: {exc}")
+            file_error = f"{type(exc).__name__}: {exc}"
+            blockers.append(f"{path.name}: {file_error}")
         if eq_rows == 0:
             blockers.append(f"{path.name}: no EQ rows")
         if bad_rows:
@@ -77,7 +79,7 @@ def main() -> int:
             "date_mismatch_rows": bad_rows,
             "size_bytes": path.stat().st_size,
             "sha256": digest.hexdigest(),
-            "status": "PASS" if expected and eq_rows and bad_rows == 0 else "FAIL",
+            "status": "PASS" if expected and eq_rows and bad_rows == 0 and file_error is None else "FAIL",
         })
 
     sessions_path = RAW / "sessions.txt"
