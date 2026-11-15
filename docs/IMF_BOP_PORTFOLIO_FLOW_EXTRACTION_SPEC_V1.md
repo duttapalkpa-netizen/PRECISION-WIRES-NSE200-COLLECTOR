@@ -237,3 +237,19 @@ Latest workflow commits:
 - Workflow blob SHA: `9f7563beab3e9e0f5d0b66cf91a7b49ff551d769`.
 
 Runtime acquisition remains NOT DONE. Exact reference acceptance is encoded as a test expectation derived from the version-pinned DSD source path; it is not claimed as a verified live dataflow result until the official XML is acquired and parsed.
+
+## 2G. SDMX-ML 2.1 Dataflow reference parser correction (2026-11-15)
+
+A standards review found that the prior parser searched for a `DataStructureRef` element. SDMX-ML 2.1 Dataflow structures instead encode the DSD link as `Dataflow/Structure/Ref` (the Ref carries agencyID, id and version). The parser was corrected to read the nested `Structure/Ref` and compare the exact expected reference `IMF:BOP:2.6.0`.
+
+A regression step now parses a minimal namespace-qualified SDMX-ML 2.1 StructureMessage fixture and asserts that the nested Ref is extracted exactly as `{"agencyID":"IMF","id":"BOP","version":"2.6.0"}`. This is a parser regression test, not a live IMF payload test.
+
+Evidence:
+- Official SDMX-ML schema catalogue lists the 2.1 structure schemas: https://xml.sdmx.org/ (reviewed 2026-11-15).
+- SDMX 2.1 User Guide documents Dataflow/Structure/Ref with a DSD reference: https://sdmx.org/wp-content/uploads/SDMX_2-1_User_Guide_draft_0-1.pdf.
+- Research branch workflow commit: `8afffeae3b8bfb4b826055a93f0842d8c46658dd`.
+- PR #34 registration branch commit: `3c5fc6b494caac0a17ae74adefc3db19c6503170`.
+- Both branch workflow contents re-fetched and confirmed identical; PR #34 remains draft/unmerged.
+- Workflow blob SHA: `c35b71a2b464cab87a41dac92dbecec1264e5c4f`.
+
+The parser correction and fixture are committed. The GitHub Actions run, live IMF XML, exact live DSD linkage and cube-region values remain NOT DONE until the workflow is registered on the default branch and dispatched.
