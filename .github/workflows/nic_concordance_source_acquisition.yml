@@ -27,6 +27,8 @@ jobs:
           sudo apt-get install -y poppler-utils
       - name: Acquire official source, SHA-256 and concordance text
         run: python scripts/research/acquire_nic_concordance_source.py --out-dir nic_concordance_source
+      - name: Parse and strictly audit concordance rows
+        run: python scripts/research/nic_concordance_parser.py nic_concordance_source/nic2025_concordance_pages_256_262.txt --out-prefix nic_concordance_source/nic2025_concordance
       - name: Upload immutable source evidence
         uses: actions/upload-artifact@v4
         with:
