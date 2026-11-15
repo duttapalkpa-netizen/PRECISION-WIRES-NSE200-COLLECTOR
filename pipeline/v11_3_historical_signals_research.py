@@ -38,6 +38,11 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def signal_time_fields(cutoff):
+    \"\"\"Date-only as-of key; exact availability timestamp is unknown, never midnight.\"\"\"
+    return {\"SIGNAL_AS_OF_DATE\": pd.Timestamp(cutoff).date().isoformat(), \"SIGNAL_TIMESTAMP\": None}
+
+
 def dynamic_ret20_v11_3(close_group, history_depth: pd.Series) -> pd.Series:
     """Match V11.3's ret_window=min(20, n-1) at every historical cutoff."""
     result = pd.Series(np.nan, index=history_depth.index, dtype=float)
@@ -222,11 +227,13 @@ def build(data_path: str, out_dir: str, min_samples: int = MIN_CALIBRATION_SAMPL
         )
         top = eligible.head(top_n).copy()
         top["CUT_OFF"] = pd.Timestamp(date).date().isoformat()
-        top["SIGNAL_TIMESTAMP"] = pd.Timestamp(date).isoformat()
+        time_fields = signal_time_fields(date)
+        top["SIGNAL_AS_OF_DATE"] = time_fields["SIGNAL_AS_OF_DATE"]
+        top["SIGNAL_TIMESTAMP"] = time_fields["SIGNAL_TIMESTAMP"]
         top["SIGNAL_ENGINE"] = "V11.3_RESEARCH_CUTOFF_SAFE_ADAPTER"
         top["SIGNAL_RANK"] = np.arange(1, len(top) + 1)
         selected_rows.append(top[[
-            "CUT_OFF", "SYMBOL", "SIGNAL_TIMESTAMP", "SIGNAL_ENGINE",
+            "CUT_OFF", "SYMBOL", "SIGNAL_AS_OF_DATE", "SIGNAL_TIMESTAMP", "SIGNAL_ENGINE",
             "SIGNAL_RANK", "V11_3_RESEARCH_SCORE", "STATE",
             "CALIBRATION_SAMPLE_N", "CALIBRATION_HIT10_H3_RATE",
             "CALIBRATION_SCORE", "A", "B", "C", "D", "E",
@@ -277,6 +284,7 @@ def build(data_path: str, out_dir: str, min_samples: int = MIN_CALIBRATION_SAMPL
         "minimum_matured_samples_per_state": min_samples,
         "calibration_maturity_sessions": MATURATION_SESSIONS,
         "calibration_label": "next 3 consecutive global sessions HIGH excursion >=10% from cutoff CLOSE",
+        "signal_timestamp_policy": "SIGNAL_AS_OF_DATE is date-only; SIGNAL_TIMESTAMP is null because exact official data-availability time is not present in input",
         "execution_convention": {
             "entry": "next global trading session OPEN",
             "target": "intraday HIGH touch",
