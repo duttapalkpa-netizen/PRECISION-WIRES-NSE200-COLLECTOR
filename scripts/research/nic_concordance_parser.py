@@ -88,7 +88,7 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
         # independent (NIC-2025 key, NIC-2008 expression) pairs separated by
         # wide whitespace. Split only on 2+ spaces; never split inside a
         # compact expression or silently discard an unmatched column.
-        columns = [part.strip() for part in re.split(r"\\s{2,}", text) if part.strip()]
+        columns = [part.strip() for part in re.split(r"\s{2,}", text) if part.strip()]
         if len(columns) >= 3:
             if len(columns) % 2:
                 raise ValueError(f"Unpaired side-by-side concordance column at line {line_no}: {text!r}")
