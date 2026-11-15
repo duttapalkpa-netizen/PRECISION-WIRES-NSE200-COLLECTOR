@@ -154,3 +154,13 @@
 - CI status for these new tests: NOT_YET_VERIFIED. `fetch_commit_workflow_runs` for the workflow update commit returned no PR-triggered runs at check time. Do not claim tests passed until a run is observed.
 - Scope still incomplete: no shard matrix workflow, no artifact merge/200-session exact-coverage manifest, and no final raw archive artifact. Bounded-shard implementation progress is partial; 200-session raw archive acceptance remains BLOCKED / 0% until the merged raw artifact contains exactly 200 unique sessions, source-date reconciliation, and per-file SHA-256 manifest.
 - PR #37 remains Draft/Open/Unmerged; no production merge authorized. Existing production invariants remain unchanged.
+
+
+### Follow-up verification on PR #37 head `0b15b8c6ad3224eb1487db41ae27a4c89732c18f`
+
+- The earlier NOT_YET_VERIFIED status was superseded after the pull-request workflows completed.
+- NSE Date Integrity Tests Run #26: run ID `43733064590`, job ID `132869599418`, SUCCESS; focused regression step completed successfully. This workflow now runs both `test_nse_date_integrity.py` and `test_nse_bounded_shards.py`.
+- NSE Raw Archive Manifest Tests Run #17: run ID `43733064634`, job ID `132869582576`, SUCCESS.
+- NSE Raw Manifest Official-Source Probe Run #16: run ID `43733064668`, job ID `132869582695`, SUCCESS; downloaded one real NSE Full Delivery file, verified source date and SHA-256 manifest, uploaded artifact ID `14168829295`, digest `sha256:8cf1f2819218895942d077128255b82580f199c59e8479dff9bc7e361a714c1c`.
+- All three workflows completed SUCCESS on PR head `0b15b8c6ad3224eb1487db41ae27a4c89732c18f`. This verifies tests and a one-session live source probe only; it does not verify bounded shard collection over a multi-week range or the complete 200-session raw archive.
+- PR #37 is still Draft/Open/Unmerged. Next engineering milestone remains: shard workflow with isolated output/artifacts, deterministic merge validator requiring exactly 200 unique session dates and no filename/content collisions, then independently inspect the final raw artifact. Final count must come from verified files, not inferred holidays.
