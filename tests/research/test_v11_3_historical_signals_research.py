@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
-from pipeline.v11_3_historical_signals_research import calibration_for_cutoff, dynamic_ret20_v11_3
+from pipeline.v11_3_historical_signals_research import calibration_for_cutoff, dynamic_ret20_v11_3, signal_time_fields
+from pipeline.v11_3_cost_aware_backtest import simulate_one
 
 
 class CutoffSafeCalibrationTests(unittest.TestCase):
@@ -43,6 +44,28 @@ class CutoffSafeCalibrationTests(unittest.TestCase):
         mapping, meta = calibration_for_cutoff(pd.DataFrame(rows), 4, 100)
         self.assertEqual(mapping, {})
         self.assertEqual(meta["matured_samples"], 0)
+
+    def test_signal_timestamp_is_unknown_not_midnight(self):
+        fields = signal_time_fields("2026-01-21")
+        self.assertEqual(fields["SIGNAL_AS_OF_DATE"], "2026-01-21")
+        self.assertIsNone(fields["SIGNAL_TIMESTAMP"])
+
+    def test_replay_preserves_null_timestamp_and_date_only_asof(self):
+        bars = pd.DataFrame([
+            {"SYMBOL":"ABC","DATE":"2026-01-21","OPEN_PRICE":100,"HIGH_PRICE":101,"LOW_PRICE":99,"CLOSE_PRICE":100,"TTL_TRD_QNTY":1000},
+            {"SYMBOL":"ABC","DATE":"2026-01-22","OPEN_PRICE":100,"HIGH_PRICE":106,"LOW_PRICE":99,"CLOSE_PRICE":105,"TTL_TRD_QNTY":1200},
+        ])
+        result = simulate_one(bars, "2026-01-21", "ABC", 5, 1, global_dates=list(pd.to_datetime(["2026-01-21","2026-01-22"])))
+        self.assertEqual(result["SIGNAL_AS_OF_DATE"], "2026-01-21")
+        self.assertIsNone(result["SIGNAL_TIMESTAMP"])
+
+    def test_empty_replay_keeps_timestamp_unknown(self):
+        bars = pd.DataFrame([
+            {"SYMBOL":"ABC","DATE":"2026-01-21","OPEN_PRICE":100,"HIGH_PRICE":101,"LOW_PRICE":99,"CLOSE_PRICE":100,"TTL_TRD_QNTY":1000},
+        ])
+        result = simulate_one(bars, "2026-01-21", "ABC", 5, 1)
+        self.assertEqual(result["SIGNAL_AS_OF_DATE"], "2026-01-21")
+        self.assertIsNone(result["SIGNAL_TIMESTAMP"])
 
 
 if __name__ == "__main__":
