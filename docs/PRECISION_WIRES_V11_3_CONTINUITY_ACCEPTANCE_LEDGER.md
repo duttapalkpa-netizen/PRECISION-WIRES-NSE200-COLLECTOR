@@ -884,3 +884,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - RBI parallel-source readiness NOT_READY. Sign-convention recovery bounded task 100%; IMF BOP 5/7=71.4%; October 2025 IMF PDF 25%; overall V11.3 NOT_CALCULABLE.
 - Sources: RBI BOP Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; RBI Working Group report https://www.rbi.org.in/scripts/PublicationReportDetails.aspx?ID=596 ; RBI 2026 Guide https://www.rbi.org.in/scripts/PublicationsView.aspx?Id=24094 .
 - No data mutation, synthetic values, paid source, credentials, PR merge or production change.
+
+## 2026-11-15 — RBI Table 42 vs archived IMF India P_F single-quarter numerical reconciliation (2025-Q2)
+- Compared official RBI Table 42 Apr–Jun 2025 with existing archived IMF CSV; no new IMF API pull or data-file modification.
+- RBI 2025-Q2 portfolio investment in India: Credit 145201, Debit 142720, Net +2481 USD million. Per RBI sign convention this is liability-side net incurrence candidate +2481.
+- RBI 2025-Q2 portfolio investment by India: Credit 1138, Debit 2011, Net −872 USD million. Per RBI sign convention this is asset-side net acquisition candidate +872. Combined Portfolio Investment Net +1608 was not mapped to either side.
+- Archived IMF A_NFA_T/P_F/USD/Q/2025-Q2 = 872453921.9430683 raw; SCALE=6 => 872.4539219431 USD million. Difference from RBI +872 = 0.4539219431 USD million (within ±0.5 display rounding).
+- Archived IMF L_NIL_T/P_F/USD/Q/2025-Q2 = 2480700911.919279 raw; SCALE=6 => 2480.7009119193 USD million. Difference from RBI +2481 = 0.2990880807 USD million (within ±0.5 display rounding).
+- Single-quarter two-sided numerical comparison PASS_WITH_ROUNDING (2/2). This does not establish full-series equivalence or vintage/revision readiness. RBI raw quarterly DBIE export/schema NOT_RETRIEVED; multi-quarter replication NOT_DONE; IMF vintage gate remains NOT_READY. No data merge, mutation or gate promotion.
+- Next: repeat on three additional non-adjacent quarters with exact matching RBI Table 42 bulletins; tolerance ±0.5 USD million only for whole-million displayed figures.
+- Bounded 2025-Q2 check 100%; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF 25%; whole V11.3 NOT_CALCULABLE.
+- Sources: RBI 25 Sep 2026 bulletin https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495 ; 23 Oct 2026 https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566 ; RBI BOP Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; archived CSV path data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv .
+- No new data pull, synthetic values, paid source, credentials, data mutation, PR merge or production change.
