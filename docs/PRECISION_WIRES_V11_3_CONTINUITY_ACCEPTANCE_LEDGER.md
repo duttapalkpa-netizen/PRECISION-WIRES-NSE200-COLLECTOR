@@ -747,3 +747,7 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Source commit `6eb13368faae01c4b054dcfb6df74d835c25f246`; source blob `534a290ab5ec244150e97cce1b92de9c7076dea5`.
 - Utility documentation commit `78e3a117b5fc992eb973b1221bb8775ecc210281`; blob `3e51a54f3ad57b4d3f1b1a8d3ddfec57e79d2b83`.
 - Exact committed tests NOT_RUN after this change; helper harness 7/7 from previous iteration is not evidence for this modified source. Live NSE capture NOT_RUN. No production workflow/code, selector, score, pressure fade, CORE-672, engines, or default branch changed.
+## 2026-11-16 — Exact test execution blocker: GitHub dispatch capability
+- Checked the research branch workflow directory: no dedicated NSE FII/DII capture utility unit-test workflow exists. Available GitHub connector methods support repository/file reads and workflow-run/artifact/log reads, but expose no workflow_dispatch/run-workflow action. Thus I cannot start a new GitHub Actions run from this session. No workflow file was added and no existing workflow/production path was modified.
+- Utility documentation updated: commit `59636d586a2455dbd4bab64eeacac5b387225331`; blob `fc76ad7c8d26930749a1736e3a82a95bb5210c95`.
+- Exact committed test suite status remains NOT_RUN; live NSE capture NOT_RUN. This is an execution-capability boundary, not a test failure and not a PASS. Next execution requires a user-triggered dedicated test workflow or a network-enabled exact checkout.
