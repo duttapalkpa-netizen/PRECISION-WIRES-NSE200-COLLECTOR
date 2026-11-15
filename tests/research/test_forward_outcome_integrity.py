@@ -34,7 +34,8 @@ class ForwardOutcomeIntegrityTests(unittest.TestCase):
     def test_incomplete_horizons_are_unknown_not_partial(self):
         out = add_forward_outcomes(self.df)
         self.assertTrue(np.isnan(out.loc[5, "FUT1_HIGH_PCT"]))
-        self.assertTrue(out.loc[3:, "FUT3_HIGH_PCT"].isna().all())
+        abc_tail = out[out["SYMBOL"] == "ABC"].iloc[3:]
+        self.assertTrue(abc_tail["FUT3_HIGH_PCT"].isna().all())
         self.assertTrue(out.loc[1:, "FUT5_HIGH_PCT"].isna().all())
 
     def test_symbols_never_cross_contaminate(self):
@@ -70,6 +71,15 @@ class ForwardOutcomeIntegrityTests(unittest.TestCase):
         for horizons in ((0,), (1.5,), (True,), (1, 1)):
             with self.subTest(horizons=horizons), self.assertRaises(ValueError):
                 add_forward_outcomes(self.df, horizons=horizons)
+
+    def test_missing_symbol_session_does_not_skip_forward(self):
+        missing = self.df[~((self.df["SYMBOL"] == "ABC") &
+                            (self.df["DATE"] == "2026-01-05"))].copy()
+        out = add_forward_outcomes(missing)
+        row = out[(out["SYMBOL"] == "ABC") &
+                  (out["DATE"] == "2026-01-02")].iloc[0]
+        self.assertTrue(np.isnan(row["FUT1_HIGH_PCT"]))
+        self.assertTrue(np.isnan(row["FUT3_HIGH_PCT"]))
 
     def test_input_is_not_mutated(self):
         before = self.df.copy(deep=True)
