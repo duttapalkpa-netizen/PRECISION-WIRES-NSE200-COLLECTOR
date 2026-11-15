@@ -386,3 +386,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Corrected the fixture to keep the first session below target and introduce the gap on the following session. Commit `c3d5028eafa7e936bdfdd1fd271ce532cf226607`.
 - A fresh CI run is triggered by the push; its result must be checked before any replay. Do not rerun collector or completed unrelated workflows.
 - CI status: Run #3 6/8 tests; Run #4 7/8 tests; latest test correction committed, runtime pending. Historical replay remains NOT_STARTED.
+
+
+## 2026-11-15 — Research backtest CI PASS and fail-closed code review
+- Cost-aware research test Run #5 / ID `43692427702`, commit `c3d5028eafa7e936bdfdd1fd271ce532cf226607`: SUCCESS. Job `research-unit-tests` and all eight tests completed SUCCESS.
+- Post-PASS code review found direct-call validation gaps not covered by the initial suite: malformed DATE values and duplicate SYMBOL/DATE keys could bypass the run() guard when calling simulate_one() directly; target_pct and horizon were not explicitly validated. Added fail-closed validation and tests for NaN/Inf/negative cost, non-positive target, fractional horizon and direct duplicate keys.
+- Research module commit `b7099903939542edd82cc8b7d37f6a34b50718c3`; test commit `cc4d397f25e735e9f7b63d2da74b40baff1aaab9`. New CI Run #6 ID `43696697367` (code commit) and Run #7 ID `43696699661` (test commit) were observed QUEUED; #7 is the run containing both changes and must be used for next verification.
+- Historical replay remains NOT_STARTED pending Run #7 PASS and source/input gate. The previously inspected 200-session artifact does not contain circuit/price-band fields; the replay cannot claim circuit-feasible execution without a separately validated restriction source or an explicit limitation. Existing V11.4 signal file semantics must also be confirmed before treating it as an accepted V11.3 signal set.
+- No production selector, ranking, pressure-fade, CORE-672, collector, or historical source artifact modified.
