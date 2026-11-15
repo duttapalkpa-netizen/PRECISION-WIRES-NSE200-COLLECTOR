@@ -43,7 +43,7 @@ jobs:
       - name: Strict QA
         run: python qa/validate_dataset.py
       - name: Raw archive SHA-256 + filename/source-date reconciliation
-        run: python scripts/research/build_raw_archive_manifest.py
+        run: python scripts/research/build_raw_archive_manifest.py --expected-sessions 200
       - name: 100-session leakage-safe V11.3 walk-forward behavioural backtest
         env:
           WF_SESSIONS: "100"
