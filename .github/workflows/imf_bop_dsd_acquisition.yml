@@ -63,19 +63,25 @@ jobs:
             sha256sum "$DIR/raw.xml" > "$DIR/SHA256SUMS"
           done
 
-      - name: Validate dataflow and constraint XML
+      - name: Validate exact dataflow reference and constraint coverage structure
         if: always()
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           import hashlib, json, xml.etree.ElementTree as ET
-          root = Path("evidence/imf_bop_dsd")
+
+          base = Path("evidence/imf_bop_dsd")
           failed = False
-          for name in ("dataflow", "constraint"):
-              folder = root / name
+
+          def local(tag):
+              return tag.rsplit("}", 1)[-1]
+
+          def inspect(name, expected_tag, expected_id):
+              global failed
+              folder = base / name
               raw = folder / "raw.xml"
-              report = {"item": name, "status": "UNKNOWN"}
+              report = {"item": name, "expected_id": expected_id, "status": "UNKNOWN"}
               if not raw.exists() or raw.stat().st_size == 0:
                   report["reason"] = "raw XML missing or empty"
                   failed = True
@@ -83,16 +89,50 @@ jobs:
                   payload = raw.read_bytes()
                   report.update(raw_bytes=len(payload), sha256=hashlib.sha256(payload).hexdigest())
                   try:
-                      node = ET.fromstring(payload)
-                      local = lambda tag: tag.rsplit("}", 1)[-1]
-                      report.update(status="PASS", root_element=local(node.tag),
-                                     element_count=sum(1 for _ in node.iter()),
-                                     artefact_ids=[e.attrib.get("id") for e in node.iter()
-                                                   if local(e.tag) in {"Dataflow", "Constraint"} and e.attrib.get("id")])
+                      root = ET.fromstring(payload)
+                      nodes = [e for e in root.iter()
+                               if local(e.tag) == expected_tag and e.attrib.get("id") == expected_id]
+                      report.update(root_element=local(root.tag),
+                                    element_count=sum(1 for _ in root.iter()),
+                                    matching_artifact_count=len(nodes))
+                      if len(nodes) != 1:
+                          report.update(status="FAIL", reason="expected artefact ID not found exactly once")
+                          failed = True
+                      else:
+                          node = nodes[0]
+                          if name == "dataflow":
+                              refs = []
+                              for e in node.iter():
+                                  if local(e.tag) == "DataStructureRef":
+                                      refs.append({k: e.attrib.get(k) for k in ("agencyID", "id", "version")})
+                              report["data_structure_refs"] = refs
+                              if not refs:
+                                  report.update(status="FAIL", reason="Dataflow has no DataStructureRef")
+                                  failed = True
+                              else:
+                                  report["status"] = "PASS"
+                          elif name == "constraint":
+                              cube_regions = [e for e in node.iter() if local(e.tag) == "CubeRegion"]
+                              report["cube_region_count"] = len(cube_regions)
+                              if not cube_regions:
+                                  report.update(status="FAIL", reason="Constraint has no CubeRegion")
+                                  failed = True
+                              else:
+                                  report["status"] = "PASS"
                   except ET.ParseError as exc:
                       report.update(status="FAIL", reason="malformed XML", error=str(exc))
                       failed = True
-              (folder / "qa_report.json").write_text(json.dumps(report, indent=2) + "\n")
+              (folder / "qa_report.json").write_text(json.dumps(report, indent=2) + "\\n")
+              return report
+
+          reports = [
+              inspect("dataflow", "Dataflow", "BOP_BPM6"),
+              inspect("constraint", "ContentConstraint", "BOP_BP6_CONSTRAINT")
+          ]
+          (base / "metadata_semantic_qa.json").write_text(json.dumps({
+              "status": "FAIL" if failed else "PASS",
+              "reports": reports
+          }, indent=2) + "\\n")
           if failed:
               raise SystemExit(1)
           PY
