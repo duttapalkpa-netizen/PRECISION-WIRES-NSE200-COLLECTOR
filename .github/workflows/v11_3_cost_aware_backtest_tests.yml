@@ -7,6 +7,8 @@ on:
       - "pipeline/forward_outcome_integrity.py"
       - "tests/research/test_v11_3_cost_aware_backtest.py"
       - "tests/research/test_forward_outcome_integrity.py"
+      - "scripts/research/audit_raw_processed_integrity.py"
+      - "tests/research/test_raw_processed_integrity.py"
       - ".github/workflows/v11_3_cost_aware_backtest_tests.yml"
   pull_request:
     paths:
