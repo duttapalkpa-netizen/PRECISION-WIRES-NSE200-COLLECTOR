@@ -1,0 +1,71 @@
+# V11.3 Cutoff-Safe Historical Signal Adapter — Research Specification
+Date: 2026-11-15
+Status: DRAFT / NOT IMPLEMENTED / NOT APPROVED FOR REPLAY
+Scope: research-only construction of historical V11.3-compatible `CUT_OFF,SYMBOL` signals for the isolated cost-aware replay.
+
+## 1. Purpose and hard boundary
+The cost-aware replay requires a historical signal ledger with `CUT_OFF,SYMBOL`. The current V11.3 candidate script emits only the latest row per symbol; the V11.4 walk-forward predictions are not an approved substitute. This specification defines a separately isolated adapter that may evaluate the existing V11.3 candidate rules repeatedly at historical cutoffs without changing production logic.
+
+This is a specification only. It does not implement an adapter, create signals, run a replay, or authorize changes to production. Protected invariants remain unchanged: Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 (56×12), and engines A–E.
+
+## 2. Verified source facts (do not reinterpret)
+- `pipeline/v11_3_abcd_e.py` currently sorts the processed dataset by symbol/date, calculates features, then uses `g.iloc[-1]` once per symbol. It writes latest candidates and top-30 outputs, not a historical cutoff ledger.
+- The V11.3 candidate script optionally loads `outputs/backtest/behavioral_dna_library.json`; its `hit10_h3` rates contribute to the calibration component of the candidate score.
+- The inspected library is produced by the V11.4 walk-forward workflow from future outcome fields (including FUT1/FUT3/FUT5 highs). A full-sample library must never be reused at earlier cutoffs.
+- The isolated cost-aware replay consumes OHLC rows with `SYMBOL,DATE,OPEN_PRICE,HIGH_PRICE,LOW_PRICE,CLOSE_PRICE,TTL_TRD_QNTY` and signals with `CUT_OFF,SYMBOL`.
+- A 200-session raw archive and its raw-file manifest have already passed scoped acceptance. Do not reacquire or re-merge this archive for this task.
+
+## 3. Proposed adapter behavior
+For each eligible historical cutoff date C, and each symbol with valid observations through C:
+1. Build the symbol's feature frame using only rows with `DATE <= C`. No row after C may enter feature calculation, normalization, ranking, calibration, or eligibility.
+2. Reproduce the existing V11.3 feature and candidate calculations from the inspected source, preserving formulas and thresholds verbatim. Do not refactor or import the V11.4 top-30 ranking as a substitute.
+3. Compute any behavioral-DNA calibration using only outcome observations whose complete H+3 maturity window ended on or before C. The H+3 outcome definition, state assignment, denominator, treatment of missing/non-traded sessions, and target-price convention must be copied exactly from the authoritative source implementation after code review; no approximate reconstruction is permitted.
+4. Never use outcomes from C or later to calibrate signals at C. Enforce this with an explicit maximum source-outcome date assertion and a leakage regression test.
+5. Emit a cutoff/symbol record only when the exact V11.3 rule inputs required for the signal are available and valid. Preserve explicit status and provenance fields in the adapter's audit output; the replay-facing file must contain only the required `CUT_OFF,SYMBOL` columns.
+6. Sort deterministically by cutoff then symbol; reject duplicate `CUT_OFF,SYMBOL` keys. Do not fabricate rows for missing symbols, sessions, features, or outcomes.
+
+## 4. Calibration gate — unresolved policy, no silent fallback
+The production candidate formula uses a numeric calibration term. A cutoff-safe historical equivalent therefore requires a declared minimum number of matured observations per state and a declared behavior below that minimum.
+
+These policy values are NOT established by the inspected source and must not be invented by implementation:
+- Minimum matured H+3 observations per state: **PENDING EXPLICIT APPROVAL**.
+- Whether counts are per state, pooled, or additionally segmented: **PENDING SOURCE/USER DECISION**.
+- Below-threshold behavior: **UNKNOWN / NOT ELIGIBLE; do not substitute 0, 50, a full-sample rate, or another synthetic value**.
+- Whether a cutoff with any required state below threshold is wholly excluded or only the affected state/symbol is marked UNKNOWN: **PENDING EXPLICIT APPROVAL**.
+
+Until these decisions are approved, the adapter may perform source inspection and tests of date isolation only; it must not emit accepted scored signals or run the cost-aware historical replay.
+
+## 5. Required inputs and provenance
+- Processed OHLC dataset derived from the accepted 200-session archive; record exact path, SHA-256, row count, date range, schema, and upstream archive artifact ID.
+- Exact source-code commit/blob SHAs for every imported feature function and candidate formula.
+- Any source inputs needed for state/outcome calibration, with source path, SHA-256, row count, date range, and the original outcome-generation definition.
+- Adapter commit SHA, Python/pandas/numpy versions, run ID, cutoff calendar, and output SHA-256.
+- Preserve raw source files unchanged. No synthetic data, fabricated timestamps, paid APIs, or external contacts.
+
+## 6. Fail-closed validation gates
+A. Cutoff isolation: mutate or append post-cutoff rows and prove the signal output at C is byte-identical.
+B. Maturity isolation: outcomes whose H+3 window ends after C must not affect calibration at C.
+C. Future-DNA exclusion: reject full-sample `behavioral_dna_library.json` inputs and any V11.4 future-outcome feature leakage.
+D. Schema and uniqueness: strict dates; unique `SYMBOL,DATE` OHLC keys; unique `CUT_OFF,SYMBOL` output keys; valid symbols; no silent date repair.
+E. Session completeness: use the verified global trading-session calendar; missing symbol sessions remain explicit UNKNOWN/exclusion, never forward-filled.
+F. Formula parity: golden tests compare adapter feature/candidate values against the existing V11.3 implementation at the same cutoff, with only the calibration source replaced by cutoff-matured data.
+G. Determinism: identical input bytes and code version produce identical output bytes and hashes.
+H. Replay precondition: no replay until all policy decisions are approved, all gates pass, and an independent audit confirms the signal ledger lineage.
+
+## 7. Required artifacts
+- This specification and a decision record for unresolved calibration policy.
+- Adapter source and isolated unit tests (only after approval).
+- Cutoff-level leakage audit, per-cutoff coverage report, signal provenance manifest, and SHA-256 manifest.
+- A separate PASS/BLOCKED report for signal-input acceptance.
+- Only after signal-input acceptance: cost-aware trade ledger, metrics, exclusions, and independent reconciliation.
+
+## 8. Current decision and progress
+- Existing V11.3 historical signal ledger: NOT_FOUND.
+- V11.4 predictions as substitute: REJECTED.
+- Adapter specification: DRAFTED; approval pending.
+- Adapter implementation/tests: NOT_STARTED.
+- Historical cost-aware replay: BLOCKED / NOT_STARTED.
+- Independent replay reconciliation: NOT_STARTED.
+
+## 9. Safety
+Research-only. Do not modify production selector, ranking, pressure-fade, CORE-672, engines A–E, or production workflows. Keep PR #37 Draft/Open/Unmerged. No merge authorization.
