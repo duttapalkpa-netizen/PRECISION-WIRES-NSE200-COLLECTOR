@@ -1254,3 +1254,36 @@ Progress:
 - Raw quarterly DBIE export: NOT_RETRIEVED.
 - Existing direct validation: 11 quarters / 22 of 22 side comparisons PASS_WITH_ROUNDING.
 - IMF BOP workstream remains 5/7 = 71.4%; vintage NOT_READY / NOT_VERIFIED; full V11.3 progress NOT_CALCULABLE.
+
+
+## Independent official metadata cross-check and DBIE export handoff checklist (2026-11-15)
+
+Purpose: add a new official discovery that narrows the manual retrieval path, without repeating the already exhausted RBI bulletin-index searches or claiming the missing observations were retrieved.
+
+New official evidence:
+- MoSPI's Compendium of Datasets and Registries in India 2024 identifies the Balance of Payments Statistics dataset as RBI-owned, quarterly, All-India, available from 30-Jun-1990, and disseminated in PDF/MS Excel.
+- The compendium gives the DBIE navigation path: Home > Statistics > External Sector > International Trade, and identifies the DBIE portal URL: https://data.rbi.org.in/DBIE/#/dbie/home
+- Official MoSPI compendium PDF: https://new.mospi.gov.in/sites/default/files/publication_reports/Compendium_of_Datasets_and_Registries_in_India_2024_1.pdf
+- RBI's April 2026 Comprehensive Guide independently confirms Table 42 is quarterly, USD million, BPM6, and maps to DBIE Publication > Time-Series Publications > Monthly RBI Bulletin > External Sector and Statistics > External Sector > International Trade. https://rbi.org.in/scripts/PublicationsView.aspx?id=24094
+- RBI's DBIE export guide confirms preformatted reports can be exported as Excel, PDF, Text or CSV. https://dbieold.rbi.org.in/DBIE/doc/Exporting_report_data_%26_related_options.pdf
+
+Interpretation / limits:
+- MoSPI metadata establishes the dataset's stated availability and a separate DBIE navigation route; it does NOT prove that a particular Table 42 report is publicly accessible now, that all historical periods are present, or that the exact portfolio-investment rows have been retrieved.
+- The exact quarterly USD-million Table 42 export, report identifier, raw file, schema, and SHA-256 remain NOT_RETRIEVED.
+- 2015-Q2 and 2021-Q2 RBI comparison values remain NOT_RETRIEVED. No proxy from Table 40, Table 43, annual data, IIP stock, or adjacent quarters is permitted.
+- Existing 11-quarter / 22-of-22 PASS_WITH_ROUNDING comparisons remain unchanged. IMF vintage remains NOT_READY / NOT_VERIFIED. IMF BOP workstream remains 5/7 = 71.4%; whole V11.3 remains NOT_CALCULABLE.
+
+Non-repeating manual handoff checklist (for user-controlled interactive DBIE session):
+1. Open https://data.rbi.org.in/DBIE/#/dbie/home and navigate Home > Statistics > External Sector > International Trade.
+2. Separately inspect Publication > Time-Series Publications > Monthly RBI Bulletin > External Sector for the Table 42 quarterly BPM6 report. Do not assume Table 40 or Table 43 is equivalent.
+3. Confirm report title/table number, frequency Quarterly, unit US$ million, period coverage, portfolio investment asset/liability net rows, provisional/revised flags, and any notes before export.
+4. Export the original report to Excel or CSV using the visible export control. Preserve the unmodified original bytes and record retrieval timestamp, report title/ID if shown, selected period, displayed metadata, and SHA-256.
+5. Validate headers, units, period keys, signs, nulls, duplicate keys and revision labels before any comparison. Keep raw file immutable; create a separate normalized research-only derivative with provenance back to the raw file.
+6. Apply the existing sign mapping and fixed ±0.5 USD-million tolerance only after row identity and period are verified. Keep UNKNOWN when a required field is absent.
+7. Do not update the source CSV, manifest, production selector, RANKING_SCORE, +1 PRESSURE_FADE, 672 diagnostics, or Hard Gate until evidence is independently checked and an explicit change is authorized.
+
+Progress:
+- New independent official metadata cross-check: 100% complete.
+- DBIE route discovery: strengthened by an additional official route; actual interactive retrieval still blocked/not executed.
+- Raw quarterly Table 42 export acquisition: 0% / NOT_RETRIEVED.
+- No source CSV, manifest, sidecar, prior PASS artifact, production code, selector, ranking score, pressure fade, diagnostic, or gate changed.
