@@ -497,3 +497,28 @@ Report workstream percentages separately from evidence status. Percentage means 
 - NOT_VERIFIED: complete calibration-label no-lookahead audit; rerun on corrected forward outcome labels; current-main production collector artifact pairing; price-band/circuit execution; slippage and portfolio sizing/drawdown.
 - BLOCKED: final paper acceptance / claim of profitable scanner.
 - Next step: inspect exact signal-generation source and prove calibration uses only fully matured observations available at each cutoff; then bind the exact processed/signal/replay artifacts to their producing commit and regenerate the H+3/H+5 corrected event labels. Do not repeat the raw-to-processed audit for this exact artifact pair.
+
+
+## 2026-11-16 — Historical calibration independent recomputation + timestamp semantic audit
+### Exact source/artifact reviewed
+- Source generation run: #21, ID `43746369505`, commit `2315455ae6e7e98e6a80e95d8d3aa4cf68bf6919`; workflow `.github/workflows/v11_3_historical_signals_research.yml`; successful job `132910523067`.
+- Generator source: `pipeline/v11_3_historical_signals_research.py`; blob SHA `(source blob verified in GitHub during audit)`; feature helper source `pipeline/walk_forward_backtest.py`, blob SHA `d085f7a2d35a88b4c4eaba65144a429a06961b09`.
+- Artifact `v11-3-cutoff-safe-replay-21`, ID `14174526631`, SHA-256 `69494bd25d688f7aa48a30f969f154f5f13229b19cac483deb5d5c8077c6573b`.
+- Processed input SHA-256 `8c433c8163dd5a52faf02ffe29e77571043c5791716c65d8c04cfca98ee857b1`; calibration audit CSV 500,733 rows; signal CSV 5,880 rows.
+### Independent calibration reconstruction — PASS for this exact artifact
+- Rebuilt next-3-global-session HIGH excursion labels directly from processed OHLC, requiring the symbol to have observations on each of the next three global sessions.
+- Reconstructed each cutoff's eligible training population using only label cutoff sessions <= current cutoff index - 3.
+- Compared expected state sample counts and H+3 >=10% hit rates against every audit row; 489,756 available/unknown state-row checks; mismatches = 0.
+- Independently recomputed calibration score `clip(50 + 50 * state_hit_rate / max_eligible_state_hit_rate, 0, 100)`; 489,756 available rows, mismatches = 0; max absolute floating-point difference 4.27e-14.
+- Joined all 5,880 selected signals to their audit rows; missing matches = 0; calibration sample/rate/score mismatches = 0.
+- Source review: `add_features()` and `add_tomorrow_features()` use current/prior OHLCV, rolling/EMA, and same-date cross-sectional values; `add_tomorrow_features` does not shift from future rows despite its name. Calibration labels are created separately and only used after three global sessions mature. No direct feature look-ahead found in the inspected generator/helper paths.
+### Timestamp semantics — BLOCKER / NOT PASS
+- All 5,880 signal rows set `SIGNAL_TIMESTAMP` to `pd.Timestamp(cutoff_date).isoformat()`, yielding `YYYY-MM-DDT00:00:00` for every signal.
+- However, the generator's features include that cutoff session's OHLCV, including same-day close/high/low/current volume. The exact data availability time is therefore not midnight. The input only supplies a trading date; no verified exchange publication/close timestamp is recorded.
+- Do not fabricate a clock time. The timestamp is semantically false/misleading and can imply look-ahead/chronology errors. Treat all 5,880 `SIGNAL_TIMESTAMP` fields as NOT_VERIFIED; the date-only `CUT_OFF` remains the valid as-of key. The replay ledger currently also copies cutoff midnight into its `SIGNAL_TIMESTAMP`; same correction needed there.
+- Required repair: retain `CUT_OFF` as date-only as-of date, add/use an explicit date-only `SIGNAL_AS_OF_DATE` if needed, and leave exact `SIGNAL_TIMESTAMP` null unless an official source proves actual publication/availability time. Add regression tests that reject midnight-as-observed-time and ensure replay preserves null timestamp while using CUT_OFF for execution.
+### Status / next step
+- PASS: independent H+3 calibration sample/rate/score reconstruction; signal-to-audit mapping; source-level review found no direct future feature shift in inspected functions.
+- NOT_VERIFIED: actual exact intraday information-availability timestamp; historical signal timestamp semantics.
+- BLOCKED: strict end-to-end no-lookahead acceptance until timestamp schema is corrected and CI/artifact regenerated. H+3/H+5 separate walk-forward label defect remains unresolved.
+- Next task: research-only timestamp semantic repair in the historical signal generator and cost-aware replay output, with targeted regression tests and a short CI run. Do not change production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or engines A-E.
