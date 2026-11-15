@@ -579,3 +579,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Scope: code correction 100%; focused tests authored 100%; workflow trigger wiring 100%; CI runtime 0% / pending; corrected H+3/H+5 artifact regeneration 0%; independent full-dataset label recomputation 0%; acceptance BLOCKED until runtime and artifact verification.
 - This correction does not modify production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A-E, collector workflow or production output. PR #37 remains open/unmerged; PR #38 remains open/draft/unmerged.
 - Next action: poll for the workflow triggered by the above commit. If it passes, run a separate bounded research-only label rebuild/audit against the exact 200-session artifact and compare every H+1/H+3/H+5 outcome against a direct T+1..T+h reference implementation; retain incomplete tails as UNKNOWN. Do not repeat Run #32 or timestamp repair.
+
+
+
+### CI checkpoint — forward-label correction (2026-11-16)
+- Located the exact PR workflow run missed by the commit-run wrapper: Run #36, ID `43749155334`, workflow `V11.3 Research Cutoff-Safe Historical Signals + Cost-Aware Replay`, head SHA `ec95660f8e559346cd8d52103af2e5c6e6c3893f`, PR #37. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43749155334
+- At direct GitHub REST recheck, run status remained `pending`, conclusion null; jobs endpoint returned an empty list. No test job had started; no runtime PASS/FAIL and no corrected artifact can be claimed.
+- Related PR workflows for other changed files did complete SUCCESS (NSE Raw Manifest Official-Source Probe Run ID `43749155298`; NSE Raw Archive Manifest Tests Run ID `43749143112`), but these are not the V11.3 historical-signal/replay workflow and do not validate the modified forward-label code. Do not substitute them as evidence.
+- No duplicate run dispatched, no rerun, no production changes. Next action is poll Run #36 until jobs start/complete; then inspect its job log and artifact before accepting the forward-label fix.
