@@ -5,6 +5,7 @@ on:
     paths:
       - "scripts/research/nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_parser.py"
+      - "tests/research/test_nic_concordance_source_acquisition.py"
       - ".github/workflows/nic_concordance_parser_tests.yml"
   pull_request:
     paths:
@@ -31,4 +32,4 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run bounded parser regression suite
-        run: python -m unittest discover -s tests/research -p "test_nic_concordance_parser.py" -v
+        run: python -m unittest tests.research.test_nic_concordance_parser tests.research.test_nic_concordance_source_acquisition -v
