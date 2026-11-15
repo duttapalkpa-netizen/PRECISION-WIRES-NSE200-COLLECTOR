@@ -804,3 +804,30 @@ The November 2024 Introductory Notes standard presentation identifies portfolio 
 Use only an officially exposed country-table export/download from the dated BOPSY 2024 release, if the portal exposes it without authentication. Require raw bytes, dated release evidence, exact country and period keys, and a defensible mapping to the existing four series. If the portal only exposes the current live table or aggregate report, stop and preserve NOT_ESTABLISHED. No hidden endpoint guesses or login bypass.
 
 No existing CSV, manifest, sidecar, raw response, or accepted gate changed.
+
+## 32. IMF November 2024 BOP release-calendar evidence and archive-link test (2026-11-15)
+
+### New dated release evidence
+The official IMF Data news page "Services Trade Expands at a Faster Pace Than Goods Trade" identifies the Balance of Payments (BOP) dataset and states:
+- BOPSY 2024 was published on 20 November 2024.
+- Country tables on a BPM6 basis cover 2011–2023; 2005–2010 are available in an archive.
+- A separate release titled "Balance of Payments and International Investment Position, Second Quarter 2024" was released on 20 November 2024, and the IMF tracks quarterly BOP/IIP across 190 countries with data starting from 1945.
+Official page: https://data.imf.org/en/news/november%2013-
+
+### Link test and limitation
+The "Second Quarter 2024" release link on the official page points to an IMF redirect URL on `t.imfconnect.imf.org`. Following that link in this audit timed out before exposing a public document or file target. The page itself supplies release title/date/coverage, but not a downloadable country-level raw file, the India series keys, or a raw response hash.
+The official page also confirms the BOPSY 2024 country coverage window but does not provide a dated export file in the page content.
+
+### Decision
+- Dated quarterly BOP release event (20 Nov 2024, reference 2024 Q2): PASS as release-calendar evidence.
+- BOPSY 2024 country-table coverage statement (BPM6, 2011–2023): PASS as publication-scope evidence.
+- Direct quarterly release document/file retrieval: NOT_RETRIEVED (redirect timeout).
+- India country raw values / exact four-series mapping in this release: NOT_ESTABLISHED.
+- Comparable second snapshot / revision comparison: NOT_ESTABLISHED.
+- No vintage promotion: a release-calendar item is not itself a raw snapshot; release date alone does not establish the contents or vintage of the existing 110-row series.
+- Revision/vintage readiness remains UNKNOWN / NOT_READY.
+
+### Next action
+Do not retry the same timed-out redirect or repeat BOPSY notes discovery. Search for an independently indexed official IMF document or archived public file for the 20 Nov 2024 Q2 release; accept only if raw content, release date, India country series, exact key mapping and overlapping periods can be verified. If none exists, close this public-link avenue as NOT_RETRIEVED and move to a different official archive source, without hidden endpoint guessing.
+
+No CSV, manifest, sidecar, raw response, or accepted gate changed.
