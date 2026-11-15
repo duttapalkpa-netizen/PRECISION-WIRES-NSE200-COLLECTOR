@@ -267,6 +267,20 @@ def download_full_delivery(session, stamp: str, out: Path) -> bool:
     return False
 
 
+def iter_candidate_dates(start_date, end_date, today, lookback_days):
+    """Yield weekdays newest-first for either a bounded shard or default lookback."""
+    if (start_date is None) != (end_date is None):
+        raise ValueError("start_date and end_date must be supplied together")
+    if start_date is not None:
+        if start_date > end_date:
+            raise ValueError("start_date must be on or before end_date")
+        span = (end_date - start_date).days + 1
+        dates = (end_date - timedelta(days=offset) for offset in range(span))
+    else:
+        dates = (today - timedelta(days=offset) for offset in range(lookback_days + 1))
+    return (day for day in dates if day.weekday() < 5)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sessions", type=int, default=200,
@@ -306,17 +320,11 @@ def main():
     valid = []
     diagnostics = []
 
-    if bounded_range:
-        scan_days = (end_date - start_date).days + 1
-        candidate_dates = (end_date - timedelta(days=offset) for offset in range(scan_days))
-    else:
-        candidate_dates = (today - timedelta(days=offset) for offset in range(args.lookback_days + 1))
+    candidate_dates = iter_candidate_dates(start_date, end_date, today, args.lookback_days)
 
     for d in candidate_dates:
         if not bounded_range and len(valid) >= args.sessions:
             break
-        if d.weekday() >= 5:
-            continue
 
         stamp = d.strftime("%d%m%Y")
         ymd = d.strftime("%Y%m%d")
