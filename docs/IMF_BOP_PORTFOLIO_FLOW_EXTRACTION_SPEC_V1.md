@@ -207,3 +207,19 @@ Workflow file: `.github/workflows/imf_bop_dsd_acquisition.yml`.
 - Workflow execution, HTTP response validation, raw XML checksums and component inventory remain NOT DONE until the workflow is registered on the default branch and manually dispatched.
 
 This expansion does not change any production signal or use registration rows as observation data.
+
+## 2E. Semantic metadata QA hardening (2026-11-15)
+
+The acquisition workflow now checks more than XML well-formedness:
+- Dataflow must contain exactly one `Dataflow` artefact with ID `BOP_BPM6`.
+- That artefact must expose at least one `DataStructureRef`; the exact agency/ID/version values are written to the QA report and are not assumed.
+- Constraint must contain exactly one `ContentConstraint` artefact with ID `BOP_BP6_CONSTRAINT` and at least one `CubeRegion`.
+- Missing raw payloads remain UNKNOWN in per-item reports and cause the workflow to fail closed; malformed XML or missing required structure is FAIL.
+- JSON QA report serialization was corrected to write valid newline-terminated JSON.
+
+Latest workflow commits:
+- Research overlay branch: `6d447a53199d24d333f02ec8c582eb00e8654c15`.
+- PR #34 registration branch: `72a6968d4065214155045dd830cecbaa6f6b3ac6`.
+- Workflow file SHA (before this documentation-only update): `40096faa971db93e9d154697ad24ffd1eb6f5d58`.
+
+Static content comparison confirms both branches contain identical workflow text. Runtime XML results are still NOT DONE: no workflow was dispatched because PR #34 remains draft/unmerged and no default-branch registration has been authorized. A structural PASS from this parser is not yet a claim about IMF's live metadata payload.
