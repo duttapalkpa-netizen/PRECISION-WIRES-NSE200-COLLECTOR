@@ -961,3 +961,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Earlier DBIE page with annual frequency remains rejected for quarterly purpose. 2015-Q2 and 2021-Q2 RBI values remain NOT_RETRIEVED; no comparison claimed.
 - Source-contract/navigation work bounded task 100% complete; raw export acquisition 0% (not retrieved). Existing 11 quarters / 22/22 comparisons unchanged; IMF BOP 5/7=71.4%; IMF vintage NOT_READY; overall V11.3 NOT_CALCULABLE.
 - Report commit: 10c37ad79265ad084f6937d266b17a2b8b9324ca; report blob: 52a6edeac08a97640f47f8a94374755dc42e0c5e.
+
+
+## 2026-11-15 — DBIE public-access execution checkpoint
+- Revalidated RBI April 2026 Guide Table 42: quarterly, US$ million, DEPR/RBI, revision subject; DBIE mapping External Sector. https://rbi.org.in/scripts/PublicationsView.aspx?Id=24094
+- Revalidated RBI DBIE export instructions: https://dbieold.rbi.org.in/DBIE/doc/Exporting_report_data_%26_related_options.pdf ; UI exports can be Excel/PDF/Text/CSV.
+- Actual public DBIE root https://data.rbi.org.in returned no readable page content; old DBIE root timed out. No quarterly report ID, CSV bytes or schema retrieved.
+- 2015-Q2 and 2021-Q2 RBI values remain NOT_RETRIEVED. No hash or comparison fabricated. No credentials, undocumented endpoints, scraping workaround or contact used.
+- RBI guide lists dbie@rbi.org.in; no external message sent pending user approval.
+- Bounded public-path attempt 100% complete, blocked at interactive report access; raw export 0% acquired. Existing 11 quarters / 22/22 PASS_WITH_ROUNDING unchanged; IMF BOP 5/7=71.4%; vintage NOT_READY; full V11.3 NOT_CALCULABLE.
+- Next dependency: user-authorized interactive DBIE access or explicit approval to contact RBI support; don't repeat public page fetches absent new access.
+- Report commit: 826e70dea1778764927b244710a32e28970042fd; report blob: c7f203f6b3560f9751a9ca662ce05731ea31251e.
