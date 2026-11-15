@@ -62,3 +62,10 @@ Replace placeholders only with URLs copied from the two distinct official NSE re
 - GitHub source hardening commit: `9e08de5aef60ae876a1fd91e32d4db7796487485`; final manifest-redaction correction commit: `e2876b213826fa951b9cef92c9e1155b1c6da80f`, source blob SHA `b5d59bd284df342927814335ed7e8357f71cf7a0`.
 - Offline test file commit: `66b7330e9b5980c3161f1f75f85eb8c372008a38`.
 - Execution boundary: this environment has no DNS/outbound network (raw GitHub fetch from the shell failed with name-resolution error). Therefore Python compile/test execution and live NSE capture remain NOT_RUN. The test suite is committed but not PASS until run in a Python environment with `requests` installed. No Actions/CI run was triggered.
+
+
+## 2026-11-16 offline test-path correction and bounded helper validation
+- Reviewed the committed test module and found its import path used `Path(__file__).parents[2]`, which resolved one directory too high. Corrected it to `parents[1]` so the test imports the sibling capture utility from `tools/research/`.
+- Test correction commit: `b4509318799b72ff23e7ddec5b18111a41dee9c3`; test blob SHA `41be6239d896e1a0c4229fc9e49c0b9d4a9fc80f`.
+- Because DNS prevented fetching the exact repository checkout into the local shell, executed a temporary offline helper harness reconstructed from the committed utility's helper functions and the same seven test cases. Python 3.13.5 and requests 2.32.5 were present. Harness py_compile PASS; 7/7 helper tests PASS in 0.002 sec. This does NOT count as execution of the exact committed repository checkout or its complete main() capture flow.
+- Exact GitHub checkout py_compile/test execution remains NOT_VERIFIED; live NSE capture remains NOT_RUN. Do not upgrade repository test status to PASS until the exact committed files are run in GitHub Actions or a network-enabled checkout.
