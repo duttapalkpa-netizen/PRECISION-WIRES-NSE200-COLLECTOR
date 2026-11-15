@@ -541,3 +541,8 @@ Report workstream percentages separately from evidence status. Percentage means 
 - CI has been triggered by the final workflow commit; runtime conclusion must be fetched before claiming PASS. If workflow does not trigger, inspect branch/PR event wiring; do not infer success from commits.
 - Prior Run #21's 5,880 historical signals and 17,640 trade rows remain immutable historical evidence with misleading midnight timestamps; they are NOT corrected artifacts and must not be reused for final acceptance. New run must regenerate signals/replay and artifact hashes.
 - Status: code edits committed 100%; test source added 100%; independent audit guard added 100%; CI runtime NOT_VERIFIED; regenerated artifact 0%; strict no-lookahead acceptance BLOCKED until CI and new artifact checks pass.
+
+
+### CI trigger checkpoint — 2026-11-16
+- Final workflow commit `63c45276c49534a5e469ba219609d85da4f424c9` triggered PR Run #32, ID `43748694785`, event `pull_request`, head SHA matches the workflow commit, current status PENDING at last poll. No jobs had yet been returned by the jobs endpoint. This is pending, not PASS.
+- PR #37 remains OPEN; do not merge. Corrected artifacts and new SHA-256 values are pending the successful run.
