@@ -1076,3 +1076,41 @@ Sources:
 Bounded three-quarter extension: 100% complete. Cumulative four-quarter numerical validation: 8/8 PASS_WITH_ROUNDING. Full-period mapping validation: NOT_DONE. RBI quarterly raw export/schema: NOT_RETRIEVED. IMF revision/vintage readiness: NOT_READY. IMF BOP workstream remains 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 project progress NOT_CALCULABLE.
 
 No new IMF data pull, RBI raw-file creation, source-data mutation, manifest/sidecar mutation, synthetic data, paid service, credentials, PR merge or production change.
+
+
+## Historical RBI BPM6 quarterly cross-check extension — 2016–2017 (2026-11-15)
+
+Scope: two non-overlapping historical fiscal-year quarters identified from RBI's official bulletin archive. The 2016 and 2017 observations are calendar-quarter Q2 (Apr–Jun), matched to IMF CSV periods 2016-Q2 and 2017-Q2. This is the earlier historical Standard Presentation of BoP in India as per BPM6 (RBI Table 40 in the October 2017 bulletin), not mislabeled as current Table 42.
+
+Source: RBI Bulletin dated 10 October 2017, official URL https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=17190 . It reports (US$ million):
+- Apr–Jun 2016 (PR): Portfolio Investment in India net +1,241; Portfolio Investment by India net +863.
+- Apr–Jun 2017 (P): Portfolio Investment in India net +11,921; Portfolio Investment by India net +530.
+
+Mapping retained from the signed-convention audit:
+- RBI Portfolio Investment by India Net -> IMF asset net acquisition = negative RBI net.
+- RBI Portfolio Investment in India Net -> IMF liability net incurrence = positive RBI net.
+
+Comparisons against the existing archived IMF quarterly CSV (USD million; raw OBS_VALUE divided by SCALE=10^6):
+| Period | RBI asset comparator | IMF asset | abs diff | RBI liability comparator | IMF liability | abs diff | Result |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 2016-Q2 | -863 | -862.901610612507 | 0.098389387493 | 1241 | 1240.54 | 0.46 | PASS_WITH_ROUNDING |
+| 2017-Q2 | -530 | -530.439269462386 | 0.439269462386 | 11921 | 11921.16 | 0.16 | PASS_WITH_ROUNDING |
+
+Acceptance rule remains absolute difference <= 0.5 USD million; no tolerance widening. Result: 4/4 side-by-side comparisons PASS_WITH_ROUNDING. RBI bulletin is rounded to whole USD million, while IMF retains sub-million precision.
+
+Evidence limitations:
+- This is a two-year historical extension only, not a completed 2015–2025 matrix.
+- RBI archive search surfaced this October 2017 USD-million BPM6 table; older or other-year pages with different units/table numbers are not silently converted or promoted.
+- No raw RBI CSV/DBIE export, raw export hash, or vintage metadata was obtained.
+- IMF CSV is unchanged; no rows were added or modified. No source promotion, no data merge, and no revision-vintage conclusion.
+- The earlier four quarters (2024-Q3, 2024-Q4, 2025-Q1, 2025-Q2) remain 8/8 PASS_WITH_ROUNDING. Combined directly observed checks now cover six quarters and 12/12 side comparisons, but are not a statistically representative full-period validation.
+
+Progress:
+- This bounded historical extension (2016–2017): 100% complete.
+- Requested 2015–2025 annual spot-check matrix: 2/11 years covered = 18.2%; 9/11 years remain NOT_DONE.
+- RBI quarterly raw DBIE export: NOT_RETRIEVED.
+- IMF revision/vintage: NOT_READY / NOT_VERIFIED.
+- IMF BOP workstream remains 5/7 = 71.4%; this extension does not change that gate count.
+- Overall PRECISION-WIRES V11.3 project progress remains NOT_CALCULABLE pending reconciled denominators and approved weights.
+
+Integrity: no changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, source CSV, manifests, or historical artifacts.
