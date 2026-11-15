@@ -86,7 +86,11 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
         m = ROW.fullmatch(text)
         if m:
             key, expr = m.group("key"), m.group("expr").strip()
-            current = Row(key, expr, [text], [line_no] if line_no else [], [pdf_page, pdf_page_end] if pdf_page else [])
+            # The marker's end page can be caused by the following printed page
+            # number being attached to this extracted line (e.g. P262-266 ... 239).
+            # Attribute the row only to the page where its source text begins;
+            # actual wrapped continuation lines add their own page below.
+            current = Row(key, expr, [text], [line_no] if line_no else [], [pdf_page] if pdf_page else [])
             rows.append(current)
             continue
         # A blank-key continuation is valid only if the preceding expression ends in '+'.
@@ -94,7 +98,7 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
             current.nic2008_expression_raw += text
             current.source_fragments.append(text)
             if line_no: current.source_lines.append(line_no)
-            if pdf_page: current.pdf_pages.extend([pdf_page] + ([pdf_page_end] if pdf_page_end and pdf_page_end != pdf_page else []))
+            if pdf_page: current.pdf_pages.append(pdf_page)
             continue
         # A standalone printed page number is metadata only when it agrees with
         # the PDF-page-to-printed-page offset documented for this source (P256 -> 232).
