@@ -18,7 +18,7 @@ Freeze difficult source-layout cases as deterministic parser acceptance tests be
 | T03 | 1512 | 10430 | 1512+2220(p) | preserve aggregation and partial |
 | T04 | 1811 | 10440 | 1811+1313(p) | preserve cross-division component |
 | T05 | 4340 | 10571–10573 | 4311(p)+4312(p)+4321(p)+4322(p)+4329(p)+4330(p)+4390(p) | join multiple wrapped lines |
-| T06 | 4642 / 4649 | 10579–10583 | 4649(p)+4659(p) | page transition; continuation under next page table header assigned only by source sequence |
+| T06 | 4642 and 4649 | 10579, 10583 | each maps to 4649(p)+4659(p) | preserve the row at the page boundary and do not collapse the two distinct NIC-2025 keys |
 | T07 | 4772 | 10626–10630 | 4772(p)+4789(p)+4791(p)+4799(p) | retain first fragment; ignore repeated header; append blank-key continuation |
 | T08 | 4790 | 10637–10644 | 4510(p)+4711(p)+4719(p)+4721(p)+4722(p)+4723(p)+4730(p)+4741(p)+4742(p)+4751(p)+4752(p)+4753(p)+4759(p)+4761(p)+4762(p)+4763(p)+4764(p)+4771(p)+4772(p)+4773(p)+4774(p)+4791(p)+4799(p) | retain every plus-separated component |
 | T09 | 9540 | 10855–10857 | 4520(p)+4540(p)+9511(p)+9512(p)+9521(p)+9522(p)+9523(p)+9524(p)+9529(p) | join wrapped final-page expression |
