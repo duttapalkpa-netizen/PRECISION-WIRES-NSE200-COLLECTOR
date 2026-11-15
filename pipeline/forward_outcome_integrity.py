@@ -44,18 +44,28 @@ def add_forward_outcomes(df: pd.DataFrame, horizons=DEFAULT_HORIZONS) -> pd.Data
     date_values = parsed_dates.to_numpy()
     result = df.copy()
 
+    # The global session calendar prevents a symbol with a missing row from
+    # silently treating a later date as the next trading session.
+    calendar = np.sort(np.unique(date_values))
+    date_to_position = {date: i for i, date in enumerate(calendar)}
+    groups = df.groupby("SYMBOL", sort=False, dropna=False).indices
+
     for horizon in checked_horizons:
         high_pct = np.full(len(df), np.nan, dtype=float)
         close_pct = np.full(len(df), np.nan, dtype=float)
 
-        groups = df.groupby("SYMBOL", sort=False, dropna=False).indices
         for positions in groups.values():
             positions = np.asarray(positions, dtype=int)
-            ordered = positions[np.argsort(date_values[positions], kind="stable")]
-            for offset, row_pos in enumerate(ordered):
-                future_positions = ordered[offset + 1: offset + horizon + 1]
-                if len(future_positions) != horizon:
+            symbol_rows = {date_values[pos]: pos for pos in positions}
+            for row_pos in positions:
+                calendar_pos = date_to_position[date_values[row_pos]]
+                future_dates = calendar[calendar_pos + 1: calendar_pos + horizon + 1]
+                if len(future_dates) != horizon:
                     continue
+                # Every global market session must have a valid row for this symbol.
+                if any(date not in symbol_rows for date in future_dates):
+                    continue
+                future_positions = np.asarray([symbol_rows[date] for date in future_dates], dtype=int)
                 entry_close = close[row_pos]
                 future_highs = high[future_positions]
                 future_closes = close[future_positions]
