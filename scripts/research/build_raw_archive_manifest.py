@@ -5,6 +5,7 @@ Research/QA only. Never repairs, rewrites, or fabricates source rows.
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -32,6 +33,12 @@ def parse_date(value: object):
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--expected-sessions", type=int, default=None,
+                        help="Require exactly this many distinct raw sessions/files")
+    args = parser.parse_args()
+    if args.expected_sessions is not None and args.expected_sessions < 1:
+        parser.error("--expected-sessions must be >= 1")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     files = sorted(RAW.glob("sec_bhavdata_full_*.csv"))
     records = []
@@ -91,6 +98,13 @@ def main() -> int:
         blockers.append("sessions.txt contains duplicate dates")
     listed_sessions = sorted(listed_sessions)
     file_dates = sorted(r["expected_date"] for r in records if r["expected_date"])
+    if len(file_dates) != len(set(file_dates)):
+        blockers.append("multiple raw files map to the same filename session date")
+    if args.expected_sessions is not None:
+        if len(listed_sessions) != args.expected_sessions:
+            blockers.append(f"expected {args.expected_sessions} sessions, found {len(listed_sessions)}")
+        if len(records) != args.expected_sessions:
+            blockers.append(f"expected {args.expected_sessions} raw files, found {len(records)}")
     missing_files = sorted(set(listed_sessions) - set(file_dates))
     unlisted_files = sorted(set(file_dates) - set(listed_sessions))
     if not sessions_path.exists():
