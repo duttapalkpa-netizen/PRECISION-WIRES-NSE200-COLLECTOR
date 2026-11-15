@@ -1,0 +1,36 @@
+name: NIC Concordance Source Acquisition
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nic-concordance-source-acquisition
+  cancel-in-progress: false
+
+jobs:
+  acquire-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PDF text utility
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+      - name: Acquire official source, SHA-256 and concordance text
+        run: python scripts/research/acquire_nic_concordance_source.py --out-dir nic_concordance_source
+      - name: Upload immutable source evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: nic-concordance-official-source-${{ github.run_id }}
+          path: nic_concordance_source/
+          if-no-files-found: error
+          retention-days: 90
