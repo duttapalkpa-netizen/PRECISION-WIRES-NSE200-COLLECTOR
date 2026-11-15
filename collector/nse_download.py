@@ -216,6 +216,36 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
         return False
 
 
+def validate_archived_daily_file(content: bytes, expected_stamp: str) -> bool:
+    """Validate an archived NSE daily CSV's structure and every EQ row's trade date.
+
+    Unlike validate_full_delivery, this also accepts normalized UDiFF files whose
+    delivery fields are intentionally blank, while still requiring the legacy
+    symbol/series/close schema and an exact embedded trade-date match.
+    """
+    if not validate_legacy(content):
+        return False
+    expected_date = _parse_date(expected_stamp)
+    if expected_date is None:
+        return False
+    try:
+        import pandas as pd
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
+        cols = {_clean_key(x): x for x in df.columns}
+        series_col = next((cols[_clean_key(n)] for n in ("SERIES", "SCTYSRS") if _clean_key(n) in cols), None)
+        date_col = next((cols[_clean_key(n)] for n in ("DATE1", "DATE", "TRADDT", "TRADING_DATE", "TRADINGDATE", "TRADE_DATE", "TRADEDATE") if _clean_key(n) in cols), None)
+        if not series_col or not date_col:
+            return False
+        eq = df[df[series_col].astype(str).str.strip().str.upper().eq("EQ")]
+        if eq.empty:
+            return False
+        parsed = [_parse_date(value) for value in eq[date_col].tolist()]
+        return bool(parsed) and all(value == expected_date for value in parsed)
+    except Exception as e:
+        print(f"ARCHIVED_DAILY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
+        return False
+
+
 def download_full_delivery(session, stamp: str, out: Path) -> bool:
     """Prefer NSE's combined Full Bhavcopy + Security Deliverable report."""
     urls = [
@@ -269,7 +299,7 @@ def main():
         ymd = d.strftime("%Y%m%d")
         target = out / f"sec_bhavdata_full_{stamp}.csv"
 
-        if target.exists() and validate_legacy(target.read_bytes()):
+        if target.exists() and validate_archived_daily_file(target.read_bytes(), stamp):
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
             print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
@@ -305,7 +335,7 @@ def main():
                 url = LEGACY.format(ddmmyyyy=stamp)
                 r = s.get(url, timeout=(10, 25))
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
-                if r.status_code == 200 and validate_legacy(r.content):
+                if r.status_code == 200 and validate_archived_daily_file(r.content, stamp):
                     target.write_bytes(r.content)
                     got = True
                 elif target.exists():
