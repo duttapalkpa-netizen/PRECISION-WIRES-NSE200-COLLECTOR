@@ -301,3 +301,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - No production selector, ranking score, pressure fade or 672 diagnostic changes; no paid service/spend, PR merge or external contact.
 
 - Follow-up bounded CI run 43688778740 completed SUCCESS after the regex correction; job `parser-unit-tests` is SUCCESS. The workflow executes the parser + acquisition preflight suite; detailed test-count confirmation should be taken from its job log. This validates the current unit-test state only, not the live full-table parser against the official PDF. Live source acquisition must be run once more only after this fix, to persist the source evidence artifact and test all 463 rows.
+
+
+## 2026-11-15 — Post-repair verification checkpoint
+- Rechecked latest Actions history: no new NIC Concordance Source Acquisition run has been dispatched after parser repair. Latest source acquisition runs remain 43688472880 / 43688167016 / 43687797343, all FAILURE at parser step, before the evidence-upload-if-always workflow change was committed.
+- Confirmed latest parser CI run 43688778740 SUCCESS; job log explicitly reports 22 tests in 0.014s, OK. Both new tests passed: side-by-side row pair parsing and fail-closed unpaired-column rejection.
+- Queried artifacts for failed source run 43688472880: zero artifacts. This is expected because that run predates the upload `if: always()` fix. Do not infer evidence persisted from its successful acquisition logs.
+- Current workflow has the always-upload change in commit 646015c587509779510acf18ba612aa402d15d52. Parser implementation current head includes regex correction commit 87666f35dd322dd60094126677e9f8cb4fcbdc17. Parser CI is green; the actual 463-row source parse is still unverified.
+- Next action is one single manual dispatch of NIC Concordance Source Acquisition on main. After that, inspect the resulting artifact first (PDF, source_manifest.json, 7-page text extract); then validate parser output and audit. Do not run additional parser CI or repeat source acquisition unless code changes or evidence indicates a new issue.
+- Status: live PDF acquisition 100% from prior run; SHA-256 computation 100% but retained artifact pending; 7-page extraction 100%; parser regression 22/22 PASS; durable source evidence artifact NOT_DONE; real 463-row extraction/audit NOT_DONE; independent reconciliation NOT_DONE.
