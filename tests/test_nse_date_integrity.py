@@ -30,8 +30,12 @@ class FullDeliveryDateIntegrityTests(unittest.TestCase):
         self.assertFalse(validate_full_delivery(raw, "14112026"))
 
     def test_rejects_missing_date_column(self):
-        raw = self.make_csv(["14-11-2026"])
-        self.assertFalse(validate_full_delivery(raw, "14112026")) if b"DATE1" not in raw else self.fail("fixture error")
+        output = io.StringIO(newline="")
+        writer = csv.writer(output)
+        writer.writerow(["SYMBOL", "SERIES", "CLOSE_PRICE", "DELIV_QTY", "DELIV_PER"])
+        for i in range(30):
+            writer.writerow([f"TEST{i:02d}", "EQ", "100.0", "1000", "50.0"])
+        self.assertFalse(validate_full_delivery(output.getvalue().encode("utf-8"), "14112026"))
 
     def test_rejects_malformed_eq_date(self):
         raw = self.make_csv(["not-a-date"])
