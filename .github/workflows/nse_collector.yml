@@ -8,6 +8,7 @@ on:
       - "docs/**"
       - "scripts/research/nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_parser.py"
+      - "tests/research/test_nic_concordance_source_acquisition.py"
       - ".github/workflows/nic_concordance_parser_tests.yml"
       - "scripts/research/acquire_nic_concordance_source.py"
       - ".github/workflows/nic_concordance_source_acquisition.yml"
