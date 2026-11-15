@@ -413,3 +413,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Updated isolated 5-minute research CI workflow to include the new helper and discover all `tests/research/test_*.py` tests. Workflow commit: `11d80d5a9394fc95c4e2be312ed60931b526ae8d`.
 - Runtime CI validation is pending; no PASS claim until run and job result are fetched. No historical replay or production pipeline modification was performed. CORE-672, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, collector workflow and archived artifacts remain unchanged.
 - Progress: source defect identification 100%; isolated correction implementation 100%; regression-test authoring 100%; CI runtime verification pending; corrected historical replay 0%; independent outcome reconciliation 0%; final V11.3 research acceptance BLOCKED.
+
+
+## 2026-11-16 — Forward-outcome integrity PR checkpoint
+- Created draft PR #38: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/pull/38 . It is OPEN, DRAFT, NOT MERGED. No production code is included.
+- Added isolated exact-forward label helper commit `136a11721f8802e318f5881ae20a8df30739e5b0`; nine tests commit `cf81c469de62c2806e2c672fb23de1c38c5da91b`.
+- CI workflow commit `11d80d5a9394fc95c4e2be312ed60931b526ae8d` expanded push paths and test discovery; follow-up commit `9f0c5ae865cd475e02eba11bcd88a72f6d2e0b1a` aligned pull_request path filters. Bounded timeout remains five minutes.
+- Independent fixture arithmetic sanity check confirmed ABC cutoff 2026-01-01 yields H1 HIGH +2%, H3 HIGH +6%, H3 CLOSE +5%, H5 HIGH +6%, H5 CLOSE +5%; XYZ labels remain isolated. This is a local fixture sanity check only, not GitHub CI PASS.
+- GitHub workflow-run listing/status endpoint available through this connector does not expose push-triggered run listing; the commit combined-status endpoint currently returns no statuses, and PR-triggered run lookup returned no runs at the time of check. Therefore CI runtime remains NOT_VERIFIED; do not infer PASS.
+- Historical outcome rebuild remains NOT_STARTED; old H+3/H+5 artifacts remain NOT_VERIFIED. Do not reuse their precision/lift or state labels as accepted evidence until corrected rebuild and independent ledger reconciliation.
+- Scoped progress: defect audit 100%; isolated helper 100%; regression test source 100%; workflow wiring 100%; fixture arithmetic sanity 100%; CI runtime verification pending; historical replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
