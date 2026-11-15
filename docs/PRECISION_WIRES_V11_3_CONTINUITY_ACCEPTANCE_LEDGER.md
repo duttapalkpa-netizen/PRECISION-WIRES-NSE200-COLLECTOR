@@ -423,3 +423,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - GitHub workflow-run listing/status endpoint available through this connector does not expose push-triggered run listing; the commit combined-status endpoint currently returns no statuses, and PR-triggered run lookup returned no runs at the time of check. Therefore CI runtime remains NOT_VERIFIED; do not infer PASS.
 - Historical outcome rebuild remains NOT_STARTED; old H+3/H+5 artifacts remain NOT_VERIFIED. Do not reuse their precision/lift or state labels as accepted evidence until corrected rebuild and independent ledger reconciliation.
 - Scoped progress: defect audit 100%; isolated helper 100%; regression test source 100%; workflow wiring 100%; fixture arithmetic sanity 100%; CI runtime verification pending; historical replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Second-pass test audit: global-session maturity guard
+- Reopened PR #38 files and performed a test-by-test source audit. Found a defect in the newly authored maturity assertion: it unintentionally included XYZ rows while asserting ABC's H+3 tail was immature. Corrected the assertion to scope ABC only.
+- More importantly, identified that symbol-local row shifting could silently skip a missing symbol/date row and count a later date as the next trading session. Hardened `pipeline/forward_outcome_integrity.py` to use the dataset-wide unique trading-session calendar and require a valid row for the symbol on every one of the next H sessions; missing symbol/session observations now remain UNKNOWN.
+- Added a regression test proving a missing ABC row on a global market session cannot be skipped when calculating H+1/H+3. Updated helper commit `2d50256f0319b0d32c476054b1d0236f28826229`; test commit `a5963b6e3f4f84e8725fba7f6abb2ce62d151055`.
+- The forward-outcome suite now contains 10 test methods (previous PR description said nine; description must be updated). The workflow still discovers all `test_*.py` research tests and has a 5-minute timeout.
+- Branch comparison against main: 11 commits ahead, 0 behind. No production file changed; PR #38 remains draft/unmerged. CI run listing still returns no PR-triggered runs and combined commit status must be checked again; no runtime PASS claim.
+- Progress: source/test audit 100%; global calendar guard implementation 100%; 10-test source suite 100%; CI runtime pending; full historical rebuild 0%; independent reconciliation 0%; final acceptance BLOCKED.
