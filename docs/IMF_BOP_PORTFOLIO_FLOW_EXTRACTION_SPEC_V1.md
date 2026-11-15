@@ -164,3 +164,29 @@ This is an independently documented alternate endpoint family, but the exact BOP
 ### Important source boundary
 
 The IMF SDMX Central guide describes the Structure Web Service for metadata (Dataflows, Codelists, Concepts and Data Structures). Do not mistake successful DSD retrieval for access to actual BOP observations. Observation extraction requires a separately verified IMF Data Portal data endpoint and dataset vintage. The IMF Data API page documents SDMX 2.1/3.0 access, while its Swagger explorer requires beta-portal sign-in. No observation API request is asserted as tested here.
+
+## 2C. IMF SDMX Central dataflow and registration discovery (2026-11-15)
+
+A separate inspection of the live IMF SDMX Central public catalogue identified the following metadata leads. These are catalogue records, not downloaded BOP observations.
+
+| Registry item | Observed catalogue evidence | Interpretation / gate |
+|---|---|---|
+| Dataflow | Agency IMF, ID `BOP_BPM6`, version 1.0 appears in the public constraints catalogue as `BOP_BPM6[1.0]` | Candidate IMF BOP dataflow identity; retrieve the dataflow structure and compare its DSD reference before constructing any observation key |
+| Constraint | `BOP_BP6_CONSTRAINT`, attached to dataflow `BOP_BPM6[1.0]`, is listed as a Cube Region Constraint | Must retrieve and parse the constraint; do not assume every REF_AREA / frequency / counterpart / indicator combination is available |
+| Registrations | Public registration catalogue lists `IMF:BOP_BPM6(1.0)` with multiple providers (including AT2, BE1, CH1, GB1, HU1, JP4, MT1, SK1 and US8) | These are provider registration records and point to national statistical authority files; they are not proof of an IMF-hosted global observation series |
+| Registration freshness | Catalogue rows show provider-specific update timestamps, ranging from 2023 to 2026 | Preserve each provider and timestamp; do not treat the catalogue as a single synchronized global vintage |
+
+Official catalogue pages:
+- Dataflow/constraint registry: https://sdmxcentral.imf.org/data/constraints.html
+- Provider registrations: https://sdmxcentral.imf.org/data/registrations.html
+- Structure Web Service: https://sdmxcentral.imf.org/webservice/schema.html
+
+### Extraction guardrails from this discovery
+
+1. Retrieve the IMF agency dataflow `BOP_BPM6` version `1.0` and confirm its exact DSD reference; do not assume it references `IMF:BOP(2.6.0)` until the dataflow XML says so.
+2. Retrieve `BOP_BP6_CONSTRAINT` and parse the cube-region restrictions before selecting any series.
+3. Treat each provider registration as a distinct national reporting source with its own URL, provider ID, last-updated timestamp, publication vintage and checksum. Do not concatenate providers without deduplication and vintage policy.
+4. Do not mistake the provider registration table for a central IMF BOP data API or for complete global country coverage.
+5. The registrations page is discovery evidence only; no provider XML, national observations or IMF observations were downloaded in this step.
+
+Audit status: DATAFLOW DISCOVERY = PASS; exact dataflow-to-DSD linkage = UNKNOWN; constraint payload parsed = UNKNOWN; observations = NOT DONE.
