@@ -40,6 +40,21 @@ class RawArchiveManifestTests(unittest.TestCase):
         self.assertEqual(report["raw_file_count"], 1)
         self.assertEqual(len(report["files"][0]["sha256"]), 64)
 
+    def test_expected_session_count_is_enforced_when_requested(self):
+        with patch.object(MODULE, "RAW", self.raw), patch.object(MODULE, "OUT", self.qa / "manifest.json"), patch("sys.argv", ["manifest", "--expected-sessions", "200"]):
+            code = MODULE.main()
+        report = json.loads((self.qa / "manifest.json").read_text())
+        self.assertEqual(code, 1)
+        self.assertTrue(any("expected 200 sessions" in x for x in report["blockers"]))
+        self.assertTrue(any("expected 200 raw files" in x for x in report["blockers"]))
+
+    def test_duplicate_raw_files_for_same_session_fail(self):
+        duplicate = self.raw / "sec_bhavdata_full_13112026_copy.csv"
+        duplicate.write_text(self.raw_file.read_text(), encoding="utf-8")
+        code, report = self.run_audit()
+        self.assertEqual(code, 1)
+        self.assertTrue(any("multiple raw files" in x for x in report["blockers"]))
+
     def test_mixed_eq_dates_fail(self):
         self.raw_file.write_text(
             "SYMBOL,SERIES,DATE1,CLOSE_PRICE\nABC,EQ,13-11-2026,100\nXYZ,EQ,14-11-2026,200\n",
