@@ -795,3 +795,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Historical body recovery 4/4 PASS; transport metadata completeness 4/4 PASS; sidecar creation 4/4 PASS; revision-aware eligibility remains NOT_READY pending source-vintage evidence and two dated overlapping releases.
 - Existing CSV and manifest unchanged; no synthetic data, new IMF pull, production change, spend, PR merge or gate promotion.
 - Audit report update commit: 70c411f5a140fa7fb82f20f781a54ba8156ba6ce.
+
+## 2026-11-15 — Archived raw SDMX vintage-attribute inspection
+
+- Inspected exact archived raw SDMX-JSON response bodies for all four India series from artifacts 14125515371 and 14122421554; no new HTTP request.
+- All four bodies have `meta: {}`; no release/vintage field in response metadata.
+- Dataset structure has metadata attributes including PUBLICATION_DATE and UPDATE_DATE, but no dedicated vintage/release identifier attribute.
+- Dataset-level UPDATE_DATE values observed: `2026-11-07T14:56:50.476461500Z` and `2026-11-07T14:56:50.532906Z`. These are dataset-level update metadata, not per-response release IDs or proven vintages; do not promote them.
+- Observation attributes: PRECISION, DERIVATION_TYPE, STATUS, ACCESS_SHARING_LEVEL, ACCESS_SHARING_NOTES, SECURITY_CLASSIFICATION, SOURCE; no observation-level vintage identifier. STATUS, ACCESS_SHARING_NOTES and SOURCE null in captured observations.
+- Dataset source-methodology text lists possible source types (country authorities, NSDPs, ECB, IMF Staff Estimates) but does not identify the provenance of each India observation or direct-reported/estimated status.
+- Raw vintage-field inspection complete; explicit source-supplied vintage not exposed in inspected structures. Sidecar vintage remains NOT_VERIFIED (retrospective inspection does not create an acquisition-time vintage declaration); revision readiness UNKNOWN / NOT_READY.
+- Next: seek a second independently dated IMF snapshot with exact same series keys and overlapping periods. No CSV, manifest, sidecar, raw response, or accepted gate changed.
+- Audit report update commit: 4c83d57546873f45b403979c7dbcf648ce4ab028.
