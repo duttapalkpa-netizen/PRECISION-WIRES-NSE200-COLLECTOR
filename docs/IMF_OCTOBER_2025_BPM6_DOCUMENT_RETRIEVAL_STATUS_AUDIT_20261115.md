@@ -1173,3 +1173,31 @@ Progress:
 - IMF BOP workstream remains 5/7 = 71.4%; IMF vintage NOT_READY / NOT_VERIFIED; RBI raw quarterly DBIE export NOT_RETRIEVED; whole V11.3 project NOT_CALCULABLE.
 
 No production logic, CSV, manifest, sidecar, prior PASS artefact, or gate was changed.
+
+
+## RBI DBIE source-contract and export-path verification (2026-11-15)
+
+New primary documentation reviewed: RBI, Comprehensive Guide for Current Statistics of the RBI Monthly Bulletin, April 2026 edition, published on RBI site 08 Oct 2026:
+https://www.rbi.org.in/scriptS/PublicationsView.aspx?id=24094
+
+Verified from the guide:
+- Table 42 is explicitly "Standard Presentation of BoP in India as per BPM6 (US$ million)".
+- Reference period: Quarterly; unit: US$ million; source department DEPR; primary source RBI; revision policy: data subject to revision.
+- Official DBIE mapping is DBIE > Publication > Time-Series Publications > Monthly RBI Bulletin > External Sector, and DBIE > Statistics > External Sector > International Trade.
+- Table 42 coverage includes financial account portfolio investment, separate assets/liabilities totals, and credit/debit/net presentation.
+- Table 43 is the ₹ crore BPM6 counterpart; Table 40 is the older overall BoP classification and is not the Table 42 substitute.
+- The guide says historical time series underlying Bulletin tables are available through DBIE, with quarterly BoP frequency. It also says Bulletin tables are generated from CIMS and aligned with underlying DBIE time-series data.
+- RBI's public DBIE export guide says preformatted reports can be accessed under Statistics > Sector > Sub Sector > Required Report or Publication > Required publication > Required Report/Search Option; available report data can be exported as Excel, PDF, Text or CSV through "Export Document as".
+
+Access test:
+- Opened the official DBIE root via RBI guide link (https://data.rbi.org.in/); public page extraction returned no readable lines. No login, credentials, bypass, hidden endpoint, or direct undocumented API used.
+- The exact Table 42 historical quarterly series export, schema, and CSV bytes were not retrievable through the public page extraction in this run.
+- The previously surfaced DBIE dataset page (dataset path external_sector.r814_standard_presentation_of_india_s_balance_of_payments_as_pe) described Annual frequency and therefore remains rejected as the quarterly Table 42 export; it must not be repurposed.
+- Consequently 2015-Q2 and 2021-Q2 RBI comparators remain NOT_RETRIEVED. No numeric comparison or PASS/FAIL result is added.
+
+Decision and next actionable route:
+- Source contract and official navigation/export path are now VERIFIED; raw quarterly export remains NOT_RETRIEVED.
+- Next retrieval should use the documented DBIE UI path and locate the quarterly USD Table 42 report/series, then export CSV and preserve the unmodified bytes, retrieval timestamp, displayed frequency/unit, and SHA-256. If DBIE requires login or blocks export, stop and retain NOT_RETRIEVED; do not use undocumented endpoints.
+- Existing 11-quarter / 22-of-22 PASS_WITH_ROUNDING results remain unchanged.
+- IMF BOP workstream remains 5/7 = 71.4%; IMF vintage NOT_READY / NOT_VERIFIED; overall V11.3 NOT_CALCULABLE.
+- No CSV, manifest, sidecar, production code, or prior PASS artefact changed.
