@@ -68,15 +68,15 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
         raw = raw.rstrip("\n")
         mm = MARKER.match(raw)
         if mm:
-            line_no, pdf_page, text = int(mm.group("line")), int(mm.group("pdfpage")), mm.group("text").strip()
+            line_no, pdf_page, text = int(mm.group("line")), int(mm.group("pdfpage")), mm.group("text").strip()\n            pdf_page_end = int(mm.group("pdfpage_end")) if mm.group("pdfpage_end") else pdf_page
         else:
-            line_no, pdf_page, text = None, None, raw.strip()
+            line_no, pdf_page, text, pdf_page_end = None, None, raw.strip(), None
         if "CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES" in text:
             in_table = True
             continue
         if not in_table:
             continue
-        if text.startswith("SECTION ") or text.startswith("DIVISION ") or text.startswith("Group "):
+        if text.startswith("EXPLANATORY NOTES") or text.startswith("SECTION ") or text.startswith("DIVISION ") or text.startswith("Group "):
             break
         if not text or HEADER.fullmatch(text):
             continue
@@ -85,7 +85,7 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
         m = ROW.fullmatch(text)
         if m:
             key, expr = m.group("key"), m.group("expr").strip()
-            current = Row(key, expr, [text], [line_no] if line_no else [], [pdf_page] if pdf_page else [])
+            current = Row(key, expr, [text], [line_no] if line_no else [], [pdf_page, pdf_page_end] if pdf_page else [])
             rows.append(current)
             continue
         # A blank-key continuation is valid only if the preceding expression ends in '+'.
@@ -93,7 +93,7 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
             current.nic2008_expression_raw += text
             current.source_fragments.append(text)
             if line_no: current.source_lines.append(line_no)
-            if pdf_page: current.pdf_pages.append(pdf_page)
+            if pdf_page: current.pdf_pages.extend([pdf_page] + ([pdf_page_end] if pdf_page_end and pdf_page_end != pdf_page else []))
             continue
         # Numeric content not understood as a row or justified continuation blocks parsing.
         if re.fullmatch(r"\d{1,3}", text):
