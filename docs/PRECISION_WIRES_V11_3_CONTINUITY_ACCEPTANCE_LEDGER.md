@@ -785,3 +785,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Existing CSV, manifest and historical hashes untouched. New compliant sidecar only during a future real HTTP GET capturing exact raw body bytes and transport metadata at acquisition time.
 - No new IMF pull, spend, production change, PR merge, or acceptance-gate promotion.
 - Audit report update commit: 57c6478aa4cfc5bc396ab1b9def717616a4f1dd9.
+
+## 2026-11-15 — Original India raw response artifacts recovered; four sidecars created
+
+- Recovered original workflow artifacts 14125515371 (run 43623518481) and 14122421554 (run 43616059985); no new IMF API pull.
+- Exact body bytes recovered and SHA-256/byte count independently rechecked: annual assets 7,845 / 85cca14c…e23a; annual liabilities 7,846 / 6eba68f8…a4e4; quarterly assets 10,201 / aff39180…d24f; quarterly liabilities 10,185 / 6ebe3c2e…8ccc. All match prior manifest/capture metadata.
+- All four original capture records preserve HTTP 200, SDMX Content-Type, requested/final URLs, GET acquisition, exact series key, query parameters and actual UTC retrieval timestamp.
+- Created four V1 sidecars under `data/research/provenance/` (annual assets, annual liabilities, quarterly assets, quarterly liabilities). Vintage remains NOT_VERIFIED / UNKNOWN with null release date/ID; no vintage inferred from retrieval time.
+- Historical body recovery 4/4 PASS; transport metadata completeness 4/4 PASS; sidecar creation 4/4 PASS; revision-aware eligibility remains NOT_READY pending source-vintage evidence and two dated overlapping releases.
+- Existing CSV and manifest unchanged; no synthetic data, new IMF pull, production change, spend, PR merge or gate promotion.
+- Audit report update commit: 70c411f5a140fa7fb82f20f781a54ba8156ba6ce.
