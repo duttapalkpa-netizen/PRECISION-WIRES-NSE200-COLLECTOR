@@ -69,3 +69,8 @@ Replace placeholders only with URLs copied from the two distinct official NSE re
 - Test correction commit: `b4509318799b72ff23e7ddec5b18111a41dee9c3`; test blob SHA `41be6239d896e1a0c4229fc9e49c0b9d4a9fc80f`.
 - Because DNS prevented fetching the exact repository checkout into the local shell, executed a temporary offline helper harness reconstructed from the committed utility's helper functions and the same seven test cases. Python 3.13.5 and requests 2.32.5 were present. Harness py_compile PASS; 7/7 helper tests PASS in 0.002 sec. This does NOT count as execution of the exact committed repository checkout or its complete main() capture flow.
 - Exact GitHub checkout py_compile/test execution remains NOT_VERIFIED; live NSE capture remains NOT_RUN. Do not upgrade repository test status to PASS until the exact committed files are run in GitHub Actions or a network-enabled checkout.
+
+## 2026-11-16 follow-on source hardening: exception URL/token leakage
+- Static review of the exact GitHub source identified that exception text was copied into capture_manifest.json. HTTP/request exceptions can include full URLs, including query parameters. Replaced raw exception message serialization with exception class plus a fixed diagnostic string; request headers/cookies and URL query tokens are not serialized through this error field.
+- Source commit: 6eb13368faae01c4b054dcfb6df74d835c25f246; source blob SHA: 534a290ab5ec244150e97cce1b92de9c7076dea5.
+- Exact committed test suite remains NOT_RUN in this environment; prior bounded helper harness 7/7 PASS is not a substitute. Live capture NOT_RUN. Re-run exact suite after this source change before any capture attempt.
