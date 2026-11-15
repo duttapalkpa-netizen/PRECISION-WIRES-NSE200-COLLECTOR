@@ -1147,3 +1147,29 @@ Cumulative status:
 - RBI raw quarterly DBIE export: NOT_RETRIEVED; IMF vintage: NOT_READY / NOT_VERIFIED.
 - IMF BOP workstream remains 5/7 = 71.4%; overall V11.3 project progress remains NOT_CALCULABLE.
 - IMF CSV unchanged; no raw source export, manifest, sidecar or production artefact modified. No source promotion or full-period equivalence claim.
+
+
+## Targeted RBI archive retrieval audit — unresolved Q2 gaps (2026-11-15)
+
+Scope: targeted retrieval for the two unfilled annual-Q2 sample periods 2015-Q2 and 2021-Q2. This is a source-discovery audit only; no numerical comparison is claimed where the exact RBI observation was not retrieved.
+
+Verified official archive evidence:
+- RBI June 2021 bulletin archive page lists Table 40, "Standard Presentation of BoP in India as per BPM6 (US $ Million)", but the page is the June 2021 bulletin and its table is not the Apr-Jun 2021 reporting period: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?mon=6&yr=2021
+- RBI Aug 17 2021 bulletin (Id=20483) Table 40 contains Jan-Mar 2020 and Jan-Mar 2021, not Apr-Jun 2021: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20483
+- RBI June 16 2022 bulletin (Id=21114) Table 40 contains Oct-Dec 2020 and Oct-Dec 2021, not Apr-Jun 2021: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21114
+- RBI March 17 2022 bulletin (Id=20916) contains Jul-Sep 2020 and Jul-Sep 2021, not Apr-Jun 2021: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20916
+- RBI search also surfaced 2021-22 and 2022-23 annual BPM6 USD-million publications, but annual observations are not substitutes for quarterly Q2 rows.
+- Searches for exact Apr-Jun 2021 RBI Table 40 row and Apr-Jun 2015 USD-million BPM6 quarterly row did not surface a source page with the required Portfolio Investment in India and Portfolio Investment by India net values.
+
+Decision:
+- 2021-Q2 RBI quarterly comparator: NOT_RETRIEVED. Do not derive it from annual values, adjacent quarters, DBIE values of unknown frequency, or FPI flow datasets.
+- 2015-Q2 RBI quarterly comparator: NOT_RETRIEVED. The surfaced Feb 2016 archive pages show Jul-Sep 2014 and Jul-Sep 2015, not Apr-Jun 2015; no quarterly comparator accepted.
+- No numeric PASS/FAIL result added. Existing IMF CSV remains unchanged; no interpolation, synthetic data, or sign/tolerance changes.
+
+Progress:
+- Targeted retrieval audit for these two gaps: 100% complete as a bounded search; outcome is unresolved source availability, not validation PASS.
+- Annual Q2 matrix remains 7/11 years = 63.6%; 2015 and 2021 remain NOT_RETRIEVED; 2024 and 2025 remain outside the annual-Q2 sampling design despite separate quarter checks.
+- Existing directly checked comparisons remain 11 quarters, 22/22 PASS_WITH_ROUNDING.
+- IMF BOP workstream remains 5/7 = 71.4%; IMF vintage NOT_READY / NOT_VERIFIED; RBI raw quarterly DBIE export NOT_RETRIEVED; whole V11.3 project NOT_CALCULABLE.
+
+No production logic, CSV, manifest, sidecar, prior PASS artefact, or gate was changed.
