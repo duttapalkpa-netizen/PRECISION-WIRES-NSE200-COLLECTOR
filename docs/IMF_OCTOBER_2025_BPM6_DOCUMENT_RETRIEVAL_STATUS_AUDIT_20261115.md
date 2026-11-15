@@ -1229,3 +1229,28 @@ Bounded task status:
 - No source CSV, manifest, sidecar, prior PASS artifact, production code, selector, ranking score, pressure fade, diagnostic or gate changed.
 
 Next dependency: user-authorized interactive access to the RBI DBIE report/export UI or explicit approval to contact the RBI-listed DBIE support address. Without one of these, repeated public-page fetches will not produce the missing raw export and must not be repeated.
+
+
+## Targeted RBI bulletin-index cross-check — 2015-Q2 / 2021-Q2 (2026-11-15)
+
+Purpose: use indexed official RBI bulletin pages to determine whether the prior NOT_RETRIEVED labels can be closed without DBIE interactive access. This is not a repeat of the earlier broad DBIE access attempt.
+
+Official RBI results inspected:
+- RBI June 16 2021 bulletin archive index lists Table 40, BPM6 USD-million, but the bulletin itself is June 2021 and its Table 40 is not a Q2 2021 observation: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?mon=6&yr=2021
+- RBI June 16 2021 Table 40 (Id=20363) reports Oct-Dec 2019 and Oct-Dec 2020: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20363
+- RBI Aug 17 2021 Table 40 (Id=20483) reports Jan-Mar 2020 and Jan-Mar 2021(P): https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20483
+- RBI June 16 2022 Table 40 (Id=21114) reports Oct-Dec 2020 and Oct-Dec 2021(P): https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21114
+- Search for an RBI indexed Table 40 page explicitly containing Apr-Jun 2021 did not return a matching page. No exact Apr-Jun 2015 quarterly USD-million Table 40 page was located either.
+- RBI Apr 11 2016 Bulletin result (Id=16211) is Table 41 in ₹ billion and contains Oct-Dec 2014 and Oct-Dec 2015, not Apr-Jun 2015: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=16211
+
+Conclusion:
+- 2015-Q2 and 2021-Q2 remain NOT_RETRIEVED; no annual, IIP stock, adjacent-quarter or INR table was substituted.
+- No numeric comparison, PASS, FAIL, or data-source promotion is claimed.
+- Public indexed-source search is exhausted for this bounded query; the remaining route is interactive DBIE access or user-approved contact with RBI DBIE support. Do not repeat identical searches absent new source evidence.
+- No CSV, manifest, sidecar, prior PASS artifact, production code, or gate changed.
+
+Progress:
+- Bounded official-index cross-check: 100% complete; both target values remain NOT_RETRIEVED.
+- Raw quarterly DBIE export: NOT_RETRIEVED.
+- Existing direct validation: 11 quarters / 22 of 22 side comparisons PASS_WITH_ROUNDING.
+- IMF BOP workstream remains 5/7 = 71.4%; vintage NOT_READY / NOT_VERIFIED; full V11.3 progress NOT_CALCULABLE.
