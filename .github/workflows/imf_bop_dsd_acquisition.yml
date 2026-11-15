@@ -106,14 +106,29 @@ jobs:
                                   if local(e.tag) == "DataStructureRef":
                                       refs.append({k: e.attrib.get(k) for k in ("agencyID", "id", "version")})
                               report["data_structure_refs"] = refs
-                              if not refs:
-                                  report.update(status="FAIL", reason="Dataflow has no DataStructureRef")
+                              expected_ref = {"agencyID": "IMF", "id": "BOP", "version": "2.6.0"}
+                              report["expected_data_structure_ref"] = expected_ref
+                              exact_matches = [r for r in refs if r == expected_ref]
+                              report["exact_expected_reference_count"] = len(exact_matches)
+                              if len(refs) != 1 or len(exact_matches) != 1:
+                                  report.update(status="FAIL", reason="Dataflow must reference exactly IMF:BOP:2.6.0")
                                   failed = True
                               else:
                                   report["status"] = "PASS"
                           elif name == "constraint":
                               cube_regions = [e for e in node.iter() if local(e.tag) == "CubeRegion"]
                               report["cube_region_count"] = len(cube_regions)
+                              def dimension_inventory(region):
+                                  dims = []
+                                  for key in region.iter():
+                                      if local(key.tag) == "KeyValue":
+                                          values = [v.text for v in key.iter() if local(v.tag) == "Value" and v.text]
+                                          dims.append({"dimension": key.attrib.get("id"), "values": values})
+                                  return dims
+                              report["cube_region_dimensions"] = [
+                                  {"include": region.attrib.get("include"), "dimensions": dimension_inventory(region)}
+                                  for region in cube_regions
+                              ]
                               if not cube_regions:
                                   report.update(status="FAIL", reason="Constraint has no CubeRegion")
                                   failed = True
