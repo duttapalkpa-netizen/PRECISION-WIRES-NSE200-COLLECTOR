@@ -33,6 +33,42 @@ jobs:
           fi
           sha256sum evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml > evidence/imf_bop_dsd/SHA256SUMS
 
+      - name: Regression test SDMX 2.1 Dataflow Structure Ref parsing
+        shell: bash
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          sample = """<mes:StructureMessage xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+              xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+              xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+            <mes:Structures>
+              <str:Dataflows>
+                <str:Dataflow id="BOP_BPM6" agencyID="IMF" version="1.0">
+                  <str:Structure>
+                    <com:Ref id="BOP" agencyID="IMF" version="2.6.0"
+                      package="datastructure" class="DataStructure"/>
+                  </str:Structure>
+                </str:Dataflow>
+              </str:Dataflows>
+            </mes:Structures>
+          </mes:StructureMessage>"""
+          root = ET.fromstring(sample)
+          local = lambda tag: tag.rsplit("}", 1)[-1]
+          flow = [e for e in root.iter() if local(e.tag) == "Dataflow"
+                  and e.attrib.get("id") == "BOP_BPM6"]
+          assert len(flow) == 1, "Dataflow fixture not identified exactly once"
+          refs = []
+          for e in flow[0].iter():
+              if local(e.tag) == "Structure":
+                  for ref in e.iter():
+                      if local(ref.tag) == "Ref":
+                          refs.append({k: ref.attrib.get(k) for k in ("agencyID", "id", "version")})
+          expected = {"agencyID": "IMF", "id": "BOP", "version": "2.6.0"}
+          assert refs == [expected], f"Unexpected DSD reference parse: {refs!r}"
+          print("PASS: SDMX 2.1 Structure/Ref parsed as IMF:BOP:2.6.0")
+          PY
+
       - name: Acquire official IMF BOP_BPM6 dataflow and constraint metadata
         if: always()
         shell: bash
