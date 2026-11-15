@@ -301,3 +301,10 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Executed the updated fixture and the per-region uniqueness assertions locally: PASS. The fixture also retains checks for the exact IMF:BOP_BPM6:1.0 attachment, first-region include/exclude, TIME_PERIOD boundaries and Attribute values.
 - Research workflow commit: `0a6af27fe0f230d3d24826605af8020bbb44eb9a`; PR #34 workflow branch sync commit: `86c132676f467cda788f9e7acbbfb9cd6db6f790`; workflow blob: `9d7ba026b42a50108e4f9fec06e39f687ad26a5e`.
 - Both workflow branch copies re-fetched and confirmed byte-identical. Live IMF XML, GitHub Actions run, and live constraint coverage remain NOT DONE. PR #34 remains unmerged.
+
+
+## 2M. Negative-case verification for per-region dimension key gate (2026-11-15)
+
+- Re-fetched the committed workflow blob `9d7ba026b42a50108e4f9fec06e39f687ad26a5e` and independently executed the two-CubeRegion fixture structure in local Python. Both regions correctly retain repeated dimension IDs across regions while each region's own keys remain unique.
+- Executed focused negative-case assertions for the same acceptance rule: a valid region with unique IDs is accepted; duplicate IDs within one region are rejected; a KeyValue missing its ID is rejected. All assertions passed.
+- This is local logic/fixture validation, not a GitHub Actions run, XSD validation, or live IMF payload check. Runtime acquisition remains NOT DONE; no PR merge or production integration.
