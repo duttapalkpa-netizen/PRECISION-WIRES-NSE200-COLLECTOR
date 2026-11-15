@@ -28,7 +28,7 @@ class CostAwareReplayTests(unittest.TestCase):
         self.assertAlmostEqual(r["GROSS_RETURN_PCT"],-3.0)
         self.assertAlmostEqual(r["NET_RETURN_PCT"],-3.22)
     def test_gap_below_stop_fills_open(self):
-        x=self.base.copy(); x[2]=["ABC","2026-01-05",95,97,94,96,1000]
+        x=self.base.copy(); x[1]=["ABC","2026-01-02",100,102,99,101,1000]; x[2]=["ABC","2026-01-05",95,97,94,96,1000]
         r=simulate_one(bars(x),"2026-01-01","ABC",5,3)
         self.assertEqual(r["EXIT_REASON"],"STOP_GAP")
         self.assertAlmostEqual(r["EXIT_PRICE"],95)
