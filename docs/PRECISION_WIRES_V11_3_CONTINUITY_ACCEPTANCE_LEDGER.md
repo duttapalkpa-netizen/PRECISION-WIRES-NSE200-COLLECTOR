@@ -757,3 +757,7 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Utility documentation update commit `57b91540102d7b4dbdc8f546760b67bbef8e37f2`; blob `590e21026a94155855b7c7acc18ef419f0beb57e`.
 - Workflow is committed but NOT_RUN: connected GitHub capability has no workflow_dispatch action. User-triggered path: Actions tab → NSE FII-DII Capture Utility Unit Tests → Run workflow → choose research branch. Exact test status remains NOT_RUN until run result is available. Live NSE capture remains NOT_RUN.
 - No default branch/PR/merge, production workflow, production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E, or collector code changed.
+## 2026-11-16 — Capture documentation URL-provenance wording corrected
+- Clarified that manifest URL provenance is query-free (scheme/host/path); query strings and fragments are intentionally omitted. This aligns the documentation with `manifest_url()` and exception redaction behavior.
+- Documentation correction commit `ba30eec75483b243ba35f8bea02e02334c755551`; blob `33cbe371071bb1dc62ea1872b5f6fa8dd65cc48c`.
+- Dedicated workflow commit remains `91f116a2dd426427845dd8bf4343cb8c6b0e259f`; committed but NOT_RUN. No claims of exact test PASS.
