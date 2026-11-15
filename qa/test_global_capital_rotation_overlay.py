@@ -23,6 +23,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07")["fx_transmission"],"UNKNOWN")
         rows.append(self.row("usd_inr_change_pct_20d",-0.4))
         self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07")["fx_transmission"],"USD_WEAKENING_INR_STRENGTHENING")
+    def test_fed_broad_usd_index_is_separate_from_ice_dxy(self):
+        rows=[self.row("fed_broad_usd_change_pct_20d",0.3569)]
+        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        self.assertEqual(out["fed_broad_usd_transmission"],"BROAD_USD_STRENGTHENING")
+        self.assertEqual(out["fx_transmission"],"UNKNOWN")
+        self.assertEqual(out["latest_observations"]["dxy_change_pct_20d"],None)
+
     def test_unknown_quality_rows_are_not_used(self):
         out=classify(load_observations(self.make([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")])),"2026-11-07")
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
