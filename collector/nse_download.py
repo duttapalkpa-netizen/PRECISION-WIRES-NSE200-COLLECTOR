@@ -41,7 +41,7 @@ def _pick(row, *names):
 
 def _parse_date(value):
     s = str(value or "").strip()
-    for fmt in ("%Y-%m-%d", "%Y%m%d", "%d-%m-%Y", "%d/%m/%Y", "%d-%b-%Y"):
+    for fmt in ("%Y-%m-%d", "%Y%m%d", "%d%m%Y", "%d-%m-%Y", "%d/%m/%Y", "%d-%b-%Y"):
         try:
             from datetime import datetime
             return datetime.strptime(s, fmt).date()
