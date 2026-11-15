@@ -95,13 +95,22 @@ def add_features(df):
         ["STRONG_EXPANSION_READY","STRONG_NOT_YET_MOVED","STRONG_EXHAUSTED"],default="NON_STRONG")
     return df
 
+def _forward_window_max(series, horizon):
+    """Exact T+1..T+h maximum; incomplete tail windows remain UNKNOWN (NaN)."""
+    if horizon < 1:
+        raise ValueError("horizon must be >= 1")
+    shifted = series.shift(-1)
+    return shifted.iloc[::-1].rolling(window=horizon, min_periods=horizon).max().iloc[::-1]
+
+
 def future_outcomes(df):
-    g=df.groupby("SYMBOL",sort=False)
-    for h in [1,3,5]:
-        fut=g["HIGH_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
-        df[f"FUT{h}_HIGH_PCT"]=(fut/df["CLOSE_PRICE"]-1)*100
-        futclose=g["CLOSE_PRICE"].transform(lambda x:x.shift(-1).rolling(h,min_periods=1).max())
-        df[f"FUT{h}_CLOSE_PCT"]=(futclose/df["CLOSE_PRICE"]-1)*100
+    df = df.sort_values(["SYMBOL", "DATE"]).copy()
+    g = df.groupby("SYMBOL", sort=False)
+    for h in [1, 3, 5]:
+        fut = g["HIGH_PRICE"].transform(lambda x: _forward_window_max(x, h))
+        df[f"FUT{h}_HIGH_PCT"] = (fut / df["CLOSE_PRICE"] - 1) * 100
+        futclose = g["CLOSE_PRICE"].transform(lambda x: _forward_window_max(x, h))
+        df[f"FUT{h}_CLOSE_PCT"] = (futclose / df["CLOSE_PRICE"] - 1) * 100
     return df
 
 def diagnostic_state(row,step_idx,filter_idx):
