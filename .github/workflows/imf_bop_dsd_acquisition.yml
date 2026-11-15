@@ -33,6 +33,69 @@ jobs:
           fi
           sha256sum evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml > evidence/imf_bop_dsd/SHA256SUMS
 
+      - name: Acquire official IMF BOP_BPM6 dataflow and constraint metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/imf_bop_dsd
+          declare -A REQUESTS
+          REQUESTS[dataflow]='https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          REQUESTS[constraint]='https://sdmxcentral.imf.org/sdmx/v2/structure/constraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          for ITEM in dataflow constraint; do
+            URL="${REQUESTS[$ITEM]}"
+            DIR="evidence/imf_bop_dsd/$ITEM"
+            mkdir -p "$DIR"
+            printf '%s\n' "$URL" > "$DIR/request_url.txt"
+            set +e
+            curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
+              --dump-header "$DIR/response_headers.txt" \
+              --output "$DIR/raw.xml" \
+              --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+              "$URL" > "$DIR/transfer_metadata.txt"
+            STATUS=$?
+            set -e
+            printf 'curl_exit=%s\n' "$STATUS" >> "$DIR/transfer_metadata.txt"
+            if [ "$STATUS" -ne 0 ]; then
+              echo "Metadata acquisition failed for $ITEM; diagnostic files retained."
+              exit 1
+            fi
+            sha256sum "$DIR/raw.xml" > "$DIR/SHA256SUMS"
+          done
+
+      - name: Validate dataflow and constraint XML
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, xml.etree.ElementTree as ET
+          root = Path("evidence/imf_bop_dsd")
+          failed = False
+          for name in ("dataflow", "constraint"):
+              folder = root / name
+              raw = folder / "raw.xml"
+              report = {"item": name, "status": "UNKNOWN"}
+              if not raw.exists() or raw.stat().st_size == 0:
+                  report["reason"] = "raw XML missing or empty"
+                  failed = True
+              else:
+                  payload = raw.read_bytes()
+                  report.update(raw_bytes=len(payload), sha256=hashlib.sha256(payload).hexdigest())
+                  try:
+                      node = ET.fromstring(payload)
+                      local = lambda tag: tag.rsplit("}", 1)[-1]
+                      report.update(status="PASS", root_element=local(node.tag),
+                                     element_count=sum(1 for _ in node.iter()),
+                                     artefact_ids=[e.attrib.get("id") for e in node.iter()
+                                                   if local(e.tag) in {"Dataflow", "Constraint"} and e.attrib.get("id")])
+                  except ET.ParseError as exc:
+                      report.update(status="FAIL", reason="malformed XML", error=str(exc))
+                      failed = True
+              (folder / "qa_report.json").write_text(json.dumps(report, indent=2) + "\n")
+          if failed:
+              raise SystemExit(1)
+          PY
+
       - name: Parse XML and produce component inventory
         if: always()
         shell: bash
