@@ -125,13 +125,19 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
     metrics=[]
     for (target,horizon),g in trades.groupby(["TARGET_PCT","HORIZON_SESSIONS"]):
         ex=g[g["EXECUTABLE"]]
+        gross=pd.to_numeric(ex["GROSS_RETURN_PCT"],errors="coerce")
         net=pd.to_numeric(ex["NET_RETURN_PCT"],errors="coerce").dropna()
-        metrics.append({"TARGET_PCT":target,"HORIZON_SESSIONS":horizon,"SIGNALS":len(g),
+        target_pct=float(g["TARGET_PCT"].iloc[0]) if len(g) else float(target)
+        gross_hit=(gross >= target_pct - 1e-8) if len(ex) else pd.Series(dtype=bool)
+        target_exit=ex["EXIT_REASON"].eq("TARGET") if len(ex) else pd.Series(dtype=bool)
+        metrics.append({"TARGET_PCT":target_pct,"HORIZON_SESSIONS":int(horizon),"SIGNALS":len(g),
             "EXECUTABLE":len(ex),"EXCLUDED":int((~g["EXECUTABLE"]).sum()),
             "EXCLUSION_REASONS":g.loc[~g["EXECUTABLE"],"DATA_STATUS"].value_counts().to_dict(),
-            "GROSS_HIT_RATE":float((pd.to_numeric(ex["GROSS_RETURN_PCT"])>=target).mean()) if len(ex) else None,
-            "TARGET_EXIT_RATE":float((ex["EXIT_REASON"]=="TARGET").mean()) if len(ex) else None,
-            "NET_PROFITABLE_TARGET_EXIT_RATE":float(((ex["EXIT_REASON"]=="TARGET") & (pd.to_numeric(ex["NET_RETURN_PCT"])>0)).mean()) if len(ex) else None,
+            "GROSS_HIT_COUNT":int(gross_hit.sum()) if len(ex) else 0,
+            "GROSS_HIT_RATE":float(gross_hit.mean()) if len(ex) else None,
+            "TARGET_EXIT_COUNT":int(target_exit.sum()) if len(ex) else 0,
+            "TARGET_EXIT_RATE":float(target_exit.mean()) if len(ex) else None,
+            "NET_PROFITABLE_TARGET_EXIT_RATE":float((target_exit & pd.to_numeric(ex["NET_RETURN_PCT"],errors="coerce").gt(0)).mean()) if len(ex) else None,
             "MEAN_NET_RETURN_PCT":float(net.mean()) if len(net) else None,
             "MEDIAN_NET_RETURN_PCT":float(net.median()) if len(net) else None})
     manifest={"engine":"V11.3_RESEARCH_ONLY_COST_AWARE_OHLC_REPLAY","cost_pct_points":cost_pct,
