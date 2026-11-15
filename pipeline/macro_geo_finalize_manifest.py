@@ -30,7 +30,22 @@ def group_is_available(groups, name):
         rows = int(item.get("rows", 0) or 0)
     except (TypeError, ValueError):
         rows = 0
-    return item.get("status") == "AVAILABLE" and rows > 0
+    if rows <= 0:
+        return False
+    if item.get("status") == "AVAILABLE":
+        return True
+    # Secondary data is eligible only under an explicit, machine-checkable
+    # contract emitted by the repair collector. Never promote a bare proxy.
+    if item.get("status") != "AVAILABLE_SECONDARY":
+        return False
+    checks = item.get("domain_qa_checks", [])
+    required_checks = {"source identity", "valid positive values", "unique date keys",
+                       "requested-window bounds", "freshness <= 3 calendar days",
+                       "source URL provenance"}
+    return (required_checks.issubset(set(checks))
+            and bool(item.get("source"))
+            and bool(item.get("url") or item.get("source_url") or item.get("source_urls"))
+            and item.get("freshness_status") == "FRESH")
 
 
 def reconcile_fpi_dii_repair(repair, nsdl):

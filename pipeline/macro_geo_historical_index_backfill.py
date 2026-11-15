@@ -69,7 +69,7 @@ def main():
       "limitations":["Historical dates and closes are only accepted from returned source records; no interpolation or synthetic values.",
         "Regime anchors remain provisional until independently verified against primary-source event records.",
         "Coverage of the first anchor date does not by itself validate the event window or causal interpretation."]}
-    (OUT/"historical_index_backfill_report.json").write_text(json.dumps(report,indent=2))
+    (OUT/"historical_index_primary_source_backfill_report.json").write_text(json.dumps(report,indent=2))
     print(json.dumps(report,indent=2))
     # This step records partial coverage; the hard gate remains responsible for blocking incomplete research.
     return 0

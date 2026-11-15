@@ -35,6 +35,15 @@ def main():
         if pd.isna(start) or pd.isna(end) or start>end: continue
         for series,g0 in panel.groupby("SERIES"):
             g=g0.reset_index(drop=True)
+            # Do not mislabel the first modern observation as a historical regime
+            # response when the actual anchor predates the available panel.
+            panel_start=g.DATE.min()
+            panel_end=g.DATE.max()
+            if start.normalize() < panel_start or start.normalize() > panel_end:
+                coverage.append({"REGIME_ID":r["REGIME_ID"],"REGIME_LABEL":r["REGIME_LABEL"],"SERIES":series,
+                    "STATUS":"ANCHOR_OUTSIDE_PANEL_HISTORY","REGIME_ANCHOR":start.date().isoformat(),
+                    "PANEL_START":str(panel_start.date()),"PANEL_END":str(panel_end.date())})
+                continue
             ix=np.flatnonzero(g.DATE.to_numpy()>=np.datetime64(start.normalize()))
             if not len(ix):
                 coverage.append({"REGIME_ID":r["REGIME_ID"],"REGIME_LABEL":r["REGIME_LABEL"],"SERIES":series,"STATUS":"NO_PANEL_AFTER_ANCHOR","PANEL_START":str(g.DATE.min().date()),"PANEL_END":str(g.DATE.max().date())})
@@ -79,11 +88,14 @@ def main():
     start=panel.DATE.min().date().isoformat() if not panel.empty else None
     end=panel.DATE.max().date().isoformat() if not panel.empty else None
     regimes_covered=int(result.REGIME_ID.nunique()) if not result.empty else 0
-    report={"status":"COMPUTED_EXPLORATORY" if not result.empty else "BLOCKED_NO_MATCHING_REGIMES",
+    regime_anchor_count=int(len(regimes))
+    anchor_coverage_complete=regimes_covered==regime_anchor_count
+    report={"status":"COMPUTED_EXPLORATORY" if not result.empty and anchor_coverage_complete else ("COMPUTED_EXPLORATORY_WITH_HISTORICAL_GAPS" if not result.empty else "BLOCKED_NO_MATCHING_REGIMES"),
       "research_status":"COMPUTED_EXPLORATORY" if not result.empty else "BLOCKED",
       "operational_status":"PASS" if not result.empty else "PASS_WITH_RESEARCH_BLOCKED",
       "panel_rows":len(panel),"panel_series":int(panel.SERIES.nunique()) if not panel.empty else 0,
-      "panel_start":start,"panel_end":end,"regime_anchors":len(regimes),"regimes_with_windows":regimes_covered,
+      "panel_start":start,"panel_end":end,"regime_anchors":regime_anchor_count,"regimes_with_windows":regimes_covered,
+      "anchor_coverage_complete":anchor_coverage_complete,"regimes_without_windows":max(0,regime_anchor_count-regimes_covered),
       "window_rows":len(result),"coverage_rows":len(coverage),
       "method":"Date-only regime anchor; baseline is previous available close; H+1/H+5/H+20 are first/5th/20th closes on or after anchor session.",
       "limitations":["Regime date anchors are provisional and require primary-source verification.","Single historical episodes do not provide repeated-sample inference.","No matched controls, overlap correction, multiple-testing adjustment or causal identification.","A 20-year study is incomplete unless the panel itself covers the full requested window and relevant series start dates.","No factor scoring or production ranking integration."]}

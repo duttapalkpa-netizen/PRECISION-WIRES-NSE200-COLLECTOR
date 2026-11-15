@@ -37,8 +37,8 @@ def main():
             rows.append({"EVENT_ID":ev.get("EVENT_ID",""),"SOURCE":ev.get("SOURCE",""),
                 "SOURCE_URL":ev.get("SOURCE_URL",""),"PUBLISHED_AT":"","EVENT_DATE":ev.get("EVENT_DATE",""),
                 "EVENT_DATE_BASIS":ev.get("EVENT_DATE_BASIS",""),"SERIES":"ALL",
-                "BASE_CLOSE_DATE":"","BASE_CLOSE":None,"H1_CLOSE_DATE":"","H1_CLOSE":None,"H5_CLOSE_DATE":"","H5_CLOSE":None,"H20_CLOSE_DATE":"","H20_CLOSE":None,
-                "H1_MATURE":False,"H5_MATURE":False,"H20_MATURE":False,"WINDOW_STATUS":"BLOCKED_INVALID_PUBLICATION_TIMESTAMP"})
+                "BASE_CLOSE_DATE":"","BASE_CLOSE":None,"H1_CLOSE_DATE":"","H1_CLOSE":None,"H3_CLOSE_DATE":"","H3_CLOSE":None,"H5_CLOSE_DATE":"","H5_CLOSE":None,"H20_CLOSE_DATE":"","H20_CLOSE":None,
+                "H1_MATURE":False,"H3_MATURE":False,"H5_MATURE":False,"H20_MATURE":False,"WINDOW_STATUS":"BLOCKED_INVALID_PUBLICATION_TIMESTAMP"})
             continue
         pub_ist=pub.tz_convert(IST)
         for series,g in panel.groupby("SERIES"):
@@ -56,13 +56,13 @@ def main():
                 if len(post_rows)>=n:
                     q=post_rows.iloc[n-1]; return q["DATE"].date().isoformat(),float(q["CLOSE"])
                 return "",None
-            h1d,h1c=close_at(1); h5d,h5c=close_at(5); h20d,h20c=close_at(20)
+            h1d,h1c=close_at(1); h3d,h3c=close_at(3); h5d,h5c=close_at(5); h20d,h20c=close_at(20)
             rows.append({"EVENT_ID":ev.get("EVENT_ID",""),"SOURCE":ev.get("SOURCE",""),
                 "SOURCE_URL":ev.get("SOURCE_URL",""),"PUBLISHED_AT":pub.isoformat(),
                 "EVENT_DATE":str(ev.get("EVENT_DATE","")),"EVENT_DATE_BASIS":str(ev.get("EVENT_DATE_BASIS","")),
                 "SERIES":series,"BASE_CLOSE_DATE":base_date,"BASE_CLOSE":base_close,
-                "H1_CLOSE_DATE":h1d,"H1_CLOSE":h1c,"H5_CLOSE_DATE":h5d,"H5_CLOSE":h5c,"H20_CLOSE_DATE":h20d,"H20_CLOSE":h20c,
-                "H1_MATURE":bool(h1d),"H5_MATURE":bool(h5d),"H20_MATURE":bool(h20d),"WINDOW_STATUS":status})
+                "H1_CLOSE_DATE":h1d,"H1_CLOSE":h1c,"H3_CLOSE_DATE":h3d,"H3_CLOSE":h3c,"H5_CLOSE_DATE":h5d,"H5_CLOSE":h5c,"H20_CLOSE_DATE":h20d,"H20_CLOSE":h20c,
+                "H1_MATURE":bool(h1d),"H3_MATURE":bool(h3d),"H5_MATURE":bool(h5d),"H20_MATURE":bool(h20d),"WINDOW_STATUS":status})
     audit=pd.DataFrame(rows)
     audit.to_csv(OUT,index=False)
     counts=audit["WINDOW_STATUS"].value_counts().to_dict() if not audit.empty else {}
@@ -71,6 +71,7 @@ def main():
         "panel_max_date":panel["DATE"].max().date().isoformat() if not panel.empty else None,
         "event_series_audit_rows":int(len(audit)),"window_status_counts":counts,
         "unique_events_with_mature_h1":int(audit.loc[audit.get("H1_MATURE",False)==True,"EVENT_ID"].nunique()) if not audit.empty else 0,
+        "unique_events_with_mature_h3":int(audit.loc[audit.get("H3_MATURE",False)==True,"EVENT_ID"].nunique()) if not audit.empty else 0,
         "unique_events_with_mature_h5":int(audit.loc[audit.get("H5_MATURE",False)==True,"EVENT_ID"].nunique()) if not audit.empty else 0,
         "unique_events_with_mature_h20":int(audit.loc[audit.get("H20_MATURE",False)==True,"EVENT_ID"].nunique()) if not audit.empty else 0,
         "historical_source_gap":"This audit diagnoses maturity only; it does not fabricate publication timestamps or backfill historical events."}

@@ -1,0 +1,105 @@
+name: P0 Collection Audit - Part 5 Coverage Reconciliation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run145-factor-registry-gap-audit]
+    paths:
+      - ".github/workflows/macro_geo_p0_part5_coverage_reconciliation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macro-geo-p0-part5-coverage-reconciliation
+  cancel-in-progress: false
+
+jobs:
+  coverage-reconciliation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Restore validated NSE panel cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/raw
+            data/processed/nse_eq_200_sessions.csv
+            data/processed/symbol_session_coverage.csv
+          key: macro-geo-nse200-${{ github.ref_name }}-part1-${{ github.run_id }}
+          restore-keys: |
+            macro-geo-nse200-${{ github.ref_name }}-
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install audit dependency
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Run canonical source coverage and factor audit
+        run: |
+          python pipeline/macro_geo_source_coverage.py
+          python pipeline/macro_geo_factor_coverage_audit.py
+      - name: Reconcile smoke-test evidence without promoting proxies
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          cp=Path("outputs/macro_geo/source_coverage.json")
+          fp=Path("outputs/macro_geo/factor_coverage_audit.json")
+          c=json.loads(cp.read_text()) if cp.exists() else {}
+          f=json.loads(fp.read_text()) if fp.exists() else {}
+          src={x.get("source"):x for x in c.get("sources",[])}
+          paths={
+            "benchmark_index":"data/external/benchmark_indices.csv",
+            "sector_indices":"data/external/sector_indices.csv",
+            "volatility":"data/external/volatility.csv",
+            "crude_oil":"data/external/brent_crude.csv",
+            "usd_inr":"data/external/usd_inr.csv",
+            "geopolitical_events":"data/external/geopolitical_events.csv"
+          }
+          reconciliation={}
+          for group,path in paths.items():
+            p=Path(path); item=src.get(group,{})
+            reconciliation[group]={"canonical_path":path,"file_exists":p.is_file(),"coverage_status":item.get("status","NOT_CONNECTED"),"rows":item.get("rows",0)}
+          report={
+            "part":"P0-5",
+            "task":"canonical coverage and factor registry reconciliation",
+            "checked_at_utc":datetime.now(timezone.utc).isoformat(),
+            "audit_execution_status":"PASS",
+            "coverage_status":c.get("status","UNKNOWN"),
+            "factor_coverage_status":f.get("status","UNKNOWN"),
+            "factor_groups":f.get("factor_groups"),
+            "fully_available_schema_groups":f.get("fully_available_schema_groups"),
+            "partial_source_coverage":f.get("partial_source_coverage"),
+            "not_connected":f.get("not_connected"),
+            "canonical_source_reconciliation":reconciliation,
+            "proxy_policy":{
+              "Part 2":"Smoke output is not automatically promoted to canonical coverage.",
+              "Part 3":"BZ=F futures proxy is not official Brent spot; USDINR proxy needs canonical provenance and QA.",
+              "Part 4":"RSS rows remain unclassified until event date, classification and join QA are verified."
+            },
+            "hard_gate":"BLOCKED_PENDING_REAL_SOURCE_COVERAGE_AND_MATURED_EVENT_WINDOWS",
+            "invariants":{"production_selector_modified":False,"RANKING_SCORE_modified":False,"PRESSURE_FADE_modified":False,"UNKNOWN_treated_as_negative":False},
+            "evidence_boundary":"Audit execution PASS does not mean source coverage is complete. Missing, warning, proxy-only and unclassified sources remain UNKNOWN/unconnected."
+          }
+          Path("outputs/macro_geo/p0_part5_coverage_reconciliation.json").write_text(json.dumps(report,indent=2)+"\n")
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Upload Part 5 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-part5-coverage-reconciliation
+          path: |
+            outputs/macro_geo/source_coverage.json
+            outputs/macro_geo/factor_coverage_audit.csv
+            outputs/macro_geo/factor_coverage_audit.json
+            outputs/macro_geo/p0_part5_coverage_reconciliation.json
+          if-no-files-found: error
