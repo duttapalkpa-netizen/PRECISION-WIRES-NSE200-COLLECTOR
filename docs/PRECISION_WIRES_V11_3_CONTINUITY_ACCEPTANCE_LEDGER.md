@@ -972,3 +972,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Bounded public-path attempt 100% complete, blocked at interactive report access; raw export 0% acquired. Existing 11 quarters / 22/22 PASS_WITH_ROUNDING unchanged; IMF BOP 5/7=71.4%; vintage NOT_READY; full V11.3 NOT_CALCULABLE.
 - Next dependency: user-authorized interactive DBIE access or explicit approval to contact RBI support; don't repeat public page fetches absent new access.
 - Report commit: 826e70dea1778764927b244710a32e28970042fd; report blob: c7f203f6b3560f9751a9ca662ce05731ea31251e.
+
+
+## 2026-11-15 — RBI bulletin-index cross-check for unresolved Q2 periods
+- RBI June 16 2021 archive: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?mon=6&yr=2021 ; listed Table 40 is not itself the Apr-Jun 2021 data release.
+- RBI June 16 2021 Table 40 (Id=20363): Oct-Dec 2019 and Oct-Dec 2020: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20363
+- RBI Aug 17 2021 Table 40 (Id=20483): Jan-Mar 2020 and Jan-Mar 2021(P): https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20483
+- RBI Jun 16 2022 Table 40 (Id=21114): Oct-Dec 2020 and Oct-Dec 2021(P): https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21114
+- RBI Apr 11 2016 Table 41 is INR billion and covers Oct-Dec 2014 / Oct-Dec 2015, not Apr-Jun 2015: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=16211
+- No exact RBI Apr-Jun 2015 or Apr-Jun 2021 BPM6 USD-million quarterly row found in bounded official-index search. Both remain NOT_RETRIEVED; no substitute series or conversion.
+- Bounded official-index cross-check 100% complete; raw DBIE export NOT_RETRIEVED; remaining route interactive DBIE access or user-approved RBI support contact. Avoid repeating same searches.
+- Existing validation 11 quarters / 22 of 22 PASS_WITH_ROUNDING; IMF BOP 5/7=71.4%; vintage NOT_READY; full V11.3 NOT_CALCULABLE.
+- Report commit: edbd600b5f782a292ce1d462de1ebe241697caf5; report blob: 7ed1563e040d7a7189eefc4aa50fef869ef33d94.
