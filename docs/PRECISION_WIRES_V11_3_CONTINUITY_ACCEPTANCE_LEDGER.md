@@ -466,3 +466,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - The newly wired PR-triggered research workflow has now started: Run #35, ID `43747974395`.
 - Job `research-unit-tests`, job ID `132915404242`. At last inspection, checkout and Python setup completed; dependency installation was in progress; unittest step had not started. No conclusion/PASS yet.
 - The run is recorded as IN_PROGRESS, not PASS. Recheck this run before any replay or acceptance decision.
+
+
+## 2026-11-16 — CI cancellation diagnosis and mitigation
+- Rechecked Run #35 (`43747974395`), job `132915404242`: workflow ended CANCELLED; dependency installation completed but the unittest step was skipped. This is not a test failure and not a PASS.
+- Job log shows GitHub reported `The operation was canceled` immediately after installing latest pandas 3.1.1 and numpy 2.5.4. The workflow used `concurrency.cancel-in-progress: true`; rapid consecutive commits on the same branch could cancel an in-flight run. Dependency versions also drifted beyond repository requirements (`pandas>=2.2,<3`, `numpy>=1.26,<3`).
+- Mitigation committed: concurrency now has `cancel-in-progress: false`; CI installs the repository-compatible ranges `pandas>=2.2,<3` and `numpy>=1.26,<3`. Commit `4654f9648b6c018f5d148231e3ce7a8b88a6da4d`.
+- This is a targeted CI reliability fix; no production pipeline or strategy logic changed. A new run was not yet returned by the commit-workflow-run lookup at the time of this ledger update. CI runtime remains NOT_VERIFIED.
+- Updated progress: cancellation diagnosis 100%; mitigation commit 100%; rerun result pending; actual NSE artifact integrity audit 0%; replay 0%; final acceptance BLOCKED.
