@@ -269,10 +269,26 @@ def download_full_delivery(session, stamp: str, out: Path) -> bool:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sessions", type=int, default=200)
+    ap.add_argument("--sessions", type=int, default=200,
+                    help="Number of recent valid sessions to collect (default mode)")
     ap.add_argument("--lookback-days", type=int, default=500)
+    ap.add_argument("--start-date", help="Inclusive ISO date YYYY-MM-DD for a bounded shard")
+    ap.add_argument("--end-date", help="Inclusive ISO date YYYY-MM-DD for a bounded shard")
     ap.add_argument("--out", default="data/raw")
     args = ap.parse_args()
+
+    if bool(args.start_date) != bool(args.end_date):
+        ap.error("--start-date and --end-date must be supplied together")
+    start_date = end_date = None
+    if args.start_date:
+        try:
+            start_date = date.fromisoformat(args.start_date)
+            end_date = date.fromisoformat(args.end_date)
+        except ValueError:
+            ap.error("date bounds must use YYYY-MM-DD")
+        if start_date > end_date:
+            ap.error("--start-date must be on or before --end-date")
+    bounded_range = start_date is not None
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -290,10 +306,15 @@ def main():
     valid = []
     diagnostics = []
 
-    for offset in range(args.lookback_days + 1):
-        if len(valid) >= args.sessions:
+    if bounded_range:
+        scan_days = (end_date - start_date).days + 1
+        candidate_dates = (end_date - timedelta(days=offset) for offset in range(scan_days))
+    else:
+        candidate_dates = (today - timedelta(days=offset) for offset in range(args.lookback_days + 1))
+
+    for d in candidate_dates:
+        if not bounded_range and len(valid) >= args.sessions:
             break
-        d = today - timedelta(days=offset)
         if d.weekday() >= 5:
             continue
 
@@ -358,8 +379,10 @@ def main():
     valid.sort()
     (out / "sessions.txt").write_text("\n".join(d.isoformat() for d in valid) + "\n")
     (out / "acquisition_diagnostics.json").write_text(json.dumps({
-        "requested_sessions": args.sessions,
-        "lookback_days": args.lookback_days,
+        "requested_sessions": None if bounded_range else args.sessions,
+        "start_date": start_date.isoformat() if bounded_range else None,
+        "end_date": end_date.isoformat() if bounded_range else None,
+        "lookback_days": args.lookback_days if not bounded_range else None,
         "valid_sessions": len(valid),
         "first_session": valid[0].isoformat() if valid else None,
         "last_session": valid[-1].isoformat() if valid else None,
@@ -367,8 +390,10 @@ def main():
     }, indent=2))
 
     print(f"VALID_SESSIONS={len(valid)}", flush=True)
-    if len(valid) < args.sessions:
+    if not bounded_range and len(valid) < args.sessions:
         raise SystemExit(f"Need {args.sessions} sessions; got {len(valid)}. See data/raw/acquisition_diagnostics.json")
+    if bounded_range and not valid:
+        raise SystemExit("No valid sessions acquired in bounded date range; see data/raw/acquisition_diagnostics.json")
 
 if __name__ == "__main__":
     main()
