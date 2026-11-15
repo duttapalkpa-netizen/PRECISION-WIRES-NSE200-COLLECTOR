@@ -937,3 +937,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - RBI raw quarterly DBIE export NOT_RETRIEVED; IMF vintage NOT_READY / NOT_VERIFIED; IMF BOP workstream remains 5/7 (71.4%); whole V11.3 project NOT_CALCULABLE.
 - No CSV/manifest/sidecar changes, source promotion, synthetic data, or production changes.
 - Report commit: 142acef931f9d40257b2055ef607f7e51c08707f; report blob: 69adbb76e456cd19871d290da35c033c9f88eb28.
+
+
+## 2026-11-15 — Targeted RBI archive retrieval audit for 2015-Q2 and 2021-Q2
+- 2021 RBI June archive lists Table 40 but not the Apr-Jun 2021 data period: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?mon=6&yr=2021
+- RBI Aug 17 2021 Table 40 is Jan-Mar 2020 / Jan-Mar 2021, not Q2: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20483
+- RBI Mar 17 2022 Table 40 is Jul-Sep 2020 / Jul-Sep 2021, not Q2: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=20916
+- RBI Jun 16 2022 Table 40 is Oct-Dec 2020 / Oct-Dec 2021, not Q2: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21114
+- Exact Apr-Jun 2021 and Apr-Jun 2015 USD-million portfolio net rows were not retrieved. Both remain NOT_RETRIEVED; annual data and adjacent quarters are not substitutes.
+- No numeric comparison or PASS/FAIL claimed. IMF CSV and prior artefacts unchanged.
+- Existing checks remain 11 quarters, 22/22 PASS_WITH_ROUNDING. Annual Q2 matrix remains 7/11 = 63.6%.
+- Bounded retrieval audit 100% complete (search outcome unresolved); IMF BOP 5/7=71.4%; RBI raw export NOT_RETRIEVED; IMF vintage NOT_READY; overall V11.3 NOT_CALCULABLE.
+- Report commit: fcbf043d078cb0011f1d37c3f988ad8720f5ca82; report blob: 8f6f2a4c7fe7858f8c20790e53ecb9650891e5bc.
