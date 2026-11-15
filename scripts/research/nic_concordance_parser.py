@@ -89,7 +89,7 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
         # wide whitespace. Split only on 2+ spaces; never split inside a
         # compact expression or silently discard an unmatched column.
         columns = [part.strip() for part in re.split(r"\\s{2,}", text) if part.strip()]
-        if len(columns) >= 4:
+        if len(columns) >= 3:
             if len(columns) % 2:
                 raise ValueError(f"Unpaired side-by-side concordance column at line {line_no}: {text!r}")
             for offset in range(0, len(columns), 2):
