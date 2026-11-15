@@ -96,6 +96,10 @@ jobs:
                     </com:TimeRange></com:KeyValue>
                     <com:Attribute id="UNIT_MEASURE" include="true"><com:Value>XDC</com:Value></com:Attribute>
                   </str:CubeRegion>
+                  <str:CubeRegion include="false">
+                    <com:KeyValue id="FREQ" include="true"><com:Value>A</com:Value></com:KeyValue>
+                    <com:KeyValue id="REF_AREA" include="true"><com:Value>US</com:Value></com:KeyValue>
+                  </str:CubeRegion>
                 </str:ContentConstraint>
               </str:Constraints>
             </mes:Structures>
@@ -115,8 +119,13 @@ jobs:
                   )
           assert flow_refs == [{"agencyID": "IMF", "id": "BOP_BPM6", "version": "1.0"}]
           regions = [e for e in constraints[0].iter() if local(e.tag) == "CubeRegion"]
-          assert len(regions) == 1
+          assert len(regions) == 2
           region = regions[0]
+          second_region = regions[1]
+          second_keys = [e for e in second_region if local(e.tag) == "KeyValue"]
+          assert [k.attrib.get("id") for k in second_keys] == ["FREQ", "REF_AREA"]
+          assert [v.text for v in second_keys[0] if local(v.tag) == "Value"] == ["A"]
+          assert [v.text for v in second_keys[1] if local(v.tag) == "Value"] == ["US"]
           keys = [e for e in region if local(e.tag) == "KeyValue"]
           assert [(k.attrib.get("id"), k.attrib.get("include", "true")) for k in keys] == [
               ("FREQ", "true"), ("REF_AREA", "false"), ("TIME_PERIOD", "true")]
@@ -260,21 +269,32 @@ jobs:
                               expected_flow = {"agencyID": "IMF", "id": "BOP_BPM6", "version": "1.0"}
                               report["constraint_dataflow_refs"] = flow_refs
                               report["expected_dataflow_ref"] = expected_flow
-                              dimension_ids = [
-                                  key.get("id")
-                                  for region in cube_regions
-                                  for key in region
-                                  if local(key.tag) == "KeyValue"
-                              ]
-                              report["dimension_key_count"] = len(dimension_ids)
-                              report["dimension_ids_unique"] = len(dimension_ids) == len(set(dimension_ids))
-                              invalid_keys = [
-                                  key.get("id") for region in cube_regions for key in region
-                                  if local(key.tag) == "KeyValue"
-                                  and (not key.get("id") or not any(
-                                      local(child.tag) in {"Value", "TimeRange"} for child in key
-                                  ))
-                              ]
+                              region_key_audits = []
+                              invalid_keys = []
+                              for region_index, region in enumerate(cube_regions):
+                                  keys = [key for key in region if local(key.tag) == "KeyValue"]
+                                  ids = [key.get("id") for key in keys]
+                                  region_key_audits.append({
+                                      "region_index": region_index,
+                                      "dimension_key_count": len(ids),
+                                      "dimension_ids_unique_within_region": (
+                                          len(ids) == len(set(ids)) and all(ids)
+                                      )
+                                  })
+                                  invalid_keys.extend(
+                                      {"region_index": region_index, "dimension_id": key.get("id")}
+                                      for key in keys
+                                      if (not key.get("id") or not any(
+                                          local(child.tag) in {"Value", "TimeRange"} for child in key
+                                      ))
+                                  )
+                              report["region_key_audits"] = region_key_audits
+                              report["dimension_key_count"] = sum(
+                                  item["dimension_key_count"] for item in region_key_audits
+                              )
+                              report["dimension_ids_unique_within_each_region"] = all(
+                                  item["dimension_ids_unique_within_region"] for item in region_key_audits
+                              )
                               report["invalid_dimension_keys"] = invalid_keys
                               report["cube_region_dimensions"] = [
                                   {"include": region.attrib.get("include", "true"),
@@ -287,7 +307,7 @@ jobs:
                               elif flow_refs != [expected_flow]:
                                   report.update(status="FAIL", reason="Constraint must attach exactly to IMF:BOP_BPM6:1.0")
                                   failed = True
-                              elif not dimension_ids or not report["dimension_ids_unique"] or invalid_keys:
+                              elif not report["dimension_key_count"] or not report["dimension_ids_unique_within_each_region"] or invalid_keys:
                                   report.update(status="FAIL", reason="CubeRegion dimension keys are missing, duplicated or malformed")
                                   failed = True
                               else:
