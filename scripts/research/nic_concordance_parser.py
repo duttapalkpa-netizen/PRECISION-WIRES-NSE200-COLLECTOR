@@ -83,13 +83,29 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
             continue
         # Strip the printed page number appended at a PDF page boundary.
         text = re.sub(r"\s+\d{3}$", "", text)
+        # pdftotext -layout preserves the source's two side-by-side
+        # concordance columns. A physical line can therefore contain two
+        # independent (NIC-2025 key, NIC-2008 expression) pairs separated by
+        # wide whitespace. Split only on 2+ spaces; never split inside a
+        # compact expression or silently discard an unmatched column.
+        columns = [part.strip() for part in re.split(r"\\s{2,}", text) if part.strip()]
+        if len(columns) >= 4:
+            if len(columns) % 2:
+                raise ValueError(f"Unpaired side-by-side concordance column at line {line_no}: {text!r}")
+            for offset in range(0, len(columns), 2):
+                pair = f"{columns[offset]} {columns[offset + 1]}"
+                m = ROW.fullmatch(pair)
+                if not m:
+                    raise ValueError(f"Unparsed side-by-side concordance pair at line {line_no}: {pair!r}")
+                key, expr = m.group("key"), m.group("expr").strip()
+                row = Row(key, expr, [pair], [line_no] if line_no else [], [pdf_page] if pdf_page else [])
+                rows.append(row)
+                current = row
+            continue
         m = ROW.fullmatch(text)
         if m:
             key, expr = m.group("key"), m.group("expr").strip()
-            # The marker's end page can be caused by the following printed page
-            # number being attached to this extracted line (e.g. P262-266 ... 239).
-            # Attribute the row only to the page where its source text begins;
-            # actual wrapped continuation lines add their own page below.
+            # Attribute a row to the page where its source text begins.
             current = Row(key, expr, [text], [line_no] if line_no else [], [pdf_page] if pdf_page else [])
             rows.append(current)
             continue
