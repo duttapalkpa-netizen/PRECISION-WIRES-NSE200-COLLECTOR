@@ -30,6 +30,7 @@ jobs:
       - name: Parse and strictly audit concordance rows
         run: python scripts/research/nic_concordance_parser.py nic_concordance_source/nic2025_concordance_pages_256_262.txt --out-prefix nic_concordance_source/nic2025_concordance
       - name: Upload immutable source evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nic-concordance-official-source-${{ github.run_id }}
