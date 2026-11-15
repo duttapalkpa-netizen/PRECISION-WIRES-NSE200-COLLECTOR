@@ -1,6 +1,14 @@
 name: V11.3 Research Cutoff-Safe Historical Signals + Cost-Aware Replay
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "pipeline/v11_3_historical_signals_research.py"
+      - "pipeline/v11_3_cost_aware_backtest.py"
+      - "tests/research/test_v11_3_historical_signals_research.py"
+      - ".github/workflows/v11_3_historical_signals_research.yml"
   push:
     branches:
       - research/nse-raw-manifest-retention-20261115
