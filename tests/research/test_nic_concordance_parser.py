@@ -37,6 +37,26 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(rows[0].pdf_pages, [262])
         self.assertEqual(rows[0].as_record()["source_printed_pages"], [238])
 
+    def test_two_side_by_side_rows_on_one_pdftotext_layout_line(self):
+        rows = parse_source_lines([
+            "L1@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+            "L2@P256: 0111                  0111                       0311               0311(p)",
+            "L3@P256: EXPLANATORY NOTES",
+        ])
+        self.assertEqual(
+            [(r.nic2025_class_4d, r.normalized_expression()) for r in rows],
+            [("0111", "0111"), ("0311", "0311(p)")],
+        )
+        self.assertEqual(rows[0].source_lines, [2])
+        self.assertEqual(rows[1].source_lines, [2])
+
+    def test_unpaired_side_by_side_column_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "Unpaired side-by-side"):
+            parse_source_lines([
+                "L1@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+                "L2@P256: 0111                  0111                       0311",
+            ])
+
     def test_simple_and_partial_aggregation(self):
         rows = self.parse("0113 0113+0128(p)\n0114 0114")
         self.assertEqual(rows[0].components(), [{"code":"0113","partial":False},{"code":"0128","partial":True}])
