@@ -24,8 +24,18 @@ class ParserTests(unittest.TestCase):
         ]
         rows = parse_source_lines(lines)
         self.assertEqual([r.nic2025_class_4d for r in rows], ["1079", "1080"])
-        self.assertEqual(rows[0].pdf_pages, [256, 257])
+        self.assertEqual(rows[0].pdf_pages, [256])
         self.assertEqual(rows[0].source_lines, [10407])
+
+    def test_page_range_end_does_not_pollute_row_provenance(self):
+        # P262-266 is an extraction span; the trailing printed page number
+        # belongs to the next section. The 9900 row itself is on P262 only.
+        rows = parse_source_lines([
+            "L10330@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+            "L10872@P262-266: 9900 9900 239",
+        ])
+        self.assertEqual(rows[0].pdf_pages, [262])
+        self.assertEqual(rows[0].as_record()["source_printed_pages"], [238])
 
     def test_simple_and_partial_aggregation(self):
         rows = self.parse("0113 0113+0128(p)\n0114 0114")
