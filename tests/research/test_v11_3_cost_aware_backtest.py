@@ -51,8 +51,18 @@ class CostAwareReplayTests(unittest.TestCase):
         r=simulate_one(bars(x),"2026-01-01","ABC",5,1)
         self.assertEqual(r["DATA_STATUS"],"INVALID_OR_NONTRADED_OHLC")
     def test_invalid_cost_rejected(self):
+        for cost in (-0.1, float("nan"), float("inf")):
+            with self.subTest(cost=cost), self.assertRaises(ValueError):
+                simulate_one(bars(self.base),"2026-01-01","ABC",5,1,cost)
+    def test_invalid_target_and_horizon_rejected(self):
         with self.assertRaises(ValueError):
-            simulate_one(bars(self.base),"2026-01-01","ABC",5,1,-0.1)
+            simulate_one(bars(self.base),"2026-01-01","ABC",0,1)
+        with self.assertRaises(ValueError):
+            simulate_one(bars(self.base),"2026-01-01","ABC",5,1.5)
+    def test_direct_duplicate_symbol_date_fails_closed(self):
+        x=self.base.copy(); x.append(x[1].copy())
+        with self.assertRaises(ValueError):
+            simulate_one(bars(x),"2026-01-01","ABC",5,1)
 
 if __name__=="__main__":
     unittest.main()
