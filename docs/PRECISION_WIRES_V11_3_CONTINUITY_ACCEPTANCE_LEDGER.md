@@ -909,3 +909,17 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Bounded extension 100%; cumulative 8/8; full-period mapping NOT_DONE; RBI export NOT_RETRIEVED; IMF revision/vintage NOT_READY; IMF BOP 5/7=71.4%; October 2025 PDF 25%; full V11.3 NOT_CALCULABLE.
 - Sources: RBI 20 Feb 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24025 ; 23 Apr 2026 https://www.rbi.org.in/scripts/BS_ViewBulletin.aspx?Id=24156 ; 22 Jul 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24352 ; prior 25 Sep 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495 ; RBI Manual https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013 ; archived CSV data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv .
 - No new IMF pull, raw RBI file, data/manifest/sidecar mutation, synthetic data, paid service, credentials, PR merge or production change.
+
+
+## 2026-11-15 — RBI BPM6 historical cross-check extension (2016–2017)
+- Official RBI bulletin: 10 Oct 2017, Table 40, BPM6 Standard Presentation, USD million; https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=17190
+- Matched calendar Q2 periods: 2016-Q2 and 2017-Q2.
+- Mapping: Portfolio Investment by India net -> negative IMF asset net acquisition; Portfolio Investment in India net -> positive IMF liability net incurrence.
+- 2016-Q2: assets RBI -863 vs IMF -862.901610612507 (abs diff 0.098389387493); liabilities RBI +1241 vs IMF +1240.54 (abs diff 0.46). 2/2 PASS_WITH_ROUNDING.
+- 2017-Q2: assets RBI -530 vs IMF -530.439269462386 (abs diff 0.439269462386); liabilities RBI +11921 vs IMF +11921.16 (abs diff 0.16). 2/2 PASS_WITH_ROUNDING.
+- Historical extension: 4/4 PASS_WITH_ROUNDING. Combined with four previously verified quarters: six quarters, 12/12 side comparisons. No full-period equivalence claim.
+- 2015–2025 annual spot-check matrix: 2/11 years covered (18.2%); 9/11 NOT_DONE.
+- RBI raw quarterly DBIE export NOT_RETRIEVED; IMF vintage NOT_READY / NOT_VERIFIED.
+- IMF BOP workstream unchanged at 5/7 (71.4%); overall project progress NOT_CALCULABLE.
+- No source CSV/manifest mutation, no synthetic data, no source promotion, no production changes; all project invariants preserved.
+- Report commit: ce05f8cce05395488b3ac3726edbe94a1550bac8; report blob: a2fdc68e5606587ab302938216631f5a02f80af5.
