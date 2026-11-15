@@ -1,0 +1,65 @@
+name: V11.3 Research Cutoff-Safe Historical Signals + Cost-Aware Replay
+
+on:
+  push:
+    branches:
+      - research/nse-raw-manifest-retention-20261115
+    paths:
+      - "pipeline/v11_3_historical_signals_research.py"
+      - "pipeline/v11_3_cost_aware_backtest.py"
+      - "tests/research/test_v11_3_historical_signals_research.py"
+      - ".github/workflows/v11_3_historical_signals_research.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v11-3-historical-research-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  historical-signals-and-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal research dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy
+      - name: Download immutable processed input from verified run #146
+        uses: actions/download-artifact@v4
+        with:
+          name: precision-wires-adaptive-146
+          run-id: 43686440086
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: .
+      - name: Verify exact processed input bytes
+        run: |
+          echo "00a1b3af4c6be836cf5ad18c9332607701b5418a7057f2a0415c202458d3dbb0  data/processed/nse_eq_200_sessions.csv" | sha256sum --check
+          python - <<'PY'
+          import pandas as pd
+          p="data/processed/nse_eq_200_sessions.csv"
+          d=pd.read_csv(p,usecols=["SYMBOL","DATE"])
+          assert len(d)>0 and d["SYMBOL"].nunique()==2994 and d["DATE"].nunique()==200
+          assert not d.duplicated(["SYMBOL","DATE"]).any()
+          print({"rows":len(d),"symbols":d.SYMBOL.nunique(),"sessions":d.DATE.nunique()})
+          PY
+      - name: Run isolated cutoff-safe V11.3 historical signal generation
+        run: python pipeline/v11_3_historical_signals_research.py --data data/processed/nse_eq_200_sessions.csv --out outputs/backtest/v11_3_historical_signals --min-calibration-samples 100 --top-n 30
+      - name: Run cost-aware H+1 H+3 H+5 replay
+        run: python pipeline/v11_3_cost_aware_backtest.py --data data/processed/nse_eq_200_sessions.csv --signals outputs/backtest/v11_3_historical_signals/v11_3_historical_signals_top30.csv --out outputs/backtest/v11_3_cost_aware_replay --cost-pct 0.22
+      - name: Run cutoff-safe calibration regression tests
+        run: python -m unittest tests.research.test_v11_3_historical_signals_research -v
+      - name: Upload research-only outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v11-3-cutoff-safe-replay-${{ github.run_number }}
+          path: |
+            outputs/backtest/v11_3_historical_signals/
+            outputs/backtest/v11_3_cost_aware_replay/
+          if-no-files-found: error
+          retention-days: 90
