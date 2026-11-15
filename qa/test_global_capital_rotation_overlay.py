@@ -30,6 +30,15 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertEqual(out["fx_transmission"],"UNKNOWN")
         self.assertEqual(out["latest_observations"]["dxy_change_pct_20d"],None)
 
+    def test_verified_h10_broad_usd_seed_is_not_ice_dxy(self):
+        seed=Path(__file__).resolve().parents[1]/"data"/"global_capital_rotation"/"fed_h10_derived_observation_2026-11-06.csv"
+        grouped=load_observations(seed)
+        out=classify(grouped,"2026-11-07")
+        self.assertAlmostEqual(grouped["fed_broad_usd_change_pct_20d"][0]["value"],0.35686378161978727)
+        self.assertEqual(out["fed_broad_usd_transmission"],"BROAD_USD_STRENGTHENING")
+        self.assertEqual(out["fx_transmission"],"UNKNOWN")
+        self.assertEqual(out["latest_observations"]["dxy_change_pct_20d"],None)
+
     def test_unknown_quality_rows_are_not_used(self):
         out=classify(load_observations(self.make([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")])),"2026-11-07")
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
