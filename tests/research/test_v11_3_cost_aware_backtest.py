@@ -1,6 +1,8 @@
 import unittest
+import tempfile
+from pathlib import Path
 import pandas as pd
-from pipeline.v11_3_cost_aware_backtest import simulate_one, COST_PCT
+from pipeline.v11_3_cost_aware_backtest import simulate_one, run, COST_PCT
 
 def bars(rows):
     return pd.DataFrame(rows,columns=["SYMBOL","DATE","OPEN_PRICE","HIGH_PRICE","LOW_PRICE","CLOSE_PRICE","TTL_TRD_QNTY"])
@@ -63,6 +65,22 @@ class CostAwareReplayTests(unittest.TestCase):
         x=self.base.copy(); x.append(x[1].copy())
         with self.assertRaises(ValueError):
             simulate_one(bars(x),"2026-01-01","ABC",5,1)
+    def test_target_hit_is_distinct_from_net_profitability(self):
+        r=simulate_one(bars(self.base),"2026-01-01","ABC",0.1,1)
+        self.assertEqual(r["EXIT_REASON"],"TARGET")
+        self.assertTrue(r["TARGET_HIT"])
+        self.assertLess(r["NET_RETURN_PCT"],0)
+    def test_run_rejects_duplicate_signal_keys(self):
+        with tempfile.TemporaryDirectory() as td:
+            data=Path(td)/"bars.csv"; signals=Path(td)/"signals.csv"
+            bars(self.base).to_csv(data,index=False)
+            pd.DataFrame([["2026-01-01","ABC"],["2026-01-01","ABC"]],columns=["CUT_OFF","SYMBOL"]).to_csv(signals,index=False)
+            with self.assertRaisesRegex(ValueError,"Duplicate CUT_OFF/SYMBOL"):
+                run(data,signals,Path(td)/"out")
+    def test_infinite_volume_is_invalid(self):
+        x=self.base.copy(); x[1]=["ABC","2026-01-02",100,106,99,104,float("inf")]
+        r=simulate_one(bars(x),"2026-01-01","ABC",5,1)
+        self.assertEqual(r["DATA_STATUS"],"INVALID_OR_NONTRADED_OHLC")
 
 if __name__=="__main__":
     unittest.main()
