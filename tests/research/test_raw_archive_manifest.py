@@ -49,7 +49,7 @@ class RawArchiveManifestTests(unittest.TestCase):
         self.assertTrue(any("expected 200 raw files" in x for x in report["blockers"]))
 
     def test_duplicate_raw_files_for_same_session_fail(self):
-        duplicate = self.raw / "sec_bhavdata_full_13112026_copy.csv"
+        duplicate = self.raw / "sec_bhavdata_full_backup13112026.csv"
         duplicate.write_text(self.raw_file.read_text(), encoding="utf-8")
         code, report = self.run_audit()
         self.assertEqual(code, 1)
