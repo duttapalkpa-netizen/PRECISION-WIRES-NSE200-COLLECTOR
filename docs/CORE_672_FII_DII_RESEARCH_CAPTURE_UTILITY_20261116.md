@@ -33,7 +33,7 @@ Replace placeholders only with URLs copied from the two distinct official NSE re
 ## Security and retention
 - Request cookies/session headers are not written to disk or manifest.
 - Do not commit raw response, CSV payloads, cookies, session IDs, or tokens.
-- The manifest includes the exact request URL, selected CSV URLs/labels, HTTP status/content type, timestamps, byte lengths and SHA-256 hashes.
+- The manifest includes query-free request URL provenance (scheme/host/path), selected CSV URL paths/labels, HTTP status/content type, timestamps, byte lengths and SHA-256 hashes. Query strings and fragments are intentionally omitted to avoid token leakage.
 - Review the manifest and raw payload locally before sharing. Redact any unexpected sensitive response fields before creating a report.
 - Utility is not wired into CI, cron, scheduled collector, or production pipeline.
 
