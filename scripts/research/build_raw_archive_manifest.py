@@ -36,7 +36,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--expected-sessions", type=int, default=None,
                         help="Require exactly this many distinct raw sessions/files")
-    args = parser.parse_args()
+    args, _unknown_args = parser.parse_known_args()
     if args.expected_sessions is not None and args.expected_sessions < 1:
         parser.error("--expected-sessions must be >= 1")
     OUT.parent.mkdir(parents=True, exist_ok=True)
