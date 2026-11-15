@@ -69,6 +69,53 @@ jobs:
           print("PASS: SDMX 2.1 Structure/Ref parsed as IMF:BOP:2.6.0")
           PY
 
+      - name: Regression test SDMX 2.1 ContentConstraint CubeRegion parsing
+        shell: bash
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          sample = """<mes:StructureMessage xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+              xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+              xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+            <mes:Structures>
+              <str:Constraints>
+                <str:ContentConstraint id="BOP_BP6_CONSTRAINT" agencyID="IMF" version="1.0" type="Actual">
+                  <str:CubeRegion include="true">
+                    <com:KeyValue id="FREQ" include="true"><com:Value>Q</com:Value></com:KeyValue>
+                    <com:KeyValue id="REF_AREA" include="false"><com:Value>XX</com:Value></com:KeyValue>
+                    <com:KeyValue id="TIME_PERIOD"><com:TimeRange>
+                      <com:StartPeriod isInclusive="true">2020-Q1</com:StartPeriod>
+                      <com:EndPeriod isInclusive="false">2025-Q4</com:EndPeriod>
+                    </com:TimeRange></com:KeyValue>
+                    <com:Attribute id="UNIT_MEASURE" include="true"><com:Value>XDC</com:Value></com:Attribute>
+                  </str:CubeRegion>
+                </str:ContentConstraint>
+              </str:Constraints>
+            </mes:Structures>
+          </mes:StructureMessage>"""
+          root = ET.fromstring(sample)
+          local = lambda tag: tag.rsplit("}", 1)[-1]
+          constraints = [e for e in root.iter() if local(e.tag) == "ContentConstraint"
+                         and e.attrib.get("id") == "BOP_BP6_CONSTRAINT"]
+          assert len(constraints) == 1
+          regions = [e for e in constraints[0].iter() if local(e.tag) == "CubeRegion"]
+          assert len(regions) == 1
+          region = regions[0]
+          keys = [e for e in region if local(e.tag) == "KeyValue"]
+          assert [(k.attrib.get("id"), k.attrib.get("include", "true")) for k in keys] == [
+              ("FREQ", "true"), ("REF_AREA", "false"), ("TIME_PERIOD", "true")]
+          assert [v.text for v in keys[0] if local(v.tag) == "Value"] == ["Q"]
+          assert [v.text for v in keys[1] if local(v.tag) == "Value"] == ["XX"]
+          tr = next(e for e in keys[2] if local(e.tag) == "TimeRange")
+          assert [(local(e.tag), e.text, e.attrib.get("isInclusive")) for e in tr] == [
+              ("StartPeriod", "2020-Q1", "true"), ("EndPeriod", "2025-Q4", "false")]
+          attrs = [e for e in region if local(e.tag) == "Attribute"]
+          assert len(attrs) == 1 and attrs[0].attrib.get("id") == "UNIT_MEASURE"
+          assert [e.text for e in attrs[0] if local(e.tag) == "Value"] == ["XDC"]
+          print("PASS: SDMX 2.1 CubeRegion KeyValue, include/exclude, TimeRange and Attribute parsed")
+          PY
+
       - name: Acquire official IMF BOP_BPM6 dataflow and constraint metadata
         if: always()
         shell: bash
@@ -160,11 +207,35 @@ jobs:
                                   dims = []
                                   for key in region.iter():
                                       if local(key.tag) == "KeyValue":
-                                          values = [v.text for v in key.iter() if local(v.tag) == "Value" and v.text]
-                                          dims.append({"dimension": key.attrib.get("id"), "values": values})
-                                  return dims
+                                          values = [v.text for v in key if local(v.tag) == "Value" and v.text]
+                                          time_ranges = []
+                                          for tr in [v for v in key if local(v.tag) == "TimeRange"]:
+                                              time_ranges.append({
+                                                  "children": [
+                                                      {"element": local(x.tag), "value": (x.text or "").strip(),
+                                                       "isInclusive": x.attrib.get("isInclusive")}
+                                                      for x in tr
+                                                  ]
+                                              })
+                                          dims.append({
+                                              "dimension": key.attrib.get("id"),
+                                              "include": key.attrib.get("include", "true"),
+                                              "values": values,
+                                              "time_ranges": time_ranges
+                                          })
+                                  attributes = []
+                                  for attr in region.iter():
+                                      if local(attr.tag) == "Attribute":
+                                          attributes.append({
+                                              "id": attr.attrib.get("id"),
+                                              "include": attr.attrib.get("include", "true"),
+                                              "values": [(v.text or "").strip() for v in attr
+                                                         if local(v.tag) == "Value" and (v.text or "").strip()]
+                                          })
+                                  return {"dimensions": dims, "attributes": attributes}
                               report["cube_region_dimensions"] = [
-                                  {"include": region.attrib.get("include"), "dimensions": dimension_inventory(region)}
+                                  {"include": region.attrib.get("include", "true"),
+                                   **dimension_inventory(region)}
                                   for region in cube_regions
                               ]
                               if not cube_regions:
