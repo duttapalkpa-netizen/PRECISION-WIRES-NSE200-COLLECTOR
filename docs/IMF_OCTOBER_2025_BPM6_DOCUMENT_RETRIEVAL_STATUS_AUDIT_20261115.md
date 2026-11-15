@@ -883,3 +883,42 @@ No RBI DBIE export was downloaded in this audit.
 Inspect RBI DBIE Table 42's actual downloadable time series and at least two dated RBI Bulletin releases for an overlapping quarter. First perform a small schema-only/table-header inspection. Compare exact portfolio assets and liabilities only if both sides are independently represented and signs/credit-debit conventions can be mapped. Keep source-native series and release snapshots separate.
 
 No IMF CSV, manifest, sidecar, raw response, or accepted gate changed.
+
+
+## 2026-11-15 — RBI Table 42 live publication snapshots and DBIE export-boundary audit
+
+### Official table and observed structure
+- Re-opened the official RBI Table 42 publication (not the earlier handbook-only audit): Table 42 is titled "Standard Presentation of BoP in India as per BPM6 (US $ Million)" and displays quarterly periods, USD million, Credit/Debit/Net columns.
+- The RBI publication's Financial Account explicitly separates: 3.2 Portfolio Investment; 3.2.A Portfolio Investment in India; 3.2.1 Equity and investment fund shares; 3.2.2 Debt securities; and 3.2.B Portfolio Investment by India. This confirms portfolio flow components are present in the actual published table, not only in the guide metadata.
+- The DBIE table URL surfaced by public search resolves to a dataset titled "Standard presentation of India's balance of payments as per BPM6 - US dollars" but its displayed metadata says Annual, period 31-03-2012–31-03-2026, 91 rows. This is not accepted as Table 42's quarterly export: frequency conflicts with the RBI guide's Table 42 quarterly contract. The public page's CSV/JSON affordance was identified, but no raw export bytes/schema were downloaded in this bounded audit.
+
+### Two dated bulletin snapshot comparison
+- 22 Jul 2026 RBI Bulletin (Table 42) shows Jan–Mar 2025 and Jan–Mar 2026 (P); 25 Sep 2026 and 23 Oct 2026 bulletins show Apr–Jun 2025 and Apr–Jun 2026 (P).
+- For the overlapping Apr–Jun 2025 quarter, 25 Sep and 23 Oct 2026 publications report identical values at the displayed US$ million precision:
+  - Portfolio Investment total: Credit 146,339; Debit 144,731; Net 1,608.
+  - Portfolio Investment in India: Credit 145,201; Debit 142,720; Net 2,481.
+  - Portfolio Investment by India: Credit 1,138; Debit 2,011; Net −872 (published rounded components do not necessarily add exactly due to rounding).
+  - Equity and investment fund shares: Credit 123,636; Debit 118,245; Net 5,391.
+  - Debt securities: Credit 21,565; Debit 24,475; Net −2,910.
+- Result: two dated public bulletin snapshots for the same reference quarter are available and agree at displayed precision. This is a repeat-publication consistency check, NOT evidence of a revision event or of unchanged source data between releases; no difference was observed in this pair. The two pages are not raw API response snapshots and their full publication payload hashes were not captured.
+- July 22 2026 provides another dated table and an earlier reference quarter (Jan–Mar 2025), but it is not the same quarter as the September/October pair and is not used to infer revision.
+
+### Mapping and gate decision
+- Actual RBI Table 42 schema-level view: PASS (quarter, USD million, Credit/Debit/Net, portfolio categories and subcategories visibly present).
+- Two dated overlapping RBI bulletin pages: PASS (25 Sep and 23 Oct 2026, Apr–Jun 2025); displayed values match for the rows above.
+- DBIE downloadable raw export/schema for quarterly Table 42: NOT_RETRIEVED; surfaced DBIE page is annual and therefore not accepted as the quarterly export.
+- Exact mapping to IMF P_F / A_NFA_T / L_NIL_T remains UNKNOWN / NOT_ESTABLISHED. In particular, do not equate RBI "Portfolio Investment in India/by India" or Credit/Debit directly with IMF net acquisition of financial assets/liabilities without an official sign/direction crosswalk. Credit/debit/net columns are not themselves proof of the IMF assets/liabilities direction.
+- No IMF vintage evidence is added; RBI releases are an independent source lineage, not an IMF second vintage. No source merge, sign conversion, CSV creation, or production integration.
+
+### Next action
+Retrieve the actual quarterly DBIE Table 42 series through an officially exposed quarterly publication/time-series route, inspect raw CSV/JSON headers and notes, then locate a documented RBI-to-BPM6 financial-account assets/liabilities sign crosswalk. Only after that, capture two dated raw exports for the same quarter and hash exact bytes. Do not use the annual DBIE dataset or infer mapping from labels.
+
+Sources inspected:
+- RBI Table 42, 25 Sep 2026: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495
+- RBI Table 42, 23 Oct 2026: https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566
+- RBI Table 42, 22 Jul 2026: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24352
+- DBIE surfaced dataset: https://dbie.rbihub.in/tables?table=external_sector.r814_standard_presentation_of_india_s_balance_of_payments_as_pe
+
+Bounded audit progress: 100% of this defined inspection complete. RBI parallel-source raw export/mapping readiness: NOT_READY. IMF BOP workstream remains 5/7 = 71.4%; October 2025 IMF PDF package remains 25%; full V11.3 project progress remains NOT_CALCULABLE.
+
+No paid services, credentials, external contact, synthetic data, CSV/manifest/sidecar mutation, PR merge, or production change.
