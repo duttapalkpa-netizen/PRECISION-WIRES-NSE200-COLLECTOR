@@ -807,3 +807,15 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Raw vintage-field inspection complete; explicit source-supplied vintage not exposed in inspected structures. Sidecar vintage remains NOT_VERIFIED (retrospective inspection does not create an acquisition-time vintage declaration); revision readiness UNKNOWN / NOT_READY.
 - Next: seek a second independently dated IMF snapshot with exact same series keys and overlapping periods. No CSV, manifest, sidecar, raw response, or accepted gate changed.
 - Audit report update commit: 4c83d57546873f45b403979c7dbcf648ce4ab028.
+
+## 2026-11-15 — Dated BOPSY 2024 publication snapshot suitability audit
+
+- Located official IMF *Balance of Payments Statistics: Introductory Notes, as of November 2024* PDF. It states BOPSY electronic release contains individual country data for all available periods and world/regional aggregates for 2005–2023; country tables and metadata are online; BPM6 basis. India reporting currency listed as XDC (domestic currency).
+- IMF Committee on BOP Statistics 2024 Annual Report independently confirms annual BOP/IIP statistics through 2023 were published in BOPSY 2024; 195 economies reported BOP data.
+- Notes distinguish individual country tables from world/regional aggregates, where missing data may be estimated by IMF staff. Do not use aggregate values as reporter observations.
+- Country-table documentation confirms portfolio investment assets/liabilities and equity/debt breakdown conceptually, but no archived raw India SDMX response, exact P_F/A_NFA_T/L_NIL_T mapping, or machine-readable four-series snapshot was retrieved.
+- Dated publication lineage PASS; raw India BOPSY 2024 country export NOT_RETRIEVED; exact equivalence to IMF.STA:BOP(21.0.0)/DSD_BOP(24.0.0) NOT_ESTABLISHED; second comparable raw snapshot NOT_ESTABLISHED.
+- BOPSY 2024 is not accepted as a second vintage for the existing 110-row panel. Revision/vintage readiness UNKNOWN / NOT_READY; no gate promotion.
+- Next: pursue only an officially exposed dated country-table export if public and unauthenticated; require raw bytes, release evidence, exact keys and mapping. No hidden endpoint guesses/login bypass.
+- Existing CSV, manifest, sidecars and raw responses unchanged.
+- Audit report update commit: 58cd00d2e94fb9e813a7836014c5d97b08abaa97.
