@@ -9,6 +9,7 @@ on:
       - "pipeline/v11_3_cost_aware_backtest.py"
       - "scripts/research/audit_v11_3_cost_aware_replay.py"
       - "tests/research/test_v11_3_historical_signals_research.py"
+      - "scripts/research/audit_v11_3_cost_aware_replay.py"
       - ".github/workflows/v11_3_historical_signals_research.yml"
   push:
     branches:
@@ -25,7 +26,7 @@ permissions:
 
 concurrency:
   group: v11-3-historical-research-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   historical-signals-and-replay:
@@ -37,7 +38,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install minimal research dependencies
-        run: python -m pip install --disable-pip-version-check pandas numpy
+        run: python -m pip install --disable-pip-version-check "pandas>=2.2,<3" "numpy>=1.26,<3"
       - name: Download immutable 200-session raw archive from verified run #4
         uses: actions/download-artifact@v4
         with:
