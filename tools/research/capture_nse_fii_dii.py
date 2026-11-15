@@ -120,7 +120,10 @@ def main():
             raise RuntimeError("Could not resolve two distinct official CSV links; supply exact URLs copied from NSE report page")
         if by_scope["nse_only"]["url"] == by_scope["combined_nse_bse_msei"]["url"]:
             raise RuntimeError("Official report controls resolved to the same URL; refusing ambiguous capture")
-        result["official_csv_links"] = by_scope
+        result["official_csv_links"] = {
+            scope: {"label": item["label"], "url": manifest_url(item["url"])}
+            for scope, item in by_scope.items()
+        }
 
         # Session bootstrap through the public NSE homepage, then exact API request.
         session.get(BASE + "/", timeout=TIMEOUT).raise_for_status()
