@@ -131,3 +131,15 @@
 - BLOCKED = known dependency/tooling/data blocker prevents acceptance.
 - UNKNOWN = insufficient evidence; never promote to PASS.
 - NOT_DONE = not executed.
+
+
+## 8. Update — bounded NSE date-shard support (2026-11-15)
+- Added inclusive `--start-date YYYY-MM-DD --end-date YYYY-MM-DD` mode to `collector/nse_download.py`; default `--sessions 200 --lookback-days 500` behaviour remains when bounds are omitted.
+- Added deterministic `iter_candidate_dates`: newest-first, inclusive, weekdays only; rejects one-sided and reversed ranges. Bounded mode scans the full date window; weekends are skipped, exchange holidays/missing source dates remain explicit misses.
+- Bounded mode records start/end and per-date diagnostics, writes its own `sessions.txt`, does not enforce the default 200-session count, and fails if no valid sessions were acquired. Use a separate output directory per shard to prevent overwrites.
+- Added five tests for inclusive range, newest-first order, single-day range, weekend-only range, reversed bounds, and one-sided bounds.
+- Latest verified branch head: `cd7bc12946003f1ba7455363c42471199ca73b93`.
+- GitHub Actions run #21 ID `43732684314`, job `132868428188`: SUCCESS; 22/22 date-integrity tests PASS (including 5 new shard iterator tests).
+- On the same PR head, raw manifest test run #13 ID `43732684344`: SUCCESS; official-source probe run #12 ID `43732684305`: SUCCESS. These do not prove a 200-session archive.
+- PR #37 remains Draft/Open/Unmerged. No full shard matrix, shard merge, or final 200-session raw artifact has been executed. Full raw archive acceptance remains BLOCKED / 0%.
+- Next: add short per-shard Actions workflow with isolated output/artifacts, deterministic merge validator requiring exactly 200 unique session dates and no filename/content collisions, then independently inspect the final raw artifact. Final count must come from verified files, not inferred holidays.
