@@ -58,6 +58,15 @@ class ParserTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.parse("4772 4772(p)+4789(p)+")
 
+
+    def test_audit_blocks_count_match_without_source_provenance(self):
+        rows = self.parse("0111 0111")
+        report = audit(rows, expected_count=1)
+        self.assertEqual(report["row_count"], 1)
+        self.assertFalse(report["provenance_complete"])
+        self.assertFalse(report["source_bounds_pass"])
+        self.assertEqual(report["acceptance"], "UNKNOWN_BLOCKED")
+
     def test_duplicate_keys_block_acceptance(self):
         rows = self.parse("0111 0111\n0111 0111")
         report = audit(rows, expected_count=2)
