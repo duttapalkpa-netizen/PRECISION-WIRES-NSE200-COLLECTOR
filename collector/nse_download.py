@@ -41,7 +41,7 @@ def _pick(row, *names):
 
 def _parse_date(value):
     s = str(value or "").strip()
-    for fmt in ("%Y-%m-%d", "%Y%m%d", "%d-%m-%Y", "%d/%m/%Y", "%d-%b-%Y"):
+    for fmt in ("%Y-%m-%d", "%Y%m%d", "%d%m%Y", "%d-%m-%Y", "%d/%m/%Y", "%d-%b-%Y"):
         try:
             from datetime import datetime
             return datetime.strptime(s, fmt).date()
@@ -83,19 +83,24 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
             return False
 
         expected_date = _parse_date(stamp)
+        if expected_date is None:
+            print("UDIFF_PARSE invalid expected date", flush=True)
+            return False
         out_rows = []
-        source_dates = set()
 
         for r in rows:
             sym = str(_pick(r, "TckrSymb", "TCKR_SYMB", "SYMBOL")).strip()
             series = str(_pick(r, "SctySrs", "SCTY_SERIES", "SERIES")).strip().upper()
-            if not sym or (series and series != "EQ"):
+            if not sym or series != "EQ":
                 continue
 
             raw_date = _pick(r, "TradDt", "TRADG_DATE", "DATE1", "DATE")
             parsed_date = _parse_date(raw_date)
-            if parsed_date:
-                source_dates.add(parsed_date)
+            # Every eligible EQ source row must carry a valid, exact source date.
+            # Never infer or backfill the date from the requested filename.
+            if parsed_date is None or parsed_date != expected_date:
+                print(f"UDIFF_PARSE invalid/mismatched EQ date expected={expected_date} raw={raw_date!r}", flush=True)
+                return False
 
             def num(*aliases):
                 return _pick(r, *aliases)
@@ -131,16 +136,13 @@ def normalize_udiff(raw: bytes, stamp: str, out: Path) -> bool:
             print("UDIFF_PARSE no EQ rows", flush=True)
             return False
 
-        # A valid daily file must identify the requested trade date when the
-        # source exposes a date field. Never accept an unrelated cached date.
-        if expected_date and source_dates and expected_date not in source_dates:
-            print(f"UDIFF_PARSE date mismatch expected={expected_date} source={sorted(source_dates)[:3]}", flush=True)
+        if not out_rows:
+            print("UDIFF_PARSE no eligible EQ rows", flush=True)
             return False
 
         target = out / f"sec_bhavdata_full_{stamp}.csv"
         import pandas as pd
         df = pd.DataFrame(out_rows)
-        df["DATE1"] = df["DATE1"].astype(str).replace({"": stamp})
         # Hard validation of the fields that downstream analysis actually needs.
         for col in ["OPEN_PRICE", "HIGH_PRICE", "LOW_PRICE", "CLOSE_PRICE", "TTL_TRD_QNTY"]:
             vals = pd.to_numeric(df[col], errors="coerce")
@@ -175,29 +177,74 @@ def validate_legacy(content: bytes) -> bool:
         return False
 
 def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
-    """Validate NSE Full Bhavcopy and Security Deliverable CSV."""
+    """Validate structure, delivery fields, and every EQ row's embedded trade date."""
     if looks_blocked(content) or len(content) < 1000:
         return False
     try:
         import pandas as pd
-        df = pd.read_csv(io.BytesIO(content), nrows=100, dtype=str)
+        # Read the complete CSV: sampling the first 100 rows can miss mixed dates.
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
         cols = {_clean_key(x): x for x in df.columns}
         def col(*names):
             return next((cols[_clean_key(n)] for n in names if _clean_key(n) in cols), None)
-        symbol, series = col("SYMBOL"), col("SERIES")
+
+        symbol, series = col("SYMBOL", "TCKRSYMB"), col("SERIES", "SCTYSRS")
         close = col("CLOSE_PRICE", "CLOSEPRICE", "CLSPRIC")
         dq = col("DELIV_QTY", "DELIVERY_QTY", "DELIVQTY")
         dp = col("DELIV_PER", "DELIVERY_PER", "DELIVPER")
-        if not all((symbol, series, close, dq, dp)):
+        trade_date = col("DATE1", "DATE", "TRADDT", "TRADING_DATE", "TRADINGDATE", "TRADE_DATE", "TRADEDATE")
+        expected_date = _parse_date(expected_stamp)
+        if not all((symbol, series, close, dq, dp, trade_date)) or expected_date is None:
             return False
+
         eq = df[df[series].astype(str).str.strip().str.upper().eq("EQ")]
+        if eq.empty:
+            return False
+
+        # Fail closed: no blank, malformed, mixed, or unexpected EQ trade dates.
+        parsed_dates = [_parse_date(value) for value in eq[trade_date].tolist()]
+        if not parsed_dates or any(value is None for value in parsed_dates):
+            return False
+        if any(value != expected_date for value in parsed_dates):
+            return False
+
         q = pd.to_numeric(eq[dq], errors="coerce")
         p = pd.to_numeric(eq[dp], errors="coerce")
         cl = pd.to_numeric(eq[close], errors="coerce")
-        return (not eq.empty and cl.notna().any() and q.notna().any()
+        return (cl.notna().any() and q.notna().any()
                 and p.notna().any() and not ((p.dropna() < 0) | (p.dropna() > 100)).any())
     except Exception as e:
         print(f"FULL_DELIVERY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
+        return False
+
+
+def validate_archived_daily_file(content: bytes, expected_stamp: str) -> bool:
+    """Validate an archived NSE daily CSV's structure and every EQ row's trade date.
+
+    Unlike validate_full_delivery, this also accepts normalized UDiFF files whose
+    delivery fields are intentionally blank, while still requiring the legacy
+    symbol/series/close schema and an exact embedded trade-date match.
+    """
+    if not validate_legacy(content):
+        return False
+    expected_date = _parse_date(expected_stamp)
+    if expected_date is None:
+        return False
+    try:
+        import pandas as pd
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
+        cols = {_clean_key(x): x for x in df.columns}
+        series_col = next((cols[_clean_key(n)] for n in ("SERIES", "SCTYSRS") if _clean_key(n) in cols), None)
+        date_col = next((cols[_clean_key(n)] for n in ("DATE1", "DATE", "TRADDT", "TRADING_DATE", "TRADINGDATE", "TRADE_DATE", "TRADEDATE") if _clean_key(n) in cols), None)
+        if not series_col or not date_col:
+            return False
+        eq = df[df[series_col].astype(str).str.strip().str.upper().eq("EQ")]
+        if eq.empty:
+            return False
+        parsed = [_parse_date(value) for value in eq[date_col].tolist()]
+        return bool(parsed) and all(value == expected_date for value in parsed)
+    except Exception as e:
+        print(f"ARCHIVED_DAILY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)
         return False
 
 
@@ -254,7 +301,7 @@ def main():
         ymd = d.strftime("%Y%m%d")
         target = out / f"sec_bhavdata_full_{stamp}.csv"
 
-        if target.exists() and validate_legacy(target.read_bytes()):
+        if target.exists() and validate_archived_daily_file(target.read_bytes(), stamp):
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
             print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
@@ -290,7 +337,7 @@ def main():
                 url = LEGACY.format(ddmmyyyy=stamp)
                 r = s.get(url, timeout=(10, 25))
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
-                if r.status_code == 200 and validate_legacy(r.content):
+                if r.status_code == 200 and validate_archived_daily_file(r.content, stamp):
                     target.write_bytes(r.content)
                     got = True
                 elif target.exists():
