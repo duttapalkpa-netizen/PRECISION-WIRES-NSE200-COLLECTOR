@@ -853,3 +853,33 @@ The IMF BOP Introductory Notes explain that the financial account records net ac
 
 ### Next action
 Continue only with an official archived BOP flow country-table/raw response that matches the exact four flow keys. Keep CPIS/PIP out of the current flow pipeline. No hidden endpoint guesses or login bypass.
+
+## 34. RBI official BPM6 quarterly BOP parallel-source contract audit (2026-11-15)
+
+### New primary-source route
+The RBI's April 2026 *Comprehensive Guide for Current Statistics of the RBI Monthly Bulletin* (published page 8 Oct 2026) identifies:
+- Table 42: Standard Presentation of BoP in India as per BPM6 (US$ million), quarterly, primary source RBI, revision policy "Data are subject to revision".
+- Table 43: same standard BPM6 presentation in ₹ crore.
+- DBIE mapping: Publication > Time-Series Publications > Monthly RBI Bulletin > External Sector; and Statistics > External Sector > International Trade.
+- Table 42 includes financial account functional classification, including Portfolio Investment, and presents credit, debit and net separately. It explicitly distinguishes its BPM6 classification structure from legacy Table 40.
+- RBI guide says extended historical time-series underlying Bulletin tables are available through DBIE in reusable formats, and latest periods may be provisional and revised as source updates arrive.
+Official guide: https://rbi.org.in/scripts/PublicationsView.aspx?Id=24094
+Official DBIE portal: https://data.rbi.org.in
+
+### Relevance and limits
+This is a strong independent official India BOP flow source for a parallel-source validation of the IMF India panel. It is BPM6, quarterly, USD, and explicitly revision-prone. It may provide a route to historical release snapshots through dated RBI Bulletins/DBIE time series.
+However, the handbook description alone does NOT establish that RBI Table 42 splits portfolio transactions into the exact IMF P_F aggregate with separate A_NFA_T and L_NIL_T observations in the same direction/sign convention, nor does it provide a raw export or release-vintage pair. RBI's Table 40 is a different overall BoP presentation; do not map it as equivalent. Table 44 is IIP positions (stocks), not BOP transaction flows.
+No RBI DBIE export was downloaded in this audit.
+
+### Decision
+- Official RBI BPM6 quarterly USD BOP source contract: PASS at metadata/documentation level.
+- Portfolio investment category in Table 42: PASS at category level.
+- Exact IMF four-key equivalence, component direction/sign and period mapping: UNKNOWN / NOT_ESTABLISHED.
+- Historical raw export and two dated overlapping snapshots: NOT_DONE.
+- RBI source is approved for a bounded parallel-source reconciliation experiment, NOT as an automatic replacement for IMF or a second IMF vintage.
+- No values should be merged until the exact series mapping, units, signs, frequency and release/vintage metadata are validated.
+
+### Next action
+Inspect RBI DBIE Table 42's actual downloadable time series and at least two dated RBI Bulletin releases for an overlapping quarter. First perform a small schema-only/table-header inspection. Compare exact portfolio assets and liabilities only if both sides are independently represented and signs/credit-debit conventions can be mapped. Keep source-native series and release snapshots separate.
+
+No IMF CSV, manifest, sidecar, raw response, or accepted gate changed.
