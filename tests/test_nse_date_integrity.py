@@ -2,7 +2,7 @@ import csv
 import io
 import unittest
 
-from collector.nse_download import validate_full_delivery
+from collector.nse_download import validate_archived_daily_file, validate_full_delivery
 
 
 class FullDeliveryDateIntegrityTests(unittest.TestCase):
@@ -48,6 +48,30 @@ class FullDeliveryDateIntegrityTests(unittest.TestCase):
     def test_rejects_invalid_expected_stamp(self):
         raw = self.make_csv(["14-11-2026"])
         self.assertFalse(validate_full_delivery(raw, "not-a-date"))
+
+    def test_archived_daily_accepts_exact_date_without_delivery_fields(self):
+        output = io.StringIO(newline="")
+        writer = csv.writer(output)
+        writer.writerow(["SYMBOL", "SERIES", "CLOSE_PRICE", "DATE1"])
+        for i in range(30):
+            writer.writerow([f"TEST{i:02d}", "EQ", "100.0", "14-11-2026"])
+        self.assertTrue(validate_archived_daily_file(output.getvalue().encode("utf-8"), "14112026"))
+
+    def test_archived_daily_rejects_wrong_date(self):
+        raw = self.make_csv(["13-11-2026"])
+        self.assertFalse(validate_archived_daily_file(raw, "14112026"))
+
+    def test_archived_daily_rejects_mixed_dates(self):
+        raw = self.make_csv(["14-11-2026", "13-11-2026"])
+        self.assertFalse(validate_archived_daily_file(raw, "14112026"))
+
+    def test_archived_daily_rejects_missing_date_column(self):
+        output = io.StringIO(newline="")
+        writer = csv.writer(output)
+        writer.writerow(["SYMBOL", "SERIES", "CLOSE_PRICE"])
+        for i in range(30):
+            writer.writerow([f"TEST{i:02d}", "EQ", "100.0"])
+        self.assertFalse(validate_archived_daily_file(output.getvalue().encode("utf-8"), "14112026"))
 
 
 if __name__ == "__main__":
