@@ -6,6 +6,8 @@ on:
       - "collector/nse_download.py"
       - "tests/test_nse_date_integrity.py"
       - "tests/test_nse_bounded_shards.py"
+      - "scripts/research/merge_raw_archive_shards.py"
+      - "tests/test_merge_raw_archive_shards.py"
       - ".github/workflows/nse_date_integrity_tests.yml"
   pull_request:
     paths:
