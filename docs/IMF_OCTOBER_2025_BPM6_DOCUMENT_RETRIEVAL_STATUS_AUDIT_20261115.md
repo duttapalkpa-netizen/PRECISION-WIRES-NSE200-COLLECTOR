@@ -1036,3 +1036,43 @@ Sources:
 Bounded 2025-Q2 two-sided reconciliation: 100% complete. Result PASS_WITH_ROUNDING (2/2). DBIE quarterly raw export NOT_RETRIEVED; multi-quarter replication NOT_DONE; IMF revision/vintage readiness NOT_READY; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF package 25%; full V11.3 progress NOT_CALCULABLE.
 
 No new data acquisition, data/manifest/sidecar mutation, synthetic values, paid source, credentials, PR merge or production change.
+
+## 2026-11-15 — Three additional RBI Table 42 vs archived IMF P_F quarterly reconciliations
+
+### Test design
+- Extended the prior single-quarter 2025-Q2 comparison to three additional, non-adjacent quarter periods: 2024-Q3, 2024-Q4 and 2025-Q1.
+- RBI official Table 42 sources: 20 Feb 2026 (Jul-Sep 2024), 23 Apr 2026 (Oct-Dec 2024), and 22 Jul 2026 (Jan-Mar 2025). All are Table 42, BPM6, USD million, Credit/Debit/Net.
+- IMF values were read from the already committed 110-row CSV data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv, exact keys IND/A_NFA_T/P_F/USD/Q and IND/L_NIL_T/P_F/USD/Q. No new IMF API call and no source data modification.
+- Applied the official RBI Manual sign bridge: asset-side candidate = −(RBI Portfolio Investment by India Net); liability-side candidate = RBI Portfolio Investment in India Net. Comparison tolerance ±0.5 USD million because RBI Table 42 publishes whole USD millions.
+
+### Results (USD million)
+| Quarter | RBI asset candidate | IMF A_NFA_T | abs diff | RBI liability candidate | IMF L_NIL_T | abs diff |
+|---|---:|---:|---:|---:|---:|---:|
+| 2024-Q3 | −35 | −34.990038547 | 0.009961453 | 19,815 | 19,815.071031982 | 0.071031982 |
+| 2024-Q4 | −63 | −62.610017414 | 0.389982586 | −11,435 | −11,434.646504149 | 0.353495851 |
+| 2025-Q1 | −136 | −135.999310934 | 0.000689065 | −5,995 | −5,994.630947245 | 0.369052755 |
+
+- All six side-by-quarter comparisons fall within ±0.5 USD million. Result: 6/6 PASS_WITH_ROUNDING.
+- Together with the earlier 2025-Q2 test, cumulative cross-check is 4 quarters × 2 sides = 8/8 PASS_WITH_ROUNDING.
+- 2025-Q2 prior test remains: assets diff 0.453921943; liabilities diff 0.299088081 USD million.
+
+### Interpretation and strict boundary
+- This is now repeated numerical support across four quarter periods, with correct direction/sign and rounded public values.
+- The compared IMF series are A_NFA_T and L_NIL_T, indicator P_F; RBI rows are Portfolio Investment by India and Portfolio Investment in India. Numerical agreement is strong evidence of a consistent aggregate mapping for the tested quarters.
+- Still not a full 2015–2025 equivalence proof: only four quarters tested; RBI raw quarterly DBIE export/schema not retrieved; RBI public bulletin tables are whole-million displayed values; no independent raw RBI export bytes or hashes; IMF response vintage remains unverified. Do not merge RBI values into the IMF panel or claim revision-ready/vintage-complete.
+- No tolerance widening; all tests used the predeclared ±0.5 USD million display-rounding interval.
+
+### Next action
+Run a full-period 2015–2025 quarterly spot-check matrix (prefer one quarter per year, with exact RBI Bulletin pages and archived IMF values) before considering a research-only source mapping note. Keep raw-source capture and vintage checks separate. If any quarter fails, stop and investigate; do not widen tolerance.
+
+Sources:
+- RBI Table 42, 20 Feb 2026, Jul-Sep 2024: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24025
+- RBI Table 42, 23 Apr 2026, Oct-Dec 2024: https://www.rbi.org.in/scripts/BS_ViewBulletin.aspx?Id=24156
+- RBI Table 42, 22 Jul 2026, Jan-Mar 2025: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24352
+- Prior RBI Table 42, 25 Sep 2026, Apr-Jun 2025: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495
+- RBI BOP Manual: https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013
+- Archived IMF CSV: data/research/imf_bop_india_portfolio_assets_liabilities_annual_quarterly_2015_2025.csv
+
+Bounded three-quarter extension: 100% complete. Cumulative four-quarter numerical validation: 8/8 PASS_WITH_ROUNDING. Full-period mapping validation: NOT_DONE. RBI quarterly raw export/schema: NOT_RETRIEVED. IMF revision/vintage readiness: NOT_READY. IMF BOP workstream remains 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 project progress NOT_CALCULABLE.
+
+No new IMF data pull, RBI raw-file creation, source-data mutation, manifest/sidecar mutation, synthetic data, paid service, credentials, PR merge or production change.
