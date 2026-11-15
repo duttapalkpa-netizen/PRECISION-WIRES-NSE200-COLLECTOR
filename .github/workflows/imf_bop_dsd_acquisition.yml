@@ -1,0 +1,124 @@
+name: IMF BOP DSD raw acquisition and metadata QA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acquire-dsd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/imf_bop_dsd
+          URL='https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          printf '%s\n' "$URL" > evidence/imf_bop_dsd/request_url.txt
+          set +e
+          curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
+            --dump-header evidence/imf_bop_dsd/response_headers.txt \
+            --output evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml \
+            --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+            "$URL" > evidence/imf_bop_dsd/transfer_metadata.txt
+          CURL_STATUS=$?
+          set -e
+          printf 'curl_exit=%s\n' "$CURL_STATUS" >> evidence/imf_bop_dsd/transfer_metadata.txt
+          if [ "$CURL_STATUS" -ne 0 ]; then
+            echo "Official DSD acquisition failed; preserve diagnostics and upload artifact."
+            exit 1
+          fi
+          sha256sum evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml > evidence/imf_bop_dsd/SHA256SUMS
+
+      - name: Parse XML and produce component inventory
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, sys
+          import xml.etree.ElementTree as ET
+
+          root_dir = Path("evidence/imf_bop_dsd")
+          raw = root_dir / "IMF_BOP_DSD_2_6_0.xml"
+          if not raw.exists() or raw.stat().st_size == 0:
+              (root_dir / "qa_report.json").write_text(json.dumps({
+                  "status": "UNKNOWN", "reason": "Raw XML missing or empty",
+                  "raw_bytes": raw.stat().st_size if raw.exists() else 0
+              }, indent=2) + "\n")
+              sys.exit(1)
+
+          payload = raw.read_bytes()
+          digest = hashlib.sha256(payload).hexdigest()
+          try:
+              root = ET.fromstring(payload)
+          except ET.ParseError as exc:
+              (root_dir / "qa_report.json").write_text(json.dumps({
+                  "status": "FAIL", "reason": "Malformed XML",
+                  "sha256": digest, "error": str(exc)
+              }, indent=2) + "\n")
+              sys.exit(1)
+
+          def local(tag):
+              return tag.rsplit("}", 1)[-1]
+
+          elements = list(root.iter())
+          dsd_nodes = [e for e in elements if local(e.tag) == "DataStructure"]
+          components = []
+          codelists = []
+          for e in elements:
+              name = local(e.tag)
+              if name in {"Dimension", "TimeDimension", "MeasureDimension",
+                          "PrimaryMeasure", "Attribute"}:
+                  components.append({
+                      "component_type": name,
+                      "id": e.attrib.get("id"),
+                      "urn": e.attrib.get("urn"),
+                      "annotations": [x.text for x in e.iter() if local(x.tag) == "AnnotationText" and x.text]
+                  })
+              elif name == "Codelist":
+                  codes = [x.attrib.get("id") for x in e.iter() if local(x.tag) == "Code"]
+                  codelists.append({
+                      "id": e.attrib.get("id"), "agencyID": e.attrib.get("agencyID"),
+                      "version": e.attrib.get("version"), "code_count": len(codes),
+                      "codes": codes
+                  })
+
+          inventory = {
+              "root_element": local(root.tag),
+              "dsd_count": len(dsd_nodes),
+              "dsd_ids": [e.attrib.get("id") for e in dsd_nodes],
+              "component_count": len(components),
+              "components": components,
+              "codelist_count": len(codelists),
+              "codelists": codelists,
+              "raw_bytes": len(payload),
+              "raw_sha256": digest
+          }
+          (root_dir / "component_inventory.json").write_text(
+              json.dumps(inventory, indent=2, ensure_ascii=False) + "\n"
+          )
+          valid = len(payload) > 0 and len(dsd_nodes) >= 1 and len(components) >= 1
+          report = {
+              "status": "PASS" if valid else "FAIL",
+              "raw_bytes": len(payload), "raw_sha256": digest,
+              "dsd_count": len(dsd_nodes), "component_count": len(components),
+              "codelist_count": len(codelists),
+              "validation": "well-formed XML; DSD and component inventory present" if valid else "DSD/components missing"
+          }
+          (root_dir / "qa_report.json").write_text(json.dumps(report, indent=2) + "\n")
+          if not valid:
+              sys.exit(1)
+          PY
+
+      - name: Upload raw response and QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd-acquisition-${{ github.run_id }}
+          path: evidence/imf_bop_dsd/
+          if-no-files-found: warn
+          retention-days: 90
