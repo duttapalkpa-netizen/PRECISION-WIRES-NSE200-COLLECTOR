@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
-MARKER = re.compile(r"^L(?P<line>\d+)@P(?P<pdfpage>\d+):\s?(?P<text>.*)$")
+MARKER = re.compile(r"^L(?P<line>\d+)@P(?P<pdfpage>\d+)(?:-(?P<pdfpage_end>\d+))?:\s?(?P<text>.*)$")
 ROW = re.compile(r"^(?P<key>\d{4})\s+(?P<expr>\d{4}(?:\s*\(p\))?(?:\s*\+\s*\d{4}(?:\s*\(p\))?)*(?:\s*\+)?)\s*$", re.I)
 CONT = re.compile(r"^\d{4}(?:\s*\(p\))?(?:\s*\+\s*\d{4}(?:\s*\(p\))?)*(?:\s*\+)?\s*$", re.I)
 HEADER = re.compile(r"^(?:NIC\s*2025\s*Code|NIC\s*2008\s*Code)$", re.I)
@@ -68,7 +68,8 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
         raw = raw.rstrip("\n")
         mm = MARKER.match(raw)
         if mm:
-            line_no, pdf_page, text = int(mm.group("line")), int(mm.group("pdfpage")), mm.group("text").strip()\n            pdf_page_end = int(mm.group("pdfpage_end")) if mm.group("pdfpage_end") else pdf_page
+            line_no, pdf_page, text = int(mm.group("line")), int(mm.group("pdfpage")), mm.group("text").strip()
+            pdf_page_end = int(mm.group("pdfpage_end")) if mm.group("pdfpage_end") else pdf_page
         else:
             line_no, pdf_page, text, pdf_page_end = None, None, raw.strip(), None
         if "CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES" in text:
