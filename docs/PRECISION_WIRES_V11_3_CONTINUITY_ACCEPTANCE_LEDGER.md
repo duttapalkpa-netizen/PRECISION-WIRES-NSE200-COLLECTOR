@@ -310,3 +310,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Current workflow has the always-upload change in commit 646015c587509779510acf18ba612aa402d15d52. Parser implementation current head includes regex correction commit 87666f35dd322dd60094126677e9f8cb4fcbdc17. Parser CI is green; the actual 463-row source parse is still unverified.
 - Next action is one single manual dispatch of NIC Concordance Source Acquisition on main. After that, inspect the resulting artifact first (PDF, source_manifest.json, 7-page text extract); then validate parser output and audit. Do not run additional parser CI or repeat source acquisition unless code changes or evidence indicates a new issue.
 - Status: live PDF acquisition 100% from prior run; SHA-256 computation 100% but retained artifact pending; 7-page extraction 100%; parser regression 22/22 PASS; durable source evidence artifact NOT_DONE; real 463-row extraction/audit NOT_DONE; independent reconciliation NOT_DONE.
+
+
+## 2026-11-15 — Latest continuation check: manual dispatch still outstanding
+- Queried the latest 20 repository Actions runs. No new NIC Concordance Source Acquisition run exists after the parser repair and artifact-upload `if: always()` commit. Latest parser test run remains 43688778740 SUCCESS (22/22); no duplicate tests were run.
+- Re-opened `.github/workflows/nic_concordance_source_acquisition.yml` at current main: workflow_dispatch trigger confirmed; strict parser step precedes artifact upload, and upload has `if: always()`, artifact path `nic_concordance_source/`, retention 90 days, job timeout 5 minutes.
+- There is no available GitHub dispatch action in the connected tool set; dispatch cannot be initiated from this session. Do not claim a run was started. Next required step remains the user's single manual `Run workflow` action on main. After the run, inspect artifact existence and contents before judging 463-row acceptance.
+- No code changed in this checkpoint; no tests rerun, no duplicate source fetch, no production selector/ranking/pressure-fade/672 changes, and no spend.
