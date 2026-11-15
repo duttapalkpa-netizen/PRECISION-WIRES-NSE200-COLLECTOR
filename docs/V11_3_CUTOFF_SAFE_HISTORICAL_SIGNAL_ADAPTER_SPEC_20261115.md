@@ -12,6 +12,9 @@ This is a specification only. It does not implement an adapter, create signals, 
 - `pipeline/v11_3_abcd_e.py` currently sorts the processed dataset by symbol/date, calculates features, then uses `g.iloc[-1]` once per symbol. It writes latest candidates and top-30 outputs, not a historical cutoff ledger.
 - The V11.3 candidate script optionally loads `outputs/backtest/behavioral_dna_library.json`; its `hit10_h3` rates contribute to the calibration component of the candidate score.
 - The inspected library is produced by the V11.4 walk-forward workflow from future outcome fields (including FUT1/FUT3/FUT5 highs). A full-sample library must never be reused at earlier cutoffs.
+- The V11.4 workflow's final state assignment (`_state_transition_v4`) is not the same function as V11.3's `classify_state`; therefore V11.4 DNA state rates cannot be joined to V11.3 states by label or assumed equivalence.
+- The current V11.4 DNA library is aggregated from the Top-30 `pred` rows per cutoff, not the full eligible universe. Its `samples` field is therefore not a general per-state population count and cannot establish the approved 50-observation threshold for V11.3 state calibration.
+- The inspected `future_outcomes` implementation uses `shift(-1).rolling(h, min_periods=1).max()`. Its rolling-window alignment and partial-window behavior must be tested against a deterministic hand-calculated fixture before treating `FUT3_HIGH_PCT` as the exact next-three-session high outcome. Do not silently assume it represents T+1 through T+3.
 - The isolated cost-aware replay consumes OHLC rows with `SYMBOL,DATE,OPEN_PRICE,HIGH_PRICE,LOW_PRICE,CLOSE_PRICE,TTL_TRD_QNTY` and signals with `CUT_OFF,SYMBOL`.
 - A 200-session raw archive and its raw-file manifest have already passed scoped acceptance. Do not reacquire or re-merge this archive for this task.
 
@@ -45,6 +48,8 @@ The threshold policy is approved, but accepted scored signals and replay remain 
 - Preserve raw source files unchanged. No synthetic data, fabricated timestamps, paid APIs, or external contacts.
 
 ## 6. Fail-closed validation gates
+A0. State parity and population integrity: implement the exact V11.3 `classify_state` on cutoff-only features; prove state labels match V11.3 at each cutoff. Do not import V11.4 `_state_transition_v4` labels or its Top-30-only `samples` counts as V11.3 calibration evidence.
+A00. H+3 outcome semantics: verify the existing `future_outcomes` window against a deterministic fixture for T+1, T+2, and T+3, including incomplete tails. Record any discrepancy as a source defect; do not silently change the production or reference workflow.
 A. Cutoff isolation: mutate or append post-cutoff rows and prove the signal output at C is byte-identical.
 B. Maturity isolation: outcomes whose H+3 window ends after C must not affect calibration at C.
 C. Future-DNA exclusion: reject full-sample `behavioral_dna_library.json` inputs and any V11.4 future-outcome feature leakage.
@@ -66,7 +71,7 @@ H. Replay precondition: no replay until all policy decisions are approved, all g
 - V11.4 predictions as substitute: REJECTED.
 - Adapter specification: UPDATED with approved minimum 50 matured observations per state.
 - Adapter implementation/tests: NOT_STARTED.
-- Historical cost-aware replay: BLOCKED / NOT_STARTED; H+3 outcome/maturity semantics require independent code audit.
+- Historical cost-aware replay: BLOCKED / NOT_STARTED; H+3 outcome/maturity semantics, state-taxonomy parity, and Top-30 sample bias require independent audit.
 - Independent replay reconciliation: NOT_STARTED.
 
 ## 9. Safety
