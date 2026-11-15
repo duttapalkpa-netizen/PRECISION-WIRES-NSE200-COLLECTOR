@@ -1114,3 +1114,36 @@ Progress:
 - Overall PRECISION-WIRES V11.3 project progress remains NOT_CALCULABLE pending reconciled denominators and approved weights.
 
 Integrity: no changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, source CSV, manifests, or historical artifacts.
+
+
+## RBI BPM6 annual spot-check expansion — 2018–2023 (2026-11-15)
+
+Method: use one calendar Q2 observation per year (Apr–Jun), compare RBI's published whole USD-million Portfolio Investment Net figures with the existing archived IMF quarterly CSV. Mapping and acceptance rule unchanged: RBI "Portfolio Investment by India" net is negated for IMF asset net acquisition; RBI "Portfolio Investment in India" net is used as IMF liability net incurrence; absolute difference <=0.5 USD million.
+
+Official RBI sources and values:
+- 2018-Q2: RBI Table 198 in official publication dated 18 Sep 2020, https://www.rbi.org.in/scripts/PublicationsView.aspx?id=19931. Portfolio Investment in India net -9,106; by India net +961.
+- 2019-Q2 and 2020-Q2: RBI Bulletin dated 12 Oct 2020, Table 40, https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=19879. In India net +5,156 / +1,098; by India net -314 / -456.
+- 2022-Q2 and 2023-Q2: RBI Bulletin dated 19 Oct 2023, Table 40, https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=22169. In India net -14,659 / +16,089; by India net +29 / -358.
+- 2021-Q2: no exact official USD-million BPM6 row located in this bounded search; NOT_RETRIEVED, not inferred.
+
+IMF CSV comparisons (USD million; raw OBS_VALUE / 10^6):
+| Period | RBI asset comparator | IMF asset | abs diff | RBI liability comparator | IMF liability | abs diff | Result |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 2018-Q2 | -961 | -960.621114404864 | 0.378885595136 | -9106 | -9105.960000000043 | 0.039999999957 | PASS_WITH_ROUNDING |
+| 2019-Q2 | +314 | +313.590331450881 | 0.409668549119 | +5156 | +5156.281990468391 | 0.281990468391 | PASS_WITH_ROUNDING |
+| 2020-Q2 | +456 | +455.928583274424 | 0.071416725576 | +1098 | +1097.593483845092 | 0.406516154908 | PASS_WITH_ROUNDING |
+| 2022-Q2 | -29 | -28.778465336278 | 0.221534663722 | -14659 | -14658.870488236891 | 0.129511763109 | PASS_WITH_ROUNDING |
+| 2023-Q2 | +358 | +358.405859195828 | 0.405859195828 | +16089 | +16089.227782268420 | 0.227782268420 | PASS_WITH_ROUNDING |
+
+Outcome: 10/10 additional side comparisons PASS_WITH_ROUNDING; no mismatch and no tolerance widening. The historical RBI source publication labels differ by year (Table 198/40); all rows above are explicitly identified as BPM6 standard presentation in USD million. 2021 remains an evidence gap.
+
+Cumulative status:
+- 2016–2017 extension: 4/4 PASS_WITH_ROUNDING.
+- 2018, 2019, 2020, 2022, 2023 extension: 10/10 PASS_WITH_ROUNDING.
+- Four 2024–2025 quarters from prior audit: 8/8 PASS_WITH_ROUNDING.
+- Total directly checked: 11 quarters, 22/22 side comparisons PASS_WITH_ROUNDING.
+- Annual coverage of 2015–2025 matrix: 7/11 years = 63.6% (2016, 2017, 2018, 2019, 2020, 2022, 2023); 2015, 2021, 2024, 2025 are not counted in this annual-Q2 matrix. Note: 2024–25 have separate quarter checks but do not replace the defined annual Q2 sampling design.
+- 2021 Q2 source: NOT_RETRIEVED.
+- RBI raw quarterly DBIE export: NOT_RETRIEVED; IMF vintage: NOT_READY / NOT_VERIFIED.
+- IMF BOP workstream remains 5/7 = 71.4%; overall V11.3 project progress remains NOT_CALCULABLE.
+- IMF CSV unchanged; no raw source export, manifest, sidecar or production artefact modified. No source promotion or full-period equivalence claim.
