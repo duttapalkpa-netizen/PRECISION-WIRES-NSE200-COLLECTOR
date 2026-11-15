@@ -852,3 +852,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next: inspect DBIE Table 42 actual export/schema and two dated RBI Bulletin snapshots with overlapping quarters. Require exact separate portfolio assets/liabilities and documented sign/frequency mapping before comparison.
 - Existing IMF CSV, manifest, sidecars, raw responses and gates unchanged.
 - Audit report update commit: d0398f3947ace3aea09691d733b98d312347128a.
+
+
+## 2026-11-15 — RBI Table 42 live publication snapshots and DBIE export-boundary audit
+- Inspected actual official RBI Table 42 bulletin pages, moving beyond the earlier handbook-only source-contract check. The table visibly contains quarterly USD-million Credit/Debit/Net columns and financial-account Portfolio Investment total, Portfolio Investment in India/by India, equity/fund shares and debt securities.
+- Two dated RBI Bulletin pages (25 Sep 2026 and 23 Oct 2026) overlap on Apr–Jun 2025 and show identical displayed values: total portfolio 146339/144731/1608; in India 145201/142720/2481; by India 1138/2011/−872; equity 123636/118245/5391; debt 21565/24475/−2910 (Credit/Debit/Net; US$ million). This is cross-publication consistency only, not evidence of a revision event or raw vintage snapshot pair.
+- 22 Jul 2026 Table 42 page provides Jan–Mar 2025 and Jan–Mar 2026 (P), but is not used as an overlapping-period revision comparison with Apr–Jun 2025.
+- DBIE surfaced page is annual (91 rows; 31-03-2012–31-03-2026) despite being labelled standard BPM6 USD BOP; it is not accepted as the quarterly Table 42 export. CSV/JSON links visible, raw export/schema NOT_RETRIEVED.
+- Actual Table 42 schema view PASS; two dated bulletin pages with overlapping quarter PASS; DBIE quarterly raw export NOT_RETRIEVED; exact mapping of RBI credit/debit and "in India/by India" to IMF P_F/A_NFA_T/L_NIL_T UNKNOWN / NOT_ESTABLISHED. No direct sign conversion or series merge permitted.
+- RBI remains independent parallel-source lineage, not an IMF vintage. No IMF gate promotion, no source data/CSV/manifest/sidecar mutation, no production change or PR merge.
+- Bounded inspection task 100%; RBI export/mapping readiness NOT_READY; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 progress NOT_CALCULABLE.
+- Sources: RBI Table 42 25 Sep 2026 https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495 ; 23 Oct 2026 https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566 ; 22 Jul 2026 https://rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24352 ; DBIE annual dataset https://dbie.rbihub.in/tables?table=external_sector.r814_standard_presentation_of_india_s_balance_of_payments_as_pe .
