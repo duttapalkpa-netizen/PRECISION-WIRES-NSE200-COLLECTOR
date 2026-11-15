@@ -922,3 +922,39 @@ Sources inspected:
 Bounded audit progress: 100% of this defined inspection complete. RBI parallel-source raw export/mapping readiness: NOT_READY. IMF BOP workstream remains 5/7 = 71.4%; October 2025 IMF PDF package remains 25%; full V11.3 project progress remains NOT_CALCULABLE.
 
 No paid services, credentials, external contact, synthetic data, CSV/manifest/sidecar mutation, PR merge, or production change.
+
+## 2026-11-15 — RBI Table 42 to IMF BPM6 financial-account direction/sign crosswalk audit
+
+### Official evidence newly checked
+- Re-inspected RBI's April 2026 Comprehensive Guide for Current Statistics and its Table 42 contract: quarterly, US$ million, BPM6 classification, financial account by functional classification, credit/debit/net presentation, residence principle, subject to revision.
+- Inspected actual RBI Bulletin Table 42 values for Apr–Jun 2025: Portfolio Investment total (Credit 146339, Debit 144731, Net 1608); Portfolio Investment in India (145201, 142720, 2481); Portfolio Investment by India (1138, 2011, −872); equity/fund shares and debt securities are separately shown beneath Portfolio Investment in India.
+- RBI's official Balance of Payments Manual for India explains that portfolio investment "in India" includes nonresident investment into India and separately identifies India's portfolio investment abroad. This supports a directional interpretation: "in India" relates to nonresident claims on Indian residents (liability-side economic direction); "by India" relates to resident holdings/claims abroad (asset-side economic direction). This is a conceptual direction clue, not an approved numerical crosswalk to IMF A_NFA_T/L_NIL_T observations.
+- IMF BPM6 Compilation Guide and IMF BOPCOM sign-convention note state financial-account flows are recorded net separately for assets and liabilities: positive means net increase, negative means net decrease; financial-account balance is assets minus liabilities. This is not the same as treating a published Credit-minus-Debit net column as either an asset or liability series without a bridge.
+
+### Critical mismatch / mapping decision
+- RBI Table 42 publishes Credit, Debit and Net (= credit less debit) for the relevant functional categories. IMF A_NFA_T and L_NIL_T represent net acquisition of financial assets and net incurrence of liabilities, each signed by increase/decrease.
+- RBI labels provide a plausible direction partition ("by India" ↔ asset direction; "in India" ↔ liability direction), but available official Table 42 guide/manual material does not provide an explicit equation mapping its Credit/Debit/Net columns to the IMF net-acquisition/net-incurrence series. The two net conventions must not be equated by assumption.
+- RBI Table 42 total portfolio category and its India/by-India split are present. However the observed sub-breakdown (equity/debt) is shown under Portfolio Investment in India; the inspected page does not establish a matching equity/debt split under Portfolio Investment by India. Scope symmetry with IMF P_F aggregate is therefore not established.
+- The old RBI manual's portfolio investment definitions are useful for residency/direction interpretation, but do not substitute for a current machine-readable sign-conversion rule or exact mapping of IMF indicator P_F.
+
+### Status
+- RBI Table 42 portfolio functional-category and directional-label inspection: PASS.
+- Conceptual India-vs-abroad direction interpretation: PARTIAL (not a series-level mapping).
+- Exact RBI Credit/Debit/Net → IMF A_NFA_T/L_NIL_T signed-flow crosswalk: NOT_ESTABLISHED / UNKNOWN.
+- Matching P_F scope and symmetrical instrument coverage: NOT_ESTABLISHED.
+- DBIE quarterly raw export and schema: NOT_RETRIEVED (previous annual dataset rejected as wrong frequency).
+- Decision: DO NOT map, sign-flip, merge or use RBI Table 42 values as IMF A_NFA_T/L_NIL_T. Keep RBI as separate parallel source. No new acceptance-gate promotion.
+
+### Next safe action
+Obtain an official RBI technical note or raw quarterly DBIE schema that explicitly defines the financial-account Credit/Debit columns and the assets/liabilities mapping. In parallel, inspect the RBI Table 42 quarterly time-series publication route for raw headers and any direction flags. If no explicit bridge is exposed, record the crosswalk as NOT_ESTABLISHED and keep sources separate.
+
+Official sources:
+- RBI current statistics guide: https://www.rbi.org.in/scripts/PublicationsView.aspx?Id=24094
+- RBI Table 42 bulletin, 25 Sep 2026: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24495
+- RBI Balance of Payments Manual for India: https://www.rbi.org.in/scripts/PublicationsView.aspx?id=13013
+- IMF BPM6 Compilation Guide: https://data.imf.org/-/media/iData/External-Storage/Documents/FB1F86C7158646DDB554D0882F1F2A3B/en/3-BPM6-com-guide.pdf
+- IMF BOPCOM sign convention note: https://www.imf.org/external/pubs/ft/bop/2013/13-13.pdf
+
+Bounded crosswalk audit: 100% complete. Mapping gate remains NOT_ESTABLISHED; RBI raw quarterly export remains NOT_RETRIEVED; IMF BOP workstream 5/7=71.4%; October 2025 IMF PDF package 25%; overall V11.3 progress NOT_CALCULABLE.
+
+No paid sources, credentials, synthetic data, fabricated mapping, data-file mutation, PR merge or production change.
