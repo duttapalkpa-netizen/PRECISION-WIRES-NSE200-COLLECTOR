@@ -79,7 +79,7 @@ class AcquisitionTests(unittest.TestCase):
                     MODULE.acquire_pdf(Path(td) / "source.pdf")
 
     def test_extract_requires_exact_seven_pages_and_writes_page_markers(self):
-        fake_text = "\\f".join([f"page-{n}" for n in range(7)]) + "\\f"
+        fake_text = "\f".join([f"page-{n}" for n in range(7)]) + "\f"
         with tempfile.TemporaryDirectory() as td:
             output = Path(td) / "extract.txt"
             completed = type("Completed", (), {"stdout": fake_text})()
@@ -92,7 +92,7 @@ class AcquisitionTests(unittest.TestCase):
             self.assertEqual(lines[-1], "L7@P262: page-6")
 
     def test_extract_rejects_incomplete_page_range(self):
-        fake_text = "\\f".join(["page-1", "page-2"]) + "\\f"
+        fake_text = "\f".join(["page-1", "page-2"]) + "\f"
         with tempfile.TemporaryDirectory() as td:
             with patch.object(MODULE.subprocess, "run", return_value=type("Completed", (), {"stdout": fake_text})()):
                 with self.assertRaisesRegex(ValueError, "Expected 7 extracted pages"):
