@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-FILE_RE = re.compile(r"^sec_bhavdata_full_(\\d{8})\\.csv$")
+FILE_RE = re.compile(r"^sec_bhavdata_full_(\d{8})\.csv$")
 
 
 def discover_shards(root: Path):
@@ -31,7 +31,6 @@ def merge(root: Path, output: Path, expected: int) -> int:
     if not shards:
         blockers.append(f"No shard artifacts with sessions.txt and raw CSVs found under {root}")
     collected = {}
-    listed_all = []
     for folder, sessions_path, files in shards:
         listed = [line.strip() for line in sessions_path.read_text(encoding="utf-8").splitlines() if line.strip()]
         if len(listed) != len(set(listed)):
@@ -63,14 +62,13 @@ def merge(root: Path, output: Path, expected: int) -> int:
                 blockers.append(f"duplicate session across shards: {day}")
                 continue
             collected[day] = csv_by_date[day]
-            listed_all.append(day)
         for day in sorted(set(csv_by_date) - set(listed)):
             blockers.append(f"{folder}: raw CSV {day} is absent from sessions.txt")
 
     if len(collected) != expected:
         blockers.append(f"expected exactly {expected} unique sessions, found {len(collected)}")
     if blockers:
-        print("\\n".join(f"BLOCKER: {item}" for item in blockers), file=sys.stderr)
+        print("\n".join(f"BLOCKER: {item}" for item in blockers), file=sys.stderr)
         return 1
 
     output.mkdir(parents=True, exist_ok=True)
@@ -83,7 +81,7 @@ def merge(root: Path, output: Path, expected: int) -> int:
         if target.stat().st_size != source.stat().st_size:
             print(f"BLOCKER: copied byte-size mismatch for {source.name}", file=sys.stderr)
             return 1
-    (output / "sessions.txt").write_text("\\n".join(sorted(collected)) + "\\n", encoding="utf-8")
+    (output / "sessions.txt").write_text("\n".join(sorted(collected)) + "\n", encoding="utf-8")
     print(f"MERGED_SHARDS={len(shards)}")
     print(f"UNIQUE_SESSIONS={len(collected)}")
     print(f"FIRST_SESSION={min(collected)}")
