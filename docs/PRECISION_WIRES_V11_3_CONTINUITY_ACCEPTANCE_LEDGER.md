@@ -829,3 +829,14 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Do not retry the same redirect or repeat BOPSY notes discovery. Search only for an independently indexed official document/file for this release; otherwise close this avenue NOT_RETRIEVED and pivot to a distinct official archive source.
 - No data files or accepted gates changed.
 - Audit report update commit: 55ad5c20043b81b54da67b5c223a9358a6091d2f.
+
+## 2026-11-15 — IMF CPIS/PIP adjacent-dataset non-equivalence audit
+
+- Identified official IMF dataset `IMF.STA:PIP`, "Portfolio Investment Positions by Counterpart Economy (formerly CPIS)", and Foreign Portfolio Investments Breakdown dashboard.
+- Official description: holdings/positions in portfolio securities by counterpart economy and instrument (equity, long-term debt, short-term debt); annual and half-yearly/semester.
+- Existing India BOP panel measures financial-account transaction flows: A_NFA_T / L_NIL_T, P_F, USD, annual/quarterly. PIP/CPIS measures positions/stocks, not transactions/flows.
+- IMF BOP Introductory Notes distinguish financial-account net acquisition/incurrence transactions from IIP positions at a point in time; IIP changes also reflect revaluations and other volume changes.
+- Decision: PIP/CPIS is NOT_EQUIVALENT and REJECTED as a second vintage, flow backfill or revision comparator. It may only support a separately approved stock/position analysis.
+- No changes to existing data, mapping, acceptance gates or vintage status; BOP revision readiness remains UNKNOWN / NOT_READY.
+- Next: only seek an archived official BOP flow country table/raw response matching the exact four keys; keep PIP out of current flow pipeline.
+- Audit report update commit: 3f0559e7ee90ee8b09ba4944493355316e9d6299.
