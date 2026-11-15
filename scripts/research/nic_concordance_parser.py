@@ -16,7 +16,7 @@ from typing import Iterable
 
 MARKER = re.compile(r"^L(?P<line>\d+)@P(?P<pdfpage>\d+):\s?(?P<text>.*)$")
 ROW = re.compile(r"^(?P<key>\d{4})\s+(?P<expr>\d{4}(?:\s*\(p\))?(?:\s*\+\s*\d{4}(?:\s*\(p\))?)*(?:\s*\+)?)\s*$", re.I)
-CONT = re.compile(r"^\d{4}(?:\s*\(p\))?(?:\s*\+\s*\d{4}(?:\s*\(p\))?)*\s*$", re.I)
+CONT = re.compile(r"^\d{4}(?:\s*\(p\))?(?:\s*\+\s*\d{4}(?:\s*\(p\))?)*(?:\s*\+)?\s*$", re.I)
 HEADER = re.compile(r"^(?:NIC\s*2025\s*Code|NIC\s*2008\s*Code)$", re.I)
 SOURCE_URL = "https://www.mospi.gov.in/uploads/publications_reports/publications_reports1763457214315_c3e5d4f3-8e25-4775-85e3-ad42d571652f_NIC_2025_Final.pdf"
 
