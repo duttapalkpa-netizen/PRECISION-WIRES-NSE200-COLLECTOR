@@ -450,3 +450,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Do not modify the protected collector workflow or production builder in this task. Record this as a source-integrity blocker requiring an isolated audit/check against the original raw files and the uploaded artifact before any replay.
 - Workflow artifact API listing could not be retrieved through the connected GitHub interface in this audit; no artifact ID or run was invented. Existing CI status for PR #38 remains NOT_VERIFIED; no PASS claim.
 - Progress: input-path/source-flow audit 100%; artifact bytes/hash verification 0%; raw-to-processed duplicate reconciliation 0%; global session/date reconciliation 0%; signal-file provenance verification 0%; corrected replay 0%; independent ledger reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Read-only raw-to-processed integrity audit implemented
+- Added `scripts/research/audit_raw_processed_integrity.py`, a read-only audit that hashes each raw Bhavcopy file and processed dataset; derives session dates from raw filenames; detects duplicate raw and processed SYMBOL/DATE keys; compares raw versus processed session-date sets and distinct symbol/date key sets; and reports symbol-level session gaps without fabricating rows.
+- Added five focused tests in `tests/research/test_raw_processed_integrity.py`: exact match PASS; duplicate raw key FAIL; missing processed date/key FAIL; extra processed date FAIL; symbol session gap reported without false failure or synthetic fill.
+- Wired both new files into the existing 5-minute research-only unittest workflow. No production collector, builder, QA, selector, ranking, pressure-fade, CORE-672, or main workflow changed.
+- Commits: audit script initial `7158cec7e1eb1d7c1f736a6453aa0958b452de53`; test `55a4812f15b302221f65febff48894ea1199d6cc`; newline correction `d6e736fafc67c698966feb9bdae173e1ad684a3f`; workflow wiring `22e4ca4c618c5e36c34968215333af3ca83741b3`.
+- Important interpretation: a symbol-level missing session is reported as a coverage gap but does not automatically fail the whole raw-to-processed key audit, because listings/suspensions/source availability require separate evidence. No missing row is synthesized. The audit is not yet run against the real Actions artifact because artifact ID/bytes are not available in the current connected session.
+- CI status is pending/not verified; source files and tests are committed but no runtime PASS is claimed.
+- Progress: audit utility implementation 100%; five test cases authored 100%; 5-minute workflow wiring 100%; GitHub ledger update 100%; CI runtime 0%/pending; actual artifact download/hash audit 0%; corrected replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
