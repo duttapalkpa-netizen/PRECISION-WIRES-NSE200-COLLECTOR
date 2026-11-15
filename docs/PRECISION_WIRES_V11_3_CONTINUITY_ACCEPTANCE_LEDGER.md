@@ -741,3 +741,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Progress: test import-path defect identified/fixed 100%; bounded helper harness 7/7 PASS; exact repository checkout test execution NOT_VERIFIED; live NSE capture NOT_RUN; market-scope reconciliation BLOCKED. Do not claim full utility test suite PASS.
 - No production code, collector, workflow, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12, engines A–E, default branch or PR state changed. No CI dispatched, no merge, no paid API/spend.
 - Next action: run the exact committed branch checkout in a network-enabled GitHub Actions runner or developer environment; only after exact tests pass, attempt a single live NSE capture. Do not repeat prior audits or helper harness unless source changes.
+
+## 2026-11-16 — NSE FII/DII capture utility: exception-message URL redaction
+- Further exact-source review found that the capture manifest serialized raw exception messages. Requests exceptions may embed full URLs with query parameters. Changed the error record to retain only exception class plus a fixed safe diagnostic; raw exception text is no longer written.
+- Source commit `6eb13368faae01c4b054dcfb6df74d835c25f246`; source blob `534a290ab5ec244150e97cce1b92de9c7076dea5`.
+- Utility documentation commit `78e3a117b5fc992eb973b1221bb8775ecc210281`; blob `3e51a54f3ad57b4d3f1b1a8d3ddfec57e79d2b83`.
+- Exact committed tests NOT_RUN after this change; helper harness 7/7 from previous iteration is not evidence for this modified source. Live NSE capture NOT_RUN. No production workflow/code, selector, score, pressure fade, CORE-672, engines, or default branch changed.
