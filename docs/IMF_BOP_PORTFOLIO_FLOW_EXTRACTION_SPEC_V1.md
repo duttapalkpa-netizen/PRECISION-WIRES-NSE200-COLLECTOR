@@ -190,3 +190,20 @@ Official catalogue pages:
 5. The registrations page is discovery evidence only; no provider XML, national observations or IMF observations were downloaded in this step.
 
 Audit status: DATAFLOW DISCOVERY = PASS; exact dataflow-to-DSD linkage = UNKNOWN; constraint payload parsed = UNKNOWN; observations = NOT DONE.
+
+## 2D. Metadata acquisition workflow expansion (2026-11-15)
+
+The short, manual-dispatch acquisition workflow was expanded to request three version-pinned metadata artefacts in one run:
+1. BOP DSD `IMF:BOP:2.6.0` (existing request retained);
+2. Dataflow `IMF:BOP_BPM6:1.0`;
+3. Content constraint `IMF:BOP_BP6_CONSTRAINT:1.0`.
+
+The SDMX REST resource for the constraint is `contentconstraint` (not the generic word `constraint`); the workflow URL was corrected accordingly after checking the IMF SDMX Central structure-service resource list. Each new metadata request stores its request URL, response headers, transfer metadata, raw XML, SHA-256 and a parseability/element-inventory report. The job timeout remains five minutes and no API key or paid service is used.
+
+Workflow file: `.github/workflows/imf_bop_dsd_acquisition.yml`.
+- Research overlay branch commit: `9feb0c4897ea22ca2d4154e8c440c94e03c7b389`.
+- PR #34 registration branch commit: `6c0353eb809af8d4c288666961abce9c2b395179`.
+- Both branches were updated from the same workflow content. The PR remains draft/unmerged; therefore no run has yet been triggered from the default branch.
+- Workflow execution, HTTP response validation, raw XML checksums and component inventory remain NOT DONE until the workflow is registered on the default branch and manually dispatched.
+
+This expansion does not change any production signal or use registration rows as observation data.
