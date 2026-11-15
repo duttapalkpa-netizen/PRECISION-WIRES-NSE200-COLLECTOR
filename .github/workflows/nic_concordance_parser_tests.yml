@@ -1,0 +1,34 @@
+name: NIC Concordance Parser Tests
+
+on:
+  push:
+    paths:
+      - "scripts/research/nic_concordance_parser.py"
+      - "tests/research/test_nic_concordance_parser.py"
+      - ".github/workflows/nic_concordance_parser_tests.yml"
+  pull_request:
+    paths:
+      - "scripts/research/nic_concordance_parser.py"
+      - "tests/research/test_nic_concordance_parser.py"
+      - ".github/workflows/nic_concordance_parser_tests.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nic-concordance-parser-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parser-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run bounded parser regression suite
+        run: python -m unittest discover -s tests/research -p "test_nic_concordance_parser.py" -v
