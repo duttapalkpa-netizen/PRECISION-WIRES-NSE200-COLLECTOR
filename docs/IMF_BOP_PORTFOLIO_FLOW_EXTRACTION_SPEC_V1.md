@@ -263,3 +263,12 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Added a namespace-qualified SDMX 2.1 regression fixture covering included and excluded dimensions, a TIME_PERIOD TimeRange with inclusive/exclusive boundaries, and an Attribute value.
 - Expanded runtime QA inventory to retain per-region include status, each KeyValue id/include/Value list/TimeRange boundaries, and Attribute id/include/Value list. This avoids treating a mere CubeRegion count as complete dimensional coverage evidence.
 - Verification: branch file re-fetched and confirmed to contain the fixture and expanded inventory; job timeout remains 5 minutes. GitHub Actions runtime has NOT been dispatched; fixture execution and live IMF response validation remain NOT DONE. Do not mark the IMF metadata runtime gate PASS from this static commit alone.
+
+
+## 2I. Local execution of CubeRegion regression fixture (2026-11-15)
+
+- Re-fetched the exact committed workflow source and extracted the committed SDMX-ML 2.1 ContentConstraint fixture step without modifying it.
+- Executed the fixture's Python assertions locally against the namespace-qualified XML sample.
+- Result: PASS for exact ContentConstraint ID lookup, one CubeRegion, FREQ included value, REF_AREA excluded value, TIME_PERIOD StartPeriod/EndPeriod with inclusive/exclusive flags, and UNIT_MEASURE Attribute value.
+- This validates the fixture's parser assertions locally only. It is not a GitHub Actions run, XSD validation of the live IMF response, or evidence that IMF's live constraint has these exact values.
+- No live acquisition or production change was performed. PR #34 remains unmerged; workflow dispatch is still blocked pending authorized registration on the default branch.
