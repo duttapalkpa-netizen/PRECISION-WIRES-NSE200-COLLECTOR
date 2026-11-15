@@ -71,6 +71,25 @@ class ParserTests(unittest.TestCase):
         self.assertFalse(report["source_bounds_pass"])
         self.assertEqual(report["acceptance"], "UNKNOWN_BLOCKED")
 
+    def test_unrecognized_three_digit_numeric_token_fails_closed(self):
+        lines = [
+            "L10330@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+            "L10331@P256: 0111 0111",
+            "L10332@P256: 123",
+        ]
+        with self.assertRaisesRegex(ValueError, "Unparsed numeric source line 10332"):
+            parse_source_lines(lines)
+
+    def test_matching_standalone_printed_page_number_is_metadata(self):
+        lines = [
+            "L10330@P256: CONCORDANCE BETWEEN 4-DIGIT INDUSTRY CLASSES OF NIC-2025 AND NIC-2008",
+            "L10331@P256: 0111 0111",
+            "L10332@P256: 232",
+            "L10333@P256: 0112 0112",
+        ]
+        rows = parse_source_lines(lines)
+        self.assertEqual([r.nic2025_class_4d for r in rows], ["0111", "0112"])
+
     def test_duplicate_keys_block_acceptance(self):
         rows = self.parse("0111 0111\n0111 0111")
         report = audit(rows, expected_count=2)
