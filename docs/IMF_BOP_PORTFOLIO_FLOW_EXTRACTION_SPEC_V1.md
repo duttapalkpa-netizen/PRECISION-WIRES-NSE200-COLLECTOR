@@ -223,3 +223,17 @@ Latest workflow commits:
 - Workflow file SHA (before this documentation-only update): `40096faa971db93e9d154697ad24ffd1eb6f5d58`.
 
 Static content comparison confirms both branches contain identical workflow text. Runtime XML results are still NOT DONE: no workflow was dispatched because PR #34 remains draft/unmerged and no default-branch registration has been authorized. A structural PASS from this parser is not yet a claim about IMF's live metadata payload.
+
+## 2F. Exact DSD linkage and constraint-key inventory (2026-11-15)
+
+Further tightened the metadata gate to prevent a false PASS:
+- Dataflow `BOP_BPM6` must contain exactly one `DataStructureRef`, and it must exactly equal agency `IMF`, ID `BOP`, version `2.6.0`. Any missing, extra or different reference fails closed.
+- Constraint QA now inventories each `CubeRegion` include/exclude flag and its `KeyValue` dimension IDs and values. This is an evidence inventory, not a hard-coded assumption about countries or frequencies.
+- Both branch copies were re-fetched and compared byte-for-byte after the update.
+
+Latest workflow commits:
+- Research overlay: `543eca8a7ec402d241c03c05febf63cf0a1876f3`.
+- PR #34 branch: `f29b16d250627d4171cddaf44f5c0b1398487a06`.
+- Workflow blob SHA: `9f7563beab3e9e0f5d0b66cf91a7b49ff551d769`.
+
+Runtime acquisition remains NOT DONE. Exact reference acceptance is encoded as a test expectation derived from the version-pinned DSD source path; it is not claimed as a verified live dataflow result until the official XML is acquired and parsed.
