@@ -96,8 +96,11 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
             if line_no: current.source_lines.append(line_no)
             if pdf_page: current.pdf_pages.extend([pdf_page] + ([pdf_page_end] if pdf_page_end and pdf_page_end != pdf_page else []))
             continue
-        # Numeric content not understood as a row or justified continuation blocks parsing.
-        if re.fullmatch(r"\d{1,3}", text):
+        # A standalone printed page number is metadata only when it agrees with
+        # the PDF-page-to-printed-page offset documented for this source (P256 -> 232).
+        # Any other numeric token, including 1-3 digit values, is an unresolved
+        # table token and must fail closed rather than silently disappearing.
+        if re.fullmatch(r"\d{1,3}", text) and pdf_page is not None and text == str(pdf_page - 24):
             continue
         if re.match(r"^\d", text):
             raise ValueError(f"Unparsed numeric source line {line_no}: {text!r}")
