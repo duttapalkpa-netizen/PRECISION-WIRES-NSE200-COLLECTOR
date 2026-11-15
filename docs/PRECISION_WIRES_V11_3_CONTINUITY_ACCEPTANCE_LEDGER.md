@@ -819,3 +819,13 @@ Acceptance boundary: this proves membership-to-BOP-dimension-code mapping only. 
 - Next: pursue only an officially exposed dated country-table export if public and unauthenticated; require raw bytes, release evidence, exact keys and mapping. No hidden endpoint guesses/login bypass.
 - Existing CSV, manifest, sidecars and raw responses unchanged.
 - Audit report update commit: 58cd00d2e94fb9e813a7836014c5d97b08abaa97.
+
+## 2026-11-15 — IMF November 2024 BOP release-calendar evidence
+
+- Official IMF Data news page confirms BOPSY 2024 published 20 Nov 2024; country BPM6 tables cover 2011–2023 and 2005–2010 are in archive.
+- Same page identifies a separate quarterly BOP/IIP release for 2024 Q2, released 20 Nov 2024, with quarterly BOP/IIP coverage across 190 countries since 1945.
+- The official Q2 release link redirects to t.imfconnect.imf.org; following it timed out before revealing a public file/document. No raw country export or exact India series values retrieved.
+- Release-calendar evidence PASS; raw file retrieval NOT_RETRIEVED; India exact series mapping NOT_ESTABLISHED; second comparable snapshot and revision comparison NOT_ESTABLISHED. Release date alone is not a vintage proof.
+- Do not retry the same redirect or repeat BOPSY notes discovery. Search only for an independently indexed official document/file for this release; otherwise close this avenue NOT_RETRIEVED and pivot to a distinct official archive source.
+- No data files or accepted gates changed.
+- Audit report update commit: 55ad5c20043b81b54da67b5c223a9358a6091d2f.
