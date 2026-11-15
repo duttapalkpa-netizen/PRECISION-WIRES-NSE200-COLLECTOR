@@ -105,7 +105,8 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
             "EXECUTABLE":len(ex),"EXCLUDED":int((~g["EXECUTABLE"]).sum()),
             "EXCLUSION_REASONS":g.loc[~g["EXECUTABLE"],"DATA_STATUS"].value_counts().to_dict(),
             "GROSS_HIT_RATE":float((pd.to_numeric(ex["GROSS_RETURN_PCT"])>=target).mean()) if len(ex) else None,
-            "NET_TARGET_HIT_RATE":float(g.loc[g["EXECUTABLE"],"TARGET_HIT"].fillna(False).mean()) if len(ex) else None,
+            "TARGET_EXIT_RATE":float((ex["EXIT_REASON"]=="TARGET").mean()) if len(ex) else None,
+            "NET_PROFITABLE_TARGET_EXIT_RATE":float(((ex["EXIT_REASON"]=="TARGET") & (pd.to_numeric(ex["NET_RETURN_PCT"])>0)).mean()) if len(ex) else None,
             "MEAN_NET_RETURN_PCT":float(net.mean()) if len(net) else None,
             "MEDIAN_NET_RETURN_PCT":float(net.median()) if len(net) else None})
     manifest={"engine":"V11.3_RESEARCH_ONLY_COST_AWARE_OHLC_REPLAY","cost_pct_points":cost_pct,
