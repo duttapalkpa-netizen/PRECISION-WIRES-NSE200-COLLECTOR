@@ -5,6 +5,7 @@ on:
     paths:
       - "collector/nse_download.py"
       - "tests/test_nse_date_integrity.py"
+      - "tests/test_nse_bounded_shards.py"
       - ".github/workflows/nse_date_integrity_tests.yml"
   pull_request:
     paths:
@@ -33,4 +34,6 @@ jobs:
       - name: Install minimal runtime dependencies
         run: python -m pip install "pandas>=2.2,<3" "requests>=2.31,<3"
       - name: Run focused date-integrity regression tests
-        run: PYTHONPATH=. python -m unittest discover -s tests -p "test_nse_date_integrity.py" -v
+        run: |
+          PYTHONPATH=. python -m unittest discover -s tests -p "test_nse_date_integrity.py" -v
+          PYTHONPATH=. python -m unittest discover -s tests -p "test_nse_bounded_shards.py" -v
