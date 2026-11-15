@@ -115,7 +115,7 @@ def parse_source_lines(lines: Iterable[str]) -> list[Row]:
     return rows
 
 
-def audit(rows: list[Row], expected_count: int = 463) -> dict:
+def audit(rows: list[Row], expected_count: int = 463, source_line_min: int = 1, source_line_max: int | None = None) -> dict:
     keys = [r.nic2025_class_4d for r in rows]
     duplicates = sorted(k for k, n in Counter(keys).items() if n > 1)
     forward = {r.nic2025_class_4d: [c["code"] for c in r.components()] for r in rows}
@@ -128,7 +128,9 @@ def audit(rows: list[Row], expected_count: int = 463) -> dict:
     unique_ok = len(set(keys)) == len(keys)
     provenance_complete = all(r.source_lines and r.pdf_pages for r in rows)
     ordered_rows = all(rows[i].source_lines and rows[i + 1].source_lines and max(rows[i].source_lines) < min(rows[i + 1].source_lines) for i in range(len(rows) - 1))
-    source_bounds_ok = bool(rows) and min((min(r.source_lines) for r in rows if r.source_lines), default=-1) >= 10330 and max((max(r.source_lines) for r in rows if r.source_lines), default=-1) <= 10872
+    observed_min = min((min(r.source_lines) for r in rows if r.source_lines), default=-1)
+    observed_max = max((max(r.source_lines) for r in rows if r.source_lines), default=-1)
+    source_bounds_ok = bool(rows) and observed_min >= source_line_min and (source_line_max is None or observed_max <= source_line_max)
     terminal_key_ok = bool(keys) and keys[-1] == "9900"
     acceptance_ok = count_ok and unique_ok and not malformed_keys and provenance_complete and ordered_rows and source_bounds_ok and terminal_key_ok
     return {
@@ -151,7 +153,7 @@ def audit(rows: list[Row], expected_count: int = 463) -> dict:
     }
 
 
-def write_outputs(rows: list[Row], out_prefix: Path, expected_count: int = 463) -> dict:
+def write_outputs(rows: list[Row], out_prefix: Path, expected_count: int = 463, source_line_min: int = 1, source_line_max: int | None = None) -> dict:
     records = [r.as_record() for r in rows]
     out_prefix.parent.mkdir(parents=True, exist_ok=True)
     json_path = out_prefix.with_suffix(".json")
@@ -164,7 +166,7 @@ def write_outputs(rows: list[Row], out_prefix: Path, expected_count: int = 463) 
         writer.writeheader()
         for rec in records:
             writer.writerow({**rec, "nic2008_components": json.dumps(rec["nic2008_components"]), "source_printed_pages": json.dumps(rec["source_printed_pages"])})
-    report = audit(rows, expected_count)
+    report = audit(rows, expected_count, source_line_min, source_line_max)
     audit_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return {"json": str(json_path), "csv": str(csv_path), "audit": str(audit_path), **report}
 
@@ -174,9 +176,11 @@ def main() -> int:
     ap.add_argument("source_text", type=Path, help="UTF-8 text dump with L<number>@P<page>: prefixes")
     ap.add_argument("--out-prefix", type=Path, default=Path("nic2025_concordance"))
     ap.add_argument("--expected-count", type=int, default=463)
+    ap.add_argument("--source-line-min", type=int, default=1)
+    ap.add_argument("--source-line-max", type=int, default=None)
     args = ap.parse_args()
     rows = parse_source_lines(args.source_text.read_text(encoding="utf-8").splitlines())
-    result = write_outputs(rows, args.out_prefix, args.expected_count)
+    result = write_outputs(rows, args.out_prefix, args.expected_count, args.source_line_min, args.source_line_max)
     print(json.dumps(result, indent=2))
     return 0 if result["acceptance"] == "PASS" else 2
 
