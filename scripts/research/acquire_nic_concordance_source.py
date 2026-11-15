@@ -77,7 +77,7 @@ def extract_pages(pdf_path: Path, text_path: Path) -> dict:
     if len(pages) != expected_pages:
         raise ValueError(f"Expected {expected_pages} extracted pages, got {len(pages)}")
     out_lines = []
-    source_line = 10330
+    source_line = 1
     for offset, page_text in enumerate(pages):
         pdf_page = PDF_FIRST_PAGE + offset
         for line in page_text.splitlines():
