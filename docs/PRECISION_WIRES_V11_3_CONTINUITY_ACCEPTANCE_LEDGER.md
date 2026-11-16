@@ -390,3 +390,18 @@
 - Scoped progress: sign convention and field dictionary 100%; release-summary opposite-sign guard 100%; country-to-global numeric reconciliation 0%; raw payload acquisition and hash 0%; PIT vintage capture 0%; registry promotion 0%. Overall Overlay remains NOT_CALCULABLE.
 - Implementation rule for future ingestion: retain source-native `us_lt_total_net` sign and store an explicit semantic label such as `US_RESIDENT_NET_PURCHASES_OF_FOREIGN_SECURITIES_USD_MN`. If a feature is reoriented to India issuer-side attraction, document that it is a U.S.-resident source subset, not total India inflow. The release summary's `Foreign Securities, net U.S. sales` field must have its own separately named sign convention.
 - No parser, registry, seed observation, test, workflow or production file changed. No observations promoted; no synthetic values/timestamps; no paid service; ₹0 spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
+
+
+## 2026-11-16 — TIC India August 2026 row arithmetic integrity check
+
+- Follow-up to the already completed TIC sign-convention audit. Re-read the exact official live Table 2 August 2026 India row (country code 42102) and performed within-row arithmetic checks; no all-country aggregation was claimed.
+- Source row (USD millions): total holdings 353,705; total net U.S. purchases +256; total valuation change -420. Components: government bonds holdings 5,997 / net purchases -69 / valuation -26; corporate bonds 8,280 / +423 / +66; corporate stocks 339,428 / -98 / -460.
+- Three independent identities reconcile exactly:
+  1. Holdings: 5,997 + 8,280 + 339,428 = 353,705 (PASS).
+  2. Net purchases: -69 + 423 - 98 = +256 (PASS).
+  3. Valuation change: -26 + 66 - 460 = -420 (PASS).
+- This validates internal arithmetic of the displayed India row only. It does not establish the full Table 2 country universe, all-country sum, aggregate equivalence to the Treasury release's +$21.6bn, raw-file byte integrity, or point-in-time vintage.
+- Official source: `https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table2.txt` (header lines 0–7; India 2026-08 row at line 4888 in the current rendered text view). Treasury August release independently reports U.S. residents' net purchases of long-term foreign securities +$21.6bn in August, but no numeric all-country Table 2 reconciliation was performed: `https://home.treasury.gov/news/press-releases/sb0662/` (lines 337–340).
+- Decision: India August 2026 holdings-component reconciliation PASS; net-purchase-component reconciliation PASS; valuation-component reconciliation PASS; all-country total reconciliation NOT_DONE; source-native sign rule remains PASS; raw payload / SHA-256 / dated vintage NOT_DONE; registry admission NOT_APPROVED.
+- Scoped progress: India row internal arithmetic 100%; country-to-global aggregate reconciliation 0% (raw all-country extraction required); raw payload acquisition and digest 0%; PIT vintage capture 0%; registry promotion 0%. Overall Overlay remains NOT_CALCULABLE.
+- No parser, registry, seed observation, test, workflow or production file changed. No observations promoted; no synthetic values/timestamps; no paid service; ₹0 spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
