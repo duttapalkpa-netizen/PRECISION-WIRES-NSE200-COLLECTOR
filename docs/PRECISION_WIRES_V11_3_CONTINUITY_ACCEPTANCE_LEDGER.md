@@ -29,3 +29,11 @@
 - Source Register update: `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md`; commit `baf48edcb1026f3d301e0e6e02c3f9039bc300c4`; blob `8c8dea2947fb8e0e991b6c629a1e21a474a634bb`.
 - Acceptance: exact official HTML Latest route resolution 100%; raw machine-readable payload endpoint 0%; raw bytes/response metadata/SHA-256 0%; immutable manifest 0%; parser binding 0%; runtime validation NOT_RUN. This closes only the route-resolution subtask; CDSL provenance gate remains UNKNOWN / NOT PASS.
 - No observations, seed CSV, parser, tests, workflow or production code changed; no CI rerun. No synthetic values/timestamps; ₹0; production invariants preserved.
+
+
+## 2026-11-16 — CDSL seed-row provenance downgrade (fail-closed correction)
+- A targeted cross-check of the current seed CSV against the already documented CDSL raw-payload gap found one inconsistency: the 2026-11-06 `india_fpi_equity_inr_cr` row was still labelled `VERIFIED_OFFICIAL`, although the exact official HTML report route is known but raw machine-readable payload endpoint, fetched bytes, response metadata, retrieval timestamp and SHA-256 are NOT_VERIFIED.
+- Corrected only that row's `quality_status` from `VERIFIED_OFFICIAL` to `UNKNOWN` in `data/global_capital_rotation/2026-11-07_seed_observations.csv`. Value, dates, unit, source and URL were not changed. This is a fail-closed data-quality correction, not new data acquisition and not a claim that the reported value is false.
+- Seed CSV commit: `20ed5ad1f11aa671f15edcdff5a3d34260adf6ac`; blob `de41afafe0e368fae3ea472dd33fdf479706fd71`.
+- Acceptance: identified and corrected the contradictory seed status 100%; raw payload provenance 0%; immutable manifest 0%; parser trust-boundary enforcement 0%; targeted test/runtime validation NOT_RUN. Existing parser ignores UNKNOWN rows, so this row must now remain excluded from decision classifications.
+- No parser, tests, workflows, production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate changed. No CI rerun, PR or merge. ₹0; no synthetic data or timestamps.
