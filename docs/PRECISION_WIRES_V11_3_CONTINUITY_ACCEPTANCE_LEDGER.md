@@ -67,3 +67,12 @@
 - Static source re-fetch confirms the malformed duplicate sequence is removed. Python compile and unittest execution are still NOT RUN because no workflow run/job execution record is available through the connected GitHub workflow tools in this session. Do not claim test PASS.
 - This is a newly discovered implementation defect from static inspection, not a rerun of an earlier audit. The isolated 5-minute workflow definition remains in place; execution result is pending.
 - Acceptance: static defect correction 100%; re-fetch verification 100%; Python compile 0% / NOT RUN; focused regression suite 0% / NOT RUN; overall parser gate acceptance NOT PASS pending runtime validation.
+
+
+## 2026-11-16 — Provisional-quality fail-closed correction
+- New static review of the current parser's classification path found that PROVISIONAL rows were still appended to the same grouped observations used by latest()/classify(). This allowed an unverified provisional value to drive overlay state labels, despite UNKNOWN being excluded. No live false signal was observed; this is a code-path integrity defect identified statically.
+- Corrected parser to exclude both UNKNOWN and PROVISIONAL from classification inputs. Only VERIFIED_OFFICIAL / VERIFIED_SECONDARY rows can now reach the grouped classification path, and those still require exact registry match plus evidence metadata.
+- Parser: pipeline/global_capital_rotation_overlay.py; commit 1286280193245e42723f617705faef30608478b2; blob fb69707e53122475b9af469cfd2e40740a75351e.
+- Added focused regression test asserting a PROVISIONAL EM flow value yields global_em_flow=UNKNOWN and latest_observations=null: qa/test_global_capital_rotation_overlay.py; commit 436546ab7dca28abf0cb5a3469ca73381b43abf9; blob 2769746d43cf18d3dadcfe0e481d4e569f7b4cce.
+- Runtime Python compile and unittest remain NOT RUN / NOT VERIFIED. Do not claim PASS until isolated QA workflow execution is confirmed.
+- Acceptance: static defect identification 100%; parser correction authored 100%; regression test authored 100%; runtime compile/tests 0% / NOT RUN; parser gate remains NOT PASS.
