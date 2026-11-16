@@ -102,3 +102,12 @@
 - Added regression tests for non-object registry root and malformed content-type allowlists (string, empty list, non-string element). Test commit 23aacd870fb389e865940d51fcef0512e41f3f92; blob b4a901f9e482ab0f1303f96b4ef286d95660376e.
 - Runtime compile and unit tests remain NOT RUN / NOT VERIFIED. No PASS claim. Existing QA workflow configuration remains unchanged; connected GitHub tools still do not expose the push-triggered Actions run list or dispatch.
 - Acceptance: static schema correction 100%; focused tests authored 100%; runtime verification 0% / NOT RUN; parser gate remains NOT PASS.
+
+
+## 2026-11-16 — Raw-payload SHA-256 byte-level verification
+- Advanced the previously documented raw-hash limitation: parser previously checked SHA-256 syntax and byte_length positivity, but did not recompute the digest from payload bytes.
+- Trusted observations now require raw_payload_path in addition to evidence metadata. Parser resolves the payload path beneath the observation CSV directory, rejects path traversal outside that directory, reads the bytes, and requires both actual byte length and hashlib.sha256(payload).hexdigest() to equal the row manifest values. This verifies payload-byte integrity relative to the row's asserted digest; it does NOT independently authenticate who created the manifest or prove source authenticity.
+- Parser commit 58967a43e9398d85682e69cc1622d97c65252b80; blob 38c05239cd805ce1d9e44edb14008eb280c7f2f3.
+- Added tests for payload-byte tampering and path traversal rejection. Test commits: 87e92f46622f7c3be4f98d4b80ed4c8a4b2f66b5 (initial fixtures/tests) and 2781f1ecba8b8f02cddbf00dc2aa58f42e61a045 (path-traversal fixture correction); final test blob b1cdda4fd3e6318d4bdc751038b6f5179afa7b2b.
+- Runtime py_compile and unittest execution remain NOT RUN / NOT VERIFIED. This is authored code and static change only; no PASS claim. Existing source registry remains empty intentionally. Existing QA workflow remains 5-minute push-triggered.
+- Acceptance: byte-level hash verification implementation authored 100%; negative regression cases authored 100%; GitHub re-fetch verification pending; runtime tests 0% / NOT RUN; parser acceptance remains NOT PASS.
