@@ -77,7 +77,8 @@ def _published_key(value):
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc).isoformat()
 
-def load_observations(path: Path):
+def load_observations(path: Path, registry_path: Path = DEFAULT_SOURCE_REGISTRY):
+    registry=_load_source_registry(registry_path)
     grouped=defaultdict(list)
     seen_keys=set()
     with path.open(encoding="utf-8-sig", newline="") as f:
@@ -105,7 +106,8 @@ def load_observations(path: Path):
                 raise ValueError(f"row {n}: observation date is after as_of_date")
             if not row["source_url"].startswith("https://"):
                 raise ValueError(f"row {n}: source_url must use HTTPS")
-            _validate_trusted_evidence(row,registry,n)\n            if row["quality_status"] == "UNKNOWN": continue
+            _validate_trusted_evidence(row,registry,n)\n            _validate_trusted_evidence(row,registry,n)
+            if row["quality_status"] == "UNKNOWN": continue
             grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
     return grouped
 
