@@ -2,6 +2,9 @@ name: NSE FII-DII Capture Utility Unit Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - research/fii-dii-contract-tests-20261116
 
 permissions:
   contents: read
