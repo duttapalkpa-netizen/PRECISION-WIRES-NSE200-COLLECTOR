@@ -21,6 +21,12 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         return load_observations(self.make(rows),registry_path=self.registry_path)
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
         return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-07T01:00:00Z",http_status="200",content_type="text/csv",byte_length="123")
+    def test_future_dated_observation_is_excluded_at_earlier_decision_time(self):
+        future=self.row("em_portfolio_flow_usd_bn",99,asof="2026-11-08",published="2026-11-07T00:00:00Z")
+        out=classify(self.load([future]),"2026-11-08",decision_at="2026-11-07T23:59:59Z")
+        self.assertEqual(out["global_em_flow"],"UNKNOWN")
+        self.assertIsNone(out["latest_observations"]["em_portfolio_flow_usd_bn"])
+
     def test_unknowns_stay_unknown(self):
         out=classify(self.load([]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN"); self.assertEqual(out["fx_transmission"],"UNKNOWN")
