@@ -916,3 +916,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Exact test output: capture utility suite 7/7 PASS (0.001 sec); FII-DII mapping contract suite 14/14 PASS (0.016 sec). Total 21/21 unit tests PASS; py_compile PASS.
 - This upgrades the prior screenshot-only status to log-verified test evidence. It is strictly offline unit-test validation; it does not establish live NSE connectivity, official CSV/API scope, historical coverage, or production mapping correctness.
 - Do not rerun these tests absent code changes. Next action is a separately gated live official-source capture/reconciliation, keeping raw payloads local/private and preserving SHA-256 manifests.
+
+
+## 2026-11-16 — FII/DII two-scope Library CSV byte/hash and arithmetic reconciliation
+- User's two latest Library CSVs were materialized as exact raw bytes and inspected; no repeat of earlier one-day data review was assumed without hashing the actual current Library versions.
+- Research report: `docs/CORE_672_FII_DII_TWO_SCOPE_CSV_RECONCILIATION_20261116.md`; commit `354ba50fa59c616aab2aa5077855c7fe4f251769`.
+- `fii-dii-nse-latest.csv`: 218 bytes; SHA-256 `b733444b5a846abb672226bc96448bc0baea2da0ad15fe810207fbe93aad7f18`.
+- `fii-dii-combined-latest.csv`: 218 bytes; SHA-256 `2697546fa012f4c08449b37a3eb7d0f8298f296c25fd8ce4b7ca134c37999eb2`.
+- Both files contain 13-Nov-2026, DII and FII/FPI rows. BUY−SELL=NET passed all 4 rows. Combined minus NSE-only: DII buy +1184.63, sell +1467.48, net -282.85 crore; FII/FPI buy +963.07, sell +480.50, net +482.57 crore.
+- Official NSE report page independently confirms two separate report sections and CSV controls: NSE Capital Market Segment, and combined NSE+BSE+MSEI Capital Market Segment. The page text extraction did not expose the exact underlying CSV URLs or HTTP response metadata.
+- Status: exact-byte hash PASS; CSV arithmetic PASS 4/4; scope distinction confirmed; authentication of these Library files' precise official download-control provenance UNKNOWN; historical maturity NOT_AVAILABLE (one date only); 20-session gate NOT_MATURE; live API capture NOT_RUN; CORE-672 mapping NOT_AUTHORIZED/NOT_DONE.
+- Do not treat the two scopes as interchangeable, sum them, or promote either to canonical production input. File names are not source authentication.
+- This is a research-only reconciliation; no production code/workflow/selector/score/pressure-fade/CORE-672/engines changed.
