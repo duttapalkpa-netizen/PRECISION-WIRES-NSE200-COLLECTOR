@@ -1,10 +1,16 @@
 """Contract tests use the provenance-pinned Run #161 excerpt; invalid cases are mutations only."""
 import copy
+import importlib.util
 import json
 import unittest
 from pathlib import Path
 
-from fii_dii_contract import validate_rows, maturity_status
+MODULE_PATH = Path(__file__).parents[1] / "fii_dii_contract.py"
+spec = importlib.util.spec_from_file_location("fii_dii_contract", MODULE_PATH)
+contract = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(contract)
+validate_rows = contract.validate_rows
+maturity_status = contract.maturity_status
 
 FIXTURE = Path(__file__).parents[2] / "tests" / "research_fii_dii_run161" / "fixtures" / "run161_fii_dii_excerpt.json"
 
