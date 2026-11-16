@@ -489,3 +489,13 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Status: official API protocol support VERIFIED; public structure metadata route DOCUMENTED; anonymous BOP observation endpoint NOT_VERIFIED; observation extraction BLOCKED; country panel/EM aggregation NOT_DONE. No data rows or synthetic timestamps created.
 - Next: confirm an official IMF client-documented route and make a minimal metadata-first one-country/one-period request; if sign-in is required, stop and keep UNKNOWN.
 - No production integration or changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, or Hard Gate. Do not repeat prior overlay 27/27 unit tests absent code changes.
+
+
+## 2026-11-16 — IMF BOP official client-guidance follow-up
+- Official IMF API page confirms SDMX 2.1/3.0 and links Python guidance; following the Python link yielded only a dynamic Loading shell in available page extraction. No official code sample, exact BOP API base, query key, or auth rule was recovered.
+- Official IMF BOP catalogue confirms publisher/frequency and API, VIEW DATA, DOWNLOAD controls, but extracted text exposes no API target/dataflow/key/download URL. No observation request executed.
+- IMF SDMX Central registrations rechecked: IMF-owned BOP6 registration is still a sample compact URL; national-provider registrations are not substitutes for IMF full BOP dissemination.
+- Third-party readimf R package documentation was considered but not used to infer BOP keys; examples are for other datasets and do not establish BOP observation access.
+- Spec updated: docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md; commit 422f1a444ae576a1621baebc682f677d25bdfa91; blob 244ef023e6be29f756171862d75c71909e9c8c6c.
+- Status: IMF API protocol VERIFIED; official client help link DISCOVERED but body inaccessible; BOP catalogue API control DISCOVERED but target unresolved; observation request NOT_EXECUTED; India rows 0; EM aggregation NOT_DONE. No guessed key, sample registration, synthetic row or timestamp used.
+- Next: obtain IMF-authored Python guidance body or official OpenAPI schema/API response with exact BOP dataflow/key; otherwise retain UNKNOWN. No production changes; preserve all selector/ranking/engine invariants.
