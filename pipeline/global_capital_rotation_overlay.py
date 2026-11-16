@@ -107,7 +107,7 @@ def load_observations(path: Path, registry_path: Path = DEFAULT_SOURCE_REGISTRY)
             if not row["source_url"].startswith("https://"):
                 raise ValueError(f"row {n}: source_url must use HTTPS")
             _validate_trusted_evidence(row,registry,n)
-            if row["quality_status"] == "UNKNOWN": continue
+            if row["quality_status"] in {"UNKNOWN","PROVISIONAL"}: continue
             grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
     return grouped
 
