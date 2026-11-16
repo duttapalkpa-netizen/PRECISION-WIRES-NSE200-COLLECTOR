@@ -405,3 +405,10 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Decision: exact official HTML report route RESOLVED; machine-readable raw download endpoint NOT_RESOLVED; response metadata/raw bytes/SHA-256/immutable vintage manifest NOT_VERIFIED. Do not treat the HTML route as a raw-data API or mark CDSL observations VERIFIED_OFFICIAL from this page alone. Preserve reporting date, trade-date semantics and retrieval timestamp as separate fields.
 - No data rows, parser, seed CSV, workflow, tests or production code changed; no CI run. Next action only if an actual downloadable payload URL/bytes can be obtained through an official CDSL download control or a user-provided official file.
 - Progress: official “Latest” route resolution 100%; raw payload endpoint 0%; raw bytes + response metadata 0%; immutable manifest 0%; parser binding 0%; runtime validation NOT_RUN.
+
+
+## 2026-11-16 — Parser-bound provenance registry policy
+- The overlay parser now rejects `VERIFIED_OFFICIAL` and `VERIFIED_SECONDARY` rows unless an exact source-label + URL + indicator + unit + quality-class tuple exists in `config/global_capital_rotation_source_registry.json`, and row-level raw payload evidence fields validate (manifest ID, SHA-256, retrieval timestamp, HTTP status, content type and byte length).
+- Registry currently has an intentionally empty `sources[]`: no source mapping has been promoted because the required raw bytes/manifest evidence is still missing or incomplete. Do not infer trust from HTTPS, a landing-page URL, publisher name, or a caller-supplied quality string.
+- All current seed observations are `UNKNOWN` pending source-specific payload evidence. This is a provenance safety state, not a statement that the reported numeric values are false.
+- Implementation is authored but runtime test execution is NOT YET VALIDATED. No source is presently parser-whitelisted; decision-grade overlay inputs remain unavailable.
