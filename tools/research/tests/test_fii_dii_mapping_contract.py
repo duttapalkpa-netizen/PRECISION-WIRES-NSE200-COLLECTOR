@@ -12,7 +12,7 @@ spec.loader.exec_module(contract)
 validate_rows = contract.validate_rows
 maturity_status = contract.maturity_status
 
-FIXTURE = Path(__file__).parents[2] / "tests" / "research_fii_dii_run161" / "fixtures" / "run161_fii_dii_excerpt.json"
+FIXTURE = Path(__file__).parents[3] / "tests" / "research_fii_dii_run161" / "fixtures" / "run161_fii_dii_excerpt.json"
 
 
 class FiiDiiMappingContractTests(unittest.TestCase):
