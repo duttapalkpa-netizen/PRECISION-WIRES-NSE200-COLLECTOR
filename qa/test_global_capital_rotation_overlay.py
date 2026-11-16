@@ -2,80 +2,89 @@ import csv, tempfile, unittest
 from decimal import Decimal
 from pathlib import Path
 from pipeline.global_capital_rotation_overlay import load_observations, classify
-FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"]
+FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status","evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length"]
 class TestGlobalCapitalRotation(unittest.TestCase):
     def make(self,rows):
-        d=tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup); p=Path(d.name)/"in.csv"
+        d=tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup); root=Path(d.name); p=root/"in.csv"
+        registry=[]
+        for i,r in enumerate(rows):
+            if r.get("quality_status","VERIFIED_OFFICIAL") in ("VERIFIED_OFFICIAL","VERIFIED_SECONDARY"):
+                registry.append({k:r[k] for k in ("source","source_url","indicator","unit","quality_status")}|{"allowed_content_types":["text/csv"]})
         with p.open("w",newline="",encoding="utf-8") as f:
             w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
             for r in rows: w.writerow({k:r.get(k,"") for k in FIELDS})
+        rp=root/"registry.json"
+        rp.write_text(__import__("json").dumps({"schema_version":1,"sources":registry}),encoding="utf-8")
+        self.registry_path=rp
         return p
+    def load(self,rows):
+        return self.load(rows),registry_path=self.registry_path)
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
-        return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q)
+        return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-07T01:00:00Z",http_status="200",content_type="text/csv",byte_length="123")
     def test_unknowns_stay_unknown(self):
-        out=classify(load_observations(self.make([])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load([])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN"); self.assertEqual(out["fx_transmission"],"UNKNOWN")
     def test_em_outflow_can_coexist_with_india_fpi_buy(self):
         rows=[self.row("em_portfolio_flow_usd_bn",-33.8,asof="2026-10-31"),self.row("india_fpi_equity_inr_cr",16277.99)]
-        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"EM_NET_OUTFLOW"); self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_BUY")
     def test_fx_requires_both_inputs_and_uses_explicit_direction(self):
         rows=[self.row("dxy_change_pct_20d",-1.2)]
-        self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")["fx_transmission"],"UNKNOWN")
+        self.assertEqual(classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")["fx_transmission"],"UNKNOWN")
         rows.append(self.row("usd_inr_change_pct_20d",-0.4))
-        self.assertEqual(classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")["fx_transmission"],"USD_WEAKENING_INR_STRENGTHENING")
+        self.assertEqual(classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")["fx_transmission"],"USD_WEAKENING_INR_STRENGTHENING")
     def test_unknown_quality_rows_are_not_used(self):
-        out=classify(load_observations(self.make([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
     def test_bad_quality_fails_closed(self):
-        with self.assertRaises(ValueError): load_observations(self.make([self.row("em_portfolio_flow_usd_bn",1,"GUESSED")]))
+        with self.assertRaises(ValueError): self.load([self.row("em_portfolio_flow_usd_bn",1,"GUESSED")]))
     def test_stale_fpi_is_excluded(self):
         row=self.row("india_fpi_equity_inr_cr",999,asof="2026-10-01")
-        out=classify(load_observations(self.make([row])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load([row])),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_equity"],"UNKNOWN")
         self.assertIn("india_fpi_equity_inr_cr",out["stale_observations_excluded"])
     def test_rejects_nan_and_infinity(self):
         for value in ("nan","inf","-inf"):
             with self.subTest(value=value), self.assertRaises(ValueError):
-                load_observations(self.make([self.row("em_portfolio_flow_usd_bn",value)]))
+                self.load([self.row("em_portfolio_flow_usd_bn",value)]))
     def test_rejects_observation_after_asof(self):
         with self.assertRaises(ValueError):
-            load_observations(self.make([{**self.row("em_portfolio_flow_usd_bn",1,asof="2026-11-07"),"date":"2026-11-08"}]))
+            self.load([{**self.row("em_portfolio_flow_usd_bn",1,asof="2026-11-07"),"date":"2026-11-08"}]))
     def test_rejects_non_https_source(self):
         row=self.row("em_portfolio_flow_usd_bn",1); row["source_url"]="http://example.org"
-        with self.assertRaises(ValueError): load_observations(self.make([row]))
+        with self.assertRaises(ValueError): self.load([row]))
     def test_duplicate_same_source_observation_key_fails_closed(self):
         row=self.row("india_fpi_equity_inr_cr",25)
         with self.assertRaisesRegex(ValueError,"duplicate observation key"):
-            load_observations(self.make([row,row]))
+            self.load([row,row]))
 
     def test_conflicting_same_vintage_fails_closed(self):
         rows=[self.row("em_portfolio_flow_usd_bn",1),self.row("em_portfolio_flow_usd_bn",-1)]
-        with self.assertRaises(ValueError): classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        with self.assertRaises(ValueError): classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
     def test_latest_publication_wins_deterministically(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T00:00:00Z"),
               self.row("india_fpi_equity_inr_cr",-5,published="2026-11-07T01:00:00Z")]
-        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
 
     def test_short_term_fpi_inflow_does_not_hide_ytd_outflow(self):
         rows=[self.row("india_fpi_equity_mtd_inr_cr",53738.78),
               self.row("india_fpi_equity_ytd_inr_cr",-241407.13)]
-        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_horizon_divergence"],"SHORT_TERM_INFLOW_LONG_TERM_OUTFLOW")
 
     def test_latest_publication_orders_equivalent_instants_in_utc(self):
         # 01:00 at UTC+02 is 23:00Z on the prior day; 00:30Z is later.
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T01:00:00+02:00"),
               self.row("india_fpi_equity_inr_cr",-5,published="2026-11-07T00:30:00Z")]
-        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        out=classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
 
     def test_equivalent_timezone_instants_are_duplicate_vintages(self):
         first=self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T01:00:00+02:00")
         second=self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T23:00:00Z")
         with self.assertRaisesRegex(ValueError,"duplicate observation key"):
-            load_observations(self.make([first,second]))
+            self.load([first,second]))
 
     def test_non_government_iif_seed_is_not_promoted_to_official_flow(self):
         seed=Path(__file__).resolve().parents[1]/"data"/"global_capital_rotation"/"2026-11-07_seed_observations.csv"
@@ -143,20 +152,20 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("Observation extraction requires a separately verified",content)
     def test_decision_cutoff_is_mandatory(self):
         with self.assertRaisesRegex(ValueError,"decision_at is required"):
-            classify(load_observations(self.make([])),"2026-11-07")
+            classify(self.load([])),"2026-11-07")
 
     def test_asof_date_is_mandatory(self):
         with self.assertRaisesRegex(ValueError,"as_of_date is required"):
-            classify(load_observations(self.make([])),decision_at="2026-11-07T23:59:59Z")
+            classify(self.load([])),decision_at="2026-11-07T23:59:59Z")
 
     def test_asof_date_must_be_iso_date(self):
         with self.assertRaisesRegex(ValueError,"as_of_date must be an ISO date"):
-            classify(load_observations(self.make([])),"07-11-2026",decision_at="2026-11-07T23:59:59Z")
+            classify(self.load([])),"07-11-2026",decision_at="2026-11-07T23:59:59Z")
 
     def test_decision_cutoff_excludes_future_publication(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T20:00:00Z"),
               self.row("india_fpi_equity_inr_cr",-20,published="2026-11-07T02:00:00Z")]
-        grouped=load_observations(self.make(rows))
+        grouped=self.load(rows))
         early=classify(grouped,"2026-11-07",decision_at="2026-11-06T21:00:00Z")
         late=classify(grouped,"2026-11-07",decision_at="2026-11-07T03:00:00Z")
         self.assertEqual(early["india_fpi_equity"],"FPI_EQUITY_NET_BUY")
@@ -164,13 +173,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
     def test_decision_cutoff_all_future_remains_unknown(self):
         rows=[self.row("usd_inr_change_pct_20d",-1,published="2026-11-07T03:00:00Z")]
-        out=classify(load_observations(self.make(rows)),"2026-11-07",decision_at="2026-11-07T02:00:00Z")
+        out=classify(self.load(rows)),"2026-11-07",decision_at="2026-11-07T02:00:00Z")
         self.assertIsNone(out["latest_observations"]["usd_inr_change_pct_20d"])
         self.assertEqual(out["fx_transmission"],"UNKNOWN")
 
     def test_decision_cutoff_normalizes_timezone_offsets(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T04:00:00+05:30")]
-        grouped=load_observations(self.make(rows))
+        grouped=self.load(rows))
         before=classify(grouped,"2026-11-07",decision_at="2026-11-06T22:29:59Z")
         after=classify(grouped,"2026-11-07",decision_at="2026-11-06T22:30:00Z")
         self.assertEqual(before["india_fpi_equity"],"UNKNOWN")
@@ -178,7 +187,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
     def test_rejects_decision_cutoff_after_asof_utc_date(self):
         with self.assertRaisesRegex(ValueError,"decision_at UTC date"):
-            classify(load_observations(self.make([])),"2026-11-07",decision_at="2026-11-08T00:00:00Z")
+            classify(self.load([])),"2026-11-07",decision_at="2026-11-08T00:00:00Z")
 
     def test_weo_october_2026_candidate_is_separate_and_estimates_are_gated(self):
         register=Path(__file__).resolve().parents[1]/"docs"/"GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
