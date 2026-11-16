@@ -791,3 +791,23 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Status: exact Python compile PASS; exact committed seven-test suite PASS; manual workflow PASS. This validates only tested helper/security/file-write behavior and Python syntax. It does NOT validate live NSE API access, CSV retrieval, response schema, raw capture integrity in a live session, market-scope reconciliation, rolling FII/DII history, CORE-672 mapping or production integration.
 - Next highest-value task: perform one controlled live NSE research-only capture from the exact tested research branch, first checking whether official page HTML exposes two distinct CSV control URLs. If not, require the exact two URLs copied from the official NSE page; do not guess. Keep raw captures local, hash them, redact secrets, and preserve UNKNOWN if access is blocked. Live capture remains NOT_RUN.
 - No production collector, workflow, dataset, selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 contract, Engines A–E, or default branch code beyond the already authorized isolated workflow file was changed by this test run.
+
+
+## 2026-11-16 — Library FII/DII CSV review (user-supplied files)
+- User stated the two NSE FII/DII CSV files had been saved in ChatGPT Library. Located and read:
+  - `/PRECISION-WIRES/NSE-FII-DII/fii-dii-nse-latest.csv` (218 bytes; file ID `file_000000006a3c82119beb9a4557318937`)
+  - `/PRECISION-WIRES/NSE-FII-DII/fii-dii-combined-latest.csv` (218 bytes; file ID `file_0000000077ec8211afe18d751021a9c6`)
+  - Duplicate copies also exist at Library root with alternate names; their contents match the corresponding folder files. No need to process duplicate copies again.
+- Both files contain two rows dated `13-Nov-2026` and columns CATEGORY, DATE, BUY VALUE (₹ Crores), SELL VALUE (₹ Crores), NET VALUE (₹ Crores).
+- NSE-only file values:
+  - DII buy 10,561.32; sell 12,532.05; net -1,970.73.
+  - FII/FPI buy 17,376.50; sell 12,122.52; net +5,253.98.
+- Combined NSE+BSE+MSEI file values:
+  - DII buy 11,745.95; sell 13,999.53; net -2,253.58.
+  - FII/FPI buy 18,339.57; sell 12,603.02; net +5,736.55.
+- Raw file SHA-256 (computed from materialized original bytes):
+  - NSE-only: `b733444b5a846abb672226bc96448bc0baea2da0ad15fe810207fbe93aad7f18`
+  - Combined: `2697546fa012f4c08449b37a3eb7d0f8298f296c25fd8ce4b7ca134c37999eb2`
+- Scope comparison confirms these are distinct series; combined values must not be substituted for NSE-only values. These are user-provided Library files; no source URL, download timestamp, original HTTP response headers, or capture manifest was included with the files. Therefore content/hash verification is PASS, but official-source provenance/live capture verification remains UNKNOWN/NOT_VERIFIED.
+- No repeated analysis of duplicate root copies beyond confirming content equality; no market history inferred from these single-date rows. These files alone do not resolve the CORE-672 `fii_net`/`dii_net` aggregation or freshness policy.
+- Status: locate/read files 100%; schema/date/value extraction 100%; raw-byte SHA-256 100%; official source URL/provenance verification NOT_VERIFIED; live API capture NOT_RUN; rolling history NOT_AVAILABLE.
