@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "evidence_type": "user_supplied_official_source_payload_inspection",
+  "publisher": "Board of Governors of the Federal Reserve System",
+  "dataset": "G.5/H.10 - Foreign Exchange Rates",
+  "official_download_route": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10",
+  "route_note": "Official H.10 DDP XML/ZIP route identified in the preceding source-route review. The ZIP was supplied through the user's ChatGPT Library; no HTTP response was captured in this session.",
+  "payload": {
+    "library_filenames": [
+      "FRB_H10.zip",
+      "FRB_H10(1).zip"
+    ],
+    "library_file_size_bytes": 2087297,
+    "sha256": "aa78aedcc4620594b69617e99a1453a52ae837d45469ed0dea859c5461f37401",
+    "duplicate_uploads_byte_identical": true,
+    "zip_integrity_test": "PASS",
+    "members": [
+      {
+        "name": "frb_common.xsd",
+        "size_bytes": 139952
+      },
+      {
+        "name": "h10_data.xml",
+        "size_bytes": 27416467
+      },
+      {
+        "name": "H10_H10.xsd",
+        "size_bytes": 34088
+      },
+      {
+        "name": "H10_struct.xml",
+        "size_bytes": 131344
+      }
+    ]
+  },
+  "source_metadata": {
+    "prepared_timestamp": "2026-11-09T18:25:06",
+    "prepared_timestamp_semantics": "Federal Reserve XML Header Prepared field; not the retrieval timestamp",
+    "retrieval_timestamp_utc": null,
+    "http_status": null,
+    "response_headers": null,
+    "content_type": null,
+    "official_source_byte_identity": "NOT_INDEPENDENTLY_VERIFIED_FROM_HTTP",
+    "provenance_note": "Payload bytes are present and hashed, but Library upload metadata is not proof of the HTTP origin or exact retrieval time. Do not claim authenticated official raw download until transport provenance is captured."
+  },
+  "xml_validation": {
+    "well_formed_xml": "PASS",
+    "xsd_validation": "NOT_COMPLETED",
+    "xsd_validation_note": "H10_H10.xsd imports frb_common.xsd, which in turn imports SDMX schemas absent from this 4-member ZIP; standalone validation could not resolve the required SDMX declarations.",
+    "dataset_series_count": 87,
+    "total_observations": 348236,
+    "duplicate_observation_dates": 0,
+    "missing_observation_values": 0,
+    "non_numeric_observation_values": 0,
+    "unsorted_series": 0
+  },
+  "overlay_relevant_series": {
+    "daily_currency_series": 23,
+    "daily_dollar_index_series": 3,
+    "total_series": 26,
+    "currency_unit": "Currency units per USD; UNIT_MULT=1",
+    "dollar_index_unit": "Index: January 1997 = 100; UNIT_MULT=1",
+    "latest_observation_date": "2026-11-06",
+    "observation_date_range": "Series-specific; see Federal Reserve XML series metadata",
+    "exact_crosscheck_against_existing_library_csv": {
+      "daily_rates_cells": 230,
+      "daily_rates_exact_matches": 230,
+      "daily_rates_mismatches": 0,
+      "dollar_index_cells": 30,
+      "dollar_index_exact_matches": 30,
+      "dollar_index_mismatches": 0,
+      "total_cells": 260,
+      "total_exact_matches": 260,
+      "total_mismatches": 0,
+      "compared_period": "2026-10-26 through 2026-11-06"
+    }
+  },
+  "acceptance": {
+    "archive_bytes_present_and_sha256_computed": "PASS",
+    "duplicate_library_upload_reconciled": "PASS",
+    "zip_member_integrity": "PASS",
+    "xml_well_formedness": "PASS",
+    "xml_structural_qa": "PASS",
+    "latest_260_cells_crosscheck": "PASS",
+    "transport_provenance_and_retrieval_timestamp": "BLOCKED",
+    "complete_xsd_validation": "NOT_DONE",
+    "registry_promotion": "NOT_APPROVED",
+    "decision": "KEEP_SOURCE_REGISTRY_EMPTY_AND_H10_ROWS_UNTRUSTED_UNTIL_TRANSPORT_PROVENANCE_AND_REQUIRED_VALIDATION_ARE_COMPLETE"
+  }
+}
