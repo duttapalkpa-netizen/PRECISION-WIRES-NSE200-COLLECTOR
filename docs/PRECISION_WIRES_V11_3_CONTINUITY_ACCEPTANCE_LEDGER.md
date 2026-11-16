@@ -85,3 +85,11 @@
 - Added regression test for a future-dated observation published before the decision cutoff; expected result is UNKNOWN with null latest observation. Test commit dadbf6a951495cac699bc5475b638f20ed73cce9; blob 56773b5969380aa4b066b92487883522e6dea743.
 - Static code changes are authored; runtime Python compilation and unittest execution remain NOT RUN / NOT VERIFIED. QA workflow run ID has not been surfaced by available GitHub workflow tools; do not claim PASS.
 - Acceptance: point-in-time guard implementation 100%; focused regression test authored 100%; GitHub re-fetch verification pending; runtime compile/tests 0%; parser gate remains NOT PASS.
+
+
+## 2026-11-16 — QA execution-status evidence check
+- Checked the configured isolated workflow definition: it is push-triggered on the research branch, restricted to overlay parser/registry/tests/data/source-register/workflow paths, and has a 5-minute timeout with py_compile plus focused unittest.
+- Checked the GitHub commit combined-status endpoint for the latest regression-test commit dadbf6a951495cac699bc5475b638f20ed73cce9; it returned an empty statuses array. This is not evidence of success or failure and does not provide a workflow run ID. The available fetch_commit_workflow_runs wrapper filters to pull-request-triggered runs, so it cannot establish this push run's result. Direct Actions run-list/dispatch capability is not exposed in the connected GitHub tools.
+- Therefore QA execution remains NOT_VERIFIED / NOT_RUN from available evidence. No test has been rerun and no PASS claim is made. Do not create another workflow or modify production workflows merely to manufacture a status.
+- Latest relevant code refs remain parser blob 5944be745eb7c22e1e8e4b7ce19226963c0c503e and test blob 56773b5969380aa4b066b92487883522e6dea743. The point-in-time look-ahead guard and future-date regression test are present.
+- Next unblocker: obtain an actual Actions run ID from the repository Actions page (workflow “Global Capital Rotation Overlay QA”), then inspect its job steps/logs/artifacts. If no run exists, user-side repository Actions permission/trigger configuration may need review; do not assume why it did not run.
