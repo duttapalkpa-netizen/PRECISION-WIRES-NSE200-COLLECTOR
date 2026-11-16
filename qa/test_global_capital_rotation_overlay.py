@@ -1,15 +1,21 @@
-import csv, tempfile, unittest
+import csv, hashlib, tempfile, unittest
 from decimal import Decimal
 from pathlib import Path
 from pipeline.global_capital_rotation_overlay import load_observations, classify
-FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status","evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length"]
+FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status","evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length","raw_payload_path"]
 class TestGlobalCapitalRotation(unittest.TestCase):
     def make(self,rows):
         d=tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup); root=Path(d.name); p=root/"in.csv"
         registry=[]
+        payload_dir=root/"payloads"; payload_dir.mkdir()
         for i,r in enumerate(rows):
             if r.get("quality_status","VERIFIED_OFFICIAL") in ("VERIFIED_OFFICIAL","VERIFIED_SECONDARY"):
                 registry.append({k:r[k] for k in ("source","source_url","indicator","unit","quality_status")}|{"allowed_content_types":["text/csv"]})
+            payload_path=payload_dir/f"fixture-{i}.bin"
+            payload_path.write_bytes(b"fixture raw payload")
+            r["raw_payload_path"]=str(payload_path.relative_to(root))
+            r["raw_sha256"]=hashlib.sha256(b"fixture raw payload").hexdigest()
+            r["byte_length"]=str(len(b"fixture raw payload"))
         with p.open("w",newline="",encoding="utf-8") as f:
             w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
             for r in rows: w.writerow({k:r.get(k,"") for k in FIELDS})
@@ -20,7 +26,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def load(self,rows):
         return load_observations(self.make(rows),registry_path=self.registry_path)
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
-        return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-07T01:00:00Z",http_status="200",content_type="text/csv",byte_length="123")
+        return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-07T01:00:00Z",http_status="200",content_type="text/csv",byte_length="19",raw_payload_path="payloads/fixture-0.bin")
     def test_future_dated_observation_is_excluded_at_earlier_decision_time(self):
         future=self.row("em_portfolio_flow_usd_bn",99,asof="2026-11-08",published="2026-11-07T00:00:00Z")
         out=classify(self.load([future]),"2026-11-08",decision_at="2026-11-07T23:59:59Z")
@@ -42,6 +48,20 @@ class TestGlobalCapitalRotation(unittest.TestCase):
                 rp.write_text(__import__("json").dumps({"schema_version":1,"sources":[item]}),encoding="utf-8")
                 with self.assertRaisesRegex(ValueError,"allowed_content_types"):
                     load_observations(self.make([]),registry_path=rp)
+
+    def test_trusted_raw_payload_hash_is_recomputed_from_bytes(self):
+        row=self.row("em_portfolio_flow_usd_bn",1)
+        path=self.make([row])
+        (path.parent/row["raw_payload_path"]).write_bytes(b"tampered payload")
+        with self.assertRaisesRegex(ValueError,"raw payload byte length or SHA-256 mismatch"):
+            load_observations(path,registry_path=self.registry_path)
+
+    def test_trusted_raw_payload_path_cannot_escape_input_directory(self):
+        row=self.row("em_portfolio_flow_usd_bn",1)
+        row["raw_payload_path"]="../outside.bin"
+        path=self.make([row])
+        with self.assertRaisesRegex(ValueError,"escapes input directory"):
+            load_observations(path,registry_path=self.registry_path)
 
     def test_unknowns_stay_unknown(self):
         out=classify(self.load([]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
