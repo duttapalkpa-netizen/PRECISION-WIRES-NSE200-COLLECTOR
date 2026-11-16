@@ -211,3 +211,25 @@ The DSD metadata gate is PASS from the archived, schema-validated structure file
 - Third-party R package readimf documentation describes a current IMF SDMX 3.0 API client and examples for WEO, but its documented wrappers do not establish a BOP dataflow/key or provide IMF-authored BOP extraction instructions. Not used to infer a BOP request.
 - Decision: official Python-guidance link discovered but content inaccessible in this extraction; official BOP catalogue/API control confirmed in text but target unresolved; IMF BOP observation request still NOT_EXECUTED; no India rows, no EM panel, no endpoint/key fabricated. Existing DSD file/hash evidence is reused, not re-downloaded.
 - Next bounded route: obtain the official Python guidance article's direct article body or API schema/Swagger OpenAPI document via IMF help/API support; only accept an exact BOP dataflow/key when the IMF source exposes it. Do not retry the prior blocked BOP6 sample or guess SDMX keys.
+
+
+## 2026-11-16 — Official IMF BOP pilot-data route and API-contract qualification
+
+### New official-source discovery
+- Located the IMF Statistics Department's official legacy BOP pilot dissemination page: https://sdmx.imf.org/bop/ . It states that SDMX-ML compact data instances cover key BOP/IIP statistics for all jurisdictions reporting to IMF, grouped into six IMF-IFS regional files, with 75 series per country. The page explicitly says **Last Update: January 9, 2013**. This is a genuine official historical dissemination route, but its age makes it unsuitable for current capital-rotation signals or a current country panel without a newer vintage confirmation.
+- The page's Developing Asia link resolves to https://sdmx.imf.org/bop/Developing_Asia.xml; the web retrieval returned Cache miss before any payload was obtained. No HTTP response, file bytes, checksum, country rows, or latest observation period were verified. Do not mark the file downloadable or ingestion PASS.
+- The official IMF Data API page continues to document SDMX 2.1/3.0 and requires beta-portal sign-in to explore Swagger. The IMF Help article URL referenced by a third-party OpenAPI catalogue could not be opened in this audit.
+- A third-party OpenAPI mirror describes a plausible SDMX 3.0 observation route pattern `/data/dataflow/{agency}/{dataflow_id}/+/{key}` and a time filter `c[TIME_PERIOD]`; this is **secondary, unverified documentation**. It does not establish the IMF BOP agency/dataflow/version, dimension order/codes, authorization behavior, or a valid request. Do not turn this route template into a concrete BOP query without official confirmation.
+- The official IMF pilot page is useful as historical source discovery only; its 2013 last-update date is a hard freshness warning. It must not be used as the current global EM flow panel or to populate live/modern backtests.
+
+### Updated gate decision
+- Official IMF SDMX API protocol: VERIFIED (2.1/3.0).
+- Official IMF legacy BOP pilot page and six regional file links: DISCOVERED; freshness is 2013-01-09.
+- Regional XML payload retrieval: NOT VERIFIED / CACHE_MISS; no bytes or SHA-256.
+- Current IMF BOP Data Portal observation endpoint and exact dataflow/key: UNKNOWN.
+- Current India BOP portfolio-transaction observations: 0 accepted.
+- Current EM panel / aggregation: NOT DONE.
+- No synthetic values, timestamps, membership, or series keys created.
+
+### Next bounded action
+Request the current official IMF Data API OpenAPI/Swagger document or BOP query export from the authenticated Data Portal (user-authorized session only), and record the exact BOP dataflow + DSD reference + key dimensions. If that cannot be accessed, seek a current official IMF Statistics Department data file with a clearly dated vintage; do not reuse the 2013 pilot as current data. Preserve the old pilot link only as an archived historical fallback.
