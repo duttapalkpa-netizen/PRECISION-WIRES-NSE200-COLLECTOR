@@ -357,7 +357,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         self.assertEqual(out["data_row_count"],2)
         self.assertEqual(out["duplicate_isin_occurrence_count"],1)
         self.assertEqual(out["acceptance"],"PASS_STRUCTURAL_ONLY")
-        self.assertTrue(any("issuer aggregation" in x for x in out["limitations"])
+        self.assertTrue(any("issuer aggregation" in x for x in out["limitations"]))
 
     def test_gzip_is_detected_by_magic_and_hashes_original_bytes(self):
         import gzip, hashlib
