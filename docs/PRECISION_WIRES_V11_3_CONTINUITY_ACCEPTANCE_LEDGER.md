@@ -59,3 +59,11 @@
 - Workflow file commit: `b7d319030332ab0d70c54f1c3fe923fce335f8ab`.
 - The GitHub workflow-run lookup available in this session returned no run records for that commit; therefore no execution result, job log, test count or PASS is claimed. The workflow definition is committed, but automated execution remains NOT VERIFIED / PENDING.
 - This bounded task closes isolated QA workflow authoring 100%; runtime execution 0% until a run record is visible. No changes to the existing NSE collector workflow or production code.
+
+
+## 2026-11-16 — Post-implementation static QA correction (runtime still pending)
+- Reviewed the committed parser and focused regression test file before claiming test readiness. Found a malformed literal backslash-n sequence and duplicated _validate_trusted_evidence(...) call in the parser's row loop. This would have prevented clean Python parsing / introduced duplicate validation. Corrected the exact malformed sequence and retained one validation call.
+- Corrected parser file: pipeline/global_capital_rotation_overlay.py; commit 97e1262e2c1369f9550c5c3f78543bb11e01c0f5; blob 2000c8e33509451189fd61107557bffd50c6a0f5.
+- Static source re-fetch confirms the malformed duplicate sequence is removed. Python compile and unittest execution are still NOT RUN because no workflow run/job execution record is available through the connected GitHub workflow tools in this session. Do not claim test PASS.
+- This is a newly discovered implementation defect from static inspection, not a rerun of an earlier audit. The isolated 5-minute workflow definition remains in place; execution result is pending.
+- Acceptance: static defect correction 100%; re-fetch verification 100%; Python compile 0% / NOT RUN; focused regression suite 0% / NOT RUN; overall parser gate acceptance NOT PASS pending runtime validation.
