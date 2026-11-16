@@ -76,3 +76,12 @@
 - Added focused regression test asserting a PROVISIONAL EM flow value yields global_em_flow=UNKNOWN and latest_observations=null: qa/test_global_capital_rotation_overlay.py; commit 436546ab7dca28abf0cb5a3469ca73381b43abf9; blob 2769746d43cf18d3dadcfe0e481d4e569f7b4cce.
 - Runtime Python compile and unittest remain NOT RUN / NOT VERIFIED. Do not claim PASS until isolated QA workflow execution is confirmed.
 - Acceptance: static defect identification 100%; parser correction authored 100%; regression test authored 100%; runtime compile/tests 0% / NOT RUN; parser gate remains NOT PASS.
+
+
+## 2026-11-16 — Point-in-time future-observation look-ahead guard
+- Static review of latest() found that the decision_at cutoff constrained publication timestamp only. It did not independently require observation date and as_of_date to be on/before the decision date. A future-dated row with an earlier publication timestamp could therefore enter a historical classification if supplied in malformed or inconsistent data. No live signal impact was observed; this is a defensive point-in-time integrity correction.
+- Parser now filters candidate rows by all three constraints: published_at <= decision_at; date <= UTC decision date; as_of_date <= UTC decision date. Existing global as_of_date validation remains unchanged.
+- Parser commit 9f0d23f2fe407590dc30f014324b9f834c4d7da7; blob 5944be745eb7c22e1e8e4b7ce19226963c0c503e.
+- Added regression test for a future-dated observation published before the decision cutoff; expected result is UNKNOWN with null latest observation. Test commit dadbf6a951495cac699bc5475b638f20ed73cce9; blob 56773b5969380aa4b066b92487883522e6dea743.
+- Static code changes are authored; runtime Python compilation and unittest execution remain NOT RUN / NOT VERIFIED. QA workflow run ID has not been surfaced by available GitHub workflow tools; do not claim PASS.
+- Acceptance: point-in-time guard implementation 100%; focused regression test authored 100%; GitHub re-fetch verification pending; runtime compile/tests 0%; parser gate remains NOT PASS.
