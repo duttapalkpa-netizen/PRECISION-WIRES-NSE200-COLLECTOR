@@ -115,7 +115,10 @@ def latest(grouped,key,decision_at=None):
     rows=grouped.get(key,[])
     if decision_at is not None:
         cutoff=_published_key(decision_at)
-        rows=[r for r in rows if r["_published_key"] <= cutoff]
+        decision_date=datetime.fromisoformat(cutoff).date()
+        rows=[r for r in rows if r["_published_key"] <= cutoff
+              and date.fromisoformat(r["date"]) <= decision_date
+              and date.fromisoformat(r["as_of_date"]) <= decision_date]
     if not rows: return None
     # Deterministic vintage selection: freshest observation, then latest publication.
     chosen=max(rows,key=lambda x:(x["as_of_date"],x["date"],x["_published_key"]))
