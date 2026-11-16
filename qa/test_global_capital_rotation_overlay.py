@@ -37,7 +37,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         out=classify(self.load([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
     def test_bad_quality_fails_closed(self):
-        with self.assertRaises(ValueError): self.load([self.row("em_portfolio_flow_usd_bn",1,"GUESSED")]))
+        with self.assertRaises(ValueError): self.load([self.row("em_portfolio_flow_usd_bn",1,"GUESSED")])
     def test_stale_fpi_is_excluded(self):
         row=self.row("india_fpi_equity_inr_cr",999,asof="2026-10-01")
         out=classify(self.load([row]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
@@ -46,10 +46,10 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def test_rejects_nan_and_infinity(self):
         for value in ("nan","inf","-inf"):
             with self.subTest(value=value), self.assertRaises(ValueError):
-                self.load([self.row("em_portfolio_flow_usd_bn",value)]))
+                self.load([self.row("em_portfolio_flow_usd_bn",value)])
     def test_rejects_observation_after_asof(self):
         with self.assertRaises(ValueError):
-            self.load([{**self.row("em_portfolio_flow_usd_bn",1,asof="2026-11-07"),"date":"2026-11-08"}]))
+            self.load([{**self.row("em_portfolio_flow_usd_bn",1,asof="2026-11-07"),"date":"2026-11-08"}])
     def test_rejects_non_https_source(self):
         row=self.row("em_portfolio_flow_usd_bn",1); row["source_url"]="http://example.org"
         with self.assertRaises(ValueError): self.load([row])
@@ -84,7 +84,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         first=self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T01:00:00+02:00")
         second=self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T23:00:00Z")
         with self.assertRaisesRegex(ValueError,"duplicate observation key"):
-            self.load([first,second]))
+            self.load([first,second])
 
     def test_non_government_iif_seed_is_not_promoted_to_official_flow(self):
         seed=Path(__file__).resolve().parents[1]/"data"/"global_capital_rotation"/"2026-11-07_seed_observations.csv"
@@ -156,11 +156,11 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
     def test_asof_date_is_mandatory(self):
         with self.assertRaisesRegex(ValueError,"as_of_date is required"):
-            classify(self.load([])),decision_at="2026-11-07T23:59:59Z")
+            classify(self.load([]),decision_at="2026-11-07T23:59:59Z")
 
     def test_asof_date_must_be_iso_date(self):
         with self.assertRaisesRegex(ValueError,"as_of_date must be an ISO date"):
-            classify(self.load([])),"07-11-2026",decision_at="2026-11-07T23:59:59Z")
+            classify(self.load([]),"07-11-2026",decision_at="2026-11-07T23:59:59Z")
 
     def test_decision_cutoff_excludes_future_publication(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T20:00:00Z"),
@@ -310,7 +310,7 @@ class TestSecurityMasterIntake(unittest.TestCase):
         self.assertEqual(out["data_row_count"],2)
         self.assertEqual(out["duplicate_isin_occurrence_count"],1)
         self.assertEqual(out["acceptance"],"PASS_STRUCTURAL_ONLY")
-        self.assertTrue(any("issuer aggregation" in x for x in out["limitations"]))
+        self.assertTrue(any("issuer aggregation" in x for x in out["limitations"])
 
     def test_gzip_is_detected_by_magic_and_hashes_original_bytes(self):
         import gzip, hashlib
