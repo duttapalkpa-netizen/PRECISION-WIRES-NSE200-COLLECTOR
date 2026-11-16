@@ -27,6 +27,22 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
         self.assertIsNone(out["latest_observations"]["em_portfolio_flow_usd_bn"])
 
+    def test_registry_root_must_be_object(self):
+        d=tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup)
+        rp=Path(d.name)/"registry.json"; rp.write_text("[]",encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"schema_version=1"):
+            load_observations(self.make([]),registry_path=rp)
+
+    def test_registry_content_type_allowlist_must_be_nonempty_string_list(self):
+        for invalid in ("text/csv",[],[1]):
+            with self.subTest(invalid=invalid):
+                d=tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup)
+                rp=Path(d.name)/"registry.json"
+                item={"source":"s","source_url":"https://example.org","indicator":"i","unit":"u","quality_status":"VERIFIED_OFFICIAL","allowed_content_types":invalid}
+                rp.write_text(__import__("json").dumps({"schema_version":1,"sources":[item]}),encoding="utf-8")
+                with self.assertRaisesRegex(ValueError,"allowed_content_types"):
+                    load_observations(self.make([]),registry_path=rp)
+
     def test_unknowns_stay_unknown(self):
         out=classify(self.load([]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN"); self.assertEqual(out["fx_transmission"],"UNKNOWN")
