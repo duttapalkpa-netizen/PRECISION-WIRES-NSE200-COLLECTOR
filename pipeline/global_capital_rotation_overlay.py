@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Research-only global capital rotation dashboard; never alters production ranking."""
 from __future__ import annotations
-import argparse, csv, json, math, re
+import argparse, csv, hashlib, json, math, re
 from collections import defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
 
 REQUIRED = {"date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"}
-EVIDENCE_FIELDS = {"evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length"}
+EVIDENCE_FIELDS = {"evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length","raw_payload_path"}
 TRUSTED_QUALITIES = {"VERIFIED_OFFICIAL","VERIFIED_SECONDARY"}
 DEFAULT_SOURCE_REGISTRY = Path(__file__).resolve().parents[1] / "config" / "global_capital_rotation_source_registry.json"
 
@@ -61,6 +61,16 @@ def _validate_trusted_evidence(row, registry, row_number):
         raise ValueError(f"row {row_number}: invalid HTTP status, byte length, or retrieval chronology")
     if row["content_type"].lower() not in entry.get("allowed_content_types",[]):
         raise ValueError(f"row {row_number}: content_type not allowed by source registry")
+    payload_root=Path(row["_input_dir"]).resolve()
+    payload_path=(payload_root / row["raw_payload_path"]).resolve()
+    if payload_root not in payload_path.parents:
+        raise ValueError(f"row {row_number}: raw_payload_path escapes input directory")
+    try:
+        raw_bytes=payload_path.read_bytes()
+    except OSError as exc:
+        raise ValueError(f"row {row_number}: raw payload unavailable") from exc
+    if len(raw_bytes) != length or hashlib.sha256(raw_bytes).hexdigest() != row["raw_sha256"]:
+        raise ValueError(f"row {row_number}: raw payload byte length or SHA-256 mismatch")
 
 ALLOWED_QUALITY = {"VERIFIED_OFFICIAL","VERIFIED_SECONDARY","PROVISIONAL","UNKNOWN"}
 MAX_AGE_DAYS = {
@@ -113,6 +123,7 @@ def load_observations(path: Path, registry_path: Path = DEFAULT_SOURCE_REGISTRY)
                 raise ValueError(f"row {n}: observation date is after as_of_date")
             if not row["source_url"].startswith("https://"):
                 raise ValueError(f"row {n}: source_url must use HTTPS")
+            row["_input_dir"]=str(path.resolve().parent)
             _validate_trusted_evidence(row,registry,n)
             if row["quality_status"] in {"UNKNOWN","PROVISIONAL"}: continue
             grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
