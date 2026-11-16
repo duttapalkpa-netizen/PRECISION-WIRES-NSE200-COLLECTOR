@@ -828,3 +828,17 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Current official NSE page search result independently shows the same two distinct series and same 13-Nov-2026 values as the Library files: NSE-only DII -1,970.73 and FII/FPI +5,253.98; combined DII -2,253.58 and FII/FPI +5,736.55. Official source also says FII/FPI data is provisional and subject to custodial confirmation/modifications. Source `turn817618search1`.
 - Clarification: no need to ask user to re-upload or re-send already available Library CSV files. Continue retrieving known files from Library and use official web sources/programmatic research wherever available. Ask the user only if a truly unavailable input requires their direct browser action; explain the precise access limitation.
 - The remaining provenance gap is not missing CSV content. It is the absence of original download URL/request metadata and capture timestamp in the stored CSVs. Do not misrepresent the user-supplied Library files as a new live NSE capture. Keep source provenance NOT_VERIFIED and live API capture NOT_RUN until independently acquired evidence supports changing those statuses.
+
+## 2026-11-16 — FII/DII Library CSV arithmetic and cross-source reconciliation
+- New bounded QA pass on the two already-stored Library CSVs (no re-upload and no hash recomputation required):
+  - Both files contain exactly the expected two categories (DII, FII/FPI), same observation date 13-Nov-2026, and same ₹ Crores units.
+  - Verified each row's arithmetic exactly to 2 decimals: BUY − SELL = NET.
+  - NSE-only: DII 10,561.32 − 12,532.05 = −1,970.73; FII/FPI 17,376.50 − 12,122.52 = +5,253.98.
+  - Combined: DII 11,745.95 − 13,999.53 = −2,253.58; FII/FPI 18,339.57 − 12,603.02 = +5,736.55.
+  - All four row arithmetic checks PASS; category/date/unit alignment PASS; no duplicate category within either file.
+- Cross-source reconciliation: combined CSV's two rows exactly match the existing NSE API artifact Run #161 (market_context.json, observation date 13-Nov-2026): DII net −2,253.58 and FII/FPI net +5,736.55, including buy/sell values. This is an independent consistency check of the combined series, but not a substitute for original CSV download URL metadata.
+- NSE-only series has no matching independent same-date API row in the evidence presently retained; its independent cross-source check remains NOT_AVAILABLE.
+- Calculated scope deltas (Combined minus NSE-only): DII buy +1,184.63, sell +1,467.48, net −282.85; FII/FPI buy +963.07, sell +480.50, net +482.57. These are exchange-scope differences, not data errors.
+- Current web-indexed official NSE report page returns stale 21-Aug-2026 table values in this retrieval snapshot, while a separately indexed NSE page variant returns “No Records”; these are cache/index retrieval artefacts and are not used to overwrite the Library's 13-Nov-2026 records. Official page continues to describe the two scopes separately and notes FII/FPI provisional status.
+- Status update: Library CSV schema/date/category checks PASS; four row arithmetic checks PASS; combined-series Run #161 reconciliation PASS; NSE-only independent same-date reconciliation NOT_AVAILABLE; CSV source URL/download timestamp NOT_VERIFIED; live raw capture NOT_RUN; historical coverage NOT_AVAILABLE.
+- No production code, selector, score, diagnostics, engines, collector, or workflow changed. This is research evidence only.
