@@ -907,3 +907,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Status: deterministic checkout correction PASS; workflow job PASS (Run #13 screenshot); both test commands are included in the verified workflow source; exact per-test counts and run ID NOT_CAPTURED; live NSE capture NOT_RUN; CORE-672 production mapping NOT_AUTHORIZED/NOT_DONE.
 - This supersedes the immediately preceding ledger status that the corrected workflow execution was NOT_RUN / NOT_KNOWN. Do not repeat the successful Run #13 test job absent code changes or new evidence.
 - No production files, collector workflows, Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 56×12 production diagnostics, or Engines A–E were changed. The only default-branch file in scope remains the explicitly authorized isolated test workflow.
+
+
+## 2026-11-16 — Exact GitHub Actions Run #13 evidence retrieved
+- Retrieved the actual GitHub Actions run record: Run #13, run ID `43869585899`, workflow ID `419761357`, event `workflow_dispatch`, branch `main`, workflow commit `c130ebbd919cf07b74e1841cb123862e0b95a4ce`, conclusion `success`, elapsed 11 seconds.
+- Retrieved job `capture-utility-tests`, job ID `133306894900`, conclusion `success`; all seven workflow steps succeeded, including checkout, Python setup, dependency install, compile, and both test commands.
+- The log explicitly confirms checkout ref `research/fii-dii-contract-tests-20261116` at test-code commit `e551cf303c48efa2c050fc1fe8b5328531aa7de0`.
+- Exact test output: capture utility suite 7/7 PASS (0.001 sec); FII-DII mapping contract suite 14/14 PASS (0.016 sec). Total 21/21 unit tests PASS; py_compile PASS.
+- This upgrades the prior screenshot-only status to log-verified test evidence. It is strictly offline unit-test validation; it does not establish live NSE connectivity, official CSV/API scope, historical coverage, or production mapping correctness.
+- Do not rerun these tests absent code changes. Next action is a separately gated live official-source capture/reconciliation, keeping raw payloads local/private and preserving SHA-256 manifests.
