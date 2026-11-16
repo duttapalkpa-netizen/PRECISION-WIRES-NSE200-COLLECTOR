@@ -1,12 +1,60 @@
 #!/usr/bin/env python3
 """Research-only global capital rotation dashboard; never alters production ranking."""
 from __future__ import annotations
-import argparse, csv, json, math
+import argparse, csv, json, math, re
 from collections import defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
 
 REQUIRED = {"date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"}
+EVIDENCE_FIELDS = {"evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length"}
+TRUSTED_QUALITIES = {"VERIFIED_OFFICIAL","VERIFIED_SECONDARY"}
+DEFAULT_SOURCE_REGISTRY = Path(__file__).resolve().parents[1] / "config" / "global_capital_rotation_source_registry.json"
+
+def _load_source_registry(path: Path):
+    try:
+        payload=json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"source registry unavailable or invalid: {path}") from exc
+    if payload.get("schema_version") != 1 or not isinstance(payload.get("sources"), list):
+        raise ValueError("source registry schema_version=1 and sources[] are required")
+    entries={}
+    for item in payload["sources"]:
+        required={"source","source_url","indicator","unit","quality_status"}
+        if not isinstance(item,dict) or not required.issubset(item):
+            raise ValueError("invalid source registry entry")
+        if item["quality_status"] not in TRUSTED_QUALITIES:
+            raise ValueError("registry quality_status must be a trusted quality")
+        key=(item["source"],item["source_url"],item["indicator"],item["unit"],item["quality_status"])
+        if key in entries:
+            raise ValueError("duplicate source registry entry")
+        entries[key]=item
+    return entries
+
+def _validate_trusted_evidence(row, registry, row_number):
+    if row["quality_status"] not in TRUSTED_QUALITIES:
+        return
+    key=(row["source"],row["source_url"],row["indicator"],row["unit"],row["quality_status"])
+    entry=registry.get(key)
+    if entry is None:
+        raise ValueError(f"row {row_number}: trusted quality has no exact source-registry match")
+    if not all(row.get(k,"").strip() for k in EVIDENCE_FIELDS):
+        raise ValueError(f"row {row_number}: trusted quality missing evidence manifest fields")
+    if not re.fullmatch(r"[0-9a-f]{64}",row["raw_sha256"]):
+        raise ValueError(f"row {row_number}: raw_sha256 must be 64 lowercase hex characters")
+    if not re.fullmatch(r"[0-9A-Za-z._:-]{1,128}",row["evidence_manifest_id"]):
+        raise ValueError(f"row {row_number}: invalid evidence_manifest_id")
+    try:
+        retrieved=_published_key(row["retrieved_at"])
+        status=int(row["http_status"])
+        length=int(row["byte_length"])
+    except (TypeError,ValueError):
+        raise ValueError(f"row {row_number}: invalid retrieval metadata")
+    if status != 200 or length <= 0 or retrieved < _published_key(row["published_at"]):
+        raise ValueError(f"row {row_number}: invalid HTTP status, byte length, or retrieval chronology")
+    if row["content_type"].lower() not in entry.get("allowed_content_types",[]):
+        raise ValueError(f"row {row_number}: content_type not allowed by source registry")
+
 ALLOWED_QUALITY = {"VERIFIED_OFFICIAL","VERIFIED_SECONDARY","PROVISIONAL","UNKNOWN"}
 MAX_AGE_DAYS = {
     "em_portfolio_flow_usd_bn":45,
@@ -57,7 +105,7 @@ def load_observations(path: Path):
                 raise ValueError(f"row {n}: observation date is after as_of_date")
             if not row["source_url"].startswith("https://"):
                 raise ValueError(f"row {n}: source_url must use HTTPS")
-            if row["quality_status"] == "UNKNOWN": continue
+            _validate_trusted_evidence(row,registry,n)\n            if row["quality_status"] == "UNKNOWN": continue
             grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
     return grouped
 
