@@ -500,3 +500,24 @@
 - Scoped progress: source family/methodology 100%; India broad REER series identity and coverage 100%; India broad NEER series identity/frequency 100% and coverage range 0%; RBI comparison boundary 100%; India daily EER identity 0% / UNKNOWN; raw payload/API acquisition and SHA-256 0%; vintage/PIT qualification 0%; parser/registry binding 0%; targeted tests/runtime validation NOT_RUN. Overall Overlay remains NOT_CALCULABLE.
 - Safe next step: obtain the official dated EER bulk CSV/SDMX package or exact India series exports as original bytes; preserve final URL, UTC retrieval timestamp, response headers, content type, byte length, release date, reference period and SHA-256. Then reconcile the two India series and investigate whether dated releases are retained as immutable vintages. Until then, do not seed or admit EER rows as VERIFIED_OFFICIAL.
 - No parser, registry, seed observation, test, workflow or production file changed. No observations promoted; no synthetic values/timestamps/hashes; no paid service; ₹0 spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
+
+
+## 2026-11-16 — BIS EER bulk-export route resolution and payload retrieval attempt
+
+- Continued from the completed India BIS EER series/methodology qualification; did not repeat the NEER/REER semantics review or earlier XRU bulk-download work.
+- Re-opened the official BIS bulk-download index. The Effective exchange rates section exposes four dated packages, each carrying the displayed release label 12-Nov-2026: CSV, CSV flat, SDMX 2.1 Compact, and SDMX 2.1 Generic.
+- Followed all four official links and resolved the exact URLs:
+  - CSV: https://data.bis.org/static/bulk/WS_EER_csv_col.zip
+  - CSV flat: https://data.bis.org/static/bulk/WS_EER_csv_flat.zip
+  - SDMX 2.1 Compact: https://data.bis.org/static/bulk/WS_EER_sdmx-compact-2.1.zip
+  - SDMX 2.1 Generic: https://data.bis.org/static/bulk/WS_EER_sdmx-generic-2.1.zip
+- The browser retrieval layer rejected each ZIP as unsupported application/zip content (HTTP-like tool error 400); a separate direct download attempt also failed. These are retrieval-layer failures, not evidence the BIS files are invalid or unavailable. No archive bytes were received, so no ZIP integrity test, member listing, content length, HTTP headers, final response metadata or SHA-256 can be asserted.
+- BIS bulk-download page describes these as full-topic zipped downloads, while its export help documents CSV and SDMX full-dataset export. The displayed release date is a current package label only; it does not establish historical immutable-vintage retention or point-in-time reproducibility.
+- Official evidence:
+  - BIS bulk download index: https://data.bis.org/bulkdownload (Effective exchange rates, four formats, displayed 12-Nov-2026).
+  - BIS export guidance: https://data.bis.org/help/export
+  - Exact package URLs listed above.
+- Decision: four exact official EER bulk routes resolved = PASS; current release label observed = PASS; raw ZIP payload acquisition = BLOCKED at retrieval layer; archive integrity/member/schema inspection = NOT_DONE; payload byte length/SHA-256/manifest = NOT_DONE; historical immutable vintage/PIT = NOT_VERIFIED; registry promotion = NOT_APPROVED.
+- Scoped progress: exact export route resolution 100%; format availability confirmation 100%; actual ZIP bytes acquisition 0% / BLOCKED; archive/schema inspection 0%; raw-payload manifest and SHA-256 0%; vintage/PIT qualification 0%; parser/registry binding 0%. Overall Overlay remains NOT_CALCULABLE.
+- Next unblocker: obtain any one original ZIP (CSV is preferred for initial inspection) through a normal browser download and upload the unchanged file. Then verify ZIP CRC/member list, extract only the India NEER/REER records, record source URL, actual UTC retrieval time, response headers if available, release date, reference period, byte length and SHA-256; compare exact series observations with BIS pages. Do not mark PIT safe from the current package label alone.
+- No parser, registry, seed observation, test, workflow or production file changed. No observations promoted; no synthetic values/timestamps/hashes; no paid service; ₹0 spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
