@@ -574,3 +574,16 @@
 - Acceptance: source family/methodology/frequency/units/cadence QUALIFIED; India exact series UNKNOWN; payload/hash NOT_DONE; vintage/PIT NOT_VERIFIED; parser/registry NOT_APPROVED; tests/runtime NOT_RUN. Scoped progress: family 100%; units/frequency/cadence 100%; India key 0%; payload/hash 0%; PIT 0%; parser/registry 0%. Overall Overlay NOT_CALCULABLE.
 - No observations, seed data, parser, registry, tests, workflows or production files changed. No synthetic values/timestamps/hashes; ₹0. All hard invariants unchanged.
 - Source Register was updated in the preceding commit; this entry preserves the same evidence and acceptance boundary in the master ledger.
+
+
+## 2026-11-16 — BIS CBTA India exact series identities (bounded metadata qualification)
+
+- Continued from the already completed CBTA source-family qualification and targeted only the missing India series identity/dimensions.
+- Official BIS Portal identifies India annual BIS-spliced domestic-currency non-transformed series: `BIS,WS_CBTA,1.0/A.IN.B.XDC.INR.N` (Annual, India, BIS-spliced, domestic currency XDC, INR, non-transformed N). Official page: https://data.bis.org/topics/CBTA/BIS%2CWS_CBTA%2C1.0/A.IN.B.XDC.INR.N .
+- Official BIS Portal identifies India quarterly BIS-spliced GDP-ratio break-adjusted series: `BIS,WS_CBTA,1.0/Q.IN.B.XDF_R_B1GQ._Z.B` (Quarterly, India, BIS-spliced, XDF_R_B1GQ, currency not applicable, adjusted for breaks); page reports 1950-Q4 to 2026-Q1. https://data.bis.org/topics/CBTA/BIS%2CWS_CBTA%2C1.0/Q.IN.B.XDF_R_B1GQ._Z.B .
+- Official BIS Portal identifies India monthly BIS-spliced USD break-adjusted series: `BIS,WS_CBTA,1.0/M.IN.B.USD._Z.B` (Monthly, India, BIS-spliced, USD, currency not applicable, adjusted for breaks). https://data.bis.org/topics/CBTA/BIS%2CWS_CBTA%2C1.0/M.IN.B.USD._Z.B .
+- Keep the three exact dimension tuples separate; no silent substitution among INR level, GDP ratio and USD level. Monthly INR and quarterly INR-level variants not verified; no guessed keys.
+- BIS documentation confirms December mapping for annual series when monthly data exist, and possible splicing of financial-statement annual series with higher-frequency monetary/statistical sources. Break-adjusted variants, USD and GDP ratios are separate series. https://www.bis.org/pages/statistics/cbta-documentation.pdf
+- Portal indexed search metadata exposed exact identity/dimensions; page-open returned only generic shell. No observation table, raw payload, HTTP headers/status, byte length, SHA-256, immutable vintage/PIT or parser binding acquired. Thus series identity PASS does not imply payload or ingestion acceptance.
+- Decision: three exact India series identities VERIFIED_OFFICIAL_IDENTITY; additional variants UNKNOWN; payload/hash NOT_DONE; vintage/PIT NOT_VERIFIED; parser/registry NOT_APPROVED; tests/runtime NOT_RUN. Scoped progress: three identities 100% each; other variants 0%; payload/hash 0%; PIT 0%; parser/registry 0%. Overall Overlay NOT_CALCULABLE.
+- No observations, parser, registry, tests, workflows or production files changed. No synthetic data/timestamps/hashes; ₹0. All hard invariants unchanged. Source Register updated in preceding commit.
