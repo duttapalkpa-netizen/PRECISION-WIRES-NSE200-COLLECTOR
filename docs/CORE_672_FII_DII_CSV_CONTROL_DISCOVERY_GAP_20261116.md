@@ -38,3 +38,13 @@ This is a source-level selector mismatch, not proof of a live HTTP failure. The 
 ## Protected invariants
 
 No production pipeline, Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 56×12, Engines A–E, or collector production workflow changes. No fabricated HTML fixture, guessed URL, synthetic data, or scope inference.
+
+
+## 2026-11-16 — Second-stage official page link-resolution check
+
+- Re-opened the official NSE page through the available source viewer: https://www.nseindia.com/reports/fii-dii (source reference in research session: `turn984782view0`).
+- The extracted page confirms the two section headings at lines 128 and 132 and one `Download (.csv)` control under each at lines 130 and 134. However, the viewer exposes both controls only as the same generic link reference (`17`); it does not expose either underlying href/URL.
+- Therefore this second check confirms the scope/control ordering but does not supply the raw HTML, DOM attributes, or exact download URLs. It cannot be used as an HTML fixture and does not resolve the parser gap.
+- The web extraction reports a crawl age of approximately three months; treat it as corroborating rendered-page structure only, not a fresh live response or an authenticated download URL.
+- Decision: do not click the generic shared link reference as a substitute for the two distinct controls; do not infer a URL. The next executable evidence step requires a raw HTTP capture from an environment that can reach NSE and preserve response bytes/headers. This chat's GitHub connector can read/write repository files but does not provide a workflow-dispatch action; no live runner was triggered in this step.
+- Status remains: raw HTML/DOM NOT_CAPTURED; exact CSV URLs UNKNOWN; live capture NOT_RUN; parser repair BLOCKED pending authentic markup.
