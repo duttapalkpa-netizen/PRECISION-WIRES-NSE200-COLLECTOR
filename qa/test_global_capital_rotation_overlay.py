@@ -36,6 +36,11 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def test_unknown_quality_rows_are_not_used(self):
         out=classify(self.load([self.row("em_portfolio_flow_usd_bn",50,"UNKNOWN")]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
         self.assertEqual(out["global_em_flow"],"UNKNOWN")
+    def test_provisional_quality_rows_are_not_used_for_classification(self):
+        out=classify(self.load([self.row("em_portfolio_flow_usd_bn",50,"PROVISIONAL")]),"2026-11-07",decision_at="2026-11-07T23:59:59Z")
+        self.assertEqual(out["global_em_flow"],"UNKNOWN")
+        self.assertIsNone(out["latest_observations"]["em_portfolio_flow_usd_bn"])
+
     def test_bad_quality_fails_closed(self):
         with self.assertRaises(ValueError): self.load([self.row("em_portfolio_flow_usd_bn",1,"GUESSED")])
     def test_stale_fpi_is_excluded(self):
