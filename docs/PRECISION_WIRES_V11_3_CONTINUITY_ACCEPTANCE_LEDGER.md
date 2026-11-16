@@ -871,3 +871,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - This prevents a false PASS where a caller could label one scope as another without evidence. Authentic scope proof still requires official source/download metadata or another trusted scope identifier. Existing CSV contents and Run #161 match remain consistency evidence only, not authentication of download scope.
 - Status: contract/test authoring 100%; scope-provenance limitation explicitly encoded 100%; workflow wiring 100%; GitHub source re-fetch verification 100%; automated execution NOT_RUN; live NSE capture NOT_RUN; production mapping NOT_AUTHORIZED/NOT_DONE.
 - No default-branch changes, no PR/merge, no production collector/diagnostic/risk-modifier/selector/score/CORE-672/engine/workflow modifications.
+
+## 2026-11-16 — Default-branch isolated workflow checkout correction
+- User screenshot showed the `main` workflow commit `Pin isolated FII-DII tests to research branch` had hard-pinned checkout to `research/nse-raw-manifest-retention-20261115`, and only ran the capture utility suite. This explained why selecting `research/fii-dii-contract-tests-20261116` in the Run workflow dialog could not execute the newer mapping-contract suite.
+- Within the user's explicit authorization limited to the isolated test workflow on the default branch, changed only `.github/workflows/nse_fii_dii_capture_unit_tests.yml` on `main`.
+- Replaced hard-coded checkout ref with `ref: ${{ github.ref }}` so the workflow checks out the branch selected in GitHub's Run workflow dialog.
+- Added the isolated `test_fii_dii_mapping_contract.py` test step after the existing capture utility tests. Workflow remains manual-only (`workflow_dispatch`), `contents: read`, 5-minute timeout, and no NSE network capture, secrets, artifacts, or production schedule.
+- Commit: `84bfa57529b2a812d4690e7ec0e91f794be448cd`; final workflow blob: `d6b897dc164b4e38ec24f2704149c5f076c5d6bd`. Re-fetched from `main`; verified selected-ref expression and both test commands.
+- This is the sole default-branch file changed, consistent with the user's prior authorization. No other production or research files changed on `main`.
+- Status: default-branch workflow correction PASS (source re-fetch verified); run execution NOT_RUN; test outcome NOT_KNOWN until GitHub Actions reports it.
