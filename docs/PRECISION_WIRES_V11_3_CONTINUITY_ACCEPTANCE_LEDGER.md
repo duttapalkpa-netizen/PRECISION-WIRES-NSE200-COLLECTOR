@@ -93,3 +93,12 @@
 - Therefore QA execution remains NOT_VERIFIED / NOT_RUN from available evidence. No test has been rerun and no PASS claim is made. Do not create another workflow or modify production workflows merely to manufacture a status.
 - Latest relevant code refs remain parser blob 5944be745eb7c22e1e8e4b7ce19226963c0c503e and test blob 56773b5969380aa4b066b92487883522e6dea743. The point-in-time look-ahead guard and future-date regression test are present.
 - Next unblocker: obtain an actual Actions run ID from the repository Actions page (workflow “Global Capital Rotation Overlay QA”), then inspect its job steps/logs/artifacts. If no run exists, user-side repository Actions permission/trigger configuration may need review; do not assume why it did not run.
+
+
+## 2026-11-16 — Source-registry schema hardening
+- New static review found malformed registry shapes could escape the intended ValueError contract: a JSON array root could trigger AttributeError at payload.get(), and allowed_content_types was not type-checked (a string or empty list could produce ambiguous membership behavior). Registry identity fields were also not constrained to non-empty strings / HTTPS.
+- Parser now requires a JSON object root with schema_version=1 and sources[], requires non-empty string identity fields, HTTPS source_url, and a non-empty list of non-empty string allowed_content_types. Exact-match trust policy and intentionally empty production registry remain unchanged.
+- Parser commit 1a094d6672d26eec9c4d5fd3ab7efcd732950228; blob 28bebd06747478c45ae7ecdecca8f80300fcef71.
+- Added regression tests for non-object registry root and malformed content-type allowlists (string, empty list, non-string element). Test commit 23aacd870fb389e865940d51fcef0512e41f3f92; blob b4a901f9e482ab0f1303f96b4ef286d95660376e.
+- Runtime compile and unit tests remain NOT RUN / NOT VERIFIED. No PASS claim. Existing QA workflow configuration remains unchanged; connected GitHub tools still do not expose the push-triggered Actions run list or dispatch.
+- Acceptance: static schema correction 100%; focused tests authored 100%; runtime verification 0% / NOT RUN; parser gate remains NOT PASS.
