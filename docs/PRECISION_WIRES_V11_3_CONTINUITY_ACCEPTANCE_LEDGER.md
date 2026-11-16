@@ -51,3 +51,11 @@
   - Seed data downgrade `data/global_capital_rotation/2026-11-07_seed_observations.csv`: commit `a74b8ac183ec0d6db9f9c82d3edae79d548b8444`; blob `203fa78fffbdc245bc6ae489b3b210fed6bf8394`.
 - Acceptance: parser trust-gate implementation 100% (code authored); machine-readable registry schema 100% (allowlist intentionally empty); seed status reconciliation 100%; regression test authoring 100%; actual test execution/runtime validation NOT RUN; no PASS claim. The gate is intentionally restrictive and all seed observations currently classify UNKNOWN until real raw payload manifests and exact source mappings are added.
 - Scope guard: no production selector/ranking/pressure-fade/CORE-672/Engines A–E/Hard Gate/collector workflow changes; no PR/merge/production integration; ₹0; no synthetic observations, timestamps, hashes or provenance.
+
+
+## 2026-11-16 — Isolated fast Overlay QA workflow added (execution pending)
+- Added `.github/workflows/global-capital-rotation-qa.yml`, a research-branch-only workflow scoped to Overlay parser, registry, seed data, source register, tests and itself. It does not run the 60-minute NSE collector/production workflow.
+- Workflow timeout is 5 minutes; steps are Python 3.12 setup, `py_compile` for parser/tests, and `python -m unittest qa.test_global_capital_rotation_overlay -v`.
+- Workflow file commit: `b7d319030332ab0d70c54f1c3fe923fce335f8ab`.
+- The GitHub workflow-run lookup available in this session returned no run records for that commit; therefore no execution result, job log, test count or PASS is claimed. The workflow definition is committed, but automated execution remains NOT VERIFIED / PENDING.
+- This bounded task closes isolated QA workflow authoring 100%; runtime execution 0% until a run record is visible. No changes to the existing NSE collector workflow or production code.
