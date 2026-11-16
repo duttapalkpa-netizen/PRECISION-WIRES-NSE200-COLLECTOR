@@ -402,4 +402,19 @@ class TestSecurityMasterIntake(unittest.TestCase):
         self.assertEqual(out["data_row_count"],2)
         self.assertEqual(out["row_width_error_count"],0)
 
+
+    def test_trusted_quality_without_exact_registry_match_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        empty=Path(path).parent/"empty-registry.json"
+        empty.write_text('{"schema_version":1,"sources":[]}',encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"no exact source-registry match"):
+            load_observations(path,registry_path=empty)
+
+    def test_trusted_quality_without_raw_manifest_fields_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        row["raw_sha256"]=""
+        with self.assertRaisesRegex(ValueError,"missing evidence manifest fields"):
+            self.load([row])
+
 if __name__=="__main__": unittest.main()
