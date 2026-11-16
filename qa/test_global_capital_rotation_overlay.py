@@ -15,7 +15,8 @@ class TestGlobalCapitalRotation(unittest.TestCase):
             payload_path=payload_dir/f"fixture-{i}.bin"
             payload_path.write_bytes(b"fixture raw payload")
             r["raw_payload_path"]=r.pop("_test_payload_path",str(payload_path.relative_to(root)))
-            r["raw_sha256"]=hashlib.sha256(b"fixture raw payload").hexdigest()
+            if r.get("raw_sha256") != "":
+                r["raw_sha256"]=hashlib.sha256(b"fixture raw payload").hexdigest()
             r["byte_length"]=str(len(b"fixture raw payload"))
         with p.open("w",newline="",encoding="utf-8") as f:
             w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
