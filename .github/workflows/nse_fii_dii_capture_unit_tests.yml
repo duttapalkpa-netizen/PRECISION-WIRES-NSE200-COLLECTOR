@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout selected workflow branch
+      - name: Checkout FII-DII research test branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: research/fii-dii-contract-tests-20261116
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
