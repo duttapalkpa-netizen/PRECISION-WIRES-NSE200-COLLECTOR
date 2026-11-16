@@ -580,3 +580,17 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Acceptance: official HBS flow table identity/unit/period/footnotes verified; 2025-26 row values observed; companion stock table identity/reference date verified. Raw Excel workbook bytes/headers/content-length/SHA not acquired; no machine-readable history or PIT archive; no proof of equivalence to Table 34. Parser/registry NOT_APPROVED. Status QUALIFIED_AS_SEPARATE_ANNUAL_CONTEXT_ONLY.
 - Scoped progress: official annual companion identity 100%; 2025-26 row extraction/review 100%; stock-vs-flow distinction 100%; raw workbook/hash 0%; historical backfill 0%; PIT 0%; cross-table equivalence 0%; parser/registry/tests 0%. Overall Overlay NOT_CALCULABLE.
 - No raw archives, parsers, registries, observations, tests, workflows or production files changed. No synthetic values/timestamps/hashes; ₹0; all production invariants unchanged.
+
+
+## 2026-11-16 — RBI HBS 2025-26 edition table-number reconciliation (correction)
+
+A direct inspection of the official RBI HBS 2025-26 AnnualPublications index resolves an edition-numbering ambiguity in the preceding 2026-11-16 HBS companion note. The 31-Jul-2026 edition identifies:
+- Table 140: “Non-Resident Deposits Outstanding - Rupees” (₹ crore), end-March stock, with observations 2008–2026. Official page: https://www.rbi.org.in/scriptS/PublicationsView.aspx?id=23965 . The 2026 end-March total is ₹1,567,984 crore (FCNR(B) 319,514; NR(E)RA 932,947; NRO 315,523).
+- Table 142: “Inflows (+)/Outflows (-) Under Various Non-Resident Deposit Schemes - Rupees” (₹ crore), FY annual flows, 2007-08–2025-26. Official page: https://www.rbi.org.in/scriptS/PublicationsView.aspx?id=23967 . FY2025-26 total ₹127,345 crore (FCNR(B) 8,362; NR(E)RA 70,160; NRO 48,823).
+- The same 2025-26 index labels Table 143 “Foreign Investment Inflows”; it is NOT the NRD outstanding table in that edition. Index: https://rbi.org.in/scriptS/AnnualPublications.aspx?head=Handbook+of+Statistics+on+Indian+Economy .
+
+Correction to prior note: the ₹1,409,330 crore end-March-2025 outstanding observation belongs to the older 2024-25 HBS edition's Table 143 (publication 29-Aug-2025, page id 23317). It must not be described as the Table 143 companion in the 2025-26 edition. The current 2025-26 edition's corresponding rupee stock table is Table 140. Bind across editions by exact title, unit, frequency/reference period and publication vintage—not table number.
+
+RBI's current index links the table HTML pages and shows displayed Excel/PDF file sizes (Table 140: 10kb/195kb; Table 142: 11kb/195kb), but this inspection did not retrieve direct XLSX/PDF hrefs or any file bytes. Raw workbook headers, bytes, content type, length and SHA-256 remain NOT_ACQUIRED; no parser/registry promotion. Container direct network attempt failed DNS resolution before HTTP response; no claim that RBI endpoint failed.
+
+Acceptance: edition/table-number reconciliation PASS; current-edition stock identity PASS; annual flow identity PASS; raw workbook acquisition/hash 0%; historical vintage archive 0%; parser/registry NOT_APPROVED. Keep Table 140 stock, Table 142 annual flow, and RBI Monthly Bulletin Table 34 USD stock/FY cumulative flow as separate measures. No conversion or join without explicit FX/date methodology. No production/data/parser/test/workflow changes; ₹0; no synthetic values/timestamps/hashes; all production invariants unchanged.
