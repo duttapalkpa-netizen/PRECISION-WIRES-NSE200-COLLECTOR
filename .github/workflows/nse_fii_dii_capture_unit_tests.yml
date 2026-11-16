@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout research branch
         uses: actions/checkout@v4
+        with:
+          ref: research/nse-raw-manifest-retention-20261115
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
