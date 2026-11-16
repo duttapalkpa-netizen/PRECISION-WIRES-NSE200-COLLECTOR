@@ -479,3 +479,13 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Acceptance: official 2026 weekday holiday list reconciliation = PASS; 15-Jan addendum application = PASS; Muhurat special-session identity/timings = PASS; 365-date manifest creation = PASS; arithmetic reconciliation = PASS. This manifest is a calendar specification only; it does not prove actual daily raw-data coverage, trading-day observation continuity, historical multi-year calendar completeness, or backtest indexing.
 - Remaining: reconcile the actual locally archived NSE session-date set against this manifest (not yet available/verified in this task); identify any additional official circular amendments after this snapshot; then recompute rolling H+1/H+3/H+5 only after actual date rows and event windows are validated. User-reported 317 sessions remains unverified.
 - No synthetic observations, forward-fill, raw market-data ingestion, production changes, PR/merge or spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and Hard Gate unchanged; Hard Gate remains BLOCKED. Overall V11.3 progress remains NOT_CALCULABLE pending full weighted acceptance-ledger reconciliation.
+
+
+## 2026-11-16 — Global Capital Rotation: IMF BOP observation-access gate re-check
+- Re-opened official IMF API documentation: https://data.imf.org/en/Resource-Pages/IMF-API . Official page confirms SDMX 2.1/3.0 APIs but the Swagger explorer directs users to beta-portal sign-in. This confirms protocol support, not a publicly tested anonymous BOP observation endpoint.
+- Rechecked IMF SDMX Central public structure-service guide; documented entry point `https://sdmxcentral.imf.org/sdmx/v2/` is for structure metadata, not proof of observation-data access.
+- A third-party tutorial surfaced a candidate `api.imf.org/external/sdmx/2.1/data/IMF.STA,BOP/...` pattern. Explicitly marked UNVERIFIED THIRD-PARTY DISCOVERY; not used to fetch or fabricate observations.
+- Updated `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md`; commit `e6e3e919ff9e38c87f2f6b26b0abda4af06207bf`; blob `340514f285df9526ac8b9a9a0531915c9783763e`.
+- Status: official API protocol support VERIFIED; public structure metadata route DOCUMENTED; anonymous BOP observation endpoint NOT_VERIFIED; observation extraction BLOCKED; country panel/EM aggregation NOT_DONE. No data rows or synthetic timestamps created.
+- Next: confirm an official IMF client-documented route and make a minimal metadata-first one-country/one-period request; if sign-in is required, stop and keep UNKNOWN.
+- No production integration or changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, or Hard Gate. Do not repeat prior overlay 27/27 unit tests absent code changes.
