@@ -550,3 +550,15 @@
 - Scoped progress: CBPOL source-family/methodology 100%; unit/frequency/cadence 100%; India exact series key 0% / UNKNOWN; raw payload/hash 0%; vintage/PIT 0%; parser/registry binding 0%; tests/runtime NOT_RUN. Overall Overlay remains NOT_CALCULABLE.
 - Source Register updated: docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md; commit 52aaad2ac52e3561121d5e87b55c522fcbfb722e; blob 7fbe9242e9d38518c8a65b13f90b0269e3daff52.
 - No observations, seed CSV, parser, registry, tests, workflows or production files changed. No synthetic values/timestamps/hashes; no paid source; ₹0. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
+
+
+## 2026-11-16 — BIS CBPOL India monthly series identity verification
+
+- Reused the prior CBPOL family qualification and targeted only the unresolved India series identity; no repeat of EER/XRU or CBPOL methodology review.
+- Official BIS series page independently resolves `BIS,WS_CBPOL,1.0/M.IN` as Central bank policy rates, India, Frequency Monthly [M], Reference area India [IN]: https://data.bis.org/topics/CBPOL/BIS%2CWS_CBPOL%2C1.0/M.IN . Monthly India exact identity = PASS. The earlier possible M.IN mapping is now confirmed by BIS itself.
+- Official BIS overview confirms percent per year, end-of-period observations, monthly value at last business day, daily direct reporting by member central banks, and metadata for splices/instrument changes and announcement-to-effective lags: https://data.bis.org/topics/CBPOL . Official release calendar distinguishes publication date from reference period: https://data.bis.org/release-calendar?view=list .
+- India daily key remains UNKNOWN: no official BIS daily India series page/key independently retrieved. Do not infer D.IN from third-party listings or guessed patterns.
+- No raw payload acquired; HTTP status/headers, response content type, byte length, SHA-256, retrieval timestamp, immutable vintage/PIT and parser binding remain NOT_DONE/NOT_VERIFIED. No observations promoted and no source registry admission.
+- Progress: monthly India identity 100%; daily India identity 0% / UNKNOWN; CBPOL family/methodology/unit/frequency/cadence 100%; payload/hash 0%; vintage/PIT 0%; parser/registry 0%; tests/runtime NOT_RUN. Overall Overlay NOT_CALCULABLE.
+- No code, parser, registry, seed data, tests, workflows or production selector/ranking/pressure-fade/CORE-672/Engines A–E/Hard Gate changed. No synthetic data; ₹0.
+- Source register updated in the preceding commit; this ledger entry records the same evidence and acceptance boundary.
