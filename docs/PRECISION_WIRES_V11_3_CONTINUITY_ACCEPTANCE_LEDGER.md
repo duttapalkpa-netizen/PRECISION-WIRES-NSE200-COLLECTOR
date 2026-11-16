@@ -897,3 +897,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Commit: `c130ebbd919cf07b74e1841cb123862e0b95a4ce`; final workflow blob `e2c4449e79d7a1f83e896d759291b9e944215f10`. Re-fetched from `main` and verified the pinned branch plus both test commands.
 - This is the only default-branch file changed in this correction. Run #11 (`main`, commit `84bfa57`) is not evidence for the updated research tests; do not repeat or count it as a test result.
 - Status: deterministic branch checkout fix 100%; source re-fetch verification 100%; next GitHub Actions execution NOT_RUN; mapping suite outcome NOT_KNOWN.
+
+
+## 2026-11-16 — FII/DII isolated workflow Run #13 success (user screenshot evidence)
+- User supplied the GitHub Actions run summary screenshot for `NSE FII-DII Capture Utility Unit Tests #13`.
+- Visible run facts: conclusion SUCCESS; branch `main`; commit prefix `c130ebb` (matches the full default-branch workflow commit `c130ebbd919cf07b74e1841cb123862e0b95a4ce`); total duration 11 seconds; job `capture-utility-tests` SUCCESS in 8 seconds; 1 job passed.
+- The exact workflow file at `.github/workflows/nse_fii_dii_capture_unit_tests.yml` was re-fetched from `main` after the run. Blob SHA `e2c4449e79d7a1f83e896d759291b9e944215f10`. It explicitly checks out `research/fii-dii-contract-tests-20261116`, then compiles the capture utility, runs `test_capture_nse_fii_dii.py`, and runs `test_fii_dii_mapping_contract.py`.
+- Interpretation: Run #13 is a successful execution of the isolated workflow with both test commands in its job. The screenshot does not expose the numeric test-method count or the GitHub run ID, so neither is asserted here. No live NSE HTTP capture occurred; these are offline tests only.
+- Status: deterministic checkout correction PASS; workflow job PASS (Run #13 screenshot); both test commands are included in the verified workflow source; exact per-test counts and run ID NOT_CAPTURED; live NSE capture NOT_RUN; CORE-672 production mapping NOT_AUTHORIZED/NOT_DONE.
+- This supersedes the immediately preceding ledger status that the corrected workflow execution was NOT_RUN / NOT_KNOWN. Do not repeat the successful Run #13 test job absent code changes or new evidence.
+- No production files, collector workflows, Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 56×12 production diagnostics, or Engines A–E were changed. The only default-branch file in scope remains the explicitly authorized isolated test workflow.
