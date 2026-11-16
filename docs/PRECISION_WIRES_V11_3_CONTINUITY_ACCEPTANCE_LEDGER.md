@@ -509,3 +509,13 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Status: API protocol VERIFIED; legacy pilot route DISCOVERED but stale (2013); regional XML payload NOT_VERIFIED; current BOP endpoint/dataflow/key UNKNOWN; accepted current India BOP observations 0; EM panel NOT_DONE. No synthetic rows/timestamps or guessed series keys.
 - Next: obtain current official IMF Swagger/OpenAPI or a user-authorized Data Portal query export to identify exact BOP dataflow + DSD linkage + dimensions; otherwise search for a current officially dated IMF statistics release. Do not use 2013 pilot as current data.
 - No production integration or change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate.
+
+
+## 2026-11-16 — Global Capital Rotation provenance trust-boundary audit
+- Static-reviewed `pipeline/global_capital_rotation_overlay.py` blob `3009306ad59e8efd75bf2d8a3a6f4859afee1ece` and `qa/test_global_capital_rotation_overlay.py` blob `c7a72386f9633b09841e0f1630fa3e2ae24bd01d`; did not rerun the already-passing 27-test suite.
+- Confirmed a high-severity research integrity gap: `load_observations()` accepts `quality_status=VERIFIED_OFFICIAL` based on CSV assertion, checks only HTTPS scheme for source_url, and does not bind source host/path/source label/unit to an authoritative indicator-source registry or immutable raw-payload manifest. Unit tests themselves use `https://example.org/data` as a generic fixture with VERIFIED_OFFICIAL, proving mechanics only, not source authenticity.
+- Additional gaps: schema lacks required retrieval timestamp, raw payload SHA-256, HTTP status/content type and vintage/manifest ID; units are not validated per indicator. This is a static trust-boundary finding, not evidence of malicious input or a live false signal.
+- Report added: `docs/GLOBAL_CAPITAL_ROTATION_PROVENANCE_TRUST_BOUNDARY_AUDIT_20261116.md`; commit `753b6d9e26c01f2be082d63e42b933cb3fcf2943`.
+- Decision: STATIC_FINDING_CONFIRMED; REMEDIATION_NOT_STARTED; RUNTIME_TEST_NOT_RUN. For decision-grade use, do not promote external rows based solely on CSV VERIFIED_OFFICIAL label; absent registry+manifest binding, retain UNKNOWN. No rows or seed values changed.
+- Next bounded remediation: versioned indicator→source/host/path/unit registry plus immutable payload manifest (retrieved_at UTC, final URL, status, content type, byte length, SHA-256, explicitly published vintage); parser must reject/downgrade missing or mismatched evidence; add offline metadata-fixture tests.
+- No production integration or changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, or Hard Gate. No PR or merge.
