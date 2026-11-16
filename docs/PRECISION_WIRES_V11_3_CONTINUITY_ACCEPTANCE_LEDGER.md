@@ -880,3 +880,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Commit: `84bfa57529b2a812d4690e7ec0e91f794be448cd`; final workflow blob: `d6b897dc164b4e38ec24f2704149c5f076c5d6bd`. Re-fetched from `main`; verified selected-ref expression and both test commands.
 - This is the sole default-branch file changed, consistent with the user's prior authorization. No other production or research files changed on `main`.
 - Status: default-branch workflow correction PASS (source re-fetch verified); run execution NOT_RUN; test outcome NOT_KNOWN until GitHub Actions reports it.
+
+## 2026-11-16 — FII/DII mapping test failure diagnosis and fixture-path correction
+- User supplied GitHub Actions Run #9 log screenshot. The log shows all setup steps, utility compilation, and `test_capture_nse_fii_dii.py` suite passed; only `Run FII-DII mapping contract tests` failed before executing tests.
+- Exact failure: `FileNotFoundError` in `FiiDiiMappingContractTests.setUpClass` while reading `tools/research/tests/test_fii_dii_mapping_contract.py`, line 21. The path resolved to `/home/runner/work/PRECISION-WIRES-NSE200-COLLECTOR/PRECISION-WIRES-NSE200-COLLECTOR/tools/tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`; the committed fixture is actually at repository-root `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`.
+- Corrected fixture path from `Path(__file__).parents[2]` to `Path(__file__).parents[3]`, preserving the fixture and tests unchanged otherwise.
+- Fix commit: `e551cf303c48efa2c050fc1fe8b5328531aa7de0`; test file blob `f2c5406381395547fb883bc0d9e9a5f8b6b331c5`.
+- Verified the fixture exists on the selected research branch at `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`, blob `25659f24854a8fae4fd7321ba76c5fe62043ee0c`, and contains the Run #161 provenance identifiers and two source rows.
+- Status: failure cause identified 100%; fixture path corrected 100%; GitHub test source updated 100%; corrected workflow execution NOT_RUN; all 14 mapping tests remain NOT_VERIFIED until next run. Prior successful capture utility tests remain PASS for Run #9 only.
+- No production files or default-branch files changed in this correction; only the isolated research-branch test file and continuity ledger updated.
