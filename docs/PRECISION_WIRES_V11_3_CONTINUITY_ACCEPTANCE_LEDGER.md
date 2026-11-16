@@ -20,3 +20,12 @@
 - Next: capture an actual CDSL daily raw payload with final URL, response metadata, UTC retrieval timestamp and SHA-256, then bind that exact route/category/unit in the registry. Until then, do not accept CSV rows as VERIFIED_OFFICIAL based on the landing page alone; decision-grade state remains UNKNOWN.
 - Invariants unchanged: research-only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows untouched; no PR/merge/production integration; ₹0 spend; no synthetic observations or timestamps.
 - Progress for this bounded task: official page/method review 100%; report family/field/unit qualification 100%; direct raw payload endpoint 0%; immutable manifest 0%; parser binding 0%; targeted tests 0%; runtime validation NOT_RUN. This is source-route qualification, not Provenance Gate completion.
+
+
+## 2026-11-16 — CDSL FPI Latest report route resolution (bounded follow-up; no duplicate review)
+- Followed the official CDSL landing-page “Latest” control. It resolves to `https://www.cdslindia.com/eservices/publications/fiidaily`, a rendered HTML report page, not a raw CSV/XLS endpoint. The retrieved extraction displayed 10-AUG-2026 as its report date; do not treat this as a current retrieval timestamp or a guarantee of freshness.
+- The page distinguishes provisional exchange-member reporting from confirmed custodian/depository submissions and states that confirmed data represents trades on and up to previous trading day(s). Preserve report date, underlying trade-date semantics and actual retrieval timestamp separately.
+- CDSL “Current Month” and “Archive” controls returned 403 to the retrieval layer. A dated archive item resolved to an official .xls URL but the retrieval layer rejected the legacy Excel content type; no raw bytes, HTTP response headers, byte length or SHA-256 were obtained.
+- Source Register update: `docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md`; commit `baf48edcb1026f3d301e0e6e02c3f9039bc300c4`; blob `8c8dea2947fb8e0e991b6c629a1e21a474a634bb`.
+- Acceptance: exact official HTML Latest route resolution 100%; raw machine-readable payload endpoint 0%; raw bytes/response metadata/SHA-256 0%; immutable manifest 0%; parser binding 0%; runtime validation NOT_RUN. This closes only the route-resolution subtask; CDSL provenance gate remains UNKNOWN / NOT PASS.
+- No observations, seed CSV, parser, tests, workflow or production code changed; no CI rerun. No synthetic values/timestamps; ₹0; production invariants preserved.
