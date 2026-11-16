@@ -13,7 +13,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
                 registry.append({k:r[k] for k in ("source","source_url","indicator","unit","quality_status")}|{"allowed_content_types":["text/csv"]})
             payload_path=payload_dir/f"fixture-{i}.bin"
             payload_path.write_bytes(b"fixture raw payload")
-            r["raw_payload_path"]=str(payload_path.relative_to(root))
+            r["raw_payload_path"]=r.pop("_test_payload_path",str(payload_path.relative_to(root)))
             r["raw_sha256"]=hashlib.sha256(b"fixture raw payload").hexdigest()
             r["byte_length"]=str(len(b"fixture raw payload"))
         with p.open("w",newline="",encoding="utf-8") as f:
@@ -58,7 +58,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
     def test_trusted_raw_payload_path_cannot_escape_input_directory(self):
         row=self.row("em_portfolio_flow_usd_bn",1)
-        row["raw_payload_path"]="../outside.bin"
+        row["_test_payload_path"]="../outside.bin"
         path=self.make([row])
         with self.assertRaisesRegex(ValueError,"escapes input directory"):
             load_observations(path,registry_path=self.registry_path)
