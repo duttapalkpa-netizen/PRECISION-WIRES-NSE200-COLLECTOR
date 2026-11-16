@@ -16,13 +16,20 @@ def _load_source_registry(path: Path):
         payload=json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise ValueError(f"source registry unavailable or invalid: {path}") from exc
-    if payload.get("schema_version") != 1 or not isinstance(payload.get("sources"), list):
+    if not isinstance(payload,dict) or payload.get("schema_version") != 1 or not isinstance(payload.get("sources"), list):
         raise ValueError("source registry schema_version=1 and sources[] are required")
     entries={}
     for item in payload["sources"]:
-        required={"source","source_url","indicator","unit","quality_status"}
+        required={"source","source_url","indicator","unit","quality_status","allowed_content_types"}
         if not isinstance(item,dict) or not required.issubset(item):
             raise ValueError("invalid source registry entry")
+        if not all(isinstance(item[k],str) and item[k].strip() for k in ("source","source_url","indicator","unit","quality_status")):
+            raise ValueError("source registry identity fields must be non-empty strings")
+        if not item["source_url"].startswith("https://"):
+            raise ValueError("source registry source_url must use HTTPS")
+        content_types=item["allowed_content_types"]
+        if not isinstance(content_types,list) or not content_types or not all(isinstance(x,str) and x.strip() for x in content_types):
+            raise ValueError("allowed_content_types must be a non-empty list of strings")
         if item["quality_status"] not in TRUSTED_QUALITIES:
             raise ValueError("registry quality_status must be a trusted quality")
         key=(item["source"],item["source_url"],item["indicator"],item["unit"],item["quality_status"])
