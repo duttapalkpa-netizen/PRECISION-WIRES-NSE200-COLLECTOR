@@ -761,3 +761,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Clarified that manifest URL provenance is query-free (scheme/host/path); query strings and fragments are intentionally omitted. This aligns the documentation with `manifest_url()` and exception redaction behavior.
 - Documentation correction commit `ba30eec75483b243ba35f8bea02e02334c755551`; blob `33cbe371071bb1dc62ea1872b5f6fa8dd65cc48c`.
 - Dedicated workflow commit remains `91f116a2dd426427845dd8bf4343cb8c6b0e259f`; committed but NOT_RUN. No claims of exact test PASS.
+
+## 2026-11-16 — Default-branch dispatch enablement for isolated FII/DII tests
+- User explicitly authorized adding only the isolated test workflow to the repository default branch; no other production or research files were authorized for modification.
+- Repository metadata confirmed default branch is `main`.
+- Confirmed the workflow path did not previously exist on `main`; created only `.github/workflows/nse_fii_dii_capture_unit_tests.yml` in commit `1539bba91bb44dadeb46a0f8a7b701a16acf0729`.
+- Follow-up hardening commit `5689512b2119a4c3d75a5bd743292616bae97e73` explicitly pins `actions/checkout` to research branch `research/nse-raw-manifest-retention-20261115`. This ensures the manual workflow executes the intended research-branch utility and seven-test suite, not files from `main`.
+- Final workflow file was re-fetched from `main`; blob SHA `217daf02687457fda6fb1ceaa2e699c53a70e93e`. Commit diff confirms the follow-up changed only this workflow file (added explicit checkout ref).
+- Workflow remains manual-only (`workflow_dispatch`), `contents: read`, concurrency-cancelled, 5-minute timeout, Python 3.12, installs requests, compiles the utility and runs only the named offline unit-test file. No NSE request, secrets, artifact upload, cron, push trigger, or production pipeline integration.
+- No other file was changed on `main`; no research source/test/doc file changed in this operation; no PR/merge, production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 contract, Engines A–E, collector workflow or dataset changed.
+- Status: default-branch workflow installation 100% (verified by fetch); research-branch checkout pin 100% (verified by fetch/diff); exact GitHub Actions execution NOT_RUN; compile NOT_RUN; seven unit tests NOT_RUN; live NSE capture NOT_RUN; API/CSV scope reconciliation BLOCKED.
+- Next action: user opens repository Actions → “NSE FII-DII Capture Utility Unit Tests” → Run workflow, selects `main` (workflow file source), then starts it. Workflow itself checks out the pinned research branch. Record run ID, commit SHA, duration, job conclusion and test output only after actual run completion.
