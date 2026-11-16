@@ -106,7 +106,7 @@ def load_observations(path: Path, registry_path: Path = DEFAULT_SOURCE_REGISTRY)
                 raise ValueError(f"row {n}: observation date is after as_of_date")
             if not row["source_url"].startswith("https://"):
                 raise ValueError(f"row {n}: source_url must use HTTPS")
-            _validate_trusted_evidence(row,registry,n)\n            _validate_trusted_evidence(row,registry,n)
+            _validate_trusted_evidence(row,registry,n)
             if row["quality_status"] == "UNKNOWN": continue
             grouped[row["indicator"]].append({**row,"value":value,"_published_key":published})
     return grouped
