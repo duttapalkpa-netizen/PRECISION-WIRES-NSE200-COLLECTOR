@@ -30,8 +30,13 @@ class FiiDiiMappingContractTests(unittest.TestCase):
 
     def test_nse_only_scope_is_explicit_not_inferred(self):
         result = validate_rows(self.rows, "NSE_ONLY")
-        self.assertEqual(result["scope"], "NSE_ONLY")
+        self.assertEqual(result["declared_scope"], "NSE_ONLY")
         self.assertEqual(result["status"], "STRUCTURE_VALIDATED_ONLY")
+
+    def test_scope_is_reported_as_caller_declared_not_authenticated(self):
+        result = validate_rows(self.rows, "NSE_BSE_MSEI_COMBINED")
+        self.assertIn("declared_scope", result)
+        self.assertNotIn("authenticated_scope", result)
 
     def test_unknown_scope_rejected(self):
         with self.assertRaisesRegex(ValueError, "scope"):
