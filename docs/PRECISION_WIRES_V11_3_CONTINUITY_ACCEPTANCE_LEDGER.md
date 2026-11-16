@@ -433,3 +433,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Next task: review the proposed adapter specification and resolve the calibration minimum-sample and below-threshold policy. After approval, implement only in an isolated research module, add short CI tests, then validate the signal-input gate before any historical replay.
 - Scoped progress: raw archive acceptance 100% PASS; lineage diagnosis 100%; adapter specification draft 100%; calibration policy approval pending; adapter implementation 0%; historical replay 0%; independent replay reconciliation 0%; project-wide percentage NOT_CALCULABLE.
 - PR #37 remains Draft/Open/Unmerged. No merge authorization. No production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E, or production workflow changes. No paid APIs/spend.
+
+
+## 2026-11-16 — NSE CSV control link-resolution follow-up
+- Re-opened official NSE FII/DII report page: https://www.nseindia.com/reports/fii-dii (web extraction ref `turn984782view0`). It confirms two distinct headings and CSV controls at extracted lines 128–134.
+- The extraction maps both generic “Download (.csv)” controls to the same generic link reference and does not expose either href. It is not raw HTML/DOM and cannot authenticate either CSV URL. Crawl age reported approximately three months; use only as corroboration of rendered structure.
+- Updated report: `docs/CORE_672_FII_DII_CSV_CONTROL_DISCOVERY_GAP_20261116.md`; commit `221d46bb900822bc49b1919727930b660f42711e`; blob `335e44a6d9eed16f704356b92905889da9d1b298`.
+- No guessed URL, synthetic fixture, live capture, parser repair, or production change was made. GitHub connector in this session exposes repository read/write and run-log/artifact retrieval but no workflow-dispatch action; no new runner was triggered.
+- Status unchanged: rendered structure corroboration PASS; raw HTML/DOM NOT_CAPTURED; exact CSV URLs UNKNOWN; live capture NOT_RUN; parser repair and API-to-CSV reconciliation BLOCKED; production mapping NOT_AUTHORIZED/NOT_DONE.
+- Next step: obtain raw NSE HTTP response bytes and response metadata from a reachable execution runner, preserve SHA-256, then implement section-context parser and offline tests from that authentic capture. Do not repeat the already-PASS 21/21 offline test suites or the two CSV hash/arithmetic checks absent changed code/data.
+- Protected invariants unchanged: Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 56×12, Engines A–E, and collector production workflows.
