@@ -7,7 +7,7 @@ EXPECTED_GROUPS = {"FII_FPI", "DII"}
 
 
 def validate_rows(rows, scope):
-    """Validate one declared scope only. Returns structural metadata, never POSITIVE/NEGATIVE."""
+    """Validate rows under a caller-declared scope label; does not authenticate scope provenance."""
     if scope not in ALLOWED_SCOPES:
         raise ValueError("unknown exchange scope")
     if not isinstance(rows, list) or not rows:
@@ -44,7 +44,7 @@ def validate_rows(rows, scope):
         dates.add(date)
     return {
         "status": "STRUCTURE_VALIDATED_ONLY",
-        "scope": scope,
+        "declared_scope": scope,
         "row_count": len(rows),
         "groups": sorted({r["group"] for r in rows}),
         "distinct_dates": len(dates),
