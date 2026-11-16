@@ -446,3 +446,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Scope progress: source/test inventory 100%; isolated CI push-trigger wiring 100%; Python compile runtime 0% / NOT VERIFIED; 21 offline tests runtime 0% / NOT VERIFIED; live NSE endpoint capture 0% / NOT STARTED; independent raw-payload/CSV/manifest reconciliation 0% / NOT STARTED.
 - This work validates only capture/structure contracts. It does not authenticate exchange scope from a caller label, prove source payload freshness, establish matured flow history, infer institutional-flow direction, or complete the Global Capital Rotation overlay. A single-date Run #161 fixture remains UNKNOWN for any multi-session maturity threshold. Do not treat structural validation as a market signal.
 - No raw payloads or CSVs were committed; no secrets/cookies written; no paid API or spend; no selector/ranking/pressure-fade/CORE-672/engines A–E changes; no PR merge or production integration.
+
+
+### Runtime validation addendum — local isolated execution (2026-11-16)
+- Executed the complete capture utility source and both test modules in an isolated local Python environment using the source contents fetched from the research branch and the provenance-pinned Run #161 fixture.
+- Full capture utility `py_compile`: PASS.
+- Capture utility offline suite: 7/7 PASS.
+- FII-DII mapping contract suite: 14/14 PASS.
+- Combined: 21 tests, 0 failures, 0 errors; runtime 0.011 seconds.
+- This is local isolated runtime evidence, not a GitHub Actions run. GitHub Actions status remains NOT VERIFIED because the available combined-status query returned no status entries and no run/job log ID was retrievable in this session. The branch-scoped push trigger remains configured to permit CI execution on subsequent branch pushes.
+- The local run used no live NSE requests. Live source access/capture, actual raw payload bytes and SHA-256, the two official CSV downloads, manifest/source cross-validation, and trusted-observation acceptance remain NOT RUN. Structural fixture result remains STRUCTURE_VALIDATED_ONLY; one observation date remains UNKNOWN for multi-session maturity.
+- Revised scoped progress: source/test inventory 100%; isolated workflow trigger wiring 100%; local Python compilation 100% PASS; local offline tests 21/21 (100% PASS); GitHub Actions confirmation NOT VERIFIED; live NSE capture 0%; independent source/raw-payload reconciliation 0%.
