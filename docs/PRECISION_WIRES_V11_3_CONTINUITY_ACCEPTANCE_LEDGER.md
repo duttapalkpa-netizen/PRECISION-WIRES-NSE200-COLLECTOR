@@ -772,3 +772,22 @@ Report workstream percentages separately from evidence status. Percentage means 
 - No other file was changed on `main`; no research source/test/doc file changed in this operation; no PR/merge, production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 contract, Engines A–E, collector workflow or dataset changed.
 - Status: default-branch workflow installation 100% (verified by fetch); research-branch checkout pin 100% (verified by fetch/diff); exact GitHub Actions execution NOT_RUN; compile NOT_RUN; seven unit tests NOT_RUN; live NSE capture NOT_RUN; API/CSV scope reconciliation BLOCKED.
 - Next action: user opens repository Actions → “NSE FII-DII Capture Utility Unit Tests” → Run workflow, selects `main` (workflow file source), then starts it. Workflow itself checks out the pinned research branch. Record run ID, commit SHA, duration, job conclusion and test output only after actual run completion.
+
+
+## 2026-11-16 — NSE FII/DII capture utility exact GitHub Actions test PASS
+- Verified the manually dispatched workflow run from GitHub API and fetched its actual job logs; this is an exact committed research-branch checkout, not the earlier reconstructed helper harness.
+- Workflow: `NSE FII-DII Capture Utility Unit Tests`; run number #3; run ID `43834406640`; event `workflow_dispatch`; workflow-source branch `main`; workflow head SHA `5689512b2119a4c3d75a5bd743292616bae97e73`; conclusion `success`; total duration 13 seconds; job `capture-utility-tests` completed success in 9 seconds.
+- Job ID `133187345477`. Logs confirm checkout of research branch `research/nse-raw-manifest-retention-20261115`, checked-out source commit `ba30eec75483b243ba35f8bea02e02334c755551`, Python `3.12.16`, requests `2.34.2`.
+- Step outcomes: checkout PASS; Python setup PASS; requests install PASS; `python -m py_compile tools/research/capture_nse_fii_dii.py` PASS; `python -m unittest discover -s tools/research/tests -p 'test_capture_nse_fii_dii.py' -v` PASS.
+- Exact offline test output: 7 tests ran in 0.001s, all OK:
+  1. `test_anchor_parser_preserves_label_and_href`
+  2. `test_https_official_hosts_allowed`
+  3. `test_invalid_port_does_not_raise`
+  4. `test_manifest_url_drops_query_and_fragment`
+  5. `test_non_https_and_non_official_hosts_rejected`
+  6. `test_sha256_known_vector`
+  7. `test_write_bytes_returns_hash_and_length`
+- Evidence URLs: run `https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43834406640`; job logs retrieved from GitHub Actions job `133187345477`.
+- Status: exact Python compile PASS; exact committed seven-test suite PASS; manual workflow PASS. This validates only tested helper/security/file-write behavior and Python syntax. It does NOT validate live NSE API access, CSV retrieval, response schema, raw capture integrity in a live session, market-scope reconciliation, rolling FII/DII history, CORE-672 mapping or production integration.
+- Next highest-value task: perform one controlled live NSE research-only capture from the exact tested research branch, first checking whether official page HTML exposes two distinct CSV control URLs. If not, require the exact two URLs copied from the official NSE page; do not guess. Keep raw captures local, hash them, redact secrets, and preserve UNKNOWN if access is blocked. Live capture remains NOT_RUN.
+- No production collector, workflow, dataset, selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 contract, Engines A–E, or default branch code beyond the already authorized isolated workflow file was changed by this test run.
