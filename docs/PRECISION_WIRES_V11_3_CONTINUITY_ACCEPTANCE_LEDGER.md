@@ -562,3 +562,15 @@
 - Progress: monthly India identity 100%; daily India identity 0% / UNKNOWN; CBPOL family/methodology/unit/frequency/cadence 100%; payload/hash 0%; vintage/PIT 0%; parser/registry 0%; tests/runtime NOT_RUN. Overall Overlay NOT_CALCULABLE.
 - No code, parser, registry, seed data, tests, workflows or production selector/ranking/pressure-fade/CORE-672/Engines A–E/Hard Gate changed. No synthetic data; ₹0.
 - Source register updated in the preceding commit; this ledger entry records the same evidence and acceptance boundary.
+
+
+## 2026-11-16 — BIS Central Bank Total Assets (CBTA) source-family qualification
+
+- Selected a new official macro-liquidity/balance-sheet source family after CBPOL identity work; checked the current Overlay register and did not repeat any recorded CBTA audit.
+- Official BIS overview states CBTA covers 50+ advanced/emerging economies, annual/quarterly/monthly series, and units in domestic currency (including fixed-parity conversions), percent of GDP and US dollars. Quarterly update cadence; page metadata displayed last release 27-Aug-2026 and next release 26-Nov-2026 at review. https://data.bis.org/topics/CBTA
+- BIS documentation: national financial statements/accounting balance sheets are primary references; monetary/statistical balance sheets supply higher-frequency observations where required. Long series may splice annual statements with monthly/quarterly sources. Annual series uses December observation when monthly data exist. Break-adjusted variants, USD series and GDP ratios are distinct dimensions. https://www.bis.org/pages/statistics/cbta-documentation.pdf
+- CBTA is a balance-sheet stock/size measure, not a liquidity-flow, QE transaction, reserve-flow or policy-rate series. Total assets may include gold, foreign reserves, claims on government/financial/non-financial sectors and non-financial assets. Preserve exact dimensions and splice/break metadata.
+- Exact India series key/dimension tuple not verified. Do not infer from sample table or third-party catalogue. No raw payload/headers/byte length/SHA-256, immutable vintage/PIT, parser or registry binding acquired. Bulk catalogue shows CBTA package release date 27-Aug-2026 but no package bytes acquired: https://data.bis.org/bulkdownload
+- Acceptance: source family/methodology/frequency/units/cadence QUALIFIED; India exact series UNKNOWN; payload/hash NOT_DONE; vintage/PIT NOT_VERIFIED; parser/registry NOT_APPROVED; tests/runtime NOT_RUN. Scoped progress: family 100%; units/frequency/cadence 100%; India key 0%; payload/hash 0%; PIT 0%; parser/registry 0%. Overall Overlay NOT_CALCULABLE.
+- No observations, seed data, parser, registry, tests, workflows or production files changed. No synthetic values/timestamps/hashes; ₹0. All hard invariants unchanged.
+- Source Register was updated in the preceding commit; this entry preserves the same evidence and acceptance boundary in the master ledger.
