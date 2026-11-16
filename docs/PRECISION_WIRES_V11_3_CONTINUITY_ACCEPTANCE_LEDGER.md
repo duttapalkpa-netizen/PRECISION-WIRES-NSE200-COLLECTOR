@@ -499,3 +499,13 @@ Official references: https://www.bseindia.com/markets/MarketInfo/DownloadAttach.
 - Spec updated: docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md; commit 422f1a444ae576a1621baebc682f677d25bdfa91; blob 244ef023e6be29f756171862d75c71909e9c8c6c.
 - Status: IMF API protocol VERIFIED; official client help link DISCOVERED but body inaccessible; BOP catalogue API control DISCOVERED but target unresolved; observation request NOT_EXECUTED; India rows 0; EM aggregation NOT_DONE. No guessed key, sample registration, synthetic row or timestamp used.
 - Next: obtain IMF-authored Python guidance body or official OpenAPI schema/API response with exact BOP dataflow/key; otherwise retain UNKNOWN. No production changes; preserve all selector/ranking/engine invariants.
+
+
+## 2026-11-16 — IMF BOP legacy pilot route freshness qualification
+- Discovered official IMF Statistics Department legacy BOP pilot dissemination page https://sdmx.imf.org/bop/ . It describes six regional SDMX-ML compact data files and 75 series per reporting country, but explicitly states Last Update: 2013-01-09. This is historical discovery only, not current data for the capital-rotation overlay.
+- Developing Asia XML target https://sdmx.imf.org/bop/Developing_Asia.xml was attempted through web retrieval and returned Cache miss before payload access. No response body, raw bytes, checksum, observation period or rows verified. Retrieval status NOT_VERIFIED; do not mark ingestion PASS.
+- Official IMF API page confirms SDMX 2.1/3.0 but Swagger exploration requires beta-portal sign-in. The IMF Help article cited by a third-party OpenAPI mirror could not be opened. The mirror's generic SDMX 3.0 dataflow/key route is secondary/unverified; no concrete IMF BOP dataflow or dimension key inferred.
+- Updated `docs/IMF_BOP_PORTFOLIO_FLOW_EXTRACTION_SPEC_V1.md`; commit `c068d00dc8606095e0ec64c13ac186351049eae8`; blob `ae6813ad17bbe67d7e348232644b49f5d14d603a`.
+- Status: API protocol VERIFIED; legacy pilot route DISCOVERED but stale (2013); regional XML payload NOT_VERIFIED; current BOP endpoint/dataflow/key UNKNOWN; accepted current India BOP observations 0; EM panel NOT_DONE. No synthetic rows/timestamps or guessed series keys.
+- Next: obtain current official IMF Swagger/OpenAPI or a user-authorized Data Portal query export to identify exact BOP dataflow + DSD linkage + dimensions; otherwise search for a current officially dated IMF statistics release. Do not use 2013 pilot as current data.
+- No production integration or change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate.
