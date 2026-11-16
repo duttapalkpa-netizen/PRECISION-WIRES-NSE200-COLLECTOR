@@ -889,3 +889,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Verified the fixture exists on the selected research branch at `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`, blob `25659f24854a8fae4fd7321ba76c5fe62043ee0c`, and contains the Run #161 provenance identifiers and two source rows.
 - Status: failure cause identified 100%; fixture path corrected 100%; GitHub test source updated 100%; corrected workflow execution NOT_RUN; all 14 mapping tests remain NOT_VERIFIED until next run. Prior successful capture utility tests remain PASS for Run #9 only.
 - No production files or default-branch files changed in this correction; only the isolated research-branch test file and continuity ledger updated.
+
+## 2026-11-16 — Deterministic checkout fix for manual FII/DII test workflow
+- User screenshot of Run #11 conclusively showed the run used `main` at workflow commit `84bfa57`, despite the user intending to select `research/fii-dii-contract-tests-20261116`. This was a GitHub UI/dispatch branch-selection mismatch; the research test branch was not actually checked out by that run.
+- To eliminate the need for the user to select a second branch in the mobile Run workflow dialog, changed only the already-authorized default-branch workflow `.github/workflows/nse_fii_dii_capture_unit_tests.yml` on `main` to explicitly checkout `research/fii-dii-contract-tests-20261116`.
+- The workflow remains `workflow_dispatch` only, `contents: read`, Python 3.12, 5-minute timeout, no NSE network capture, no secrets, no production schedules. It runs both the capture utility offline tests and FII-DII mapping contract tests from the pinned research branch.
+- Commit: `c130ebbd919cf07b74e1841cb123862e0b95a4ce`; final workflow blob `e2c4449e79d7a1f83e896d759291b9e944215f10`. Re-fetched from `main` and verified the pinned branch plus both test commands.
+- This is the only default-branch file changed in this correction. Run #11 (`main`, commit `84bfa57`) is not evidence for the updated research tests; do not repeat or count it as a test result.
+- Status: deterministic branch checkout fix 100%; source re-fetch verification 100%; next GitHub Actions execution NOT_RUN; mapping suite outcome NOT_KNOWN.
