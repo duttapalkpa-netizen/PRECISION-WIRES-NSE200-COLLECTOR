@@ -928,3 +928,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Status: exact-byte hash PASS; CSV arithmetic PASS 4/4; scope distinction confirmed; authentication of these Library files' precise official download-control provenance UNKNOWN; historical maturity NOT_AVAILABLE (one date only); 20-session gate NOT_MATURE; live API capture NOT_RUN; CORE-672 mapping NOT_AUTHORIZED/NOT_DONE.
 - Do not treat the two scopes as interchangeable, sum them, or promote either to canonical production input. File names are not source authentication.
 - This is a research-only reconciliation; no production code/workflow/selector/score/pressure-fade/CORE-672/engines changed.
+
+
+## 2026-11-16 — NSE FII/DII download-control parser gap found before live run
+- Inspected the official NSE report page rendered structure: two separate scope headings (“NSE in Capital Market Segment” and “NSE, BSE and MSEI in Capital Market Segment”), each followed by a “Download (.csv)” control.
+- Current utility's `AnchorParser` stores only individual anchor text/href; its selector requires the anchor label itself to contain “capital market” and FII/DII. The section scope text is outside the download control label, so this parser cannot reliably bind controls to the correct scope and may fail closed with ACCESS_BLOCKED.
+- This is a static selector-design finding from rendered page inspection, not a live raw HTML/DOM capture or a verified runtime failure. Exact download URLs remain UNKNOWN; no URL guessed.
+- Report: `docs/CORE_672_FII_DII_CSV_CONTROL_DISCOVERY_GAP_20261116.md`; commit `5f2a48d3456f37317e3557285f656cd3579ed66a`.
+- Next task: obtain exact official raw page markup/DOM, preserve its provenance/hash, then implement a section-context-aware parser and fixture tests. Do not run live capture until exact controls are resolved or the explicit exact-URL override is supplied.
+- Status: rendered two-control structure PASS; current scope-to-control parser association BLOCKED; raw DOM fixture NOT_CAPTURED; URLs UNKNOWN; live capture NOT_RUN; API-to-CSV reconciliation BLOCKED.
+- No production files/workflows or selector/scoring/CORE-672/engines changed.
