@@ -6,11 +6,12 @@ FIELDS=["date","indicator","value","unit","source","source_url","published_at","
 class TestGlobalCapitalRotation(unittest.TestCase):
     def make(self,rows):
         d=tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup); root=Path(d.name); p=root/"in.csv"
-        registry=[]
+        registry={}
         payload_dir=root/"payloads"; payload_dir.mkdir()
         for i,r in enumerate(rows):
             if r.get("quality_status","VERIFIED_OFFICIAL") in ("VERIFIED_OFFICIAL","VERIFIED_SECONDARY"):
-                registry.append({k:r[k] for k in ("source","source_url","indicator","unit","quality_status")}|{"allowed_content_types":["text/csv"]})
+                key=tuple(r[k] for k in ("source","source_url","indicator","unit","quality_status"))
+                registry[key]={k:r[k] for k in ("source","source_url","indicator","unit","quality_status")}|{"allowed_content_types":["text/csv"]}
             payload_path=payload_dir/f"fixture-{i}.bin"
             payload_path.write_bytes(b"fixture raw payload")
             r["raw_payload_path"]=r.pop("_test_payload_path",str(payload_path.relative_to(root)))
@@ -20,13 +21,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
             w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
             for r in rows: w.writerow({k:r.get(k,"") for k in FIELDS})
         rp=root/"registry.json"
-        rp.write_text(__import__("json").dumps({"schema_version":1,"sources":registry}),encoding="utf-8")
+        rp.write_text(__import__("json").dumps({"schema_version":1,"sources":list(registry.values())}),encoding="utf-8")
         self.registry_path=rp
         return p
     def load(self,rows):
         return load_observations(self.make(rows),registry_path=self.registry_path)
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
-        return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-07T01:00:00Z",http_status="200",content_type="text/csv",byte_length="19",raw_payload_path="payloads/fixture-0.bin")
+        return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-08T01:00:00Z",http_status="200",content_type="text/csv",byte_length="19",raw_payload_path="payloads/fixture-0.bin")
     def test_future_dated_observation_is_excluded_at_earlier_decision_time(self):
         future=self.row("em_portfolio_flow_usd_bn",99,asof="2026-11-08",published="2026-11-07T00:00:00Z")
         out=classify(self.load([future]),"2026-11-08",decision_at="2026-11-07T23:59:59Z")
@@ -344,6 +345,20 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
 
 
+    def test_trusted_quality_without_exact_registry_match_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        empty=Path(path).parent/"empty-registry.json"
+        empty.write_text('{"schema_version":1,"sources":[]}',encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"no exact source-registry match"):
+            load_observations(path,registry_path=empty)
+
+    def test_trusted_quality_without_raw_manifest_fields_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        row["raw_sha256"]=""
+        with self.assertRaisesRegex(ValueError,"missing evidence manifest fields"):
+            self.load([row])
+
 class TestSecurityMasterIntake(unittest.TestCase):
     def test_csv_hash_and_duplicate_isin_are_reported_without_issuer_inference(self):
         import hashlib
@@ -449,19 +464,5 @@ class TestSecurityMasterIntake(unittest.TestCase):
         self.assertEqual(out["data_row_count"],2)
         self.assertEqual(out["row_width_error_count"],0)
 
-
-    def test_trusted_quality_without_exact_registry_match_is_rejected(self):
-        row=self.row("india_fpi_equity_inr_cr",10)
-        path=self.make([row])
-        empty=Path(path).parent/"empty-registry.json"
-        empty.write_text('{"schema_version":1,"sources":[]}',encoding="utf-8")
-        with self.assertRaisesRegex(ValueError,"no exact source-registry match"):
-            load_observations(path,registry_path=empty)
-
-    def test_trusted_quality_without_raw_manifest_fields_is_rejected(self):
-        row=self.row("india_fpi_equity_inr_cr",10)
-        row["raw_sha256"]=""
-        with self.assertRaisesRegex(ValueError,"missing evidence manifest fields"):
-            self.load([row])
 
 if __name__=="__main__": unittest.main()
