@@ -212,7 +212,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
     def test_decision_cutoff_excludes_future_publication(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-06T20:00:00Z"),
               self.row("india_fpi_equity_inr_cr",-20,published="2026-11-07T02:00:00Z")]
-        grouped=self.load(rows))
+        grouped=self.load(rows)
         early=classify(grouped,"2026-11-07",decision_at="2026-11-06T21:00:00Z")
         late=classify(grouped,"2026-11-07",decision_at="2026-11-07T03:00:00Z")
         self.assertEqual(early["india_fpi_equity"],"FPI_EQUITY_NET_BUY")
@@ -226,7 +226,7 @@ class TestGlobalCapitalRotation(unittest.TestCase):
 
     def test_decision_cutoff_normalizes_timezone_offsets(self):
         rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T04:00:00+05:30")]
-        grouped=self.load(rows))
+        grouped=self.load(rows)
         before=classify(grouped,"2026-11-07",decision_at="2026-11-06T22:29:59Z")
         after=classify(grouped,"2026-11-07",decision_at="2026-11-06T22:30:00Z")
         self.assertEqual(before["india_fpi_equity"],"UNKNOWN")
