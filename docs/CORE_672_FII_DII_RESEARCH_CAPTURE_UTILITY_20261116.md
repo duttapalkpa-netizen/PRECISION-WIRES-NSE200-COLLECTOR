@@ -83,3 +83,12 @@ Replace placeholders only with URLs copied from the two distinct official NSE re
 - Workflow commit: `91f116a2dd426427845dd8bf4343cb8c6b0e259f`.
 - This connector cannot dispatch a workflow run. The workflow is committed but NOT_RUN. User can start it from GitHub Actions → 'NSE FII-DII Capture Utility Unit Tests' → Run workflow, selecting branch `research/nse-raw-manifest-retention-20261115`.
 - Expected scope is py_compile plus 7 unit tests; do not call it PASS until a completed GitHub Actions run confirms success.
+
+## 2026-11-16 exact GitHub Actions execution evidence
+- GitHub Actions Run #13: run ID `43869585899`; workflow ID `419761357`; workflow commit `c130ebbd919cf07b74e1841cb123862e0b95a4ce`; branch `main`; conclusion SUCCESS; elapsed 11 seconds.
+- Job `capture-utility-tests`, job ID `133306894900`: SUCCESS. Actual checkout was `research/fii-dii-contract-tests-20261116` at commit `e551cf303c48efa2c050fc1fe8b5328531aa7de0`.
+- Python 3.12.16; `py_compile` PASS.
+- Exact committed capture utility offline suite: 7/7 PASS.
+- Exact committed FII-DII mapping contract suite: 14/14 PASS.
+- Total: 21/21 offline unit tests PASS. The log shows no NSE HTTP capture command; live capture remains NOT_RUN.
+- This is an execution result for the isolated research branch only. It does not authorize production mapping or establish actual CSV/API scope.
