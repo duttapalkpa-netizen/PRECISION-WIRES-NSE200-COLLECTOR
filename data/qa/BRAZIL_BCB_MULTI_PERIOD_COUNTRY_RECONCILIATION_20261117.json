@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "purpose": "research_only_bcb_multi_period_domestic_portfolio_release_crosscheck",
   "audit_date": "2026-11-17",
   "branch": "research/bcb-priority-metadata-audit-20261117",
@@ -192,7 +192,25 @@
     },
     "exact_original_vintage_xlsx": "UNKNOWN; period-indexed 202601/202603 files served with HTTP Last-Modified 2026-10-19 and 2026-10-18",
     "revision_cause": "UNKNOWN_NOT_ATTRIBUTED",
-    "latest_release_table_extract": "data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json"
+    "latest_release_table_extract": "data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json",
+    "annual_2025_parent_revision_bridge": "PASS_AT_PUBLISHED_PRECISION",
+    "bcb_2025_portfolio_liabilities_previous_usd_bn": 15.1,
+    "bcb_2025_portfolio_liabilities_revised_usd_bn": 17.6,
+    "current_sgs_22924_2025_sum_usd_mn": 17569.2,
+    "january_2026_table10_2025_parent_usd_mn": 15139.982135850001,
+    "current_minus_previous_parent_usd_mn": 2429.217864149999,
+    "annual_component_deltas_usd_mn": {
+      "22930": 116.125357449998,
+      "22936": 1931.1145406999997,
+      "22942": 239.58139105,
+      "domestic_market_total": 2286.821289199997
+    },
+    "annual_revision_mechanism": "BCB Sep-2026 release documents direct/portfolio reclassification under the 10% nonresident ownership criterion; largest observed component delta is fund liabilities 22936",
+    "dec_2025_monthly_component_allocation": "PARTIAL_NOT_ATTRIBUTED",
+    "feb_2026_22942_debt_delta_usd_mn": 203.707796359998,
+    "feb_2026_22942_debt_revision_cause": "UNKNOWN_NOT_ATTRIBUTED",
+    "revision_release_archive": "data/raw/bcb/revision_release_202609/202609_External_sector_statistics_text.pdf",
+    "annual_revision_bridge_qa": "data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json"
   },
   "revision_context": {
     "bcb_september_2026_release_says_2025_statistics_definitive_and_2026_estimates_revised": true,
