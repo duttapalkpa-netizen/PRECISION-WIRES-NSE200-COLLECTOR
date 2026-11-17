@@ -182,3 +182,23 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44089780668
 - New bounded official BCB historical release table capture workflow committed: .github/workflows/bcb_release_tables_vintage_capture.yml; commit 9329767f79814bf61afad1bb9e311429e228dff1. It targets Jan-2026 publication tables (Dec-2025 reference) and Mar-2026 publication tables (Feb-2026 reference), preserving raw XLSX, HTTP headers, byte lengths, SHA-256 and sheet names. Run ID 44089945873 queued; runtime result pending.
 - Next: verify capture; inspect the exact BCB workbook cells for the two vintage exceptions and the 22936 market perimeter; only then decide whether a revision bridge can be proved.
+
+## 17. 2026-11-17 — Exact Table 10 component crosswalk and vintage differences
+- Captured official BCB historical Table 10 workbooks for publication periods 202601, 202603 and 202610, including HTTP response headers, ETags, bytes and SHA-256.
+- Capture Run #2 ID 44090062072 SUCCESS (202601/202603); Run #3 ID 44090618010 SUCCESS (added 202610).
+- Official Table 10 component mapping verified:
+  - SGS 22930 = domestic-market equity, Table 10 row 14.
+  - SGS 22936 = investment-fund liabilities, Table 10 row 20. Footnote 1 says the nonresident quota holder owns <10% of the net asset value of the investment fund in Brazil; row 41 combines equity and funds and row 40 is domestic-market portfolio total. This supports the domestic-fund scope mapping.
+  - SGS 22942 = domestic-market debt securities, Table 10 row 24. Correct official topic catalogue mapping; not short-term-only.
+- Table 10 accounting identities passed for all three files/periods: row14+row20=row41; row24=row42; row41+row42=row40.
+- 2026-09 current Table 10 vs latest SGS: 22930 -2110.79771091 vs -2110.8; 22936 +416.80852785 vs +416.8; 22942 -382.35384003 vs -382.4; all within USD 0.1 million. This validates the current crosswalk and parser.
+- Current archived SGS minus Table 10 historical values (USD mn):
+  - Dec-2025: 22930 +116.1748; 22936 +211.6830; 22942 +39.3771; equity/funds +327.8578; domestic total +367.2349.
+  - Feb-2026: 22930 -0.0374; 22936 +0.0395; 22942 +203.7078; equity/funds +0.0020; domestic total +203.7098.
+- The contemporaneous Jan-2026 PDF release reports Dec-2025 equity/funds -1.4bn, debt +5.3bn, total +3.9bn. The contemporaneous Mar-2026 PDF release reports Feb-2026 equity/funds +2.8bn, debt +2.6bn, total +5.4bn. Latest SGS rounds to Dec-2025 -1.1/+5.3/+4.2 and Feb-2026 +2.8/+2.8/+5.6. Differences are confirmed at published 0.1bn precision.
+- Critical caveat: the period-indexed XLSX files 202601 and 202603 were served with HTTP Last-Modified 19-Oct-2026 and 18-Oct-2026. They are official historical tables as served 2026-11-17, but are not proven immutable original publication-vintage snapshots. Contemporaneous PDFs preserve only rounded values. Specific revision cause/date remains UNKNOWN.
+- Exact extraction file: data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json. Raw workbook manifest: data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json. Reproducer: scripts/research/extract_bcb_domestic_portfolio_release_vintage.py.
+- Extraction Run #4 ID 44090856672 SUCCESS; commit 6b8cfc3daf489a04bd22db882343dc58342318b5; artifact 14330724185; digest 9c6c2c2733c75a2b098c4180d556bf5208cd6cea06dccf85a86f32d86f42e8f1.
+- Status: series crosswalk PASS; latest Sep-2026 component validation PASS; Dec-2025 and Feb-2026 vintage differences CONFIRMED; exact original-vintage file proof UNKNOWN; revision attribution NOT_DONE; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next: seek a documented BCB revision notice or immutable as-of-publication values for Dec-2025 and Feb-2026 only. Do not re-download existing raw SGS or repeat Sep-2026 validation.
+- Invariants preserved: ₹0; official free sources; no synthetic values; no raw source overwrite; no Production Selector/RANKING_SCORE/+1 PRESSURE_FADE/CORE-672/Engines A–E/Hard Gate/seed/parser/production changes.
