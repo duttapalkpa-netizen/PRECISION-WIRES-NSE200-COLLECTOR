@@ -33,3 +33,15 @@ The official metadata capture passed. The exact IMF:BOP_BPM6:1.0 dataflow refere
 - Dataflow/constraint attachment: PASS.
 - Portfolio indicator definitions reconciled to allowed constraint values: pending runtime QA.
 - Country observation panel / EM coverage / PIT vintage: NOT_DONE.
+
+## Runtime crosswalk result — PASS (2026-11-17)
+- GitHub Actions Run #1 / ID `44096119287`: SUCCESS; https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44096119287.
+- Output `data/qa/IMF_BOP_BPM6_PORTFOLIO_INDICATOR_CROSSWALK_20261117.json`; blob SHA `5bf166cf5bbcf36a5ce55738c185b96ae259b79c`; commit `62e0e4132b9567bc4e8cd6ff82a7e3e9d8536dfc`.
+- Exact constraint contains 98 allowed indicators and 7 portfolio-related candidates: BFPA/BFPL in EUR, USD and XDC; BFP aggregate in EUR only.
+- USD net acquisition of financial assets `BFPA_BP6_USD`: ALLOWED.
+- USD net incurrence of liabilities `BFPL_BP6_USD`: ALLOWED.
+- USD aggregate `BFP_BP6_USD`: NOT ALLOWED by this captured constraint. EUR aggregate `BFP_BP6_EUR`: ALLOWED.
+- BOP DSD 2.6.0 `CL_FUNCTIONAL_CAT=P` is Portfolio Investment; `CL_ACCOUNT_ENTRY=A` is Assets (Net Acquisition of); `L` is Liabilities (Net Incurrence of).
+- This is a definition-based semantic candidate crosswalk only. The BOP_BPM6 dataflow references ECOFIN_DSD 1.0, so no same-DSD equivalence is claimed.
+- QA artifact ID `14332773823`; archive SHA-256 `4e419378b3e612cf06acdd41ade56f6374615fce55455f0f409bd31fab1260ab`; 1,794 bytes; expires 2027-02-15.
+- No country observations, actual-vs-estimate separation, release lag, vintage/PIT, or EM coverage were validated. No production integration.
