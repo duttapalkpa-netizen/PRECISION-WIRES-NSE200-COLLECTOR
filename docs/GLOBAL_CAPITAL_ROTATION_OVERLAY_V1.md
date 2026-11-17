@@ -113,3 +113,21 @@ This adds a verified broad-dollar input only. It does not establish capital flow
 - Official Federal Reserve H.10 DDP page (last release 16-Nov-2026) exposes a 26.2 MB single XML/SDMX ZIP download. Exact link: https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10. The binary fetch was rejected by the available inspection layer and a local download attempt failed; no raw archive, hash, XML parse, or extracted observations are claimed from this step.
 - Fed DDP announcement says Build Your Package was retired 12-Nov-2026; historical XML remains available on Board release pages and full-history FRED API v2 retrieval requires an account/API key. See https://www.federalreserve.gov/data/data-download-fred-information.htm.
 - Until a raw payload is acquired and hashed, H.10 full-history ingestion remains NOT_DONE. Do not calculate a fresh H.10 return from the 10-observation preview or splice series with incompatible base-year metadata.
+
+
+## Brazil September-2026 portfolio outflow: India transmission relevance and overlay treatment — 2026-11-17
+
+### Official observations
+- BCB External Sector Statistics, released 26-Oct-2026, reports September-2026 domestic-market portfolio investment net outflows of USD 2.1bn: equity/investment funds USD 1.7bn and debt securities USD 0.4bn. The same release reports a positive USD 5.1bn net inflow over the trailing 12 months through September. This is a one-month country-specific flow observation, not evidence of persistent Brazil-wide or global capital flight.
+- RBI preliminary India BoP release, 13-Nov-2026, reports September-2026 net foreign portfolio investment of -USD 6.7bn, including -USD 6.5bn FPI investment in India; April-September 2026 cumulative net FPI was -USD 8.9bn. These India observations are direct domestic-market evidence and have greater relevance to Indian market transmission than Brazil's country-specific monthly flow.
+- RBI's October-2026 Financial Stability / macro-financial commentary states FPI flows to India and other emerging-market portfolio flows have been net sold since September, driven by renewed West Asia tensions, elevated crude prices and rising global bond yields. RBI also describes Indian equities as bearish in September and October (through 19-Oct), with FII selling pressure partly offset by DII net buying.
+
+### Interpretation and hard boundary
+- Brazil's USD 2.1bn monthly outflow is useful as **cross-country corroborative context** for global risk appetite / emerging-market capital rotation. It is not a direct causal input for India and cannot quantify the impact on NIFTY, sectors or individual Indian stocks.
+- Do not compare USD 2.1bn Brazil directly as a market-impact magnitude against India's USD 6.7bn FPI outflow: country coverage, reporting definitions, investor perimeter and balance-of-payments treatment are not yet harmonized. The juxtaposition is directional context only.
+- The BCB release's positive trailing-12-month USD 5.1bn net inflow cautions against interpreting the single September monthly outflow as a persistent structural exit.
+- Overlay classification: `BRAZIL_PORTFOLIO_FLOW_CONTEXT` = contextual corroboration / low direct India-transmission confidence. It may appear in a global risk-appetite evidence panel with source date, reference month, horizon and definition; it must not receive an independent India stock score, direct NIFTY directional weight, buy/sell trigger, or production selector input.
+- India-specific FPI flows, DXY/broad USD (kept distinct), USD/INR, US yields, VIX, crude, NSE breadth/price-volume and DII offset are the direct transmission set to test. Cross-country confirmation should be evaluated only after synchronized dates and historical event-study tests; no predictive coefficient or impact percentage is asserted.
+
+### Research decision
+Brazil September-2026 outflow: retain as contextual evidence only; exclude from direct India transmission scoring and trading triggers. This is a classification decision, not a claim that Brazil flows never matter. No production change.
