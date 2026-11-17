@@ -64,3 +64,26 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - No synthetic observations, forward-fill, guessed values, timestamps, signs, or hashes.
 - ₹0 spend; free official BCB sources only.
 - No production integration or PR merge without explicit authorization.
+
+
+## 7. 2026-11-17 — Raw capture runtime PASS and independent artifact inspection
+- GitHub Actions Run #3 / ID `44075768714`, head `9813ec5b884712461aa59ec9664e66915e7bf94b`: completed SUCCESS.
+- Artifact ID `14324188933`; archive SHA-256 `40a1ff44317b16ffb789b4669496628a048a94010113d55cd40161d6570ee6c8`; artifact contains manifest plus all seven CSV files.
+- Independently downloaded artifact and recomputed archive SHA-256; exact match. Independently recomputed each of seven raw CSV SHA-256 values and byte lengths; all seven matched manifest.
+- All seven HTTP responses 200; content type `text/csv; charset=utf-8`.
+- CSV schema observed: UTF-8, header `data;valor`, semicolon delimiter, date `DD/MM/YYYY`, decimal comma.
+- Each series has exactly 381 rows, 1995-01-01 through 2026-09-01; all date sequences unique, strictly increasing, contiguous monthly and aligned; no missing numeric values.
+- Deterministic audit script added: `scripts/research/audit_bcb_priority_sgs_csv.py`; commit `3351e3818a573ad9ce96e4d92aca7a4b460c8244`.
+- QA results note commit `51c157fe6307eb5946cea2763fc18db3b1af8cc0`; machine-readable QA summary commit `f93228ce7f007f046ce5436e9f14ac29160b52ea`.
+- Three candidate net/component identities tested over all 381 months: 22906 = 22908 − 22907 (275 exact; all 381 within ±0.1); 22924 = 22925 − 22926 (283 exact; all 381 within ±0.1); 22905 = 22906 − 22924 (285 exact; all 381 within ±0.1). Maximum absolute difference for each is 0.1 USD million.
+- BCB official methodology note supports asset net = acquisitions less disposals, liability net = issuance less repayment, and financial-account balance = net financial assets less net financial liabilities. The data are empirically consistent with the candidate sign orientation. However, one-decimal CSV display precision and no formally approved tolerance mean these identities are ROUNDING-CONSISTENT, not final PASS.
+- Official series-specific receipt/expense sign/perimeter mapping and tolerance approval remain pending. Do not modify source values to force exact identities.
+- Raw capture + manifest hashes: PASS. Structural monthly QA: PASS. Accounting sign reconciliation: PARTIAL_EMPIRICAL_ALIGNMENT. Country-period QA: NOT_DONE. Brazil pilot: NOT_ACCEPTED. EM-wide panel: NOT_DONE. Trusted observation admission / production integration: NOT_AUTHORIZED.
+- Raw artifact retention is 90 days. Permanent raw-byte repository archive is still NOT_DONE; do not claim permanent archival until a committed archive can be fetched back and re-hashed.
+
+## 8. Next action
+1. Resolve the 0.1 USD-million residuals using source precision/revision semantics, without applying an invented tolerance. Consider a separately captured official JSON resource only as a precision/schema cross-check; do not overwrite CSV raw bytes.
+2. Obtain the exact BPM6/BCB series-specific methodological statement for the Portuguese `receita/despesa` definitions and verify the perimeter for 22905–22926.
+3. Complete a separate country-period cross-check against a BCB official release/table where the perimeter is explicit; document that aggregate press-release series may not equal the SGS series.
+4. Commit the raw ZIP archive permanently only after verifying the repository binary-archive upload and re-fetch SHA-256; meanwhile artifact ID 14324188933 is the 90-day raw evidence source.
+5. Keep Brazil pilot acceptance blocked until the above gates pass; then proceed to the instrument-level equity/fund/debt split and only later EM-wide panel.
