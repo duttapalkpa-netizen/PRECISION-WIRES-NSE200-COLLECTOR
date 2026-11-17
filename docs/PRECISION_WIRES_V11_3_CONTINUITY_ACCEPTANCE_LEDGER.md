@@ -892,3 +892,10 @@
 - Commits: parser 924b0be2cf6be5cdbc27c7752c410b2ea2b8d8b2; tests 79182c8d765d36fc6dbcc593d9c13bf66f9aa4b6; schema 88e0a4bb0997e476ea506cb8b387a736dcfd8789; workflow update and documentation follow in branch history.
 - Status: schema 100%; parser implementation 100% static; tests authored 100%; CI filters 100%; runtime tests NOT_RUN; registry population EMPTY_BY_DESIGN; trusted ingestion NOT_DONE; production NOT_AUTHORIZED.
 - No data observations, registry entries, production logic, selector, ranking, engines or collector workflows changed. ₹0; no synthetic market data/timestamps/hashes. UNKNOWN is not PASS.
+
+
+## 2026-11-17 — Manifest CI runtime check (no run observed)
+- Corrected .github/workflows/global_capital_rotation_overlay_tests.yml to include research/taxonomy-crosswalk-contract-20261117 in push branches, remove duplicate path entries, and trigger on manifest schema/source registry changes for push and pull_request. Five-minute job timeout retained.
+- Workflow commit d0c7022c43c60035ba3ed5eab2633f884c6ed859; blob 33bd663af8536677cac711899ded32a73ce0f755.
+- Queried Actions runs for this exact branch after correction: total_count=0. Runtime tests NOT_RUN; no PASS claim. If subsequent qualifying commit does not trigger, manually run workflow_dispatch in GitHub Actions UI. No workflow dispatch tool is available in current connected GitHub actions.
+- All earlier manifest parser/schema/tests commits and taxonomy blockers remain recorded; no repeat of implementation. No production changes; UNKNOWN not PASS.
