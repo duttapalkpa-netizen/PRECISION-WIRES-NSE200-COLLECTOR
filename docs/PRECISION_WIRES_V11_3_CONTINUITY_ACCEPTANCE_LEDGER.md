@@ -1180,3 +1180,9 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Next: compare at least two timestamped manifests to detect changes in common reference months; continue seeking immutable original Feb-2026 vintage/revision evidence. No repeated raw capture or September check.
 - Acceptance: prospective baseline PASS; cross-snapshot revision detection NOT_DONE until second snapshot; Feb-2026 original-vintage cause UNKNOWN / NOT_PROVEN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched; ₹0; official free sources only; no synthetic data or overwrites.
+
+## 2026-11-17 — GitHub recurrence trigger qualification for BCB vintage snapshots
+- Official GitHub documentation says scheduled workflows run only on the default branch and workflow_dispatch requires the workflow file on the default branch. The BCB snapshot workflow is isolated to the research branch; default/production branch changes are not authorized.
+- Removed ineffective schedule/manual-dispatch triggers. Research workflow is now push-only, listening to `docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt` on `research/bcb-priority-metadata-audit-20261117`.
+- First baseline Run #1 / ID `44093241898` and snapshot commit `6237baa` remain valid. Future monthly capture requires an explicit trigger-file update/commit after a BCB release. Unattended monthly schedule is NOT_ENABLED.
+- Updated report, Chapter 32 Progress Log, baseline QA and snapshot contract to make this limitation explicit. No default/production branch or selector changes.
