@@ -4,6 +4,7 @@ on:
     branches:
       - research/bcb-priority-metadata-audit-20261117
     paths:
+      - '.github/workflows/bcb_multi_period_country_reconciliation.yml'
       - 'scripts/research/audit_bcb_multi_period_country_reconciliation.py'
       - 'data/raw/bcb/instrument_net_capture_20261117/sgs_22936.csv'
       - 'data/raw/bcb/instrument_net_capture_20261117/sgs_22942.csv'
