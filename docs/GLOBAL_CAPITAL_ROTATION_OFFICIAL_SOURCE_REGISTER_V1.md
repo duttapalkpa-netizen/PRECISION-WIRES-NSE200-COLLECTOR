@@ -141,3 +141,17 @@ A second official BCB portal instance was inspected and reveals an unresolved ca
 - Next validation: resolve each portal's JSON resource link and capture final URL, HTTP status, content type, response bytes, retrieval timestamp and SHA-256; compare payload values/date keys and SGS series metadata. If payloads are byte/value-identical, treat as duplicate catalogue records and preserve both provenance records. If payloads differ, quarantine both until BCB methodology clarifies the canonical series.
 - Evidence: official BCB portal pages `opendata.bcb.gov.br` SGS 22905 and `dadosabertos.bcb.gov.br` SGS 22905. Both catalogues are official but disagree on organization and classification.
 - Current decision: SGS 22905 excluded from any calculation; SGS 22906 and 22924 remain separate Depec series pending their own raw archive and reconciliation. No net-flow identity inferred.
+
+
+## BCB SGS 22905 dual-catalogue resource comparison — 2026-11-17 (follow-up)
+
+The JSON resource links on both official catalogue instances were followed directly:
+- `dadosabertos.bcb.gov.br` resource link resolves to `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json` and the browser returned a readable JSON response (application/json).
+- `opendata.bcb.gov.br` resource link resolves to the exact same URL. The browser identifies the same API host/path/query and application/json resource; the second click did not render a separate body excerpt.
+- Therefore the two catalogue records do not point to distinct resource URLs in this check. The earlier hypothesis that they may deliver different payloads is not supported by the resolved URLs. Because the final endpoint is identical, the canonical SGS API route is common to both catalogue records.
+- The official JSON response visible from the first resource begins at 1995-01-01 and includes monthly observations through 2026-09-01 in the returned browser excerpt. This is a browser-inspected response, not an immutable raw archive; byte count, retrieval timestamp, full response length and SHA-256 remain NOT_DONE.
+- CSV resource links on both pages resolve to `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=csv`; the browser could not parse the `text/csv` response (HTTP/content-type reader limitation). This is not evidence of a BCB API failure.
+- Remaining conflict: the catalogue metadata records still disagree on organization (Depec vs Dstat), description/title language, classification hierarchy and metadata update date. The shared JSON endpoint establishes resource identity, not which catalogue metadata record is authoritative or whether the series methodology changed. Preserve both provenance records; classification remains CONFLICT / UNKNOWN pending BCB methodology/version metadata reconciliation.
+- Do not infer any arithmetic identity or sign mapping between SGS 22905 and 22906/22924. No values admitted to global EM aggregate or relative-attraction calculations.
+
+Integrity status: same JSON endpoint across both portals = VERIFIED; visible JSON response = INSPECTED; raw archive + SHA-256 = NOT_DONE; CSV body comparison = NOT_DONE; metadata authority/methodology reconciliation = UNKNOWN; production impact = NONE.
