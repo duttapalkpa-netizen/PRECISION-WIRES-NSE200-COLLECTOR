@@ -43,8 +43,17 @@ Values are USD billions; positive = net inflow, negative = net outflow. The tabl
   - Feb-2026: current SGS equity+funds matches +USD 2.8bn; debt is +USD 2.8bn vs release +USD 2.6bn; total is +USD 5.6bn vs release +USD 5.4bn.
 - These are not silently accepted and not labelled data errors. They remain **VINTAGE_DIFFERENCE_UNRESOLVED** pending same-vintage data/revision bridge.
 
+## Exact current-SGS values for the two exceptions
+
+| Reference month | Equity + funds (USD mn) | Domestic debt (USD mn) | Total (USD mn) |
+|---|---:|---:|---:|
+| 2025-12 | -1,082.9 | +5,321.6 | +4,238.7 |
+| 2026-02 | +2,786.2 | +2,783.2 | +5,569.4 |
+
+The release values are published only to one decimal USD billion; the exact values above are the captured current SGS CSV values, not reconstructed historical release-vintage observations.
+
 ## Revision context
-BCB's September-2026 External Sector Statistics release states that the revision covers definitive statistics for 2025 and revised estimates for 2026. This is consistent with the possibility that a November-2026 SGS snapshot differs from earlier monthly press releases for December-2025 and February-2026. The specific numerical deltas have not yet been attributed to a documented series-by-series revision notice; therefore causation remains UNKNOWN.
+BCB's September-2026 External Sector Statistics release states that the revision covers definitive statistics for 2025 and revised estimates for 2026 (official release: https://bcb.gov.br/estatisticas/estatisticassetorexterno?kclid=KywNUB4ZA5A0GUTk). This is consistent with the possibility that a November-2026 SGS snapshot differs from earlier monthly press releases for December-2025 and February-2026. The specific numerical deltas have not yet been attributed to a documented series-by-series revision notice; therefore causation remains UNKNOWN.
 
 ## Acceptance
 | Gate | Status |
