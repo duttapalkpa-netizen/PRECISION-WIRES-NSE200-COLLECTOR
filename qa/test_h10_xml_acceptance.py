@@ -84,6 +84,17 @@ class H10XMLAcceptanceTests(unittest.TestCase):
         self.assertTrue(all(o.attrib.get("OBS_VALUE") == ND_SENTINEL for o in nd))
         # ND values are status-coded missing data, never numeric zero or imputations.
 
+    def test_january_2006_monthly_average_is_reindexed_to_100(self):
+        # Board Technical Q&A: from 2019-06-24 the monthly average of Jan-2006
+        # is the base. Check raw daily observations, without applying the factor again.
+        january = [
+            float(o["OBS_VALUE"]) for o in self.observations
+            if o.get("TIME_PERIOD", "").startswith("2006-01")
+            and o.get("OBS_STATUS") == "A"
+        ]
+        self.assertEqual(len(january), 22)
+        self.assertAlmostEqual(sum(january) / len(january), 100.0, delta=0.00001)
+
     def test_no_unexpected_status_codes(self):
         self.assertEqual(set(self.statuses), {"A", "ND"})
 
