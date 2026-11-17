@@ -222,3 +222,11 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - No arithmetic relationship between 22905 and 22906/22924 inferred. Methodology and overlapping raw observation reconciliation still required.
 - Corrected source register commit: acdf663e31d6881d286d44d12d3bd5ef9e3dd677; blob: c97cb778ddd8305ea547daf5fa1c13fbb26432d1. Corrected extraction spec commit: a0605a0f3634b1d7f9e6e5bed1b48b9edd53a209; blob: 47b46ba3588580a8af421622731a9f442a878ed6.
 - Evidence: official BCB portal catalogue pages for SGS 22905, 22906 and 22924. No production change.
+
+
+## 3R. Dual official BCB catalogue conflict for SGS 22905 — 2026-11-17
+- Identified conflicting official portal records for SGS 22905: `opendata.bcb.gov.br` classifies as BCB/Depec (metadata 2026-03-26), while `dadosabertos.bcb.gov.br` classifies as BCB/Dstat under BPM6/financial account/portfolio investment (metadata 2026-09-08, timeliness up to four weeks).
+- Both identify monthly USD million from 1995-01 and both link an SGS 22905 JSON resource. Catalogue text alone cannot establish whether duplicate records point to the same payload or conflicting definitions.
+- Withdraw definitive single-owner assertions. Classification now CONFLICT / UNKNOWN; exclude 22905 from all calculations until final resource URLs, payloads, metadata, date keys, and hashes are compared. Do not infer a net-flow identity with 22906/22924.
+- Updated source register commit: 9ce57cf065bc604a41de84960fb81134b39020a5; blob: 4383152e51526c48da87afdda21b8afafdf30861. Extraction spec commit: ef0ac5dabf80952ff5d17636d48567d555934ee2; blob: 51ac652bcc8846552ed8350afa6a08537166de50.
+- Official evidence: BCB `opendata` and `dadosabertos` portal dataset pages. No production change.
