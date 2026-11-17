@@ -80,3 +80,12 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - IMF BOP dataset: https://data.imf.org/en/datasets/IMF.STA%3ABOP
 - IMF SDMX Central: https://sdmxcentral.imf.org/data/datastructure.html
 - Treasury TIC Securities A: https://home.treasury.gov/data/treasury-international-capital-tic-system-home-page/tic-forms-instructions/securities-a-us-transactions-with-foreign-residents-in-long-term-securities
+
+## 7. Project-wide TOTAL ACTIVITY AUDIT pointer — 2026-11-17
+- Master audit: `docs/PRECISION_WIRES_TOTAL_ACTIVITY_AUDIT_20261005_20261117.md`.
+- Commit: `20fb54cdea4dbf15d89ee79330a7d1300832df6d`.
+- File blob SHA verified after commit: `8debb302d2cab0696dbe21ed310d5e0742712311`; 297 lines.
+- Covers earliest auditable repository PR activity (2026-10-05) through 2026-11-17; PR inventory #1–#38, dated workstream timeline, accepted evidence, blocked/unknown/not-done items, rejected interpretations, next actions and progress-reporting rules.
+- Important boundary: 2026-10-05 is the earliest PR activity verified in the reviewed repository history, not proof of absolute project inception. Full chat/file/run/artifact reconstruction remains partial where direct evidence is not indexed.
+- Current whole-project acceptance remains NOT_RECONCILED; overall V11.3 percentage NOT_CALCULABLE. Global Capital Rotation 62.5% is only the last recorded 2026-11-12 value, not a newly measured 2026-11-17 value.
+- Preserve this master audit as the starting reference for future continuation chapters. Do not repeat PASS work without a new source, code, artifact, or explicit revalidation requirement.
