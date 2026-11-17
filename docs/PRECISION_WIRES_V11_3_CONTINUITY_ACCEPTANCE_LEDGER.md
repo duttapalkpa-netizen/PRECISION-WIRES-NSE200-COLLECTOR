@@ -1120,3 +1120,21 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Artifact ID \`14330248320\`; SHA-256 \`4b46d50d369370b5eb7806e5f61a95af1802220bb0ccb099804040d09e2a2fa3\`; expiry \`2027-02-15T13:08:37Z\`.
 - Added bounded workflow \`.github/workflows/bcb_release_tables_vintage_capture.yml\` (commit \`9329767f79814bf61afad1bb9e311429e228dff1\`) to capture official Jan-2026 publication tables (Dec-2025 reference) and Mar-2026 publication tables (Feb-2026 reference). It preserves raw XLSX, HTTP headers, bytes, SHA-256, workbook integrity and sheet names. Run ID \`44089945873\` queued; result pending.
 - Next: inspect the exact historical workbook tables and metadata for 22936's market perimeter, then resolve only Dec-2025 and Feb-2026. Do not claim revision attribution from the numeric differences alone.
+
+## 2026-11-17 — Exact BCB Table 10 crosswalk and Dec-2025 / Feb-2026 differences
+- Official historical BCB Table 10 workbooks for publication files 202601, 202603 and 202610 are now archived with HTTP headers, ETags, byte lengths and SHA-256 in data/raw/bcb/release_tables_*/ and manifest data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json.
+- Crosswalk supported by BCB Table 10:
+  - 22930 = domestic-market equity, row 14.
+  - 22936 = investment-fund liabilities, row 20; Table 10 footnote 1 defines the investment fund in Brazil, and row 41 combines equity and funds within the domestic-market portfolio. Domestic fund scope is supported by the table structure and footnote.
+  - 22942 = domestic-market debt securities, row 24; official topic catalogue confirms domestic market, not short-term-only.
+- All three BCB Table 10 internal identities pass for the extracted periods: row14+row20=row41; row24=row42; row41+row42=row40.
+- September-2026 Table 10 values agree with latest SGS within USD 0.1 million for 22930, 22936 and 22942, independently validating the current component crosswalk.
+- Latest archived SGS minus official Table 10 historical values, USD mn:
+  - Dec-2025: 22930 +116.1748; 22936 +211.6830; 22942 +39.3771; equity/funds +327.8578; total +367.2349.
+  - Feb-2026: 22930 -0.0374; 22936 +0.0395; 22942 +203.7078; equity/funds +0.0020; total +203.7098.
+- Contemporaneous Jan-2026 PDF says Dec-2025 domestic-market values: equity/funds -1.4bn, debt +5.3bn, total +3.9bn. Contemporaneous Mar-2026 PDF says Feb-2026: equity/funds +2.8bn, debt +2.6bn, total +5.4bn. Latest SGS rounds to Dec-2025 -1.1/+5.3/+4.2 and Feb-2026 +2.8/+2.8/+5.6; mismatches are confirmed at the releases' one-decimal precision.
+- XLSX vintage caveat: the 202601 and 202603 historical table files served by BCB have HTTP Last-Modified 19-Oct-2026 and 18-Oct-2026. They are official historical tables but not proven immutable original as-of-publication snapshots. Contemporaneous PDFs preserve the published rounded figures; exact original-vintage values and specific revision cause/date remain UNKNOWN.
+- Exact QA extract: data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json; reproducer: scripts/research/extract_bcb_domestic_portfolio_release_vintage.py; report: docs/BRAZIL_BCB_MULTI_PERIOD_COUNTRY_RECONCILIATION_20261117.md.
+- Capture Run #2 ID 44090062072 SUCCESS; Capture Run #3 ID 44090618010 SUCCESS; extraction Run #4 ID 44090856672 SUCCESS, artifact 14330724185, SHA-256 9c6c2c2733c75a2b098c4180d556bf5208cd6cea06dccf85a86f32d86f42e8f1.
+- Revised status: component scope PASS; September-2026 current table comparison PASS; Dec-2025/Feb-2026 published-vs-current differences CONFIRMED; exact original vintage and revision attribution UNKNOWN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next: find documented BCB revision notices or immutable as-of-publication observations for only Dec-2025 and Feb-2026. Do not repeat source capture or September validation. No production invariants changed; ₹0; no synthetic data.
