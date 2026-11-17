@@ -20,7 +20,7 @@ This work establishes a prospective point-in-time record so future revisions can
 - Manifest stores requested/final URL, HTTP status, response headers, UTC retrieval start/end, byte length, SHA-256, content type, first/last period, row count, latest observation, and February-2026 observation where present.
 - CSV validation fails closed on wrong header, malformed row, duplicate month, non-ascending dates, invalid numeric values, empty response, non-200 HTTP, or unexpected content type.
 - Workflow commits the timestamped raw snapshot to the research branch and uploads an artifact; 6-minute timeout.
-- Schedule: monthly on day 28 at 12:17 UTC; manual dispatch available for a new observation after a BCB release.
+- Recurrence limitation: this workflow lives only on the research branch. GitHub scheduled and manual-dispatch events require the workflow file on the repository default branch; we will not alter the protected/default production branch. Therefore recurring capture is initiated by a push that changes `docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt` on this research branch after a BCB release. The workflow is deliberately push-only.
 
 ## Interpretation limits
 - This is a snapshot of the current SGS response at the recorded retrieval timestamp, not an original publication-vintage reconstruction.
@@ -62,3 +62,7 @@ Research-only; ₹0; official free BCB sources only. No synthetic data, no forwa
 - Latest SGS 22942 February-2026 value in this baseline remains USD 2,783.2m. This is a current response snapshot, not the original March-2026 as-published vintage.
 - Structured runtime result: `data/qa/BRAZIL_BCB_SGS_PROSPECTIVE_VINTAGE_BASELINE_20261117.json`.
 - Acceptance: first prospective baseline PASS; change detection NOT_DONE until a second timestamped snapshot; February-2026 original-vintage cause UNKNOWN / NOT_PROVEN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+
+
+## Trigger safety correction
+GitHub documents that both `schedule` and `workflow_dispatch` require the workflow file to exist on the default branch; scheduled runs execute on the default branch. This research workflow is intentionally isolated to the research branch, and no default/production branch change is authorized. The workflow was therefore corrected to be push-only, watching `docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt`. A future monthly snapshot is initiated by updating that trigger file on the research branch after the relevant BCB release. The first baseline run above remains valid; no claim of unattended monthly scheduling is made.
