@@ -956,3 +956,12 @@
 - GitHub Actions #229 / ID 44035746086 SUCCESS; full suite 70 tests in 0.055s, OK. Helper commit f7af7e6acaa12d2a22f01457fd96bbf2787dd970; QA commit 83d2e1f4c6d2056e83d7249c2158a7e87817f85d; specification doc commit 9d56133b4b9538c92d048cb9a96daf47e53ec8a0.
 - Bounded task state: formula/calendar specification 100%; helper implementation 100%; dedicated QA 100%; CI runtime 100% PASS; actual live derived output NOT_COMPUTED; multi-vintage historical PIT replay NOT_DONE; permanent archive NOT_DONE; classifier/production integration NOT_AUTHORIZED.
 - Next: compute a separate research-only result from captured raw H.10 ZIP with exact 21 valid observations and independently cross-check against a second official package. Do not change dxy_change_pct_20d, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate.
+
+
+## 2026-11-17 — Critical H.10 ND sentinel correction; 20-observation result
+- QA found H.10 not-available observations use numeric `OBS_VALUE=-9999.0` with `OBS_STATUS=ND`; the earlier script only skipped literal string ND and erroneously counted 214 such rows as parser-admitted. Explicitly supersede the earlier 5,445 admission count. Preserve the incident/correction history; do not repeat or present 5,445 as valid.
+- Added `filter_fed_h10_valid_xml_observations` to parser module; only OBS_STATUS=A, ISO date, finite numeric values pass. Collector now excludes all 214 ND rows before CSV/parser. Corrected source records 5,445; valid A=5,231; ND=214.
+- Corrected capture workflow #8 / ID 44036104490 PASS, commit 4e3da948ff04e1d8efe50ee3782a16c4814e8965; artifact 14306134441; outer digest 2d9a4808cd9e48ac21175b8a79ccf42173f57f2370086e24832e4d460afbe4ba; raw payload hash unchanged c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77. Existing parser accepted exactly 5,231 corrected rows.
+- Regression workflow #232 / ID 44036012995 PASS; 72 tests in 0.056s, including ND sentinel, unknown status and non-finite tests.
+- Actual current-vintage 20-observation change: 20 prior valid H.10 records + current = 21; 2026-10-15 value 121.5693 to 2026-11-13 value 122.6503; +0.8892047581% (+0.8892%). 2026-11-11 ND omitted; no forward-fill. This counts H.10 observation dates, not Indian trading sessions.
+- Full result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. One Prepared vintage only; historical PIT replay and second-vintage cross-check NOT_DONE; long-term archive NOT_DONE; classifier/production integration NOT_AUTHORIZED.
