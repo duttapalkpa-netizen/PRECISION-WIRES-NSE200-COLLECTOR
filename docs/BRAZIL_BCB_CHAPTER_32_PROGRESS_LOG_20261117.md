@@ -146,3 +146,11 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Acceptance: nine-period comparison implemented and independently calculated; overall multi-period country validation PARTIAL; Brazil pilot NOT_ACCEPTED; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next action: verify the bounded CI result; then resolve only Dec-2025 and Feb-2026 using exact same-vintage BCB tables/archives and the September-2026 revision bridge. Do not repeat raw capture or September-only validation.
 - Invariants preserved: ₹0; official sources only; no synthetic data or invented hashes/timestamps; no production selector, ranking, +1 pressure fade, CORE-672, Engines A–E, Hard Gate, seed or production workflow changes.
+
+## 14. 2026-11-17 — Bounded reconciliation CI runtime PASS
+- Workflow Run #1 / ID 44086204426; head `ed7c695c33c4739b9dd5acebf663f08469b2cb15`; conclusion SUCCESS.
+- Job `reconcile` SUCCESS; the raw SHA-256 verification and nine-period reproducibility step completed SUCCESS.
+- Runtime re-confirmed all three raw source SHA-256 values; 9 months checked; 7 complete months; 23/27 component/total comparisons matched. The two vintage-sensitive exceptions are preserved, not hidden.
+- Artifact ID 14328529268; name `bcb-multi-period-country-reconciliation`; archive digest `c65447a53ba44c44c85a0239776bb9af08c454bdc6e9046c98700492806dc647`; expires 2027-02-15T12:45:57Z.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086204426
+- Bounded CI runtime: PASS. Country-period multi-vintage reconciliation remains PARTIAL; Brazil pilot NOT_ACCEPTED; exact Dec-2025 and Feb-2026 revision attribution NOT_DONE.
