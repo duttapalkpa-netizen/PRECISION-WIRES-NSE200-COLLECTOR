@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "purpose": "research_only_bcb_multi_period_domestic_portfolio_release_crosscheck",
   "audit_date": "2026-11-17",
   "branch": "research/bcb-priority-metadata-audit-20261117",
@@ -161,17 +161,26 @@
       "2025-12",
       "2026-02"
     ],
-    "country_period_acceptance": "PARTIAL",
+    "country_period_acceptance": "PARTIAL_SCOPE_UNKNOWN",
     "brazil_pilot_acceptance": "NOT_ACCEPTED",
     "em_wide_panel": "NOT_DONE",
-    "production_integration": "NOT_AUTHORIZED"
+    "production_integration": "NOT_AUTHORIZED",
+    "debt_comparisons_matched": 8,
+    "equity_funds_numeric_comparisons_matched": 8,
+    "numeric_comparison_count": 27,
+    "numeric_comparisons_matched": 23,
+    "series_22942_hierarchy_correction": "DOMESTIC_MARKET_DEBT_NOT_SHORT_TERM",
+    "fund_22936_market_perimeter": "UNKNOWN",
+    "same_vintage_revision_bridge": "NOT_DONE"
   },
   "revision_context": {
     "bcb_september_2026_release_says_2025_statistics_definitive_and_2026_estimates_revised": true,
     "attribution_of_specific_december_2025_and_february_2026_deltas": "UNKNOWN / NOT_DONE",
     "source_url": "https://bcb.gov.br/estatisticas/estatisticassetorexterno?kclid=KywNUB4ZA5A0GUTk"
   },
-  "errors": [],
+  "errors": [
+    "Earlier hierarchy map incorrectly labelled 22942 as short-term debt; corrected from official BCB catalogue. No raw data changed."
+  ],
   "runtime_validation": {
     "workflow_run_number": 2,
     "workflow_run_id": 44086387367,
@@ -181,5 +190,17 @@
     "artifact_id": 14329222273,
     "artifact_sha256": "fc6d34e8856db75ca0eb22a254bafdc395e0a77d783f7149ffb89474ce379138",
     "artifact_expires_at": "2027-02-15T12:47:07Z"
+  },
+  "series_scope": {
+    "22930": "domestic-market equity liabilities net; official BCB topic catalogue",
+    "22936": "investment-fund liabilities net; no domestic/foreign-market qualifier in official topic catalogue entry",
+    "22942": "domestic-market debt-security liabilities net; NOT short-term debt; official BCB topic catalogue"
+  },
+  "perimeter_assessment": {
+    "debt_22942_vs_release_domestic_debt": "SCOPE_CONFIRMED",
+    "equity_22930_vs_release_domestic_equity": "SCOPE_CONFIRMED",
+    "funds_22936_vs_release_domestic_fund_shares": "SCOPE_UNKNOWN_MARKET_QUALIFIER_NOT_STATED_IN_CATALOGUE",
+    "equity_funds_composite_country_validation": "PARTIAL_NOT_ACCEPTED",
+    "total_composite_country_validation": "PARTIAL_NOT_ACCEPTED"
   }
 }
