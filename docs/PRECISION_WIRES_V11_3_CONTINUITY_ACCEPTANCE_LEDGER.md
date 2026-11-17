@@ -1102,3 +1102,14 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Artifact ID `14329222273`; archive SHA-256 `fc6d34e8856db75ca0eb22a254bafdc395e0a77d783f7149ffb89474ce379138`; expires `2027-02-15T12:47:07Z`.
 - Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086387367
 - Status: bounded reproducibility PASS; Brazil country-period acceptance PARTIAL; Brazil pilot NOT_ACCEPTED; same-vintage revision bridge NOT_DONE; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+
+## 2026-11-17 — BCB official hierarchy correction and country-scope qualification
+- Rechecked the exact BCB official “Temas” topic catalogue after a potential 22942 short-term classification concern.
+- Correct authoritative mapping: 22942–22944 = domestic-market debt-security liabilities (net/inflow/outflow); 22945–22947 = foreign-market debt-security liabilities; 22948–22950 = foreign-market short-term debt; 22951–22953 = foreign-market long-term debt. The previous hierarchy-map table incorrectly shifted the short/long labels onto 22942/22945; it has been corrected. Existing SGS 22942 raw archive is correctly the domestic-market debt net series.
+- 22930 is explicitly domestic-market equity liabilities. 22936 is labelled investment-fund liabilities without a domestic/foreign-market qualifier in the official topic catalogue. Its exact perimeter relative to the release's “equities and investment funds traded in the domestic market” remains UNKNOWN.
+- The nine-month comparison remains numerically reproducible (23/27 values match; 7/9 months all three rounded numeric values match), but this does not establish full country-perimeter validation. Debt 22942 scope is confirmed and 8/9 debt values match; Feb-2026 debt remains discrepant. Equity/funds and total composite remain PARTIAL/NOT_ACCEPTED until 22936 scope is documented.
+- Updated report, QA JSON and reproducibility script now encode this distinction; CI reruns on the updated script. No raw data changed or recaptured.
+- Official catalogue: https://dadosabertos.bcb.gov.br/pages/temas
+- Official 22936 dataset: https://dadosabertos.bcb.gov.br/dataset/22936-sgs
+- Official 22942 dataset: https://dadosabertos.bcb.gov.br/dataset/22942-investimentos-em-carteira---titulos-de-renda-fixa---passivos---negociados-no-mercado-domestic
+- Next: verify updated CI; resolve 22936 fund-market perimeter; obtain same-vintage official tables for Dec-2025 and Feb-2026; no unsupported revision attribution. Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED. All production invariants unchanged; ₹0; no synthetic data.
