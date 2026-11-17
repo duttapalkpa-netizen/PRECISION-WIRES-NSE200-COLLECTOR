@@ -171,5 +171,15 @@
     "attribution_of_specific_december_2025_and_february_2026_deltas": "UNKNOWN / NOT_DONE",
     "source_url": "https://bcb.gov.br/estatisticas/estatisticassetorexterno?kclid=KywNUB4ZA5A0GUTk"
   },
-  "errors": []
+  "errors": [],
+  "runtime_validation": {
+    "workflow_run_number": 2,
+    "workflow_run_id": 44086387367,
+    "head_commit": "b3d5bf9b29e1c730a7f9d60a510277b64d181f48",
+    "conclusion": "SUCCESS",
+    "job": "reconcile",
+    "artifact_id": 14329222273,
+    "artifact_sha256": "fc6d34e8856db75ca0eb22a254bafdc395e0a77d783f7149ffb89474ce379138",
+    "artifact_expires_at": "2027-02-15T12:47:07Z"
+  }
 }
