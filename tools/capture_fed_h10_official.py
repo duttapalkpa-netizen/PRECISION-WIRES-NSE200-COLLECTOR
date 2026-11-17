@@ -78,7 +78,8 @@ for item in series_summary:
         "content_type": content_type, "byte_length": len(payload),
         "sha256": hashlib.sha256(payload).hexdigest(), "raw_payload_path": zip_path.name,
         "series_id": code, "series_unit_multiplier": item["unit_multiplier"],
-        "observation_count": item["observation_count"]
+        "observation_count": item["source_observation_count"],
+        "valid_observation_count": item["valid_observation_count"]
     }
     (manifest_dir / (evidence_id + ".json")).write_text(json.dumps(series_manifest, indent=2) + "\n", encoding="utf-8")
 # Build a parser-ingestion fixture for the one registry-qualified broad-dollar series.
