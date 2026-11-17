@@ -50,3 +50,46 @@ Interpretation: the proposed sign orientation is empirically consistent to withi
 
 ## 5. Reproducibility
 The deterministic audit script `scripts/research/audit_bcb_priority_sgs_csv.py` reads the captured raw CSVs and manifest, verifies each raw SHA-256, validates exact dates and rows, and computes the three identities without altering source values. Its output is `qa_report.json` in the capture directory. The raw capture artifact remains retained by GitHub Actions for 90 days; permanent raw-byte repository archival is a separate pending step and must not be claimed until a committed archive can be fetched back and re-hashed.
+
+
+## 6. Independent official BCB historical-vintage cross-check
+- Captured the official BCB Monthly Balance-of-Payments history ZIP from `https://www.bcb.gov.br/ftp/notaecon/balpagm.zip`.
+- Capture Run #1 / ID `44076495816`: SUCCESS; artifact ID `14324932604`; artifact archive SHA-256 `1da1dda4398abc2d3f93255bc47e1595f75a778731d5ae80241e3852ac1a0c4c`.
+- Inner raw ZIP: 2,813,472 bytes; SHA-256 `e58d64374d13ae62fb2af95e4bd26acaf924f0da113a825842307c95219dec4b`; HTTP 200; ZIP CRC PASS.
+- ZIP contains `BalPagM.xlsx` (2,875,732 bytes; internal file date 2019-03-22). Workbook sheet `Balanço` is explicitly titled `Balanço de pagamentos – BPM6`; its last monthly column is Feb-2019. Treat this as a 2019 historical vintage, not current 2026 data.
+- Permanent archive workflow Run #1 / ID `44077157516`: SUCCESS; permanent commit `88eebada24c1619d82292bb757df64e4372851ad`; path `data/raw/bcb/monthly_bop_history_20190322/`; post-commit re-fetch SHA-256 PASS.
+
+### Workbook's exact SGS row mapping
+- Row 220: total portfolio investment, SGS 22905.
+- Row 221: portfolio investment assets net, SGS 22906.
+- Row 222: asset receipts, SGS 22907.
+- Row 223: asset expenses, SGS 22908.
+- Row 241: portfolio investment liabilities net, SGS 22924.
+- Row 242: liability receipts, SGS 22925.
+- Row 243: liability expenses, SGS 22926.
+These are verified from the workbook's explicit SGS-code column, not inferred from row position alone.
+
+### Vintage-level accounting identity test
+Across the workbook's 290 months (1995-01 through 2019-02), all three relationships hold to floating-point representation residuals no larger than approximately 1e-11:
+- 22906 = 22908 − 22907.
+- 22924 = 22925 − 22926.
+- 22905 = 22906 − 22924.
+This independently confirms the sign orientation in the 2019 BPM6 workbook.
+
+### Old-vintage vs current SGS CSV comparison
+Comparisons use the same 290 dates and the displayed CSV's one-decimal precision; threshold ±0.05 is a diagnostic only, not a formal acceptance tolerance:
+- 22907 asset receipts: 290/290 within ±0.05.
+- 22908 asset expenses: 288/290 within ±0.05; Jan/Feb 2019 differ.
+- 22906 asset net: 287/290 within ±0.05; one 1996-11 boundary case is a floating-point/half-step edge and Jan/Feb 2019 differ.
+- 22905 total net: 245/290 within ±0.05; 45 vintage differences, beginning in 2015.
+- 22924 liability net: 245/290 within ±0.05; 45 vintage differences, beginning in 2015.
+- 22925 liability receipts: 246/290 within ±0.05; 44 vintage differences, beginning in 2015.
+- 22926 liability expenses: 247/290 within ±0.05; 43 vintage differences, beginning in 2015.
+The differences are evidence of non-identical vintages/perimeter/revisions, not evidence that either source is wrong. Do not overwrite current CSV values with the 2019 workbook, and do not claim full-series cross-source equivalence.
+
+### Revised acceptance interpretation
+- Conceptual sign orientation: CONFIRMED by BCB methodology and exact SGS row mapping in 2019 BPM6 workbook.
+- 2019 vintage accounting identities: PASS to floating-point precision.
+- Current 2026 CSV identities: all 381 months within ±0.1, maximum absolute difference 0.1; formal display-rounding tolerance still not approved.
+- Historical vintage reconciliation: PARTIAL; divergences from 2015 onward remain unexplained and must be treated as vintage/revision differences.
+- Current series accounting acceptance: PARTIAL, not final PASS.
