@@ -1243,3 +1243,11 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - This clarification preserves the correct gate: no anonymous IMF BOP_BPM6 observation GET/query contract has been established. Do not infer one from validation, transformation or registration endpoints.
 - Cumulative evidence pointers include RBI comparator audit commit b3c4d46fcfbf67570586260757b562476577c10d, source register commit b87a9aa517f643c371a12d48893838a3a67255ec, and earlier Chapter 34 IMF API audit commit 9ef15932fd49c6e1e37ebdec9c59b5fe858f3374.
 - Current next task remains a bounded official RBI XLSX transport attempt. No raw XLSX has been acquired; if anti-bot/denial persists, preserve challenge evidence and stop without bypass.
+
+
+## 2026-11-17 — Cross-workstream continuity pointer: BCB 15-series accounting audit
+- Chapter 34 IMF/RBI work remains on this branch; related Brazil/BCB work is maintained on research/bcb-priority-metadata-audit-20261117 to avoid duplicating or moving its raw evidence.
+- BCB aggregate and instrument raw archives: commits 73bf04f6333fd90d8c0d24c7ba9e71eb1ba3f568 and 527a8d41c434609c980eb3181d491eac4fa6e822.
+- New direct arithmetic audit: 15 SGS series, 381 common months (1995-01 to 2026-09), six identities, 2,286/2,286 checks within USD 0.11m; reverse asset/liability sign orientations rejected. Report commit 1b5ff6c1db9c0f0981b6744889349ccf5dc65f7b.
+- Reproducible validator commit 7ea509cc52f9dc8f6a73064fbef0bb7bbf3921d1; five-minute QA workflow commit 9e2e51551875e35875e83f3d9f71b6198806321d; master BCB ledger commit f569866fe23d07a49a054166350142561b380dfd.
+- Runtime/hash revalidation still PENDING; do not promote to CI PASS. Brazil pilot remains NOT_ACCEPTED; EM panel NOT_DONE; production NOT_AUTHORIZED. No production invariants changed.
