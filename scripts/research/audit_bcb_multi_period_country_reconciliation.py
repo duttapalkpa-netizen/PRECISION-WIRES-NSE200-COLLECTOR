@@ -100,17 +100,33 @@ def main() -> None:
         })
     matches = sum(sum((r["eq_funds_match"], r["debt_match"], r["total_match"])) for r in rows)
     complete_months = sum(all((r["eq_funds_match"], r["debt_match"], r["total_match"])) for r in rows)
+    debt_matches = sum(r["debt_match"] for r in rows)
+    eq_funds_matches = sum(r["eq_funds_match"] for r in rows)
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "purpose": "research_only_bcb_multi_period_domestic_portfolio_release_crosscheck",
         "source_sha256_verified": {code: meta["sha256"] for code, meta in SOURCES.items()},
+        "series_scope": {
+            "22930": "domestic-market equity liabilities net (official BCB topic catalogue)",
+            "22936": "investment-fund liabilities net; official topic catalogue does not add a domestic/foreign-market qualifier",
+            "22942": "domestic-market debt-security liabilities net (official BCB topic catalogue; NOT short-term debt)",
+        },
+        "perimeter_assessment": {
+            "debt_22942_vs_release_domestic_debt": "SCOPE_CONFIRMED",
+            "equity_22930_vs_release_domestic_equity": "SCOPE_CONFIRMED",
+            "funds_22936_vs_release_domestic_fund_shares": "SCOPE_UNKNOWN_MARKET_QUALIFIER_NOT_STATED_IN_CATALOGUE",
+            "equity_funds_composite_country_validation": "PARTIAL_NOT_ACCEPTED",
+            "total_composite_country_validation": "PARTIAL_NOT_ACCEPTED",
+        },
         "months_checked": len(rows),
-        "complete_months": complete_months,
-        "comparisons": len(rows) * 3,
-        "comparisons_matched": matches,
+        "complete_numeric_match_months": complete_months,
+        "numeric_comparisons": len(rows) * 3,
+        "numeric_comparisons_matched": matches,
+        "debt_comparisons_matched": debt_matches,
+        "equity_funds_comparisons_matched": eq_funds_matches,
         "rows": rows,
-        "status": "PASS_BOUNDED_REPRODUCIBILITY_WITH_TWO_UNRESOLVED_VINTAGE_MONTHS"
-        if complete_months == 7 and matches == 23 else "FAIL",
+        "status": "PASS_REPRODUCIBILITY_SCOPE_PARTIAL_WITH_TWO_VINTAGE_EXCEPTIONS"
+        if complete_months == 7 and matches == 23 and debt_matches == 8 else "FAIL",
     }
     out = ROOT / "bcb_multi_period_reconciliation_result.json"
     out.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
