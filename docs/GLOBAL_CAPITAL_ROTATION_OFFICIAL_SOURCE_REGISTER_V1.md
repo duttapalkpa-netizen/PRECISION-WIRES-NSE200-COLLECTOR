@@ -823,3 +823,11 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Artifact 14306184279, outer SHA-256 5fb36967f83329693a72e78ac6e9472469dd9ea1c29940b79a1efed9c39d2e74, expires 2027-02-15. Artifact retention is finite; not permanent repository archival.
 - Do not map to ICE DXY or dxy_change_pct_20d. Advanced, EM and INR series discovered but not registry-qualified/admitted. PIT vintage history and derived series remain open.
 - Detailed evidence: docs/FED_H10_RAW_EVIDENCE_AND_PARSER_ADMISSION_20261117.md.
+
+
+## Fed H.10 20-valid-observation change definition — 2026-11-17
+- Separate candidate indicator: `fed_h10_nominal_broad_dollar_change_pct_20obs`; derived only from registered `fed_h10_nominal_broad_dollar_index` (JRXWTFB_N.B). Not ICE DXY and not `dxy_change_pct_20d`.
+- Window: 20 prior valid H.10 observations plus current = 21; formula (latest/base - 1)*100. Count H.10 observation dates only, no India exchange-session equivalence, no fill/interpolation, <21 => unavailable.
+- PIT cutoff mandatory; publication-vintage-aware; latest eligible revision per observation date; same-vintage conflicts rejected.
+- Helper QA passed in workflow #229, ID 44035746086 (70 tests). Specification: docs/FED_H10_20OBS_DERIVED_SERIES_SPEC_20261117.md.
+- No live derived value computed yet. Historical multi-vintage replay NOT_DONE. Not approved for classifier or production use.
