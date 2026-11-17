@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "manifest_id_pattern": "^[0-9A-Za-z._:-]{1,128}$",
+  "required_fields": [
+    "schema_version", "evidence_manifest_id", "source", "source_url", "final_url",
+    "indicator", "unit", "quality_status", "published_at", "retrieved_at",
+    "http_status", "content_type", "byte_length", "sha256", "raw_payload_path"
+  ],
+  "storage": "evidence_manifests/<evidence_manifest_id>.json",
+  "rules": [
+    "One immutable manifest per acquired raw payload and source publication vintage.",
+    "Manifest fields must exactly match the observation row; timestamps are compared after UTC normalization.",
+    "final_url must be HTTPS and must equal the registered source_url unless explicitly listed in registry.allowed_final_urls.",
+    "HTTP status must be 200; byte_length must be positive; retrieved_at must not precede published_at.",
+    "The parser recomputes SHA-256 and byte length from the raw payload file and checks path containment.",
+    "Never overwrite manifests; corrections require a new manifest ID and append-only evidence."
+  ]
+}
