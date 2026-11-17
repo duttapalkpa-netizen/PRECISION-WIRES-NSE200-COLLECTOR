@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Capture the official Federal Reserve H.10 ZIP response with transport evidence."""
 from __future__ import annotations
-import hashlib, json, os, sys, urllib.request, urllib.error, zipfile
+import hashlib, json, os, sys, urllib.request, urllib.error, zipfile, xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -35,6 +35,49 @@ with zipfile.ZipFile(zip_path) as archive:
     if bad_member:
         raise SystemExit(f"ZIP integrity failure in member {bad_member}")
     members = [{"name": x.filename, "size_bytes": x.file_size, "compressed_size_bytes": x.compress_size} for x in archive.infolist()]
+    xml_root = ET.fromstring(archive.read("H10_data.xml"))
+ns = {"message": "http://www.SDMX.org/resources/SDMXML/schemas/v1_0/message",
+      "frb": "http://www.federalreserve.gov/structure/compact/common",
+      "kf": "http://www.federalreserve.gov/structure/compact/H10_H10"}
+prepared = xml_root.findtext("message:Header/message:Prepared", namespaces=ns)
+series_map = {
+    "JRXWTFB_N.B": ("fed_h10_nominal_broad_dollar_index", "Index:_1997_Jan_100"),
+    "JRXWTFN_N.B": ("fed_h10_nominal_advanced_dollar_index", "Index:_1997_Jan_100"),
+    "JRXWTFO_N.B": ("fed_h10_nominal_em_dollar_index", "Index:_1997_Jan_100"),
+    "RXI_N.B.IN": ("fed_h10_inr_per_usd", "Currency")
+}
+series_summary = []
+for series in xml_root.findall(".//kf:Series", ns):
+    code = series.attrib.get("SERIES_NAME")
+    if code in series_map:
+        observations = series.findall("frb:Obs", ns)
+        series_summary.append({
+            "series_id": code, "indicator": series_map[code][0],
+            "unit": series.attrib.get("UNIT"), "unit_multiplier": series.attrib.get("UNIT_MULT"),
+            "observation_count": len(observations),
+            "first_observation": observations[0].attrib if observations else None,
+            "latest_observation": observations[-1].attrib if observations else None
+        })
+if len(series_summary) != len(series_map):
+    raise SystemExit("one or more required H.10 series are absent from the downloaded XML")
+manifest_dir = OUT / "evidence_manifests"
+manifest_dir.mkdir(exist_ok=True)
+for item in series_summary:
+    code = item["series_id"]
+    indicator, unit = series_map[code]
+    evidence_id = "fed-h10-" + code.lower().replace(".", "-")
+    series_manifest = {
+        "schema_version": 1, "evidence_manifest_id": evidence_id,
+        "source": "Federal Reserve Board H.10 Data Download Program",
+        "source_url": URL, "final_url": final_url, "indicator": indicator, "unit": unit,
+        "quality_status": "VERIFIED_OFFICIAL", "published_at": prepared,
+        "retrieved_at": retrieved.isoformat(), "http_status": status,
+        "content_type": content_type, "byte_length": len(payload),
+        "sha256": hashlib.sha256(payload).hexdigest(), "raw_payload_path": zip_path.name,
+        "series_id": code, "series_unit_multiplier": item["unit_multiplier"],
+        "observation_count": item["observation_count"]
+    }
+    (manifest_dir / (evidence_id + ".json")).write_text(json.dumps(series_manifest, indent=2) + "\n", encoding="utf-8")
 manifest = {
     "schema_version": 1,
     "evidence_type": "official_http_transport_capture",
@@ -51,7 +94,7 @@ manifest = {
     "sha256": hashlib.sha256(payload).hexdigest(),
     "raw_payload_path": zip_path.name,
     "zip_integrity_test": "PASS",
-    "members": members,
+    "members": members,\n    "source_prepared_timestamp": prepared,\n    "selected_series": series_summary,
     "github": {
         "repository": os.environ.get("GITHUB_REPOSITORY"),
         "commit_sha": os.environ.get("GITHUB_SHA"),
