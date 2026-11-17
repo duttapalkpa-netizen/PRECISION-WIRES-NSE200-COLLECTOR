@@ -62,3 +62,12 @@ Documentation-only audit. No parser, registry, tests, workflows, observations or
 - Static implementation state: code/test/schema/workflow changes committed. Runtime test execution has NOT been performed in this environment; therefore no test PASS is claimed. Workflow is configured for push on its existing mainline branch, pull_request, and workflow_dispatch; this research branch push alone does not guarantee a run. Verify a GitHub Actions run before acceptance.
 - Acceptance: manifest schema authored 100%; parser manifest resolution/binding implemented 100% (static review only); negative/positive test cases authored 100%; CI path triggers updated 100%; runtime tests NOT_RUN; registry population BLOCKED/EMPTY_BY_DESIGN; trusted source ingestion NOT_DONE; PIT/predictive validation NOT_DONE; production NOT_AUTHORIZED.
 - No market observations or official registry entries added; no production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate or collector workflows changed. ₹0; no synthetic market observations, timestamps or hashes.
+
+
+## 2026-11-17 — CI trigger repair and runtime execution check
+
+- Repaired workflow path/branch configuration in .github/workflows/global_capital_rotation_overlay_tests.yml: added research/taxonomy-crosswalk-contract-20261117 to push branches, removed duplicate paths, and included the schema + source registry paths in both push and pull_request filters. Workflow retains timeout-minutes: 5 and Python 3.12.
+- Workflow file commit: d0c7022c43c60035ba3ed5eab2633f884c6ed859; blob SHA 33bd663af8536677cac711899ded32a73ce0f755.
+- Queried GitHub Actions runs for the exact research branch after the workflow change: total_count=0. Therefore no run was triggered/visible and runtime tests remain NOT_RUN. Do not infer PASS from authored tests or static inspection.
+- This branch's workflow push trigger should now match subsequent commits touching configured paths. If no run appears after a qualifying commit, manual workflow_dispatch from GitHub Actions UI is required (no dispatch action exposed in the connected GitHub tools here).
+- Runtime gate status: NOT_RUN / NOT_VERIFIED. Parser + six tests are committed; CI trigger repair committed; source registry remains empty by design; trusted ingestion remains blocked.
