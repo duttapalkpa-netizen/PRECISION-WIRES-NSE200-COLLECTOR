@@ -95,7 +95,7 @@ for code, meta in SERIES.items():
                 sample = decoded[:8192]
                 delimiter = None
                 try:
-                    delimiter = csv.Sniffer().sniff(sample, delimiters=",;\\t|").delimiter
+                    delimiter = csv.Sniffer().sniff(sample, delimiters=",;" + chr(9) + "|").delimiter
                 except csv.Error:
                     pass
                 path = OUT / name
@@ -150,7 +150,7 @@ manifest["acceptance"] = {
     "production_integration": "NOT_AUTHORIZED",
 }
 manifest["status"] = "RAW_CAPTURE_7_OF_7_PASS" if passed == len(SERIES) and not manifest["errors"] else "BLOCKED"
-(OUT / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+(OUT / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + chr(10), encoding="utf-8")
 print(json.dumps(manifest, indent=2, sort_keys=True))
 if manifest["status"] != "RAW_CAPTURE_7_OF_7_PASS":
     sys.exit(1)
