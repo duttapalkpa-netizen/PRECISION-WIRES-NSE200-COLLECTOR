@@ -851,3 +851,12 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - 5/20/60 prior-valid-observation changes: Broad +0.941681/+0.889205/+3.082118%; Advanced +1.951566/+1.056856/+3.484809%; EM -0.028413/+0.726701/+2.692781%.
 - Latest 5-observation window shows USD strengthening much more against Advanced than EM basket; this is FX-basket divergence only, not proof of capital rotation or inflows.
 - Research report: docs/FED_H10_RELATIVE_DOLLAR_BASKET_PATTERN_SCAN_20261117.md. Predictive/PIT validation and production use NOT_DONE / NOT_AUTHORIZED.
+
+
+## 2026-11-17 — RBI India BPM6 quarterly BOP comparator (metadata-qualified; payload pending)
+- Official RBI Monthly Bulletin Comprehensive Guide identifies Table 42 (US$ million) and Table 43 (₹ crore) as quarterly BPM6-standard India BoP tables, DEPR/RBI, subject to revision. Table 42 presents Credit, Debit and Net and includes Portfolio Investment in the financial account; preliminary data are marked P.
+- Official SDDS calendar lists Apr–Jun 2026 release on 01-Sep-2026 and Jul–Sep 2026 release on 01-Dec-2026. Thus Jul–Sep 2026 is not yet released as of 17-Nov-2026.
+- Apr–Jun 2026 XLSX route resolved: https://rbidocs.rbi.org.in/rdocs/content/docs/BOPS01092026FULL.xlsx. Browser retrieval encountered an anti-bot challenge; no raw workbook bytes/headers/hash captured. Do not whitelist this route in parser registry yet.
+- Independent comparator only. No mechanical equivalence to IMF BFPA/BFPL until row-level sign/direction/residency semantics are reconciled. Monthly press-release FPI summaries must not be mixed with quarterly BPM6 Table 42.
+- Detailed audit: docs/INDIA_RBI_BOP_BPM6_OFFICIAL_COMPARATOR_SOURCE_AUDIT_20261117.md; commit b3c4d46fcfbf67570586260757b562476577c10d.
+- Status: official publisher/series family/unit/frequency/revision and release calendar QUALIFIED; raw XLSX payload NOT_VERIFIED; row extraction NOT_DONE; RBI↔IMF crosswalk NOT_DONE; parser admission NOT_DONE.
