@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "immutable_official_bcb_historical_release_table_vintage_capture",
-  "captured_at_utc": "2026-11-17T13:10:28.621190+00:00",
+  "captured_at_utc": "2026-11-17T13:13:52.546869+00:00",
   "files": [
     {
       "publication_period": "202601",
@@ -10,7 +10,7 @@
       "bytes": 232666,
       "sha256": "525d3ad355d2a68b37d9f59554b2dc2446fd8536647f3c8889b2e91b47345685",
       "http_headers_path": "data/raw/bcb/release_tables_202601/response_headers.txt",
-      "http_headers": "HTTP/2 200 \ndate: Tue, 17 Nov 2026 13:10:26 GMT\ncontent-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\ncontent-length: 232666\ncache-control: private,max-age=0\nexpires: Mon, 02 Nov 2026 13:10:26 GMT\nlast-modified: Mon, 19 Oct 2026 03:00:58 GMT\netag: \"{B412AC73-7D66-4801-B92A-02F1C0F01BE8},9\"\nresourcetag: rt:B412AC73-7D66-4801-B92A-02F1C0F01BE8@00000000009\npublic-extension: http://schemas.microsoft.com/repl-2\nrequest-id: e2bc4fa2-7eb4-e089-2bae-970280f6f7a9\nx-frame-options: SAMEORIGIN\ncontent-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;\nx-content-type-options: nosniff\nx-ms-invokeapp: 1; RequireReadOnly\nframe-ancestors: 'self' https://*.bcb.gov.br\nstrict-transport-security: max-age=16070400; includeSubDomains\nset-cookie: TS0164d60d=01b3424a9d2c1bbe1531020d6a96998fd00422e2986315cb34524ecbf465d87689a2372bf50cb2a5a6a52495394edf53350bb86150; Path=/; Domain=.www.bcb.gov.br\nx-azure-ref: 20261117T131025Z-17875568855kg95thC1DM1dev400000046e0000000001wke\nx-cache: PRIVATE_NOSTORE\nx-fd-int-roxy-purgeid: 0\naccept-ranges: bytes\n\n",
+      "http_headers": "HTTP/2 200 \ndate: Tue, 17 Nov 2026 13:13:50 GMT\ncontent-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\ncontent-length: 232666\ncache-control: private,max-age=0\nexpires: Mon, 02 Nov 2026 13:13:50 GMT\nlast-modified: Mon, 19 Oct 2026 03:00:58 GMT\netag: \"{B412AC73-7D66-4801-B92A-02F1C0F01BE8},9\"\nresourcetag: rt:B412AC73-7D66-4801-B92A-02F1C0F01BE8@00000000009\npublic-extension: http://schemas.microsoft.com/repl-2\nrequest-id: 14bd4fa2-ce69-e089-0e09-d2e82e459e74\nx-frame-options: SAMEORIGIN\ncontent-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;\nx-content-type-options: nosniff\nx-ms-invokeapp: 1; RequireReadOnly\nframe-ancestors: 'self' https://*.bcb.gov.br\nstrict-transport-security: max-age=16070400; includeSubDomains\nset-cookie: TS0164d60d=01b3424a9d169daa263070c2ce842b109516cd9106213cc8eb50a62d86dddb9a4960339d3903e90d14bb61fea100f3dcf59915b7c5; Path=/; Domain=.www.bcb.gov.br\nx-azure-ref: 20261117T131349Z-er16cb5f4fbl7b9fhC1IADaeus00000008n000000000533q\nx-cache: PRIVATE_NOSTORE\nx-fd-int-roxy-purgeid: 0\naccept-ranges: bytes\n\n",
       "xlsx_zip_integrity": "PASS",
       "sheet_names": [
         "Índice",
@@ -54,7 +54,39 @@
       "bytes": 151485,
       "sha256": "3590b1bf3baded2a12c5ec747329bdd0fb7be10b26043eba99b64f8de9f75017",
       "http_headers_path": "data/raw/bcb/release_tables_202603/response_headers.txt",
-      "http_headers": "HTTP/2 200 \ndate: Tue, 17 Nov 2026 13:10:28 GMT\ncontent-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\ncontent-length: 151485\ncache-control: private,max-age=0\nexpires: Mon, 02 Nov 2026 13:10:28 GMT\nlast-modified: Sun, 18 Oct 2026 18:30:04 GMT\netag: \"{73A460C9-279F-4080-80EC-B1D703B43EB4},12\"\nresourcetag: rt:73A460C9-279F-4080-80EC-B1D703B43EB4@00000000012\npublic-extension: http://schemas.microsoft.com/repl-2\nrequest-id: e3bc4fa2-0e17-e089-7079-3cf3ac99fba6\nx-frame-options: SAMEORIGIN\ncontent-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;\nx-content-type-options: nosniff\nx-ms-invokeapp: 1; RequireReadOnly\nframe-ancestors: 'self' https://*.bcb.gov.br\nstrict-transport-security: max-age=16070400; includeSubDomains\nset-cookie: TS0164d60d=01b3424a9dcd46a92b8a05040e4d0d29a9403b91383c0b810d9776e93dbe4fd75ebf21495359542e74c746905588e3290d4890f34a; Path=/; Domain=.www.bcb.gov.br\nx-azure-ref: 20261117T131027Z-17875568855s9rm4hC1DM1vmrw00000040eg000000000k95\nx-cache: PRIVATE_NOSTORE\nx-fd-int-roxy-purgeid: 0\naccept-ranges: bytes\n\n",
+      "http_headers": "HTTP/2 200 \ndate: Tue, 17 Nov 2026 13:13:51 GMT\ncontent-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\ncontent-length: 151485\ncache-control: private,max-age=0\nexpires: Mon, 02 Nov 2026 13:13:51 GMT\nlast-modified: Sun, 18 Oct 2026 18:30:04 GMT\netag: \"{73A460C9-279F-4080-80EC-B1D703B43EB4},12\"\nresourcetag: rt:73A460C9-279F-4080-80EC-B1D703B43EB4@00000000012\npublic-extension: http://schemas.microsoft.com/repl-2\nrequest-id: 14bd4fa2-3ead-e089-0e09-d307b71b7206\nx-frame-options: SAMEORIGIN\ncontent-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;\nx-content-type-options: nosniff\nx-ms-invokeapp: 1; RequireReadOnly\nframe-ancestors: 'self' https://*.bcb.gov.br\nstrict-transport-security: max-age=16070400; includeSubDomains\nset-cookie: TS0164d60d=01b3424a9d28d7212f458afcff6971920808255cabc0dc524349309e8084eeeb13a226fa234c397b41469a193e312bae4a4ea19914; Path=/; Domain=.www.bcb.gov.br\nx-azure-ref: 20261117T131350Z-er16cb5f4fbm2rtjhC1IADm2hc00000041tg0000000056ff\nx-cache: PRIVATE_NOSTORE\nx-fd-int-roxy-purgeid: 0\naccept-ranges: bytes\n\n",
+      "xlsx_zip_integrity": "PASS",
+      "sheet_names": [
+        "Índice",
+        "Tabela 1",
+        "Tabela 2",
+        "Tabela 3",
+        "Tabela 4",
+        "Tabela 5",
+        "Tabela 6",
+        "Tabela 7",
+        "Tabela 8",
+        "Tabela 9",
+        "Tabela 10",
+        "Tabela 11",
+        "Tabela 12",
+        "Tabela 13",
+        "Tabela 14",
+        "Tabela 15",
+        "Tabela 16",
+        "Tabela 17",
+        "Tabela 18",
+        "Tabela 19"
+      ]
+    },
+    {
+      "publication_period": "202610",
+      "path": "data/raw/bcb/release_tables_202610/bcb_external_sector_tables_202610.xlsx",
+      "source_url": "https://www.bcb.gov.br/content/estatisticas/hist_estatisticassetorexterno/202610_Tabelas_de_estatisticas_do_setor_externo.xlsx",
+      "bytes": 116357,
+      "sha256": "8888aaef2ee5279a8e2f247c0c417247caa24733a659b90e04b618742de71c3a",
+      "http_headers_path": "data/raw/bcb/release_tables_202610/response_headers.txt",
+      "http_headers": "HTTP/2 200 \ndate: Tue, 17 Nov 2026 13:13:52 GMT\ncontent-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\ncontent-length: 116357\ncache-control: private,max-age=0\nexpires: Mon, 02 Nov 2026 13:13:52 GMT\nlast-modified: Mon, 26 Oct 2026 11:31:47 GMT\netag: \"{9E536319-6D06-4D9F-B1B9-33965227C32B},8\"\nresourcetag: rt:9E536319-6D06-4D9F-B1B9-33965227C32B@00000000008\npublic-extension: http://schemas.microsoft.com/repl-2\nrequest-id: 14bd4fa2-3eeb-e089-2bae-9bf0152783cc\nx-frame-options: SAMEORIGIN\ncontent-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;\nx-content-type-options: nosniff\nx-ms-invokeapp: 1; RequireReadOnly\nframe-ancestors: 'self' https://*.bcb.gov.br\nstrict-transport-security: max-age=16070400; includeSubDomains\nset-cookie: TS0164d60d=01b3424a9d0244d9c69f33e7e1d73653de93257863db0285cb4faf37d05fedcee4c559abf20f6e05c9407ad7e23dbecaac60a7b612; Path=/; Domain=.www.bcb.gov.br\nx-azure-ref: 20261117T131351Z-er16cb5f4fbx5hn5hC1IAD4z6n0000003y1g000000002mb6\nx-cache: PRIVATE_NOSTORE\nx-fd-int-roxy-purgeid: 0\naccept-ranges: bytes\n\n",
       "xlsx_zip_integrity": "PASS",
       "sheet_names": [
         "Índice",

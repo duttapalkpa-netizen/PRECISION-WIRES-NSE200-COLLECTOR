@@ -1,0 +1,23 @@
+HTTP/2 200 
+date: Tue, 17 Nov 2026 13:13:52 GMT
+content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+content-length: 116357
+cache-control: private,max-age=0
+expires: Mon, 02 Nov 2026 13:13:52 GMT
+last-modified: Mon, 26 Oct 2026 11:31:47 GMT
+etag: "{9E536319-6D06-4D9F-B1B9-33965227C32B},8"
+resourcetag: rt:9E536319-6D06-4D9F-B1B9-33965227C32B@00000000008
+public-extension: http://schemas.microsoft.com/repl-2
+request-id: 14bd4fa2-3eeb-e089-2bae-9bf0152783cc
+x-frame-options: SAMEORIGIN
+content-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;
+x-content-type-options: nosniff
+x-ms-invokeapp: 1; RequireReadOnly
+frame-ancestors: 'self' https://*.bcb.gov.br
+strict-transport-security: max-age=16070400; includeSubDomains
+set-cookie: TS0164d60d=01b3424a9d0244d9c69f33e7e1d73653de93257863db0285cb4faf37d05fedcee4c559abf20f6e05c9407ad7e23dbecaac60a7b612; Path=/; Domain=.www.bcb.gov.br
+x-azure-ref: 20261117T131351Z-er16cb5f4fbx5hn5hC1IAD4z6n0000003y1g000000002mb6
+x-cache: PRIVATE_NOSTORE
+x-fd-int-roxy-purgeid: 0
+accept-ranges: bytes
+
