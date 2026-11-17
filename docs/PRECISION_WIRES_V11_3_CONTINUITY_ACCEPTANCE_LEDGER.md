@@ -936,3 +936,13 @@
 
 - CI after exact package URL/content-type registry allowance: run #224 / ID 44031737983 SUCCESS.
 - CI after transport-capture documentation: run #225 / ID 44031833858 SUCCESS; test job and unittest step passed. This is regression coverage only; no per-row manifest/parser ingestion acceptance implied.
+
+
+## 2026-11-17 — Fed H.10 raw evidence + existing parser admission PASS
+- Capture workflow #6 / ID 44035209336 completed SUCCESS on commit 7faddf575e5f772f3823912dc2ad06b37842118f. Existing overlay parser `load_observations` was invoked by the capture script and accepted 5,445 trusted observations for JRXWTFB_N.B / fed_h10_nominal_broad_dollar_index.
+- Official ZIP HTTP 200, content-type application/x-zip-compressed, retrieved 2026-11-17T06:59:11.059096Z, source Prepared 2026-11-16T16:47:01, raw bytes 2,088,268, SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77; ZIP integrity PASS.
+- Artifact ID 14306184279; artifact archive SHA-256 5fb36967f83329693a72e78ac6e9472469dd9ea1c29940b79a1efed9c39d2e74; expires 2027-02-15T06:59:04Z. Not permanent repository storage; preserve before expiry.
+- Broad series first observation 2006-01-02=101.4155; latest 2026-11-13=122.6503. Manifest ID fed-h10-jrxwtfb_n-b. Parser result file reported PASS and 5,445 admitted rows.
+- Capture run #3 failed due to malformed Python line escaping; run #5 failed due to repository-root import path. Both causes corrected; only #6 is the parser admission PASS.
+- Other three H.10 series were discovered but NOT admitted. No ICE DXY mapping. PIT multi-vintage validation, 20-session derived series, and classifier/production integration remain NOT_DONE/NOT_AUTHORIZED.
+- Full evidence report: docs/FED_H10_RAW_EVIDENCE_AND_PARSER_ADMISSION_20261117.md. Next task: specify and test a separate Fed H.10 broad-dollar 20-valid-observation change series, no forward-fill, with Prepared-vintage PIT cutoff and explicit H.10 observation-calendar semantics.
