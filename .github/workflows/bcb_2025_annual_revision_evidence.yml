@@ -1,0 +1,66 @@
+name: BCB 2025 Annual Portfolio Revision Evidence
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'scripts/research/audit_bcb_2025_annual_revision_bridge.py'
+      - '.github/workflows/bcb_2025_annual_revision_evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install XLSX reader
+        run: python -m pip install --disable-pip-version-check openpyxl==3.1.5
+      - name: Capture September 2026 official revision release
+        run: |
+          set -euo pipefail
+          mkdir -p data/raw/bcb/revision_release_202609
+          curl -fLsS --retry 2 -D data/raw/bcb/revision_release_202609/response_headers.txt \
+            'https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202609_External_sector_statistics_text.pdf' \
+            -o data/raw/bcb/revision_release_202609/202609_External_sector_statistics_text.pdf
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          p=Path("data/raw/bcb/revision_release_202609/202609_External_sector_statistics_text.pdf")
+          raw=p.read_bytes()
+          if not raw.startswith(b"%PDF-"): raise SystemExit("Invalid PDF signature")
+          headers=p.parent.joinpath("response_headers.txt").read_text(errors="replace")
+          result={"schema_version":1,"captured_at_utc":datetime.now(timezone.utc).isoformat(),
+                  "source_url":"https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202609_External_sector_statistics_text.pdf",
+                  "path":str(p),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),
+                  "pdf_signature":"PASS","http_headers":headers}
+          p.parent.joinpath("manifest.json").write_text(json.dumps(result,indent=2)+"\n")
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Reproduce annual revision bridge
+        run: python scripts/research/audit_bcb_2025_annual_revision_bridge.py
+      - name: Commit evidence
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/bcb/revision_release_202609 data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json
+          if git diff --cached --quiet; then echo "No evidence change."; else
+            git commit -m "qa: archive BCB 2025 portfolio revision evidence"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+      - name: Upload evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-2025-annual-portfolio-revision-evidence
+          path: |
+            data/raw/bcb/revision_release_202609/
+            data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json
+          if-no-files-found: warn
+          retention-days: 90
