@@ -60,3 +60,15 @@ Status:
 4. No synchronized panel, relative-attraction output, event study or predictive validation is accepted yet.
 
 No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E, or PR merge changed.
+## 4. Direct H.10 XML endpoint discovery — 2026-11-17
+
+Opening the official Federal Reserve DDP Choose page and following its XML download control exposed the exact official endpoint:
+https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10
+
+The browser confirmed this is the page's 26.2 MB SDMX/ZIP download control, but the web text-fetch layer rejected the binary response content-type (application/x-zip-compressed). A separate container download attempt also failed before a local file was created. Therefore the route is now PINNED_OFFICIAL, but acquisition is still NOT_DONE: no local ZIP, response headers, byte count, SHA-256, XML parse, or raw series extraction from this attempt. Do not mark H.10 acquisition PASS.
+
+Official page and link evidence: https://www.federalreserve.gov/datadownload/Choose.aspx?rel=H10 (XML download link resolves to the endpoint above).
+
+## 5. CDSL 16-Nov arithmetic correction
+
+The live official page shows Equity net +₹5,564.90 crore (gross buy 18,571.97 less gross sell 13,007.07). This supersedes any transcribed 16-Nov value of +₹5,564.89 crore based only on the stock-exchange sub-row; the accepted equity figure is the page's sub-total including Primary market & others. Debt-General +₹389.47, Debt-VRR +₹51.60, Debt-FAR -₹1,163.67, Hybrid +₹3.63; five-category FPI subtotal +₹4,845.93 crore. Mutual Funds remain separate at -₹18.74 crore; page total +₹4,827.19 crore.
