@@ -60,3 +60,10 @@ The overlay's global EM portfolio-flow input is a material classification input,
 - Country-level portfolio-flow panel: UNKNOWN / NOT_DONE.
 - BOP_AGG actual/estimate decomposition: NOT_DONE.
 - Production integration: NOT_AUTHORIZED.
+
+## New exact BOP_BPM6 metadata evidence — 2026-11-17
+- Raw structure capture now PASS for IMF:BOP:2.6.0, IMF:BOP_BPM6:1.0, IMF:BOP_BP6_CONSTRAINT:1.0, and the dataflow's actual referenced IMF:ECOFIN_DSD:1.0. See `docs/IMF_BOP_DSD_OFFICIAL_METADATA_ACQUISITION_20261117.md`.
+- The BOP_BPM6 dataflow uses ECOFIN_DSD's generic INDICATOR dimension. It does not directly use BOP DSD 2.6.0 dimensions; an explicit definition-based crosswalk is now recorded.
+- The exact constraint allows BFPA_BP6_USD (portfolio investment net acquisition of financial assets) and BFPL_BP6_USD (portfolio investment net incurrence of liabilities). The aggregate BFP_BP6_USD is not allowed by the captured constraint; BFP_BP6_EUR is allowed.
+- This metadata discovery does not replace or merge with the separately audited IMF Portal BOP dataflow/DSD24 observations. No new BOP_BPM6 observation body has been captured in this work package.
+- Exact BOP_BPM6 country-level observation access, actual-vs-estimate attributes, reporting-country coverage, historical vintage and PIT eligibility remain NOT_DONE / UNKNOWN. Production integration NOT_AUTHORIZED.
