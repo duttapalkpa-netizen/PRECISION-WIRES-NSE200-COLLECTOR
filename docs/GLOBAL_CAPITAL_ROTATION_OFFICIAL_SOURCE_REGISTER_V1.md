@@ -751,3 +751,12 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Sample code strings demonstrate changed Basic Industry code formatting/length (e.g., March-2022 IN0101010001 vs July-2023 IN010101001). Never truncate or join by suffix/label alone.
 - BSE Index Services October-2025 paper reports 59/197, consistent with NSE 2023 counts. This supports temporal evolution but not the complete code transition or effective dates.
 - Full bidirectional inventory/diff, exact additions/deletions/renames/splits/merges, raw bytes/hash manifests, and BSE full equivalence remain NOT_DONE / NOT_ACQUIRED. Do not promote issuer mapping or parser/registry integration.
+
+
+## 2026-11-17 — NSE historical taxonomy correction: old labels consolidated, not deleted
+- Rechecked full relevant table ranges in the official March-2022 and July-2023 NSE Indices PDFs. Sources: https://nsearchives.nseindia.com/web/sites/default/files/inline-files/NSE%20Indices_Industry%20Classification%20Structure-2022-03.pdf and https://nsearchives.nseindia.com/web/sites/default/files/inline-files/nse-indices_industry-classification-structure-2023-07.pdf .
+- March-2022 IN020201001 Air Conditioner is not simply absent in July-2023: July IN020201007 Household Appliances definition expressly includes air conditioners. Candidate consolidation/reclassification; not deletion.
+- March-2022 IN020201014 Toys is not simply absent: July IN020201010 Leisure Products definition expressly includes toys and games. Candidate consolidation/reclassification; not deletion.
+- March-2022 2/3 Wheelers definition includes bicycles while Cycles is separately listed; July 2/3 Wheelers explicitly excludes bicycles/tricycles and Cycles covers bicycles/tricycles. Candidate scope-boundary clarification.
+- March IN020101003 Trading - Automobiles vs July IN020101004 Auto Dealer; March IN020102005 Trading - Auto Ancillaries vs July IN020102007 Trading - Auto Components. Candidate rename/recode lineage; not exact-code matches.
+- Absence in a partial excerpt is never deletion evidence. Full target-vintage row inventory and parent-category review are mandatory. Exhaustive diff, effective dates, raw bytes/hash and BSE equivalence remain open.
