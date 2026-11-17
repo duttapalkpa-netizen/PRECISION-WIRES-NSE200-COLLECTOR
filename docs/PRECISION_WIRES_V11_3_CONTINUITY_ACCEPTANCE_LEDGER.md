@@ -1093,3 +1093,12 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086204426
 - CI gate PASS does not upgrade the two vintage exceptions or the Brazil pilot. Dec-2025 and Feb-2026 remain VINTAGE_DIFFERENCE_UNRESOLVED; same-vintage revision bridge NOT_DONE; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next action unchanged: resolve only the two mismatched months using same-vintage official BCB archived tables and revision evidence. No repeated capture or September-only audit.
+
+## 2026-11-17 — BCB exact-value reproducibility hardening CI PASS
+- Audit script now emits exact current SGS values in USD million for all nine periods, in addition to the one-decimal release comparison. No source files or source values were modified.
+- Workflow Run #2 / ID `44086387367`, head `b3d5bf9b29e1c730a7f9d60a510277b64d181f48`: SUCCESS; raw SHA-256 verification and reproducibility step SUCCESS.
+- Exact current SGS exception values: Dec-2025 equity/funds -1082.9, debt +5321.6, total +4238.7 USD mn; Feb-2026 equity/funds +2786.2, debt +2783.2, total +5569.4 USD mn.
+- Summary remains 9 periods, 7 full-period matches, 23/27 comparisons matched; two vintage exceptions unresolved.
+- Artifact ID `14329222273`; archive SHA-256 `fc6d34e8856db75ca0eb22a254bafdc395e0a77d783f7149ffb89474ce379138`; expires `2027-02-15T12:47:07Z`.
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086387367
+- Status: bounded reproducibility PASS; Brazil country-period acceptance PARTIAL; Brazil pilot NOT_ACCEPTED; same-vintage revision bridge NOT_DONE; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
