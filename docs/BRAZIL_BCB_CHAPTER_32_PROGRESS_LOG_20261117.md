@@ -214,3 +214,12 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Run #1 ID 44091390515 SUCCESS; artifact 14330869727; digest 15d99f469b7cb9d461c47125dc9d1dec513e2edaa3deb744b7900c92e0ada971.
 - Status: 2025 annual revision bridge PASS; Dec-2025 monthly attribution PARTIAL/NOT_ATTRIBUTED; Feb-2026 debt attribution UNKNOWN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next: investigate only Feb-2026 22942 debt and month-specific 2025 revision allocation through official revision history or preserved SGS vintages. No repeat source capture or Sep-2026 check.
+
+## 19. 2026-11-17 — Feb-2026 22942 debt discrepancy isolated to February
+- Used March-2026 Table 10 Jan-Feb cumulative row values minus February monthly row values to infer January 2026, then compared with current SGS January raw observations.
+- January component deltas (latest SGS minus BCB-implied, USD mn): 22930 -0.0371; 22936 -0.0035; 22942 -0.0408; equity/funds -0.0407; domestic total -0.0814. All match within USD 0.1m.
+- February 2026: 22930 -0.0374; 22936 +0.0395; 22942 +203.7078; equity/funds +0.0020; domestic total +203.7098. Thus the Jan-Feb cumulative debt difference is isolated to February 22942, not January carry-over or equity/fund mismatch.
+- Exact inferred January values and Jan-Feb cumulative identities are now included in data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json; all inferred January Table 10 identities PASS.
+- Updated extraction Run #5 / ID 44091831003 SUCCESS; artifact ID 14332500865; digest ee222deb9a1eabe10b0357ab1b1907f7696b764f5dfcfa2924166cb809f0cbfd.
+- Status: January 2026 component comparison CLOSED (within 0.1m); February 2026 22942 debt discrepancy isolated, exact revision cause UNKNOWN; 2025 annual revision bridge PASS; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next: investigate only February-2026 22942 revision using official BCB revision notice or preserved historical SGS vintage. Do not repeat January or September checks.
