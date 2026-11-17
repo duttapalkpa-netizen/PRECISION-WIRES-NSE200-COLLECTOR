@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 WORKBOOKS = {
     "202601": {"path": ROOT / "data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx", "targets": ["2025-12"]},
     "202603": {"path": ROOT / "data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx", "targets": ["2026-02"]},
-    "202610": {"path": ROOT / "data/raw/bcb/release_tables_202610/bcb_external_sector_tables_202610.xlsx", "targets": ["2025-12", "2026-02", "2026-09"]},
+    "202610": {"path": ROOT / "data/raw/bcb/release_tables_202610/bcb_external_sector_tables_202610.xlsx", "targets": ["2026-09"]},
 }
 SGS_FILES = {
     "22930": ROOT / "bcb_domestic_market_crosscheck_202609/sgs_22930.csv",
