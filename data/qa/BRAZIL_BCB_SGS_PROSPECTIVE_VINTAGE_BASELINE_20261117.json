@@ -69,5 +69,11 @@
     "brazil_pilot": "NOT_ACCEPTED",
     "em_panel": "NOT_DONE",
     "production_integration": "NOT_AUTHORIZED"
+  },
+  "capture_recurrence": {
+    "mode": "research_branch_push_trigger",
+    "trigger_path": "docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt",
+    "unattended_schedule": "NOT_ENABLED",
+    "reason": "GitHub scheduled and workflow_dispatch triggers require workflow file on default branch; default/production branch remains untouched"
   }
 }
