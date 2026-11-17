@@ -1,0 +1,46 @@
+name: BCB Historical Release Table Vintage Inspection
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'scripts/research/inspect_bcb_historical_release_tables.py'
+      - 'data/raw/bcb/release_tables_202601/**'
+      - 'data/raw/bcb/release_tables_202603/**'
+      - '.github/workflows/bcb_historical_release_table_inspection.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install XLSX reader
+        run: python -m pip install --disable-pip-version-check openpyxl==3.1.5
+      - name: Extract exact portfolio table rows
+        run: python scripts/research/inspect_bcb_historical_release_tables.py
+      - name: Commit extracted evidence
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/qa/BCB_HISTORICAL_RELEASE_TABLES_TARGET_CELLS_20261117.json
+          if git diff --cached --quiet; then
+            echo "No evidence change."
+          else
+            git commit -m "qa: extract portfolio rows from archived BCB release tables"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+      - name: Upload extracted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-historical-release-table-inspection
+          path: data/qa/BCB_HISTORICAL_RELEASE_TABLES_TARGET_CELLS_20261117.json
+          if-no-files-found: warn
+          retention-days: 90
