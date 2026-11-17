@@ -1015,3 +1015,16 @@
 - Status: hierarchy mapping 100% (catalogue labels); exact child metadata PARTIAL; raw payload/manifest NOT_DONE; accounting sign/reconciliation NOT_DONE; pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED.
 - No observations, raw hashes, timestamps, or calculations fabricated. No code, parser, registry, seed, tests, workflow or production component changed. ₹0.
 - Invariants preserved: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
+
+
+## 2026-11-17 — BCB seven priority-series metadata audit
+- New document: `docs/BRAZIL_BCB_PRIORITY_SERIES_METADATA_AUDIT_20261117.md`.
+- Branch: `research/bcb-priority-metadata-audit-20261117`.
+- Metadata audit commit: `d3470dc4f886e3d86923214377e2b482287cbec3`.
+- Completed official dataset metadata coverage for the seven priority series 22905, 22906, 22907, 22908, 22924, 22925 and 22926. The newly closed gaps are liability net 22924 and liability receipts 22925; 22926 and 22905–22908 are carried forward from prior official page verification, not falsely counted as newly acquired observations.
+- All seven official dataset pages identify BCB/Depec, monthly frequency, USD-million units, and coverage from 1995-01-01. Each page exposes BCData/SGS JSON and CSV resources.
+- This is metadata-only PASS. No raw CSV/JSON bytes were acquired; no response headers/status/byte lengths/hashes exist; no date-level observations or accounting calculations were performed.
+- BOP sign convention and net/component identities remain UNKNOWN / NOT_DONE. The official methodology-note route was previously found unreadable in the available JS-dependent retrieval path.
+- Brazil pilot remains NOT_ACCEPTED; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next step: bounded byte-capable runner capture for seven official CSV payloads with immutable response metadata and SHA-256, then date-level reconciliation. Do not retry already completed metadata discovery absent new evidence.
+- No code, parser, registry, seed, test, workflow, production selector, ranking score, pressure fade, CORE-672, Engines A–E, Hard Gate or collector workflow changed. ₹0.
