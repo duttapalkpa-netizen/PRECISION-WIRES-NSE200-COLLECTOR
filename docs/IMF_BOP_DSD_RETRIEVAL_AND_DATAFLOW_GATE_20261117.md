@@ -48,3 +48,14 @@ When network retrieval is available, fetch the exact registry XML URL above with
 - Do not convert IIP positions into BOP flows.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Engines A–E changes.
 - UNKNOWN remains UNKNOWN; this audit is not an observation-extraction PASS.
+
+## Superseding official acquisition result — 2026-11-17
+- The previous local DNS failure is superseded for structure metadata only. GitHub Actions Run #2 / ID `44095286184` SUCCESS captured and committed the raw BOP DSD, BOP_BPM6 dataflow, its constraint, and the dataflow's actual referenced DSD. Commit `bd2a7d123b949f4ffcc426608a36de706a8fd658`.
+- Capture ID `20261117T134325Z`; manifest SHA-256 `e029afe097cb5267113663eb0a40b0c1990290c9ff8c1bf1c0469a080d6331fb`.
+- Crucial correction: IMF:BOP_BPM6:1.0 explicitly references IMF:ECOFIN_DSD:1.0, not IMF:BOP:2.6.0. The two DSDs are structurally distinct; no direct equivalence is assumed.
+- Exact XML raw hashes: BOP DSD `073afeeb971dfa797460ba2233c7af4aa7dfffe4908657b5364e24fc77314f2f`; dataflow `74a8f3a58ff3e0bc6e6681c4143cd042cc642edee06f8080e86c29dc3b64e919`; constraint `aa6c002fb3a2498420ed8796621664b492c18f58d75918d5c1bf8737fc917656`; referenced ECOFIN DSD `81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045`.
+- All four resources returned HTTP 200, XML parsed, DSD/dataflow/constraint identity and attachment checks PASS. Raw bytes and per-resource HTTP metadata are in `evidence/imf_bop_dsd/20261117T134325Z/`.
+- Metadata-only indicator crosswalk QA Run #1 / ID `44096119287` SUCCESS; result `data/qa/IMF_BOP_BPM6_PORTFOLIO_INDICATOR_CROSSWALK_20261117.json`, blob `5bf166cf5bbcf36a5ce55738c185b96ae259b79c`, commit `62e0e4132b9567bc4e8cd6ff82a7e3e9d8536dfc`.
+- Constraint has 98 allowed indicator codes; 7 portfolio candidates: BFPA and BFPL in USD/EUR/XDC; BFP aggregate in EUR only. BFPA_BP6_USD and BFPL_BP6_USD are allowed; BFP_BP6_USD is not.
+- BOP DSD code meanings: FUNCTIONAL_CAT=P Portfolio Investment; ACCOUNT_ENTRY=A Assets (Net Acquisition of); L Liabilities (Net Incurrence of). This is a definition-based candidate crosswalk, not a same-DSD mapping.
+- Remaining: exact BOP_BPM6 observation query and bounded country pilot, actual-vs-estimate/attributes, reporter coverage and vintage/PIT. Prior IMF Portal BOP dataset results remain a separate dataflow/source and must not be silently merged.
