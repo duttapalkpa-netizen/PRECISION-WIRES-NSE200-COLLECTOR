@@ -107,3 +107,9 @@ The previously acquired workflow artifact was downloaded and independently reval
 - No missing value was forward-filled. The calculation uses 21 valid observations to measure 20 intervals; source gaps outside those valid endpoints are not imputed.
 
 This adds a verified broad-dollar input only. It does not establish capital flows, an ICE DXY observation, a synchronized USD/INR panel, sector transmission, predictive value, or production readiness.
+
+## Source freshness correction — 2026-11-17
+- CDSL live Daily Trends page currently displays 16-NOV-2026 as its latest investment reporting date. Do not treat the 17-Nov page-access date as a 17-Nov investment observation. Accepted 16-Nov Equity sub-total is +₹5,564.90 crore (gross buys 18,571.97 less gross sales 13,007.07); five-category FPI subtotal +₹4,845.93 crore; Mutual Funds separately -₹18.74 crore; page total +₹4,827.19 crore. The 17-Nov investment figures previously stated in a checkpoint are withdrawn/rejected.
+- Official Federal Reserve H.10 DDP page (last release 16-Nov-2026) exposes a 26.2 MB single XML/SDMX ZIP download. Exact link: https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10. The binary fetch was rejected by the available inspection layer and a local download attempt failed; no raw archive, hash, XML parse, or extracted observations are claimed from this step.
+- Fed DDP announcement says Build Your Package was retired 12-Nov-2026; historical XML remains available on Board release pages and full-history FRED API v2 retrieval requires an account/API key. See https://www.federalreserve.gov/data/data-download-fred-information.htm.
+- Until a raw payload is acquired and hashed, H.10 full-history ingestion remains NOT_DONE. Do not calculate a fresh H.10 return from the 10-observation preview or splice series with incompatible base-year metadata.
