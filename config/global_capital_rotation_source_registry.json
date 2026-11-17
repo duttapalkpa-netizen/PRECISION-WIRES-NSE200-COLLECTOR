@@ -9,7 +9,11 @@
       "unit": "Index:_1997_Jan_100",
       "quality_status": "VERIFIED_OFFICIAL",
       "allowed_content_types": [
-        "text/html"
+        "text/html",
+        "application/x-zip-compressed"
+      ],
+      "allowed_final_urls": [
+        "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10"
       ]
     }
   ],
