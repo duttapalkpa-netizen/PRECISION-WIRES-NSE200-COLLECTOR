@@ -352,3 +352,13 @@ A working official BCB open-data JSON endpoint was identified and its live respo
 - Official endpoint URLs and definitions are recorded in the source register.
 - These are Brazil country-level BCB observations, not IMF BOP_AGG and not an EM regional aggregate. Do not derive combined net inflow until the exact BCB sign convention is verified. Do not treat as daily trading trigger.
 - API live-response retrieval PASS; immutable raw-file archive, byte count, SHA-256, full row QA, revision/vintage and sign reconciliation NOT_DONE. Therefore no observation is yet admitted to the overlay input panel.
+
+
+## BCB 22905 cross-series comparability guard — 2026-11-17
+
+Official BCB catalogue review adds a critical classification boundary:
+- SGS 22905 is a separate monthly “Portfolio investment - net” dataset under BCB/Dstat, associated with the BOP6/BPM6 hierarchy. Its official catalogue describes assets and liabilities, USD millions, monthly observations, and publication timeliness up to four weeks after the reference period.
+- SGS 22906 and 22924 are separately catalogued BCB/Depec series (Department of Economics), respectively net acquisition of financial assets and net incurrence of liabilities. Their individual dataset pages provide monthly coverage from 1995-01 and USD-million units.
+- Similar labels do not prove identical calculation, sign convention, compilation vintage, or reconciliation. 22905 is a cross-series control candidate only; it must not be used as a plug, replacement, or arithmetic identity for 22906/22924 without BCB methodology reconciliation and overlapping-period numeric testing.
+- The BCB portal's stated four-week timeliness for 22905 confirms this is a delayed monthly macro series, not a daily capital-flow signal. Use the actual publication timestamp/vintage if acquired; do not assign the observation date as its publication timestamp.
+- Evidence: official BCB dataset pages for 22905, 22906, 22924 and the official topic taxonomy. The direct 22905 JSON endpoint did not render in this browser inspection, so its live observations remain NOT_ACQUIRED in this verification step.
