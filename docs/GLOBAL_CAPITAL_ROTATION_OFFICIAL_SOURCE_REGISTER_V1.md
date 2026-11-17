@@ -74,3 +74,10 @@ A fresh check of the official IMF API documentation and IMF SDMX Central catalog
 - Neither BOP nor BOP_AGG observations were acquired in this re-check. No EM portfolio flow value is admitted; no daily signal, relative-attraction calculation, or overlay gate advances.
 
 Current status: IMF API documentation/catalogue route discovery PASS; BOP_AGG anonymous observation access NOT_DEMONSTRATED; legacy BOP dataflow/observations NOT_VERIFIED; raw bytes/hash/series mapping NOT_DONE.
+
+
+## IMF observation access correction — 2026-11-17
+- IMF SDMX Central Web Services Guide (May 2025) defines `/sdmx/v2/` as a public structure/metadata REST service. It separately points to `/ws/public/data` for FMR data-processing tasks (validation, conversion, registration), not for a proven BOP observation feed.
+- Accordingly, no IMF BOP or BOP_AGG observation endpoint has been verified. The modern IMF Data Portal API link redirects to developer-portal sign-in. Catalogue/DSD discovery must not be mistaken for observation access.
+- Exact BOP DSD 2.6.0 XML request was attempted via browser reader but remained inaccessible; no raw XML/hash acquired.
+- Current status: structure route documented; DSD raw retrieval NOT_DONE; BOP/BOP_AGG observation access NOT_VERIFIED; no observations admitted.
