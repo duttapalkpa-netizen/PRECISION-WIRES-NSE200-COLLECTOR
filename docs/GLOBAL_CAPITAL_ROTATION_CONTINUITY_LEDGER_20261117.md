@@ -129,3 +129,12 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - User Library copies of combined NSE+BSE+MSEI and NSE-only CSVs were byte-hashed (218 bytes each); buy-sell arithmetic exactly reconciles to reported net for DII and FII/FPI on 13-Nov-2026 in both scopes. Duplicate copies had identical hashes and are not additional observations.
 - H.10 user Library slice: 813 bytes, SHA-256 c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1; 10 daily observations 26-Oct through 06-Nov-2026; metadata identifies JRXWTFB_N.B as Nominal Broad Dollar Index, index Jan-1997=100. Endpoint changes over this 9-interval slice: broad +0.227048%, advanced +0.254686%, emerging market economies +0.200138%. Not a 20-session return and not ICE DXY.
 - Supplied-file byte integrity and arithmetic/schema checks PASS only. Original official download URLs/retrieval timestamps/response provenance were not embedded or independently verified; official raw-download provenance remains NOT_VERIFIED. The H.10 slice is not enough for a 20-interval indicator. No panel, relative-attraction calculation, or gate advanced.
+
+
+## 3F. 2026-11-17 CDSL official page refresh and H.10 freshness check
+- New checkpoint: `docs/GLOBAL_CAPITAL_ROTATION_CDSL_H10_FRESHNESS_CHECKPOINT_20261117.md`.
+- Commit: 42fd95bd337e23720a2344d9c1ff956b128116b4; post-commit fetch blob SHA: 1b944b4e34700394517d52773edc8214b459ef55.
+- CDSL official daily page now displays reporting date 17-Nov-2026. Equity +₹5,107.61cr; Debt-General +₹137.23cr; Debt-VRR -₹2,379.67cr; Debt-FAR -₹424.29cr; Hybrid -₹4.74cr; five-category FPI subtotal +₹2,436.14cr. Mutual Funds separately +₹37.68cr; page total including MF +₹2,473.82cr. Arithmetic reconciles. CDSL says custodian reports received 17-Nov and trades conducted on/up to previous trading day(s); reporting date is not intraday execution time.
+- CDSL official page snapshot VERIFIED and arithmetic PASS; raw response bytes/CSV URL/byte count/SHA-256 NOT_DONE.
+- Fed H.10 official preview shows broad dollar index 122.6503 on 13-Nov, unit index Jan-1997=100; DDP review lists 5,445 observations from 2006-01-02 to 2026-11-13. Last 20-observation preview has ND on 11-Nov, leaving 19 numeric observations; 20-interval return requires 21 valid observations and remains NOT_DONE. H.10 is not ICE DXY.
+- No IMF transaction panel, synchronized panel, relative-attraction calculation, event study or predictive validation completed. No production changes.
