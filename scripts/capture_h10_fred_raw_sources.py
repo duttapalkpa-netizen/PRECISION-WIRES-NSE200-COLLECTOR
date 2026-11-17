@@ -128,7 +128,7 @@ if "fed_h10_xml.zip" in manifest["sources"]:
                     errors.append("Duplicate dates in H.10 target series")
     except Exception as exc:
         errors.append(f"H.10 target-series parse failed: {type(exc).__name__}: {exc}")
-\nmanifest["errors"] = errors
+manifest["errors"] = errors
 manifest["status"] = "PASS_CAPTURE" if not errors and len(manifest["sources"]) == 3 else "PARTIAL_BLOCKED"
 (OUT / "capture_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 print(json.dumps(manifest, indent=2, sort_keys=True))
