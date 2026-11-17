@@ -39,7 +39,10 @@
       "latest_sgs_total_bn": 4.2,
       "release_total_bn": 3.9,
       "total_match": false,
-      "release_url": "https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202601_External_sector_statistics_text.pdf"
+      "release_url": "https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202601_External_sector_statistics_text.pdf",
+      "latest_sgs_eq_funds_mn": "-1082.9",
+      "latest_sgs_debt_mn": "5321.6",
+      "latest_sgs_total_mn": "4238.7"
     },
     {
       "month": "2026-01",
@@ -65,7 +68,10 @@
       "latest_sgs_total_bn": 5.6,
       "release_total_bn": 5.4,
       "total_match": false,
-      "release_url": "https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202603_External_sector_statistics_text.pdf"
+      "release_url": "https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202603_External_sector_statistics_text.pdf",
+      "latest_sgs_eq_funds_mn": "2786.2",
+      "latest_sgs_debt_mn": "2783.2",
+      "latest_sgs_total_mn": "5569.4"
     },
     {
       "month": "2026-03",
@@ -162,7 +168,8 @@
   },
   "revision_context": {
     "bcb_september_2026_release_says_2025_statistics_definitive_and_2026_estimates_revised": true,
-    "attribution_of_specific_december_2025_and_february_2026_deltas": "UNKNOWN / NOT_DONE"
+    "attribution_of_specific_december_2025_and_february_2026_deltas": "UNKNOWN / NOT_DONE",
+    "source_url": "https://bcb.gov.br/estatisticas/estatisticassetorexterno?kclid=KywNUB4ZA5A0GUTk"
   },
   "errors": []
 }
