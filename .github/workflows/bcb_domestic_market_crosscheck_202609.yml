@@ -1,0 +1,47 @@
+name: BCB September-2026 Domestic Portfolio Country-Period QA
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/capture_bcb_domestic_market_crosscheck_22930.py"
+      - ".github/workflows/bcb_domestic_market_crosscheck_202609.yml"
+permissions:
+  contents: write
+concurrency:
+  group: bcb-domestic-market-crosscheck-202609
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax-check
+        run: python -m py_compile scripts/research/capture_bcb_domestic_market_crosscheck_22930.py
+      - name: Capture 22930 and reconcile September 2026 official release
+        run: python scripts/research/capture_bcb_domestic_market_crosscheck_22930.py
+      - name: Preserve exact CSV bytes and evidence
+        run: |
+          printf '*.csv -text\n' > bcb_domestic_market_crosscheck_202609/.gitattributes
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bcb_domestic_market_crosscheck_202609/
+          git commit -m "data: archive BCB Sep-2026 domestic portfolio crosscheck"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Re-fetch raw CSV and verify SHA-256
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          root=Path("bcb_domestic_market_crosscheck_202609")
+          m=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
+          b=subprocess.check_output(["git","show","HEAD:bcb_domestic_market_crosscheck_202609/sgs_22930.csv"])
+          assert hashlib.sha256(b).hexdigest()==m["sha256"]
+          assert len(b)==m["byte_length"]
+          print("RE-FETCH PASS",len(b),m["sha256"])
+          PY
