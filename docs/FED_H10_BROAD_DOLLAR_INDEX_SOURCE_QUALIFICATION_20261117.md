@@ -113,3 +113,6 @@ Acquire the official H.10 preview payload directly from the exact URL above thro
 - Production authorization: NOT_AUTHORIZED.
 
 Next bounded step: create observation CSV + exact per-observation evidence manifest bound to this raw ZIP, execute parser validation at a point-in-time cutoff, and preserve the raw ZIP in durable GitHub evidence storage. Do not rename this series ICE DXY or map it directly to `dxy_change_pct_20d`.
+
+- Registry regression workflow run #224 / ID 44031737983, head c84fde84a7ab4f8087d48cf35d77fa9003be49fb: SUCCESS.
+- Documentation follow-up workflow run #225 / ID 44031833858, head 55b3eb3717853f3e2bc4c8baa983d59f4cbe04f8: SUCCESS; test job and unittest step passed.
