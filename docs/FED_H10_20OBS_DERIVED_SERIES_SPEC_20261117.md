@@ -58,3 +58,10 @@ The helper returns indicator name, percentage value, unit, window count (21), pr
 - Long-term raw payload archive: NOT_DONE.
 - Classifier integration / trading use: NOT_AUTHORIZED.
 - Next task: produce a separate research-only derived output from the captured raw H.10 archive, verify the 21 actual valid observations and their vintage, then test the result against a second independently downloaded official package. Do not modify existing `dxy_change_pct_20d` or any production scoring path.
+
+
+## 2026-11-17 QA correction and live result addendum
+- Initial raw parser count 5,445 was invalid because 214 XML records had `OBS_STATUS=ND` and numeric sentinel `-9999.0`. Corrected collector admits only `OBS_STATUS=A`: 5,231 valid observations, 214 excluded. The old 5,445 admission count is superseded.
+- Added explicit ND/status filter and two regression tests. Full workflow #232 / ID 44036012995 PASS: 72 tests in 0.056s. Corrected capture #8 / ID 44036104490 PASS.
+- Current-vintage output calculated from 21 valid H.10 observation records: 2026-10-15 121.5693 to 2026-11-13 122.6503 = +0.8892047581%. 2026-11-11 ND excluded; no fill.
+- Details: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Historical PIT replay and second-vintage confirmation remain NOT_DONE.
