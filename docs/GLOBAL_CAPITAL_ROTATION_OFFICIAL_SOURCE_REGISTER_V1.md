@@ -844,3 +844,10 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Supersede initial 5,445 admitted count: 5,445 source records = 5,231 OBS_STATUS=A + 214 OBS_STATUS=ND numeric sentinels. Corrected capture #8 / ID 44036104490 PASS; parser admitted 5,231; 214 excluded.
 - Derived 20-prior-valid-observation change = +0.8892047581091633%, 2026-10-15 121.5693 to 2026-11-13 122.6503. Not ICE DXY / not dxy_change_pct_20d. Details: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md.
 - Regression #232 / ID 44036012995 PASS (72 tests). One vintage only; no classifier/production use.
+
+
+## H.10 relative dollar basket pattern scan — 2026-11-17
+- Python analysis reused corrected capture #8 artifact; no new download. Parsed official XML definitions and filtered only OBS_STATUS=A; 5,231 valid rows per Broad, Advanced, EM index; no fill.
+- 5/20/60 prior-valid-observation changes: Broad +0.941681/+0.889205/+3.082118%; Advanced +1.951566/+1.056856/+3.484809%; EM -0.028413/+0.726701/+2.692781%.
+- Latest 5-observation window shows USD strengthening much more against Advanced than EM basket; this is FX-basket divergence only, not proof of capital rotation or inflows.
+- Research report: docs/FED_H10_RELATIVE_DOLLAR_BASKET_PATTERN_SCAN_20261117.md. Predictive/PIT validation and production use NOT_DONE / NOT_AUTHORIZED.
