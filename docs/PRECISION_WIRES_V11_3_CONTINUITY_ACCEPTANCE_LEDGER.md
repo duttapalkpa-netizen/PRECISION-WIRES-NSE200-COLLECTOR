@@ -933,3 +933,6 @@
 - XML Header Prepared 2026-11-16T16:47:01, timezone unspecified (do not convert to UTC). XML well-formed. Broad dollar series JRXWTFB_N.B: 5,445 observations, 2006-01-02 to 2026-11-13, latest 122.6503; advanced index latest 116.2360; EM index latest 130.8877; bilateral INR RXI_N.B.IN latest 94.2400. Never conflate these.
 - Registry entry updated with the exact observed ZIP content type and exact final URL (commit c84fde84a7ab4f8087d48cf35d77fa9003be49fb; blob d90ffd92794d3a0a4aad5df39ef37ce80fb4cbdd). H.10 qualification document updated (commit ff86e3a9199420c4dbdaa5885644b0ef3eeb2034).
 - Evidence boundary: transport capture PASS; per-observation parser manifest binding NOT_DONE; full XSD validation NOT_DONE; durable repo archival NOT_DONE (Actions artifact expires after 90 days); 20-session derived index change NOT_DONE; classifier mapping NOT_DONE; production authorization NOT_AUTHORIZED. Current source metadata tuple is still distinct from actual row admission.
+
+- CI after exact package URL/content-type registry allowance: run #224 / ID 44031737983 SUCCESS.
+- CI after transport-capture documentation: run #225 / ID 44031833858 SUCCESS; test job and unittest step passed. This is regression coverage only; no per-row manifest/parser ingestion acceptance implied.
