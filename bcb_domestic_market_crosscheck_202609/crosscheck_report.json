@@ -1,0 +1,62 @@
+{
+  "accounting_rounding_tolerance": "RELEASE_COMPARISON_ONLY; reported to USD 0.1bn; not a universal series reconciliation tolerance",
+  "brazil_pilot_acceptance": "NOT_ACCEPTED",
+  "checks": {
+    "domestic_debt_matches_release_rounded": true,
+    "equity_funds_matches_release_rounded": true,
+    "total_matches_release_rounded": true
+  },
+  "country_period_qa": "PASS",
+  "derived_outflows_usd_billion": {
+    "domestic_debt": "0.3824",
+    "equity_and_funds": "1.694",
+    "total": "2.0764"
+  },
+  "derived_rounded_to_0_1_usd_billion": {
+    "domestic_debt": "0.4",
+    "equity_and_funds": "1.7",
+    "total": "2.1"
+  },
+  "em_wide_panel": "NOT_DONE",
+  "input_values_usd_million": {
+    "22930_domestic_equity_liabilities_net": "-2110.8",
+    "22936_fund_liabilities_net": "416.8",
+    "22942_domestic_debt_liabilities_net": "-382.4"
+  },
+  "official_release": {
+    "publication_date": "2026-10-26",
+    "reference_period": "2026-09",
+    "reported_domestic_debt_outflow_usd_bn": "0.4",
+    "reported_equity_and_funds_domestic_outflow_usd_bn": "1.7",
+    "reported_total_domestic_portfolio_outflow_usd_bn": "2.1",
+    "source_url": "https://www.bcb.gov.br/estatisticas/estatisticassetorexterno?mode=light"
+  },
+  "production_integration": "NOT_AUTHORIZED",
+  "purpose": "research_only_official_bcb_country_period_crosscheck",
+  "raw_capture": {
+    "byte_length": 8669,
+    "content_type": "text/csv; charset=utf-8",
+    "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22930/dados?formato=csv",
+    "http_status": 200,
+    "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22930/dados?formato=csv",
+    "response_headers": {
+      "access-control-allow-origin": "*",
+      "cache-control": "private",
+      "connection": "close",
+      "content-disposition": "attachment; filename=bcdata.sgs.22930.csv",
+      "content-type": "text/csv; charset=utf-8",
+      "correlation-id": "3583e1d8-6625-440c-9ad2-391bb3f41cb8",
+      "date": "Tue, 17 Nov 2026 11:52:15 GMT",
+      "set-cookie": "TS01912a8f=012e4f88b370ecc0bfe022a5b781b9a16bf98052fe25ae7665ae73cf039f02777e25a8cd856d35332166b424ceb20c6e239f710f12; Path=/",
+      "transfer-encoding": "chunked",
+      "x-azure-ref": "20261117T115214Z-16d5b8ff4cbbplhqhC1CO1ekqc00000045t0000000008wx4",
+      "x-cache": "CONFIG_NOCACHE",
+      "x-content-type-options": "nosniff"
+    },
+    "retrieval_started_at_utc": "2026-11-17T11:52:13.936310+00:00",
+    "retrieved_at_utc": "2026-11-17T11:52:15.717661+00:00",
+    "sha256": "c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776"
+  },
+  "reference_date": "2026-09-01",
+  "schema_version": 1
+}
