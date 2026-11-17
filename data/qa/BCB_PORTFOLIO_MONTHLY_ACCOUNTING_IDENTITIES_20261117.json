@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "purpose": "research_only_multi_period_BCB_portfolio_investment_accounting_identity_audit",
+  "provider": "Banco Central do Brasil / BCData SGS",
+  "unit": "USD million",
+  "coverage": {
+    "period_count": 381,
+    "first_period": "1995-01",
+    "last_period": "2026-09"
+  },
+  "tolerance": {
+    "usd_million": "0.11",
+    "basis": "0.1 USD million displayed precision plus 0.01 guard"
+  },
+  "raw_manifest_sha256": {
+    "priority": "d07eb53d054c994e29ca1de288ab8e09060a1b784234fcab91645d46154fded4",
+    "instrument": "cb4b054a898e5fd05ef93121c4455495f1d0fb471fb064c6b8c5fdcd234baf55"
+  },
+  "series_provenance": {
+    "22905": {
+      "bytes": 8908,
+      "sha256": "76391aef708216f537ead5fb140730c2dbd55164373b9689634aaa45f96b4837",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:07.943715+00:00"
+    },
+    "22906": {
+      "bytes": 8513,
+      "sha256": "dfdcec3b7c1618c070063ce76f3b722fdd4dadeac5d5fe0f1205fad61af64eaf",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - Net acquisition of financial assets - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:09.361579+00:00"
+    },
+    "22907": {
+      "bytes": 8486,
+      "sha256": "14105f48a0954c0da0615f136fb8e95885259a47c3395164ef922667dee8bbbf",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - Net acquisition of financial assets - monthly - inflows",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22907/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22907/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:10.920387+00:00"
+    },
+    "22908": {
+      "bytes": 8512,
+      "sha256": "82917f2f093a87f95733ecadabda2d59e8ddbf782b64c150bbc41e1627c5f1d7",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - Net acquisition of financial assets - monthly - outflows",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22908/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22908/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:12.325793+00:00"
+    },
+    "22924": {
+      "bytes": 8809,
+      "sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - Net incurrence of liabilities - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:13.730516+00:00"
+    },
+    "22925": {
+      "bytes": 9005,
+      "sha256": "44f5e93d196355fa9c99d649667d240aff1c217bfa7f2448a1e6863da59ab75e",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - Net incurrence of liabilities - monthly - inflows",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22925/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22925/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:15.178918+00:00"
+    },
+    "22926": {
+      "bytes": 8987,
+      "sha256": "b03dfecbc6617a4ce772388b2b3131943df4e1921e7637d6c8a6ee84ec3e463e",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - Net incurrence of liabilities - monthly - outflows",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22926/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22926/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:38:16.075278+00:00"
+    },
+    "22909": {
+      "bytes": 8209,
+      "sha256": "cbfe7caa331d814ef4801940d08bd1966f8bca9d9cd6a024b4e1cacf79a34382",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - equities - assets - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22909/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22909/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:11.769952+00:00"
+    },
+    "22912": {
+      "bytes": 8385,
+      "sha256": "f9552bad9d7aac7d6190fca1783a81c25ad0593d802b2b4570706ae270a8087f",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - investment funds - assets - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22912/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22912/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:13.225086+00:00"
+    },
+    "22915": {
+      "bytes": 8357,
+      "sha256": "0b2275648eb640cae39f3a900451aef316913ada7ca5ba9505324da24780faa1",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - debt securities - assets - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22915/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22915/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:14.486038+00:00"
+    },
+    "22927": {
+      "bytes": 8666,
+      "sha256": "6108baede8f25e95dce65943699fe915c5ebaa97e5c57f7b894ab62a56e0549c",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - equities - liabilities - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22927/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22927/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:15.702192+00:00"
+    },
+    "22936": {
+      "bytes": 8006,
+      "sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - investment funds - liabilities - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22936/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22936/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:16.994217+00:00"
+    },
+    "22939": {
+      "bytes": 8757,
+      "sha256": "24080225e1758010a0f4f6fd995b0a5887a77395caa90a7365d74bab18a240ca",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - debt securities - liabilities - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22939/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22939/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:18.232400+00:00"
+    },
+    "22942": {
+      "bytes": 8579,
+      "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - debt securities - liabilities - domestic market - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22942/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22942/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:19.606629+00:00"
+    },
+    "22945": {
+      "bytes": 8705,
+      "sha256": "452695200d21d72ae34fa972304b76f4418aaa6be1e838395cf4bba22061d563",
+      "rows": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "title": "Portfolio investment - debt securities - liabilities - external market - monthly - net",
+      "requested_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22945/dados?formato=csv",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22945/dados?formato=csv",
+      "retrieved_at_utc": "2026-11-17T11:49:20.840812+00:00"
+    }
+  },
+  "identity_results": [
+    {
+      "id": "assets_net_from_gross",
+      "formula": "22906 = 22908 - 22907",
+      "series": [
+        "22906",
+        "22908",
+        "22907"
+      ],
+      "period_count": 381,
+      "pass_count": 381,
+      "fail_count": 0,
+      "tolerance_usd_million": "0.11",
+      "max_abs_residual_usd_million": "0.1",
+      "max_residual_period": "1995-07",
+      "first_failures": [],
+      "status": "PASS"
+    },
+    {
+      "id": "liabilities_net_from_gross",
+      "formula": "22924 = 22925 - 22926",
+      "series": [
+        "22924",
+        "22925",
+        "22926"
+      ],
+      "period_count": 381,
+      "pass_count": 381,
+      "fail_count": 0,
+      "tolerance_usd_million": "0.11",
+      "max_abs_residual_usd_million": "0.1",
+      "max_residual_period": "1995-04",
+      "first_failures": [],
+      "status": "PASS"
+    },
+    {
+      "id": "portfolio_net_assets_minus_liabilities",
+      "formula": "22905 = 22906 - 22924",
+      "series": [
+        "22905",
+        "22906",
+        "22924"
+      ],
+      "period_count": 381,
+      "pass_count": 381,
+      "fail_count": 0,
+      "tolerance_usd_million": "0.11",
+      "max_abs_residual_usd_million": "0.1",
+      "max_residual_period": "1995-04",
+      "first_failures": [],
+      "status": "PASS"
+    },
+    {
+      "id": "assets_instrument_components",
+      "formula": "22906 = 22909 + 22912 + 22915",
+      "series": [
+        "22906",
+        "22909",
+        "22912",
+        "22915"
+      ],
+      "period_count": 381,
+      "pass_count": 381,
+      "fail_count": 0,
+      "tolerance_usd_million": "0.11",
+      "max_abs_residual_usd_million": "0.1",
+      "max_residual_period": "1995-02",
+      "first_failures": [],
+      "status": "PASS"
+    },
+    {
+      "id": "liabilities_instrument_components",
+      "formula": "22924 = 22927 + 22936 + 22939",
+      "series": [
+        "22924",
+        "22927",
+        "22936",
+        "22939"
+      ],
+      "period_count": 381,
+      "pass_count": 381,
+      "fail_count": 0,
+      "tolerance_usd_million": "0.11",
+      "max_abs_residual_usd_million": "0.1",
+      "max_residual_period": "1995-05",
+      "first_failures": [],
+      "status": "PASS"
+    },
+    {
+      "id": "debt_liability_market_split",
+      "formula": "22939 = 22942 + 22945",
+      "series": [
+        "22939",
+        "22942",
+        "22945"
+      ],
+      "period_count": 381,
+      "pass_count": 381,
+      "fail_count": 0,
+      "tolerance_usd_million": "0.11",
+      "max_abs_residual_usd_million": "0.1",
+      "max_residual_period": "1996-03",
+      "first_failures": [],
+      "status": "PASS"
+    }
+  ],
+  "acceptance": "PASS_ALL_6_IDENTITIES",
+  "interpretation": {
+    "assets_net": "22906 = 22908 outflows minus 22907 inflows; observed BCB series sign convention.",
+    "liabilities_net": "22924 = 22925 inflows minus 22926 outflows.",
+    "portfolio_net": "22905 = net acquisition of financial assets (22906) minus net incurrence of liabilities (22924).",
+    "scope": "monthly BOP accounting identities only; not a forecast, trading trigger or production feature."
+  },
+  "production_integration": "NOT_AUTHORIZED",
+  "trusted_feature_admission": "NOT_AUTHORIZED"
+}
