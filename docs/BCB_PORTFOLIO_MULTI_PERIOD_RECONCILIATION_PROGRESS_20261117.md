@@ -92,3 +92,13 @@ Added:
 - No original as-published Feb-2026 workbook or direct 22942 revision notice found in this pass. The broad September revision disclosure is context only, not direct causal proof. Preserve UNKNOWN / NOT_PROVEN.
 - Runtime acceptance updated: BCB domestic release vintage validator runtime PASS; canonical 15-series identity validator runtime PASS; both artifact ZIP digests independently reverified. Original vintage proof NOT_PROVEN; Feb-2026 22942 attribution UNKNOWN; multi-vintage revision attribution NOT_DONE; Brazil pilot NOT_ACCEPTED; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Exact next action: continue official-source search for a dated original 2026-03 workbook / immutable pre-October 2026 copy or a BCB-specific 22942 revision notice; if absent, retain UNKNOWN and await next genuine future BCB snapshot for prospective comparison. Do not redownload existing archive or repeat the six identity tests.
+
+
+## Follow-on source-scope check (2026-11-18)
+- Further targeted official BCB search found no original as-published March-2026 workbook copy and no direct revision notice naming SGS 22942 / February-2026 / USD 203.70779636m.
+- BCB 28-Sep-2026 policy note explicitly states the annual review covers definitive 2025 statistics and current-year 2026 estimates. Its documented portfolio-liability change is an annual 2025 aggregate revision from USD 15.1bn to USD 17.6bn, with fund ownership >=10% reclassification between direct and portfolio investment. It does not identify the February-2026 domestic debt monthly-series discrepancy. The same note's 2026 estimate adjustments listed in section 3.3 concern current-account aggregates and direct-investment profits; no 22942-specific amount is disclosed. This is contextual evidence only, not attribution.
+- BCB Open Data metadata for SGS 22942 identifies it as monthly, USD million, source Department of Economics/Statistics, temporal coverage from 1995-01; metadata updated 26-Mar-2026 (the localized dataset mirror separately shows metadata update 8-Sep-2026). No revision log/versioned observation history exposed in the metadata record.
+- Decision: retain Feb-2026 SGS 22942 cause UNKNOWN / NOT_PROVEN. Original as-published workbook vintage NOT_PROVEN. No further inference from the general revision policy.
+
+- BCB release vintage QA Run #2 44150764171 SUCCESS; artifact 14358771813; ZIP SHA-256 a8ea641748f3c7410aeb6dceda7eeaee8ea0c904a0ceb659ebffa174c4772d86; independently verified.
+- Canonical 15-series monthly identity QA Run #1 44148019785 SUCCESS; all six identities 381/381 PASS across 381 months (2,286/2,286 checks); artifact 14356334010; ZIP SHA-256 fcf6c72dec436f7847e293c1b179b628a0c0625b420be90aa1460dfdb6baba77; independently verified.
