@@ -1,0 +1,54 @@
+name: BCB Portfolio Monthly Accounting Identity QA
+
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - "scripts/research/validate_bcb_portfolio_monthly_identities.py"
+      - "data/raw/bcb/priority_series_capture_20261117/**"
+      - "data/raw/bcb/instrument_net_capture_20261117/**"
+      - ".github/workflows/bcb_portfolio_monthly_identity_qa.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bcb-portfolio-monthly-identity-qa
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile validator
+        run: python -m py_compile scripts/research/validate_bcb_portfolio_monthly_identities.py
+      - name: Verify raw hashes and run 381-month accounting identities
+        run: python scripts/research/validate_bcb_portfolio_monthly_identities.py
+      - name: Archive deterministic QA result in research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/qa/BCB_PORTFOLIO_MONTHLY_ACCOUNTING_IDENTITIES_20261117.json docs/BCB_PORTFOLIO_MONTHLY_ACCOUNTING_IDENTITIES_20261117.md
+          if git diff --cached --quiet; then
+            echo "No QA result changes to commit."
+          else
+            git commit -m "qa: archive BCB 381-month portfolio accounting identity results"
+            git push origin research/bcb-priority-metadata-audit-20261117
+          fi
+      - name: Upload QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-portfolio-monthly-accounting-identities
+          path: |
+            data/qa/BCB_PORTFOLIO_MONTHLY_ACCOUNTING_IDENTITIES_20261117.json
+            docs/BCB_PORTFOLIO_MONTHLY_ACCOUNTING_IDENTITIES_20261117.md
+          if-no-files-found: error
+          retention-days: 90
