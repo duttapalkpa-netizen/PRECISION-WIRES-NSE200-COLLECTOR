@@ -1154,3 +1154,16 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - February remains: 22930 -0.0374m; 22936 +0.0395m; 22942 +203.7078m; equity/funds +0.0020m; domestic total +203.7098m. The Jan-Feb cumulative debt difference is therefore isolated to February 2026 SGS 22942; not a January carry-over or equity/fund scope issue.
 - Reproducible evidence in data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json; extraction Run #5 / ID \`44091831003\` SUCCESS; artifact \`14332500865\`; SHA-256 \`ee222deb9a1eabe10b0357ab1b1907f7696b764f5dfcfa2924166cb809f0cbfd\`.
 - January component reconciliation CLOSED within USD 0.1m. February 22942 revision cause remains UNKNOWN / NOT_ATTRIBUTED. Next action: investigate only February-2026 22942 using official revision notice or preserved historical SGS vintage. No repeated January/September checks.
+
+## 2026-11-17 — SGS 22942 February-2026 revision attribution disposition
+- Existing archived raw SGS 22942 reused; SHA-256 `4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169`. No raw re-download.
+- Exact February-2026 Table 10 row 24 (as served in Oct-2026 workbook) = USD 2,579.492203640002m; latest SGS = USD 2,783.2m; delta = +USD 203.707796359998m.
+- January 2026 inferred from Jan-Feb cumulative table = USD 6,938.640771049998m; latest SGS = USD 6,938.6m; delta = -USD 0.040771m. The mismatch is isolated to February.
+- Official BCB Open Data Portal confirms SGS 22942 title/scope: debt securities issued in domestic market, monthly, USD million, coverage from 1995-01.
+- BCB DSTAT 3rd-edition (Jun-2023) policy describes ordinary short-term revisions at publication frequency, allows low-impact revisions without detailed disclosure, and notes BOP monthly revisions may reach back to January of the preceding year. This is revision-policy compatibility, not proof of this specific change.
+- BCB Sep-2026 release confirms the 4th-edition annual revision consolidation in September, a 2025 portfolio-liability revision USD 15.1bn -> 17.6bn and current-year 2026 estimate revisions. It does not specifically identify February-2026 SGS 22942 or its +USD 203.708m delta.
+- March-2026 Table 10 workbook Last-Modified 2026-10-18, so immutable original publication-vintage status is NOT_PROVEN; contemporaneous March PDF contains rounded figures only.
+- Final disposition: `REVISION_POSSIBLE_UNATTRIBUTED`; discrepancy existence PASS; February-only isolation PASS; exact revision event/date/cause UNKNOWN / NOT_PROVEN; Feb-2026 reconciliation BLOCKED; Brazil pilot NOT_ACCEPTED.
+- Report `docs/BRAZIL_BCB_SGS22942_FEB2026_REVISION_ATTRIBUTION_DISPOSITION_20261117.md`; QA `data/qa/BRAZIL_BCB_SGS22942_FEB2026_REVISION_ATTRIBUTION_DISPOSITION_20261117.json`.
+- Next: seek immutable official BCB historical vintage or SGS revision log for Feb-2026 22942; if unavailable, start prospective monthly vintage snapshots. Do not repeat raw capture, Table 10 extraction, Jan inference or Sep validation.
+- Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched; ₹0; no synthetic data or invented provenance.
