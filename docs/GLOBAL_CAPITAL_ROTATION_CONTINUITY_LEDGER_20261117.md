@@ -31,6 +31,14 @@ Protected: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×1
 - NSE official page exposes two distinct CSV download controls (NSE-only and NSE+BSE+MSEI); exact download URLs/raw bytes were not available in this check. Both CSV raw acquisition and SHA-256 remain NOT_DONE.
 - No change to prior gate status or overall overlay percentage; this is not a full overlay gate.
 
+## 3B. 2026-11-17 official-source correction (supersedes earlier draft)
+- The first draft of `GLOBAL_CAPITAL_ROTATION_INDIA_FPI_DII_SOURCE_CHECKPOINT_20261117.md` contained unsupported 17-Nov CDSL values. Those figures are withdrawn and must not be used.
+- Corrected file commit: 58b3995f3d86cfc4b2836d5614f2fdec1a306e0f.
+- Fresh CDSL official page showed 16-Nov-2026 as latest visible investment reporting date: FPI category subtotal +₹4,845.93 crore; separately displayed MF -₹18.74 crore; page total +₹4,827.19 crore. Bounded displayed-page arithmetic only.
+- Fresh NSE official page showed 13-Nov-2026: NSE-only FII/FPI +₹5,253.98 crore and DII -₹1,970.73 crore; combined NSE+BSE+MSEI FII/FPI +₹5,736.55 crore and DII -₹2,253.58 crore. Both provisional; scopes remain separate.
+- CDSL raw bytes/hash, both NSE raw CSVs/hash, matched daily panel and IMF BOP transaction panel remain NOT_DONE.
+- No new full overlay gate is accepted; overall percentage remains NOT_RECALCULATED.
+
 ## 3. 2026-11-17 new checkpoint
 Created docs/GLOBAL_CAPITAL_ROTATION_INDIA_FPI_DII_SEMANTICS_CHECKPOINT_20261117.md.
 Commit: 66271d77c685f348943af804945ec1e9e3f65684.
