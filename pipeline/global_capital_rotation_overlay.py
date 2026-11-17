@@ -193,6 +193,24 @@ def latest(grouped,key,decision_at=None):
     return chosen
 
 
+
+def filter_fed_h10_valid_xml_observations(observations):
+    """Keep only explicitly available H.10 observations; reject ND sentinels."""
+    valid = []
+    for obs in observations:
+        if obs.get("OBS_STATUS") != "A":
+            continue
+        try:
+            date.fromisoformat(obs["TIME_PERIOD"])
+            value = float(obs["OBS_VALUE"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not math.isfinite(value):
+            continue
+        valid.append(obs)
+    return valid
+
+
 def derive_fed_h10_broad_dollar_change_20obs(grouped, decision_at):
     """Research-only percentage change across 20 prior valid H.10 observations."""
     indicator = "fed_h10_nominal_broad_dollar_index"
