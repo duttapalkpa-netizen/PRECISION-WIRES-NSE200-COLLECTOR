@@ -1,0 +1,2 @@
+date,indicator,value,unit,source,source_url,published_at,as_of_date,quality_status
+2026-11-06,fed_h10_nominal_broad_usd_change_pct_20_valid_intervals,0.2286140969373074,percent_change_over_20_valid_observation_intervals,Federal Reserve Board H.10 Nominal Broad Dollar Index JRXWTFB_N.B,https://www.federalreserve.gov/releases/h10/data/FRB_h10_xml.zip,2026-11-09T18:25:06,2026-11-06,VERIFIED_OFFICIAL
