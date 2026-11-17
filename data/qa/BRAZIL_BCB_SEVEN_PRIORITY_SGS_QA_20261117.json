@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "purpose": "research_only_bcb_raw_csv_structural_and_identity_audit",
+  "capture_run_id": 44075768714,
+  "capture_run_conclusion": "success",
+  "artifact_id": 14324188933,
+  "artifact_sha256": "40a1ff44317b16ffb789b4669496628a048a94010113d55cd40161d6570ee6c8",
+  "status": "STRUCTURAL_QA_PASS_IDENTITY_ROUNDING_REVIEW_PENDING",
+  "date_coverage": {
+    "first": "1995-01-01",
+    "last": "2026-09-01",
+    "rows_per_series": 381,
+    "monthly_complete": true,
+    "unique_dates": true,
+    "strictly_increasing": true,
+    "missing_values": 0
+  },
+  "series": {
+    "22905": {
+      "bytes": 8908,
+      "sha256": "76391aef708216f537ead5fb140730c2dbd55164373b9689634aaa45f96b4837"
+    },
+    "22906": {
+      "bytes": 8513,
+      "sha256": "dfdcec3b7c1618c070063ce76f3b722fdd4dadeac5d5fe0f1205fad61af64eaf"
+    },
+    "22907": {
+      "bytes": 8486,
+      "sha256": "14105f48a0954c0da0615f136fb8e95885259a47c3395164ef922667dee8bbbf"
+    },
+    "22908": {
+      "bytes": 8512,
+      "sha256": "82917f2f093a87f95733ecadabda2d59e8ddbf782b64c150bbc41e1627c5f1d7"
+    },
+    "22924": {
+      "bytes": 8809,
+      "sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2"
+    },
+    "22925": {
+      "bytes": 9005,
+      "sha256": "44f5e93d196355fa9c99d649667d240aff1c217bfa7f2448a1e6863da59ab75e"
+    },
+    "22926": {
+      "bytes": 8987,
+      "sha256": "b03dfecbc6617a4ce772388b2b3131943df4e1921e7637d6c8a6ee84ec3e463e"
+    }
+  },
+  "identity_diagnostics": {
+    "22906 = 22908 - 22907": {
+      "tested": 381,
+      "exact": 275,
+      "within_plus_minus_0_1": 381,
+      "greater_than_0_1": 0,
+      "max_abs_difference": "0.1"
+    },
+    "22924 = 22925 - 22926": {
+      "tested": 381,
+      "exact": 283,
+      "within_plus_minus_0_1": 381,
+      "greater_than_0_1": 0,
+      "max_abs_difference": "0.1"
+    },
+    "22905 = 22906 - 22924": {
+      "tested": 381,
+      "exact": 285,
+      "within_plus_minus_0_1": 381,
+      "greater_than_0_1": 0,
+      "max_abs_difference": "0.1"
+    }
+  },
+  "accounting_sign_reconciliation": "PARTIAL_EMPIRICAL_ALIGNMENT",
+  "rounding_tolerance_formally_approved": false,
+  "series_specific_methodology_fully_reconciled": false,
+  "country_period_qa": "NOT_DONE",
+  "brazil_pilot_acceptance": "NOT_ACCEPTED",
+  "em_wide_panel": "NOT_DONE",
+  "production_integration": "NOT_AUTHORIZED",
+  "errors": []
+}
