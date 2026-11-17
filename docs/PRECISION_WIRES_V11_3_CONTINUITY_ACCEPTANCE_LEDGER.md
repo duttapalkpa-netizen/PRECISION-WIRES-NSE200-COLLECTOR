@@ -919,3 +919,8 @@
 - Workflow run #221 (44030991201), registry commit 380918fc008ad96bccabbbab06b18b4ae6683df5: SUCCESS; test job and `python -m unittest qa.test_global_capital_rotation_overlay -v` step passed.
 - Workflow run #222 (44031034467), source-register commit d970737f9bb2cdc682ad5c8bd256c2b7fdf84d24: SUCCESS; test job and unittest step passed.
 - This confirms the one-entry registry change does not break current automated tests. It does not grant trusted data admission; raw official response bytes + exact evidence manifest still NOT_ACQUIRED. No 20-session derived series or classifier mapping has been approved.
+
+
+## 2026-11-17 — Follow-up CI run after source qualification notes
+- Workflow run #223 / ID 44031095909, head c1c252ad635bff9429c13f4e0d14ccb7918dde20, completed SUCCESS. Test job and `python -m unittest qa.test_global_capital_rotation_overlay -v` passed.
+- The first H.10 source tuple remains metadata-qualified only. Official raw payload bytes and manifest are still NOT_ACQUIRED; trusted observations admitted remain zero.
