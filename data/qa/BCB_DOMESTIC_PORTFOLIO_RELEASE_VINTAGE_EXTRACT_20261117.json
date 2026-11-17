@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "purpose": "exact_bcb_domestic_portfolio_release_table_extraction",
+  "workbooks": [
+    {
+      "publication_vintage": "202601",
+      "source_path": "data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx",
+      "source_bytes": 232666,
+      "source_sha256": "525d3ad355d2a68b37d9f59554b2dc2446fd8536647f3c8889b2e91b47345685",
+      "sheet": "Tabela 10",
+      "max_row": 48,
+      "max_column": 5,
+      "selected_rows": [
+        {
+          "row": 1,
+          "cells_A_L": [
+            "Tabela 10 – Investimentos em carteira – passivos",
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 2,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 3,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 4,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            "US$ milhões"
+          ]
+        },
+        {
+          "row": 5,
+          "cells_A_L": [
+            "Discriminação",
+            2024,
+            null,
+            "2025*",
+            null
+          ]
+        },
+        {
+          "row": 6,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 7,
+          "cells_A_L": [
+            null,
+            "Dez",
+            "Ano",
+            "Dez",
+            "Ano"
+          ]
+        },
+        {
+          "row": 8,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 9,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 10,
+          "cells_A_L": [
+            "Total",
+            -7578.952369,
+            8225.217452629997,
+            4397.32724514,
+            15139.982135850001
+          ]
+        },
+        {
+          "row": 11,
+          "cells_A_L": [
+            "   Receitas",
+            30037.411469619994,
+            287553.50258606,
+            33521.75266215,
+            316586.21681981004
+          ]
+        },
+        {
+          "row": 12,
+          "cells_A_L": [
+            "   Despesas",
+            37616.36383862,
+            279328.28513343,
+            29124.425417010003,
+            301446.23468396
+          ]
+        },
+        {
+          "row": 40,
+          "cells_A_L": [
+            "Investimento em carteira negociados no mercado doméstico (líquido)",
+            -12410.46011904,
+            -4994.673457190006,
+            3871.4651193200034,
+            15284.378710800003
+          ]
+        },
+        {
+          "row": 41,
+          "cells_A_L": [
+            "Ações e fundos de investimentos",
+            -7925.80659921,
+            -17682.770291110006,
+            -1410.7578214299965,
+            -4944.739898149998
+          ]
+        },
+        {
+          "row": 42,
+          "cells_A_L": [
+            "Títulos de dívida",
+            -4484.653519830001,
+            12688.09683392,
+            5282.22294075,
+            20229.11860895
+          ]
+        }
+      ]
+    },
+    {
+      "publication_vintage": "202603",
+      "source_path": "data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx",
+      "source_bytes": 151485,
+      "source_sha256": "3590b1bf3baded2a12c5ec747329bdd0fb7be10b26043eba99b64f8de9f75017",
+      "sheet": "Tabela 10",
+      "max_row": 48,
+      "max_column": 6,
+      "selected_rows": [
+        {
+          "row": 1,
+          "cells_A_L": [
+            "Tabela 10 – Investimentos em carteira – passivos",
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 2,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 3,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 4,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            "US$ milhões"
+          ]
+        },
+        {
+          "row": 5,
+          "cells_A_L": [
+            "Discriminação",
+            2025,
+            null,
+            null,
+            "2026*",
+            null
+          ]
+        },
+        {
+          "row": 6,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 7,
+          "cells_A_L": [
+            null,
+            "Fev",
+            "Jan-fev",
+            "Ano",
+            "Fev",
+            "Jan-fev"
+          ]
+        },
+        {
+          "row": 8,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 9,
+          "cells_A_L": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "row": 10,
+          "cells_A_L": [
+            "Total",
+            2972.9733905700004,
+            -1848.3957603299987,
+            15139.982135850001,
+            9655.11832691,
+            18643.92170434
+          ]
+        },
+        {
+          "row": 11,
+          "cells_A_L": [
+            "   Receitas",
+            23016.265034930002,
+            45269.24063544,
+            316586.21681981004,
+            32991.2727573,
+            71442.35651843
+          ]
+        },
+        {
+          "row": 12,
+          "cells_A_L": [
+            "   Despesas",
+            20043.29164436,
+            47117.63639577,
+            301446.23468396,
+            23336.154430390005,
+            52798.43481409001
+          ]
+        },
+        {
+          "row": 40,
+          "cells_A_L": [
+            "Investimento em carteira negociados no mercado doméstico (líquido)",
+            938.0949801500032,
+            222.86101150000297,
+            15284.378710800003,
+            5365.690176509997,
+            14232.771619289993
+          ]
+        },
+        {
+          "row": 41,
+          "cells_A_L": [
+            "Ações e fundos de investimentos",
+            889.9337775000025,
+            2544.4637172400035,
+            -4944.739898149998,
+            2786.1979728699957,
+            4714.638644599994
+          ]
+        },
+        {
+          "row": 42,
+          "cells_A_L": [
+            "Títulos de dívida",
+            48.16120265000063,
+            -2321.6027057400006,
+            20229.11860895,
+            2579.492203640002,
+            9518.13297469
+          ]
+        }
+      ]
+    }
+  ]
+}
