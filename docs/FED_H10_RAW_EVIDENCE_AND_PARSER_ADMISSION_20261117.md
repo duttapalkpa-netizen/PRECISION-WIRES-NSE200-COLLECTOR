@@ -74,3 +74,10 @@ Build a small, explicit derived-series specification and QA test for a clearly n
 - Corrected capture workflow #8 / ID 44036104490 SUCCESS; commit 4e3da948ff04e1d8efe50ee3782a16c4814e8965; artifact 14306134441; artifact SHA-256 2d9a4808cd9e48ac21175b8a79ccf42173f57f2370086e24832e4d460afbe4ba. Parser admission PASS for 5,231; 214 excluded.
 - Corrected 20-valid-observation result: 2026-10-15 121.5693 to 2026-11-13 122.6503 = +0.8892047581% (rounded +0.8892%), using 20 prior valid H.10 observations plus current. 2026-11-11 ND is excluded; no fill.
 - Full correction/result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Regression workflow #232 / ID 44036012995 SUCCESS, 72 tests in 0.056s.
+
+
+## ND sentinel correction — superseding addendum
+- The initial 5,445 parser-admitted count above is superseded. H.10 XML contains 5,445 source records: 5,231 with OBS_STATUS=A and 214 with OBS_STATUS=ND (numeric sentinel values such as -9999.0). The corrected collector filters OBS_STATUS=A before parser ingestion.
+- Corrected capture #8 / ID 44036104490 PASS; 5,231 admitted, 214 excluded. Artifact ID 14306134441; artifact digest sha256:2d9a4808cd9e48ac21175b8a79ccf42173f57f2370086e24832e4d460afbe4ba; raw ZIP SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77.
+- The actual 21-row window from the artifact is 2026-10-15=121.5693 to 2026-11-13=122.6503, giving +0.8892047581091633% (20 prior valid H.10 observations plus current). 2026-11-11 ND is omitted; no fill. Detailed result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md.
+- Regression #232 / ID 44036012995 PASS, 72 tests. Historical multi-vintage PIT and production use remain NOT_DONE / NOT_AUTHORIZED.
