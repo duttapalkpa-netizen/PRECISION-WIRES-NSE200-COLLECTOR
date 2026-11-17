@@ -1,0 +1,37 @@
+name: Bounded NSE Archive Live Smoke Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/run93-corrective-fixes]
+    paths:
+      - "pipeline/nse_archive_live_smoke_test.py"
+      - ".github/workflows/nse_archive_live_smoke_test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  live-archive-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout audit branch only
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install smoke-test dependency
+        run: python -m pip install pandas requests
+      - name: Test official NSE daily archive schema and real values
+        run: python pipeline/nse_archive_live_smoke_test.py
+      - name: Upload live source evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nse-archive-live-smoke
+          path: outputs/macro_geo/nse_archive_live_smoke_test.json
+          if-no-files-found: warn

@@ -72,9 +72,29 @@ def yahoo_history(label,spec,start,end):
     # Yahoo chart period2 is exclusive. Keep provenance and never silently substitute symbols.
     period1=int(datetime.combine(start,datetime.min.time(),tzinfo=timezone.utc).timestamp())
     period2=int(datetime.combine(end+timedelta(days=1),datetime.min.time(),tzinfo=timezone.utc).timestamp())
-    url=f"{YAHOO}{spec['symbol']}"
-    resp=session.get(url,params={"period1":period1,"period2":period2,"interval":"1d","events":"history"},timeout=30)
-    resp.raise_for_status()
+    # Try both Yahoo chart hosts and bounded retries for transient 429/5xx.
+    params={"period1":period1,"period2":period2,"interval":"1d","events":"history"}
+    last_error=None
+    resp=None
+    for host in ["https://query2.finance.yahoo.com/v8/finance/chart/","https://query1.finance.yahoo.com/v8/finance/chart/"]:
+        url=f"{host}{spec['symbol']}"
+        for attempt in range(3):
+            try:
+                resp=session.get(url,params=params,timeout=30)
+                if resp.status_code == 429 or resp.status_code >= 500:
+                    last_error=RuntimeError(f"Yahoo chart transient HTTP {resp.status_code} host={host} attempt={attempt+1}")
+                    time.sleep(1.5*(attempt+1))
+                    continue
+                resp.raise_for_status()
+                last_error=None
+                break
+            except Exception as exc:
+                last_error=exc
+                if attempt < 2: time.sleep(1.0*(attempt+1))
+        if last_error is None and resp is not None:
+            break
+    if last_error is not None or resp is None:
+        raise RuntimeError(f"Yahoo chart hosts exhausted: {last_error}")
     payload=resp.json()
     chart=payload.get("chart",{})
     if chart.get("error"): raise RuntimeError(str(chart["error"]))
@@ -108,14 +128,37 @@ def niftyindices_history(start,end):
       "Content-Type":"application/json; charset=UTF-8","X-Requested-With":"XMLHttpRequest",
       "Referer":"https://www.niftyindices.com/reports/historical-data"}
     rows=[]; failures=[]
+    def parse_official_response(resp, endpoint):
+        # Some IIS responses are JSON, while others wrap the payload in a
+        # single-quoted .NET object. Parse both safely and retain diagnostics.
+        text_body=(resp.text or "").strip()
+        try:
+            body=resp.json()
+        except Exception:
+            try:
+                body=ast.literal_eval(text_body)
+            except Exception as exc:
+                raise ValueError(f"{endpoint}: invalid JSON/Python-literal response; status={resp.status_code}; content_type={resp.headers.get('Content-Type','')}; preview={text_body[:180]!r}; parse_error={type(exc).__name__}") from exc
+        if isinstance(body, dict):
+            raw=body.get("d", [])
+        else:
+            raw=body
+        if isinstance(raw, list):
+            return raw
+        if raw is None or str(raw).strip().lower() in ("", "false", "none", "null"):
+            return []
+        if isinstance(raw, str):
+            try:
+                value=json.loads(raw)
+            except Exception:
+                value=ast.literal_eval(raw)
+            return value if isinstance(value,list) else []
+        return []
     for label,api_name in index_map.items():
         payload={"cinfo":f"{{'name':'{api_name}','startDate':'{start_text}','endDate':'{end_text}','indexName':'{api_name}'}}"}
         try:
             resp=session.post(base+"getHistoricaldatatabletoString",json=payload,headers=headers,timeout=(5,20))
-            resp.raise_for_status(); body=resp.json(); raw_data=body.get("d","[]")
-            try: data=raw_data if isinstance(raw_data,list) else json.loads(raw_data) if str(raw_data).strip().lower() not in ("false","none","null","") else []
-            except Exception: data=ast.literal_eval(raw_data) if isinstance(raw_data,str) else []
-            if not isinstance(data,list): data=[]
+            resp.raise_for_status(); data=parse_official_response(resp,"getHistoricaldatatabletoString")
             for item in data:
                 raw_date=item.get("HistoricalDate") or item.get("DATE")
                 dt=pd.to_datetime(raw_date,errors="coerce",dayfirst=True)
@@ -132,10 +175,7 @@ def niftyindices_history(start,end):
     try:
         resp=session.post(base+"BindHistoricalIndiaVixData",data=vix_payload,
           headers=headers,timeout=(5,20))
-        resp.raise_for_status(); body=resp.json(); raw=body.get("d","false")
-        try: data=raw if isinstance(raw,list) else json.loads(raw) if str(raw).strip().lower() not in ("false","none","null","") else []
-        except Exception: data=ast.literal_eval(raw) if isinstance(raw,str) else []
-        if not isinstance(data,list): data=[]
+        resp.raise_for_status(); data=parse_official_response(resp,"BindHistoricalIndiaVixData")
         for item in data:
             dt=pd.to_datetime(item.get("date") or item.get("Date"),errors="coerce",dayfirst=True)
             close=pd.to_numeric(pd.Series([item.get("close") or item.get("CLOSE")]),errors="coerce").iloc[0]
@@ -145,9 +185,30 @@ def niftyindices_history(start,end):
               "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
     except Exception as exc:
         failures.append({"series":"INDIA VIX","error":f"{type(exc).__name__}: {exc}"})
+    # Explicit, provenance-labelled fallback: if the official site serves an
+    # HTML/block page, retrieve genuine historical observations from the already
+    # configured Yahoo chart endpoint. Never label these rows as NSE-origin.
+    existing_labels={str(r.get("SERIES","")) for r in rows}
+    fallback_labels=[]
+    for label in [*index_map.keys(),"INDIA VIX"]:
+        if label in existing_labels:
+            continue
+        spec=SERIES.get(label)
+        if not spec:
+            failures.append({"series":label,"fallback":"Yahoo Finance chart API","error":"No configured source symbol"})
+            continue
+        try:
+            fallback_rows,source_url=yahoo_history(label,spec,start,end)
+            for row in fallback_rows:
+                row["SOURCE"]="Yahoo Finance chart API (explicit fallback; NSE Indices endpoint unavailable)"
+            rows.extend(fallback_rows)
+            fallback_labels.append(label)
+        except Exception as exc:
+            failures.append({"series":label,"fallback":"Yahoo Finance chart API","error":f"{type(exc).__name__}: {exc}"})
     df=pd.DataFrame(rows)
-    if not df.empty: df=df.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
-    return df.to_dict("records"),{"rows":len(df),"series":int(df.SERIES.nunique()) if not df.empty else 0,"failures":failures}
+    if not df.empty: df=df.drop_duplicates(["DATE","SERIES"],keep="last").sort_values(["DATE","SERIES"])
+    return df.to_dict("records"),{"rows":len(df),"series":int(df.SERIES.nunique()) if not df.empty else 0,
+      "fallback_series":fallback_labels,"failures":failures}
 
 def nse_index_history(start,end):
     """Download official NSE daily multi-index close CSVs; no main-site session required."""
@@ -298,6 +359,19 @@ def is_trusted_news_url(url):
     except Exception:
         return False
 
+def build_date_slices(start, end, max_days=7):
+    """Return bounded, inclusive date slices; smaller windows reduce slow GDELT query cost."""
+    if max_days < 1:
+        raise ValueError("max_days must be >= 1")
+    slices=[]
+    cursor=start
+    while cursor<=end:
+        slice_end=min(end,cursor+timedelta(days=max_days-1))
+        slices.append((cursor,slice_end))
+        cursor=slice_end+timedelta(days=1)
+    return slices
+
+
 def fetch_gdelt_events(start,end):
     """Collect timestamped trusted media mentions from GDELT plus public publisher RSS feeds."""
     event_start=max(start,end-timedelta(days=90))
@@ -305,21 +379,19 @@ def fetch_gdelt_events(start,end):
     # 30-day window repeatedly timed out in the hosted runner. We still apply
     # strict title classification and trusted-domain validation after retrieval.
     queries=[
-      ("GLOBAL_MACRO_GEO_NEWS",'(war OR missile OR sanctions OR tariff OR crude OR tanker OR shipping OR "Red Sea" OR "Strait of Hormuz" OR OPEC OR refinery OR LNG)')
+      ("GLOBAL_MACRO_GEO_NEWS",'(missile OR "Strait of Hormuz" OR "Red Sea" OR sanctions OR tanker)')
     ]
     metrics={"gdelt":{"requests_attempted":0,"request_failures":0,"successful_responses":0,
       "successful_empty_responses":0,"articles_seen":0,"filtered_untrusted_publisher":0,
-      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0},
+      "filtered_irrelevant_title":0,"filtered_invalid_timestamp":0,"accepted_articles":0,
+      "slice_days":30,"connect_timeout_seconds":8,"read_timeout_seconds":30,"maxrecords_per_slice":10,"attempts_per_slice":2},
       "rss":{"feeds_attempted":0,"feed_failures":0,"successful_feeds":0,"successful_empty_feeds":0,
       "articles_seen":0,"filtered_untrusted_publisher":0,"filtered_irrelevant_title":0,
       "filtered_invalid_timestamp":0,"accepted_articles":0,"feed_results":[]}}
     events=[]; failures=[]
-    slices=[]; cursor=event_start
-    while cursor<=end:
-        # 14-day windows bound GDELT search cost and make failures diagnosable;
-        # a 90-day history still covers matured post-publication close windows.
-        slice_end=min(end,cursor+timedelta(days=13))
-        slices.append((cursor,slice_end)); cursor=slice_end+timedelta(days=1)
+    # Run #99 proved the broad 7-day GDELT query timed out in all 13 slices. Use a compact query,
+    # 30-day windows and fewer returned rows to reduce API query cost while preserving the 90-day lookback.
+    slices=build_date_slices(event_start,end,max_days=30)
     cols=["EVENT_DATE","EVENT_ID","EVENT_TYPE","PUBLISHED_AT","SOURCE","SOURCE_URL","TITLE","CONFIDENCE",
       "EVIDENCE_TYPE","EVENT_DATE_BASIS","QUERY_GROUP","SOURCE_COUNTRY","GDELT_API_URL"]
     def add_article(title,url,published,provider,group,evidence,basis,confidence,metric_group,source_country=""):
@@ -346,20 +418,20 @@ def fetch_gdelt_events(start,end):
         m["accepted_articles"]+=1
     for slice_start,slice_end in slices:
       for query_label,query in queries:
-        params={"query":query,"mode":"ArtList","format":"json","maxrecords":50,"sort":"DateDesc",
+        params={"query":query,"mode":"ArtList","format":"json","maxrecords":10,"sort":"DateDesc",
           "startdatetime":slice_start.strftime("%Y%m%d")+"000000",
           "enddatetime":slice_end.strftime("%Y%m%d")+"235959"}
         last_error=None
         metrics["gdelt"]["requests_attempted"]+=1
-        for attempt in range(3):
+        for attempt in range(2):
             try:
-                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,35))
+                resp=session.get(GDELT,params=params,headers={"User-Agent":UA,"Accept":"application/json"},timeout=(8,30))
                 if resp.status_code==429:
                     retry_after=resp.headers.get("Retry-After","")
                     try: wait=min(30,max(5,int(float(retry_after))))
                     except (TypeError,ValueError): wait=5*(attempt+1)
                     last_error=f"HTTP 429 rate limit; slice {slice_start}/{slice_end}; retry {attempt+1}/3 after {wait}s"
-                    if attempt<2:
+                    if attempt<1:
                         time.sleep(wait)
                         continue
                     break
@@ -387,7 +459,7 @@ def fetch_gdelt_events(start,end):
                 break
             except Exception as exc:
                 last_error=f"{type(exc).__name__}: {exc}; slice {slice_start}/{slice_end}"
-                if attempt<2: time.sleep(3*(attempt+1))
+                if attempt<1: time.sleep(2)
         if last_error:
             metrics["gdelt"]["request_failures"]+=1
             failures.append({"provider":"GDELT","query_group":query_label,"slice_start":slice_start.isoformat(),
