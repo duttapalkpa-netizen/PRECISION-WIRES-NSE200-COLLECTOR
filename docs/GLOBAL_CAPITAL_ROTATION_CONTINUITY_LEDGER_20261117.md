@@ -252,3 +252,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Raw JSON bytes, byte count, retrieval timestamp, SHA-256, full-history row/date/missing QA, revision/vintage history and BCB methodology sign reconciliation remain NOT_DONE. Browser-rendered JSON is inspection evidence only.
 - Next action: acquire 22924 raw response; archive all three series with hashes; run exact common-month comparison for 1995 onward; test any candidate formula across every overlapping month; inspect official SGS detailed metadata/methodology and revisions; keep UNKNOWN/excluded until every gate passes.
 - No overlay calculation, stock ranking, selector, production or trading logic changed.
+
+
+
+## 3U. BCB liability inflow/outflow component discovery; 22924 live refresh blocked — 2026-11-17
+- Official BCB catalogue identifies three distinct monthly USD-million series, all beginning 1995-01 and attributed to BCB/Depec: SGS 22924 (liabilities net), SGS 22925 (liabilities inflows), SGS 22926 (liabilities outflows).
+- This is a new, useful reconciliation path. The existence of gross inflow/outflow series does not prove SGS 22924 = 22925 − 22926 or any other formula. Sign convention, gross/net treatment, scope, timing and revisions must be tested against full common-period raw observations and BCB methodology.
+- Direct open of the official 22924 JSON endpoint was inaccessible to the browser reader in this turn. Treat as tool access limitation, not source outage. No fresh 22924 value/raw bytes acquired; previously noted Sep-2026 -1,698.5 is not freshly revalidated.
+- BCB's September-2026 External Sector Statistics publication reports domestic-market portfolio investment liabilities net outflows USD 2.1bn, equity/fund outflows USD 1.7bn and debt-security outflows USD 0.4bn; 12-month net inflows USD 5.1bn. This is contextual official cross-check only, not proven identical to SGS 22924.
+- Source register, IMF extraction spec and this ledger updated. Acceptance remains BLOCKED: raw 22924/22925/22926 capture, byte counts, retrieval timestamps, SHA-256, full common-period QA, formula/sign reconciliation, vintage/revision QA all NOT_DONE. No values admitted to overlay.
+- No production changes. PR #20 remains open/draft/unmerged pending fresh status verification.
