@@ -85,6 +85,9 @@ def main() -> None:
         expected = tuple(Decimal(x).quantize(Q) for x in release)
         rows.append({
             "month": month,
+            "sgs_eq_funds_mn": str(eq_funds),
+            "sgs_debt_mn": str(debt),
+            "sgs_total_mn": str(total),
             "sgs_eq_funds_bn": str(calculated[0]),
             "release_eq_funds_bn": str(expected[0]),
             "eq_funds_match": calculated[0] == expected[0],
