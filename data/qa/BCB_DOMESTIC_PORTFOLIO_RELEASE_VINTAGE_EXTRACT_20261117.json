@@ -134,6 +134,41 @@
             "equity_plus_funds_equals_row41": true,
             "debt_row24_equals_row42": true,
             "equity_funds_plus_debt_equals_total": true
+          },
+          "jan_feb_cumulative_and_inferred_january": {
+            "cumulative_release_rows_usd_mn": {
+              "14": "6885.1745908299945",
+              "20": "-2170.53594623",
+              "24": "9518.13297469",
+              "40": "14232.771619289993",
+              "41": "4714.638644599994",
+              "42": "9518.13297469"
+            },
+            "inferred_january_release_rows_usd_mn": {
+              "14": "3752.9371462099989",
+              "20": "-1824.4964744800001",
+              "24": "6938.640771049998",
+              "40": "8867.081442779996",
+              "41": "1928.4406717299983",
+              "42": "6938.640771049998"
+            },
+            "latest_archived_sgs_january_usd_mn": {
+              "22930": "3752.9",
+              "22936": "-1824.5",
+              "22942": "6938.6"
+            },
+            "latest_minus_inferred_january_usd_mn": {
+              "22930": "-0.0371462099989",
+              "22936": "-0.0035255199999",
+              "22942": "-0.040771049998",
+              "equity_funds": "-0.0406717299983",
+              "domestic_total": "-0.081442779996"
+            },
+            "inferred_january_table_identities": {
+              "equity_plus_funds_equals_row41": true,
+              "debt_row24_equals_row42": true,
+              "equity_funds_plus_debt_equals_total": true
+            }
           }
         }
       ]
