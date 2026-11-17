@@ -787,3 +787,8 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Workflow branch filter now includes research/taxonomy-crosswalk-contract-20261117; duplicate path entries removed; registry and manifest schema paths included for push and pull_request. Timeout remains five minutes.
 - Commit d0c7022c43c60035ba3ed5eab2633f884c6ed859 (blob 33bd663af8536677cac711899ded32a73ce0f755).
 - Actions API query for this branch returned zero runs. Runtime test state remains NOT_RUN, not PASS. If no qualifying push run appears, invoke workflow_dispatch manually in GitHub UI. Registry remains empty by design; no trusted source ingestion.
+
+
+## 2026-11-17 — Manifest V1 test suite runtime result (supersedes earlier NOT_RUN checkpoint)
+- GitHub Actions workflow run #219 (ID 44030545512), branch research/taxonomy-crosswalk-contract-20261117, HEAD cd25be239b5c9be6b85fd14536073ce7d0a220b1: conclusion SUCCESS. The `tests` job and `python -m unittest qa.test_global_capital_rotation_overlay -v` step both completed successfully (06:20:59Z–06:21:07Z). No artifacts were emitted.
+- Runtime tests: PASS for this exact commit. This does not promote any source into the registry; registry remains empty and trusted observation ingestion remains BLOCKED until exact source tuple and real payload/manifest qualification.
