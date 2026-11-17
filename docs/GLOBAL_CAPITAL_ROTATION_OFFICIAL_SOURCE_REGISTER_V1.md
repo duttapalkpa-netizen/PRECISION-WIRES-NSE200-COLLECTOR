@@ -62,3 +62,15 @@ The page text extraction does not expose the actual CSV hrefs; its generic extra
 Detailed immutable-ingestion schema and acceptance checks: `docs/NSE_FII_DII_DAILY_ACTIVITY_INGESTION_CONTRACT_V1.md`.
 
 Current state: official source page and series semantics VERIFIED; exact CSV URL UNKNOWN; raw bytes/hash NOT DONE; daily DII panel NOT DONE; matched DII/FPI panel NOT DONE; predictive validation NOT DONE; production use NOT AUTHORIZED. Do not use displayed sample rows or third-party mirrors as raw observations.
+
+
+## IMF API catalogue re-check — 2026-11-17
+
+A fresh check of the official IMF API documentation and IMF SDMX Central catalogue confirms:
+- The current IMF Data API documentation advertises SDMX 2.1 and SDMX 3.0, while API exploration is directed through a beta-portal Swagger sign-in. Anonymous access to BOP_AGG observations was not demonstrated.
+- The public IMF SDMX Central catalogue visibly lists multiple `IMF:BOP` data-structure versions, including `2.6.0`. This is a distinct country-level Balance of Payments structure, not proof that the annual `IMF.STA:BOP_AGG` aggregate dataset is published through that legacy service.
+- The legacy SDMX Central service guide documents a public REST entry point, but the exact live dataflow and observation URLs could not be retrieved by the available inspection layer. Therefore do not promote the legacy endpoint from DOCUMENTED to VERIFIED for BOP_AGG or BOP observations.
+- A country-level IMF:BOP transaction panel could be evaluated as a separate fallback for a medium-frequency EM portfolio-flow aggregate only after live dataflow + DSD + observation response are acquired, dimension/key mapping is proven, country membership and weights are declared, and missing reporters are handled. It must not be described as the BOP_AGG World/Group Aggregate dataset.
+- Neither BOP nor BOP_AGG observations were acquired in this re-check. No EM portfolio flow value is admitted; no daily signal, relative-attraction calculation, or overlay gate advances.
+
+Current status: IMF API documentation/catalogue route discovery PASS; BOP_AGG anonymous observation access NOT_DEMONSTRATED; legacy BOP dataflow/observations NOT_VERIFIED; raw bytes/hash/series mapping NOT_DONE.
