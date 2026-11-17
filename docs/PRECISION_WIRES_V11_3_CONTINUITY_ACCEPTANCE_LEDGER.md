@@ -994,3 +994,14 @@
 - New stock discoveries on this audit: NONE. This task is historical deduplication, not a fresh scan. H.10 FX basket scan is a previously completed macro diagnostic, not a stock discovery.
 - Prior V11.3 backtest remains unprofitable under tested execution: negative mean net return for +5% H+1, +10% H+3 and +20% H+5 even at zero assumed cost. Do not treat historical signals as profitable recommendations.
 - Next session: run duplicate_guard.py against any proposed candidate CSV using the historical processed universe and Top-30 ledger from artifact 14171590981 before showing any new symbol. Preserve production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and all production workflows.
+
+
+## 2026-11-17 — Brazil BCB SGS series crosswalk expansion (no duplicate endpoint retry)
+- Reused prior pilot document `docs/BRAZIL_BCB_SGS_PORTFOLIO_FLOW_PILOT_DISCOVERY_20261117.md`; did not repeat 22907/22926 endpoint discovery or retry the previously unsupported IMF XML route.
+- Expanded official BCB asset-side series crosswalk: SGS 22907 = monthly net acquisition of financial assets inflows; 22908 = monthly net acquisition of financial assets outflows; 22906 = monthly net acquisition of financial assets net. All three official dataset pages identify BCB/Depec, monthly periodicity, USD-million unit and coverage from 1995-01-01. Prior 22926 liability-side outflow identity retained separately.
+- Independently inspected BCB External Sector Statistics press release dated 2026-10-26. It reports domestic-market portfolio investment net inflows and September 2026 liability-side net outflows of USD 2.1bn (equities/funds USD 1.7bn; debt securities USD 0.4bn), with trailing 12-month domestic-market net inflows USD 5.1bn. This is an independent aggregate cross-check only; not proven equivalent to any SGS series perimeter.
+- Official methodology-note route linked from BCB dataset pages resolves to a JavaScript-dependent page with no readable note content in this retrieval. Sign/perimeter/accounting reconciliation remains NOT_DONE. No series arithmetic or combined flow was computed.
+- Detailed audit: `docs/BRAZIL_BCB_SGS_SERIES_CROSSWALK_AND_METHOD_GATE_20261117.md`; committed separately and re-fetch verification pending.
+- Status: official identities 22906/22907/22908/22926 verified; official release cross-check verified; exact scope equivalence UNKNOWN; methodology content BLOCKED; raw bounded payload bytes/HTTP metadata/byte lengths/SHA-256 NOT_DONE; series arithmetic NOT_DONE; pilot NOT_ACCEPTED; EM panel UNKNOWN; production integration NOT_AUTHORIZED.
+- No observation values were copied from charts; no raw bytes, timestamps, hashes, or synthetic data invented. No parser/registry/seed/workflow/production code changed; ₹0 spend.
+- Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows untouched.
