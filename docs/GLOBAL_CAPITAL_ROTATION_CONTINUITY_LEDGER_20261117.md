@@ -150,3 +150,9 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - CDSL live 16-Nov page's Equity sub-total is +₹5,564.90 crore, calculated from gross buys ₹18,571.97cr less gross sales ₹13,007.07cr. The ₹5,564.89cr exchange-only row is not the accepted sub-total. FPI five-category subtotal +₹4,845.93cr; MF separate -₹18.74cr; page total +₹4,827.19cr.
 - Updated correction report: docs/GLOBAL_CAPITAL_ROTATION_CDSL_DATE_CORRECTION_H10_DDP_ROUTE_20261117.md; latest report commit 28e689b990b3f08681361aa554aaa772d6c7e0a9; blob f5f06537d3ad8f5ce1590e4227bf8538d80d9d1f.
 - No raw H.10/CSDL payload acquired, no calculation gates passed. Production invariants unchanged; PR #20 remains open, draft, unmerged.
+## 3I. Overlay source-freshness correction carried into main specification — 2026-11-17
+- `docs/GLOBAL_CAPITAL_ROTATION_OVERLAY_V1.md` now carries the CDSL 16-Nov reporting-date correction and Fed H.10 XML route/acquisition status so the core specification no longer relies only on a side correction note.
+- Core spec commit: e70ce0f325afb8250d792875d8caa5f96e8e2dcf; blob: fa12430084748377346e7feb34cd93b4d243face.
+- H.10 official XML binary fetch remains unavailable in this execution environment. Exact route is official, but no ZIP bytes/hash/parser output have been acquired. CDSL raw payload likewise NOT_DONE.
+- The overlay research unit-test workflow has historical PASS runs (latest visible prior run 43204879661, commit 7bc769b002c9c4bb26aa3bb464888e962944e580); no new run is yet visible for the latest documentation-only commits. Do not carry forward an old PASS as current-head CI evidence.
+- No new source observations or calculation gates were admitted. Overall overlay completion percentage remains unreported pending a full acceptance-matrix audit.
