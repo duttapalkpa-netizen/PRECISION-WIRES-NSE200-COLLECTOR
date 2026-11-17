@@ -1,14 +1,10 @@
 name: BCB SGS Prospective Vintage Snapshot
 on:
-  schedule:
-    - cron: '17 12 28 * *'
-  workflow_dispatch:
   push:
     branches:
       - research/bcb-priority-metadata-audit-20261117
     paths:
-      - '.github/workflows/bcb_sgs_prospective_vintage_snapshot.yml'
-      - 'scripts/research/capture_bcb_sgs_prospective_vintage.py'
+      - 'docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt'
 permissions:
   contents: write
   actions: write
