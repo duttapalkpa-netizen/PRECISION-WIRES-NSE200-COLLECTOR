@@ -16,7 +16,7 @@ SOURCES = {
     "fred_dtwexbgs.csv": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTWEXBGS",
     "ddp_fred_crosswalk.csv": "https://www.federalreserve.gov/data/documents/DDP-FRED%20Data%20Series%20Crosswalk.csv",
 }
-TARGET_BOARD = "H10/H10/JRXWTFB_N.B"
+TARGET_BOARD = "JRXWTFB_N.B"
 TARGET_FRED = "DTWEXBGS"
 
 def fetch(name: str, url: str) -> dict:
@@ -67,7 +67,7 @@ if "ddp_fred_crosswalk.csv" in manifest["sources"]:
     board_col = next((c for c in cols if norm(c) in ("board_series_id", "ddp_series_id", "series_id")), None)
     fred_col = next((c for c in cols if norm(c) == "fred_series_id"), None)
     release_col = next((c for c in cols if norm(c) in ("ddp_release", "release_id", "release")), None)
-    matches = [r for r in rows if board_col and fred_col and r.get(board_col, "").strip() == TARGET_BOARD and r.get(fred_col, "").strip() == TARGET_FRED]
+    matches = [r for r in rows if board_col and fred_col and r.get(board_col, "").strip() == TARGET_BOARD and r.get(fred_col, "").strip() == TARGET_FRED and (not release_col or r.get(release_col, "").strip().upper() == "H10")]
     manifest["checks"]["crosswalk"] = {
         "columns": cols, "rows": len(rows), "board_column": board_col,
         "fred_column": fred_col, "release_column": release_col,
