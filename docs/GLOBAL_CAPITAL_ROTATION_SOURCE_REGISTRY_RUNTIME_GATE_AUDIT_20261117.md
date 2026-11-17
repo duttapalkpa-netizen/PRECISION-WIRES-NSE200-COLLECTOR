@@ -77,3 +77,9 @@ Documentation-only audit. No parser, registry, tests, workflows, observations or
 - Workflow run #219, run ID 44030545512, event=push, head SHA cd25be239b5c9be6b85fd14536073ce7d0a220b1, conclusion=success; duration approximately 8 seconds (06:20:59Z–06:21:07Z).
 - Job `tests` completed successfully. Steps checkout, setup-python@v5, and `python -m unittest qa.test_global_capital_rotation_overlay -v` all report conclusion=success. No artifacts were produced. This is a genuine CI runtime PASS for the current branch HEAD; it does not certify source registry population, data ingestion, PIT validation, taxonomy inventory, or production readiness.
 - CI runtime gate: PASS for this commit/workflow invocation. Registry remains intentionally empty; trusted observations admitted=0; ingestion remains BLOCKED pending individually qualified exact source tuples and real raw-payload manifests.
+
+
+## 2026-11-17 — Registry populated with first exact source tuple (metadata-only qualification)
+- Added one VERIFIED_OFFICIAL tuple for Federal Reserve H.10 Nominal Broad Dollar Index, series H10/H10/JRXWTFB_N.B, unit Index:_1997_Jan_100, indicator fed_h10_nominal_broad_dollar_index, official Preview URL recorded in source qualification document.
+- This is a source identity/definition qualification only. The user's Library CSV is a comparison fixture, not official raw bytes. Official raw response payload, HTTP metadata, retrieval timestamp, byte length, SHA-256 and manifest remain NOT_ACQUIRED. Parser should continue to reject trusted observation rows without a real exact-bound manifest and rehashed raw payload.
+- Do not map this series to ICE DXY or directly to dxy_change_pct_20d. 20-session derivation and classifier integration are NOT_DONE. Registry now contains one tuple; trusted observation admissions remain zero.
