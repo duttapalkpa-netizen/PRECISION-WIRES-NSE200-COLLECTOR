@@ -187,3 +187,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Updated IMF extraction spec commit: ecea657c2cf515933eeedbaeb51c8f0928bdf5c8; blob: 2d85316df371b56e88ffb2cef33e1b65e420e023.
 - Updated source register commit: 910399d2e9e893233dd402197d0a454dea0a6db4; blob: 85ab457b8b9cbc198aa50d21d38867ccc3f28b64.
 - No observations admitted; BOP/BOP_AGG panel, synchronized panel and relative-attraction gates remain NOT_DONE. Production unchanged.
+
+
+## 3N. Brazil BCB official monthly portfolio-flow pilot — 2026-11-17
+- Identified and retrieved live JSON responses from official BCB open-data API endpoints via the BCB Open Data Portal resource links.
+- SGS 22906 (net acquisition of financial assets): monthly USD million, from 1995-01; latest visible 2026-09-01 = +3,269.3.
+- SGS 22924 (net incurrence of liabilities): monthly USD million, from 1995-01; latest visible 2026-09-01 = -1,698.5.
+- Exact URLs, definitions, provenance boundaries and acceptance limits recorded in source register. This is Brazil country-level monthly data, not IMF BOP_AGG/EM aggregate. Do not combine signs before exact series sign reconciliation.
+- Updated source register commit: 25f1a32402b68f7a26ebee517c6d492b1473f1d6; blob: a05537f917efd3bddbee9af59ba4940f60f787a3.
+- Updated IMF extraction spec commit: 6c6dcf41ec17352d14147e0d49d1bcec5e331fd0; blob: 194e2a4561d2faabbcd964e73ca7a8a4e37a6f21.
+- API response inspection PASS; raw archive, byte count, SHA-256, full-history QA, vintage and sign reconciliation NOT_DONE. No value admitted to global EM flow input; synchronized panel and relative-attraction gates remain NOT_DONE. Production unchanged.
