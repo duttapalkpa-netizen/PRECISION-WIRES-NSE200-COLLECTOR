@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "purpose": "research_only_bcb_multi_period_domestic_portfolio_release_crosscheck",
   "audit_date": "2026-11-17",
   "branch": "research/bcb-priority-metadata-audit-20261117",
@@ -210,7 +210,19 @@
     "feb_2026_22942_debt_delta_usd_mn": 203.707796359998,
     "feb_2026_22942_debt_revision_cause": "UNKNOWN_NOT_ATTRIBUTED",
     "revision_release_archive": "data/raw/bcb/revision_release_202609/202609_External_sector_statistics_text.pdf",
-    "annual_revision_bridge_qa": "data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json"
+    "annual_revision_bridge_qa": "data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json",
+    "january_2026_component_comparison": "CLOSED_WITHIN_0.1_USD_MN_USING_MARCH_2026_TABLE10_JAN_FEB_CUMULATIVE_MINUS_FEB",
+    "january_2026_deltas_usd_mn": {
+      "22930": -0.0371462099989,
+      "22936": -0.0035255199999,
+      "22942": -0.040771049998,
+      "eq_funds": -0.0406717299983,
+      "domestic_total": -0.081442779996
+    },
+    "february_2026_debt_discrepancy": "ISOLATED_TO_22942_FEBRUARY; JANUARY_CARRYOVER_EXCLUDED",
+    "february_2026_22942_delta_usd_mn": 203.707796359998,
+    "february_2026_22942_cause": "UNKNOWN_NOT_ATTRIBUTED",
+    "extraction_evidence": "data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json"
   },
   "revision_context": {
     "bcb_september_2026_release_says_2025_statistics_definitive_and_2026_estimates_revised": true,
