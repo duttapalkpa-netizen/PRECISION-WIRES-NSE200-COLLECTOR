@@ -60,3 +60,56 @@ Acquire the official H.10 preview payload directly from the exact URL above thro
 
 
 - Follow-up documentation commit c1c252ad635bff9429c13f4e0d14ccb7918dde20 was also exercised by workflow run #223 / ID 44031095909; final run status COMPLETED / SUCCESS, test job and unittest step passed. This verifies the documentation-updated branch head used for that run; it still does not satisfy raw payload acquisition or observation manifest admission.
+
+
+## Official transport capture addendum — 2026-11-17
+
+### Acquisition method
+- Collector: `tools/capture_fed_h10_official.py`
+- Workflow: `.github/workflows/fed_h10_official_evidence_capture.yml`
+- Workflow run #2: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44031614252
+- Run ID: 44031614252; head `1fe925b6c8a52a33745a4e445461fdbe9aa12afd`
+- Artifact ID: 14305441931; name `fed-h10-official-evidence-44031614252`
+- Artifact SHA-256: `05928613d892fafd3ac904c3ae325794535fcc643613f39c8d3dd968d79620f2`
+- Artifact retention: 90 days; not permanent archival.
+
+### Captured official HTTP response
+- Request/final URL: https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10
+- Request started UTC: 2026-11-17T06:29:47.973930+00:00
+- Retrieved UTC: 2026-11-17T06:29:48.056078+00:00
+- HTTP status: 200
+- Content-Type: application/x-zip-compressed
+- Raw response length: 2,088,268 bytes
+- Raw response SHA-256: `c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77`
+- ZIP integrity: PASS.
+- Hash independently recomputed after downloading the Actions artifact; matched manifest and checksum sidecar exactly.
+- Response headers captured in the artifact include Date, Content-Type, Content-Disposition, Last-Modified and transport metadata.
+
+### ZIP/XML verification
+- `H10_data.xml`: 27,426,691 bytes; `H10_H10.xsd`: 34,088; `H10_struct.xml`: 131,344; `frb_common.xsd`: 139,952.
+- XML well-formedness: PASS.
+- XML Header Prepared: `2026-11-16T16:47:01`; this is source package preparation time, not HTTP retrieval time. Timezone is unspecified; do not convert it to UTC.
+- `JRXWTFB_N.B` Broad Dollar Index: unit `Index:_1997_Jan_100`, multiplier 1, 5,445 observations, 2006-01-02 through 2026-11-13; latest 2026-11-13 = 122.6503, status A.
+- `JRXWTFN_N.B` Advanced Foreign Economies Index: 5,445 observations; latest 2026-11-13 = 116.2360.
+- `JRXWTFO_N.B` Emerging Market Economies Index: 5,445 observations; latest 2026-11-13 = 130.8877.
+- `RXI_N.B.IN` bilateral INR series: unit Currency; 14,054 observations; latest 2026-11-13 = 94.2400. It is not the broad index or an RBI reference rate.
+- This package extends beyond the earlier Library ZIP vintage; retain both vintages separately.
+
+### Correction / controls
+- Initial capture run #1 sidecars contained literal escaped newline suffixes; run #1 is superseded and not canonical.
+- Collector was corrected. Run #2's JSON and checksum sidecars parse correctly; only run #2 / artifact 14305441931 is canonical for this capture.
+- Registry now allows only the exact observed `application/x-zip-compressed` content type and exact H.10 package URL as an allowed final URL for this exact series tuple.
+
+### Acceptance status
+- Official HTTP transport evidence: PASS.
+- Raw package bytes + independent SHA-256: PASS.
+- ZIP integrity + XML well-formedness: PASS.
+- Selected series identity/unit/observation extraction: PASS.
+- XSD validation: NOT_DONE (SDMX dependency chain incomplete).
+- Per-observation manifest bound to parser CSV: NOT_DONE.
+- Durable GitHub archive beyond 90-day artifact retention: NOT_DONE.
+- 20-session derived index change: NOT_DONE.
+- Classifier integration: NOT_DONE.
+- Production authorization: NOT_AUTHORIZED.
+
+Next bounded step: create observation CSV + exact per-observation evidence manifest bound to this raw ZIP, execute parser validation at a point-in-time cutoff, and preserve the raw ZIP in durable GitHub evidence storage. Do not rename this series ICE DXY or map it directly to `dxy_change_pct_20d`.
