@@ -259,3 +259,18 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Removed the ineffective schedule/manual-dispatch assumptions from the research workflow. It is now push-only and listens for a change to `docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt` on `research/bcb-priority-metadata-audit-20261117`.
 - The first baseline run remains valid and fully committed. Future monthly snapshots require a trigger-file update/commit on the research branch after a BCB release; unattended monthly scheduling is NOT_ENABLED. This limitation is explicit in the workflow contract and QA JSON.
 - No default branch, production workflow, selector, or scoring logic was changed.
+
+## 23. 2026-11-17 — BCB SGS vintage revision-diff verifier implemented; baseline integrity PASS
+- Reused the existing 2026-11-17T13:29:39Z prospective snapshot. No BCB endpoint re-download, no raw archive overwrite, no repeat of Jan/Sept reconciliation.
+- Added `scripts/research/diff_bcb_sgs_vintages.py`: independently validates each raw CSV byte length and SHA-256, HTTP 200 / CSV PASS flags, exact four-series set, official source URL, timestamp timezone, CSV schema, numeric values, ascending unique dates, row count, month-set equality, and every raw value/date against its manifest.
+- Added a fail-closed two-latest-snapshot comparator. When a second genuine snapshot exists, it classifies unchanged/changed/added/removed observations and records old/new values and deltas. It never assigns a revision cause.
+- Added workflow `.github/workflows/bcb_sgs_vintage_revision_diff.yml`, five-minute timeout, research branch only, triggers on comparator/workflow or new snapshot files; commits timestamped QA JSON and uploads 90-day artifact.
+- Added design/acceptance report `docs/BRAZIL_BCB_SGS_VINTAGE_REVISION_DIFF_20261117.md` and machine-readable contract `data/qa/BRAZIL_BCB_SGS_VINTAGE_REVISION_DIFF_CONTRACT_20261117.json`.
+- Run #1 / ID `44094567641` SUCCESS; URL https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44094567641.
+- Runtime independently validated all four raw series against the existing manifest: byte lengths, hashes, URLs, 381-row counts, periods, unique chronological dates, and all observation values matched.
+- QA result `data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_20261117T132939Z.json`, blob SHA `6744a8a23413406bdd3603b6debc94b8ce979fcf`. Correct result: `WAITING_FOR_SECOND_VINTAGE`; one snapshot; comparison not performed; attribution UNKNOWN_NOT_ASSESSED.
+- Artifact ID `14333152609`; 991 bytes; SHA-256 `9d0cf6bde66691e3bf4d5645bbc7afed805e1f9da517e556278a9f86e3169961`; expires 2027-02-15.
+- Actions-generated QA commit `f7130e3`; report runtime-result update committed afterward.
+- Acceptance: baseline integrity PASS; comparator/workflow runtime PASS; actual revision detection NOT_DONE pending a second genuine snapshot; February-2026 original-vintage cause UNKNOWN / NOT_PROVEN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next: when a new genuine monthly BCB capture is initiated by the research-branch trigger-file update, the diff workflow automatically compares the two latest snapshots. Do not rerun or recreate the first baseline.
+- Invariants preserved: ₹0; official BCB sources; no synthetic observations; no inferred timestamps; no raw overwrites; no production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission or production workflow changes.
