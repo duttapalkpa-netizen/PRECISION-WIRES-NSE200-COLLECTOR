@@ -136,7 +136,7 @@ def compare(old_rows, new_rows):
             delta = new["value"] - old["value"]
             record["absolute_delta"] = str(delta)
             if old["value"] != 0:
-                record["relative_delta_pct"] = format((delta / old["value"]) * Decimal(100), "f").rstrip("0").rstrip(".")
+                record["relative_delta_pct"] = format(((delta / old["value"]) * Decimal(100)).normalize(), "f")
         record["classification"] = kind
         counts[kind] += 1
         output.append(record)
