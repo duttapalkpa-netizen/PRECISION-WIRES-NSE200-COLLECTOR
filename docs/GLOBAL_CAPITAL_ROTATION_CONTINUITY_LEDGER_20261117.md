@@ -138,3 +138,10 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - CDSL official page snapshot VERIFIED and arithmetic PASS; raw response bytes/CSV URL/byte count/SHA-256 NOT_DONE.
 - Fed H.10 official preview shows broad dollar index 122.6503 on 13-Nov, unit index Jan-1997=100; DDP review lists 5,445 observations from 2006-01-02 to 2026-11-13. Last 20-observation preview has ND on 11-Nov, leaving 19 numeric observations; 20-interval return requires 21 valid observations and remains NOT_DONE. H.10 is not ICE DXY.
 - No IMF transaction panel, synchronized panel, relative-attraction calculation, event study or predictive validation completed. No production changes.
+
+## 3G. 2026-11-17 CDSL reporting-date correction and H.10 DDP route change
+- Correction report: docs/GLOBAL_CAPITAL_ROTATION_CDSL_DATE_CORRECTION_H10_DDP_ROUTE_20261117.md.
+- Commit: 9d45eef7f3711b559c772e527966dbaf5cfe40ba; post-commit blob SHA: f5e1a180f7472b7f6dee624d0c9a058ccd3a15fa.
+- Official CDSL Daily Trends page currently displays latest investment report 16-NOV-2026, not 17-Nov. The previously asserted 17-Nov figures (+₹5,107.61cr equity etc.) are withdrawn/rejected and must not be ingested. 16-Nov displayed FPI subtotal +₹4,845.93cr; MF separate -₹18.74cr; page total +₹4,827.19cr. Raw CDSL bytes/hashes remain NOT_DONE.
+- Federal Reserve DDP Build Your Package was retired 12-Nov-2026. Official DDP offers last-10-observation CSV previews and 26.2MB all-G5/H10 XML; full raw historical XML not acquired in this audit. FRED API v2 full-history route requires account/API key; do not assume anonymous API access. H.10 20-interval return remains UNKNOWN.
+- No synchronized panel, relative-attraction calculation, event study or predictive validation completed. No production changes.
