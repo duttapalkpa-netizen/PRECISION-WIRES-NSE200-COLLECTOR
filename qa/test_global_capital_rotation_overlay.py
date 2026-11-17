@@ -1,7 +1,7 @@
 import csv, hashlib, tempfile, unittest
 from decimal import Decimal
 from pathlib import Path
-from pipeline.global_capital_rotation_overlay import load_observations, classify
+from pipeline.global_capital_rotation_overlay import load_observations, classify, derive_fed_h10_broad_dollar_change_20obs
 FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status","evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length","raw_payload_path"]
 class TestGlobalCapitalRotation(unittest.TestCase):
     def make(self,rows):
@@ -40,6 +40,53 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         return load_observations(self.make(rows),registry_path=self.registry_path)
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
         return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-08T01:00:00Z",http_status="200",content_type="text/csv",byte_length="19",raw_payload_path="payloads/fixture-0.bin")
+    def h10_rows(self, count=21, published="2026-11-16T16:47:01Z"):
+        from datetime import date, timedelta
+        start=date(2026,10,1)
+        return [{"date":(start+timedelta(days=i)).isoformat(),"as_of_date":"2026-11-16",
+                 "value":100.0+i*0.5,"published_at":published,
+                 "quality_status":"VERIFIED_OFFICIAL"} for i in range(count)]
+
+    def test_h10_20obs_change_requires_20_prior_plus_current(self):
+        rows=self.h10_rows(21)
+        out=derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-17T00:00:00Z")
+        self.assertEqual(out["window_observation_count"],21)
+        self.assertEqual(out["prior_valid_observation_count"],20)
+        self.assertAlmostEqual(out["value"],10.0)
+        self.assertEqual(out["window_start_date"],rows[0]["date"])
+        self.assertFalse(out["production_eligible"])
+        self.assertEqual(out["not_equivalent_to"],"ICE DXY / dxy_change_pct_20d")
+
+    def test_h10_20obs_returns_none_with_only_20_valid_observations(self):
+        rows=self.h10_rows(20)
+        self.assertIsNone(derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-17T00:00:00Z"))
+
+    def test_h10_20obs_does_not_forward_fill_missing_observation(self):
+        rows=self.h10_rows(21)
+        rows.pop(10)
+        self.assertIsNone(derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-17T00:00:00Z"))
+
+    def test_h10_20obs_respects_publication_vintage_cutoff(self):
+        rows=self.h10_rows(21,published="2026-11-16T16:47:01Z")
+        self.assertIsNone(derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-16T16:00:00Z"))
+        out=derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-16T17:00:00Z")
+        self.assertIsNotNone(out)
+
+    def test_h10_20obs_uses_latest_available_revision_per_date(self):
+        rows=self.h10_rows(21,published="2026-11-16T16:47:01Z")
+        revised=dict(rows[0],value=90.0,published_at="2026-11-17T00:00:00Z")
+        rows.append(revised)
+        early=derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-16T18:00:00Z")
+        late=derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-17T01:00:00Z")
+        self.assertAlmostEqual(early["base_value"],100.0)
+        self.assertAlmostEqual(late["base_value"],90.0)
+
+    def test_h10_20obs_rejects_conflicting_values_at_same_vintage(self):
+        rows=self.h10_rows(21)
+        rows.append(dict(rows[0],value=999.0))
+        with self.assertRaisesRegex(ValueError,"conflicting H.10 values"):
+            derive_fed_h10_broad_dollar_change_20obs({"fed_h10_nominal_broad_dollar_index":rows},"2026-11-17T00:00:00Z")
+
     def test_future_dated_observation_is_excluded_at_earlier_decision_time(self):
         future=self.row("em_portfolio_flow_usd_bn",99,asof="2026-11-08",published="2026-11-07T00:00:00Z")
         out=classify(self.load([future]),"2026-11-08",decision_at="2026-11-07T23:59:59Z")
