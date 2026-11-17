@@ -1,0 +1,75 @@
+name: Archive Verified BCB SGS Capture Artifact
+on:
+  push:
+    branches:
+      - "research/bcb-priority-metadata-audit-20261117"
+    paths:
+      - ".github/workflows/archive_bcb_priority_sgs_artifact.yml"
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Existing successful BCB capture workflow run ID"
+        required: true
+        default: "44075768714"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: archive-bcb-priority-sgs-raw
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Download the already captured artifact (no source re-fetch)
+        uses: actions/download-artifact@v4
+        with:
+          name: bcb-seven-priority-sgs-raw-capture
+          run-id: ${{ github.event.inputs.source_run_id || '44075768714' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: data/raw/bcb/priority_series_capture_20261117
+      - name: Verify every raw file against its capture manifest
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root = Path("data/raw/bcb/priority_series_capture_20261117")
+          manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+          assert manifest.get("status") == "RAW_CAPTURE_7_OF_7_PASS", manifest.get("status")
+          assert len(manifest.get("series", {})) == 7
+          for code, meta in manifest["series"].items():
+              p = root / f"sgs_{code}.csv"
+              raw = p.read_bytes()
+              digest = hashlib.sha256(raw).hexdigest()
+              assert meta.get("raw_capture_status") == "PASS", code
+              assert len(raw) == meta.get("byte_length"), code
+              assert digest == meta.get("sha256"), code
+              print(f"PASS SGS {code}: {len(raw)} bytes sha256={digest}")
+          PY
+      - name: Preserve exact CSV bytes and commit archive
+        run: |
+          printf '*.csv -text\n' > data/raw/bcb/priority_series_capture_20261117/.gitattributes
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/bcb/priority_series_capture_20261117
+          git commit -m "data: archive verified BCB priority SGS raw capture 2026-11-17"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Re-fetch committed bytes and verify SHA-256
+        run: |
+          python - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          root = Path("data/raw/bcb/priority_series_capture_20261117")
+          manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+          for code, meta in manifest["series"].items():
+              path = f"data/raw/bcb/priority_series_capture_20261117/sgs_{code}.csv"
+              raw = subprocess.check_output(["git", "show", f"HEAD:{path}"])
+              digest = hashlib.sha256(raw).hexdigest()
+              assert digest == meta["sha256"], (code, digest, meta["sha256"])
+              print(f"RE-FETCH PASS SGS {code}: {digest}")
+          PY
