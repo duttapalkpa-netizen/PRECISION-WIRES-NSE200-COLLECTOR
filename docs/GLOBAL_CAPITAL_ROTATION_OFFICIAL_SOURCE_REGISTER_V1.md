@@ -774,3 +774,10 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Current source registry is intentionally empty (sources=[]), so trusted observation admission remains fail-closed; no source is yet eligible for VERIFIED_OFFICIAL/VERIFIED_SECONDARY through this branch registry.
 - Static review found evidence_manifest_id is syntax-checked but not resolved to an immutable manifest record; manifest metadata is not independently bound to the row. Payload bytes/hash are checked, but manifest-to-row URL/retrieval/status/content-type/publication-vintage binding remains a gap.
 - Audit: docs/GLOBAL_CAPITAL_ROTATION_SOURCE_REGISTRY_RUNTIME_GATE_AUDIT_20261117.md. Runtime tests NOT_RUN; no parser/registry/observation/production changes. Next: manifest schema and strict binding, offline positive/negative tests, then source tuples qualified individually. No guessed registry entries.
+
+
+## 2026-11-17 — Immutable Evidence Manifest V1 parser gate implemented
+- Trusted rows now resolve evidence_manifests/<evidence_manifest_id>.json and bind source, source URL/final URL, indicator, unit, quality, publication/retrieval timestamps, HTTP status, content type, byte length, payload path and SHA-256 to the CSV row. Timestamps normalize to UTC; final URL is HTTPS and exact-match unless registry explicitly allowlists it; payload bytes/hash are independently rechecked.
+- Schema: config/global_capital_rotation_evidence_manifest_schema_v1.json. Six offline test cases added for missing manifest, final URL mismatch, publication timestamp mismatch, HTTP mismatch, hash mismatch and valid binding. CI path filters include schema/registry changes.
+- Runtime test execution NOT_RUN; no PASS claim. Registry remains empty intentionally; source admission remains blocked until individual source tuples are independently qualified. No guessed source mappings.
+- Detailed audit: docs/GLOBAL_CAPITAL_ROTATION_SOURCE_REGISTRY_RUNTIME_GATE_AUDIT_20261117.md. No production integration.
