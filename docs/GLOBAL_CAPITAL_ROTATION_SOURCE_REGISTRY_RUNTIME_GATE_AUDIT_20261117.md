@@ -83,3 +83,10 @@ Documentation-only audit. No parser, registry, tests, workflows, observations or
 - Added one VERIFIED_OFFICIAL tuple for Federal Reserve H.10 Nominal Broad Dollar Index, series H10/H10/JRXWTFB_N.B, unit Index:_1997_Jan_100, indicator fed_h10_nominal_broad_dollar_index, official Preview URL recorded in source qualification document.
 - This is a source identity/definition qualification only. The user's Library CSV is a comparison fixture, not official raw bytes. Official raw response payload, HTTP metadata, retrieval timestamp, byte length, SHA-256 and manifest remain NOT_ACQUIRED. Parser should continue to reject trusted observation rows without a real exact-bound manifest and rehashed raw payload.
 - Do not map this series to ICE DXY or directly to dxy_change_pct_20d. 20-session derivation and classifier integration are NOT_DONE. Registry now contains one tuple; trusted observation admissions remain zero.
+
+
+## 2026-11-17 — First official raw H.10 payload passes existing parser gate
+- The corrected capture workflow #6 / ID 44035209336 downloaded official Fed H.10 ZIP (HTTP 200; 2,088,268 bytes; SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77) and produced the exact broad-dollar series manifest.
+- Existing `load_observations` parser accepted 5,445 rows with the exact registered tuple and independently rehashed payload. Parser admission result: PASS. This is a genuine runtime parser admission, not only a static implementation check.
+- The artifact has 90-day retention and expires 2027-02-15; it is not a permanent archive. Long-term repo retention remains NOT_DONE.
+- One publication vintage only: full PIT vintage validation remains NOT_DONE. Derived 20-observation change, classifier integration, and production use remain NOT_AUTHORIZED.
