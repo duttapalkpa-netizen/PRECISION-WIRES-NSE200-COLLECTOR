@@ -74,3 +74,10 @@ Inspect the GitHub Actions run for the newly added bounded workflow and download
 
 ## 9. Invariants
 ₹0; official/free sources only; no synthetic data, invented timestamps, forward-fill, raw overwrites or access-control bypass. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission and production workflows unchanged. No source admission or production integration authorized.
+
+
+## 10. Runtime verification update (2026-11-18)
+- Workflow Run #2 ID 44150764171: SUCCESS; commit 17e40218c1a2446e5d31bdd4df694e216386298a; job 134278191392; artifact ID 14358771813; ZIP 2,885 bytes; SHA-256 a8ea641748f3c7410aeb6dceda7eeaee8ea0c904a0ceb659ebffa174c4772d86. Downloaded and independently re-hashed. Manifest/workbook SHA and byte-length validation PASS; Table 10 internal identities PASS.
+- Workflow Run #1 ID 44150706922 also SUCCESS. Canonical 15-series identity workflow Run #1 ID 44148019785 SUCCESS; all six identities 381/381 PASS, 2,286/2,286 checks, 0 failures; artifact ID 14356334010, ZIP SHA-256 fcf6c72dec436f7847e293c1b179b628a0c0625b420be90aa1460dfdb6baba77, independently re-hashed.
+- Official BCB 28-Sep-2026 revision note confirms 2025 portfolio-liability aggregate revised USD 15.1bn to USD17.6bn with reclassification for nonresident individual fund ownership >=10%; it does not attribute February-2026 SGS 22942's +USD203.70779636m delta. Keep cause UNKNOWN.
+- Runtime gate: PASS. Original as-published vintage: NOT_PROVEN. Brazil pilot: NOT_ACCEPTED. EM-wide panel: NOT_DONE. Production integration: NOT_AUTHORIZED.
