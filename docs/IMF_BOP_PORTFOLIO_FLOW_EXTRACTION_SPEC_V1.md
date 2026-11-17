@@ -385,3 +385,12 @@ A second official BCB portal instance was inspected and reveals an unresolved ca
 - Next validation: resolve each portal's JSON resource link and capture final URL, HTTP status, content type, response bytes, retrieval timestamp and SHA-256; compare payload values/date keys and SGS series metadata. If payloads are byte/value-identical, treat as duplicate catalogue records and preserve both provenance records. If payloads differ, quarantine both until BCB methodology clarifies the canonical series.
 - Evidence: official BCB portal pages `opendata.bcb.gov.br` SGS 22905 and `dadosabertos.bcb.gov.br` SGS 22905. Both catalogues are official but disagree on organization and classification.
 - Current decision: SGS 22905 excluded from any calculation; SGS 22906 and 22924 remain separate Depec series pending their own raw archive and reconciliation. No net-flow identity inferred.
+
+
+## BCB SGS 22905 dual-catalogue endpoint verification — 2026-11-17
+
+Both official BCB portal JSON resource links were resolved and point to the identical endpoint: `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json`. The response from the dadosabertos resource was readable as JSON and showed monthly records from 1995-01 through 2026-09 in the browser excerpt. The opendata resource resolved to the same exact URL. Thus the earlier concern about separate numerical payloads from two distinct resource URLs is not supported; both catalogue records reference one SGS JSON API route.
+
+The catalogue metadata conflict remains: one page identifies BCB/Depec and English title “Portfolio investment - monthly - net”; the other identifies BCB/Dstat and places the dataset under BPM6 / financial account / portfolio investment. A shared endpoint does not decide which metadata hierarchy/owner record is authoritative, nor does it prove a methodology/version history. Preserve both metadata provenance records and keep classification CONFLICT / UNKNOWN until official methodology/version evidence resolves it.
+
+The CSV links also resolve to the same API route with `formato=csv`, but the browser reader rejected the `text/csv` content type; no CSV bytes were acquired. Browser-inspected JSON is not a raw archive: byte count, retrieval timestamp, complete payload capture, SHA-256, full-history row QA and vintage/revision QA remain NOT_DONE. No observations admitted to the global EM flow panel. No relationship with SGS 22906/22924 inferred.
