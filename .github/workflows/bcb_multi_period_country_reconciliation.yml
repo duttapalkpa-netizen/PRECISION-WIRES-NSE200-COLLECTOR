@@ -1,0 +1,33 @@
+name: BCB Multi-Period Country Reconciliation
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'scripts/research/audit_bcb_multi_period_country_reconciliation.py'
+      - 'data/raw/bcb/instrument_net_capture_20261117/sgs_22936.csv'
+      - 'data/raw/bcb/instrument_net_capture_20261117/sgs_22942.csv'
+      - 'bcb_domestic_market_crosscheck_202609/sgs_22930.csv'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify raw SHA-256 and reproduce nine-period comparison
+        run: python scripts/research/audit_bcb_multi_period_country_reconciliation.py
+      - name: Preserve result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-multi-period-country-reconciliation
+          path: bcb_multi_period_reconciliation_result.json
+          if-no-files-found: warn
+          retention-days: 90
