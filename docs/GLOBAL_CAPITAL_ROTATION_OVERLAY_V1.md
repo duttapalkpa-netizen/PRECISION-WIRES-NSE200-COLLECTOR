@@ -131,3 +131,15 @@ This adds a verified broad-dollar input only. It does not establish capital flow
 
 ### Research decision
 Brazil September-2026 outflow: retain as contextual evidence only; exclude from direct India transmission scoring and trading triggers. This is a classification decision, not a claim that Brazil flows never matter. No production change.
+
+
+
+## Daily market temporal-alignment guard — 2026-11-17
+
+The research classifier now emits `temporal_alignment.daily_india_market_panel` for the latest non-stale observations among India FPI equity/debt, DII equity, USD/INR, Brent, VIX, India-vs-world relative return, ICE DXY (if separately supplied), Fed broad USD, and US 10Y. This is a calendar-date proximity audit only:
+- `ALIGNED_WITHIN_3D`: at least two available inputs and the maximum observation-date spread is no more than 3 calendar days.
+- `UNSYNCHRONIZED`: at least two available inputs and the maximum spread exceeds 3 calendar days. Do not treat the combined cross-market snapshot as synchronized.
+- `NOT_ASSESSED`: fewer than two available inputs.
+- The report lists included dates and excluded missing/stale indicators. No date is forward-filled, and no values are interpolated.
+
+Important limitation: calendar-date proximity does not prove same-session availability, common publication vintage, common market close, or causal comparability. A full synchronized panel still requires immutable raw archives, source publication/retrieval timestamps, trading-calendar mapping and vintage QA. Monthly EM flow remains a separate low-frequency layer and is not forced into the daily synchronization group. This guard does not create an EM aggregate or a Relative-Attraction score and has no production effect.
