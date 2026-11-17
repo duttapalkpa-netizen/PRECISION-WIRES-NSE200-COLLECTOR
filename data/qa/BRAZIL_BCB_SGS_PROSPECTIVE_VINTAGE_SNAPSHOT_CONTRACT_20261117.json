@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "purpose": "prospective_point_in_time_bcb_sgs_vintage_archive",
+  "date": "2026-11-17",
+  "series": [
+    "22924",
+    "22930",
+    "22936",
+    "22942"
+  ],
+  "cadence": "monthly day 28 at 12:17 UTC plus manual dispatch",
+  "capture_contract": {
+    "immutable_timestamped_directory": true,
+    "raw_bytes_preserved": true,
+    "sha256": true,
+    "http_headers": true,
+    "utc_retrieval_timestamps": true,
+    "full_observation_values": true,
+    "latest_and_feb_2026_observation_summary": true,
+    "strict_csv_validation": true
+  },
+  "acceptance": {
+    "implementation": "PASS",
+    "first_runtime_capture": "PENDING",
+    "cross_snapshot_revision_detection": "NOT_DONE_REQUIRES_TWO_SNAPSHOTS",
+    "feb_2026_original_vintage_reconciliation": "BLOCKED",
+    "brazil_pilot": "NOT_ACCEPTED",
+    "em_panel": "NOT_DONE",
+    "production_integration": "NOT_AUTHORIZED"
+  },
+  "interpretation": "A prospective snapshot records the current SGS response at retrieval time; it cannot reconstruct original publication vintage or prove the cause of a change.",
+  "source": "https://opendata.bcb.gov.br/dataset/22942-portfolio-investment---debt-securities----issued-in-the-domestic-market---monthly---net",
+  "errors": []
+}
