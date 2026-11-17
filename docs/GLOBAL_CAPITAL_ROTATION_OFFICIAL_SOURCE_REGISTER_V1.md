@@ -170,3 +170,19 @@ Direct official API JSON inspection in this verification:
 - Official API JSON endpoints: `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json` and `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=json`. Source evidence: BCB Open Data Portal SGS 22905 catalogue and both official API JSON responses.
 
 Integrity boundary unchanged: browser response inspection only; no immutable raw bytes, extraction timestamp file, byte count, SHA-256, full-history structural QA, vintage archive or methodology reconciliation. The values are not admitted to the overlay. Metadata owner/classification conflict for 22905 remains CONFLICT / UNKNOWN.
+
+
+
+## BCB portfolio-liability component discovery — SGS 22924/22925/22926 — 2026-11-17
+
+Further official BCB catalogue inspection identifies three distinct monthly USD-million series, each beginning 1995-01 and maintained by BCB/Depec:
+- SGS 22924: “Portfolio investment - Net incurrence of liabilities - monthly - net”.
+- SGS 22925: “Portfolio investment - Net incurrence of liabilities - monthly - inflows”.
+- SGS 22926: “Portfolio investment - Net incurrence of liabilities - monthly - outflows”.
+The official 22924 catalogue describes portfolio investment liabilities as transactions/positions in equity and investment-fund shares and debt securities; it links the BCB SGS JSON and CSV resources. The 22925 and 22926 catalogue pages confirm separate inflow and outflow series. Their existence provides a better methodology cross-check path, but titles alone do not establish whether 22924 equals inflows minus outflows, the sign orientation, gross/net adjustments, revisions or common observation coverage.
+
+Direct API open for SGS 22924 was inaccessible to the browser reader in this verification (tool-level inaccessible URL). This is not evidence that the BCB endpoint is down. No fresh 22924 value or raw payload was acquired. Therefore the earlier Sep-2026 -1,698.5 value remains a prior browser observation, not freshly revalidated in this turn.
+
+BCB official External Sector Statistics release for September 2026 (published 26-Oct-2026) reports domestic-market portfolio investment liabilities net outflows of USD 2.1bn; equity/fund outflows USD 1.7bn and debt-security outflows USD 0.4bn; 12-month net inflows USD 5.1bn. This is a separate aggregate/statistical publication and is not assumed equivalent to SGS 22924 without scope and period reconciliation.
+
+Integrity decision: 22924 live API refresh = NOT_ACQUIRED in this turn; 22925/22926 catalogue discovery = PASS; component formula = UNKNOWN; external publication cross-check = contextual only; no data admitted to overlay. Preserve separate series and do not derive a net-flow feature until raw common-period QA and BCB methodology establish the formula.
