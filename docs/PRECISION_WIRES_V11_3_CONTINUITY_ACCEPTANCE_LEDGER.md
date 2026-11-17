@@ -1070,3 +1070,18 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 5. EM-wide panel remains separate and must use consistent country coverage, flow concepts, and vintages.
 6. No production integration or selector changes without explicit user approval.
 
+## 2026-11-17 — Brazil BCB multi-period domestic portfolio reconciliation (Chapter 32)
+- Reused existing permanently archived raw data; no source re-download:
+  - SGS 22930 blob `f7626bbc6b62630b6518451c472f718de3370175`, raw SHA-256 `c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776`.
+  - SGS 22936 blob `3865fe689081cea11dff15227d01da4bb75925e0`, raw SHA-256 `0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24`.
+  - SGS 22942 blob `3da8dc2b03da91e0dc9ff0861024c1ff17cce400`, raw SHA-256 `4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169`.
+- Multi-period comparison of current latest-vintage SGS 22930+22936 equity/funds, SGS 22942 domestic debt, and total vs official BCB monthly releases for 9 periods (Dec-2025; Jan, Feb, Mar, Apr, Jun, Jul, Aug, Sep-2026): 7/9 periods match all three values at release precision; 23/27 component/total comparisons match.
+- Two exceptions remain VINTAGE_DIFFERENCE_UNRESOLVED:
+  - Dec-2025: current SGS equity/funds -USD 1.1bn vs contemporaneous release -USD 1.4bn; debt +USD 5.3bn matches; total +USD 4.2bn vs +USD 3.9bn.
+  - Feb-2026: current SGS equity/funds +USD 2.8bn matches; debt +USD 2.8bn vs release +USD 2.6bn; total +USD 5.6bn vs +USD 5.4bn.
+- BCB September-2026 release states 2025 statistics became definitive and 2026 estimates were revised. This is consistent with a vintage explanation, but specific attribution of the two deltas is UNKNOWN until a matched-vintage bridge is obtained.
+- Report `docs/BRAZIL_BCB_MULTI_PERIOD_COUNTRY_RECONCILIATION_20261117.md`; QA JSON `data/qa/BRAZIL_BCB_MULTI_PERIOD_COUNTRY_RECONCILIATION_20261117.json`; reproducible script `scripts/research/audit_bcb_multi_period_country_reconciliation.py`; bounded workflow `.github/workflows/bcb_multi_period_country_reconciliation.yml`.
+- Workflow run #1 / ID `44086204426` queued on commit `ed7c695c33c4739b9dd5acebf663f08469b2cb15`; runtime verification pending at this ledger entry.
+- Acceptance: multi-period comparison PARTIAL; Brazil pilot NOT_ACCEPTED; same-vintage revision bridge NOT_DONE; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next action: verify CI; then resolve only Dec-2025 and Feb-2026 from same-vintage official BCB tables/archives. Do not repeat source capture, the September-2026 one-month check, or metadata discovery.
+- Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched; ₹0; no synthetic values or invented provenance.
