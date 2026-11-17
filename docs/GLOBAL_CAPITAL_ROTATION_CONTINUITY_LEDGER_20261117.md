@@ -272,3 +272,14 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Interpretation: BCB Sep outflow is **contextual cross-country risk-appetite corroboration only**. It does not quantify an India market impact or establish causality. Do not compare the Brazil USD 2.1bn and India USD 6.7bn figures as apples-to-apples market impact; definitions/perimeters differ. Brazil's positive trailing-12-month net inflow argues against reading one month as structural outflow.
 - Overlay disposition: `BRAZIL_PORTFOLIO_FLOW_CONTEXT` = contextual only / low direct India-transmission confidence. No independent NIFTY/sector/stock weight, ranking score, buy/sell trigger or production selector input. Direct India FPI, FX, yields, crude, VIX and domestic breadth/flows remain the testable transmission channels.
 - Updated Overlay V1 doc and this ledger. This is a research classification decision; no production change.
+
+
+
+## 3W. Daily India-market temporal-alignment guard — 2026-11-17
+- Code review identified that the classifier selected the latest value per indicator but did not report whether the daily market inputs shared comparable observation dates.
+- Added `temporal_alignment.daily_india_market_panel` to the research-only output. It evaluates latest non-stale observations for India FPI equity/debt, DII equity, USD/INR, Brent, VIX, India-vs-world relative return, ICE DXY (if separately supplied), Fed broad USD, and US 10Y.
+- Threshold is explicitly an engineering guard of 3 calendar days, not an economic threshold: `ALIGNED_WITHIN_3D` when at least two inputs exist and spread <=3 days; `UNSYNCHRONIZED` when spread >3; `NOT_ASSESSED` when fewer than two inputs exist. Output records dates, included indicators and missing/stale exclusions.
+- No forward-fill or interpolation. Monthly EM flows remain a separate frequency layer. The date check does not establish same-session timing, publication-vintage equality or causality.
+- Added three unit tests: over-3-day spread rejects synchronization; within-3-day spread passes the date-proximity guard; fewer than two inputs remains NOT_ASSESSED.
+- Pipeline commit `c20810f635fef01f738fcbdfec44ee94f1a98dbc` (blob `d82f37b3699cdac25b154e87b01214f81783cfd4`); test commit `8fd36b33685ac8e09e7d79e3fa8ba9b7e0663512` (blob `584d50ce8f904c3c5447501d66c87c139443b62a`).
+- Files were updated on the existing research branch; CI result pending. No live dataset, relative-attraction computation, stock score, production selector or trade trigger created. PR remains draft/unmerged unless separately changed.
