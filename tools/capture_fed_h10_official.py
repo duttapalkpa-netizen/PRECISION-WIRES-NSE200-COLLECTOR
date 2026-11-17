@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv, hashlib, json, os, sys, urllib.request, urllib.error, zipfile, xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 URL = "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10"
 OUT = Path(os.environ.get("OUTPUT_DIR", "fed_h10_capture"))
