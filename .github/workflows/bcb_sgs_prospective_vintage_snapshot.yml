@@ -1,0 +1,49 @@
+name: BCB SGS Prospective Vintage Snapshot
+on:
+  schedule:
+    - cron: '17 12 28 * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - '.github/workflows/bcb_sgs_prospective_vintage_snapshot.yml'
+      - 'scripts/research/capture_bcb_sgs_prospective_vintage.py'
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: bcb-sgs-prospective-vintage-snapshot
+  cancel-in-progress: false
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Capture four official SGS series as a timestamped vintage
+        run: python scripts/research/capture_bcb_sgs_prospective_vintage.py
+      - name: Commit immutable snapshot directory
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/bcb/sgs_vintage_snapshots/
+          if git diff --cached --quiet; then
+            echo "No new snapshot files to commit" >&2
+            exit 1
+          fi
+          git commit -m "data: archive BCB SGS point-in-time vintage snapshot"
+          git push origin HEAD:research/bcb-priority-metadata-audit-20261117
+      - name: Upload snapshot manifest artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-sgs-prospective-vintage-snapshot
+          path: data/raw/bcb/sgs_vintage_snapshots/
+          if-no-files-found: warn
+          retention-days: 90
