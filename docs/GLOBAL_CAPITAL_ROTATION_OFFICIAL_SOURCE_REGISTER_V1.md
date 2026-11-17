@@ -88,3 +88,23 @@ Current status: IMF API documentation/catalogue route discovery PASS; BOP_AGG an
 - IMF SDMX Central shows provider-specific national BPM6 BOP dataflows/registrations. These are not a unified IMF global panel; any use requires provider-specific source validation and explicit country/coverage reconciliation.
 - Historic IMF BOP pilot regional SDMX files explicitly last updated 2013-01-09. REJECTED_FOR_CURRENT_SIGNAL; format/reference only, not current flow evidence.
 - No BOP/BOP_AGG observations admitted; no EM flow panel or overlay calculation advanced.
+
+
+## Brazil BCB official monthly portfolio-flow pilot — 2026-11-17
+
+A live official open-data API response was successfully retrieved through the Banco Central do Brasil Open Data Portal resource links. This is a country-level source pilot, not an IMF BOP_AGG observation and not a global EM aggregate.
+
+Accepted source endpoints (JSON):
+- Assets: https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=json — SGS 22906, “Portfolio investment - Net acquisition of financial assets - monthly - net”, monthly, USD million, coverage starts 1995-01. Official portal page documents the definition and resource endpoint.
+- Liabilities: https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=json — SGS 22924, “Portfolio investment - Net incurrence of liabilities - monthly - net”, monthly, USD million, coverage starts 1995-01. Official portal page documents the definition and resource endpoint.
+- Both live JSON responses were returned by the official API. Latest visible observation in each response: 2026-09-01. SGS 22906 value: 3,269.3 USD million; SGS 22924 value: -1,698.5 USD million. These are source-reported monthly series values, not independently reconciled totals.
+- Separate series are retained. Do not add/subtract assets and liabilities or label a combined “net inflow” until BCB metadata and BPM6 sign convention for these exact series are verified. Do not substitute the distinct SGS 22905 “Portfolio investment - net” series without mapping and reconciliation.
+- The data are monthly, published with up to four weeks' lag for the BCB/Dstat net series; they are strategic context, not daily trading triggers. BCB's IMF SDMX registration URL for BR1 is a registered metadata document; it is not the same as the SGS observation endpoint.
+
+Integrity boundary:
+- API JSON endpoint retrieval: PASS (official live response observed).
+- Raw response file archived in repository: NOT_DONE.
+- Raw byte count / retrieval timestamp / SHA-256: NOT_DONE (browser response was inspected, not downloaded as an immutable file).
+- Full-history row count, missing marker scan, revision/vintage capture and exact end-date cross-check: NOT_DONE.
+- Financial-account sign reconciliation and combined portfolio net-flow derivation: UNKNOWN / NOT_DONE.
+- This pilot may be admitted only as a Brazil monthly source after raw archive + QA; it is not an EM aggregate and does not unlock the global EM portfolio-flow input.
