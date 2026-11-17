@@ -1,0 +1,33 @@
+name: Brazil BCB Seven Priority SGS Raw Capture
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/capture_bcb_priority_sgs_csv.py"
+      - ".github/workflows/bcb_priority_sgs_raw_capture.yml"
+permissions:
+  contents: read
+concurrency:
+  group: bcb-priority-sgs-raw-capture
+  cancel-in-progress: false
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture seven official BCB SGS CSV payloads
+        run: python scripts/research/capture_bcb_priority_sgs_csv.py
+      - name: Upload raw bytes and manifest even when capture fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-seven-priority-sgs-raw-capture
+          path: bcb_priority_capture/
+          if-no-files-found: warn
+          retention-days: 90
