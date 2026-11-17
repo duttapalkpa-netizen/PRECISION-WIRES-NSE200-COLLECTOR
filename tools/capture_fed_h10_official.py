@@ -94,7 +94,9 @@ manifest = {
     "sha256": hashlib.sha256(payload).hexdigest(),
     "raw_payload_path": zip_path.name,
     "zip_integrity_test": "PASS",
-    "members": members,\n    "source_prepared_timestamp": prepared,\n    "selected_series": series_summary,
+    "members": members,
+    "source_prepared_timestamp": prepared,
+    "selected_series": series_summary,
     "github": {
         "repository": os.environ.get("GITHUB_REPOSITORY"),
         "commit_sha": os.environ.get("GITHUB_SHA"),
