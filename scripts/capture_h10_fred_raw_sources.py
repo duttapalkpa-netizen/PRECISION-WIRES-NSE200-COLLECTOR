@@ -123,17 +123,41 @@ if "fed_h10_xml.zip" in manifest["sources"]:
         else:
             attrs, obs = target[0]
             statuses, dates = {}, []
+            active_non_numeric, nd_non_sentinel, nd_sentinel_count = [], [], 0
             for item in obs:
                 status = item.attrib.get("OBS_STATUS", "")
+                value = item.attrib.get("OBS_VALUE", "")
+                date = item.attrib.get("TIME_PERIOD", "")
                 statuses[status] = statuses.get(status, 0) + 1
-                dates.append(item.attrib.get("TIME_PERIOD", ""))
+                dates.append(date)
+                if status == "A":
+                    try:
+                        number = float(value)
+                        if not __import__("math").isfinite(number):
+                            active_non_numeric.append({"date": date, "value": value})
+                    except (TypeError, ValueError):
+                        active_non_numeric.append({"date": date, "value": value})
+                elif status == "ND":
+                    if value == "-9999":
+                        nd_sentinel_count += 1
+                    else:
+                        nd_non_sentinel.append({"date": date, "value": value})
             manifest["checks"]["h10_target_series"] = {"series_name": TARGET_BOARD,
                 "series_attributes": attrs, "observation_count": len(obs), "status_counts": statuses,
                 "first_date": min(dates) if dates else None, "last_date": max(dates) if dates else None,
+                "chronological_order": dates == sorted(dates),
                 "duplicate_date_count": len(dates)-len(set(dates)),
-                "active_observation_count": statuses.get("A", 0), "nd_observation_count": statuses.get("ND", 0)}
+                "active_observation_count": statuses.get("A", 0), "nd_observation_count": statuses.get("ND", 0),
+                "active_non_numeric_count": len(active_non_numeric), "nd_non_sentinel_count": len(nd_non_sentinel),
+                "nd_minus9999_sentinel_count": nd_sentinel_count}
             if len(dates) != len(set(dates)):
                 errors.append("Duplicate dates in H.10 target series")
+            if dates != sorted(dates):
+                errors.append("H.10 target series is not chronological")
+            if active_non_numeric:
+                errors.append(f"Active H.10 observations contain non-numeric/non-finite values: {active_non_numeric[:5]}")
+            if nd_non_sentinel:
+                errors.append(f"ND observations do not use expected -9999 sentinel: {nd_non_sentinel[:5]}")
     except Exception as exc:
         errors.append(f"H.10 ZIP/XML parse: {type(exc).__name__}: {exc}")
 
