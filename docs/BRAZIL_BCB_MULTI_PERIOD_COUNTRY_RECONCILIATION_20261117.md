@@ -106,3 +106,57 @@ A second scope qualification remains: BCB's official topic catalogue labels 2293
 Authority: BCB official topic catalogue https://dadosabertos.bcb.gov.br/pages/temas; official dataset page for SGS 22942 https://dadosabertos.bcb.gov.br/dataset/22942-investimentos-em-carteira---titulos-de-renda-fixa---passivos---negociados-no-mercado-domestic; official dataset page for SGS 22936 https://dadosabertos.bcb.gov.br/dataset/22936-sgs.
 
 Next: obtain an authoritative BCB definition for the market perimeter of 22936, then obtain same-vintage evidence for the Dec-2025 and Feb-2026 debt/equity/fund values. No inference from numerical coincidence, no blanket revision attribution, no raw overwrite.
+
+## 2026-11-17 — Exact BCB Table 10 component and current-SGS comparison
+A bounded extraction was added for the official BCB XLSX workbooks served under publication periods 202601, 202603 and 202610. All workbooks passed ZIP integrity and all three Table 10 accounting identities:
+1. domestic-market equity (row 14) + investment-fund liabilities (row 20) = equity/funds subtotal (row 41);
+2. domestic-market debt (row 24) = debt subtotal (row 42);
+3. equity/funds subtotal + debt subtotal = domestic-market portfolio total (row 40).
+
+### Market-perimeter crosswalk
+- SGS 22930 maps to Table 10 row 14, domestic-market equity.
+- SGS 22936 maps to Table 10 row 20, investment-fund liabilities. Footnote 1 states that the transactions concern a nonresident quota holder owning less than 10% of the net asset value of an investment fund in Brazil. In the same Table 10, row 41 combines domestic-market equity and funds, and row 40 totals the domestic-market portfolio. This supports the 22936 domestic-fund component mapping; the shorter catalogue label alone does not show the market qualifier.
+- SGS 22942 maps to Table 10 row 24, domestic-market debt securities. Official topic catalogue confirms 22942–22944 domestic-market debt and 22945–22947 foreign-market debt. It is not a short-term-only series.
+
+### Exact values: latest archived SGS minus BCB Table 10 values (USD million)
+| Reference month | SGS 22930 vs row 14 | SGS 22936 vs row 20 | SGS 22942 vs row 24 | Equity/funds composite delta | Domestic total delta |
+|---|---:|---:|---:|---:|---:|
+| 2025-12 | +116.1748 | +211.6830 | +39.3771 | +327.8578 | +367.2349 |
+| 2026-02 | -0.0374 | +0.0395 | +203.7078 | +0.0020 | +203.7098 |
+| 2026-09 | -0.0023 | -0.0085 | -0.0462 | -0.0108 | -0.0570 |
+
+The 2026-09 current BCB table (publication file 202610) matches the latest archived SGS values to within USD 0.1 million for each component. This independently supports the crosswalk and latest-SGS parser.
+
+### Historical publication precision and file-vintage limitation
+- January-2026 BCB press release (published 26-Jan-2026) reports Dec-2025 domestic-market portfolio total USD 3.9bn, comprising equity/funds -USD 1.4bn and debt +USD 5.3bn.
+- March-2026 BCB press release (published 27-Mar-2026) reports Feb-2026 total +USD 5.4bn, comprising equity/funds +USD 2.8bn and debt +USD 2.6bn.
+- Current SGS snapshot rounds to Dec-2025 -1.1bn equity/funds, +5.3bn debt, +4.2bn total; Feb-2026 +2.8bn equity/funds, +2.8bn debt, +5.6bn total. Thus the previously observed mismatches are real at the BCB press-release display precision.
+- Important limitation: HTTP Last-Modified for the period-indexed 202601 and 202603 XLSX files served on 2026-11-17 is 19-Oct-2026 and 18-Oct-2026 respectively. These XLSX files are official historical tables but are not proven to be immutable original as-of-publication snapshots. The contemporaneous PDFs preserve the rounded published figures; the precise XLSX cell values are recorded as the BCB historical table files served in November 2026, not asserted as original-vintage exact values.
+- 202610 XLSX Last-Modified is 26-Oct-2026 and its Sep-2026 Table 10 values agree with latest SGS to < USD 0.1m.
+
+### Evidence files
+- Raw XLSX and HTTP headers: data/raw/bcb/release_tables_202601/, data/raw/bcb/release_tables_202603/, data/raw/bcb/release_tables_202610/.
+- Manifest: data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json.
+- Exact extraction and component deltas: data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json.
+- Reproducer: scripts/research/extract_bcb_domestic_portfolio_release_vintage.py.
+- Capture Run #2 / ID 44090062072 (202601/202603) SUCCESS; capture Run #3 / ID 44090618010 (adds 202610) SUCCESS.
+- Extraction Run #4 / ID 44090856672 SUCCESS; head 6b8cfc3daf489a04bd22db882343dc58342318b5; artifact ID 14330724185; artifact digest 9c6c2c2733c75a2b098c4180d556bf5208cd6cea06dccf85a86f32d86f42e8f1.
+
+### Revised acceptance
+| Gate | Status |
+|---|---|
+| BCB debt/equity/fund component crosswalk | PASS (Table 10 rows + footnote + Sep-2026 match) |
+| Release Table 10 internal identities | PASS (all three workbooks) |
+| Latest SGS vs 2026-10 BCB Table 10 Sep-2026 comparison | PASS (all components within USD 0.1m) |
+| Dec-2025 current SGS vs historical release | VINTAGE_DIFFERENCE_CONFIRMED at published 0.1bn precision |
+| Feb-2026 current SGS vs historical release | VINTAGE_DIFFERENCE_CONFIRMED at published 0.1bn precision |
+| Exact original-vintage XLSX preservation | UNKNOWN (historical XLSX Last-Modified dates are Oct-2026) |
+| Specific revision event/cause for Dec-2025 and Feb-2026 deltas | UNKNOWN / NOT_DONE |
+| Brazil pilot acceptance | NOT_ACCEPTED pending documented revision bridge and full matured validation |
+| EM-wide panel | NOT_DONE |
+| Production integration | NOT_AUTHORIZED |
+
+BCB/IMF metadata indicates published data may be revised when source information is revised; this general policy does not identify the cause of these specific deltas. Do not infer a specific revision event or date without evidence.
+
+## Next bounded action
+Retrieve any documented BCB revision notice or preserved as-of-publication data for Dec-2025 and Feb-2026, then reconcile against the 2026-10/2026-11 latest series. If no immutable original vintage is available, keep the exact revision attribution UNKNOWN and retain both published PDF values and latest SGS values as separate vintages. No synthetic values, no tolerance relaxation, no production integration.
