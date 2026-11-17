@@ -342,3 +342,13 @@ Corrected status: BOP DSD metadata route documented; raw DSD retrieval NOT_DONE;
 - A historic IMF SDMX BOP pilot site offers regional compact SDMX files for 75 series per reporting country, but the page explicitly states last update 9-Jan-2013. This route is rejected for current overlay ingestion due to staleness; it may only be used as a historical format/reference example, not current flow evidence.
 - BOP_AGG remains a separate annual World/Country Group aggregate dataset. Neither the current BOP page nor the old pilot files establish a current BOP_AGG download payload.
 - Result: current BOP dataset discovery PASS; direct current observations NOT_ACQUIRED; country-provider registrations are discovery leads only; 2013 pilot files REJECTED_FOR_CURRENT_SIGNAL; BOP_AGG raw payload NOT_DONE. No observations or values admitted.
+
+
+## 2P. Country-level official fallback: Brazil BCB SGS portfolio flows — 2026-11-17
+
+A working official BCB open-data JSON endpoint was identified and its live response inspected for two distinct monthly BPM6 portfolio-investment components:
+- SGS 22906: net acquisition of financial assets; USD million; monthly; starts 1995-01; latest visible observation 2026-09-01 = +3,269.3 USD million.
+- SGS 22924: net incurrence of liabilities; USD million; monthly; starts 1995-01; latest visible observation 2026-09-01 = -1,698.5 USD million.
+- Official endpoint URLs and definitions are recorded in the source register.
+- These are Brazil country-level BCB observations, not IMF BOP_AGG and not an EM regional aggregate. Do not derive combined net inflow until the exact BCB sign convention is verified. Do not treat as daily trading trigger.
+- API live-response retrieval PASS; immutable raw-file archive, byte count, SHA-256, full row QA, revision/vintage and sign reconciliation NOT_DONE. Therefore no observation is yet admitted to the overlay input panel.
