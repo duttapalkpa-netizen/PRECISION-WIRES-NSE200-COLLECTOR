@@ -333,3 +333,12 @@ A direct review of the IMF SDMX Central Web Services Guide (last updated May 202
 - The exact BOP DSD 2.6.0 metadata URL was also attempted through the available browser reader but returned an inaccessible response; no raw XML bytes, HTTP headers, byte count or SHA-256 were obtained.
 
 Corrected status: BOP DSD metadata route documented; raw DSD retrieval NOT_DONE; public IMF BOP/BOP_AGG observation API NOT_VERIFIED; no IMF observations extracted. This correction supersedes any interpretation that the legacy SDMX Central service route is a public BOP observation endpoint.
+
+
+## 2O. IMF public BOP pilot archive and current BOP dataset route assessment — 2026-11-17
+
+- The current IMF Data Portal country-level Balance of Payments (BOP) dataset is a distinct dataset from annual BOP_AGG. Its official page exposes API / VIEW DATA / DOWNLOAD controls and defines BOP as resident/nonresident transactions. Search metadata describes Annual and Quarterly frequency. The API control redirects to the developer portal sign-in; the page's DOWNLOAD control does not expose a direct file URL in the available page extraction. No current raw observations were retrieved.
+- IMF SDMX Central's public dataflow catalogue visibly includes provider-specific BPM6 BOP dataflows (e.g., ESTAT) and its registrations page lists country statistical-provider URLs for BOP6/BOP_GBPM6 dataflows. These are provider-hosted national datasets, not a single IMF global BOP observation panel. They must not be aggregated without a separately verified country universe, provider URL, DSD/version, period coverage, units/sign, revisions and missing-country method.
+- A historic IMF SDMX BOP pilot site offers regional compact SDMX files for 75 series per reporting country, but the page explicitly states last update 9-Jan-2013. This route is rejected for current overlay ingestion due to staleness; it may only be used as a historical format/reference example, not current flow evidence.
+- BOP_AGG remains a separate annual World/Country Group aggregate dataset. Neither the current BOP page nor the old pilot files establish a current BOP_AGG download payload.
+- Result: current BOP dataset discovery PASS; direct current observations NOT_ACQUIRED; country-provider registrations are discovery leads only; 2013 pilot files REJECTED_FOR_CURRENT_SIGNAL; BOP_AGG raw payload NOT_DONE. No observations or values admitted.
