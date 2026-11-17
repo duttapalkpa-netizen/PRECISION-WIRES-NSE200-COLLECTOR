@@ -25,7 +25,10 @@
       "path": "data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx",
       "bytes": 232666,
       "sha256": "525d3ad355d2a68b37d9f59554b2dc2446fd8536647f3c8889b2e91b47345685",
+      "manifest_sha256": "525d3ad355d2a68b37d9f59554b2dc2446fd8536647f3c8889b2e91b47345685",
+      "manifest_byte_length": 232666,
       "http_last_modified": "Mon, 19 Oct 2026 03:00:58 GMT",
+      "original_as_published_vintage_status": "NOT_PROVEN_FROM_CAPTURED_HTTP_LAST_MODIFIED",
       "table": "Tabela 10 – Investimentos em carteira – passivos",
       "header_year_row_5": [
         "Discriminação",
@@ -70,6 +73,8 @@
             "equity_funds": "327.8578214299965",
             "domestic_total": "367.2348806799966"
           },
+          "difference_interpretation": "REVISION_OR_SNAPSHOT_DIFFERENCE_UNATTRIBUTED",
+          "original_release_value_status": "NOT_PROVEN_BY_THIS_CAPTURE",
           "table_internal_identities": {
             "equity_plus_funds_equals_row41": true,
             "debt_row24_equals_row42": true,
@@ -83,7 +88,10 @@
       "path": "data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx",
       "bytes": 151485,
       "sha256": "3590b1bf3baded2a12c5ec747329bdd0fb7be10b26043eba99b64f8de9f75017",
+      "manifest_sha256": "3590b1bf3baded2a12c5ec747329bdd0fb7be10b26043eba99b64f8de9f75017",
+      "manifest_byte_length": 151485,
       "http_last_modified": "Sun, 18 Oct 2026 18:30:04 GMT",
+      "original_as_published_vintage_status": "NOT_PROVEN_FROM_CAPTURED_HTTP_LAST_MODIFIED",
       "table": "Tabela 10 – Investimentos em carteira – passivos",
       "header_year_row_5": [
         "Discriminação",
@@ -130,6 +138,8 @@
             "equity_funds": "0.0020271300043",
             "domestic_total": "203.709823490003"
           },
+          "difference_interpretation": "REVISION_OR_SNAPSHOT_DIFFERENCE_UNATTRIBUTED",
+          "original_release_value_status": "NOT_PROVEN_BY_THIS_CAPTURE",
           "table_internal_identities": {
             "equity_plus_funds_equals_row41": true,
             "debt_row24_equals_row42": true,
@@ -178,7 +188,10 @@
       "path": "data/raw/bcb/release_tables_202610/bcb_external_sector_tables_202610.xlsx",
       "bytes": 116357,
       "sha256": "8888aaef2ee5279a8e2f247c0c417247caa24733a659b90e04b618742de71c3a",
+      "manifest_sha256": "8888aaef2ee5279a8e2f247c0c417247caa24733a659b90e04b618742de71c3a",
+      "manifest_byte_length": 116357,
       "http_last_modified": "Mon, 26 Oct 2026 11:31:47 GMT",
+      "original_as_published_vintage_status": "NOT_PROVEN_FROM_CAPTURED_HTTP_LAST_MODIFIED",
       "table": "Tabela 10 – Investimentos em carteira – passivos",
       "header_year_row_5": [
         "Discriminação",
@@ -225,6 +238,8 @@
             "equity_funds": "-0.0108169399998",
             "domestic_total": "-0.0569769099997"
           },
+          "difference_interpretation": "REVISION_OR_SNAPSHOT_DIFFERENCE_UNATTRIBUTED",
+          "original_release_value_status": "NOT_PROVEN_BY_THIS_CAPTURE",
           "table_internal_identities": {
             "equity_plus_funds_equals_row41": true,
             "debt_row24_equals_row42": true,
@@ -234,5 +249,23 @@
       ]
     }
   ],
-  "acceptance": "PASS_TABLE_EXTRACTION_AND_INTERNAL_IDENTITIES; VINTAGE_DIFFERENCES_QUANTIFIED_NOT_ATTRIBUTED"
+  "acceptance": "PASS_TABLE_EXTRACTION_AND_INTERNAL_IDENTITIES; VINTAGE_DIFFERENCES_QUANTIFIED_NOT_ATTRIBUTED",
+  "manifest": {
+    "path": "data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json",
+    "sha256": "62eb80a3084a56976753ed7073ccf684b74cc34160c02b9d65beb52ede445e8a",
+    "publication_periods": [
+      "202601",
+      "202603",
+      "202610"
+    ],
+    "workbook_hash_and_length_verification": "PASS_ALL_CONFIGURED_VINTAGES"
+  },
+  "vintage_comparison_guardrails": {
+    "comparison_is_current_sgs_snapshot_minus_archived_release_table": true,
+    "differences_are_revision_or_definition_differences_not_attributed": true,
+    "all_three_release_table_files_have_http_last_modified_dates_in_october_2026": true,
+    "original_as_published_vintage_status": "NOT_PROVEN",
+    "february_2026_sgs_22942_revision_cause": "UNKNOWN_NOT_PROVEN",
+    "no_original_vintage_inference_from_latest_snapshot": true
+  }
 }
