@@ -84,6 +84,7 @@ def main():
                  "bytes": len(raw), "sha256": actual_sha256,
                  "manifest_sha256": manifest_entry["sha256"], "manifest_byte_length": manifest_entry["bytes"],
                  "http_last_modified": last_modified.group(1) if last_modified else None,
+                 "original_as_published_vintage_status": "NOT_PROVEN_FROM_CAPTURED_HTTP_LAST_MODIFIED",
                  "table": "Tabela 10 – Investimentos em carteira – passivos",
                  "header_year_row_5": [ws.cell(5,c).value for c in range(1,min(ws.max_column,12)+1)],
                  "header_month_row_7": [ws.cell(7,c).value for c in range(1,min(ws.max_column,12)+1)],
@@ -121,6 +122,8 @@ def main():
                     "22930": str(current["22930"]-eq), "22936": str(current["22936"]-funds),
                     "22942": str(current["22942"]-debt), "equity_funds": str(current_eqfunds-eqfunds),
                     "domestic_total": str(current_total-total)},
+                "difference_interpretation": "REVISION_OR_SNAPSHOT_DIFFERENCE_UNATTRIBUTED",
+                "original_release_value_status": "NOT_PROVEN_BY_THIS_CAPTURE",
                 "table_internal_identities": identities,
             }
             if vintage == "202603" and month == "2026-02":
@@ -160,6 +163,8 @@ def main():
     result["vintage_comparison_guardrails"] = {
         "comparison_is_current_sgs_snapshot_minus_archived_release_table": True,
         "differences_are_revision_or_definition_differences_not_attributed": True,
+        "all_three_release_table_files_have_http_last_modified_dates_in_october_2026": True,
+        "original_as_published_vintage_status": "NOT_PROVEN",
         "february_2026_sgs_22942_revision_cause": "UNKNOWN_NOT_PROVEN",
         "no_original_vintage_inference_from_latest_snapshot": True,
     }
