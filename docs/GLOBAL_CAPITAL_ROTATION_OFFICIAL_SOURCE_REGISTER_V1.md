@@ -760,3 +760,10 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - March-2022 2/3 Wheelers definition includes bicycles while Cycles is separately listed; July 2/3 Wheelers explicitly excludes bicycles/tricycles and Cycles covers bicycles/tricycles. Candidate scope-boundary clarification.
 - March IN020101003 Trading - Automobiles vs July IN020101004 Auto Dealer; March IN020102005 Trading - Auto Ancillaries vs July IN020102007 Trading - Auto Components. Candidate rename/recode lineage; not exact-code matches.
 - Absence in a partial excerpt is never deletion evidence. Full target-vintage row inventory and parent-category review are mandatory. Exhaustive diff, effective dates, raw bytes/hash and BSE equivalence remain open.
+
+
+## 2026-11-17 — NSE full inventory acquisition status
+- Re-opened official NSE March-2022 PDF (34 pages; 1,135 extracted lines) and July-2023 PDF (23 pages; 1,064 extracted lines) in the web document reader. Both show the expected classification table fields.
+- Binary download of the March-2022 PDF into the working runtime failed; raw bytes, byte length, HTTP headers, retrieval timestamp and SHA-256 remain NOT_ACQUIRED. Do not claim a complete inventory or fabricate hashes from web-extracted text.
+- Deterministic complete inventory and bidirectional diff remain NOT_DONE / BLOCKED pending binary acquisition. Existing five spot examples and corrections are retained; do not repeat them.
+- Next: acquire both exact official PDF binaries via a working permitted route or user-provided exact files, hash them, then parse/validate in bounded chunks. No issuer mapping, PIT, parser or registry promotion authorized.
