@@ -1,8 +1,8 @@
 {
-  "schema_version": 2,
-  "purpose": "same_vintage_bcb_domestic_portfolio_component_reconciliation",
+  "schema_version": 3,
+  "purpose": "BCB_domestic_portfolio_historical_table_vintage_and_latest_SGS_comparison",
   "unit": "USD million",
-  "sources": {
+  "source_sgs": {
     "22930": {
       "path": "bcb_domestic_market_crosscheck_202609/sgs_22930.csv",
       "bytes": 8669,
@@ -19,135 +19,185 @@
       "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169"
     }
   },
-  "periods": [
+  "workbooks": [
     {
-      "reference_month": "2025-12",
-      "publication_vintage": "202601",
-      "xlsx_path": "data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx",
-      "xlsx_bytes": 232666,
-      "xlsx_sha256": "525d3ad355d2a68b37d9f59554b2dc2446fd8536647f3c8889b2e91b47345685",
+      "publication_period_file": "202601",
+      "path": "data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx",
+      "bytes": 232666,
+      "sha256": "525d3ad355d2a68b37d9f59554b2dc2446fd8536647f3c8889b2e91b47345685",
+      "http_last_modified": "Mon, 19 Oct 2026 03:00:58 GMT",
       "table": "Tabela 10 – Investimentos em carteira – passivos",
-      "reference_month_column": 4,
-      "release_table_rows": {
-        "14": {
-          "label": "      Negociadas no mercado doméstico",
-          "value_usd_mn": "-1963.1748415899965"
-        },
-        "20": {
-          "label": "   Fundos de investimentos1/",
-          "value_usd_mn": "552.41702016"
-        },
-        "24": {
-          "label": "      Negociados no mercado doméstico2/ 3/",
-          "value_usd_mn": "5282.22294075"
-        },
-        "40": {
-          "label": "Investimento em carteira negociados no mercado doméstico (líquido)",
-          "value_usd_mn": "3871.4651193200034"
-        },
-        "41": {
-          "label": "Ações e fundos de investimentos",
-          "value_usd_mn": "-1410.7578214299965"
-        },
-        "42": {
-          "label": "Títulos de dívida",
-          "value_usd_mn": "5282.22294075"
+      "header_year_row_5": [
+        "Discriminação",
+        2024,
+        null,
+        "2025*",
+        null
+      ],
+      "header_month_row_7": [
+        null,
+        "Dez",
+        "Ano",
+        "Dez",
+        "Ano"
+      ],
+      "periods": [
+        {
+          "reference_month": "2025-12",
+          "column_number": 4,
+          "release_rows_usd_mn": {
+            "22930_domestic_equity_row14": "-1963.1748415899965",
+            "22936_fund_liabilities_row20": "552.41702016",
+            "22942_domestic_debt_row24": "5282.22294075",
+            "equity_funds_total_row41": "-1410.7578214299965",
+            "domestic_portfolio_total_row40": "3871.4651193200034",
+            "debt_total_row42": "5282.22294075",
+            "fund_footnote_row45": "1/ Inclui transações em que o cotista residente no exterior possui menos de 10% do patrimônio líquido do fundo de investimento no Brasil."
+          },
+          "latest_archived_sgs_usd_mn": {
+            "22930": "-1847.0",
+            "22936": "764.1",
+            "22942": "5321.6"
+          },
+          "latest_archived_sgs_composites_usd_mn": {
+            "equity_funds": "-1082.9",
+            "domestic_portfolio_total": "4238.7"
+          },
+          "latest_minus_table_usd_mn": {
+            "22930": "116.1748415899965",
+            "22936": "211.68297984",
+            "22942": "39.37705925",
+            "equity_funds": "327.8578214299965",
+            "domestic_total": "367.2348806799966"
+          },
+          "table_internal_identities": {
+            "equity_plus_funds_equals_row41": true,
+            "debt_row24_equals_row42": true,
+            "equity_funds_plus_debt_equals_total": true
+          }
         }
-      },
-      "footnote_1": "1/ Inclui transações em que o cotista residente no exterior possui menos de 10% do patrimônio líquido do fundo de investimento no Brasil.",
-      "release_component_values_usd_mn": {
-        "domestic_equity": "-1963.1748415899965",
-        "investment_funds": "552.41702016",
-        "domestic_debt": "5282.22294075",
-        "equity_funds_total": "-1410.7578214299965",
-        "domestic_portfolio_total": "3871.4651193200034"
-      },
-      "latest_archived_sgs_values_usd_mn": {
-        "22930": "-1847.0",
-        "22936": "764.1",
-        "22942": "5321.6"
-      },
-      "latest_archived_sgs_composites_usd_mn": {
-        "equity_funds": "-1082.9",
-        "domestic_portfolio_total": "4238.7"
-      },
-      "latest_minus_release_usd_mn": {
-        "22930_domestic_equity_latest_minus_release": "116.1748415899965",
-        "22936_fund_liabilities_latest_minus_release": "211.68297984",
-        "22942_domestic_debt_latest_minus_release": "39.37705925",
-        "equity_funds_composite_latest_minus_release": "327.8578214299965",
-        "domestic_portfolio_total_latest_minus_release": "367.2348806799966"
-      },
-      "release_table_internal_identities": {
-        "equity_plus_funds_equals_row41": true,
-        "debt_row24_equals_row42": true,
-        "equity_funds_plus_debt_equals_total": true
-      }
+      ]
     },
     {
-      "reference_month": "2026-02",
-      "publication_vintage": "202603",
-      "xlsx_path": "data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx",
-      "xlsx_bytes": 151485,
-      "xlsx_sha256": "3590b1bf3baded2a12c5ec747329bdd0fb7be10b26043eba99b64f8de9f75017",
+      "publication_period_file": "202603",
+      "path": "data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx",
+      "bytes": 151485,
+      "sha256": "3590b1bf3baded2a12c5ec747329bdd0fb7be10b26043eba99b64f8de9f75017",
+      "http_last_modified": "Sun, 18 Oct 2026 18:30:04 GMT",
       "table": "Tabela 10 – Investimentos em carteira – passivos",
-      "reference_month_column": 5,
-      "release_table_rows": {
-        "14": {
-          "label": "      Negociadas no mercado doméstico",
-          "value_usd_mn": "3132.2374446199956"
-        },
-        "20": {
-          "label": "   Fundos de investimentos1/",
-          "value_usd_mn": "-346.0394717499999"
-        },
-        "24": {
-          "label": "      Negociados no mercado doméstico2/ 3/",
-          "value_usd_mn": "2579.492203640002"
-        },
-        "40": {
-          "label": "Investimento em carteira negociados no mercado doméstico (líquido)",
-          "value_usd_mn": "5365.690176509997"
-        },
-        "41": {
-          "label": "Ações e fundos de investimentos",
-          "value_usd_mn": "2786.1979728699957"
-        },
-        "42": {
-          "label": "Títulos de dívida",
-          "value_usd_mn": "2579.492203640002"
+      "header_year_row_5": [
+        "Discriminação",
+        2025,
+        null,
+        null,
+        "2026*",
+        null
+      ],
+      "header_month_row_7": [
+        null,
+        "Fev",
+        "Jan-fev",
+        "Ano",
+        "Fev",
+        "Jan-fev"
+      ],
+      "periods": [
+        {
+          "reference_month": "2026-02",
+          "column_number": 5,
+          "release_rows_usd_mn": {
+            "22930_domestic_equity_row14": "3132.2374446199956",
+            "22936_fund_liabilities_row20": "-346.0394717499999",
+            "22942_domestic_debt_row24": "2579.492203640002",
+            "equity_funds_total_row41": "2786.1979728699957",
+            "domestic_portfolio_total_row40": "5365.690176509997",
+            "debt_total_row42": "2579.492203640002",
+            "fund_footnote_row45": "1/ Inclui transações em que o cotista residente no exterior possui menos de 10% do patrimônio líquido do fundo de investimento no Brasil."
+          },
+          "latest_archived_sgs_usd_mn": {
+            "22930": "3132.2",
+            "22936": "-346.0",
+            "22942": "2783.2"
+          },
+          "latest_archived_sgs_composites_usd_mn": {
+            "equity_funds": "2786.2",
+            "domestic_portfolio_total": "5569.4"
+          },
+          "latest_minus_table_usd_mn": {
+            "22930": "-0.0374446199956",
+            "22936": "0.0394717499999",
+            "22942": "203.707796359998",
+            "equity_funds": "0.0020271300043",
+            "domestic_total": "203.709823490003"
+          },
+          "table_internal_identities": {
+            "equity_plus_funds_equals_row41": true,
+            "debt_row24_equals_row42": true,
+            "equity_funds_plus_debt_equals_total": true
+          }
         }
-      },
-      "footnote_1": "1/ Inclui transações em que o cotista residente no exterior possui menos de 10% do patrimônio líquido do fundo de investimento no Brasil.",
-      "release_component_values_usd_mn": {
-        "domestic_equity": "3132.2374446199956",
-        "investment_funds": "-346.0394717499999",
-        "domestic_debt": "2579.492203640002",
-        "equity_funds_total": "2786.1979728699957",
-        "domestic_portfolio_total": "5365.690176509997"
-      },
-      "latest_archived_sgs_values_usd_mn": {
-        "22930": "3132.2",
-        "22936": "-346.0",
-        "22942": "2783.2"
-      },
-      "latest_archived_sgs_composites_usd_mn": {
-        "equity_funds": "2786.2",
-        "domestic_portfolio_total": "5569.4"
-      },
-      "latest_minus_release_usd_mn": {
-        "22930_domestic_equity_latest_minus_release": "-0.0374446199956",
-        "22936_fund_liabilities_latest_minus_release": "0.0394717499999",
-        "22942_domestic_debt_latest_minus_release": "203.707796359998",
-        "equity_funds_composite_latest_minus_release": "0.0020271300043",
-        "domestic_portfolio_total_latest_minus_release": "203.709823490003"
-      },
-      "release_table_internal_identities": {
-        "equity_plus_funds_equals_row41": true,
-        "debt_row24_equals_row42": true,
-        "equity_funds_plus_debt_equals_total": true
-      }
+      ]
+    },
+    {
+      "publication_period_file": "202610",
+      "path": "data/raw/bcb/release_tables_202610/bcb_external_sector_tables_202610.xlsx",
+      "bytes": 116357,
+      "sha256": "8888aaef2ee5279a8e2f247c0c417247caa24733a659b90e04b618742de71c3a",
+      "http_last_modified": "Mon, 26 Oct 2026 11:31:47 GMT",
+      "table": "Tabela 10 – Investimentos em carteira – passivos",
+      "header_year_row_5": [
+        "Discriminação",
+        2025,
+        null,
+        null,
+        2026,
+        null
+      ],
+      "header_month_row_7": [
+        null,
+        "Set",
+        "Jan-Set",
+        "Ano",
+        "Set",
+        "Jan-Set"
+      ],
+      "periods": [
+        {
+          "reference_month": "2026-09",
+          "column_number": 5,
+          "release_rows_usd_mn": {
+            "22930_domestic_equity_row14": "-2110.79771091",
+            "22936_fund_liabilities_row20": "416.80852785",
+            "22942_domestic_debt_row24": "-382.35384003",
+            "equity_funds_total_row41": "-1693.9891830600002",
+            "domestic_portfolio_total_row40": "-2076.3430230900003",
+            "debt_total_row42": "-382.35384003",
+            "fund_footnote_row45": "1/ Inclui transações em que o cotista residente no exterior possui menos de 10% do patrimônio líquido do fundo de investimento no Brasil."
+          },
+          "latest_archived_sgs_usd_mn": {
+            "22930": "-2110.8",
+            "22936": "416.8",
+            "22942": "-382.4"
+          },
+          "latest_archived_sgs_composites_usd_mn": {
+            "equity_funds": "-1694.0",
+            "domestic_portfolio_total": "-2076.4"
+          },
+          "latest_minus_table_usd_mn": {
+            "22930": "-0.00228909",
+            "22936": "-0.00852785",
+            "22942": "-0.04615997",
+            "equity_funds": "-0.0108169399998",
+            "domestic_total": "-0.0569769099997"
+          },
+          "table_internal_identities": {
+            "equity_plus_funds_equals_row41": true,
+            "debt_row24_equals_row42": true,
+            "equity_funds_plus_debt_equals_total": true
+          }
+        }
+      ]
     }
   ],
-  "acceptance": "PASS_EXTRACTION_AND_TABLE_IDENTITIES; VINTAGE_DIFFERENCES_QUANTIFIED_NOT_ATTRIBUTED"
+  "acceptance": "PASS_TABLE_EXTRACTION_AND_INTERNAL_IDENTITIES; VINTAGE_DIFFERENCES_QUANTIFIED_NOT_ATTRIBUTED"
 }
