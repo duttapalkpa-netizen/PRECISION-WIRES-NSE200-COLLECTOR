@@ -163,3 +163,14 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Artifact ID 14329222273; SHA-256 `fc6d34e8856db75ca0eb22a254bafdc395e0a77d783f7149ffb89474ce379138`; expiry 2027-02-15T12:47:07Z.
 - Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086387367
 - No raw-source re-download, production change, or general tolerance introduced.
+
+## 15. 2026-11-17 — Official hierarchy correction and scope qualification
+- Re-opened the exact official BCB topic catalogue after the screenshot raised a possible 22942 short-term classification conflict.
+- The catalogue explicitly shows 22942–22944 = domestic-market debt-security liabilities (net/inflow/outflow), 22945–22947 = foreign-market debt-security liabilities, 22948–22950 = foreign-market short-term debt, and 22951–22953 = foreign-market long-term debt.
+- Therefore the screenshot's short-term concern is not correct for SGS 22942. The prior hierarchy map had a row-offset/mapping error; corrected it in docs/BRAZIL_BCB_PORTFOLIO_INVESTMENT_HIERARCHY_MAP_20261117.md. The existing 22942 raw archive is the correct domestic-market debt net series; no raw observations changed.
+- BCB catalogue lists 22930 as domestic-market equity liabilities, but lists 22936 only as investment-fund liabilities without a domestic/foreign-market qualifier. This leaves the release-to-22936 fund-share perimeter UNKNOWN.
+- Reproducible script updated to report the scope qualification explicitly and prevent interpreting the 23/27 numeric matches as full country-perimeter PASS. 22942 debt comparison scope confirmed (8/9 numerical matches; Feb-2026 differs); 22936 fund market perimeter unknown; overall equity/funds and total domestic-market validation PARTIAL / NOT_ACCEPTED.
+- Report and QA JSON superseded with the correction; source URLs are recorded in the report. No raw data re-download or overwrite.
+- Next actions: (1) verify updated CI after script change; (2) obtain an authoritative BCB definition of 22936 market perimeter; (3) obtain same-vintage official release tables/archive for Dec-2025 and Feb-2026 and resolve their debt/equity/fund differences. Do not claim revision causation until supported.
+- Status: hierarchy 22942/22945 corrected PASS; 22936 perimeter UNKNOWN; numerical reproduction pending updated CI; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Invariants preserved: ₹0; official free sources; no synthetic data; no raw changes; no production selector, score, pressure fade, CORE-672, engines, hard gate, parser admission or seed changes.
