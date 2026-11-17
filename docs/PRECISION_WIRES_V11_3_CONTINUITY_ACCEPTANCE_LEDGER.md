@@ -913,3 +913,9 @@
 - Added one exact metadata-qualified VERIFIED_OFFICIAL source tuple to config/global_capital_rotation_source_registry.json (commit 380918fc008ad96bccabbbab06b18b4ae6683df5; blob 1f36e9f57b19dcec434903744963c234cadc43e5). Source qualification note: docs/FED_H10_BROAD_DOLLAR_INDEX_SOURCE_QUALIFICATION_20261117.md (commit 8ebd01c07246e9e6eb0f06d4c81cdbb6ae0017ae).
 - Existing user Library FRB_H10(1).csv is 813 bytes, SHA-256 c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1; it cross-checks displayed values for 2026-10-26 to 2026-11-06 against official Fed rendering, but is not raw official payload and cannot satisfy the manifest evidence gate.
 - Official raw response bytes and manifest not acquired. Therefore trusted observation admission remains BLOCKED; 20-session derivation and classifier integration NOT_DONE. This source metadata qualification is not a data-ingestion PASS or production authorization.
+
+
+## 2026-11-17 — H.10 registry change CI verified
+- Workflow run #221 (44030991201), registry commit 380918fc008ad96bccabbbab06b18b4ae6683df5: SUCCESS; test job and `python -m unittest qa.test_global_capital_rotation_overlay -v` step passed.
+- Workflow run #222 (44031034467), source-register commit d970737f9bb2cdc682ad5c8bd256c2b7fdf84d24: SUCCESS; test job and unittest step passed.
+- This confirms the one-entry registry change does not break current automated tests. It does not grant trusted data admission; raw official response bytes + exact evidence manifest still NOT_ACQUIRED. No 20-session derived series or classifier mapping has been approved.
