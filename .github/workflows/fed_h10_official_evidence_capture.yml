@@ -1,0 +1,30 @@
+name: Fed H.10 official raw evidence capture
+on:
+  push:
+    branches:
+      - research/taxonomy-crosswalk-contract-20261117
+    paths:
+      - "tools/capture_fed_h10_official.py"
+      - ".github/workflows/fed_h10_official_evidence_capture.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture official H.10 response and transport metadata
+        run: python tools/capture_fed_h10_official.py
+      - name: Upload immutable run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fed-h10-official-evidence-${{ github.run_id }}
+          path: fed_h10_capture/
+          if-no-files-found: error
+          retention-days: 90
