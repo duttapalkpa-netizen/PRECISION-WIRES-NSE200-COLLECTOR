@@ -1,0 +1,421 @@
+name: IMF BOP DSD raw acquisition and metadata QA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acquire-dsd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/imf_bop_dsd
+          URL='https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          printf '%s\n' "$URL" > evidence/imf_bop_dsd/request_url.txt
+          set +e
+          curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
+            --dump-header evidence/imf_bop_dsd/response_headers.txt \
+            --output evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml \
+            --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+            "$URL" > evidence/imf_bop_dsd/transfer_metadata.txt
+          CURL_STATUS=$?
+          set -e
+          printf 'curl_exit=%s\n' "$CURL_STATUS" >> evidence/imf_bop_dsd/transfer_metadata.txt
+          if [ "$CURL_STATUS" -ne 0 ]; then
+            echo "Official DSD acquisition failed; preserve diagnostics and upload artifact."
+            exit 1
+          fi
+          sha256sum evidence/imf_bop_dsd/IMF_BOP_DSD_2_6_0.xml > evidence/imf_bop_dsd/SHA256SUMS
+
+      - name: Regression test SDMX 2.1 Dataflow Structure Ref parsing
+        shell: bash
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          sample = """<mes:StructureMessage xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+              xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+              xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+            <mes:Structures>
+              <str:Dataflows>
+                <str:Dataflow id="BOP_BPM6" agencyID="IMF" version="1.0">
+                  <str:Structure>
+                    <com:Ref id="BOP" agencyID="IMF" version="2.6.0"
+                      package="datastructure" class="DataStructure"/>
+                  </str:Structure>
+                </str:Dataflow>
+              </str:Dataflows>
+            </mes:Structures>
+          </mes:StructureMessage>"""
+          root = ET.fromstring(sample)
+          local = lambda tag: tag.rsplit("}", 1)[-1]
+          flow = [e for e in root.iter() if local(e.tag) == "Dataflow"
+                  and e.attrib.get("id") == "BOP_BPM6"]
+          assert len(flow) == 1, "Dataflow fixture not identified exactly once"
+          refs = []
+          for e in flow[0].iter():
+              if local(e.tag) == "Structure":
+                  for ref in e.iter():
+                      if local(ref.tag) == "Ref":
+                          refs.append({k: ref.attrib.get(k) for k in ("agencyID", "id", "version")})
+          expected = {"agencyID": "IMF", "id": "BOP", "version": "2.6.0"}
+          assert refs == [expected], f"Unexpected DSD reference parse: {refs!r}"
+          print("PASS: SDMX 2.1 Structure/Ref parsed as IMF:BOP:2.6.0")
+          PY
+
+      - name: Regression test SDMX 2.1 ContentConstraint CubeRegion parsing
+        shell: bash
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          sample = """<mes:StructureMessage xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+              xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+              xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+            <mes:Structures>
+              <str:Constraints>
+                <str:ContentConstraint id="BOP_BP6_CONSTRAINT" agencyID="IMF" version="1.0" type="Actual">
+                  <str:ConstraintAttachment>
+                    <str:Dataflow>
+                      <Ref id="BOP_BPM6" agencyID="IMF" version="1.0"
+                        package="datastructure" class="Dataflow"/>
+                    </str:Dataflow>
+                  </str:ConstraintAttachment>
+                  <str:CubeRegion include="true">
+                    <com:KeyValue id="FREQ" include="true"><com:Value>Q</com:Value></com:KeyValue>
+                    <com:KeyValue id="REF_AREA" include="false"><com:Value>XX</com:Value></com:KeyValue>
+                    <com:KeyValue id="TIME_PERIOD"><com:TimeRange>
+                      <com:StartPeriod isInclusive="true">2020-Q1</com:StartPeriod>
+                      <com:EndPeriod isInclusive="false">2025-Q4</com:EndPeriod>
+                    </com:TimeRange></com:KeyValue>
+                    <com:Attribute id="UNIT_MEASURE" include="true"><com:Value>XDC</com:Value></com:Attribute>
+                  </str:CubeRegion>
+                  <str:CubeRegion include="false">
+                    <com:KeyValue id="FREQ" include="true"><com:Value>A</com:Value></com:KeyValue>
+                    <com:KeyValue id="REF_AREA" include="true"><com:Value>US</com:Value></com:KeyValue>
+                  </str:CubeRegion>
+                </str:ContentConstraint>
+              </str:Constraints>
+            </mes:Structures>
+          </mes:StructureMessage>"""
+          root = ET.fromstring(sample)
+          local = lambda tag: tag.rsplit("}", 1)[-1]
+          constraints = [e for e in root.iter() if local(e.tag) == "ContentConstraint"
+                         and e.attrib.get("id") == "BOP_BP6_CONSTRAINT"]
+          assert len(constraints) == 1
+          attachment = next(e for e in constraints[0] if local(e.tag) == "ConstraintAttachment")
+          flow_refs = []
+          for flow in attachment.iter():
+              if local(flow.tag) == "Dataflow":
+                  flow_refs.extend(
+                      {k: ref.attrib.get(k) for k in ("agencyID", "id", "version")}
+                      for ref in flow if local(ref.tag) == "Ref"
+                  )
+          assert flow_refs == [{"agencyID": "IMF", "id": "BOP_BPM6", "version": "1.0"}]
+          regions = [e for e in constraints[0].iter() if local(e.tag) == "CubeRegion"]
+          assert len(regions) == 2
+          region = regions[0]
+          second_region = regions[1]
+          second_keys = [e for e in second_region if local(e.tag) == "KeyValue"]
+          assert [k.attrib.get("id") for k in second_keys] == ["FREQ", "REF_AREA"]
+          assert [v.text for v in second_keys[0] if local(v.tag) == "Value"] == ["A"]
+          assert [v.text for v in second_keys[1] if local(v.tag) == "Value"] == ["US"]
+          keys = [e for e in region if local(e.tag) == "KeyValue"]
+          assert [(k.attrib.get("id"), k.attrib.get("include", "true")) for k in keys] == [
+              ("FREQ", "true"), ("REF_AREA", "false"), ("TIME_PERIOD", "true")]
+          assert [v.text for v in keys[0] if local(v.tag) == "Value"] == ["Q"]
+          assert [v.text for v in keys[1] if local(v.tag) == "Value"] == ["XX"]
+          tr = next(e for e in keys[2] if local(e.tag) == "TimeRange")
+          assert [(local(e.tag), e.text, e.attrib.get("isInclusive")) for e in tr] == [
+              ("StartPeriod", "2020-Q1", "true"), ("EndPeriod", "2025-Q4", "false")]
+          attrs = [e for e in region if local(e.tag) == "Attribute"]
+          assert len(attrs) == 1 and attrs[0].attrib.get("id") == "UNIT_MEASURE"
+          assert [e.text for e in attrs[0] if local(e.tag) == "Value"] == ["XDC"]
+          print("PASS: SDMX 2.1 CubeRegion KeyValue, include/exclude, TimeRange and Attribute parsed")
+          PY
+
+      - name: Acquire official IMF BOP_BPM6 dataflow and constraint metadata
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/imf_bop_dsd
+          declare -A REQUESTS
+          REQUESTS[dataflow]='https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          REQUESTS[constraint]='https://sdmxcentral.imf.org/sdmx/v2/structure/contentconstraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          for ITEM in dataflow constraint; do
+            URL="${REQUESTS[$ITEM]}"
+            DIR="evidence/imf_bop_dsd/$ITEM"
+            mkdir -p "$DIR"
+            printf '%s\n' "$URL" > "$DIR/request_url.txt"
+            set +e
+            curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
+              --dump-header "$DIR/response_headers.txt" \
+              --output "$DIR/raw.xml" \
+              --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+              "$URL" > "$DIR/transfer_metadata.txt"
+            STATUS=$?
+            set -e
+            printf 'curl_exit=%s\n' "$STATUS" >> "$DIR/transfer_metadata.txt"
+            if [ "$STATUS" -ne 0 ]; then
+              echo "Metadata acquisition failed for $ITEM; diagnostic files retained."
+              exit 1
+            fi
+            sha256sum "$DIR/raw.xml" > "$DIR/SHA256SUMS"
+          done
+
+      - name: Validate exact dataflow reference and constraint coverage structure
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, xml.etree.ElementTree as ET
+
+          base = Path("evidence/imf_bop_dsd")
+          failed = False
+
+          def local(tag):
+              return tag.rsplit("}", 1)[-1]
+
+          def inspect(name, expected_tag, expected_id):
+              global failed
+              folder = base / name
+              raw = folder / "raw.xml"
+              report = {"item": name, "expected_id": expected_id, "status": "UNKNOWN"}
+              if not raw.exists() or raw.stat().st_size == 0:
+                  report["reason"] = "raw XML missing or empty"
+                  failed = True
+              else:
+                  payload = raw.read_bytes()
+                  report.update(raw_bytes=len(payload), sha256=hashlib.sha256(payload).hexdigest())
+                  try:
+                      root = ET.fromstring(payload)
+                      nodes = [e for e in root.iter()
+                               if local(e.tag) == expected_tag and e.attrib.get("id") == expected_id]
+                      report.update(root_element=local(root.tag),
+                                    element_count=sum(1 for _ in root.iter()),
+                                    matching_artifact_count=len(nodes))
+                      if len(nodes) != 1:
+                          report.update(status="FAIL", reason="expected artefact ID not found exactly once")
+                          failed = True
+                      else:
+                          node = nodes[0]
+                          if name == "dataflow":
+                              refs = []
+                              for e in node.iter():
+                                  if local(e.tag) == "Structure":
+                                      for ref in e.iter():
+                                          if local(ref.tag) == "Ref":
+                                              refs.append({k: ref.attrib.get(k) for k in ("agencyID", "id", "version")})
+                              report["data_structure_refs"] = refs
+                              expected_ref = {"agencyID": "IMF", "id": "BOP", "version": "2.6.0"}
+                              report["expected_data_structure_ref"] = expected_ref
+                              exact_matches = [r for r in refs if r == expected_ref]
+                              report["exact_expected_reference_count"] = len(exact_matches)
+                              if len(refs) != 1 or len(exact_matches) != 1:
+                                  report.update(status="FAIL", reason="Dataflow must reference exactly IMF:BOP:2.6.0")
+                                  failed = True
+                              else:
+                                  report["status"] = "PASS"
+                          elif name == "constraint":
+                              cube_regions = [e for e in node.iter() if local(e.tag) == "CubeRegion"]
+                              report["cube_region_count"] = len(cube_regions)
+                              def dimension_inventory(region):
+                                  dims = []
+                                  for key in region.iter():
+                                      if local(key.tag) == "KeyValue":
+                                          values = [v.text for v in key if local(v.tag) == "Value" and v.text]
+                                          time_ranges = []
+                                          for tr in [v for v in key if local(v.tag) == "TimeRange"]:
+                                              time_ranges.append({
+                                                  "children": [
+                                                      {"element": local(x.tag), "value": (x.text or "").strip(),
+                                                       "isInclusive": x.attrib.get("isInclusive")}
+                                                      for x in tr
+                                                  ]
+                                              })
+                                          dims.append({
+                                              "dimension": key.attrib.get("id"),
+                                              "include": key.attrib.get("include", "true"),
+                                              "values": values,
+                                              "time_ranges": time_ranges
+                                          })
+                                  attributes = []
+                                  for attr in region.iter():
+                                      if local(attr.tag) == "Attribute":
+                                          attributes.append({
+                                              "id": attr.attrib.get("id"),
+                                              "include": attr.attrib.get("include", "true"),
+                                              "values": [(v.text or "").strip() for v in attr
+                                                         if local(v.tag) == "Value" and (v.text or "").strip()]
+                                          })
+                                  return {"dimensions": dims, "attributes": attributes}
+                              attachment = next((e for e in node if local(e.tag) == "ConstraintAttachment"), None)
+                              flow_refs = []
+                              if attachment is not None:
+                                  for flow in attachment.iter():
+                                      if local(flow.tag) == "Dataflow":
+                                          flow_refs.extend(
+                                              {k: ref.attrib.get(k) for k in ("agencyID", "id", "version")}
+                                              for ref in flow if local(ref.tag) == "Ref"
+                                          )
+                              expected_flow = {"agencyID": "IMF", "id": "BOP_BPM6", "version": "1.0"}
+                              report["constraint_dataflow_refs"] = flow_refs
+                              report["expected_dataflow_ref"] = expected_flow
+                              region_key_audits = []
+                              invalid_keys = []
+                              for region_index, region in enumerate(cube_regions):
+                                  keys = [key for key in region if local(key.tag) == "KeyValue"]
+                                  ids = [key.get("id") for key in keys]
+                                  region_key_audits.append({
+                                      "region_index": region_index,
+                                      "dimension_key_count": len(ids),
+                                      "dimension_ids_unique_within_region": (
+                                          len(ids) == len(set(ids)) and all(ids)
+                                      )
+                                  })
+                                  invalid_keys.extend(
+                                      {"region_index": region_index, "dimension_id": key.get("id")}
+                                      for key in keys
+                                      if (not key.get("id") or not any(
+                                          local(child.tag) in {"Value", "TimeRange"} for child in key
+                                      ))
+                                  )
+                              report["region_key_audits"] = region_key_audits
+                              report["dimension_key_count"] = sum(
+                                  item["dimension_key_count"] for item in region_key_audits
+                              )
+                              report["dimension_ids_unique_within_each_region"] = all(
+                                  item["dimension_ids_unique_within_region"] for item in region_key_audits
+                              )
+                              report["invalid_dimension_keys"] = invalid_keys
+                              report["cube_region_dimensions"] = [
+                                  {"include": region.attrib.get("include", "true"),
+                                   **dimension_inventory(region)}
+                                  for region in cube_regions
+                              ]
+                              if not cube_regions:
+                                  report.update(status="FAIL", reason="Constraint has no CubeRegion")
+                                  failed = True
+                              elif flow_refs != [expected_flow]:
+                                  report.update(status="FAIL", reason="Constraint must attach exactly to IMF:BOP_BPM6:1.0")
+                                  failed = True
+                              elif not report["dimension_key_count"] or not report["dimension_ids_unique_within_each_region"] or invalid_keys:
+                                  report.update(status="FAIL", reason="CubeRegion dimension keys are missing, duplicated or malformed")
+                                  failed = True
+                              else:
+                                  report["status"] = "PASS"
+                  except ET.ParseError as exc:
+                      report.update(status="FAIL", reason="malformed XML", error=str(exc))
+                      failed = True
+              (folder / "qa_report.json").write_text(json.dumps(report, indent=2) + "\n")
+              return report
+
+          reports = [
+              inspect("dataflow", "Dataflow", "BOP_BPM6"),
+              inspect("constraint", "ContentConstraint", "BOP_BP6_CONSTRAINT")
+          ]
+          (base / "metadata_semantic_qa.json").write_text(json.dumps({
+              "status": "FAIL" if failed else "PASS",
+              "reports": reports
+          }, indent=2) + "\n")
+          if failed:
+              raise SystemExit(1)
+          PY
+
+      - name: Parse XML and produce component inventory
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, sys
+          import xml.etree.ElementTree as ET
+
+          root_dir = Path("evidence/imf_bop_dsd")
+          raw = root_dir / "IMF_BOP_DSD_2_6_0.xml"
+          if not raw.exists() or raw.stat().st_size == 0:
+              (root_dir / "qa_report.json").write_text(json.dumps({
+                  "status": "UNKNOWN", "reason": "Raw XML missing or empty",
+                  "raw_bytes": raw.stat().st_size if raw.exists() else 0
+              }, indent=2) + "\n")
+              sys.exit(1)
+
+          payload = raw.read_bytes()
+          digest = hashlib.sha256(payload).hexdigest()
+          try:
+              root = ET.fromstring(payload)
+          except ET.ParseError as exc:
+              (root_dir / "qa_report.json").write_text(json.dumps({
+                  "status": "FAIL", "reason": "Malformed XML",
+                  "sha256": digest, "error": str(exc)
+              }, indent=2) + "\n")
+              sys.exit(1)
+
+          def local(tag):
+              return tag.rsplit("}", 1)[-1]
+
+          elements = list(root.iter())
+          dsd_nodes = [e for e in elements if local(e.tag) == "DataStructure"]
+          components = []
+          codelists = []
+          for e in elements:
+              name = local(e.tag)
+              if name in {"Dimension", "TimeDimension", "MeasureDimension",
+                          "PrimaryMeasure", "Attribute"}:
+                  components.append({
+                      "component_type": name,
+                      "id": e.attrib.get("id"),
+                      "urn": e.attrib.get("urn"),
+                      "annotations": [x.text for x in e.iter() if local(x.tag) == "AnnotationText" and x.text]
+                  })
+              elif name == "Codelist":
+                  codes = [x.attrib.get("id") for x in e.iter() if local(x.tag) == "Code"]
+                  codelists.append({
+                      "id": e.attrib.get("id"), "agencyID": e.attrib.get("agencyID"),
+                      "version": e.attrib.get("version"), "code_count": len(codes),
+                      "codes": codes
+                  })
+
+          inventory = {
+              "root_element": local(root.tag),
+              "dsd_count": len(dsd_nodes),
+              "dsd_ids": [e.attrib.get("id") for e in dsd_nodes],
+              "component_count": len(components),
+              "components": components,
+              "codelist_count": len(codelists),
+              "codelists": codelists,
+              "raw_bytes": len(payload),
+              "raw_sha256": digest
+          }
+          (root_dir / "component_inventory.json").write_text(
+              json.dumps(inventory, indent=2, ensure_ascii=False) + "\n"
+          )
+          valid = len(payload) > 0 and len(dsd_nodes) >= 1 and len(components) >= 1
+          report = {
+              "status": "PASS" if valid else "FAIL",
+              "raw_bytes": len(payload), "raw_sha256": digest,
+              "dsd_count": len(dsd_nodes), "component_count": len(components),
+              "codelist_count": len(codelists),
+              "validation": "well-formed XML; DSD and component inventory present" if valid else "DSD/components missing"
+          }
+          (root_dir / "qa_report.json").write_text(json.dumps(report, indent=2) + "\n")
+          if not valid:
+              sys.exit(1)
+          PY
+
+      - name: Upload raw response and QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd-acquisition-${{ github.run_id }}
+          path: evidence/imf_bop_dsd/
+          if-no-files-found: warn
+          retention-days: 90
