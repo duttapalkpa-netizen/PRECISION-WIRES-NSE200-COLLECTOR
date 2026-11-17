@@ -730,3 +730,13 @@
 - Exact FY2025-26 monthly segment observations, raw bytes/headers/length/retrieval timestamp/SHA-256 and historical PIT remain NOT_ACQUIRED/NOT_DONE. No chart pixel digitisation or third-party mirror data accepted. Official route map and category semantics VERIFIED; endpoint availability NOT_DETERMINED.
 - Scoped progress: route map 100%; segment hierarchy/provenance 100%; exact monthly observations 0%; raw manifest/hash 0%; PIT 0%; parser/registry/tests 0%. Overall Overlay NOT_CALCULABLE. Annual segment reconciliation remains complete and annual-only.
 - No observations, parsers, registries, tests, workflows or production files changed; no synthetic values/timestamps/hashes; ₹0; all production invariants unchanged. Source Register updated in preceding commit.
+
+
+## 2026-11-17 — NSDL pilot FY-wise FPI page integrity audit (quarantine)
+
+- Discovered alternate NSDL-hosted pilot route via SEBI official curation index. Page https://pilot.fpi.nsdl.co.in/Reports/Yearwise.aspx?RptType=5 shows annual INR crore columns Equity/Debt/Debt-VRR/Hybrid/Total and note data up to 30-Oct-2025; footer says website updated 05-Oct-2020. The FY2025-26 row is therefore only a partial snapshot through 30-Oct-2025, not full-year/current-2026 data.
+- FY2025-26 displayed 14,612 + 3,509 - 427 + 2,869 = 20,563, while displayed total is 35,601; +15,038 crore unreconciled residual. FY2024-25 displayed equity 11,999,989, debt 44, VRR 0, hybrid -368, total 11,944,596; displayed components sum 11,999,665, also inconsistent. Do not guess which fields are wrong or backfill residual.
+- CDSL FY page only through FY2024-25 and footer last updated 20-May-2020; its FY2024-25 row sums internally to 86,875.89, but cannot independently corroborate FY2025-26. NSDL pilot monthly page also carries 30-Oct-2025 data date and a 05-Oct-2020 footer; it distinguishes provisional exchange T-day inputs from confirmed custodian/depository reports. Do not mix these data classes.
+- Decision: quarantine both NSDL pilot annual rows from registry/signal use; route/vintage verified, arithmetic FAIL, raw export/bytes/headers/HTTP metadata/length/retrieval timestamp/SHA NOT_ACQUIRED, independent clarification/reconciliation 0%, parser/registry/production not approved. No repairs, normalization or inferred values.
+- Scoped progress: route discovery 100%; vintage assessment 100%; FY2025-26 arithmetic test 100% (FAIL); FY2024-25 arithmetic test 100% (FAIL); raw export/hash 0%; independent reconciliation 0%; parser/registry 0%; production 0%. Overall Overlay NOT_CALCULABLE.
+- No data ingestion, parser, tests, workflows or production changes; no synthetic values/timestamps/hashes; ₹0; all hard invariants unchanged. Source Register updated in preceding commit.
