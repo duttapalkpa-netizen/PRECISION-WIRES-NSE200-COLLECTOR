@@ -192,6 +192,60 @@ def latest(grouped,key,decision_at=None):
         raise ValueError(f"{key}: conflicting values share the same observation and publication vintage")
     return chosen
 
+
+def derive_fed_h10_broad_dollar_change_20obs(grouped, decision_at):
+    """Research-only percentage change across 20 prior valid H.10 observations."""
+    indicator = "fed_h10_nominal_broad_dollar_index"
+    try:
+        cutoff = _published_key(decision_at)
+        decision_date = datetime.fromisoformat(cutoff).date()
+    except (TypeError, ValueError):
+        raise ValueError("decision_at must be an ISO date or datetime")
+    by_date = {}
+    for row in grouped.get(indicator, []):
+        if row.get("quality_status") not in TRUSTED_QUALITIES:
+            continue
+        try:
+            observed = date.fromisoformat(row["date"])
+            asof = date.fromisoformat(row["as_of_date"])
+            published = _published_key(row["published_at"])
+            value = float(row["value"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not math.isfinite(value) or published > cutoff or observed > decision_date or asof > decision_date:
+            continue
+        current = by_date.get(observed)
+        candidate = {"date": observed, "value": value, "published": published}
+        if current is None or published > current["published"]:
+            by_date[observed] = candidate
+        elif published == current["published"] and value != current["value"]:
+            raise ValueError(f"conflicting H.10 values for {observed.isoformat()} at the same publication vintage")
+    ordered = [by_date[k] for k in sorted(by_date)]
+    # 20 prior valid observations plus the current observation = 21 values.
+    if len(ordered) < 21:
+        return None
+    window = ordered[-21:]
+    base, current = window[0], window[-1]
+    if base["value"] == 0:
+        raise ValueError("H.10 base observation must be non-zero")
+    return {
+        "indicator": "fed_h10_nominal_broad_dollar_change_pct_20obs",
+        "value": (current["value"] / base["value"] - 1.0) * 100.0,
+        "unit": "percent",
+        "window_observation_count": 21,
+        "prior_valid_observation_count": 20,
+        "window_start_date": base["date"].isoformat(),
+        "window_end_date": current["date"].isoformat(),
+        "base_value": base["value"],
+        "latest_value": current["value"],
+        "decision_at": cutoff,
+        "calendar_semantics": "20 prior valid Federal Reserve H.10 observation dates; not Indian trading sessions; no forward-fill",
+        "quality_status": "VERIFIED_OFFICIAL",
+        "production_eligible": False,
+        "not_equivalent_to": "ICE DXY / dxy_change_pct_20d"
+    }
+
+
 def classify(grouped,as_of_date=None,decision_at=None):
     if as_of_date is None:
         raise ValueError("as_of_date is required for reproducible freshness classification")
