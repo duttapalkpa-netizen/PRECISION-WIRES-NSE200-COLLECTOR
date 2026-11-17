@@ -394,3 +394,547 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Research module commit `b7099903939542edd82cc8b7d37f6a34b50718c3`; test commit `cc4d397f25e735e9f7b63d2da74b40baff1aaab9`. New CI Run #6 ID `43696697367` (code commit) and Run #7 ID `43696699661` (test commit) were observed QUEUED; #7 is the run containing both changes and must be used for next verification.
 - Historical replay remains NOT_STARTED pending Run #7 PASS and source/input gate. The previously inspected 200-session artifact does not contain circuit/price-band fields; the replay cannot claim circuit-feasible execution without a separately validated restriction source or an explicit limitation. Existing V11.4 signal file semantics must also be confirmed before treating it as an accepted V11.3 signal set.
 - No production selector, ranking, pressure-fade, CORE-672, collector, or historical source artifact modified.
+
+
+## 2026-11-15 — Run #7 PASS and signal-ledger fail-closed hardening
+- Verified cost-aware research CI Run #7 / ID `43696699661`: job `research-unit-tests` completed SUCCESS on the code + validation-test commits. Run #6 / ID `43696697367` was cancelled; do not repeat it.
+- Review of the accepted simulator found `run()` silently removed duplicate `CUT_OFF,SYMBOL` rows using `drop_duplicates()`, contrary to the fail-closed duplicate-key contract. It also conflated target touch with net profitability in `TARGET_HIT` and accepted infinite volume as a valid positive quantity.
+- Created isolated branch `research/cost-aware-signal-ledger-guard-20261115` from reviewed commit `56a8b63d4f5c286917db9368b96907383388143c`.
+- Hardened research-only simulator to reject duplicate normalized signal keys, make `TARGET_HIT` represent target execution independently of net profitability, and reject non-finite volume. Added focused regression tests for all three cases.
+- Module commit: `d930fa8a2f6d335c9c1682e147180250173a42cb`; module blob: `ec9b4e95c2b06ed98bb057af251f151fe12c36d2`.
+- Test commit: `0c798e0b12f538a46610d733f30c780b0bc479d7`; test blob: `48c6d3f5dfb9dd3f30ee936fa8595aeed9facdaf`.
+- New workflow runtime validation is pending; no PASS claim until its run is fetched. Historical replay remains BLOCKED pending signal-source acceptance and independent input/outcome gates. No production logic or production workflow modified.
+
+
+## 2026-11-16 — Critical H+3/H+5 forward-outcome alignment finding and isolated correction
+- Source review of `pipeline/walk_forward_backtest.py` (blob SHA `d085f7a2d35a88b4c4eaba65144a429a06961b09`) found `future_outcomes()` computes `shift(-1).rolling(h, min_periods=1).max()`. This is a trailing rolling window over shifted values, not the exact forward window T+1..T+h for h>1; `min_periods=1` also emits partial labels at the end of each symbol series. H+1 is not affected by the window-direction issue, but H+3/H+5 labels are not accepted as correctly aligned/matured from this implementation. Existing derived H+3/H+5 precision/lift and state labels must be treated as NOT_VERIFIED pending rebuild/reconciliation. Do not silently overwrite old artifacts.
+- Kept the V11.4 pipeline and all production logic untouched. Added isolated research helper `pipeline/forward_outcome_integrity.py` (commit `136a11721f8802e318f5881ae20a8df30739e5b0`) that computes exactly T+1..T+h per symbol, preserves input row order, rejects invalid dates/duplicate symbol-date keys, and emits NaN/UNKNOWN unless every future session and price in the horizon is valid.
+- Added `tests/research/test_forward_outcome_integrity.py` (commit `cf81c469de62c2806e2c672fb23de1c38c5da91b`) with nine regression tests: exact H1/H3/H5 high and close outcomes; full maturity/no partial tail labels; symbol isolation; unsorted input; duplicate/date rejection; invalid future price; invalid horizons; input immutability.
+- Updated isolated 5-minute research CI workflow to include the new helper and discover all `tests/research/test_*.py` tests. Workflow commit: `11d80d5a9394fc95c4e2be312ed60931b526ae8d`.
+- Runtime CI validation is pending; no PASS claim until run and job result are fetched. No historical replay or production pipeline modification was performed. CORE-672, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, collector workflow and archived artifacts remain unchanged.
+- Progress: source defect identification 100%; isolated correction implementation 100%; regression-test authoring 100%; CI runtime verification pending; corrected historical replay 0%; independent outcome reconciliation 0%; final V11.3 research acceptance BLOCKED.
+
+
+## 2026-11-16 — Forward-outcome integrity PR checkpoint
+- Created draft PR #38: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/pull/38 . It is OPEN, DRAFT, NOT MERGED. No production code is included.
+- Added isolated exact-forward label helper commit `136a11721f8802e318f5881ae20a8df30739e5b0`; nine tests commit `cf81c469de62c2806e2c672fb23de1c38c5da91b`.
+- CI workflow commit `11d80d5a9394fc95c4e2be312ed60931b526ae8d` expanded push paths and test discovery; follow-up commit `9f0c5ae865cd475e02eba11bcd88a72f6d2e0b1a` aligned pull_request path filters. Bounded timeout remains five minutes.
+- Independent fixture arithmetic sanity check confirmed ABC cutoff 2026-01-01 yields H1 HIGH +2%, H3 HIGH +6%, H3 CLOSE +5%, H5 HIGH +6%, H5 CLOSE +5%; XYZ labels remain isolated. This is a local fixture sanity check only, not GitHub CI PASS.
+- GitHub workflow-run listing/status endpoint available through this connector does not expose push-triggered run listing; the commit combined-status endpoint currently returns no statuses, and PR-triggered run lookup returned no runs at the time of check. Therefore CI runtime remains NOT_VERIFIED; do not infer PASS.
+- Historical outcome rebuild remains NOT_STARTED; old H+3/H+5 artifacts remain NOT_VERIFIED. Do not reuse their precision/lift or state labels as accepted evidence until corrected rebuild and independent ledger reconciliation.
+- Scoped progress: defect audit 100%; isolated helper 100%; regression test source 100%; workflow wiring 100%; fixture arithmetic sanity 100%; CI runtime verification pending; historical replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Second-pass test audit: global-session maturity guard
+- Reopened PR #38 files and performed a test-by-test source audit. Found a defect in the newly authored maturity assertion: it unintentionally included XYZ rows while asserting ABC's H+3 tail was immature. Corrected the assertion to scope ABC only.
+- More importantly, identified that symbol-local row shifting could silently skip a missing symbol/date row and count a later date as the next trading session. Hardened `pipeline/forward_outcome_integrity.py` to use the dataset-wide unique trading-session calendar and require a valid row for the symbol on every one of the next H sessions; missing symbol/session observations now remain UNKNOWN.
+- Added a regression test proving a missing ABC row on a global market session cannot be skipped when calculating H+1/H+3. Updated helper commit `2d50256f0319b0d32c476054b1d0236f28826229`; test commit `a5963b6e3f4f84e8725fba7f6abb2ce62d151055`.
+- The forward-outcome suite now contains 10 test methods (previous PR description said nine; description must be updated). The workflow still discovers all `test_*.py` research tests and has a 5-minute timeout.
+- Branch comparison against main: 11 commits ahead, 0 behind. No production file changed; PR #38 remains draft/unmerged. CI run listing still returns no PR-triggered runs and combined commit status must be checked again; no runtime PASS claim.
+- Progress: source/test audit 100%; global calendar guard implementation 100%; 10-test source suite 100%; CI runtime pending; full historical rebuild 0%; independent reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Research contract decision reconciliation and replay gate
+- Re-read the full research contract and simulator source rather than repeating the earlier source audit. Confirmed simulator records target touch independently of net profitability (`TARGET_HIT = reason == TARGET`), applies 0.22 percentage-point cost once, enters next global session OPEN, uses intraday HIGH, -3% stop, conservative stop-first, and horizon-final CLOSE. Existing focused tests cover target touch with negative net return, stop-first, gap stop, missing symbol sessions, maturity and duplicate keys.
+- The contract still incorrectly said G0 was blocked pending decisions, despite the user's previously explicit approval of the above conventions. Reconciled the contract to freeze those exact research-only rules and mark G0 PASS for convention approval; circuit/price-band feasibility remains explicitly unverified due missing validated restriction data, and portfolio sizing/concurrency remain undefined, so only per-trade metrics are permitted.
+- Contract update commit: `62eb7c42ec01c490838f2eb62b4d94d651ade0f8`. No simulator or production code changed in this step.
+- Replay is still not safe to start: the actual OHLC source artifact and accepted signal CSV must be present and provenance/hash-verified in the active workspace; the repository's simulator defaults alone do not prove those inputs exist. CI for PR #38 remains NOT_VERIFIED (connector returned no workflow runs/statuses); no PASS inferred.
+- Progress: decision/contract reconciliation 100%; simulator convention source review 100%; CI runtime verification pending; source-input provenance gate 0%; corrected historical replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Historical replay input provenance audit (read-only)
+- Audited the exact input contracts and source-generation path for the research replay. The simulator expects `data/processed/nse_eq_200_sessions.csv` and `outputs/backtest/walk_forward_predictions.csv`; these are runtime-generated paths, not evidence that the files currently exist or are verified in this session.
+- Confirmed `collector/build_200_sessions.py` creates the processed OHLC/delivery dataset from `data/raw/sec_bhavdata_full_*.csv`, and writes `data/processed/nse_eq_200_sessions.csv` plus `symbol_session_coverage.csv`. The main collector workflow runs `collector/nse_download.py --sessions 200`, then builder, QA, V11.4 walk-forward, and uploads `data/processed/`, `data/reference/`, `data/qa/`, and `outputs/backtest/` as a GitHub Actions artifact. The separate prospective workflow independently rebuilds 200 sessions and uploads audit outputs.
+- Input provenance gate remains BLOCKED: no actual downloaded artifact bytes, artifact ID, SHA-256, row count, unique symbol/session counts, date range, or signal-file content were available from the repository source inspection. Do not substitute the previously reported 317-session archive for the 200-session path expected by this simulator; reconcile exact source artifact and intended coverage first.
+- Newly identified QA weakness (audit finding, not changed): `collector/build_200_sessions.py` calls `drop_duplicates(["SYMBOL","DATE"])` before QA, silently suppressing duplicate source rows rather than failing closed. `qa/validate_dataset.py` checks duplicate keys only after that suppression, and its PASS gate requires at least 200 raw session-list entries but does not assert processed DATE count equals session-list count or that each symbol's missing sessions are accounted for. Therefore a PASS from this QA script alone is insufficient proof of raw-to-processed row integrity or per-symbol full-session coverage.
+- Do not modify the protected collector workflow or production builder in this task. Record this as a source-integrity blocker requiring an isolated audit/check against the original raw files and the uploaded artifact before any replay.
+- Workflow artifact API listing could not be retrieved through the connected GitHub interface in this audit; no artifact ID or run was invented. Existing CI status for PR #38 remains NOT_VERIFIED; no PASS claim.
+- Progress: input-path/source-flow audit 100%; artifact bytes/hash verification 0%; raw-to-processed duplicate reconciliation 0%; global session/date reconciliation 0%; signal-file provenance verification 0%; corrected replay 0%; independent ledger reconciliation 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Read-only raw-to-processed integrity audit implemented
+- Added `scripts/research/audit_raw_processed_integrity.py`, a read-only audit that hashes each raw Bhavcopy file and processed dataset; derives session dates from raw filenames; detects duplicate raw and processed SYMBOL/DATE keys; compares raw versus processed session-date sets and distinct symbol/date key sets; and reports symbol-level session gaps without fabricating rows.
+- Added five focused tests in `tests/research/test_raw_processed_integrity.py`: exact match PASS; duplicate raw key FAIL; missing processed date/key FAIL; extra processed date FAIL; symbol session gap reported without false failure or synthetic fill.
+- Wired both new files into the existing 5-minute research-only unittest workflow. No production collector, builder, QA, selector, ranking, pressure-fade, CORE-672, or main workflow changed.
+- Commits: audit script initial `7158cec7e1eb1d7c1f736a6453aa0958b452de53`; test `55a4812f15b302221f65febff48894ea1199d6cc`; newline correction `d6e736fafc67c698966feb9bdae173e1ad684a3f`; workflow wiring `22e4ca4c618c5e36c34968215333af3ca83741b3`.
+- Important interpretation: a symbol-level missing session is reported as a coverage gap but does not automatically fail the whole raw-to-processed key audit, because listings/suspensions/source availability require separate evidence. No missing row is synthesized. The audit is not yet run against the real Actions artifact because artifact ID/bytes are not available in the current connected session.
+- CI status is pending/not verified; source files and tests are committed but no runtime PASS is claimed.
+- Progress: audit utility implementation 100%; five test cases authored 100%; 5-minute workflow wiring 100%; GitHub ledger update 100%; CI runtime 0%/pending; actual artifact download/hash audit 0%; corrected replay 0%; independent reconciliation 0%; final acceptance BLOCKED.
+
+
+### CI runtime update — 2026-11-16
+- The newly wired PR-triggered research workflow has now started: Run #35, ID `43747974395`.
+- Job `research-unit-tests`, job ID `132915404242`. At last inspection, checkout and Python setup completed; dependency installation was in progress; unittest step had not started. No conclusion/PASS yet.
+- The run is recorded as IN_PROGRESS, not PASS. Recheck this run before any replay or acceptance decision.
+
+
+## 2026-11-16 — CI cancellation diagnosis and mitigation
+- Rechecked Run #35 (`43747974395`), job `132915404242`: workflow ended CANCELLED; dependency installation completed but the unittest step was skipped. This is not a test failure and not a PASS.
+- Job log shows GitHub reported `The operation was canceled` immediately after installing latest pandas 3.1.1 and numpy 2.5.4. The workflow used `concurrency.cancel-in-progress: true`; rapid consecutive commits on the same branch could cancel an in-flight run. Dependency versions also drifted beyond repository requirements (`pandas>=2.2,<3`, `numpy>=1.26,<3`).
+- Mitigation committed: concurrency now has `cancel-in-progress: false`; CI installs the repository-compatible ranges `pandas>=2.2,<3` and `numpy>=1.26,<3`. Commit `4654f9648b6c018f5d148231e3ce7a8b88a6da4d`.
+- This is a targeted CI reliability fix; no production pipeline or strategy logic changed. A new run was not yet returned by the commit-workflow-run lookup at the time of this ledger update. CI runtime remains NOT_VERIFIED.
+- Updated progress: cancellation diagnosis 100%; mitigation commit 100%; rerun result pending; actual NSE artifact integrity audit 0%; replay 0%; final acceptance BLOCKED.
+
+
+## 2026-11-16 — Research CI PASS + actual 200-session raw/processed artifact reconciliation
+### CI evidence
+- PR workflow Run #40: ID `43748065772`, conclusion SUCCESS; job `research-unit-tests` ID `132915699706` SUCCESS.
+- Job log explicitly reports `Ran 50 tests in 0.094s` and `OK`. This includes the five new raw/processed integrity audit tests, forward-outcome integrity tests, cost-aware replay tests, and existing NIC concordance tests.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43748065772
+### Actual raw archive artifact
+- Located successful NSE raw backfill Run #25: ID `43746369460`; merge job ID `132911365036` SUCCESS; all 21 bounded shard acquisition jobs shown SUCCESS.
+- Downloaded artifact `nse-200-session-raw-archive-25`, artifact ID `14174496957`, size 26,279,303 bytes. GitHub artifact digest and independently computed ZIP SHA-256 both equal `8bd3b32e9efb1ae39086b1fe5901307e17d5f8eb245e615f82c2beb1b7d2f308`.
+- Independently inspected archive and embedded `qa/raw_archive_manifest.json`: status PASS, exactly 200 raw Bhavcopy files / 200 distinct dates, 2026-01-21 through 2026-11-13; 500,733 EQ rows; 2,997 unique symbols; all 200 per-file SHA-256 values and manifest row counts/date fields matched; duplicate raw SYMBOL/DATE key rows = 0.
+### Processed + signals/replay artifact
+- Downloaded successful cutoff-safe replay Run #21 artifact `v11-3-cutoff-safe-replay-21`, artifact ID `14174526631`; GitHub digest and independently computed ZIP SHA-256 both equal `69494bd25d688f7aa48a30f969f154f5f13229b19cac483deb5d5c8077c6573b`.
+- Processed input `data/processed/nse_eq_200_sessions.csv` SHA-256 `8c433c8163dd5a52faf02ffe29e77571043c5791716c65d8c04cfca98ee857b1`. Independently compared all raw EQ SYMBOL/DATE keys against processed dataset: raw rows 500,733; processed rows 500,733; unique symbols 2,997 each; sessions 200 each; duplicate keys raw=0 / processed=0; missing raw-to-processed keys=0; extra processed keys=0; missing/extra session dates=0. Raw-to-processed key reconciliation PASS for this exact artifact pair.
+- Historical signal file SHA-256 `0e57446e98c372fb832bcfa5a4957791142e88a8f10bacc04e3dc61a945a0df3`; 5,880 rows; 196 cutoff dates; exactly 30 rows per cutoff; 0 duplicate cutoff/symbol keys; every signal symbol/cutoff existed in processed input. This is key-presence provenance only, not full feature look-ahead proof.
+- Cost-aware trade ledger: 17,640 rows; zero duplicate cutoff/symbol/target/horizon keys. Embedded independent replay audit says PASS, blockers empty, execution reconciliation errors=0, net arithmetic errors=0, exclusion policy errors=0.
+- Performance evidence is not a profitability PASS: gross target hit rates were 12.87% (5%/H+1), 9.04% (10%/H+3), 2.83% (20%/H+5); mean net returns after 0.22 percentage-point round-trip cost were -0.813%, -0.877%, -0.926% respectively. Median net returns were -1.669%, -3.220%, -3.220%. Slippage not modelled. This historical research-only adapter does not invoke the production selector or production RANKING_SCORE.
+- Historical calibration labels/score construction and strict no-lookahead provenance still require code-level review against the exact signal generation commit. The separate previously identified H+3/H+5 walk-forward label defect remains NOT_VERIFIED until corrected labels are regenerated and independently audited; do not substitute this artifact's simulation outputs for that separate acceptance gate.
+### Current state
+- PASS: 50-test research CI; raw archive per-file hashes/date/row checks; raw-to-processed exact SYMBOL/DATE key reconciliation for the exact two artifacts above; basic signal cutoff-key presence; independent replay arithmetic reconciliation.
+- NOT_VERIFIED: complete calibration-label no-lookahead audit; rerun on corrected forward outcome labels; current-main production collector artifact pairing; price-band/circuit execution; slippage and portfolio sizing/drawdown.
+- BLOCKED: final paper acceptance / claim of profitable scanner.
+- Next step: inspect exact signal-generation source and prove calibration uses only fully matured observations available at each cutoff; then bind the exact processed/signal/replay artifacts to their producing commit and regenerate the H+3/H+5 corrected event labels. Do not repeat the raw-to-processed audit for this exact artifact pair.
+
+
+## 2026-11-16 — Historical calibration independent recomputation + timestamp semantic audit
+### Exact source/artifact reviewed
+- Source generation run: #21, ID `43746369505`, commit `2315455ae6e7e98e6a80e95d8d3aa4cf68bf6919`; workflow `.github/workflows/v11_3_historical_signals_research.yml`; successful job `132910523067`.
+- Generator source: `pipeline/v11_3_historical_signals_research.py`; blob SHA `(source blob verified in GitHub during audit)`; feature helper source `pipeline/walk_forward_backtest.py`, blob SHA `d085f7a2d35a88b4c4eaba65144a429a06961b09`.
+- Artifact `v11-3-cutoff-safe-replay-21`, ID `14174526631`, SHA-256 `69494bd25d688f7aa48a30f969f154f5f13229b19cac483deb5d5c8077c6573b`.
+- Processed input SHA-256 `8c433c8163dd5a52faf02ffe29e77571043c5791716c65d8c04cfca98ee857b1`; calibration audit CSV 500,733 rows; signal CSV 5,880 rows.
+### Independent calibration reconstruction — PASS for this exact artifact
+- Rebuilt next-3-global-session HIGH excursion labels directly from processed OHLC, requiring the symbol to have observations on each of the next three global sessions.
+- Reconstructed each cutoff's eligible training population using only label cutoff sessions <= current cutoff index - 3.
+- Compared expected state sample counts and H+3 >=10% hit rates against every audit row; 489,756 available/unknown state-row checks; mismatches = 0.
+- Independently recomputed calibration score `clip(50 + 50 * state_hit_rate / max_eligible_state_hit_rate, 0, 100)`; 489,756 available rows, mismatches = 0; max absolute floating-point difference 4.27e-14.
+- Joined all 5,880 selected signals to their audit rows; missing matches = 0; calibration sample/rate/score mismatches = 0.
+- Source review: `add_features()` and `add_tomorrow_features()` use current/prior OHLCV, rolling/EMA, and same-date cross-sectional values; `add_tomorrow_features` does not shift from future rows despite its name. Calibration labels are created separately and only used after three global sessions mature. No direct feature look-ahead found in the inspected generator/helper paths.
+### Timestamp semantics — BLOCKER / NOT PASS
+- All 5,880 signal rows set `SIGNAL_TIMESTAMP` to `pd.Timestamp(cutoff_date).isoformat()`, yielding `YYYY-MM-DDT00:00:00` for every signal.
+- However, the generator's features include that cutoff session's OHLCV, including same-day close/high/low/current volume. The exact data availability time is therefore not midnight. The input only supplies a trading date; no verified exchange publication/close timestamp is recorded.
+- Do not fabricate a clock time. The timestamp is semantically false/misleading and can imply look-ahead/chronology errors. Treat all 5,880 `SIGNAL_TIMESTAMP` fields as NOT_VERIFIED; the date-only `CUT_OFF` remains the valid as-of key. The replay ledger currently also copies cutoff midnight into its `SIGNAL_TIMESTAMP`; same correction needed there.
+- Required repair: retain `CUT_OFF` as date-only as-of date, add/use an explicit date-only `SIGNAL_AS_OF_DATE` if needed, and leave exact `SIGNAL_TIMESTAMP` null unless an official source proves actual publication/availability time. Add regression tests that reject midnight-as-observed-time and ensure replay preserves null timestamp while using CUT_OFF for execution.
+### Status / next step
+- PASS: independent H+3 calibration sample/rate/score reconstruction; signal-to-audit mapping; source-level review found no direct future feature shift in inspected functions.
+- NOT_VERIFIED: actual exact intraday information-availability timestamp; historical signal timestamp semantics.
+- BLOCKED: strict end-to-end no-lookahead acceptance until timestamp schema is corrected and CI/artifact regenerated. H+3/H+5 separate walk-forward label defect remains unresolved.
+- Next task: research-only timestamp semantic repair in the historical signal generator and cost-aware replay output, with targeted regression tests and a short CI run. Do not change production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or engines A-E.
+
+
+## 2026-11-16 — Research-only timestamp semantic repair committed; CI pending
+- Implemented on source branch `research/nse-raw-manifest-retention-20261115` (PR #37 branch; no merge/production change):
+  - Generator now writes `SIGNAL_AS_OF_DATE=YYYY-MM-DD` and leaves `SIGNAL_TIMESTAMP` null because input contains date-only OHLC and no verified publication/availability clock time.
+  - Cost-aware replay now carries the same date-only as-of key and null timestamp for both executable and excluded trades. Replay input rejects non-null `SIGNAL_TIMESTAMP` values to prevent reuse of fabricated midnight timestamps.
+  - Independent replay audit rejects non-null signal/trade timestamps and checks `SIGNAL_AS_OF_DATE` exactly equals `CUT_OFF`.
+  - Added three regression tests: generator timestamp semantics; executable replay preserves null timestamp/date key; excluded replay preserves null timestamp/date key.
+- Commits on source branch, in order:
+  - generator initial repair `fef1369eebae7ecc4783bbb1bc212e8f5a350ffb`
+  - replay propagation and fail-closed input check `01ff9f90e4df859d09e7667361ba48976fcd44d7`
+  - three timestamp regression tests `8074b203720a67ea3be5688fd0a5a195d193bd19`
+  - independent audit timestamp checks `6d98df1f69eab5b0ece745b3ba285c7d2ff36509`
+  - corrected Python quoting in helper `14c23b8933b70d448c81d267a182f68e12947fd7`
+  - workflow adds audit script trigger, stable pandas/numpy version ranges and disables in-progress cancellation `63c45276c49534a5e469ba219609d85da4f424c9`
+- Workflow retains 10-minute maximum because it also downloads/verifies raw archive, rebuilds the processed dataset and runs historical replay; unit test additions are small. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or A-E production code changed.
+- CI has been triggered by the final workflow commit; runtime conclusion must be fetched before claiming PASS. If workflow does not trigger, inspect branch/PR event wiring; do not infer success from commits.
+- Prior Run #21's 5,880 historical signals and 17,640 trade rows remain immutable historical evidence with misleading midnight timestamps; they are NOT corrected artifacts and must not be reused for final acceptance. New run must regenerate signals/replay and artifact hashes.
+- Status: code edits committed 100%; test source added 100%; independent audit guard added 100%; CI runtime NOT_VERIFIED; regenerated artifact 0%; strict no-lookahead acceptance BLOCKED until CI and new artifact checks pass.
+
+
+### CI trigger checkpoint — 2026-11-16
+- Final workflow commit `63c45276c49534a5e469ba219609d85da4f424c9` triggered PR Run #32, ID `43748694785`, event `pull_request`, head SHA matches the workflow commit, current status PENDING at last poll. No jobs had yet been returned by the jobs endpoint. This is pending, not PASS.
+- PR #37 remains OPEN; do not merge. Corrected artifacts and new SHA-256 values are pending the successful run.
+
+
+### Run #32 live checkpoint — 2026-11-16
+- Re-polled GitHub Actions run #32, ID `43748694785`, head SHA `63c45276c49534a5e469ba219609d85da4f424c9`: status IN_PROGRESS; job `historical-signals-and-replay`, ID `132917876701`, IN_PROGRESS.
+- Completed steps: job setup, checkout, Python setup. Current step: `Install minimal research dependencies` IN_PROGRESS. Archive download, manifest verification, dataset rebuild, historical signal generation, replay, independent audit, regression tests and artifact upload are still PENDING.
+- This is a queue/runtime checkpoint only. No CI PASS, no corrected artifact, no new hashes, and no acceptance promotion. Do not start a duplicate run while this one is active.
+
+
+
+## 2026-11-16 — Run #32 corrected timestamp artifact regenerated and independently audited
+- GitHub Actions Run #32: ID `43748694785`, workflow job `historical-signals-and-replay` ID `132917876701`, completed SUCCESS. Source head commit: `63c45276c49534a5e469ba219609d85da4f424c9`; PR merge-ref checkout `7cc4c6d96c1f1d4b80270dd27e1c7393f9b01f54`. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43748694785
+- All workflow steps SUCCESS: dependency install; download immutable raw archive; raw manifest/session verification; processed dataset rebuild; exact processed-to-raw session-date equality; cutoff-safe historical signal generation; cost-aware H+1/H+3/H+5 replay; independent reconciliation; timestamp/calibration regression tests; artifact upload.
+- Source archive used by this run: `nse-200-session-raw-archive-5`, artifact ID `14170166475`; downloaded ZIP digest verified by Actions as `3c15ceb5cd6cb3270515090eb8393d22f8ca609a6032d0d7e128c5b78fb57494`. Embedded manifest: 200 raw files / 200 sessions, 2026-01-21 through 2026-11-13.
+- Newly regenerated artifact: `v11-3-cutoff-safe-replay-32`, artifact ID `14175118322`, size 25,817,040 bytes, GitHub artifact ZIP SHA-256 `141109906b276a37b241a13fa583a8b8d732245e8735a93dea25ff0de4426599`, retention through 2027-02-13. Artifact URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43748694785/artifacts/14175118322
+- Independent replay audit output: status PASS; blockers=[]; 5,880 signal rows across 196 cutoffs; 17,640 trade rows; 17,023 executable and 617 excluded; execution reconciliation errors=0; net arithmetic errors=0; exclusion policy errors=0. Independent audit SHA-256s: processed input `d046f879b6b35ee2740ff6b721dee4cecc1ff5761ef644d5b399bb80333fb928`; signals `cce0f8039c2c6930022b3f00adb0f08f2dfe7ee0cf701a8e9a8f471066456bcd`; trade ledger `b5d66feef1a2b8901a916c01bba3e96052c10a78fa7596c5587737f943abb1cc`; metrics `e014c90bfe6f994d36402ac6f6eb243db94d67f9f783907f420f8ebcbd16b415`.
+- Timestamp semantic repair verified in regenerated outputs: date-only `SIGNAL_AS_OF_DATE`; exact `SIGNAL_TIMESTAMP` remains null; replay propagates null and uses `CUT_OFF` for date-based execution. Seven focused regression tests passed (7/7), including below-minimum sample UNKNOWN, no matured window UNKNOWN, fully matured cutoffs only, empty replay null timestamp, executable replay null timestamp/date-only as-of, and midnight timestamp rejection.
+- Performance remains negative after 0.22 percentage-point round-trip cost: +5%/H+1 gross hit 12.87%, mean net -0.813%, median -1.669%; +10%/H+3 gross hit 9.04%, mean net -0.877%, median -3.220%; +20%/H+5 gross hit 2.83%, mean net -0.926%, median -3.220%. This is an integrity/replay PASS, NOT a profitability PASS. Slippage, circuit/price-band feasibility and portfolio sizing/concurrency remain unmodelled or unverified.
+- The new artifact supersedes Run #21's timestamp-defective artifact for the corrected research replay. Preserve Run #21 as immutable historical provenance; do not reuse it for final acceptance.
+- Status: timestamp code repair 100%; focused regression tests 100% / 7 of 7 PASS; Run #32 workflow 100% SUCCESS; corrected artifact generation 100%; independent replay reconciliation 100% PASS; timestamp semantic gate PASS for this artifact; profitable strategy gate BLOCKED; project-wide Hard Gate and final paper remain BLOCKED pending separate unresolved items (including H+3/H+5 forward-label defect, CORE-672 semantic independence, Macro-Geo/Factor Registry, circuit/slippage and portfolio tests).
+- No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 definitions, engines A-E production code, collector production workflow, or default branch changed. PR #37 remains open/unmerged; PR #38 remains open/draft/unmerged. No paid API or spend.
+- Next highest-value task: inspect and correct the separate H+3/H+5 forward-label window defect in `pipeline/walk_forward_backtest.py` in an isolated research-only branch, add exact T+1..T+h maturity and no-partial-tail regression tests, then run a short CI and independently recompute labels. Do not repeat Run #32, timestamp repair, raw archive verification or this replay audit absent new changes.
+
+
+
+## 2026-11-16 — H+3/H+5 forward-label defect: isolated research-only correction committed; CI pending
+- After Run #32 passed, inspected exact source `pipeline/walk_forward_backtest.py` (prior blob SHA `d085f7a2d35a88b4c4eaba65144a429a06961b09`). Confirmed `shift(-1).rolling(h, min_periods=1).max()` is a trailing rolling window over shifted values, not the exact forward T+1..T+h window for h>1; `min_periods=1` also emits partial-tail outcomes. This invalidates existing H+3/H+5 label values near the cutoff and tail.
+- Research-only correction on `research/nse-raw-manifest-retention-20261115`: introduced `_forward_window_max(series, horizon)`, which shifts by one session, reverses for forward rolling, requires `min_periods=horizon`, and restores original order. `future_outcomes()` sorts by SYMBOL/DATE and uses exact T+1..T+h maxima for HIGH and CLOSE. Incomplete future windows remain NaN/UNKNOWN; no partial-tail labels.
+- Added three regression tests: H+3 uses exact next-three rows and excludes a later out-of-window spike; H+5 requires all five future rows and leaves all immature tail rows NaN; H+1 HIGH/CLOSE labels use only the next session and final row remains NaN.
+- Commits: source fix `6c2e90248b556da11ce8d7b1075749270b60700a`; tests `e16b742c8d5ee19e14f2cbf2e70ce3f1bd7358cd`; workflow trigger path includes `pipeline/walk_forward_backtest.py`, commit `ec95660f8e559346cd8d52103af2e5c6e6c3893f`.
+- CI lookup for final workflow commit `ec95660f8e559346cd8d52103af2e5c6e6c3893f` returned no workflow run at first poll. Runtime validation is PENDING / NOT_VERIFIED; do not claim PASS. No duplicate run dispatched.
+- Scope: code correction 100%; focused tests authored 100%; workflow trigger wiring 100%; CI runtime 0% / pending; corrected H+3/H+5 artifact regeneration 0%; independent full-dataset label recomputation 0%; acceptance BLOCKED until runtime and artifact verification.
+- This correction does not modify production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A-E, collector workflow or production output. PR #37 remains open/unmerged; PR #38 remains open/draft/unmerged.
+- Next action: poll for the workflow triggered by the above commit. If it passes, run a separate bounded research-only label rebuild/audit against the exact 200-session artifact and compare every H+1/H+3/H+5 outcome against a direct T+1..T+h reference implementation; retain incomplete tails as UNKNOWN. Do not repeat Run #32 or timestamp repair.
+
+
+
+### CI checkpoint — forward-label correction (2026-11-16)
+- Located the exact PR workflow run missed by the commit-run wrapper: Run #36, ID `43749155334`, workflow `V11.3 Research Cutoff-Safe Historical Signals + Cost-Aware Replay`, head SHA `ec95660f8e559346cd8d52103af2e5c6e6c3893f`, PR #37. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43749155334
+- At direct GitHub REST recheck, run status remained `pending`, conclusion null; jobs endpoint returned an empty list. No test job had started; no runtime PASS/FAIL and no corrected artifact can be claimed.
+- Related PR workflows for other changed files did complete SUCCESS (NSE Raw Manifest Official-Source Probe Run ID `43749155298`; NSE Raw Archive Manifest Tests Run ID `43749143112`), but these are not the V11.3 historical-signal/replay workflow and do not validate the modified forward-label code. Do not substitute them as evidence.
+- No duplicate run dispatched, no rerun, no production changes. Next action is poll Run #36 until jobs start/complete; then inspect its job log and artifact before accepting the forward-label fix.
+
+
+## 2026-11-16 — Run #36 H+3/H+5 forward-label runtime validation PASS; artifact hash verified
+- Polled the exact previously pending Run #36; no duplicate workflow was dispatched. Final GitHub run status: `completed`, conclusion `success`; run ID `43749155334`; job ID `132919512328`; head SHA `ec95660f8e559346cd8d52103af2e5c6e6c3893f`; URL https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43749155334.
+- All substantive workflow steps completed SUCCESS: immutable raw archive download, manifest/session verification, processed dataset build, exact processed-to-raw session-date equality, cutoff-safe signal generation, cost-aware H+1/H+3/H+5 replay, independent signal/execution/cost/metric reconciliation, cutoff-safe calibration regression tests, and artifact upload. Cleanup steps also completed; job conclusion SUCCESS.
+- Artifact: `v11-3-cutoff-safe-replay-36`, artifact ID `14175433267`, size 25,817,040 bytes, retention until 2027-02-13. GitHub-reported digest and independently computed downloaded ZIP SHA-256 both equal `da4243672222fc764214bc8dcc9ef2afe3fbf661724c95f3c09d6581a3bca6e1`. Artifact URL https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43749155334/artifacts/14175433267.
+- Artifact manifest reports 200 sessions (2026-01-21 through 2026-11-13), 500,733 processed rows, 2,997 symbols, 5,880 signals across 196 cutoffs, and timestamp policy: `SIGNAL_AS_OF_DATE` is date-only; `SIGNAL_TIMESTAMP` null because exact official availability time is absent. Independently inspected both signal CSV and trade ledger: all 5,880 signal timestamps and all 17,640 trade timestamps are null; date-only as-of fields are populated and align with CUT_OFF.
+- Independently verified all three historical-signal output SHA-256 values and byte lengths against the manifest: signals `cce0f8039c2c6930022b3f00adb0f08f2dfe7ee0cf701a8e9a8f471066456bcd`; coverage `f88fe42aab0965c1d27039baacdb044a213c693d20e01319885ce478185025e7`; calibration audit `8ac7fd3f1c1f7727778603f64d52c89261085ded03c55775f5b8a3356d7af435`. All matched.
+- Independent replay audit in artifact: status PASS, blockers empty, 5,880 signals, 17,640 trade rows, 17,023 executable, 617 excluded; execution reconciliation errors=0, net arithmetic errors=0, exclusion-policy errors=0. Independent audit JSON SHA-256 `64068b56e199ebe7250c6376ab942c0ad68c7f95e751f2a3d19f76f49dead703`.
+- Updated gross target hit rates and cost-adjusted results remain economically negative: +5% H+1 gross hit 12.87%, mean net -0.813%, median -1.669%; +10% H+3 gross hit 9.04%, mean net -0.877%, median -3.220%; +20% H+5 gross hit 2.83%, mean net -0.926%, median -3.220%. Slippage not modelled; circuit/price-band feasibility and portfolio sizing/concurrency remain unverified. Integrity PASS is not profitability PASS.
+- Inspected corrected `pipeline/walk_forward_backtest.py` at head SHA: `_forward_window_max` shifts one row forward, reverses, applies `rolling(window=horizon,min_periods=horizon)`, then restores order; `future_outcomes` applies it to HIGH_PRICE and CLOSE_PRICE. Separately checked a deterministic six-value reference sequence for H+1/H+3/H+5: exact T+1..T+h maxima matched and incomplete tails were NaN. This is a focused formula sanity check, not yet a full 200-session independent per-row label recomputation.
+- Status update: Run #36 runtime 100% PASS; corrected full 200-session artifact generation 100%; artifact download/hash verification 100%; artifact timestamp semantics 100% PASS; independent replay reconciliation 100% PASS; forward-label full-dataset independent recomputation remains NOT_DONE (0%); project-wide hard gate and final research paper remain BLOCKED on separate Macro-Geo/Factor Registry, CORE-672 semantic independence, slippage/circuit/portfolio and other acceptance requirements.
+- No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 definitions, engines A-E production code, collector workflow, or main branch changed. PR #37 remains open/unmerged; PR #38 remains open/draft/unmerged. No paid APIs/spend.
+- Next highest-value task: perform the missing independent full-dataset H+1/H+3/H+5 label recomputation from the immutable processed input, comparing exact forward windows and incomplete-tail/missing-session behavior against the generated calibration labels. Do not repeat timestamp repair, raw archive verification, or Run #36.
+
+
+## 2026-11-16 — Independent full-dataset forward-label recomputation PASS (Run #36 artifact)
+- Completed the next acceptance task without rerunning CI or repeating timestamp/raw-archive checks. Used the downloaded Run #36 artifact `v11-3-cutoff-safe-replay-36` (artifact SHA-256 `da4243672222fc764214bc8dcc9ef2afe3fbf661724c95f3c09d6581a3bca6e1`) as the immutable input.
+- Independently recomputed exact per-symbol forward HIGH and CLOSE maxima for H+1, H+3, H+5 using a direct slice/reference implementation over all 500,733 rows and compared against the corrected reverse-rolling implementation from `pipeline/walk_forward_backtest.py` at commit `ec95660f8e559346cd8d52103af2e5c6e6c3893f`.
+  - H+1 HIGH/CLOSE: 497,736 valid rows each; 2,997 incomplete symbol tails; NaN pattern identical; 0 mismatches; max absolute difference 0.
+  - H+3 HIGH/CLOSE: 491,746 valid rows each; 8,987 incomplete tails; NaN pattern identical; 0 mismatches; max absolute difference 0.
+  - H+5 HIGH/CLOSE: 485,762 valid rows each; 14,971 incomplete tails; NaN pattern identical; 0 mismatches; max absolute difference 0.
+  - No partial-tail labels emitted by the corrected helper. The check confirms exact next h observed rows per symbol; it does not establish exchange price-band/circuit execution feasibility.
+- Separately reconstructed the historical calibration label pipeline independently from the same processed dataset: assigned global session indices, required the symbol to have a row on each of the next 3 consecutive global sessions, formed max HIGH over those sessions, computed the >=10% excursion label, matured only labels with SESSION_IDX <= cutoff_idx-3, grouped by STATE, applied minimum sample threshold 100, and independently reconstructed calibration sample count, hit rate and calibration score for every row.
+  - 500,733/500,733 rows joined exactly; 489,219 valid H+3 labels and 11,514 invalid/missing-session labels.
+  - Across 489,756 non-null calibration comparisons: sample-count mismatches 0; hit-rate mismatches 0 (max absolute diff 9.72e-17); calibration-score mismatches 0 (max absolute diff 1.43e-14); null-pattern equality PASS.
+- This is an independent full-dataset label/calibration integrity PASS, not a profitability PASS. The cost-aware returns remain negative as recorded in the Run #36 entry. H+3 calibration label policy is stricter than the generic per-symbol forward-window helper: it explicitly requires the next three global sessions, preserving UNKNOWN for missing sessions.
+- Progress: H+1/H+3/H+5 exact forward-window recomputation 100% PASS; H+3 global-session calibration-label recomputation 100% PASS; calibration maturity/sample/score reconciliation 100% PASS; Run #36 runtime/artifact validation 100% PASS. Overall project hard gate/final paper remain BLOCKED by independent outstanding Macro-Geo/Factor Registry, CORE-672 semantic independence, circuit/slippage/portfolio and final acceptance requirements.
+- No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A-E production code, collector workflow, or main branch changed. PR #37 remains open/unmerged; PR #38 remains open/draft/unmerged. No paid APIs/spend.
+- Next highest-value work: audit the research adapter's feature/score mapping and CORE-672 semantic independence against the declared 56x12 contract, without changing production selector or RANKING_SCORE; separately retain Macro-Geo/Factor Registry as an unresolved blocker. Do not repeat this forward-label recomputation, Run #36, timestamp repair, or raw archive verification absent new changes.
+
+
+## 2026-11-16 — CORE-672 independent semantic audit: implementation gap confirmed (read-only)
+- Inspected exact source on branch `research/nse-raw-manifest-retention-20261115`: `pipeline/diagnostics_672.py`, blob SHA `af0a8ddc17d72024509167533585713600a4b845`. No code, production file, selector, ranking, engine, dataset or workflow was changed.
+- Confirmed 56 Step names and 12 Filter names are declared and nested loops emit 672 named columns, but the Filter variable is used only to construct the column name; it is never used in the calculation. Therefore each Step's 12 Filter outputs are identical by construction. This is a structural 672-column matrix, not 672 independently evaluated diagnostics.
+- Most Steps use the same candidate-level proxy: mean of ENERGY, LEAD_TIME and min(RVOL20*25,100), classified with one fixed state() threshold pair (60/40). The eight explicitly named technical Steps also call the same state(base), functionally identical to the generic else branch. Thus many unrelated macro/sector/price/event/global-theme labels are not backed by Step-specific evidence.
+- Special branches also repeat one value across all 12 Filters: one aggregate FII/DII scalar, India VIX percentChange vs 10, and geopolitical news article_count vs 40. Five catalyst/event/earnings Steps are hard-coded UNKNOWN; three live/progression/reversal Steps are hard-coded UNKNOWN.
+- `NOT_APPLICABLE` is declared in STATES but no code path emits it; state() emits only POSITIVE/NEGATIVE/UNKNOWN. The report's 672 count is only a named-column count and does not test semantic independence or provenance.
+- Audit report committed separately: `docs/CORE_672_INDEPENDENT_SEMANTIC_AUDIT_20261116.md`, commit `4ff0f81a6a32e1c0426b2645d46369b0e524b175`, on research branch `research/nse-raw-manifest-retention-20261115`. This report records F1–F5, evidence, acceptance matrix and repair plan. Status: static source audit 100%; CORE-672 acceptance BLOCKED; runtime candidate-dataset correlation audit 0%; Step×Filter evidence registry 0%; repair/tests 0%.
+- Research impact: do not treat CORE-672 scores/coverage as 672 independent confirmations; any downstream aggregation may overcount repeated evidence. Do not infer all engines or entire project invalid; this finding is scoped to this diagnostics generator. UNKNOWN remains UNKNOWN; do not relabel as PASS.
+- Next action: build a read-only, source-backed Step×Filter evidence registry and runtime duplication/coverage audit using the actual candidates input and context files, without changing production. Any repair requires explicit approval and must be isolated; no PR merge or production change.
+
+
+## 2026-11-16 — CORE-672 Step×Filter Evidence Registry and downstream-consumer audit (read-only)
+- Reused the already-recorded runtime duplication result from artifact 14151241008; did not rerun that audit. Existing evidence: 672 columns × 2,994 rows, only 3 unique full-column state vectors (540 columns in one vector, 120 in a second, 12 in a third); 132 columns constant UNKNOWN. This is a prior verified artifact result, not a newly regenerated measurement.
+- Re-fetched exact `pipeline/diagnostics_672.py` from branch `research/nse-raw-manifest-retention-20261115`, blob SHA `af0a8ddc17d72024509167533585713600a4b845`. Parsed the source declarations directly: 56 Steps and 12 Filters; generated 672 explicit registry cells. Registry file: `docs/CORE_672_STEP_FILTER_EVIDENCE_REGISTRY_20261116.csv`; commit `af21723ee05b897209e8d880d01744c310ba97e7`.
+- Each registry cell records the observed source/field, actual transformation, threshold/freshness status, applicability/missing-data behavior and filter-logic status. Where source code does not define unique Step×Filter evidence, the registry explicitly marks it NOT_IMPLEMENTED / BLOCKED; no missing source mapping was invented. All 672 cells are NOT_ACCEPTED because the Filter dimension is unused by the implementation, even where a Step has a special branch.
+- Downstream consumer audit: inspected `pipeline/final_selection.py` (blob SHA `8bf216c866030d92f8066e9183c9636880577910`). It checks only whether `outputs/diagnostics/diagnostics_672.csv` exists and adds blocker `672_DIAGNOSTIC_ENGINE_OUTPUT_MISSING` if absent. It does not load, aggregate, score, or inspect any D01–D56 diagnostic column. Repository code search for `D01_FRESHNESS`, `D56_PATH`, and `diagnostics_672.csv read_csv` found no other direct column consumer; this is bounded to accessible indexed code/search results, not a mathematical proof that no indirect/external consumer exists.
+- Consequence: current final-selection readiness gate validates file presence, not 672-cell semantic coverage or quality. This does not change ranking or selection; it is a governance/acceptance gap.
+- Runtime evidence and static source evidence are separate: prior artifact runtime duplication remains verified; new registry is source-derived. No candidate/context files were rerun because no fresh candidate/context artifact was retrieved in this task. No new runtime dataset correlation/coverage result is claimed.
+- Progress: prior runtime duplication evidence reuse 100%; exact source/step/filter extraction 100%; 672-cell registry generation 100%; final-selection consumer inspection 100%; direct downstream column-consumer search 100% (bounded search); new runtime replay 0% / NOT RUN; repair/tests 0% / NOT AUTHORIZED; CORE-672 acceptance BLOCKED.
+- No production code, dataset, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 definitions, engines A–E, collector workflow or default branch changed. No PR merged. No paid APIs or spend.
+- Next step: user-approved research-only design of independently testable evidence predicates and data contracts for each cell; do not implement in production until explicit approval.
+
+
+## 2026-11-16 — CORE-672 FII/DII source-schema mismatch isolated; contract/test spec committed (read-only)
+- Reused the existing 672-cell registry and semantic audit; did not rerun the 672-column runtime correlation audit.
+- Inspected exact source blobs: `collector/context_data.py` `f38e17979774d1439eea79e4dc7728ba92a790d1`; `pipeline/diagnostics_672.py` `af0a8ddc17d72024509167533585713600a4b845`; `pipeline/risk_modifier.py` `4115a1247992ef8a075b2fd247efb9ce8f8663f6`. Collector emits FII/DII rows with `group`, `date`, `net_value`; CORE-672 diagnostic reads `fii_net` and `dii_net`. This is a deterministic schema mismatch. The risk modifier consumes the collector schema but uses a separate first-20-row sum; that is not proof of the intended CORE-672 aggregation rule.
+- Source-level consequence: the diagnostic's FII/DII list comprehensions find no populated fields in the collector-shaped records; aggregate values become NaN and the branch substitutes zero before classification, resulting in UNKNOWN under the current state thresholds. This is source-derived analysis, not a fresh runtime measurement.
+- Created `docs/CORE_672_FII_DII_CONTEXT_CONTRACT_TEST_SPEC_20261116.md`, commit `150e8bbaffbf7c8be82ac5d89a5a4d672123ef9c`, branch `research/nse-raw-manifest-retention-20261115`. It records the exact schema mismatch, canonical input fields, fail-closed requirements, 12 regression-test cases, additional CORE-672 tests, acceptance gates and scope protections.
+- Deliberately did not choose latest-date vs rolling-window aggregation, missing-side substitution, or freshness limits: current source does not establish these policies. Implementation must wait for explicit policy approval; do not silently copy risk_modifier's 20-row sum.
+- Progress: source retrieval 100%; schema comparison 100%; mismatch classification 100%; regression-test specification 100%; aggregation policy BLOCKED; implementation 0%; regression execution 0%; CORE-672 acceptance BLOCKED.
+- No production code, collector, diagnostic generator, risk modifier, dataset, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 definitions, engines A–E, workflow or default branch changed. No CI run dispatched; no PR merged; no paid API/spend.
+- Next highest-value task: after policy approval, implement a small research-only adapter for the existing collector schema and run only the focused FII/DII contract tests; then inspect a real archived context artifact before considering any wider runtime audit.
+
+
+## 2026-11-16 — FII/DII runtime context artifact availability audit (read-only)
+- Reused the already-inspected collector and workflow sources; did not repeat the schema-mismatch analysis. Exact blobs: `collector/context_data.py` `f38e17979774d1439eea79e4dc7728ba92a790d1`; `.github/workflows/nse_collector.yml` `96a714e7e74aa9d09b43f74facc758f358fd3124`. Workflow includes `data/context/` in its artifact upload paths and invokes the context collector; this is expected-output configuration, not evidence of a specific successful output.
+- Downloaded existing replay artifact ID `14175433267` (known Run #36 / run ID `43749155334`). ZIP size 25,817,040 bytes; independently recomputed SHA-256 `da4243672222fc764214bc8dcc9ef2afe3fbf661724c95f3c09d6581a3bca6e1`, matching the previously recorded artifact hash.
+- Inspected all 13 ZIP entries. Found the raw archive manifest and historical signal manifest, but no `data/context/` directory, no `market_context.json`, and no FII/DII payload. This is a finding only about artifact `14175433267`; it does not prove other collector workflow artifacts lack context.
+- Audit document: `docs/CORE_672_FII_DII_RUNTIME_CONTEXT_ARTIFACT_AUDIT_20261116.md`, commit `11b53ebeb2f2f91293ca85f7ef08780cf5fe0193`, branch `research/nse-raw-manifest-retention-20261115`.
+- Progress: source/workflow reinspection 100%; artifact download/hash verification 100%; ZIP inventory/context-presence check 100%; all-workflow artifact discovery NOT_COMPLETE; real context runtime schema validation 0% / NOT_VERIFIED; aggregation policy BLOCKED; adapter/tests 0% / NOT_STARTED.
+- Next: inspect artifact inventories for the actual collector workflow runs and retrieve a context-bearing artifact if one exists. Do not rerun the full collector workflow merely to recreate context; first check existing artifacts. If none retained, design a bounded research-only retention test.
+- No production code, workflow, dataset, selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 definitions, engines A–E, default branch or PR state changed. No CI dispatched, no PR merged, no paid API/spend.
+
+
+## 2026-11-16 — Real FII/DII runtime context recovered and verified (Run #161)
+- Located an actual successful Collector workflow artifact, closing the previous discovery gap for one run. Workflow `.github/workflows/nse_collector.yml`, workflow ID `373721663`; Run #161 / ID `43696699698`; branch `main`; head commit `cc4d397f25e735e9f7b63d2da74b40baff1aaab9`; completed success from `2026-11-15T08:54:51Z` to `2026-11-15T09:01:03Z`.
+- Artifact ID `14154408713`, name `precision-wires-adaptive-161`, size 61,626,954 bytes, created `2026-11-15T09:00:59Z`. Downloaded ZIP independently SHA-256 verified: `b4623c28d30d04a73d21eb67662caeeab56123b2eba637d9eb652225df0305e8`. ZIP contains 25 entries and actual `data/context/market_context.json` (5,973 bytes), whose SHA-256 is `83c811be558501bbfed7b2104658f2d3796bfd506b37149800a730384bed5dc8`.
+- Fetched `collector/context_data.py` at exact run head commit; blob SHA `f38e17979774d1439eea79e4dc7728ba92a790d1`, same source blob as prior source audit.
+- Parsed actual JSON successfully. `generated_at=2026-11-15T08:59:46.921319+00:00`; source provenance `NSE /api/fiidiiTradeReact (category-normalized)`; two rows, one DII and one FII/FPI, both date-only `13-Nov-2026`; coverage metadata rows=2, fii_rows=1, dii_rows=1, fii_dates=1, dii_dates=1. DII buy/sell/net=11745.95/13999.53/-2253.58; FII/FPI=18339.57/12603.02/5736.55. Actual fields: `category`, `group`, `date`, `buy_value`, `sell_value`, `net_value`. Both groups recognized, finite numeric net values, one row per group/date, no duplicate group/date pair, no collector error keys.
+- This proves collector-shaped runtime schema and provenance for Run #161 only. It does not prove a rolling history, a correct aggregation window, sign/unit policy, missing-side rule, freshness limit, or any CORE-672 POSITIVE/NEGATIVE output. `generated_at` is generation time, not an intraday market observation timestamp. Do not infer a broader historical retention guarantee from one artifact.
+- Verification report: `docs/CORE_672_FII_DII_ARCHIVED_RUNTIME_CONTEXT_VERIFICATION_20261116.md`, commit `dcca451010228d11ab10f7d6c902b5dd0d513fe6`, branch `research/nse-raw-manifest-retention-20261115`.
+- Progress: Run discovery 100%; artifact retrieval 100%; ZIP SHA verification 100%; context extraction and SHA verification 100%; JSON/provenance/schema/row structure validation 100% for this artifact; runtime schema evidence now VERIFIED_FOR_RUN_161_ONLY; aggregation/freshness policy BLOCKED; adapter 0%; focused regression execution 0%; CORE-672 semantic acceptance BLOCKED.
+- Next: create a minimal research-only adapter contract test pinned to this real archived payload, without synthetic market rows and without emitting a trading state until aggregation/freshness policy is approved.
+- No production code/workflow/data/selector/`RANKING_SCORE`/`+1 PRESSURE_FADE`/CORE-672/engines A–E/default branch/PR state changed. No CI dispatched, no PR merged, no paid API/spend.
+
+
+## 2026-11-16 — Run #161 provenance-pinned FII/DII research contract tests PASS
+- Re-downloaded the actual Run #161 collector artifact (ID `14154408713`) and independently recomputed hashes: ZIP SHA-256 `b4623c28d30d04a73d21eb67662caeeab56123b2eba637d9eb652225df0305e8`; member `data/context/market_context.json` SHA-256 `83c811be558501bbfed7b2104658f2d3796bfd506b37149800a730384bed5dc8`. Both match the prior verification report. Actual payload still has exactly two rows, one per `FII_FPI` and `DII`, date-only `13-Nov-2026`.
+- Added research-only provenance fixture `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`. It is a literal excerpt of the two real archived rows, explicitly labelled as an excerpt and pinned to Run ID, artifact ID, ZIP hash and member hash; it is not synthetic market data.
+- Added isolated test module `tests/research_fii_dii_run161/test_contract.py`. Its validator checks source provenance, generation timestamp, date-only observation, recognized groups, finite numeric `net_value`, and duplicate group/date rejection. It confirms there is no dependency on legacy `fii_net`/`dii_net` fields and does not zero-fill a missing category. The return status is only `SCHEMA_VALIDATED_ONLY`; it cannot emit POSITIVE/NEGATIVE or calculate an aggregate.
+- Local execution: `python -m unittest -v`; 10/10 tests PASS in 0.001 sec. Test cases cover real fixture schema, legacy-field absence, one-sided data without zero fill, duplicate rows, unknown group, null/string/NaN/infinite/boolean net values, missing provenance, timestamp-shaped/invalid date, missing generated_at, and absent/empty rows. No GitHub Actions run was dispatched.
+- Research branch `research/nse-raw-manifest-retention-20261115` commits: fixture `8cd945b42dec13b830fb8875452d44be59082cb1`; tests `5d47dd5619d5cebfbfbadb4891c6f1726e6a0ae0`; report `52c3824c403afa88b02c30b3bfd44a8be2f69927`. Report path: `docs/CORE_672_FII_DII_RUN161_RESEARCH_REGRESSION_20261116.md`.
+- Defined work package progress: artifact provenance recheck 100%; fixture creation 100%; research-only validator/tests 100%; local regression execution 100% PASS. Aggregation period, sign/units, freshness threshold and missing-side policy remain BLOCKED; production adapter/integration 0% / NOT_AUTHORIZED; CORE-672 semantic acceptance BLOCKED. One-date fixture does not establish rolling coverage.
+- No production code, collector, workflow, dataset, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12 contract, engines A–E, default branch, or PR state changed. No CI dispatch, merge, paid API or spend. Preserve UNKNOWN as UNKNOWN.
+- Next highest-value task: obtain explicit policy approval for the FII/DII aggregation period, sign/units interpretation, freshness rule and missing-side behavior before writing any state-producing adapter. Do not repeat this fixture/hash/test run unless its source artifact or test code changes.
+
+
+## 2026-11-16 — FII/DII official-source policy evidence matrix and segment-scope reconciliation
+- Reused the verified Run #161 archive and existing regression fixture; did not rerun schema tests or repeat artifact hashing. Re-fetched exact collector source `collector/context_data.py` blob `f38e17979774d1439eea79e4dc7728ba92a790d1`, diagnostics source blob `af0a8ddc17d72024509167533585713600a4b845`, risk modifier blob `4115a1247992ef8a075b2fd247efb9ce8f8663f6`, and the previously committed contract/verification/regression reports.
+- Inspected official NSE FII/DII report page: https://www.nseindia.in/reports/fii-dii . It distinguishes (a) NSE-only Capital Market Segment and (b) combined NSE+BSE+MSEI Capital Market Segment. It labels Buy/Sell/Net values in ₹ Crores. NSE notes FII/FPI same-day activity is compiled from PANs provided by NSDL and is provisional, subject to custodial confirmation/modifications; DII categorization is based on Trading Member trading codes/client-category classification. NSE directs users to NSDL/CDSL for final FII/FPI data.
+- Material one-date reconciliation: Run #161 archived values for 13-Nov-2026 (FII/FPI 18,339.57 / 12,603.02 / +5,736.55; DII 11,745.95 / 13,999.53 / -2,253.58) exactly match the official NSE page's combined NSE+BSE+MSEI table. The separate NSE-only table for that date reports different values (FII/FPI 17,376.50 / 12,122.52 / +5,253.98; DII 10,561.32 / 12,532.05 / -1,970.73).
+- Consequence: the archived values are consistent with the combined dataset for this date; do not label them NSE-only based solely on the endpoint/source label. Collector source string `NSE /api/fiidiiTradeReact (category-normalized)` does not contain an explicit market-scope field. Exact API-to-table mapping needs a raw API response or official endpoint contract. The one-date match is not proof of endpoint scope across all dates.
+- Arithmetic checked: buy minus sell equals net for both archived groups. Thus positive net means buy exceeds sell and negative net means sell exceeds buy in this sample. This supports column arithmetic/sign interpretation only, not a CORE-672 threshold or direction score.
+- New evidence matrix: `docs/CORE_672_FII_DII_POLICY_EVIDENCE_MATRIX_20261116.md`, research branch `research/nse-raw-manifest-retention-20261115`, commit `6750197acdc5ee04d023a568d7277546bdaaa4a4`. It separates verified source facts from unresolved decisions: intended market scope, aggregation period/session alignment, provisional vs final FII vintage/revisions, freshness/cutoff, missing-side and duplicate handling, and signal normalization.
+- Scoped progress: official NSE source inspection 100%; unit/sign/segment-label evidence extraction 100%; Run #161 one-date table reconciliation 100%; endpoint-to-table scope proof BLOCKED; aggregation/freshness/missing-side policy approval BLOCKED; state-producing adapter 0% / NOT_AUTHORIZED; CORE-672 FII/DII acceptance BLOCKED.
+- No production files, collector, workflow, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12 definitions, engines A–E, dataset, default branch or PR state changed. No CI dispatched, no PR merged, no paid API/spend.
+- Next highest-value task: obtain and archive the exact raw `/api/fiidiiTradeReact` response for a known date and compare it against both official NSE table variants; if the API response cannot be retrieved historically, add an explicit unresolved scope field/blocker rather than infer it. Do not repeat the 13-Nov-2026 table comparison or existing regression suite absent new evidence/code changes.
+
+
+## 2026-11-16 — FII/DII raw API capture access gate (bounded attempt)
+- Objective: resolve exact market scope of `https://www.nseindia.com/api/fiidiiTradeReact` by capturing its raw response and comparing same-date official NSE-only and NSE+BSE+MSEI CSVs.
+- Reused existing evidence without repeating it: Run #161 artifact ID `14154408713`, run ID `43696699698`, normalized context SHA-256 `83c811be558501bbfed7b2104658f2d3796bfd506b37149800a730384bed5dc8`, collector source blob `f38e17979774d1439eea79e4dc7728ba92a790d1`; prior one-date comparison on 13-Nov-2026 showed archived values match the combined table, not NSE-only.
+- Reopened official NSE FII/DII page https://www.nseindia.in/reports/fii-dii . The rendered page explicitly labels two datasets: “on NSE in Capital Market Segment” and “on NSE, BSE and MSEI in Capital Market Segment”, each with its own CSV download control. The page extraction did not expose distinct underlying CSV URLs; both controls resolved to a generic link reference.
+- Attempted direct retrieval of `https://www.nseindia.com/api/fiidiiTradeReact` through the available web retrieval channel; it returned inaccessible/internal-error. No raw JSON body, response headers, resolved URL, or official endpoint documentation was obtained. This is an access-channel limitation, not proof that the endpoint is unavailable to the collector.
+- Result: API market scope remains BLOCKED. Do not infer API scope from the one-date match alone. Do not label the payload NSE-only solely because the collector's source string contains NSE.
+- Created bounded access-gate report: `docs/CORE_672_FII_DII_RAW_API_CAPTURE_ACCESS_GATE_20261116.md`, research branch `research/nse-raw-manifest-retention-20261115`, commit `a6f37ac897a80e668f20163d88fa43b167e1cde1`. It defines the exact evidence needed for a future raw capture: request URL/time, redacted response headers, raw bytes/hash, parsed JSON/hash, both official CSV byte hashes and deterministic row-level reconciliation; secrets/cookies must never be committed.
+- Progress: official report page/table labels reconfirmed 100%; direct API retrieval attempted 100% but ACCESS_BLOCKED; raw response bytes/hash 0% / NOT_OBTAINED; official CSV payload hashes 0% / NOT_OBTAINED; API-to-table scope reconciliation BLOCKED; CORE-672 aggregation policy BLOCKED; trading-state adapter 0% / NOT_AUTHORIZED.
+- No production code, collector, workflow, dataset, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12 contract, engines A–E, default branch or PR state changed. No CI, no merge, no paid API/spend.
+- Next action: a one-off, manually triggered, research-only capture with NSE session bootstrap and raw-response/official-CSV archival in an isolated environment. If access remains blocked, stop and retain UNKNOWN; do not guess undocumented endpoints or silently alter production collector.
+
+
+## 2026-11-16 — Isolated NSE FII/DII raw capture utility committed (live capture pending)
+- To advance the previously documented ACCESS_BLOCKED gate without changing production, added `tools/research/capture_nse_fii_dii.py` on research branch `research/nse-raw-manifest-retention-20261115`.
+- Utility design: fetch official report HTML; bootstrap public NSE homepage session; request exact `/api/fiidiiTradeReact`; preserve raw response bytes and separately parsed JSON; download distinct NSE-only and combined NSE+BSE+MSEI official CSVs; compute SHA-256 and write a local manifest. It fails closed with `ACCESS_BLOCKED` when it cannot resolve two distinct CSV links or obtain a required response.
+- Added explicit CLI URL overrides for the two CSV controls when page HTML has generic labels. URLs must be on official NSE domains and must differ. Exact URLs must be copied from the two official NSE controls; placeholders must not be used.
+- Security: utility does not serialize request cookies/session headers; raw captures remain local and are not automatically committed; no CI, cron, workflow, production pipeline import or scheduled run.
+- Utility source commits: initial `079f771384a733dc3a5b2e80170f95dc95b9fa08`; follow-up URL override `73dbd31a378b0f5a9f524527fe54e18212b24f31`, source blob SHA `98882b58a50023a7d170f76b198be204658ded6d`.
+- Usage/limitations document: `docs/CORE_672_FII_DII_RESEARCH_CAPTURE_UTILITY_20261116.md`, commit `a7afe6c27252b3e27d77f4b41d303413db8d79c8`.
+- Important honesty boundary: the utility has been committed, but Python compile/runtime test and live NSE capture have NOT been executed in this environment. Do not claim capture success, raw response availability, or market-scope reconciliation. Current progress: utility authoring 100%; GitHub source commit 100%; Python compile/runtime 0% / NOT_RUN; live API and CSV capture 0% / NOT_RUN; API-to-table scope reconciliation BLOCKED; production integration 0% / NOT_AUTHORIZED.
+- No production files, collector, workflow, dataset, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12 contract, engines A–E, default branch or PR state changed. No CI dispatched, no PR merged, no paid API/spend.
+- Next action: execute this one-off utility in a permitted environment with outbound access; if official page links cannot be extracted, provide the two exact CSV URLs copied from NSE's distinct report controls. Preserve raw bytes/hashes locally and create a redacted evidence report only after inspecting the actual capture. Do not repeat prior one-date reconciliation or regression tests.
+
+
+## 2026-11-16 — Capture utility executable-quality hardening (tests committed, execution pending)
+- Reused the exact committed utility and performed source-level review; did not repeat FII/DII source/schema/one-date audits. Shell attempt to retrieve raw GitHub source for local execution failed with DNS name-resolution error, establishing this environment has no outbound DNS/network. Therefore no claim of Python runtime or live NSE execution.
+- Found and fixed two security issues: initial URL validator accepted HTTP and the initial manifest retained query strings in CSV link metadata. Final `safe_nse_url` requires HTTPS, official NSE domain/subdomain, no embedded credentials, and default/443 port; malformed URLs fail closed. `manifest_url` strips query and fragment from manifest URLs. Both CSV overrides must be supplied together.
+- Final utility source blob SHA: `b5d59bd284df342927814335ed7e8357f71cf7a0`; hardening commits `9e08de5aef60ae876a1fd91e32d4db7796487485` and `e2876b213826fa951b9cef92c9e1155b1c6da80f`.
+- Added offline test file `tools/research/tests/test_capture_nse_fii_dii.py`, commit `66b7330e9b5980c3161f1f75f85eb8c372008a38`. Tests cover official URL allowlist, HTTP/lookalike/credential/port/malformed URL rejection, manifest query redaction, SHA-256 known vector, anchor parsing and file hash/length.
+- Updated utility documentation with quality hardening addendum, commit `965af6bc840577813ffed64e61f1bc697e7c301d`.
+- Status/progress: source-level quality review 100%; HTTPS/domain/credential/port validation 100% implemented; query redaction 100% implemented; offline tests authored 100%; Python compile and unit-test execution 0% / NOT_RUN due outbound DNS unavailable; live API/CSV capture 0% / NOT_RUN; API market-scope reconciliation BLOCKED. Tests are committed, not PASS until actually executed.
+- No production files, collector, workflow, dataset, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12 contract, engines A–E, default branch or PR state changed. No CI dispatch, no PR merge, no paid API/spend.
+- Next action: run `python -m unittest discover -s tools/research/tests -v` and `python -m py_compile tools/research/capture_nse_fii_dii.py` in a permitted Python environment; then run one live capture only after offline tests pass. Do not rerun old FII/DII audits or the one-date table reconciliation.
+
+
+## 2026-11-16 — Offline test import-path defect corrected; helper harness PASS (bounded)
+- Reviewed the committed test module and found its import path pointed one directory above the utility. Fixed `Path(__file__).parents[2]` to `parents[1]`. Commit `b4509318799b72ff23e7ddec5b18111a41dee9c3`; test blob `41be6239d896e1a0c4229fc9e49c0b9d4a9fc80f`.
+- Python 3.13.5 and requests 2.32.5 are available in the local container, but DNS resolution to raw.githubusercontent.com fails, so exact committed repository files could not be downloaded for execution.
+- Executed a temporary offline harness reconstructed from the committed utility's helper functions and the same seven unit cases. Harness syntax compilation PASS; 7/7 helper tests PASS in 0.002 sec. This is explicitly NOT a run of the exact committed checkout and does not validate the full main() network capture flow.
+- Updated utility documentation addendum: `docs/CORE_672_FII_DII_RESEARCH_CAPTURE_UTILITY_20261116.md`, commit `bcaa1c3bc3061c861fd9bcb2d2b83407e51a640e`, blob `36bc7306021a6bd281c7de444d31b38f718a2481`.
+- Progress: test import-path defect identified/fixed 100%; bounded helper harness 7/7 PASS; exact repository checkout test execution NOT_VERIFIED; live NSE capture NOT_RUN; market-scope reconciliation BLOCKED. Do not claim full utility test suite PASS.
+- No production code, collector, workflow, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12, engines A–E, default branch or PR state changed. No CI dispatched, no merge, no paid API/spend.
+- Next action: run the exact committed branch checkout in a network-enabled GitHub Actions runner or developer environment; only after exact tests pass, attempt a single live NSE capture. Do not repeat prior audits or helper harness unless source changes.
+
+## 2026-11-16 — NSE FII/DII capture utility: exception-message URL redaction
+- Further exact-source review found that the capture manifest serialized raw exception messages. Requests exceptions may embed full URLs with query parameters. Changed the error record to retain only exception class plus a fixed safe diagnostic; raw exception text is no longer written.
+- Source commit `6eb13368faae01c4b054dcfb6df74d835c25f246`; source blob `534a290ab5ec244150e97cce1b92de9c7076dea5`.
+- Utility documentation commit `78e3a117b5fc992eb973b1221bb8775ecc210281`; blob `3e51a54f3ad57b4d3f1b1a8d3ddfec57e79d2b83`.
+- Exact committed tests NOT_RUN after this change; helper harness 7/7 from previous iteration is not evidence for this modified source. Live NSE capture NOT_RUN. No production workflow/code, selector, score, pressure fade, CORE-672, engines, or default branch changed.
+## 2026-11-16 — Exact test execution blocker: GitHub dispatch capability
+- Checked the research branch workflow directory: no dedicated NSE FII/DII capture utility unit-test workflow exists. Available GitHub connector methods support repository/file reads and workflow-run/artifact/log reads, but expose no workflow_dispatch/run-workflow action. Thus I cannot start a new GitHub Actions run from this session. No workflow file was added and no existing workflow/production path was modified.
+- Utility documentation updated: commit `59636d586a2455dbd4bab64eeacac5b387225331`; blob `fc76ad7c8d26930749a1736e3a82a95bb5210c95`.
+- Exact committed test suite status remains NOT_RUN; live NSE capture NOT_RUN. This is an execution-capability boundary, not a test failure and not a PASS. Next execution requires a user-triggered dedicated test workflow or a network-enabled exact checkout.
+## 2026-11-16 — Dedicated manual-only NSE FII/DII unit-test workflow committed
+- Added `.github/workflows/nse_fii_dii_capture_unit_tests.yml` to research branch `research/nse-raw-manifest-retention-20261115` in commit `91f116a2dd426427845dd8bf4343cb8c6b0e259f`.
+- Workflow is manual-only (`workflow_dispatch`), `contents: read`, concurrency-cancelled, 5-minute timeout, Python 3.12. It installs requests, runs `py_compile` on the utility, then runs only the 7-test offline suite. It does not call NSE, access secrets, upload artifacts, or modify production collector workflows.
+- Utility documentation update commit `57b91540102d7b4dbdc8f546760b67bbef8e37f2`; blob `590e21026a94155855b7c7acc18ef419f0beb57e`.
+- Workflow is committed but NOT_RUN: connected GitHub capability has no workflow_dispatch action. User-triggered path: Actions tab → NSE FII-DII Capture Utility Unit Tests → Run workflow → choose research branch. Exact test status remains NOT_RUN until run result is available. Live NSE capture remains NOT_RUN.
+- No default branch/PR/merge, production workflow, production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E, or collector code changed.
+## 2026-11-16 — Capture documentation URL-provenance wording corrected
+- Clarified that manifest URL provenance is query-free (scheme/host/path); query strings and fragments are intentionally omitted. This aligns the documentation with `manifest_url()` and exception redaction behavior.
+- Documentation correction commit `ba30eec75483b243ba35f8bea02e02334c755551`; blob `33cbe371071bb1dc62ea1872b5f6fa8dd65cc48c`.
+- Dedicated workflow commit remains `91f116a2dd426427845dd8bf4343cb8c6b0e259f`; committed but NOT_RUN. No claims of exact test PASS.
+
+## 2026-11-16 — Default-branch dispatch enablement for isolated FII/DII tests
+- User explicitly authorized adding only the isolated test workflow to the repository default branch; no other production or research files were authorized for modification.
+- Repository metadata confirmed default branch is `main`.
+- Confirmed the workflow path did not previously exist on `main`; created only `.github/workflows/nse_fii_dii_capture_unit_tests.yml` in commit `1539bba91bb44dadeb46a0f8a7b701a16acf0729`.
+- Follow-up hardening commit `5689512b2119a4c3d75a5bd743292616bae97e73` explicitly pins `actions/checkout` to research branch `research/nse-raw-manifest-retention-20261115`. This ensures the manual workflow executes the intended research-branch utility and seven-test suite, not files from `main`.
+- Final workflow file was re-fetched from `main`; blob SHA `217daf02687457fda6fb1ceaa2e699c53a70e93e`. Commit diff confirms the follow-up changed only this workflow file (added explicit checkout ref).
+- Workflow remains manual-only (`workflow_dispatch`), `contents: read`, concurrency-cancelled, 5-minute timeout, Python 3.12, installs requests, compiles the utility and runs only the named offline unit-test file. No NSE request, secrets, artifact upload, cron, push trigger, or production pipeline integration.
+- No other file was changed on `main`; no research source/test/doc file changed in this operation; no PR/merge, production selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 contract, Engines A–E, collector workflow or dataset changed.
+- Status: default-branch workflow installation 100% (verified by fetch); research-branch checkout pin 100% (verified by fetch/diff); exact GitHub Actions execution NOT_RUN; compile NOT_RUN; seven unit tests NOT_RUN; live NSE capture NOT_RUN; API/CSV scope reconciliation BLOCKED.
+- Next action: user opens repository Actions → “NSE FII-DII Capture Utility Unit Tests” → Run workflow, selects `main` (workflow file source), then starts it. Workflow itself checks out the pinned research branch. Record run ID, commit SHA, duration, job conclusion and test output only after actual run completion.
+
+
+## 2026-11-16 — NSE FII/DII capture utility exact GitHub Actions test PASS
+- Verified the manually dispatched workflow run from GitHub API and fetched its actual job logs; this is an exact committed research-branch checkout, not the earlier reconstructed helper harness.
+- Workflow: `NSE FII-DII Capture Utility Unit Tests`; run number #3; run ID `43834406640`; event `workflow_dispatch`; workflow-source branch `main`; workflow head SHA `5689512b2119a4c3d75a5bd743292616bae97e73`; conclusion `success`; total duration 13 seconds; job `capture-utility-tests` completed success in 9 seconds.
+- Job ID `133187345477`. Logs confirm checkout of research branch `research/nse-raw-manifest-retention-20261115`, checked-out source commit `ba30eec75483b243ba35f8bea02e02334c755551`, Python `3.12.16`, requests `2.34.2`.
+- Step outcomes: checkout PASS; Python setup PASS; requests install PASS; `python -m py_compile tools/research/capture_nse_fii_dii.py` PASS; `python -m unittest discover -s tools/research/tests -p 'test_capture_nse_fii_dii.py' -v` PASS.
+- Exact offline test output: 7 tests ran in 0.001s, all OK:
+  1. `test_anchor_parser_preserves_label_and_href`
+  2. `test_https_official_hosts_allowed`
+  3. `test_invalid_port_does_not_raise`
+  4. `test_manifest_url_drops_query_and_fragment`
+  5. `test_non_https_and_non_official_hosts_rejected`
+  6. `test_sha256_known_vector`
+  7. `test_write_bytes_returns_hash_and_length`
+- Evidence URLs: run `https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43834406640`; job logs retrieved from GitHub Actions job `133187345477`.
+- Status: exact Python compile PASS; exact committed seven-test suite PASS; manual workflow PASS. This validates only tested helper/security/file-write behavior and Python syntax. It does NOT validate live NSE API access, CSV retrieval, response schema, raw capture integrity in a live session, market-scope reconciliation, rolling FII/DII history, CORE-672 mapping or production integration.
+- Next highest-value task: perform one controlled live NSE research-only capture from the exact tested research branch, first checking whether official page HTML exposes two distinct CSV control URLs. If not, require the exact two URLs copied from the official NSE page; do not guess. Keep raw captures local, hash them, redact secrets, and preserve UNKNOWN if access is blocked. Live capture remains NOT_RUN.
+- No production collector, workflow, dataset, selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 contract, Engines A–E, or default branch code beyond the already authorized isolated workflow file was changed by this test run.
+
+
+## 2026-11-16 — Library FII/DII CSV review (user-supplied files)
+- User stated the two NSE FII/DII CSV files had been saved in ChatGPT Library. Located and read:
+  - `/PRECISION-WIRES/NSE-FII-DII/fii-dii-nse-latest.csv` (218 bytes; file ID `file_000000006a3c82119beb9a4557318937`)
+  - `/PRECISION-WIRES/NSE-FII-DII/fii-dii-combined-latest.csv` (218 bytes; file ID `file_0000000077ec8211afe18d751021a9c6`)
+  - Duplicate copies also exist at Library root with alternate names; their contents match the corresponding folder files. No need to process duplicate copies again.
+- Both files contain two rows dated `13-Nov-2026` and columns CATEGORY, DATE, BUY VALUE (₹ Crores), SELL VALUE (₹ Crores), NET VALUE (₹ Crores).
+- NSE-only file values:
+  - DII buy 10,561.32; sell 12,532.05; net -1,970.73.
+  - FII/FPI buy 17,376.50; sell 12,122.52; net +5,253.98.
+- Combined NSE+BSE+MSEI file values:
+  - DII buy 11,745.95; sell 13,999.53; net -2,253.58.
+  - FII/FPI buy 18,339.57; sell 12,603.02; net +5,736.55.
+- Raw file SHA-256 (computed from materialized original bytes):
+  - NSE-only: `b733444b5a846abb672226bc96448bc0baea2da0ad15fe810207fbe93aad7f18`
+  - Combined: `2697546fa012f4c08449b37a3eb7d0f8298f296c25fd8ce4b7ca134c37999eb2`
+- Scope comparison confirms these are distinct series; combined values must not be substituted for NSE-only values. These are user-provided Library files; no source URL, download timestamp, original HTTP response headers, or capture manifest was included with the files. Therefore content/hash verification is PASS, but official-source provenance/live capture verification remains UNKNOWN/NOT_VERIFIED.
+- No repeated analysis of duplicate root copies beyond confirming content equality; no market history inferred from these single-date rows. These files alone do not resolve the CORE-672 `fii_net`/`dii_net` aggregation or freshness policy.
+- Status: locate/read files 100%; schema/date/value extraction 100%; raw-byte SHA-256 100%; official source URL/provenance verification NOT_VERIFIED; live API capture NOT_RUN; rolling history NOT_AVAILABLE.
+
+
+## 2026-11-16 — FII/DII official CSV URL discovery follow-up
+- Reopened the exact capture utility source `tools/research/capture_nse_fii_dii.py` on `research/nse-raw-manifest-retention-20261115`. Its current contract correctly fails closed unless it resolves two distinct official CSV URLs, either from unambiguous report-page anchors or as a pair of exact user-copied URLs. It also records query-free URL provenance and never serializes exception text that could leak URL tokens.
+- Rechecked the official NSE report page. It explicitly labels two separate report controls: (1) FII/FPI & DII trading activity on NSE in Capital Market Segment; (2) FII/FPI & DII trading activity on NSE, BSE and MSEI in Capital Market Segment. The visible page extraction exposes both as generic Download (.csv) controls, not their distinct href/download URLs. Web source: `turn984136view0`, lines 128-134.
+- Official NSE search-indexed report text additionally states that NSE-exclusive and combined series are separately collated, and that FII/FPI data is provisional and subject to custodial confirmation/modifications; DII classification is based on trading-member codes/client category. Source: `turn523810search6` and `turn523810search0`.
+- Direct browser retrieval of `https://www.nseindia.com/api/fiidiiTradeReact` was not accessible in the web retrieval environment; no API payload was obtained in this step. This is a tool-access limitation, not evidence that the endpoint is down.
+- No URL was guessed, no live capture was attempted, no raw data was committed, and no production file/workflow was changed.
+- Current state: official page scope labels VERIFIED; provisional-data caveat VERIFIED; exact CSV URLs NOT_RESOLVED; live capture NOT_RUN. Next safe action is obtain the two exact download request URLs from the user's browser (or an official-page browser network/download trace), then pass both together to the existing isolated utility.
+
+
+## 2026-11-16 — User correction: use existing Library files; do not request re-upload
+- User clarified that FII/DII files are already stored in ChatGPT Library and expects the research workflow to retrieve and use them independently rather than asking the user to resend files or manually download them.
+- Confirmed Library folder `/PRECISION-WIRES/NSE-FII-DII` contains both existing files: `fii-dii-nse-latest.csv` and `fii-dii-combined-latest.csv` (218 bytes each). Both were already read from Library and raw-byte SHA-256 computed in prior ledger entry.
+- Current official NSE page search result independently shows the same two distinct series and same 13-Nov-2026 values as the Library files: NSE-only DII -1,970.73 and FII/FPI +5,253.98; combined DII -2,253.58 and FII/FPI +5,736.55. Official source also says FII/FPI data is provisional and subject to custodial confirmation/modifications. Source `turn817618search1`.
+- Clarification: no need to ask user to re-upload or re-send already available Library CSV files. Continue retrieving known files from Library and use official web sources/programmatic research wherever available. Ask the user only if a truly unavailable input requires their direct browser action; explain the precise access limitation.
+- The remaining provenance gap is not missing CSV content. It is the absence of original download URL/request metadata and capture timestamp in the stored CSVs. Do not misrepresent the user-supplied Library files as a new live NSE capture. Keep source provenance NOT_VERIFIED and live API capture NOT_RUN until independently acquired evidence supports changing those statuses.
+
+## 2026-11-16 — FII/DII Library CSV arithmetic and cross-source reconciliation
+- New bounded QA pass on the two already-stored Library CSVs (no re-upload and no hash recomputation required):
+  - Both files contain exactly the expected two categories (DII, FII/FPI), same observation date 13-Nov-2026, and same ₹ Crores units.
+  - Verified each row's arithmetic exactly to 2 decimals: BUY − SELL = NET.
+  - NSE-only: DII 10,561.32 − 12,532.05 = −1,970.73; FII/FPI 17,376.50 − 12,122.52 = +5,253.98.
+  - Combined: DII 11,745.95 − 13,999.53 = −2,253.58; FII/FPI 18,339.57 − 12,603.02 = +5,736.55.
+  - All four row arithmetic checks PASS; category/date/unit alignment PASS; no duplicate category within either file.
+- Cross-source reconciliation: combined CSV's two rows exactly match the existing NSE API artifact Run #161 (market_context.json, observation date 13-Nov-2026): DII net −2,253.58 and FII/FPI net +5,736.55, including buy/sell values. This is an independent consistency check of the combined series, but not a substitute for original CSV download URL metadata.
+- NSE-only series has no matching independent same-date API row in the evidence presently retained; its independent cross-source check remains NOT_AVAILABLE.
+- Calculated scope deltas (Combined minus NSE-only): DII buy +1,184.63, sell +1,467.48, net −282.85; FII/FPI buy +963.07, sell +480.50, net +482.57. These are exchange-scope differences, not data errors.
+- Current web-indexed official NSE report page returns stale 21-Aug-2026 table values in this retrieval snapshot, while a separately indexed NSE page variant returns “No Records”; these are cache/index retrieval artefacts and are not used to overwrite the Library's 13-Nov-2026 records. Official page continues to describe the two scopes separately and notes FII/FPI provisional status.
+- Status update: Library CSV schema/date/category checks PASS; four row arithmetic checks PASS; combined-series Run #161 reconciliation PASS; NSE-only independent same-date reconciliation NOT_AVAILABLE; CSV source URL/download timestamp NOT_VERIFIED; live raw capture NOT_RUN; historical coverage NOT_AVAILABLE.
+- No production code, selector, score, diagnostics, engines, collector, or workflow changed. This is research evidence only.
+
+## 2026-11-16 — CORE-672 FII/DII schema-mapping gap audit completed
+- Added research-only report `docs/CORE_672_FII_DII_SCHEMA_MAPPING_GAP_AUDIT_20261116.md` (commit `80f2038fc3ccae42bd5caa14ee4a87b9bb377cd3`; report blob re-fetched and verified).
+- Exact source blobs reviewed: `collector/context_data.py` `f38e17979774d1439eea79e4dc7728ba92a790d1`; `pipeline/diagnostics_672.py` `af0a8ddc17d72024509167533585713600a4b845`; `pipeline/risk_modifier.py` `4115a1247992ef8a075b2fd247efb9ce8f8663f6`.
+- Confirmed schema mismatch: collector emits category/group/date/buy_value/sell_value/net_value; CORE-672 diagnostics reads `fii_net` and `dii_net`. For retained collector-shaped rows both lists are empty -> NaN -> neutral score 50 -> UNKNOWN. No zero is asserted as actual flow.
+- Confirmed Risk Modifier separately sums first 20 group-specific net_value rows but does not sort by date or enforce 20 distinct matured sessions/scope. This is not an approved CORE-672 mapping or rolling-history policy.
+- Report specifies required gates: explicit exchange scope, category normalization, observation-date identity, uniqueness, arithmetic validation, freshness/provisional/revision handling, minimum matured-session rule, fail-closed UNKNOWN, and separation of CORE-672 from Risk Modifier.
+- Status: static source inspection PASS; mismatch finding PASS; production mapping change NOT_AUTHORIZED/NOT_DONE; rolling 20-session evidence NOT_AVAILABLE; live NSE capture NOT_RUN; official CSV download provenance NOT_VERIFIED.
+- No production source, collector, diagnostics, Risk Modifier, Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 56×12 structure, Engines A-E, or workflow was modified. Research report only.
+
+## 2026-11-16 — Research-only FII/DII mapping contract and isolated tests
+- Created isolated branch `research/fii-dii-contract-tests-20261116` from `research/nse-raw-manifest-retention-20261115`; no default-branch merge and no production files changed.
+- Added `tools/research/fii_dii_contract.py` (commit `6e596937923e157c370a8facd7a865c995cbfd52`, blob `a63a6008f8f0e5d24d1b26d7c96b012205dec23f`). The validator is structural only: explicit scope enum (`NSE_ONLY` / `NSE_BSE_MSEI_COMBINED`), category allowlist, date-only observation date, duplicate scope/date/category rejection, finite numeric validation, BUY-SELL=NET arithmetic, and explicit caller-supplied maturity threshold. It emits no POSITIVE/NEGATIVE signal and does not define a production aggregation policy.
+- Added `tools/research/tests/test_fii_dii_mapping_contract.py` (final commit `777e8272b71800c1be448a40990fc86965dafb76`, blob `3433ddd68ee14f6b7e80307062dcde3c1ecb7afd`), 13 tests using provenance-pinned Run #161 fixture `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`. Invalid-input mutations are test cases only, not synthetic market observations. Import path was explicitly fixed using importlib because unittest discovery runs from the tests directory.
+- Extended only the existing manual `workflow_dispatch` offline test workflow on this isolated branch to run the new contract suite after the existing capture utility suite. Workflow update commit `fa10ab59c6b08e74f0f6ef9c7e2c8f1fcd017531`, blob `5b4db141ff0de4906887cc7e913a315461b347c3`. Workflow retains contents:read, 5-minute timeout, no NSE calls, no secrets, no artifacts, no production schedule.
+- Re-fetched all three final files from the isolated branch; verified 13 test methods and both test commands are present. Exact GitHub Actions execution is NOT_RUN because this session has no workflow-dispatch action. Do not claim test PASS until user triggers the workflow and GitHub confirms success.
+- This contract deliberately does not assume a 20-session FII/DII window or set a new threshold. `maturity_status` requires a caller-supplied positive integer; the one-date Run #161 fixture returns UNKNOWN for a 20-session requirement. Any actual production window/freshness/provisional policy remains to be approved separately.
+- Status: contract authoring 100%; 13 test cases authored 100%; manual workflow wiring 100%; final GitHub file retrieval verification 100%; exact automated execution NOT_RUN; production mapping NOT_AUTHORIZED/NOT_DONE; live NSE capture NOT_RUN; historical multi-session evidence NOT_AVAILABLE.
+- No changes to default branch, Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 56×12 production diagnostics, engines A-E, collector production code, or production workflows.
+
+## 2026-11-16 — FII/DII contract scope-provenance boundary hardening
+- Continued the isolated mapping-contract task on `research/fii-dii-contract-tests-20261116`; no repeated execution of prior tests and no production edits.
+- Code review identified an important boundary: the contract receives scope as a caller argument; the retained Run #161 fixture itself does not carry authenticated exchange-scope metadata. Therefore a validator cannot prove the caller's NSE-only/combined label from that fixture alone.
+- Hardened `tools/research/fii_dii_contract.py` to return `declared_scope` rather than `scope`, and clarified its docstring: it validates rows under a caller-declared label but does not authenticate scope provenance. Final blob `090f9b5f58922fcb543f69d425c2a32fb387dd93`, commit `591317831a4093c930223682191a39edfa96a327`.
+- Expanded `tools/research/tests/test_fii_dii_mapping_contract.py` from 13 to 14 tests, including a regression assertion that the output exposes only `declared_scope` and does not claim `authenticated_scope`. Final blob `efddbdb4e3a36e77cb35b8ae2701e2ee3b3423b9`, commit `e6be1907cb1452aea43926a64be53b7c1beffe5f`.
+- Re-fetched final contract, test file, and manual workflow from the branch. Verified final test count=14 and workflow still includes both isolated test suites. Workflow blob `5b4db141ff0de4906887cc7e913a315461b347c3`.
+- This prevents a false PASS where a caller could label one scope as another without evidence. Authentic scope proof still requires official source/download metadata or another trusted scope identifier. Existing CSV contents and Run #161 match remain consistency evidence only, not authentication of download scope.
+- Status: contract/test authoring 100%; scope-provenance limitation explicitly encoded 100%; workflow wiring 100%; GitHub source re-fetch verification 100%; automated execution NOT_RUN; live NSE capture NOT_RUN; production mapping NOT_AUTHORIZED/NOT_DONE.
+- No default-branch changes, no PR/merge, no production collector/diagnostic/risk-modifier/selector/score/CORE-672/engine/workflow modifications.
+
+## 2026-11-16 — Default-branch isolated workflow checkout correction
+- User screenshot showed the `main` workflow commit `Pin isolated FII-DII tests to research branch` had hard-pinned checkout to `research/nse-raw-manifest-retention-20261115`, and only ran the capture utility suite. This explained why selecting `research/fii-dii-contract-tests-20261116` in the Run workflow dialog could not execute the newer mapping-contract suite.
+- Within the user's explicit authorization limited to the isolated test workflow on the default branch, changed only `.github/workflows/nse_fii_dii_capture_unit_tests.yml` on `main`.
+- Replaced hard-coded checkout ref with `ref: ${{ github.ref }}` so the workflow checks out the branch selected in GitHub's Run workflow dialog.
+- Added the isolated `test_fii_dii_mapping_contract.py` test step after the existing capture utility tests. Workflow remains manual-only (`workflow_dispatch`), `contents: read`, 5-minute timeout, and no NSE network capture, secrets, artifacts, or production schedule.
+- Commit: `84bfa57529b2a812d4690e7ec0e91f794be448cd`; final workflow blob: `d6b897dc164b4e38ec24f2704149c5f076c5d6bd`. Re-fetched from `main`; verified selected-ref expression and both test commands.
+- This is the sole default-branch file changed, consistent with the user's prior authorization. No other production or research files changed on `main`.
+- Status: default-branch workflow correction PASS (source re-fetch verified); run execution NOT_RUN; test outcome NOT_KNOWN until GitHub Actions reports it.
+
+## 2026-11-16 — FII/DII mapping test failure diagnosis and fixture-path correction
+- User supplied GitHub Actions Run #9 log screenshot. The log shows all setup steps, utility compilation, and `test_capture_nse_fii_dii.py` suite passed; only `Run FII-DII mapping contract tests` failed before executing tests.
+- Exact failure: `FileNotFoundError` in `FiiDiiMappingContractTests.setUpClass` while reading `tools/research/tests/test_fii_dii_mapping_contract.py`, line 21. The path resolved to `/home/runner/work/PRECISION-WIRES-NSE200-COLLECTOR/PRECISION-WIRES-NSE200-COLLECTOR/tools/tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`; the committed fixture is actually at repository-root `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`.
+- Corrected fixture path from `Path(__file__).parents[2]` to `Path(__file__).parents[3]`, preserving the fixture and tests unchanged otherwise.
+- Fix commit: `e551cf303c48efa2c050fc1fe8b5328531aa7de0`; test file blob `f2c5406381395547fb883bc0d9e9a5f8b6b331c5`.
+- Verified the fixture exists on the selected research branch at `tests/research_fii_dii_run161/fixtures/run161_fii_dii_excerpt.json`, blob `25659f24854a8fae4fd7321ba76c5fe62043ee0c`, and contains the Run #161 provenance identifiers and two source rows.
+- Status: failure cause identified 100%; fixture path corrected 100%; GitHub test source updated 100%; corrected workflow execution NOT_RUN; all 14 mapping tests remain NOT_VERIFIED until next run. Prior successful capture utility tests remain PASS for Run #9 only.
+- No production files or default-branch files changed in this correction; only the isolated research-branch test file and continuity ledger updated.
+
+## 2026-11-16 — Deterministic checkout fix for manual FII/DII test workflow
+- User screenshot of Run #11 conclusively showed the run used `main` at workflow commit `84bfa57`, despite the user intending to select `research/fii-dii-contract-tests-20261116`. This was a GitHub UI/dispatch branch-selection mismatch; the research test branch was not actually checked out by that run.
+- To eliminate the need for the user to select a second branch in the mobile Run workflow dialog, changed only the already-authorized default-branch workflow `.github/workflows/nse_fii_dii_capture_unit_tests.yml` on `main` to explicitly checkout `research/fii-dii-contract-tests-20261116`.
+- The workflow remains `workflow_dispatch` only, `contents: read`, Python 3.12, 5-minute timeout, no NSE network capture, no secrets, no production schedules. It runs both the capture utility offline tests and FII-DII mapping contract tests from the pinned research branch.
+- Commit: `c130ebbd919cf07b74e1841cb123862e0b95a4ce`; final workflow blob `e2c4449e79d7a1f83e896d759291b9e944215f10`. Re-fetched from `main` and verified the pinned branch plus both test commands.
+- This is the only default-branch file changed in this correction. Run #11 (`main`, commit `84bfa57`) is not evidence for the updated research tests; do not repeat or count it as a test result.
+- Status: deterministic branch checkout fix 100%; source re-fetch verification 100%; next GitHub Actions execution NOT_RUN; mapping suite outcome NOT_KNOWN.
+
+
+## 2026-11-16 — FII/DII isolated workflow Run #13 success (user screenshot evidence)
+- User supplied the GitHub Actions run summary screenshot for `NSE FII-DII Capture Utility Unit Tests #13`.
+- Visible run facts: conclusion SUCCESS; branch `main`; commit prefix `c130ebb` (matches the full default-branch workflow commit `c130ebbd919cf07b74e1841cb123862e0b95a4ce`); total duration 11 seconds; job `capture-utility-tests` SUCCESS in 8 seconds; 1 job passed.
+- The exact workflow file at `.github/workflows/nse_fii_dii_capture_unit_tests.yml` was re-fetched from `main` after the run. Blob SHA `e2c4449e79d7a1f83e896d759291b9e944215f10`. It explicitly checks out `research/fii-dii-contract-tests-20261116`, then compiles the capture utility, runs `test_capture_nse_fii_dii.py`, and runs `test_fii_dii_mapping_contract.py`.
+- Interpretation: Run #13 is a successful execution of the isolated workflow with both test commands in its job. The screenshot does not expose the numeric test-method count or the GitHub run ID, so neither is asserted here. No live NSE HTTP capture occurred; these are offline tests only.
+- Status: deterministic checkout correction PASS; workflow job PASS (Run #13 screenshot); both test commands are included in the verified workflow source; exact per-test counts and run ID NOT_CAPTURED; live NSE capture NOT_RUN; CORE-672 production mapping NOT_AUTHORIZED/NOT_DONE.
+- This supersedes the immediately preceding ledger status that the corrected workflow execution was NOT_RUN / NOT_KNOWN. Do not repeat the successful Run #13 test job absent code changes or new evidence.
+- No production files, collector workflows, Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 56×12 production diagnostics, or Engines A–E were changed. The only default-branch file in scope remains the explicitly authorized isolated test workflow.
+
+
+## 2026-11-16 — Exact GitHub Actions Run #13 evidence retrieved
+- Retrieved the actual GitHub Actions run record: Run #13, run ID `43869585899`, workflow ID `419761357`, event `workflow_dispatch`, branch `main`, workflow commit `c130ebbd919cf07b74e1841cb123862e0b95a4ce`, conclusion `success`, elapsed 11 seconds.
+- Retrieved job `capture-utility-tests`, job ID `133306894900`, conclusion `success`; all seven workflow steps succeeded, including checkout, Python setup, dependency install, compile, and both test commands.
+- The log explicitly confirms checkout ref `research/fii-dii-contract-tests-20261116` at test-code commit `e551cf303c48efa2c050fc1fe8b5328531aa7de0`.
+- Exact test output: capture utility suite 7/7 PASS (0.001 sec); FII-DII mapping contract suite 14/14 PASS (0.016 sec). Total 21/21 unit tests PASS; py_compile PASS.
+- This upgrades the prior screenshot-only status to log-verified test evidence. It is strictly offline unit-test validation; it does not establish live NSE connectivity, official CSV/API scope, historical coverage, or production mapping correctness.
+- Do not rerun these tests absent code changes. Next action is a separately gated live official-source capture/reconciliation, keeping raw payloads local/private and preserving SHA-256 manifests.
+
+
+## 2026-11-16 — FII/DII two-scope Library CSV byte/hash and arithmetic reconciliation
+- User's two latest Library CSVs were materialized as exact raw bytes and inspected; no repeat of earlier one-day data review was assumed without hashing the actual current Library versions.
+- Research report: `docs/CORE_672_FII_DII_TWO_SCOPE_CSV_RECONCILIATION_20261116.md`; commit `354ba50fa59c616aab2aa5077855c7fe4f251769`.
+- `fii-dii-nse-latest.csv`: 218 bytes; SHA-256 `b733444b5a846abb672226bc96448bc0baea2da0ad15fe810207fbe93aad7f18`.
+- `fii-dii-combined-latest.csv`: 218 bytes; SHA-256 `2697546fa012f4c08449b37a3eb7d0f8298f296c25fd8ce4b7ca134c37999eb2`.
+- Both files contain 13-Nov-2026, DII and FII/FPI rows. BUY−SELL=NET passed all 4 rows. Combined minus NSE-only: DII buy +1184.63, sell +1467.48, net -282.85 crore; FII/FPI buy +963.07, sell +480.50, net +482.57 crore.
+- Official NSE report page independently confirms two separate report sections and CSV controls: NSE Capital Market Segment, and combined NSE+BSE+MSEI Capital Market Segment. The page text extraction did not expose the exact underlying CSV URLs or HTTP response metadata.
+- Status: exact-byte hash PASS; CSV arithmetic PASS 4/4; scope distinction confirmed; authentication of these Library files' precise official download-control provenance UNKNOWN; historical maturity NOT_AVAILABLE (one date only); 20-session gate NOT_MATURE; live API capture NOT_RUN; CORE-672 mapping NOT_AUTHORIZED/NOT_DONE.
+- Do not treat the two scopes as interchangeable, sum them, or promote either to canonical production input. File names are not source authentication.
+- This is a research-only reconciliation; no production code/workflow/selector/score/pressure-fade/CORE-672/engines changed.
+
+
+## 2026-11-16 — NSE FII/DII download-control parser gap found before live run
+- Inspected the official NSE report page rendered structure: two separate scope headings (“NSE in Capital Market Segment” and “NSE, BSE and MSEI in Capital Market Segment”), each followed by a “Download (.csv)” control.
+- Current utility's `AnchorParser` stores only individual anchor text/href; its selector requires the anchor label itself to contain “capital market” and FII/DII. The section scope text is outside the download control label, so this parser cannot reliably bind controls to the correct scope and may fail closed with ACCESS_BLOCKED.
+- This is a static selector-design finding from rendered page inspection, not a live raw HTML/DOM capture or a verified runtime failure. Exact download URLs remain UNKNOWN; no URL guessed.
+- Report: `docs/CORE_672_FII_DII_CSV_CONTROL_DISCOVERY_GAP_20261116.md`; commit `5f2a48d3456f37317e3557285f656cd3579ed66a`.
+- Next task: obtain exact official raw page markup/DOM, preserve its provenance/hash, then implement a section-context-aware parser and fixture tests. Do not run live capture until exact controls are resolved or the explicit exact-URL override is supplied.
+- Status: rendered two-control structure PASS; current scope-to-control parser association BLOCKED; raw DOM fixture NOT_CAPTURED; URLs UNKNOWN; live capture NOT_RUN; API-to-CSV reconciliation BLOCKED.
+- No production files/workflows or selector/scoring/CORE-672/engines changed.

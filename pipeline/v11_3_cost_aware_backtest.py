@@ -15,7 +15,8 @@ def _valid_bar(row):
     if not all(pd.notna(v) and np.isfinite(float(v)) and float(v)>0 for v in vals):
         return False
     o,h,l,c=map(float,vals)
-    return h >= max(o,l,c) and l <= min(o,h,c) and float(row["TTL_TRD_QNTY"]) > 0
+    volume=float(row["TTL_TRD_QNTY"])
+    return h >= max(o,l,c) and l <= min(o,h,c) and np.isfinite(volume) and volume > 0
 
 def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
     """Entry next global session OPEN; stop -3%; target intraday HIGH; stop-first on ambiguous OHLC bar."""
@@ -77,7 +78,7 @@ def simulate_one(bars, cutoff, symbol, target_pct, horizon, cost_pct=COST_PCT):
         "ENTRY_SESSION":window_dates[0].date().isoformat(),"ENTRY_PRICE":entry,"ENTRY_STATUS":"EXECUTED",
         "TARGET_PCT":float(target_pct),"HORIZON_SESSIONS":int(horizon),"EXIT_SESSION":exit_date.date().isoformat(),
         "EXIT_PRICE":float(exit_price),"EXIT_REASON":reason,"GROSS_RETURN_PCT":gross,"COST_PCT":float(cost_pct),
-        "NET_RETURN_PCT":net,"TARGET_HIT":reason=="TARGET" and net>=0,"STOP_HIT":reason.startswith("STOP"),
+        "NET_RETURN_PCT":net,"TARGET_HIT":reason=="TARGET","STOP_HIT":reason.startswith("STOP"),
         "EXECUTABLE":True,"DATA_STATUS":"VERIFIED_OHLC","SOURCE_FILE":"","SOURCE_ROW_OR_KEY":f"{symbol}|{window_dates[0].date()}"}
 
 def _empty(cutoff,symbol,target,horizon,status,cost):
@@ -98,8 +99,11 @@ def run(data_path, signals_path, out_dir, cost_pct=COST_PCT):
     if not {"CUT_OFF","SYMBOL"}.issubset(signals.columns): raise ValueError("Signals require CUT_OFF and SYMBOL")
     signals["CUT_OFF"]=pd.to_datetime(signals["CUT_OFF"],errors="coerce")
     if signals["CUT_OFF"].isna().any(): raise ValueError("Invalid signal cutoff")
+    signal_keys=signals.assign(_SYMBOL=signals["SYMBOL"].astype(str))
+    if signal_keys.duplicated(["CUT_OFF","_SYMBOL"]).any():
+        raise ValueError("Duplicate CUT_OFF/SYMBOL signal keys; fail closed")
     rows=[]
-    for s in signals[["CUT_OFF","SYMBOL"]].drop_duplicates().itertuples(index=False):
+    for s in signals[["CUT_OFF","SYMBOL"]].itertuples(index=False):
         for target,horizon in TARGETS:
             row=simulate_one(bars,s.CUT_OFF,s.SYMBOL,target,horizon,cost_pct)
             row["SOURCE_FILE"]=str(data_path)
