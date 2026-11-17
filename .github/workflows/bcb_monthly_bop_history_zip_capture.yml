@@ -1,0 +1,33 @@
+name: Brazil BCB Official Monthly BOP History ZIP Capture
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/capture_bcb_monthly_bop_history_zip.py"
+      - ".github/workflows/bcb_monthly_bop_history_zip_capture.yml"
+permissions:
+  contents: read
+concurrency:
+  group: bcb-monthly-bop-history-capture
+  cancel-in-progress: false
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax-check
+        run: python -m py_compile scripts/research/capture_bcb_monthly_bop_history_zip.py
+      - name: Capture official BCB monthly historical ZIP
+        run: python scripts/research/capture_bcb_monthly_bop_history_zip.py
+      - name: Upload raw archive and manifest even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-monthly-bop-history-zip
+          path: bcb_monthly_bop_history/
+          if-no-files-found: warn
+          retention-days: 90
