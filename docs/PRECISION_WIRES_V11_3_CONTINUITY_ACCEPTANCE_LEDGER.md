@@ -1085,3 +1085,11 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Acceptance: multi-period comparison PARTIAL; Brazil pilot NOT_ACCEPTED; same-vintage revision bridge NOT_DONE; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next action: verify CI; then resolve only Dec-2025 and Feb-2026 from same-vintage official BCB tables/archives. Do not repeat source capture, the September-2026 one-month check, or metadata discovery.
 - Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched; ₹0; no synthetic values or invented provenance.
+
+## 2026-11-17 — BCB multi-period reconciliation CI runtime PASS
+- Workflow Run #1 / ID `44086204426`, head `ed7c695c33c4739b9dd5acebf663f08469b2cb15`, completed SUCCESS; job `reconcile` and raw SHA-256/reproduction step SUCCESS.
+- CI independently rechecked all three committed raw source hashes and reproduced 9 reference months, 7 fully matching months, and 23/27 matching component/total comparisons.
+- Artifact ID `14328529268`; archive SHA-256 `c65447a53ba44c44c85a0239776bb9af08c454bdc6e9046c98700492806dc647`; expiry `2027-02-15T12:45:57Z`.
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086204426
+- CI gate PASS does not upgrade the two vintage exceptions or the Brazil pilot. Dec-2025 and Feb-2026 remain VINTAGE_DIFFERENCE_UNRESOLVED; same-vintage revision bridge NOT_DONE; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next action unchanged: resolve only the two mismatched months using same-vintage official BCB archived tables and revision evidence. No repeated capture or September-only audit.
