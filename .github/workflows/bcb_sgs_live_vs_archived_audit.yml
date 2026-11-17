@@ -1,0 +1,43 @@
+name: BCB SGS Live vs Archived 15-Series Audit
+
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'scripts/research/audit_bcb_sgs_live_vs_archived_15_series.py'
+      - 'data/raw/bcb/priority_series_capture_20261117/**'
+      - 'data/raw/bcb/instrument_net_capture_20261117/**'
+      - '.github/workflows/bcb_sgs_live_vs_archived_audit.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bcb-sgs-live-vs-archived-audit
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile fail-closed comparison script
+        run: python -m py_compile scripts/research/audit_bcb_sgs_live_vs_archived_15_series.py
+      - name: Compare official live SGS API with immutable 15-series capture
+        run: python scripts/research/audit_bcb_sgs_live_vs_archived_15_series.py
+      - name: Upload machine-readable comparison evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-sgs-live-vs-archived-15-series-${{ github.run_id }}
+          path: data/qa/BCB_SGS_LIVE_VS_ARCHIVED_15_SERIES_20261118.json
+          if-no-files-found: error
+          retention-days: 90
