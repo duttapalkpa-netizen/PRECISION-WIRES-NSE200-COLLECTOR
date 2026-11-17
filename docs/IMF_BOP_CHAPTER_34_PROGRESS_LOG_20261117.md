@@ -1,7 +1,7 @@
 # IMF BOP Continuation — Chapter 34 Progress Log
 Date: 2026-11-17
 Workstream: Global Capital Rotation & Relative-Attraction Overlay
-Branch: `research/bcb-priority-metadata-audit-20261117`
+Branch: `research/ch34-india-bop-pilot-query-audit-20261117`
 
 ## 1. Completed Tasks
 
@@ -76,3 +76,39 @@ Percentages apply only to this Chapter 34 work package; do not present them as t
 - Crosswalk report: `docs/IMF_BOP_PORTFOLIO_INDICATOR_SEMANTIC_CROSSWALK_20261117.md`
 - Raw capture: `evidence/imf_bop_dsd/20261117T134325Z/`
 - Crosswalk QA: `data/qa/IMF_BOP_BPM6_PORTFOLIO_INDICATOR_CROSSWALK_20261117.json`
+
+
+## 2026-11-17 — RBI BPM6 comparator and corrected IMF endpoint boundary
+
+### Completed in this continuation
+- RBI official BPM6 Table 42 (US$ million) and Table 43 (₹ crore) identified and source semantics documented: quarterly, DEPR/RBI, subject to revision, functional classification includes Portfolio Investment, Credit/Debit/Net, preliminary marker P.
+- RBI SDDS calendar verified: Apr–Jun 2026 published 01-Sep-2026; Jul–Sep 2026 scheduled 01-Dec-2026. Official Apr–Jun XLSX URL resolved: https://rbidocs.rbi.org.in/rdocs/content/docs/BOPS01092026FULL.xlsx.
+- XLSX retrieval returned anti-bot challenge via browser retrieval. Raw bytes/headers/hash NOT_VERIFIED; no bypass attempted.
+- September 2026 monthly RBI BOP press release (13-Nov-2026) found, but its monthly/cumulative USD billion FPI values are explicitly excluded from the quarterly Table 42 crosswalk.
+- IMF API boundary clarified: official May-2025 SDMX Central guide documents FMR /ws/public/data processing entry point; public POST /validate and POST /transform are data processing, not observation-query GET. Do not treat those as data retrieval. No anonymous BOP observation query contract established.
+- Audit docs: docs/INDIA_RBI_BOP_BPM6_OFFICIAL_COMPARATOR_SOURCE_AUDIT_20261117.md (commit b3c4d46fcfbf67570586260757b562476577c10d); docs/IMF_SDMC_CENTRAL_STRUCTURE_VS_OBSERVATION_API_BOUNDARY_AUDIT_20261117.md.
+- Source register update commit: b87a9aa517f643c371a12d48893838a3a67255ec. Continuity ledger append commit: 0ed547b19a3951d8554fbf7ad1f064b830121bda.
+
+### Rejected / excluded
+- Treating FMR /validate or /transform as an IMF observation query endpoint.
+- Guessing India REF_AREA code or BOP query URL.
+- Mapping RBI Credit/Debit/Net mechanically to IMF BFPA/BFPL without row-level sign/direction proof.
+- Substituting monthly press-release FPI summary for quarterly BPM6 Table 42.
+- Adding RBI XLSX to parser allowlist before raw payload bytes and manifest are verified.
+
+### Progress (Chapter 34 work package only)
+| Gate | Progress | Status |
+|---|---:|---|
+| IMF metadata, crosswalk, ECOFIN dimension order | 100% | PASS — reused |
+| RBI Table 42/43 source identity and semantics | 100% | PASS — documented |
+| RBI SDDS release calendar and exact XLSX route | 100% | PASS — route resolved |
+| RBI raw XLSX transport capture | 0% | NOT_VERIFIED |
+| RBI Table 42 row extraction | 0% | NOT_DONE |
+| RBI ↔ IMF BFPA/BFPL semantic reconciliation | 0% | NOT_DONE |
+| IMF anonymous observation endpoint/query contract | 0% | UNKNOWN / NOT_DONE |
+| India IMF quarterly observation pilot | 0% | NOT_DONE |
+| Actual/estimate, coverage and PIT/vintage gate | 0% | NOT_DONE |
+| EM aggregation eligibility | 0% | NOT_DONE |
+
+### Exact next action
+Attempt one short, isolated research-branch retrieval of the official RBI Apr–Jun 2026 XLSX. Preserve full response metadata and bytes if valid; if anti-bot challenge/denial appears, archive the challenge response and stop. If XLSX is retrieved, extract Table 42 only and reconcile row-level semantics with IMF metadata. No production integration.
