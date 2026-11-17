@@ -214,3 +214,11 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Test commit: 33bae5d289932803a0cdb30108e6c114849ecbb4; blob: 6d7eb2fe2a96661c2bf6c08da9a3d89997d06cbd.
 - Both files re-fetched and patch presence verified. Full repository unit test suite / CI execution: NOT_VERIFIED; no workflow run returned for the test commit. Do not mark test suite PASS.
 - Scope: research overlay timestamp selection only. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E or hard-gate changes.
+
+
+## 3Q. Correction to BCB SGS 22905 organization/source classification — 2026-11-17
+- Rechecked the exact official BCB portal pages and JSON resource link. SGS 22905 is BCB/Depec (Department of Economics), monthly, million USD, coverage from 1995-01. SGS 22906 and SGS 22924 are also catalogued as BCB/Depec. The earlier 3O note's “BCB/Dstat” classification and claim of a distinct organizational hierarchy are withdrawn as unsupported.
+- The 22905 JSON resource link resolves to the official API endpoint and identifies application/json, but response rows were not rendered by the browser. Values/latest period/raw archive/byte count/SHA-256 remain NOT_ACQUIRED/NOT_DONE.
+- No arithmetic relationship between 22905 and 22906/22924 inferred. Methodology and overlapping raw observation reconciliation still required.
+- Corrected source register commit: acdf663e31d6881d286d44d12d3bd5ef9e3dd677; blob: c97cb778ddd8305ea547daf5fa1c13fbb26432d1. Corrected extraction spec commit: a0605a0f3634b1d7f9e6e5bed1b48b9edd53a209; blob: 47b46ba3588580a8af421622731a9f442a878ed6.
+- Evidence: official BCB portal catalogue pages for SGS 22905, 22906 and 22924. No production change.
