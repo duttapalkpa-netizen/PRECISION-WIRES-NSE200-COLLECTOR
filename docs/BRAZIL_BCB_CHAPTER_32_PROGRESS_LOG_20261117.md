@@ -174,3 +174,11 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Next actions: (1) verify updated CI after script change; (2) obtain an authoritative BCB definition of 22936 market perimeter; (3) obtain same-vintage official release tables/archive for Dec-2025 and Feb-2026 and resolve their debt/equity/fund differences. Do not claim revision causation until supported.
 - Status: hierarchy 22942/22945 corrected PASS; 22936 perimeter UNKNOWN; numerical reproduction pending updated CI; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Invariants preserved: ₹0; official free sources; no synthetic data; no raw changes; no production selector, score, pressure fade, CORE-672, engines, hard gate, parser admission or seed changes.
+
+## 16. 2026-11-17 — Scope-aware reconciliation CI PASS; matched-vintage table capture queued
+- Updated reconciliation script CI Run #3 / ID 44089780668: SUCCESS; commit 6e10775e5ea3a3902519d8edb75fabfb45ef71c8. Runtime verified the same three raw SHA-256 values and explicit scope flags: 22942 domestic-market debt; 22930 domestic-market equity; 22936 fund liabilities without explicit market qualifier in catalogue.
+- Updated result: 9 periods; 7 complete numeric matches; 23/27 numeric comparisons; debt comparison scope confirmed 8/9; fund market perimeter UNKNOWN. This is a reproducibility PASS, not country-perimeter acceptance.
+- Artifact ID 14330248320; digest sha256:4b46d50d369370b5eb7806e5f61a95af1802220bb0ccb099804040d09e2a2fa3; expiry 2027-02-15T13:08:37Z.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44089780668
+- New bounded official BCB historical release table capture workflow committed: .github/workflows/bcb_release_tables_vintage_capture.yml; commit 9329767f79814bf61afad1bb9e311429e228dff1. It targets Jan-2026 publication tables (Dec-2025 reference) and Mar-2026 publication tables (Feb-2026 reference), preserving raw XLSX, HTTP headers, byte lengths, SHA-256 and sheet names. Run ID 44089945873 queued; runtime result pending.
+- Next: verify capture; inspect the exact BCB workbook cells for the two vintage exceptions and the 22936 market perimeter; only then decide whether a revision bridge can be proved.
