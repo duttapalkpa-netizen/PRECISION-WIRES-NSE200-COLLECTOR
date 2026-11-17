@@ -767,3 +767,10 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Binary download of the March-2022 PDF into the working runtime failed; raw bytes, byte length, HTTP headers, retrieval timestamp and SHA-256 remain NOT_ACQUIRED. Do not claim a complete inventory or fabricate hashes from web-extracted text.
 - Deterministic complete inventory and bidirectional diff remain NOT_DONE / BLOCKED pending binary acquisition. Existing five spot examples and corrections are retained; do not repeat them.
 - Next: acquire both exact official PDF binaries via a working permitted route or user-provided exact files, hash them, then parse/validate in bounded chunks. No issuer mapping, PIT, parser or registry promotion authorized.
+
+
+## 2026-11-17 — Source registry and evidence-manifest runtime gate
+- Current parser requires exact source/source_url/indicator/unit/quality match against config/global_capital_rotation_source_registry.json and re-hashes raw payload bytes, checks byte length, status, chronology, content type and path containment. UNKNOWN/PROVISIONAL are excluded.
+- Current source registry is intentionally empty (sources=[]), so trusted observation admission remains fail-closed; no source is yet eligible for VERIFIED_OFFICIAL/VERIFIED_SECONDARY through this branch registry.
+- Static review found evidence_manifest_id is syntax-checked but not resolved to an immutable manifest record; manifest metadata is not independently bound to the row. Payload bytes/hash are checked, but manifest-to-row URL/retrieval/status/content-type/publication-vintage binding remains a gap.
+- Audit: docs/GLOBAL_CAPITAL_ROTATION_SOURCE_REGISTRY_RUNTIME_GATE_AUDIT_20261117.md. Runtime tests NOT_RUN; no parser/registry/observation/production changes. Next: manifest schema and strict binding, offline positive/negative tests, then source tuples qualified individually. No guessed registry entries.
