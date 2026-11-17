@@ -195,3 +195,19 @@ Integrity decision: 22924 live API refresh = NOT_ACQUIRED in this turn; 22925/22
 - RBI, Developments in India's Balance of Payments for September 2026, press release 13-Nov-2026: net FPI -USD 6.7bn, FPI in India -USD 6.5bn; Apr-Sep cumulative net FPI -USD 8.9bn. Official page: `https://www.rbi.org.in/scripts/bs_pressreleasedisplay.aspx/BS_PressReleaseDisplay.aspx?prid=63974`.
 - RBI official commentary on global risk-off / EM portfolio flow selling since September cites West Asia tensions, elevated crude and rising global bond yields; Indian equities bearish Sep-Oct through 19-Oct with DII net buying offsetting part of FII selling. Official RBI Bulletin source: `https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24516`.
 - Scope: Brazil monthly country-specific portfolio liabilities are contextual cross-country evidence only; they are not a synchronized global flow panel or direct India FPI observation. Do not compare raw USD magnitudes as impact weights without harmonized definitions and denominators.
+
+
+## Federal Reserve H.10 nominal broad dollar index — raw archive and 20-valid-interval calculation — 2026-11-17
+
+A Library-held official Federal Reserve H.10 XML ZIP was independently materialized and inspected. Raw archive:
+- Filename: `FRB_H10.zip`
+- Size: 2,087,297 bytes
+- ZIP SHA-256: `aa78aedcc4620594b69617e99a1453a52ae837d45469ed0dea859c5461f37401`
+- Embedded `h10_data.xml` SHA-256: `49b625b653e279f2ccf9cf665f581e507492d4b47d02dd106eddf06cf5502edf`
+- H.10 XML header Prepared timestamp: `2026-11-09T18:25:06`
+- Series ID: `JRXWTFB_N.B`; series description: Nominal Broad Dollar Index; unit: index, Jan-1997=100; frequency: daily; series observations: 5,440, spanning 2006-01-02 through 2026-11-06 in this archive.
+- Last valid observation: 2026-11-06 = 121.8803. The 21st preceding valid observation: 2026-10-09 = 121.6023. Percentage change over 20 valid observation intervals = `(121.8803 / 121.6023 - 1) * 100 = +0.2286140969%`.
+- The source contained an explicit ND marker on 2026-10-12 (OBS_VALUE -9999.0); it was excluded from valid observations, not converted to a numeric return. The 20-interval count uses valid observation points and does not count missing markers.
+- Derived row committed separately as `data/global_capital_rotation/fed_h10_nominal_broad_usd_20obs_2026-11-06.csv` (commit `fff9580f0948689dce9139fc1b2d933f9a25ff36`). It is a distinct H.10 series and is not substituted into the existing FRED DTWEXBGS row.
+
+Measurement boundary: H.10 JRXWTFB_N.B has Jan-1997 base and FRED DTWEXBGS has Jan-2006 base; both are broad USD indexes but they are distinct series. Do not splice levels or returns, and do not label either as ICE DXY. The existing `fed_h10_derived_observation_2026-11-06.csv` actually records FRED DTWEXBGS, so its filename/indicator naming is potentially misleading; this new H.10-derived file preserves the correct series identity. The H.10 value is a reproducible historical observation, not a current 17-Nov print; it must pass the classifier's freshness gate and cannot replace the later FRED DTWEXBGS observation.
