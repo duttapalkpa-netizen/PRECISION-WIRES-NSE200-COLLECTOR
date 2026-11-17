@@ -81,3 +81,10 @@ Current status: IMF API documentation/catalogue route discovery PASS; BOP_AGG an
 - Accordingly, no IMF BOP or BOP_AGG observation endpoint has been verified. The modern IMF Data Portal API link redirects to developer-portal sign-in. Catalogue/DSD discovery must not be mistaken for observation access.
 - Exact BOP DSD 2.6.0 XML request was attempted via browser reader but remained inaccessible; no raw XML/hash acquired.
 - Current status: structure route documented; DSD raw retrieval NOT_DONE; BOP/BOP_AGG observation access NOT_VERIFIED; no observations admitted.
+
+
+## IMF current BOP dataset and historic pilot qualification — 2026-11-17
+- Current IMF country-level BOP dataset is separate from annual BOP_AGG; official page exposes API/VIEW DATA/DOWNLOAD but API redirects to developer sign-in and no direct download URL/raw response was obtained. Current observations NOT_ACQUIRED.
+- IMF SDMX Central shows provider-specific national BPM6 BOP dataflows/registrations. These are not a unified IMF global panel; any use requires provider-specific source validation and explicit country/coverage reconciliation.
+- Historic IMF BOP pilot regional SDMX files explicitly last updated 2013-01-09. REJECTED_FOR_CURRENT_SIGNAL; format/reference only, not current flow evidence.
+- No BOP/BOP_AGG observations admitted; no EM flow panel or overlay calculation advanced.
