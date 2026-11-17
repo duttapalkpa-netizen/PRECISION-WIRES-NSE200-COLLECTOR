@@ -118,3 +118,14 @@ Official BCB catalogue review adds a critical classification boundary:
 - Similar labels do not prove identical calculation, sign convention, compilation vintage, or reconciliation. 22905 is a cross-series control candidate only; it must not be used as a plug, replacement, or arithmetic identity for 22906/22924 without BCB methodology reconciliation and overlapping-period numeric testing.
 - The BCB portal's stated four-week timeliness for 22905 confirms this is a delayed monthly macro series, not a daily capital-flow signal. Use the actual publication timestamp/vintage if acquired; do not assign the observation date as its publication timestamp.
 - Evidence: official BCB dataset pages for 22905, 22906, 22924 and the official topic taxonomy. The direct 22905 JSON endpoint did not render in this browser inspection, so its live observations remain NOT_ACQUIRED in this verification step.
+
+
+## Correction: BCB SGS 22905 catalogue ownership and resource verification — 2026-11-17
+
+Correction to the immediately preceding 22905 comparability note: the official Open Data Portal page identifies SGS 22905 as organization BCB/Depec (Department of Economics), not BCB/Dstat. The official SGS 22906 page also identifies BCB/Depec; the 22924 catalogue entry likewise identifies BCB/Depec. Therefore the earlier statement that 22905 was a Dstat series distinct by organization from 22906/22924 is withdrawn. The prior claim that 22905 was in a separate BOP6/Dstat hierarchy is not supported by the official catalogue page and must not be used.
+
+Verified catalogue facts for 22905: title “Portfolio investment - monthly - net”; source/author/maintainer Central Bank of Brazil / Department of Economics; monthly; unit million US dollars; temporal coverage from 1995-01-01. The portal's JSON resource link resolves to `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json` and the browser identifies `application/json`, but it did not expose the response rows in readable text. Therefore live observation values, latest period, raw archive, byte count and SHA-256 remain NOT_ACQUIRED / NOT_DONE in this verification.
+
+22905 remains a third BCB/Depec series that may be compared against 22906 and 22924, but no algebraic identity, sign convention, or aggregation relation is inferred from titles. Reconcile BCB methodology and overlapping raw observations before calculating or replacing any series. Prior reported Sep-2026 22906/22924 figures remain historical claims from earlier response inspection and are not revalidated by this catalogue correction.
+
+Official evidence: BCB 22905 dataset page (organization, definition, resources, coverage, frequency, unit); BCB 22906 dataset page (same organization, coverage, frequency, unit); BCB 22924 dataset catalogue (same organization and unit/frequency/coverage).
