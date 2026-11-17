@@ -1,0 +1,142 @@
+{
+  "BOP_BPM6_dataflow": {
+    "EUR_aggregate_indicator_allowed": true,
+    "USD_aggregate_indicator_allowed": false,
+    "USD_asset_indicator_allowed": true,
+    "USD_liability_indicator_allowed": true,
+    "allowed_indicator_count": 98,
+    "constraint_counterpart_area": [
+      "W1"
+    ],
+    "constraint_data_domain": [
+      "BOP6"
+    ],
+    "portfolio_candidate_count": 7,
+    "portfolio_indicator_candidates": [
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "EUR",
+        "indicator_code": "BFPA_BP6_EUR",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.A.A.A.6>><<SDDSComponent:Portfolio investment: Assets>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment, Net acquisition of financial assets [BPM6], Euros",
+        "semantic_role": "net_acquisition_of_financial_assets"
+      },
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "USD",
+        "indicator_code": "BFPA_BP6_USD",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.A.A.A.1>><<SDDSComponent:Portfolio investment: Assets>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment, Net acquisition of financial assets [BPM6], US Dollars",
+        "semantic_role": "net_acquisition_of_financial_assets"
+      },
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "XDC",
+        "indicator_code": "BFPA_BP6_XDC",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.A.A.A.2>><<SDDSComponent:Portfolio investment: Assets>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment, Net acquisition of financial assets [BPM6], National Currency",
+        "semantic_role": "net_acquisition_of_financial_assets"
+      },
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "EUR",
+        "indicator_code": "BFPL_BP6_EUR",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.L.A.A.6>><<SDDSComponent:Portfolio investment: Liabilities>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment, Net incurrence of liabilities [BPM6], Euros",
+        "semantic_role": "net_incurrence_of_liabilities"
+      },
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "USD",
+        "indicator_code": "BFPL_BP6_USD",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.L.A.A.1>><<SDDSComponent:Portfolio investment: Liabilities>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment, Net incurrence of liabilities [BPM6], US Dollars",
+        "semantic_role": "net_incurrence_of_liabilities"
+      },
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "XDC",
+        "indicator_code": "BFPL_BP6_XDC",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.L.A.A.2>><<SDDSComponent:Portfolio investment: Liabilities>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment, Net incurrence of liabilities [BPM6], National Currency",
+        "semantic_role": "net_incurrence_of_liabilities"
+      },
+      {
+        "allowed_by_constraint": true,
+        "currency_suffix": "EUR",
+        "indicator_code": "BFP_BP6_EUR",
+        "official_annotation": "<<IMFReportFormCode:.3B9999.N.A.A.6>>",
+        "official_name": "Balance of Payments, Financial Account, Portfolio investment [BPM6], Euros",
+        "semantic_role": "aggregate_portfolio_investment"
+      }
+    ]
+  },
+  "BOP_DSD_semantic_codes": {
+    "CL_ACCOUNT_ENTRY": {
+      "A": {
+        "description": "",
+        "name": "Assets (Net Acquisition of)"
+      },
+      "L": {
+        "description": "",
+        "name": "Liabilities (Net Incurrence of)"
+      },
+      "metadata": {
+        "agencyID": "IMF",
+        "id": "CL_ACCOUNT_ENTRY",
+        "version": "1.5.0"
+      }
+    },
+    "CL_FUNCTIONAL_CAT": {
+      "P": {
+        "description": "",
+        "name": "Portfolio Investment"
+      },
+      "metadata": {
+        "agencyID": "IMF",
+        "id": "CL_FUNCTIONAL_CAT",
+        "version": "1.10.1"
+      }
+    }
+  },
+  "capture_id_utc": "20261117T134325Z",
+  "identities": {
+    "BOP_BPM6_dataflow": {
+      "agencyID": "IMF",
+      "id": "BOP_BPM6",
+      "version": "1.0"
+    },
+    "BOP_BPM6_referenced_DSD": {
+      "agencyID": "IMF",
+      "id": "ECOFIN_DSD",
+      "version": "1.0"
+    },
+    "BOP_DSD_2_6_0": {
+      "agencyID": "IMF",
+      "id": "BOP",
+      "version": "2.6.0"
+    },
+    "BOP_constraint": {
+      "agencyID": "IMF",
+      "id": "BOP_BP6_CONSTRAINT",
+      "version": "1.0"
+    }
+  },
+  "interpretation_boundary": [
+    "BFPA is defined as portfolio investment, net acquisition of financial assets; it is not a gross inflow measure.",
+    "BFPL is defined as portfolio investment, net incurrence of liabilities; it is not an equity-only FPI measure.",
+    "The BOP DSD P/A/L concepts and ECOFIN_DSD INDICATOR codes are separate structural representations; this is a definition-based semantic candidate crosswalk, not a formal same-DSD mapping.",
+    "No observations, reporting-country coverage, actual-vs-estimate status, publication vintage or PIT freshness are validated here.",
+    "No trading signal or production overlay admission is authorized."
+  ],
+  "schema_version": 1,
+  "source_capture_manifest_sha256": "e029afe097cb5267113663eb0a40b0c1990290c9ff8c1bf1c0469a080d6331fb",
+  "source_raw_sha256": {
+    "bop_dsd": "073afeeb971dfa797460ba2233c7af4aa7dfffe4908657b5364e24fc77314f2f",
+    "constraint": "aa6c002fb3a2498420ed8796621664b492c18f58d75918d5c1bf8737fc917656",
+    "dataflow": "74a8f3a58ff3e0bc6e6681c4143cd042cc642edee06f8080e86c29dc3b64e919",
+    "referenced_dsd": "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045"
+  },
+  "status": "PASS_METADATA_SEMANTIC_CANDIDATES_NOT_OBSERVATION_ACCESS",
+  "structural_relation": "DIFFERENT_DSD_REFERENCE_REQUIRES_EXPLICIT_CROSSWALK"
+}
