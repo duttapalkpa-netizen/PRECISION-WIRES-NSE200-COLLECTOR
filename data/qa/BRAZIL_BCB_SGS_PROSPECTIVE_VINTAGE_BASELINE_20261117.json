@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "purpose": "first_prospective_bcb_sgs_vintage_snapshot_runtime_result",
+  "snapshot_id_utc": "20261117T132939Z",
+  "workflow_run": {
+    "id": 44093241898,
+    "run_number": 1,
+    "conclusion": "success",
+    "url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44093241898",
+    "head_sha": "a79d408d17bcdfe7523348417442cbae64120c33",
+    "snapshot_commit": "6237baa"
+  },
+  "artifact": {
+    "id": 14333041266,
+    "name": "bcb-sgs-prospective-vintage-snapshot",
+    "bytes": 26480,
+    "sha256": "7955c0f65379130939258cbd9fcd25c5d1108d49346b4eae0bf1297132897dca",
+    "expires_at": "2027-02-15T13:29:33Z"
+  },
+  "manifest": {
+    "path": "data/raw/bcb/sgs_vintage_snapshots/20261117T132939Z/manifest.json",
+    "sha256": "4821d71e2308c7ac35ebf765c70c465baa9d9c1ec50be3ca1f44fd2af8a7ed0b",
+    "git_blob": "c7c5688d4e1164acc826fc5bea22a8e6369aae14"
+  },
+  "series": {
+    "22924": {
+      "bytes": 8809,
+      "sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+      "observations": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09"
+    },
+    "22930": {
+      "bytes": 8669,
+      "sha256": "c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776",
+      "observations": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09"
+    },
+    "22936": {
+      "bytes": 8006,
+      "sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+      "observations": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09"
+    },
+    "22942": {
+      "bytes": 8579,
+      "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+      "observations": 381,
+      "first_period": "1995-01",
+      "last_period": "2026-09",
+      "february_2026": "2783.2"
+    }
+  },
+  "validation": {
+    "http_200_all_four": true,
+    "csv_schema_all_four": "PASS",
+    "ascending_dates_all_four": "PASS",
+    "duplicate_months": 0,
+    "raw_files_committed_to_git": true,
+    "artifact_uploaded": true,
+    "overall": "PASS_4_OF_4"
+  },
+  "limitations": {
+    "this_is_current_sgs_response_not_original_february_2026_publication_vintage": true,
+    "revision_detection_requires_second_snapshot": true,
+    "february_2026_specific_revision_cause": "UNKNOWN / NOT_PROVEN",
+    "brazil_pilot": "NOT_ACCEPTED",
+    "em_panel": "NOT_DONE",
+    "production_integration": "NOT_AUTHORIZED"
+  }
+}
