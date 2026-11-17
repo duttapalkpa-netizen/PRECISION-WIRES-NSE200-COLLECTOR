@@ -230,3 +230,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Withdraw definitive single-owner assertions. Classification now CONFLICT / UNKNOWN; exclude 22905 from all calculations until final resource URLs, payloads, metadata, date keys, and hashes are compared. Do not infer a net-flow identity with 22906/22924.
 - Updated source register commit: 9ce57cf065bc604a41de84960fb81134b39020a5; blob: 4383152e51526c48da87afdda21b8afafdf30861. Extraction spec commit: ef0ac5dabf80952ff5d17636d48567d555934ee2; blob: 51ac652bcc8846552ed8350afa6a08537166de50.
 - Official evidence: BCB `opendata` and `dadosabertos` portal dataset pages. No production change.
+
+
+## 3S. BCB SGS 22905 shared JSON endpoint confirmed; metadata conflict retained — 2026-11-17
+- Followed the JSON resource links on both official BCB catalogue pages. Both resolve to the exact same endpoint: `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json`.
+- The `dadosabertos` resource click returned readable JSON; visible records begin 1995-01-01 and extend through 2026-09-01 in the browser excerpt. The `opendata` resource resolves to the same URL; no distinct second payload URL exists.
+- This resolves the resource-URL comparison: the previous hypothesis of two different payload endpoints is NOT_SUPPORTED. The two official portal entries reference one SGS API series route.
+- The metadata conflict remains unresolved: `opendata` labels organization BCB/Depec and `dadosabertos` labels BCB/Dstat and BPM6 financial-account hierarchy. Shared endpoint identity does not establish the authoritative metadata owner, classification, methodology version or historical revision policy. Keep metadata status CONFLICT / UNKNOWN and preserve both provenance records.
+- Both CSV resource links resolve to the same `formato=csv` endpoint, but browser reader could not parse `text/csv`; no CSV bytes acquired.
+- JSON body was inspected in browser only. Raw response file, byte count, retrieval timestamp, full payload capture, SHA-256, full-history QA and vintage/revision QA remain NOT_DONE. No data admitted to global EM flow input; no relationship/sign mapping to SGS 22906/22924 inferred.
+- Updated official source register and IMF extraction spec in the same branch; follow-up commit/blob SHAs to be recorded after writes and re-fetch verification. No production change; PR #20 remains draft/unmerged unless independently changed.
