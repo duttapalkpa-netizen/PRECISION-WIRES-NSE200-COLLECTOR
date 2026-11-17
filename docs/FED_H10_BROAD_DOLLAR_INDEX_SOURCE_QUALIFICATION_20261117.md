@@ -51,3 +51,9 @@ Scope: metadata qualification only; research overlay; no production approval.
 ## Next permitted step
 
 Acquire the official H.10 preview payload directly from the exact URL above through an allowed HTTP client, capture final URL, UTC retrieval time, HTTP status, content type, byte length and SHA-256, store bytes under the manifest-controlled raw payload path, and create an append-only evidence manifest. If raw bytes cannot be obtained, stop and keep trusted observations BLOCKED. Do not use a search snippet, browser-rendered text, or user-library CSV as a substitute for the official raw payload.
+
+
+## CI validation after registry admission
+- Registry commit 380918fc008ad96bccabbbab06b18b4ae6683df5 triggered workflow run #221 / ID 44030991201; conclusion SUCCESS. The tests job and Python unittest step both succeeded.
+- Source Register commit d970737f9bb2cdc682ad5c8bd256c2b7fdf84d24 triggered workflow run #222 / ID 44031034467; conclusion SUCCESS. The tests job and Python unittest step both succeeded.
+- These CI passes validate the current overlay test suite with the one-entry registry. They do not establish official raw-payload acquisition, manifest creation, any admitted observation, 20-session derivation, or production authorization.
