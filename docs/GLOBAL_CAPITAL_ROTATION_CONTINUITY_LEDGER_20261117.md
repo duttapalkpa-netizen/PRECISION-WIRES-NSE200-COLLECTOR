@@ -240,3 +240,15 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Both CSV resource links resolve to the same `formato=csv` endpoint, but browser reader could not parse `text/csv`; no CSV bytes acquired.
 - JSON body was inspected in browser only. Raw response file, byte count, retrieval timestamp, full payload capture, SHA-256, full-history QA and vintage/revision QA remain NOT_DONE. No data admitted to global EM flow input; no relationship/sign mapping to SGS 22906/22924 inferred.
 - Updated official source register and IMF extraction spec in the same branch; follow-up commit/blob SHAs to be recorded after writes and re-fetch verification. No production change; PR #20 remains draft/unmerged unless independently changed.
+
+
+
+## 3T. BCB live JSON values: 22905/22906 comparison; 22924 re-fetch pending — 2026-11-17
+- Official API JSON response for SGS 22905 visibly includes 2026-09-01 = +4,967.8 million USD.
+- Official API JSON response for SGS 22906 visibly includes 2026-09-01 = +3,269.3 million USD.
+- Arithmetic difference 22905 − 22906 = +1,698.5 million USD.
+- A previous inspection had recorded SGS 22924 for 2026-09-01 = −1,698.5 million USD, but the 22924 API could not be freshly retrieved in this turn. The magnitude match is a one-period reconciliation lead only, not proof of formula/sign identity. Do not combine or admit any series.
+- Official 22905 catalogue page confirms monthly USD-million data, starts 1995-01 and describes portfolio investment split into assets and liabilities, with stated timeliness up to four weeks. The same page labels organization BCB/Dstat and BPM6 financial-account hierarchy; the second official portal still conflicts with BCB/Depec metadata. Retain CONFLICT / UNKNOWN.
+- Raw JSON bytes, byte count, retrieval timestamp, SHA-256, full-history row/date/missing QA, revision/vintage history and BCB methodology sign reconciliation remain NOT_DONE. Browser-rendered JSON is inspection evidence only.
+- Next action: acquire 22924 raw response; archive all three series with hashes; run exact common-month comparison for 1995 onward; test any candidate formula across every overlapping month; inspect official SGS detailed metadata/methodology and revisions; keep UNKNOWN/excluded until every gate passes.
+- No overlay calculation, stock ranking, selector, production or trading logic changed.
