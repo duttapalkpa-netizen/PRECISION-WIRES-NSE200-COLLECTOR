@@ -1,0 +1,86 @@
+name: BCB Historical Release Tables Vintage Capture
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - '.github/workflows/bcb_release_tables_vintage_capture.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture official historical release tables
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/raw/bcb/release_tables_202601 data/raw/bcb/release_tables_202603
+          curl -fLsS --retry 2 -D data/raw/bcb/release_tables_202601/response_headers.txt \
+            'https://www.bcb.gov.br/content/estatisticas/hist_estatisticassetorexterno/202601_Tabelas_de_estatisticas_do_setor_externo.xlsx' \
+            -o data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx
+          curl -fLsS --retry 2 -D data/raw/bcb/release_tables_202603/response_headers.txt \
+            'https://www.bcb.gov.br/content/estatisticas/hist_estatisticassetorexterno/202603_Tabelas_de_estatisticas_do_setor_externo.xlsx' \
+            -o data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx
+          python - <<'PY'
+          import hashlib, json, zipfile
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import re
+          files = [
+              ("202601", "data/raw/bcb/release_tables_202601/bcb_external_sector_tables_202601.xlsx",
+               "https://www.bcb.gov.br/content/estatisticas/hist_estatisticassetorexterno/202601_Tabelas_de_estatisticas_do_setor_externo.xlsx"),
+              ("202603", "data/raw/bcb/release_tables_202603/bcb_external_sector_tables_202603.xlsx",
+               "https://www.bcb.gov.br/content/estatisticas/hist_estatisticassetorexterno/202603_Tabelas_de_estatisticas_do_setor_externo.xlsx"),
+          ]
+          manifest = {"schema_version": 1, "purpose": "immutable_official_bcb_historical_release_table_vintage_capture",
+                      "captured_at_utc": datetime.now(timezone.utc).isoformat(), "files": []}
+          for period, name, url in files:
+              p = Path(name)
+              raw = p.read_bytes()
+              if not zipfile.is_zipfile(p):
+                  raise SystemExit(f"Not a valid XLSX/ZIP: {name}")
+              with zipfile.ZipFile(p) as z:
+                  bad = z.testzip()
+                  if bad:
+                      raise SystemExit(f"Corrupt XLSX member {bad}: {name}")
+                  workbook = z.read("xl/workbook.xml").decode("utf-8", "replace")
+                  sheets = re.findall(r'<sheet[^>]*name="([^"]+)"', workbook)
+              headers_path = p.parent / "response_headers.txt"
+              headers = headers_path.read_text(errors="replace")
+              manifest["files"].append({
+                  "publication_period": period, "path": name, "source_url": url,
+                  "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(),
+                  "http_headers_path": str(headers_path), "http_headers": headers,
+                  "xlsx_zip_integrity": "PASS", "sheet_names": sheets
+              })
+          Path("data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json").write_text(
+              json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          print(json.dumps(manifest, indent=2, ensure_ascii=False))
+          PY
+      - name: Commit immutable source capture
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/bcb/release_tables_202601 data/raw/bcb/release_tables_202603 data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json
+          if git diff --cached --quiet; then
+            echo "No content changes; existing immutable capture retained."
+          else
+            git commit -m "data: archive official BCB historical release table vintages"
+            git push origin "HEAD:\${GITHUB_REF_NAME}"
+          fi
+      - name: Upload capture artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-historical-release-table-vintages
+          path: |
+            data/raw/bcb/release_tables_202601/
+            data/raw/bcb/release_tables_202603/
+            data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json
+          if-no-files-found: warn
+          retention-days: 90
