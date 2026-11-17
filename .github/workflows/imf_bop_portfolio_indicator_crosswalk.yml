@@ -1,0 +1,43 @@
+name: IMF BOP Portfolio Indicator Semantic Crosswalk QA
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'docs/IMF_BOP_INDICATOR_CROSSWALK_TRIGGER.txt'
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: imf-bop-indicator-crosswalk-qa
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build semantic crosswalk from immutable official XML
+        run: |
+          python scripts/research/build_imf_bop_indicator_crosswalk.py \
+            --capture-dir evidence/imf_bop_dsd/20261117T134325Z \
+            --output data/qa/IMF_BOP_BPM6_PORTFOLIO_INDICATOR_CROSSWALK_20261117.json
+      - name: Commit deterministic QA result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/qa/IMF_BOP_BPM6_PORTFOLIO_INDICATOR_CROSSWALK_20261117.json
+          git commit -m "qa: record IMF BOP portfolio indicator semantic crosswalk"
+          git push origin HEAD:research/bcb-priority-metadata-audit-20261117
+      - name: Upload crosswalk result
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-portfolio-indicator-crosswalk
+          path: data/qa/IMF_BOP_BPM6_PORTFOLIO_INDICATOR_CROSSWALK_20261117.json
+          if-no-files-found: error
+          retention-days: 90
