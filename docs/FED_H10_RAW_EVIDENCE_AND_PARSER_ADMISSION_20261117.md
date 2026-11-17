@@ -66,3 +66,11 @@
 
 ## Next permitted task
 Build a small, explicit derived-series specification and QA test for a clearly named Fed H.10 broad-dollar 20-session change, using only valid observation dates and preserving gaps/ND. Before calculating, decide and document session calendar semantics (H.10 daily observation days vs Indian trading sessions), require 20 valid prior observations, no forward fill, and PIT cutoff by the source Prepared vintage. Keep the result separate from `dxy_change_pct_20d`. Do not add the other three series to registry until their exact descriptions/units are separately qualified.
+
+
+## Correction addendum — 2026-11-17 (supersedes initial count above)
+- The original collector skipped literal value strings `ND` but the H.10 XML encodes not-available observations with numeric sentinel `-9999.0` and `OBS_STATUS=ND`. The original 5,445 parser-admitted count therefore incorrectly included 214 ND records. Treat the original 5,445 admission count above as SUPERSEDED, not valid.
+- XML source records: 5,445; `OBS_STATUS=A`: 5,231; `OBS_STATUS=ND`: 214. The corrected collector admits only `OBS_STATUS=A` with ISO date and finite numeric value.
+- Corrected capture workflow #8 / ID 44036104490 SUCCESS; commit 4e3da948ff04e1d8efe50ee3782a16c4814e8965; artifact 14306134441; artifact SHA-256 2d9a4808cd9e48ac21175b8a79ccf42173f57f2370086e24832e4d460afbe4ba. Parser admission PASS for 5,231; 214 excluded.
+- Corrected 20-valid-observation result: 2026-10-15 121.5693 to 2026-11-13 122.6503 = +0.8892047581% (rounded +0.8892%), using 20 prior valid H.10 observations plus current. 2026-11-11 ND is excluded; no fill.
+- Full correction/result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Regression workflow #232 / ID 44036012995 SUCCESS, 72 tests in 0.056s.
