@@ -8,7 +8,7 @@
     "22936",
     "22942"
   ],
-  "cadence": "monthly day 28 at 12:17 UTC plus manual dispatch",
+  "cadence": "Manual monthly trigger-file update on research branch after BCB release; no unattended schedule because GitHub schedule/workflow_dispatch require default-branch workflow file",
   "capture_contract": {
     "immutable_timestamped_directory": true,
     "raw_bytes_preserved": true,
@@ -30,5 +30,11 @@
   },
   "interpretation": "A prospective snapshot records the current SGS response at retrieval time; it cannot reconstruct original publication vintage or prove the cause of a change.",
   "source": "https://opendata.bcb.gov.br/dataset/22942-portfolio-investment---debt-securities----issued-in-the-domestic-market---monthly---net",
-  "errors": []
+  "errors": [],
+  "trigger": {
+    "type": "push",
+    "path": "docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt",
+    "branch": "research/bcb-priority-metadata-audit-20261117"
+  },
+  "default_branch_change": "NOT_AUTHORIZED"
 }
