@@ -155,3 +155,18 @@ The JSON resource links on both official catalogue instances were followed direc
 - Do not infer any arithmetic identity or sign mapping between SGS 22905 and 22906/22924. No values admitted to global EM aggregate or relative-attraction calculations.
 
 Integrity status: same JSON endpoint across both portals = VERIFIED; visible JSON response = INSPECTED; raw archive + SHA-256 = NOT_DONE; CSV body comparison = NOT_DONE; metadata authority/methodology reconciliation = UNKNOWN; production impact = NONE.
+
+
+
+## BCB live observation cross-check — SGS 22905 and 22906 — 2026-11-17
+
+Direct official API JSON inspection in this verification:
+- SGS 22905, 2026-09-01: +4,967.8 million USD.
+- SGS 22906, 2026-09-01: +3,269.3 million USD.
+- Difference 22905 minus 22906 = +1,698.5 million USD.
+- A prior inspection recorded SGS 22924 for 2026-09-01 as -1,698.5 million USD; that 22924 value was not independently re-fetched successfully in this turn. The numerical magnitude therefore matches the prior 22924 observation, but this is a single-vintage candidate relationship, NOT a verified algebraic identity or sign convention.
+- Do not calculate, net, combine, or admit these series into an overlay flow feature until 22924 is freshly fetched and the BCB methodology, signs, scope and historical overlap are reconciled over the full common sample.
+- Important correction: 22905 latest visible value is 4,967.8 (not the earlier Sep-2026 value 4,967.8 was previously absent; previous checkpoint had no acquired value). The 22906 latest visible value is 3,269.3, independently matching the earlier inspected value.
+- Official API JSON endpoints: `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json` and `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=json`. Source evidence: BCB Open Data Portal SGS 22905 catalogue and both official API JSON responses.
+
+Integrity boundary unchanged: browser response inspection only; no immutable raw bytes, extraction timestamp file, byte count, SHA-256, full-history structural QA, vintage archive or methodology reconciliation. The values are not admitted to the overlay. Metadata owner/classification conflict for 22905 remains CONFLICT / UNKNOWN.
