@@ -1,0 +1,45 @@
+name: IMF BOP DSD Official Metadata Acquisition
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'docs/IMF_BOP_DSD_ACQUISITION_TRIGGER.txt'
+      - 'scripts/research/capture_imf_bop_dsd.py'
+      - '.github/workflows/imf_bop_dsd_official_acquisition.yml'
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: imf-bop-dsd-official-acquisition
+  cancel-in-progress: false
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Capture official IMF DSD, dataflow and constraint
+        id: capture
+        run: python scripts/research/capture_imf_bop_dsd.py
+      - name: Commit immutable raw XML and manifests
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/imf_bop_dsd/
+          git commit -m "evidence: archive official IMF BOP DSD 2.6.0 metadata"
+          git push origin HEAD:research/bcb-priority-metadata-audit-20261117
+      - name: Upload acquisition evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd-acquisition-${{ github.run_id }}
+          path: evidence/imf_bop_dsd/
+          if-no-files-found: warn
+          retention-days: 90
