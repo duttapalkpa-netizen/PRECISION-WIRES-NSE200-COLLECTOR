@@ -1113,3 +1113,10 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Official 22936 dataset: https://dadosabertos.bcb.gov.br/dataset/22936-sgs
 - Official 22942 dataset: https://dadosabertos.bcb.gov.br/dataset/22942-investimentos-em-carteira---titulos-de-renda-fixa---passivos---negociados-no-mercado-domestic
 - Next: verify updated CI; resolve 22936 fund-market perimeter; obtain same-vintage official tables for Dec-2025 and Feb-2026; no unsupported revision attribution. Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED. All production invariants unchanged; ₹0; no synthetic data.
+
+## 2026-11-17 — BCB scope-aware reconciliation CI and matched-vintage capture
+- Scope-aware audit CI Run #3 / ID \`44089780668\` SUCCESS on commit \`6e10775e5ea3a3902519d8edb75fabfb45ef71c8\`; three archived raw SHA-256 values verified.
+- Reproduction output: 9 periods, 7 complete numeric matches, 23/27 numeric comparisons; debt 22942 comparison scope confirmed and 8/9 debt values match; 22936 fund market qualifier remains UNKNOWN. Country-perimeter acceptance remains PARTIAL / NOT_ACCEPTED.
+- Artifact ID \`14330248320\`; SHA-256 \`4b46d50d369370b5eb7806e5f61a95af1802220bb0ccb099804040d09e2a2fa3\`; expiry \`2027-02-15T13:08:37Z\`.
+- Added bounded workflow \`.github/workflows/bcb_release_tables_vintage_capture.yml\` (commit \`9329767f79814bf61afad1bb9e311429e228dff1\`) to capture official Jan-2026 publication tables (Dec-2025 reference) and Mar-2026 publication tables (Feb-2026 reference). It preserves raw XLSX, HTTP headers, bytes, SHA-256, workbook integrity and sheet names. Run ID \`44089945873\` queued; result pending.
+- Next: inspect the exact historical workbook tables and metadata for 22936's market perimeter, then resolve only Dec-2025 and Feb-2026. Do not claim revision attribution from the numeric differences alone.
