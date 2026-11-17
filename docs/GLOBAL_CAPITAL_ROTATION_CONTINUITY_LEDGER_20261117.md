@@ -283,3 +283,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Added three unit tests: over-3-day spread rejects synchronization; within-3-day spread passes the date-proximity guard; fewer than two inputs remains NOT_ASSESSED.
 - Pipeline commit `c20810f635fef01f738fcbdfec44ee94f1a98dbc` (blob `d82f37b3699cdac25b154e87b01214f81783cfd4`); test commit `8fd36b33685ac8e09e7d79e3fa8ba9b7e0663512` (blob `584d50ce8f904c3c5447501d66c87c139443b62a`).
 - Files were updated on the existing research branch; CI result pending. No live dataset, relative-attraction computation, stock score, production selector or trade trigger created. PR remains draft/unmerged unless separately changed.
+
+
+
+## 3X. Existing seed inventory check — synchronized raw panel not present — 2026-11-17
+- Inspected the complete `data/global_capital_rotation/` directory on the research branch. It contains only three CSVs: `2026-11-07_seed_observations.csv`, `2026-11-10_seed_observations.csv`, and `fed_h10_derived_observation_2026-11-06.csv`.
+- The 2026-11-10 seed contains six daily India FPI equity rows for 02-Nov through 09-Nov, one MTD and one YTD subtotal, one debt subtotal, and one H-1B policy event. It does not contain DII, USD/INR, Brent, VIX, DXY, US10Y, India-vs-world relative return, or global EM flow observations. The Fed H.10 derived file is a single broad-USD diagnostic and is not ICE DXY.
+- Therefore the new temporal-alignment guard can only report NOT_ASSESSED/UNKNOWN on current seed data; it cannot manufacture a synchronized panel. This is an inventory finding, not a failure of the new date guard.
+- Official CDSL page latest visible reporting date at this audit is 16-Nov-2026, but no immutable 16-Nov raw snapshot is present in the overlay data directory. Preserve the previous 09-Nov seed as historical; do not silently overwrite or pretend it is current.
+- Next data work remains: acquire immutable official daily series for the synchronized India-market group, with each series' observation date, published_at, retrieved_at, source URL, raw bytes and SHA-256; acquire DII combined NSE+BSE+MSEI separately from NSE-only; acquire USD/INR, Brent, VIX, comparable total-return benchmark and US yields; then build date-keyed panel with missing dates left blank and vintage metadata preserved.
+- No values admitted; no synthetic fill; no production changes. CI for the new code/test commits has not been observed; last verified historical successful run is 43204879661 on older commit 7bc769b002c9c4bb26aa3bb464888e962944e580, not the current code.
