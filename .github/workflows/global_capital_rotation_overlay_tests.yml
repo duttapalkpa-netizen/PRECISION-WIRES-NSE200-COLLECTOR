@@ -14,6 +14,8 @@ on:
       - "docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
       - "data/global_capital_rotation/**"
       - ".github/workflows/global_capital_rotation_overlay_tests.yml"
+      - "scripts/capture_h10_fred_raw_sources.py"
+      - ".github/workflows/h10_fred_raw_capture.yml"
   pull_request:
     paths:
       - "pipeline/global_capital_rotation_overlay.py"
@@ -38,3 +40,32 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m unittest qa.test_global_capital_rotation_overlay -v
+
+  h10_fred_raw_capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture official raw sources and compute SHA-256
+        id: capture
+        continue-on-error: true
+        run: python scripts/capture_h10_fred_raw_sources.py
+      - name: Upload raw evidence bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h10-fred-raw-capture-${{ github.run_id }}
+          path: artifacts/h10_fred_capture/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce capture acceptance
+        if: always()
+        run: |
+          if [ "${{ steps.capture.outcome }}" != "success" ]; then
+            echo "Capture incomplete; inspect manifest artifact."
+            exit 1
+          fi
+          echo "Raw capture checks passed."
