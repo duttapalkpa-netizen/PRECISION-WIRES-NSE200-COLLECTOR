@@ -1,0 +1,51 @@
+{
+  "baseline": {
+    "captured_at_utc": "2026-11-17T13:29:39.897799+00:00",
+    "manifest_sha256": "4821d71e2308c7ac35ebf765c70c465baa9d9c1ec50be3ca1f44fd2af8a7ed0b",
+    "series": {
+      "22924": {
+        "byte_length": 8809,
+        "first_period": "1995-01",
+        "last_period": "2026-09",
+        "retrieved_at_utc": "2026-11-17T13:29:41.468745+00:00",
+        "row_count": 381,
+        "sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+        "source_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=csv"
+      },
+      "22930": {
+        "byte_length": 8669,
+        "first_period": "1995-01",
+        "last_period": "2026-09",
+        "retrieved_at_utc": "2026-11-17T13:29:43.109297+00:00",
+        "row_count": 381,
+        "sha256": "c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776",
+        "source_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22930/dados?formato=csv"
+      },
+      "22936": {
+        "byte_length": 8006,
+        "first_period": "1995-01",
+        "last_period": "2026-09",
+        "retrieved_at_utc": "2026-11-17T13:29:44.407955+00:00",
+        "row_count": 381,
+        "sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+        "source_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22936/dados?formato=csv"
+      },
+      "22942": {
+        "byte_length": 8579,
+        "first_period": "1995-01",
+        "last_period": "2026-09",
+        "retrieved_at_utc": "2026-11-17T13:29:46.464611+00:00",
+        "row_count": 381,
+        "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+        "source_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22942/dados?formato=csv"
+      }
+    },
+    "snapshot_id": "20261117T132939Z"
+  },
+  "comparison_performed": false,
+  "message": "One fully verified snapshot exists. A revision comparison requires a second independently captured vintage; no values or causes have been inferred.",
+  "revision_attribution": "UNKNOWN_NOT_ASSESSED",
+  "schema_version": 1,
+  "snapshot_count": 1,
+  "status": "WAITING_FOR_SECOND_VINTAGE"
+}
