@@ -815,3 +815,11 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - XML Header Prepared 2026-11-16T16:47:01 (timezone unspecified; not retrieval timestamp). Broad index JRXWTFB_N.B has 5,445 observations through 2026-11-13, latest 122.6503; advanced index 116.2360; EM index 130.8877; bilateral INR RXI_N.B.IN latest 94.2400. Distinct series, distinct meaning.
 - Artifact SHA-256: 05928613d892fafd3ac904c3ae325794535fcc643613f39c8d3dd968d79620f2. Run #1 was superseded due to malformed escaped newline sidecars; only run #2 is canonical. Detailed checks and acceptance boundary are in the H.10 qualification document.
 - Raw transport capture PASS does not yet mean per-observation manifest admission. XSD validation NOT_DONE; parser row/manifest validation NOT_DONE; durable GitHub archival NOT_DONE; derived 20-session change NOT_DONE; classifier integration NOT_DONE; production use NOT_AUTHORIZED.
+
+
+## Fed H.10 raw acquisition and parser admission — 2026-11-17
+- Run #6 / ID 44035209336 PASS; official ZIP raw bytes 2,088,268, SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77; HTTP 200; application/x-zip-compressed; retrieved 2026-11-17T06:59:11.059096Z; source Prepared 2026-11-16T16:47:01.
+- Existing parser admitted 5,445 rows for JRXWTFB_N.B under manifest fed-h10-jrxwtfb_n-b. Latest observation 2026-11-13=122.6503; first 2006-01-02=101.4155.
+- Artifact 14306184279, outer SHA-256 5fb36967f83329693a72e78ac6e9472469dd9ea1c29940b79a1efed9c39d2e74, expires 2027-02-15. Artifact retention is finite; not permanent repository archival.
+- Do not map to ICE DXY or dxy_change_pct_20d. Advanced, EM and INR series discovered but not registry-qualified/admitted. PIT vintage history and derived series remain open.
+- Detailed evidence: docs/FED_H10_RAW_EVIDENCE_AND_PARSER_ADMISSION_20261117.md.
