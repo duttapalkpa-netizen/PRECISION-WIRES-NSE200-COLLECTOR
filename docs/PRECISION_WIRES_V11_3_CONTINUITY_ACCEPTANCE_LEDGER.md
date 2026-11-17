@@ -899,3 +899,9 @@
 - Workflow commit d0c7022c43c60035ba3ed5eab2633f884c6ed859; blob 33bd663af8536677cac711899ded32a73ce0f755.
 - Queried Actions runs for this exact branch after correction: total_count=0. Runtime tests NOT_RUN; no PASS claim. If subsequent qualifying commit does not trigger, manually run workflow_dispatch in GitHub Actions UI. No workflow dispatch tool is available in current connected GitHub actions.
 - All earlier manifest parser/schema/tests commits and taxonomy blockers remain recorded; no repeat of implementation. No production changes; UNKNOWN not PASS.
+
+
+## 2026-11-17 — Global Capital Rotation manifest CI runtime PASS
+- Workflow run #219 / ID 44030545512, branch research/taxonomy-crosswalk-contract-20261117, head SHA cd25be239b5c9be6b85fd14536073ce7d0a220b1, event push, conclusion success; 06:20:59Z–06:21:07Z.
+- Job `tests` succeeded; Python 3.12 setup and `python -m unittest qa.test_global_capital_rotation_overlay -v` step succeeded. No artifacts produced. This validates runtime tests on the recorded HEAD only; it is not evidence of source ingestion or production acceptance.
+- Update prior NOT_RUN status: runtime test gate is now PASS for this run. Source registry still intentionally empty; trusted data admission 0 / BLOCKED. Keep all source qualification and historical PIT gates open. No production invariants changed.
