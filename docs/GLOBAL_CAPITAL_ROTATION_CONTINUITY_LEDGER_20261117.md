@@ -163,3 +163,10 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Official Fed H.10 release landing page now yields exact XML/ZIP route `https://www.federalreserve.gov/releases/h10/data/FRB_h10_xml.zip`. Browser fetch rejected binary content type; route discovery PASS only, raw ZIP acquisition/parse NOT_DONE. Fed FAQ confirms release-page XML continues after BYP retirement, but is overwritten each update and does not provide archived point-in-time vintages.
 - IMF official API page documents SDMX 2.1/3.0 but Swagger requires beta portal sign-in. Legacy IMF SDMX Central guide documents a public REST endpoint, but no live response or BOP_AGG mapping was verified. IMF observation acquisition remains NOT_DONE; no values admitted.
 - No synchronized panel or overlay calculation gates advanced. All production invariants unchanged; PR #20 remains open/draft/unmerged.
+
+
+## 3K. IMF BOP versus BOP_AGG catalogue distinction — 2026-11-17
+- Official IMF API documentation advertises SDMX 2.1/3.0 but Swagger exploration requires beta portal sign-in. Official IMF SDMX Central catalogue visibly lists IMF:BOP DSD versions including 2.6.0; this does not establish that IMF.STA:BOP_AGG is available on that legacy service.
+- Country-level IMF:BOP transaction observations are a distinct possible medium-frequency fallback, not a substitute label for BOP_AGG. Live dataflow/DSD/observation retrieval, dimension mapping, EM membership/weights and missing-reporter treatment all remain unverified.
+- Updated source register: commit 6e65f6a820fd6d4032f7d63c6a33c6fdf5727e50; blob 991c974d338620e5852f609a7122e2f59a86c643.
+- No IMF observations admitted, no panel/calculation gate advanced, no production changes.
