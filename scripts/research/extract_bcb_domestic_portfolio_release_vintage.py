@@ -87,7 +87,7 @@ def main():
             current = {code: sgs[code][month] for code in SGS_FILES}
             current_eqfunds = current["22930"] + current["22936"]
             current_total = current_eqfunds + current["22942"]
-            entry["periods"].append({
+            period_record = {
                 "reference_month": month, "column_number": col,
                 "release_rows_usd_mn": {
                     "22930_domestic_equity_row14": str(eq),
@@ -106,7 +106,30 @@ def main():
                     "22942": str(current["22942"]-debt), "equity_funds": str(current_eqfunds-eqfunds),
                     "domestic_total": str(current_total-total)},
                 "table_internal_identities": identities,
-            })
+            }
+            if vintage == "202603" and month == "2026-02":
+                cumulative_col = 6
+                cumulative = {row: dec(ws.cell(row=row, column=cumulative_col).value) for row in (14,20,24,40,41,42)}
+                inferred_jan = {row: cumulative[row] - dec(values[row]) for row in cumulative}
+                current_jan = {code: sgs[code]["2026-01"] for code in SGS_FILES}
+                period_record["jan_feb_cumulative_and_inferred_january"] = {
+                    "cumulative_release_rows_usd_mn": {str(k): str(v) for k,v in cumulative.items()},
+                    "inferred_january_release_rows_usd_mn": {str(k): str(v) for k,v in inferred_jan.items()},
+                    "latest_archived_sgs_january_usd_mn": {k: str(v) for k,v in current_jan.items()},
+                    "latest_minus_inferred_january_usd_mn": {
+                        "22930": str(current_jan["22930"]-inferred_jan[14]),
+                        "22936": str(current_jan["22936"]-inferred_jan[20]),
+                        "22942": str(current_jan["22942"]-inferred_jan[24]),
+                        "equity_funds": str(current_jan["22930"]+current_jan["22936"]-inferred_jan[41]),
+                        "domestic_total": str(current_jan["22930"]+current_jan["22936"]+current_jan["22942"]-inferred_jan[40]),
+                    },
+                    "inferred_january_table_identities": {
+                        "equity_plus_funds_equals_row41": abs(inferred_jan[14]+inferred_jan[20]-inferred_jan[41]) <= Decimal("0.00001"),
+                        "debt_row24_equals_row42": abs(inferred_jan[24]-inferred_jan[42]) <= Decimal("0.00001"),
+                        "equity_funds_plus_debt_equals_total": abs(inferred_jan[41]+inferred_jan[42]-inferred_jan[40]) <= Decimal("0.00001"),
+                    }
+                }
+            entry["periods"].append(period_record)
         result["workbooks"].append(entry)
         wb.close()
     if not all(all(p["table_internal_identities"].values()) for w in result["workbooks"] for p in w["periods"]):
