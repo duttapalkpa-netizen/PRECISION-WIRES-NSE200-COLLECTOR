@@ -1148,3 +1148,9 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Reproducer: scripts/research/audit_bcb_2025_annual_revision_bridge.py; QA: data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json.
 - Run ID \`44091390515\` SUCCESS; artifact \`14330869727\`; digest \`15d99f469b7cb9d461c47125dc9d1dec513e2edaa3deb744b7900c92e0ada971\`.
 - Status: 2025 annual revision bridge PASS; Dec-2025 monthly allocation PARTIAL/NOT_ATTRIBUTED; Feb-2026 debt attribution UNKNOWN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED. Next: investigate only Feb-2026 22942 and monthly 2025 revision allocation; no repeat captures or Sep-2026 cross-check.
+
+## 2026-11-17 — February-2026 debt mismatch isolated to February 22942
+- March-2026 BCB Table 10 provides Jan-Feb cumulative values; subtracting Feb monthly values infers Jan-2026. Current SGS January matches the inferred BCB January within USD 0.1m for all three components: 22930 -0.0371m; 22936 -0.0035m; 22942 -0.0408m; equity/funds -0.0407m; domestic total -0.0814m.
+- February remains: 22930 -0.0374m; 22936 +0.0395m; 22942 +203.7078m; equity/funds +0.0020m; domestic total +203.7098m. The Jan-Feb cumulative debt difference is therefore isolated to February 2026 SGS 22942; not a January carry-over or equity/fund scope issue.
+- Reproducible evidence in data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json; extraction Run #5 / ID \`44091831003\` SUCCESS; artifact \`14332500865\`; SHA-256 \`ee222deb9a1eabe10b0357ab1b1907f7696b764f5dfcfa2924166cb809f0cbfd\`.
+- January component reconciliation CLOSED within USD 0.1m. February 22942 revision cause remains UNKNOWN / NOT_ATTRIBUTED. Next action: investigate only February-2026 22942 using official revision notice or preserved historical SGS vintage. No repeated January/September checks.
