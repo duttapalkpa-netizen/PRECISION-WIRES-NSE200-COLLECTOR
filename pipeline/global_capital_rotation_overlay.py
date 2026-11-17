@@ -3,7 +3,7 @@
 from __future__ import annotations
 import argparse, csv, json, math
 from collections import defaultdict
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 REQUIRED = {"date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"}
@@ -20,7 +20,13 @@ MAX_AGE_DAYS = {
 
 def _published_key(value):
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).isoformat()
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        # Offset-bearing timestamps must be compared as instants, not as
+        # their original wall-clock strings (lexical ordering is wrong
+        # across offsets). Keep date-only and naive legacy timestamps intact.
+        if parsed.tzinfo is not None:
+            parsed = parsed.astimezone(timezone.utc)
+        return parsed.isoformat()
     except (TypeError, ValueError):
         try:
             return date.fromisoformat(value).isoformat()
