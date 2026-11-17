@@ -355,3 +355,28 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - CDSL current page/archive display = bounded verification PASS; immutable raw payload + SHA-256 = NOT_DONE.
 - Continue only with an actual retrievable official raw payload and preserve byte-level provenance. If the available browser/download route continues to time out and no alternative official export is exposed, record a bounded access BLOCKER rather than synthesizing data.
 - IMF BOP_AGG raw observation archive, synchronized India daily panel, Relative-Attraction calculation and predictive validation remain NOT_DONE/BLOCKED. No production changes; PR #20 remains research-only.
+
+## 3AC. IMF BOP_AGG and RBI USD/INR source-fitness recheck — 2026-11-17
+
+### IMF BOP_AGG — official source qualification
+- Reopened the exact IMF dataset page `https://data.imf.org/en/datasets/IMF.STA:BOP_AGG`. It describes BOP/IIP World and Country Group Aggregates (historically BOPSY), an annual publication released each November and based on BPM6. Country-group aggregates combine reported data with estimates for nonreporting economies; country-level data have a different compilation basis.
+- The page exposes API / View Data / Download affordances, but following the API link redirects to the IMF API developer portal sign-in page. No public raw BOP_AGG observation payload, CSV/XLS bytes, response metadata or SHA-256 was acquired in this check.
+- Fitness decision: BOP_AGG is annual and group-aggregate/contextual evidence, not a daily or monthly synchronized global portfolio-flow panel. Do not use it as a substitute for daily FPI/DII or monthly country-level portfolio-flow series. It may remain a separate annual macro-context layer if and when raw public data are acquired and its aggregate-estimate methodology is preserved.
+- Evidence: IMF BOP_AGG dataset page `turn250862view0` lines 13-23; API link redirects to sign-in `turn212170view0`.
+
+### RBI USD/INR — official DBIE and RBI archive qualification
+- Official RBI DBIE search result for `financial_markets.r691_daily_interbank_forex_rates_usd_vis_a_vis_inr` identifies “Daily interbank forex rates (USD vis-a-vis INR)”, source RBI, daily frequency, 6,319 rows, coverage 08-Aug-2000 to 30-Jun-2026, with Download CSV and JSON controls. The displayed latest period is 30-Jun-2026, so as of this 17-Nov-2026 checkpoint it is over four months behind and fails a current daily freshness gate until refreshed. No raw CSV/JSON bytes, exact API/export URL, retrieval timestamp or SHA-256 acquired.
+- RBI's own Reference Rate Archive is an interactive date/currency search page and exposes an Excel download control, not a directly verified CSV resource in this inspection. This is a separate RBI reference-rate series and must not be silently substituted for DBIE interbank rates. Source page shows last website update 17-Nov-2026, which is not itself a latest observation date.
+- Evidence: DBIE table result `turn940379search6`; RBI Reference Rate Archive `turn250862view2` lines 23-50 and 91.
+- Decision: RBI DBIE daily series = official metadata discovered, latest visible observation stale for current panel, raw acquisition NOT_DONE. RBI reference-rate archive = official archive UI discovered, direct downloadable payload not acquired. Keep these two rate definitions distinct.
+
+### CDSL freshness caveat
+- Fresh search-index result for the CDSL live page displayed 16-NOV-2026; a previously opened live-page view in this same research stream displayed 17-NOV-2026. Search-index/cache and page-open snapshots therefore disagree on the latest displayed date. Preserve both retrieval vintages; do not overwrite the 17-Nov checkpoint or claim an independently stable current value based on the cached snippet alone.
+- CDSL archive search-index result displayed coverage only through 06-Nov-2026, while the earlier direct page-open checkpoint showed an archive header through 17-Nov-2026. This discrepancy is a retrieval/rendering freshness conflict, not evidence that CDSL deleted later rows. Raw bytes and hash remain NOT_DONE.
+- Evidence: live search result `turn940379search4`; archive search result `turn940379search5`; prior direct-open checkpoints recorded in sections 3AA/3AB.
+
+### Acceptance / next action
+- New work completed: source suitability and access-gate qualification for IMF BOP_AGG and RBI USD/INR, plus CDSL snapshot conflict explicitly preserved.
+- No raw source bytes acquired in this checkpoint; no new values admitted; no synchronized panel assembled. IMF annual aggregate is rejected as daily/monthly substitute; RBI DBIE current freshness is not accepted until latest data are refreshed; CDSL remains display-only.
+- Next smallest high-value action: use an actual official downloadable RBI DBIE CSV/JSON resource or RBI archive Excel export to capture raw bytes, response metadata, retrieval time and SHA-256; then test latest observation freshness before admitting it. Do not use third-party mirrors or fill missing dates.
+- Relative-Attraction calculation and predictive validation remain BLOCKED. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E and Hard Gate unchanged; no production integration.
