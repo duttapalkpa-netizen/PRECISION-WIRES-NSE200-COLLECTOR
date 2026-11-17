@@ -154,3 +154,12 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Artifact ID 14328529268; name `bcb-multi-period-country-reconciliation`; archive digest `c65447a53ba44c44c85a0239776bb9af08c454bdc6e9046c98700492806dc647`; expires 2027-02-15T12:45:57Z.
 - Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086204426
 - Bounded CI runtime: PASS. Country-period multi-vintage reconciliation remains PARTIAL; Brazil pilot NOT_ACCEPTED; exact Dec-2025 and Feb-2026 revision attribution NOT_DONE.
+
+## 15. 2026-11-17 — Exact-value reproducibility hardening CI PASS
+- Updated the research-only audit script to emit exact current SGS values in USD million for every checked month, while retaining the release-rounded comparison.
+- Re-run #2 / ID 44086387367 on script commit `b3d5bf9b29e1c730a7f9d60a510277b64d181f48`: SUCCESS; job `reconcile` and raw SHA-256/reproduction step SUCCESS.
+- Runtime verified exact exception values: Dec-2025 equity/funds -1082.9, domestic debt +5321.6, total +4238.7 USD million; Feb-2026 equity/funds +2786.2, domestic debt +2783.2, total +5569.4 USD million.
+- Summary unchanged: 9 months; 7 complete matches; 23/27 comparisons match; two vintage exceptions remain unresolved.
+- Artifact ID 14329222273; SHA-256 `fc6d34e8856db75ca0eb22a254bafdc395e0a77d783f7149ffb89474ce379138`; expiry 2027-02-15T12:47:07Z.
+- Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44086387367
+- No raw-source re-download, production change, or general tolerance introduced.
