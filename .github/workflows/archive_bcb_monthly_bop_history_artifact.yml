@@ -1,0 +1,70 @@
+name: Archive BCB Monthly BOP Historical Vintage
+on:
+  push:
+    branches:
+      - "research/bcb-priority-metadata-audit-20261117"
+    paths:
+      - ".github/workflows/archive_bcb_monthly_bop_history_artifact.yml"
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Successful BCB monthly historical ZIP capture run ID"
+        required: true
+        default: "44076495816"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: archive-bcb-monthly-bop-history
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Download existing BCB history artifact (no source re-fetch)
+        uses: actions/download-artifact@v4
+        with:
+          name: bcb-monthly-bop-history-zip
+          run-id: ${{ github.event.inputs.source_run_id || '44076495816' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: data/raw/bcb/monthly_bop_history_20190322
+      - name: Verify ZIP bytes against capture manifest
+        run: |
+          python - <<'PY'
+          import hashlib, json, zipfile
+          from pathlib import Path
+          root=Path("data/raw/bcb/monthly_bop_history_20190322")
+          m=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
+          p=root/"balpagm.zip"
+          b=p.read_bytes()
+          assert m["http_status"]==200
+          assert len(b)==m["byte_length"]
+          assert hashlib.sha256(b).hexdigest()==m["sha256"]
+          with zipfile.ZipFile(p) as z: assert z.testzip() is None
+          print("PASS",len(b),m["sha256"],m["members"])
+          PY
+      - name: Commit exact raw vintage bytes
+        run: |
+          printf '*.zip -text\n' > data/raw/bcb/monthly_bop_history_20190322/.gitattributes
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/bcb/monthly_bop_history_20190322
+          git commit -m "data: archive BCB monthly BOP historical vintage 2019-03-22"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Re-fetch committed ZIP and verify SHA-256
+        run: |
+          python - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          root=Path("data/raw/bcb/monthly_bop_history_20190322")
+          m=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
+          path="data/raw/bcb/monthly_bop_history_20190322/balpagm.zip"
+          b=subprocess.check_output(["git","show",f"HEAD:{path}"])
+          assert hashlib.sha256(b).hexdigest()==m["sha256"]
+          assert len(b)==m["byte_length"]
+          print("RE-FETCH PASS",len(b),m["sha256"])
+          PY
