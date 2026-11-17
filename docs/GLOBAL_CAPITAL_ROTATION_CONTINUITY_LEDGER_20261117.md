@@ -39,6 +39,14 @@ Protected: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×1
 - CDSL raw bytes/hash, both NSE raw CSVs/hash, matched daily panel and IMF BOP transaction panel remain NOT_DONE.
 - No new full overlay gate is accepted; overall percentage remains NOT_RECALCULATED.
 
+## 3C. 2026-11-17 IMF BOP aggregate candidate checkpoint
+- New file: docs/GLOBAL_CAPITAL_ROTATION_IMF_BOP_AGGREGATE_SOURCE_CHECKPOINT_20261117.md
+- Checkpoint commit: 5842a401e8264ce393cb338b8d2699a6283af4ed.
+- IMF BOP extraction spec appended with BOP_AGG findings; commit: c43722774b2e48636ec57b423c2ae3cbb7308f10.
+- Official IMF BOP_AGG is an annual November BPM6 publication. Its World/country-group aggregates combine reported data with estimates for nonreporting economies; EMDE grouping is IMF-defined and not MSCI EM. Use only financial-account portfolio-investment transactions, never IIP positions.
+- Source discovery/methodology assessment PASS only. Exact portfolio-investment series mapping and raw workbook/API payload, retrieval timestamp, byte count, SHA-256, unit/sign/vintage QA remain NOT_DONE.
+- No value admitted to em_portfolio_flow_usd_bn; no full overlay gate or percentage advanced.
+
 ## 3. 2026-11-17 new checkpoint
 Created docs/GLOBAL_CAPITAL_ROTATION_INDIA_FPI_DII_SEMANTICS_CHECKPOINT_20261117.md.
 Commit: 66271d77c685f348943af804945ec1e9e3f65684.
