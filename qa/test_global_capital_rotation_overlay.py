@@ -18,6 +18,17 @@ class TestGlobalCapitalRotation(unittest.TestCase):
             if r.get("raw_sha256") != "":
                 r["raw_sha256"]=hashlib.sha256(b"fixture raw payload").hexdigest()
             r["byte_length"]=str(len(b"fixture raw payload"))
+            r["evidence_manifest_id"]=f"fixture-{i:03d}"
+            manifest_dir=root/"evidence_manifests"; manifest_dir.mkdir(exist_ok=True)
+            manifest={
+                "schema_version":1,"evidence_manifest_id":r["evidence_manifest_id"],
+                "source":r["source"],"source_url":r["source_url"],"final_url":r["source_url"],
+                "indicator":r["indicator"],"unit":r["unit"],"quality_status":r.get("quality_status","VERIFIED_OFFICIAL"),
+                "published_at":r["published_at"],"retrieved_at":r["retrieved_at"],"http_status":r["http_status"],
+                "content_type":r["content_type"],"byte_length":r["byte_length"],"sha256":r["raw_sha256"],
+                "raw_payload_path":r["raw_payload_path"]
+            }
+            (manifest_dir/f"{r['evidence_manifest_id']}.json").write_text(__import__("json").dumps(manifest),encoding="utf-8")
         with p.open("w",newline="",encoding="utf-8") as f:
             w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
             for r in rows: w.writerow({k:r.get(k,"") for k in FIELDS})
@@ -359,6 +370,60 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         row["raw_sha256"]=""
         with self.assertRaisesRegex(ValueError,"missing evidence manifest fields"):
             self.load([row])
+
+
+    def test_missing_evidence_manifest_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        (path.parent/"evidence_manifests"/"fixture-000.json").unlink()
+        with self.assertRaisesRegex(ValueError,"evidence manifest unavailable"):
+            load_observations(path,registry_path=self.registry_path)
+
+    def test_manifest_final_url_mismatch_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        mp=path.parent/"evidence_manifests"/"fixture-000.json"
+        manifest=__import__("json").loads(mp.read_text(encoding="utf-8"))
+        manifest["final_url"]="https://untrusted.example/data"
+        mp.write_text(__import__("json").dumps(manifest),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"final_url not allowed"):
+            load_observations(path,registry_path=self.registry_path)
+
+    def test_manifest_publication_timestamp_mismatch_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        mp=path.parent/"evidence_manifests"/"fixture-000.json"
+        manifest=__import__("json").loads(mp.read_text(encoding="utf-8"))
+        manifest["published_at"]="2026-11-05T00:00:00Z"
+        mp.write_text(__import__("json").dumps(manifest),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"published_at mismatch"):
+            load_observations(path,registry_path=self.registry_path)
+
+    def test_manifest_http_status_mismatch_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        mp=path.parent/"evidence_manifests"/"fixture-000.json"
+        manifest=__import__("json").loads(mp.read_text(encoding="utf-8"))
+        manifest["http_status"]=206
+        mp.write_text(__import__("json").dumps(manifest),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"http_status mismatch"):
+            load_observations(path,registry_path=self.registry_path)
+
+    def test_manifest_payload_hash_mismatch_is_rejected(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        path=self.make([row])
+        mp=path.parent/"evidence_manifests"/"fixture-000.json"
+        manifest=__import__("json").loads(mp.read_text(encoding="utf-8"))
+        manifest["sha256"]="0"*64
+        mp.write_text(__import__("json").dumps(manifest),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"sha256 mismatch"):
+            load_observations(path,registry_path=self.registry_path)
+
+    def test_valid_manifest_is_resolved_and_bound_to_payload(self):
+        row=self.row("india_fpi_equity_inr_cr",10)
+        grouped=self.load([row])
+        self.assertEqual(len(grouped["india_fpi_equity_inr_cr"]),1)
+
 
 class TestSecurityMasterIntake(unittest.TestCase):
     def test_csv_hash_and_duplicate_isin_are_reported_without_issuer_inference(self):
