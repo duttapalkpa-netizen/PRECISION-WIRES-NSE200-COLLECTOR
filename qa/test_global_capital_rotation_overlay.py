@@ -134,4 +134,33 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         self.assertIn("SHA-256: NOT AVAILABLE",content)
         self.assertIn("not evidence that this audit successfully retrieved the response",content)
         self.assertIn("Observation extraction requires a separately verified",content)
+    def test_daily_market_panel_flags_date_spread_over_three_days(self):
+        rows=[
+            self.row("india_fpi_equity_inr_cr",10,asof="2026-11-16"),
+            self.row("india_dii_equity_inr_cr",20,asof="2026-11-12"),
+            self.row("usd_inr_change_pct_20d",0.5,asof="2026-11-16"),
+        ]
+        out=classify(load_observations(self.make(rows)),"2026-11-17")
+        panel=out["temporal_alignment"]["daily_india_market_panel"]
+        self.assertEqual(panel["status"],"UNSYNCHRONIZED")
+        self.assertEqual(panel["max_date_spread_days"],4)
+        self.assertEqual(panel["threshold_days"],3)
+
+    def test_daily_market_panel_accepts_date_spread_within_three_days(self):
+        rows=[
+            self.row("india_fpi_equity_inr_cr",10,asof="2026-11-16"),
+            self.row("india_dii_equity_inr_cr",20,asof="2026-11-14"),
+        ]
+        out=classify(load_observations(self.make(rows)),"2026-11-17")
+        panel=out["temporal_alignment"]["daily_india_market_panel"]
+        self.assertEqual(panel["status"],"ALIGNED_WITHIN_3D")
+        self.assertEqual(panel["max_date_spread_days"],2)
+
+    def test_daily_market_panel_is_not_assessed_with_fewer_than_two_inputs(self):
+        rows=[self.row("india_fpi_equity_inr_cr",10,asof="2026-11-16")]
+        out=classify(load_observations(self.make(rows)),"2026-11-17")
+        panel=out["temporal_alignment"]["daily_india_market_panel"]
+        self.assertEqual(panel["status"],"NOT_ASSESSED")
+        self.assertIsNone(panel["max_date_spread_days"])
+
 if __name__=="__main__": unittest.main()
