@@ -186,3 +186,12 @@ Direct API open for SGS 22924 was inaccessible to the browser reader in this ver
 BCB official External Sector Statistics release for September 2026 (published 26-Oct-2026) reports domestic-market portfolio investment liabilities net outflows of USD 2.1bn; equity/fund outflows USD 1.7bn and debt-security outflows USD 0.4bn; 12-month net inflows USD 5.1bn. This is a separate aggregate/statistical publication and is not assumed equivalent to SGS 22924 without scope and period reconciliation.
 
 Integrity decision: 22924 live API refresh = NOT_ACQUIRED in this turn; 22925/22926 catalogue discovery = PASS; component formula = UNKNOWN; external publication cross-check = contextual only; no data admitted to overlay. Preserve separate series and do not derive a net-flow feature until raw common-period QA and BCB methodology establish the formula.
+
+
+
+## Brazil–India portfolio flow context: official source references — 2026-11-17
+
+- BCB, External Sector Statistics, September 2026, press release 26-Oct-2026: domestic-market portfolio investment net outflow USD 2.1bn (equity/funds -USD 1.7bn; debt securities -USD 0.4bn); trailing 12-month net inflow USD 5.1bn. Official page: `https://www.bcb.gov.br/estatisticas/estatisticassetorexterno?mode=light`; official PDF: `https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202610_External_sector_statistics_text.pdf`.
+- RBI, Developments in India's Balance of Payments for September 2026, press release 13-Nov-2026: net FPI -USD 6.7bn, FPI in India -USD 6.5bn; Apr-Sep cumulative net FPI -USD 8.9bn. Official page: `https://www.rbi.org.in/scripts/bs_pressreleasedisplay.aspx/BS_PressReleaseDisplay.aspx?prid=63974`.
+- RBI official commentary on global risk-off / EM portfolio flow selling since September cites West Asia tensions, elevated crude and rising global bond yields; Indian equities bearish Sep-Oct through 19-Oct with DII net buying offsetting part of FII selling. Official RBI Bulletin source: `https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24516`.
+- Scope: Brazil monthly country-specific portfolio liabilities are contextual cross-country evidence only; they are not a synchronized global flow panel or direct India FPI observation. Do not compare raw USD magnitudes as impact weights without harmonized definitions and denominators.
