@@ -113,3 +113,11 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Important boundary: 2026-10-05 is the earliest PR activity verified in the reviewed repository history, not proof of absolute project inception. Full chat/file/run/artifact reconstruction remains partial where direct evidence is not indexed.
 - Current whole-project acceptance remains NOT_RECONCILED; overall V11.3 percentage NOT_CALCULABLE. Global Capital Rotation 62.5% is only the last recorded 2026-11-12 value, not a newly measured 2026-11-17 value.
 - Preserve this master audit as the starting reference for future continuation chapters. Do not repeat PASS work without a new source, code, artifact, or explicit revalidation requirement.
+
+
+## 3D. 2026-11-17 IMF BOP_AGG raw acquisition blocker
+- New bounded attempt record: `docs/GLOBAL_CAPITAL_ROTATION_IMF_BOP_AGG_RAW_ACQUISITION_BLOCKER_20261117.md`.
+- Commit: 6f8149629ebbd466b5c8677dfc10c524a389cf91; post-commit fetch verified blob SHA: 4934021f899ade9fd84535c44e9be889e1a8f543.
+- Official BOP_AGG landing page exposes VIEW DATA and DOWNLOAD controls, but the available text extraction did not expose a concrete download URL/file. Following the official API link redirected to the IMF API developer portal sign-in page; anonymous API access was not demonstrated.
+- No IMF raw bytes were acquired; byte count, retrieval timestamp, SHA-256, transaction-series mapping, units/sign/vintage QA remain NOT_DONE/UNKNOWN. Third-party mirror excluded under official-only constraint.
+- This is a documented access blocker, not a source-data PASS. No value admitted to `em_portfolio_flow_usd_bn`; no overlay gate or percentage advanced; no production change.
