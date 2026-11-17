@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Research-only official H.10 / FRED raw-byte capture and crosswalk gate."""
 from __future__ import annotations
-import csv, hashlib, json, os, sys, time
+import csv, hashlib, json, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -22,6 +22,7 @@ def capture(name: str, url: str) -> Path:
     path = OUT / name
     req = Request(url, headers={"User-Agent": "PRECISION-WIRES-research-audit/1.0", "Accept": "*/*"})
     last = None
+    source_started_at = datetime.now(timezone.utc).isoformat()
     for attempt in range(3):
         try:
             with urlopen(req, timeout=90) as response:
@@ -32,6 +33,8 @@ def capture(name: str, url: str) -> Path:
                 headers = {k.lower(): v for k, v in response.headers.items()}
                 manifest["sources"][name] = {
                     "requested_url": url, "final_url": response.geturl(),
+                    "retrieval_started_at_utc": source_started_at,
+                    "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
                     "http_status": response.status, "response_headers": headers,
                     "byte_length": len(data), "sha256": hashlib.sha256(data).hexdigest(),
                 }
@@ -53,7 +56,7 @@ if crosswalk.exists():
     try:
         with crosswalk.open("r", encoding="utf-8-sig", newline="") as f:
             reader = csv.DictReader(f)
-            headers = [h.strip() for h in (reader.fieldnames or [])]
+            headers = [h.strip().lower() for h in (reader.fieldnames or [])]
             required = {"ddp_release", "board_series_id", "fred_series_id"}
             if not required.issubset(set(headers)):
                 raise ValueError(f"required columns missing; observed={headers}")
