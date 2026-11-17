@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "purpose": "research_only_monthly_BCB_portfolio_series_internal_accounting_identity_audit",
+  "provider": "Banco Central do Brasil / BCData SGS",
+  "unit": "USD million",
+  "period": {
+    "count": 381,
+    "first": "1995-01",
+    "last": "2026-09",
+    "frequency": "monthly"
+  },
+  "capture_manifests": {
+    "data/raw/bcb/priority_series_capture_20261117/manifest.json": {
+      "status": "RAW_CAPTURE_7_OF_7_PASS",
+      "git_blob_sha": "8ece77e0c4fe64d7648d822fe37213ea8621915c"
+    },
+    "data/raw/bcb/instrument_net_capture_20261117/manifest.json": {
+      "status": "RAW_CAPTURE_8_OF_8_PASS",
+      "git_blob_sha": "9a4657e53b00bfd3a8b9f7f86dfc535b86eedece"
+    }
+  },
+  "raw_series": {
+    "22905": {
+      "bytes": 8908,
+      "sha256": "76391aef708216f537ead5fb140730c2dbd55164373b9689634aaa45f96b4837",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22906": {
+      "bytes": 8513,
+      "sha256": "dfdcec3b7c1618c070063ce76f3b722fdd4dadeac5d5fe0f1205fad61af64eaf",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22907": {
+      "bytes": 8486,
+      "sha256": "14105f48a0954c0da0615f136fb8e95885259a47c3395164ef922667dee8bbbf",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22908": {
+      "bytes": 8512,
+      "sha256": "82917f2f093a87f95733ecadabda2d59e8ddbf782b64c150bbc41e1627c5f1d7",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22909": {
+      "bytes": 8209,
+      "sha256": "cbfe7caa331d814ef4801940d08bd1966f8bca9d9cd6a024b4e1cacf79a34382",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22912": {
+      "bytes": 8385,
+      "sha256": "f9552bad9d7aac7d6190fca1783a81c25ad0593d802b2b4570706ae270a8087f",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22915": {
+      "bytes": 8357,
+      "sha256": "0b2275648eb640cae39f3a900451aef316913ada7ca5ba9505324da24780faa1",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22924": {
+      "bytes": 8809,
+      "sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22925": {
+      "bytes": 9005,
+      "sha256": "44f5e93d196355fa9c99d649667d240aff1c217bfa7f2448a1e6863da59ab75e",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22926": {
+      "bytes": 8987,
+      "sha256": "b03dfecbc6617a4ce772388b2b3131943df4e1921e7637d6c8a6ee84ec3e463e",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22927": {
+      "bytes": 8666,
+      "sha256": "6108baede8f25e95dce65943699fe915c5ebaa97e5c57f7b894ab62a56e0549c",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22936": {
+      "bytes": 8006,
+      "sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22939": {
+      "bytes": 8757,
+      "sha256": "24080225e1758010a0f4f6fd995b0a5887a77395caa90a7365d74bab18a240ca",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22942": {
+      "bytes": 8579,
+      "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+      "http_status": 200,
+      "rows": 381
+    },
+    "22945": {
+      "bytes": 8705,
+      "sha256": "452695200d21d72ae34fa972304b76f4418aaa6be1e838395cf4bba22061d563",
+      "http_status": 200,
+      "rows": 381
+    }
+  },
+  "tolerance_policy": "USD 0.1 million inclusive; source observations are rounded to one decimal place",
+  "identities": [
+    {
+      "id": "portfolio_net_assets_minus_liabilities",
+      "equation": "22905 = 22906 − 22924",
+      "n_periods": 381,
+      "within_tolerance": 381,
+      "failed_periods": 0,
+      "max_abs_difference_usd_mn": "0.1",
+      "status": "PASS"
+    },
+    {
+      "id": "asset_net_equals_equity_funds_debt_assets",
+      "equation": "22906 = 22909 + 22912 + 22915",
+      "n_periods": 381,
+      "within_tolerance": 381,
+      "failed_periods": 0,
+      "max_abs_difference_usd_mn": "0.1",
+      "status": "PASS"
+    },
+    {
+      "id": "asset_net_equals_outflows_minus_inflows",
+      "equation": "22906 = 22908 − 22907",
+      "n_periods": 381,
+      "within_tolerance": 381,
+      "failed_periods": 0,
+      "max_abs_difference_usd_mn": "0.1",
+      "status": "PASS"
+    },
+    {
+      "id": "liability_net_equals_inflows_minus_outflows",
+      "equation": "22924 = 22925 − 22926",
+      "n_periods": 381,
+      "within_tolerance": 381,
+      "failed_periods": 0,
+      "max_abs_difference_usd_mn": "0.1",
+      "status": "PASS"
+    },
+    {
+      "id": "liability_net_equals_equity_funds_debt_liabilities",
+      "equation": "22924 = 22927 + 22936 + 22939",
+      "n_periods": 381,
+      "within_tolerance": 381,
+      "failed_periods": 0,
+      "max_abs_difference_usd_mn": "0.1",
+      "status": "PASS"
+    },
+    {
+      "id": "debt_liabilities_equals_domestic_plus_external",
+      "equation": "22939 = 22942 + 22945",
+      "n_periods": 381,
+      "within_tolerance": 381,
+      "failed_periods": 0,
+      "max_abs_difference_usd_mn": "0.1",
+      "status": "PASS"
+    }
+  ],
+  "aggregate_result": "6_OF_6_IDENTITIES_PASS_ACROSS_381_MONTHS",
+  "raw_integrity": "manifest SHA-256 and byte-length values recorded; reproducible script verifies on execution",
+  "production_integration": "NOT_AUTHORIZED",
+  "portfolio_flow_signal": "NOT_AUTHORIZED",
+  "limitations": [
+    "Internal identities do not prove full BPM6 semantic equivalence or revision-vintage stability.",
+    "Brazil monthly series are not direct IMF quarterly BFPA/BFPL equivalents.",
+    "No capital-flow ranking, country score, investment recommendation or trading trigger calculated."
+  ]
+}
