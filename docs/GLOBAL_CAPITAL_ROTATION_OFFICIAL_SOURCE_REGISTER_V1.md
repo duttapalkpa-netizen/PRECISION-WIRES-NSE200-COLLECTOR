@@ -801,3 +801,9 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Official preview surfaced 2026-11-13 122.6503, 2026-11-12 122.5433, 2026-11-11 ND, 2026-11-10 122.1143, 2026-11-09 121.6623. Do not forward-fill ND. H.10 publishes prior-business-week daily data on Mondays at 4:15 p.m. ET (next business day on Monday holiday).
 - User Library fixture FRB_H10(1).csv (813 bytes; SHA-256 c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1) overlaps 2026-10-26 through 2026-11-06 and its displayed values match official Fed DownloadTable rendering on those dates. This file is comparison-only, not official raw-payload evidence.
 - Raw official response bytes, final URL/headers/retrieval time/length/hash and immutable evidence manifest: NOT_ACQUIRED. Trusted observation admission: BLOCKED. Derived 20-session change and classifier integration: NOT_DONE. Full details: docs/FED_H10_BROAD_DOLLAR_INDEX_SOURCE_QUALIFICATION_20261117.md.
+
+
+## CI confirmation for first H.10 registry tuple — 2026-11-17
+- Workflow run #221 / ID 44030991201 on registry commit 380918fc008ad96bccabbbab06b18b4ae6683df5: SUCCESS; test job and Python unittest command passed.
+- Workflow run #222 / ID 44031034467 on source-register commit d970737f9bb2cdc682ad5c8bd256c2b7fdf84d24: SUCCESS; test job and Python unittest command passed.
+- Registry JSON now contains exactly one metadata-qualified source tuple. These CI runs validate code/tests against that registry state; they do not mean a source payload or observation has passed the immutable evidence manifest gate.
