@@ -1210,3 +1210,15 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Chapter 34 progress log: `docs/IMF_BOP_CHAPTER_34_PROGRESS_LOG_20261117.md`. Acquisition and semantic crosswalk are 100%; exact BOP_BPM6 country observation pilot, reporter actual-vs-estimate/coverage, PIT/vintage and EM aggregation remain 0% / NOT_DONE. No observation panel or production input is claimed.
 - Exact next action: inspect ECOFIN_DSD/BOP_BPM6 dimension order and key/query syntax; then bounded India quarterly pilot for BFPA_BP6_USD and BFPL_BP6_USD, retaining raw provenance and all attributes. Compare separately with prior IMF Portal DSD24 results; never merge sources or reuse unverified key syntax.
 - Invariants: ₹0; official free sources only; no synthetic values, guessed timestamps, credentials or paid APIs; UNKNOWN remains UNKNOWN; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission and production workflows unchanged.
+
+
+## 2026-11-17 — IMF SDMX structure-vs-observation API boundary audit
+- Reused Chapter 34's exact ECOFIN DSD dimension order and did not repeat metadata acquisition or crosswalk QA.
+- Verified from the official IMF SDMX Central Web Services Guide (May 2025) that the structure-query service base is `https://sdmxcentral.imf.org/sdmx/v2/`, access is Public, method is GET, and supported structure resources include `codelist`. The guide documents the structure URL blueprint and codelist resource.
+- Derived a candidate CL_REF_AREA codelist URL from the documented template. The available browser retrieval path did not successfully retrieve it; therefore this is NOT a codelist payload capture and India REF_AREA remains NOT_VERIFIED.
+- The IMF Data Portal API page documents SDMX 2.1/3.0 APIs but says Swagger exploration requires beta-portal sign-in. This does not establish an anonymous observation endpoint or exact BOP_BPM6 observation key syntax.
+- Official guide examples document ECOFIN quarterly `FREQ=Q`, `COUNTERPART_AREA=W1`, and `TIME_FORMAT=P3M`; exact codelist-level confirmation remains pending.
+- New audit: `docs/IMF_SDMC_CENTRAL_STRUCTURE_VS_OBSERVATION_API_BOUNDARY_AUDIT_20261117.md`; commit `9ef15932fd49c6e1e37ebdec9c59b5fe858f3374`.
+- Acceptance: public structure-service boundary/documented URL contract 100% PASS; codelist retrieval 0% NOT_VERIFIED; India REF_AREA 0% NOT_DONE; anonymous observation endpoint/query syntax UNKNOWN; observation pilot NOT_DONE. No observation values retrieved.
+- Next bounded action: capture the exact referenced CL_REF_AREA XML through a verifiable official route; only then establish whether an authorized public observation endpoint exists. No credentials or paid access.
+- Invariants unchanged: ₹0, official/free sources, no synthetic observations/timestamps, no forward-fill, UNKNOWN != PASS; production selector/ranking/pressure-fade/CORE-672/Engines A–E/Hard Gate/parser/registry/workflows unchanged; no PR merge or production integration.
