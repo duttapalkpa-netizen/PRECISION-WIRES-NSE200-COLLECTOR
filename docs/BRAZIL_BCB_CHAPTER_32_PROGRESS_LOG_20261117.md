@@ -223,3 +223,17 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Updated extraction Run #5 / ID 44091831003 SUCCESS; artifact ID 14332500865; digest ee222deb9a1eabe10b0357ab1b1907f7696b764f5dfcfa2924166cb809f0cbfd.
 - Status: January 2026 component comparison CLOSED (within 0.1m); February 2026 22942 debt discrepancy isolated, exact revision cause UNKNOWN; 2025 annual revision bridge PASS; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next: investigate only February-2026 22942 revision using official BCB revision notice or preserved historical SGS vintage. Do not repeat January or September checks.
+
+## 20. 2026-11-17 — SGS 22942 February-2026 revision-attribution investigation
+- Reused existing BCB raw SGS 22942 and Table 10 vintage extraction; no raw re-download and no repeated January/September reconciliation.
+- Confirmed February discrepancy: contemporaneous-period Table 10 row 24 value as currently served = USD 2,579.492203640002m; latest archived SGS = USD 2,783.2m; difference +USD 203.707796359998m.
+- Confirmed January 2026 inferred from Jan-Feb cumulative row = USD 6,938.640771049998m vs latest SGS USD 6,938.6m (difference -USD 0.040771m), isolating mismatch to February only.
+- Official BCB Open Data Portal identifies SGS 22942 as domestic-market debt securities liabilities, monthly, USD million, coverage from Jan-1995.
+- BCB June-2023 third-edition DSTAT revision policy says short-term ordinary revisions can occur at publication frequency, incorporate new information/revised estimates/errors/quality validation; low-impact routine revisions may not receive detailed disclosure; BOP may be revised monthly and reach back to January of preceding year when necessary. This makes revision possible but does not prove this observation's cause.
+- BCB September-2026 statistics release confirms the fourth-edition annual revision cycle was consolidated in September; it reports 2025 portfolio-liability revisions from USD 15.1bn to USD 17.6bn and 2026 current-year estimate revisions, but does not specifically attribute the February-2026 SGS 22942 +USD 203.708m discrepancy.
+- The March-2026 Table 10 workbook in the archive was served with Last-Modified 18-Oct-2026; it is not proven to be an immutable original March publication vintage. Contemporaneous March PDF provides rounded debt value only.
+- Archived 2019 BCB monthly BOP ZIP is not usable to validate 2026; explicitly excluded from this comparison.
+- Disposition: REVISION_POSSIBLE_UNATTRIBUTED. Discrepancy existence PASS; February-only isolation PASS; exact revision event/date/cause UNKNOWN / NOT_PROVEN; original publication-vintage immutability NOT_PROVEN; February reconciliation BLOCKED; Brazil pilot NOT_ACCEPTED.
+- New report: docs/BRAZIL_BCB_SGS22942_FEB2026_REVISION_ATTRIBUTION_DISPOSITION_20261117.md. Machine-readable QA: data/qa/BRAZIL_BCB_SGS22942_FEB2026_REVISION_ATTRIBUTION_DISPOSITION_20261117.json.
+- Next action: obtain an immutable official BCB historical version or documented SGS revision log for February-2026 22942. If unavailable, document the limitation and begin prospective monthly vintage snapshots. Do not repeat raw capture, Table 10 extraction, January inference, or September validation.
+- Invariants unchanged: ₹0, official free sources only, no synthetic data or invented provenance; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched.
