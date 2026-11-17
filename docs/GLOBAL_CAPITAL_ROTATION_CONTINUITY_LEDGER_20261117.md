@@ -170,3 +170,11 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Country-level IMF:BOP transaction observations are a distinct possible medium-frequency fallback, not a substitute label for BOP_AGG. Live dataflow/DSD/observation retrieval, dimension mapping, EM membership/weights and missing-reporter treatment all remain unverified.
 - Updated source register: commit 6e65f6a820fd6d4032f7d63c6a33c6fdf5727e50; blob 991c974d338620e5852f609a7122e2f59a86c643.
 - No IMF observations admitted, no panel/calculation gate advanced, no production changes.
+
+
+## 3L. IMF SDMX Central observation-endpoint scope correction — 2026-11-17
+- The official IMF SDMX Central Web Services Guide (May 2025) distinguishes `/sdmx/v2/` as the public structure/metadata service from `/ws/public/data` for FMR data-processing operations. Neither route is evidence of a public BOP observation-data endpoint.
+- Modern IMF BOP dataset API link redirects to developer-portal sign-in. Public BOP/BOP_AGG observations remain NOT_VERIFIED; DSD raw XML retrieval also NOT_DONE. No values admitted.
+- Updated extraction spec commit: 3c93551577c32ec584173f62c76d24c333251d8f; blob: 808021c9239c35a77b445611fff62dfb83371f13.
+- Updated official source register commit: 19758b6d62da532f960b05d1ce2836b81d701c81; blob: b1d7c4f9d1e5ccd8080c35dc761a4f1c6703f03c.
+- No panel or calculation gate advanced; no production changes.
