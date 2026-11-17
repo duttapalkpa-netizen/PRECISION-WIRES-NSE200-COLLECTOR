@@ -121,3 +121,11 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Official BOP_AGG landing page exposes VIEW DATA and DOWNLOAD controls, but the available text extraction did not expose a concrete download URL/file. Following the official API link redirected to the IMF API developer portal sign-in page; anonymous API access was not demonstrated.
 - No IMF raw bytes were acquired; byte count, retrieval timestamp, SHA-256, transaction-series mapping, units/sign/vintage QA remain NOT_DONE/UNKNOWN. Third-party mirror excluded under official-only constraint.
 - This is a documented access blocker, not a source-data PASS. No value admitted to `em_portfolio_flow_usd_bn`; no overlay gate or percentage advanced; no production change.
+
+
+## 3E. 2026-11-17 uploaded CSV byte and arithmetic audit
+- New report: `docs/GLOBAL_CAPITAL_ROTATION_UPLOADED_FILE_BYTE_AUDIT_20261117.md`.
+- Commit: 8cf077dbe9f538288f7a604ecba8f95956e80832; post-commit verification pending at time of ledger update.
+- User Library copies of combined NSE+BSE+MSEI and NSE-only CSVs were byte-hashed (218 bytes each); buy-sell arithmetic exactly reconciles to reported net for DII and FII/FPI on 13-Nov-2026 in both scopes. Duplicate copies had identical hashes and are not additional observations.
+- H.10 user Library slice: 813 bytes, SHA-256 c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1; 10 daily observations 26-Oct through 06-Nov-2026; metadata identifies JRXWTFB_N.B as Nominal Broad Dollar Index, index Jan-1997=100. Endpoint changes over this 9-interval slice: broad +0.227048%, advanced +0.254686%, emerging market economies +0.200138%. Not a 20-session return and not ICE DXY.
+- Supplied-file byte integrity and arithmetic/schema checks PASS only. Original official download URLs/retrieval timestamps/response provenance were not embedded or independently verified; official raw-download provenance remains NOT_VERIFIED. The H.10 slice is not enough for a 20-interval indicator. No panel, relative-attraction calculation, or gate advanced.
