@@ -195,3 +195,21 @@ For Feb-2026, the latest 22942 domestic-debt series exceeds the March-2026 histo
 - Feb-2026 debt revision attribution: UNKNOWN / NOT_ATTRIBUTED.
 - Original immutable 202601/202603 XLSX as-of-publication snapshots: UNKNOWN; served files have Oct-2026 Last-Modified dates.
 - Brazil pilot: NOT_ACCEPTED; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
+
+## 2026-11-17 — February-2026 debt discrepancy isolated to February, not January
+The March-2026 BCB Table 10 provides both February monthly values and Jan-Feb cumulative values. Subtracting the February monthly row from the Jan-Feb cumulative row yields an independently inferred January value. This allows the current SGS January value to be checked without inventing a separate vintage.
+
+| Component | BCB-implied Jan-2026 | Latest SGS Jan-2026 | Latest minus BCB-implied (USD mn) |
+|---|---:|---:|---:|
+| Domestic equity 22930 | 3,752.9371 | 3,752.9 | -0.0371 |
+| Investment funds 22936 | -1,824.4965 | -1,824.5 | -0.0035 |
+| Domestic debt 22942 | 6,938.6408 | 6,938.6 | -0.0408 |
+| Equity/funds composite | 1,928.4407 | 1,928.4 | -0.0407 |
+| Domestic portfolio total | 8,867.0814 | 8,867.0 | -0.0814 |
+
+All January components match within USD 0.1 million. The February 22942 debt difference remains +USD 203.7078 million, while February equity and funds match within USD 0.04 million each. Therefore the Jan-Feb cumulative debt discrepancy is isolated to February 2026; it is not a January carry-over or an equity/fund perimeter mismatch. The specific February revision event/cause remains UNKNOWN.
+
+Reproducible extraction now records the Jan-Feb cumulative rows, inferred January values, identities and deltas in data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json. Updated extraction Run #5 / ID 44091831003 SUCCESS; artifact ID 14332500865; digest ee222deb9a1eabe10b0357ab1b1907f7696b764f5dfcfa2924166cb809f0cbfd.
+
+### Revised next action
+Investigate only the February-2026 SGS 22942 historical revision, using official BCB monthly revision notices or preserved series vintages. January 2026 is now closed at component level (within USD 0.1m). Do not repeat January, September-2026, or the 2025 annual revision bridge.
