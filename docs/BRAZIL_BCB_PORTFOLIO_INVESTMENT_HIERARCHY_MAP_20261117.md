@@ -25,8 +25,10 @@ Official topic catalogue: https://dadosabertos.bcb.gov.br/pages/temas
 | 22933–22935 | Ações - no exterior: líquido / ingresso / saída | Foreign-market equity liabilities | Liabilities → equity → abroad |
 | 22936–22938 | Fundos de investimento - passivos: líquido / ingresso / saída | Investment-fund liabilities | Liabilities → fund shares |
 | 22939–22941 | Títulos de dívida - passivos: líquido / ingresso / saída | Debt-security liabilities | Liabilities → debt |
-| 22942–22944 | Títulos de dívida - passivos - curto prazo: líquido / ingresso / saída | Short-term debt-security liabilities | Liabilities → debt → short-term |
-| 22945–22947 | Títulos de dívida - passivos - longo prazo: líquido / ingresso / saída | Long-term debt-security liabilities | Liabilities → debt → long-term |
+| 22942–22944 | Títulos de dívida - passivos - negociados no mercado doméstico: líquido / ingresso / saída | Domestic-market debt-security liabilities | Liabilities → debt → domestic market |
+| 22945–22947 | Títulos de dívida - passivos - negociados no mercado externo: líquido / ingresso / saída | Foreign-market debt-security liabilities | Liabilities → debt → foreign market |
+| 22948–22950 | Títulos de dívida - passivos - negociados no mercado externo - curto prazo: líquido / ingresso / saída | Foreign-market short-term debt-security liabilities | Liabilities → debt → foreign market → short-term |
+| 22951–22953 | Títulos de dívida - passivos - negociados no mercado externo - longo prazo: líquido / ingresso / saída | Foreign-market long-term debt-security liabilities | Liabilities → debt → foreign market → long-term |
 
 The numeric ranges above are grouped by the topic catalogue's explicit consecutive code labels; exact English names for the child series are working translations of the Portuguese catalogue terms, not independent English metadata claims.
 
@@ -83,3 +85,13 @@ Prioritize exact raw capture and identity reconciliation for 22905, 22906, 22924
 
 ## Hard invariants
 Research-only. No synthetic data, guessed values, timestamps, or hashes. ₹0 spend. UNKNOWN never PASS. Do not alter Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate or production workflows.
+
+
+## Correction — 2026-11-17 (official catalogue re-check)
+The previous table version incorrectly labelled 22942–22944 as short-term debt liabilities and 22945–22947 as long-term debt liabilities. This was a row-mapping error. The current official BCB topic catalogue explicitly places:
+- 22942–22944 under **debt securities liabilities negotiated in the domestic market** (net / inflow / outflow);
+- 22945–22947 under **debt securities liabilities negotiated in the foreign market** (net / inflow / outflow);
+- 22948–22950 as foreign-market short-term debt liabilities;
+- 22951–22953 as foreign-market long-term debt liabilities.
+
+Authority: https://dadosabertos.bcb.gov.br/pages/temas (BCB official “Temas” catalogue; topic tree under Conta financeira / Investimentos em carteira / Passivos / Títulos de renda fixa). This correction supersedes the earlier short-term/long-term row labels above. The existing SGS 22942 raw archive remains the correct domestic-market debt net series; no raw values or hashes changed.
