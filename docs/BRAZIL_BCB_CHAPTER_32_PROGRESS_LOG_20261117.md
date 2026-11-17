@@ -97,3 +97,15 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Confirmed tree entries: `.gitattributes`, `manifest.json`, and `sgs_22905.csv`, `sgs_22906.csv`, `sgs_22907.csv`, `sgs_22908.csv`, `sgs_22924.csv`, `sgs_22925.csv`, `sgs_22926.csv`.
 - Re-fetch SHA-256 validation: PASS 7/7 after commit. Original CRLF bytes preserved via `.gitattributes`.
 - This closes the permanent raw CSV archive gate. The Actions artifact is still useful provenance but no longer the only copy.
+
+
+## 10. 2026-11-17 — Independent official BCB BPM6 historical vintage audit
+- Captured official monthly BOP history ZIP from BCB: `https://www.bcb.gov.br/ftp/notaecon/balpagm.zip`.
+- Capture Run #1 / ID `44076495816`: SUCCESS; artifact ID `14324932604`; outer artifact SHA-256 `1da1dda4398abc2d3f93255bc47e1595f75a778731d5ae80241e3852ac1a0c4c`.
+- Inner ZIP: 2,813,472 bytes; SHA-256 `e58d64374d13ae62fb2af95e4bd26acaf924f0da113a825842307c95219dec4b`; HTTP 200; ZIP CRC PASS. One member: `BalPagM.xlsx`, 2,875,732 bytes, internal date 2019-03-22.
+- Workbook `Balanço` explicitly labels itself “Balanço de pagamentos – BPM6”; its available monthly span is Jan-1995 to Feb-2019 (290 months). It is a 2019 vintage, not a current 2026 dataset.
+- Exact SGS mapping verified from workbook code column: row 220=22905; 221=22906; 222=22907; 223=22908; 241=22924; 242=22925; 243=22926.
+- All three accounting identities hold across 290 months in the 2019 workbook to floating-point residuals no larger than approximately 1e-11: 22906=22908−22907; 22924=22925−22926; 22905=22906−22924.
+- Current 2026 SGS CSV vs 2019 workbook (same 290 dates) is not fully identical: 22907 290/290 within ±0.05; 22908 288/290; 22906 287/290 (one half-step/floating edge and Jan/Feb 2019 revisions); 22905 245/290; 22924 245/290; 22925 246/290; 22926 247/290. The 22905/22924/22925/22926 differences begin in 2015 and indicate vintage differences; reason not yet established. Do not treat old-vintage mismatches as source errors or replace current values.
+- Historical archive workflow Run #1 / ID `44077157516`: SUCCESS; permanent archive commit `88eebada24c1619d82292bb757df64e4372851ad`; path `data/raw/bcb/monthly_bop_history_20190322/`; post-commit `git show` SHA-256 verification PASS.
+- Result: conceptual sign orientation CONFIRMED; 2019-vintage identity PASS; current 2026 displayed-value identities remain rounding-consistent but formal tolerance is not approved; current-vintage vs 2019-vintage reconciliation PARTIAL.
