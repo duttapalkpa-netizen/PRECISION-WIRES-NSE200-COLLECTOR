@@ -96,3 +96,8 @@ Documentation-only audit. No parser, registry, tests, workflows, observations or
 - Initial 5,445 row parser-admission count is superseded: 214 records had OBS_STATUS=ND with numeric -9999.0 and were incorrectly included by the first collector version.
 - Corrected filter accepts only OBS_STATUS=A and finite numeric values. Workflow #8 / ID 44036104490 PASS; 5,231 admitted, 214 excluded. Regression #232 / ID 44036012995 PASS (72 tests).
 - Current 20-valid-observation candidate = +0.8892047581%; details docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Still one publication vintage, no classifier or production use.
+
+
+## H.10 numeric ND sentinel correction
+- Initial 5,445 admission count superseded: 214 rows had OBS_STATUS=ND and numeric sentinel values. Corrected capture #8 admitted 5,231 OBS_STATUS=A rows and excluded 214 ND rows. Workflow #232 regression PASS, 72 tests.
+- Derived current-vintage 20-prior-valid-observation change is +0.8892047581091633%; result and limits documented in docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md.
