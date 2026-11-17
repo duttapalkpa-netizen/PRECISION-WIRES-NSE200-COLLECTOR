@@ -46,3 +46,7 @@ Do not guess India code, do not execute an observation query against an invented
 ## Official sources
 1. IMF SDMX Central Web Services Guide, May 2025: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf (especially sections 2, 4.1–4.6; structure service entry point, Public GET access, codelist resource and URL blueprint).
 2. IMF Data APIs: https://data.imf.org/en/Resource-Pages/IMF-API (SDMX 2.1/3.0 and Swagger beta-portal sign-in requirement).
+
+
+## API boundary clarification (2026-11-17)
+The May-2025 Web Services Guide also documents the FMR data-processing entry point https://sdmxcentral.imf.org/ws/public/data. Its explicitly documented public operations in the inspected guide are POST /validate and POST /transform (validation and dataset conversion). These are not a public observation-query GET endpoint and must not be interpreted as a way to retrieve IMF BOP observations. The guide also describes a private registration POST route. Therefore the earlier conclusion remains: no anonymous observation query endpoint/key contract for the BOP_BPM6 pilot has been established from the verified sources. See guide sections 2, 5 and 6: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf.
