@@ -19,8 +19,24 @@ EXPECTED_CODES = {
     "22905","22906","22907","22908","22924","22925","22926",
     "22909","22912","22915","22927","22936","22939","22942","22945",
 }
-FOCUS = {"22905","22930","22936","22942"}  # 22930 is a comparison series, loaded only if archived manifest contains it
 API = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados?formato=json"
+SERIES_FILES = {
+    "22905": ("priority_series_capture_20261117", "sgs_22905.csv"),
+    "22906": ("priority_series_capture_20261117", "sgs_22906.csv"),
+    "22907": ("priority_series_capture_20261117", "sgs_22907.csv"),
+    "22908": ("priority_series_capture_20261117", "sgs_22908.csv"),
+    "22924": ("priority_series_capture_20261117", "sgs_22924.csv"),
+    "22925": ("priority_series_capture_20261117", "sgs_22925.csv"),
+    "22926": ("priority_series_capture_20261117", "sgs_22926.csv"),
+    "22909": ("instrument_net_capture_20261117", "sgs_22909.csv"),
+    "22912": ("instrument_net_capture_20261117", "sgs_22912.csv"),
+    "22915": ("instrument_net_capture_20261117", "sgs_22915.csv"),
+    "22927": ("instrument_net_capture_20261117", "sgs_22927.csv"),
+    "22936": ("instrument_net_capture_20261117", "sgs_22936.csv"),
+    "22939": ("instrument_net_capture_20261117", "sgs_22939.csv"),
+    "22942": ("instrument_net_capture_20261117", "sgs_22942.csv"),
+    "22945": ("instrument_net_capture_20261117", "sgs_22945.csv"),
+}
 
 def period_from_date(value: str) -> str:
     dd, mm, yyyy = value.split("/")
@@ -108,10 +124,9 @@ def main():
     failures = []
     for code in sorted(EXPECTED_CODES):
         meta = entries[code]
-        rel = meta.get("path") or meta.get("relative_path")
-        if not rel:
-            raise RuntimeError(f"manifest lacks raw path for SGS {code}")
-        archive_path = ROOT / rel
+        group_dir, filename = SERIES_FILES[code]
+        archive_path = ROOT / "data/raw/bcb" / group_dir / filename
+        rel = str(archive_path.relative_to(ROOT))
         archive_raw, archived = read_archive(archive_path)
         archive_sha = hashlib.sha256(archive_raw).hexdigest()
         if archive_sha != meta["sha256"] or len(archive_raw) != meta["byte_length"]:
