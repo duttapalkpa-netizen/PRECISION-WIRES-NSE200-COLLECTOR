@@ -1186,3 +1186,14 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Removed ineffective schedule/manual-dispatch triggers. Research workflow is now push-only, listening to `docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt` on `research/bcb-priority-metadata-audit-20261117`.
 - First baseline Run #1 / ID `44093241898` and snapshot commit `6237baa` remain valid. Future monthly capture requires an explicit trigger-file update/commit after a BCB release. Unattended monthly schedule is NOT_ENABLED.
 - Updated report, Chapter 32 Progress Log, baseline QA and snapshot contract to make this limitation explicit. No default/production branch or selector changes.
+
+## 2026-11-17 — BCB SGS vintage revision-diff verifier and baseline integrity runtime PASS
+- Added `scripts/research/diff_bcb_sgs_vintages.py`, which verifies exact raw byte length/SHA-256, HTTP/CSV PASS, official source URL, timezone-aware timestamps, CSV schema, chronological unique dates, numeric values, row counts, manifest month sets and every raw value/date against the manifest. It compares the two latest snapshots only when two genuine snapshots exist.
+- Added bounded research-branch workflow `.github/workflows/bcb_sgs_vintage_revision_diff.yml` (5-minute timeout), timestamped QA output, artifact upload, report and machine-readable acceptance contract.
+- Reused existing BCB baseline `20261117T132939Z`; no raw download, no overwrite, no repeated reconciliation. Run #1 / ID `44094567641` SUCCESS: all four SGS series fully validated against manifest.
+- QA output `data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_20261117T132939Z.json`; blob `6744a8a23413406bdd3603b6debc94b8ce979fcf`; status `WAITING_FOR_SECOND_VINTAGE`, snapshot_count=1, comparison_performed=false. This is baseline integrity PASS, not a revision-detection PASS.
+- Artifact ID `14333152609`; archive digest `9d0cf6bde66691e3bf4d5645bbc7afed805e1f9da517e556278a9f86e3169961`; artifact expires 2027-02-15.
+- Actions QA commit `f7130e3`; progress log updated; report records run and acceptance.
+- Next: on the next genuine BCB capture (manual research-branch trigger file update), workflow compares the two latest verified vintages. No synthetic second vintage. February-2026 original-vintage cause remains UNKNOWN / NOT_PROVEN.
+- Acceptance: baseline integrity PASS; comparator runtime PASS; second-vintage comparison NOT_DONE; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Invariants: ₹0, official free sources, no synthetic observations, no invented timestamps, no raw overwrites; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission and production workflows unchanged.
