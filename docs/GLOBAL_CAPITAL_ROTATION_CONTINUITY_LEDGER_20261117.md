@@ -204,3 +204,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - SGS 22906/22924 are separately catalogued Depec asset/liability component series. No arithmetic equivalence or sign mapping assumed.
 - 22905 promoted only to cross-series control candidate; direct API observation not acquired in this browser verification. No series substitution or net-flow calculation permitted until methodology and overlapping observations reconcile.
 - Source register update commit: 2218f35e427a90733f9ba3768e6ee1a342d9b193; blob: beb4874d05c4560d392af9fbbe919a96bf481c06. Extraction spec update commit: d04cf751dcb3706dad15c32f4c1c58905cd8a2cd; blob: 4a0b6468834cb96817cb2c7dfa6113e4f9513470.
+
+
+## 3P. Publication timestamp ordering defect — UTC normalization — 2026-11-17
+- Code review found `_published_key()` retained offset-bearing ISO timestamp strings and `latest()` selected the newest publication by lexicographic string order. This can misorder timestamps that use different UTC offsets, selecting the wrong vintage.
+- Patched `pipeline/global_capital_rotation_overlay.py` to convert offset-aware datetimes to UTC before returning the comparison key. Date-only and naive legacy values retain their prior representation; no fabricated timezone is assigned.
+- Added regression test `test_latest_publication_orders_timezone_offsets_by_utc_instant` with 2026-11-07T00:30:00+02:00 (22:30Z) versus 2026-11-06T23:00:00Z; expected newest is the latter. A local arithmetic check confirmed the UTC order (22:30Z < 23:00Z).
+- Pipeline commit: 5daeb769f671a0cfadf1ccd362f545018958758e; blob: 7f6942a6ba061262cd5e11acb0efb7867fcf6a4c.
+- Test commit: 33bae5d289932803a0cdb30108e6c114849ecbb4; blob: 6d7eb2fe2a96661c2bf6c08da9a3d89997d06cbd.
+- Both files re-fetched and patch presence verified. Full repository unit test suite / CI execution: NOT_VERIFIED; no workflow run returned for the test commit. Do not mark test suite PASS.
+- Scope: research overlay timestamp selection only. No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E or hard-gate changes.
