@@ -410,3 +410,27 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - No visible downloadable raw CSV/XLS payload or exact file URL was exposed in this page inspection. Raw bytes, byte count, retrieved_at, SHA-256, full history, and schema QA remain NOT_DONE. Do not synthesize a raw file from HTML.
 - Acceptance: official source identity and scope metadata = PASS; displayed arithmetic = PASS; raw acquisition/hash = NOT_DONE; matched daily panel = BLOCKED; no overlay admission pending raw and vintage QA.
 - Next action: capture MSEI official daily history/raw export only through a verifiable official download route; otherwise preserve as display-only provisional evidence. Continue separate CDSL confirmed FPI, NSE-only provisional, and combined MSEI/NSE/BSE provisional series. No forward-fill or cross-scope substitution.
+
+## 3AG. NSE two-scope FII/DII snapshot byte-integrity and cross-scope reconciliation — 2026-11-17
+
+### Exact files inspected from Library
+- `fii-dii-combined-latest.csv` (Library file `file_0000000077ec8211afe18d751021a9c6`), 218 bytes, created 2026-11-16 09:09:45 UTC; SHA-256 `2697546fa012f4c08449b37a3eb7d0f8298f296c25fd8ce4b7ca134c37999eb2`.
+- `fii-dii-nse-latest.csv` (Library file `file_000000006a3c82119beb9a4557318937`), 218 bytes, created 2026-11-16 09:09:45 UTC; SHA-256 `b733444b5a846abb672226bc96448bc0baea2da0ad15fe810207fbe93aad7f18`.
+- Correction to prior shorthand: hash `2697546f...99eb2` belongs to COMBINED; hash `b733444b...7f18` belongs to NSE-ONLY. Do not reverse these labels.
+- Both files contain exactly two categories (DII and FII/FPI) for 13-Nov-2026, with buy/sell/net in INR crore. No daily history beyond this one date is present in these files.
+
+### Independent arithmetic (4/4 PASS)
+- Combined: FII/FPI 18,339.57 - 12,603.02 = +5,736.55; DII 11,745.95 - 13,999.53 = -2,253.58.
+- NSE-only: FII/FPI 17,376.50 - 12,122.52 = +5,253.98; DII 10,561.32 - 12,532.05 = -1,970.73.
+- All four recomputed nets equal the stored net values to 0.01 crore precision; zero arithmetic mismatches.
+
+### Scope deltas (COMBINED minus NSE-only; not an extra flow)
+- FII/FPI: buy +963.07; sell +480.50; net +482.57 crore.
+- DII: buy +1,184.63; sell +1,467.48; net -282.85 crore.
+- These are cross-scope differences between provisional exchange series, not an additional independent investor flow, not custodian-confirmed final FPI and not a CDSL reconciliation residual. Do not add them to either scope or infer investor domicile.
+
+### Provenance and admission boundary
+- Byte integrity was recomputed from the two exact Library files in this run; their file sizes and SHA-256 are verified. This proves the stored snapshot bytes, not the original NSE download route: exact original CSV href, HTTP headers/status, download/retrieval timestamp, and upstream NSE response hash were not captured in this checkpoint.
+- Official NSE report page identifies two distinct CSV downloads: NSE-only and combined NSE+BSE+MSEI. It also states FII/FPI values are provisional and subject to custodial confirmation/modifications. Evidence: `turn119296view0` lines 128-134 and 118-127; search result table confirms the separate scopes `turn250660search0`.
+- Therefore acceptance = Library byte-integrity PASS; arithmetic PASS 4/4; scope comparison PASS; upstream raw-source provenance PARTIAL; full-history acquisition NOT_DONE; matched panel BLOCKED. This one-day snapshot is research evidence only and is not admitted as a complete daily flow panel.
+- No production integration or selector changes. No fill-forward, synthetic rows or scope mixing.
