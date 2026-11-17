@@ -156,3 +156,10 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - H.10 official XML binary fetch remains unavailable in this execution environment. Exact route is official, but no ZIP bytes/hash/parser output have been acquired. CDSL raw payload likewise NOT_DONE.
 - The overlay research unit-test workflow has historical PASS runs (latest visible prior run 43204879661, commit 7bc769b002c9c4bb26aa3bb464888e962944e580); no new run is yet visible for the latest documentation-only commits. Do not carry forward an old PASS as current-head CI evidence.
 - No new source observations or calculation gates were admitted. Overall overlay completion percentage remains unreported pending a full acceptance-matrix audit.
+
+## 3J. H.10 release-page XML route and IMF API access checkpoint — 2026-11-17
+- New checkpoint: `docs/GLOBAL_CAPITAL_ROTATION_H10_IMF_ACCESS_CHECKPOINT_20261117.md`.
+- Checkpoint commit: 1235521fa4dca01590a14922c10d559886fe968b.
+- Official Fed H.10 release landing page now yields exact XML/ZIP route `https://www.federalreserve.gov/releases/h10/data/FRB_h10_xml.zip`. Browser fetch rejected binary content type; route discovery PASS only, raw ZIP acquisition/parse NOT_DONE. Fed FAQ confirms release-page XML continues after BYP retirement, but is overwritten each update and does not provide archived point-in-time vintages.
+- IMF official API page documents SDMX 2.1/3.0 but Swagger requires beta portal sign-in. Legacy IMF SDMX Central guide documents a public REST endpoint, but no live response or BOP_AGG mapping was verified. IMF observation acquisition remains NOT_DONE; no values admitted.
+- No synchronized panel or overlay calculation gates advanced. All production invariants unchanged; PR #20 remains open/draft/unmerged.
