@@ -1,0 +1,42 @@
+{
+  "accounting_sign_acceptance": "NOT_DONE",
+  "byte_length": 2813472,
+  "content_use": "INDEPENDENT_CROSSCHECK_CANDIDATE_ONLY",
+  "date_value_reconciliation": "NOT_DONE",
+  "errors": [],
+  "final_url": "https://www.bcb.gov.br/ftp/notaecon/balpagm.zip",
+  "http_status": 200,
+  "member_count": 1,
+  "members": [
+    {
+      "compressed_size": 2813314,
+      "name": "BalPagM.xlsx",
+      "size": 2875732
+    }
+  ],
+  "production_integration": "NOT_AUTHORIZED",
+  "purpose": "research_only_independent_bcb_bop_history_capture",
+  "response_headers": {
+    "accept-ranges": "bytes",
+    "connection": "close",
+    "content-length": "2813472",
+    "content-type": "application/x-zip-compressed",
+    "date": "Tue, 17 Nov 2026 11:43:05 GMT",
+    "etag": "\"395f608ef2e0d41:0\"",
+    "frame-ancestors": "'self' https://*.bcb.gov.br",
+    "last-modified": "Fri, 22 Mar 2019 21:02:27 GMT",
+    "strict-transport-security": "max-age=16070400; includeSubDomains",
+    "x-azure-ref": "20261117T114304Z-17875568855bvb5fhC1DM1182n0000003vng000000009672",
+    "x-cache": "TCP_MISS",
+    "x-content-type-options": "nosniff",
+    "x-fd-int-roxy-purgeid": "0",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "retrieval_started_at_utc": "2026-11-17T11:43:04.058870+00:00",
+  "retrieved_at_utc": "2026-11-17T11:43:06.024624+00:00",
+  "schema_version": 1,
+  "series_mapping": "NOT_DONE",
+  "sha256": "e58d64374d13ae62fb2af95e4bd26acaf924f0da113a825842307c95219dec4b",
+  "source_url": "https://www.bcb.gov.br/ftp/notaecon/balpagm.zip",
+  "zip_crc_test": "PASS"
+}
