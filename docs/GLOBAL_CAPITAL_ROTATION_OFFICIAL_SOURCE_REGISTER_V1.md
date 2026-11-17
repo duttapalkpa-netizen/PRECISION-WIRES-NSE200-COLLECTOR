@@ -838,3 +838,9 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Corrected capture run #8 / ID 44036104490 PASS; artifact 14306134441; raw ZIP SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77.
 - Derived candidate `fed_h10_nominal_broad_dollar_change_pct_20obs`: +0.8892047581% from 2026-10-15 121.5693 to 2026-11-13 122.6503, 20 prior valid H.10 records plus current; 2026-11-11 ND omitted without fill. Not ICE DXY / not dxy_change_pct_20d.
 - QA workflow #232 / ID 44036012995 PASS, 72 tests. Detailed result docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Single current vintage only; no historical PIT or production approval.
+
+
+## Fed H.10 correction — numeric ND sentinel excluded
+- Supersede initial 5,445 admitted count: 5,445 source records = 5,231 OBS_STATUS=A + 214 OBS_STATUS=ND numeric sentinels. Corrected capture #8 / ID 44036104490 PASS; parser admitted 5,231; 214 excluded.
+- Derived 20-prior-valid-observation change = +0.8892047581091633%, 2026-10-15 121.5693 to 2026-11-13 122.6503. Not ICE DXY / not dxy_change_pct_20d. Details: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md.
+- Regression #232 / ID 44036012995 PASS (72 tests). One vintage only; no classifier/production use.
