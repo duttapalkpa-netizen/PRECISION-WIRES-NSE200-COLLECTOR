@@ -45,3 +45,20 @@ This work establishes a prospective point-in-time record so future revisions can
 
 ## Protected invariants
 Research-only; ₹0; official free BCB sources only. No synthetic data, no forward-fill, no inferred timestamps or hashes. Do not alter Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations, or production workflows.
+
+## First runtime result — PASS (2026-11-17)
+- Workflow Run #1 / ID `44093241898`, conclusion SUCCESS; run URL https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44093241898.
+- Snapshot ID: `20261117T132939Z`; directory `data/raw/bcb/sgs_vintage_snapshots/20261117T132939Z/`.
+- All four official BCData SGS requests returned HTTP 200; all CSV headers, rows, numeric values, ascending date order and uniqueness checks passed.
+- Every series contains 381 monthly observations from 1995-01 through 2026-09.
+- Raw files and SHA-256:
+  - 22924: 8,809 bytes; `f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2`.
+  - 22930: 8,669 bytes; `c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776`.
+  - 22936: 8,006 bytes; `0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24`.
+  - 22942: 8,579 bytes; `4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169`.
+- Snapshot manifest SHA-256: `4821d71e2308c7ac35ebf765c70c465baa9d9c1ec50be3ca1f44fd2af8a7ed0b`.
+- Immutable snapshot Git commit: `6237baa` (full commit is on branch history); files: manifest plus four raw CSVs.
+- Artifact ID `14333041266`, 26,480 bytes; archive SHA-256 `7955c0f65379130939258cbd9fcd25c5d1108d49346b4eae0bf1297132897dca`; expires 2027-02-15.
+- Latest SGS 22942 February-2026 value in this baseline remains USD 2,783.2m. This is a current response snapshot, not the original March-2026 as-published vintage.
+- Structured runtime result: `data/qa/BRAZIL_BCB_SGS_PROSPECTIVE_VINTAGE_BASELINE_20261117.json`.
+- Acceptance: first prospective baseline PASS; change detection NOT_DONE until a second timestamped snapshot; February-2026 original-vintage cause UNKNOWN / NOT_PROVEN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
