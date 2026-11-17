@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Capture the official Federal Reserve H.10 ZIP response with transport evidence."""
 from __future__ import annotations
-import hashlib, json, os, sys, urllib.request, urllib.error, zipfile, xml.etree.ElementTree as ET
+import csv, hashlib, json, os, sys, urllib.request, urllib.error, zipfile, xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -78,6 +78,46 @@ for item in series_summary:
         "observation_count": item["observation_count"]
     }
     (manifest_dir / (evidence_id + ".json")).write_text(json.dumps(series_manifest, indent=2) + "\n", encoding="utf-8")
+# Build a parser-ingestion fixture for the one registry-qualified broad-dollar series.
+broad = next(x for x in series_summary if x["series_id"] == "JRXWTFB_N.B")
+broad_id = "fed-h10-jrxwtfb_n-b"
+broad_observations = next(
+    series.findall("frb:Obs", ns) for series in xml_root.findall(".//kf:Series", ns)
+    if series.attrib.get("SERIES_NAME") == "JRXWTFB_N.B"
+)
+csv_path = OUT / "fed_h10_broad_dollar_observations.csv"
+columns = ["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status",
+           "evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length","raw_payload_path"]
+with csv_path.open("w", encoding="utf-8", newline="") as handle:
+    writer = csv.DictWriter(handle, fieldnames=columns)
+    writer.writeheader()
+    for obs in broad_observations:
+        value = obs.attrib.get("OBS_VALUE")
+        if value in (None, "", "ND"):
+            continue
+        writer.writerow({
+            "date": obs.attrib["TIME_PERIOD"], "indicator": "fed_h10_nominal_broad_dollar_index",
+            "value": value, "unit": "Index:_1997_Jan_100",
+            "source": "Federal Reserve Board H.10 Data Download Program", "source_url": URL,
+            "published_at": prepared, "as_of_date": prepared[:10], "quality_status": "VERIFIED_OFFICIAL",
+            "evidence_manifest_id": broad_id, "raw_sha256": hashlib.sha256(payload).hexdigest(),
+            "retrieved_at": retrieved.isoformat(), "http_status": status, "content_type": content_type,
+            "byte_length": len(payload), "raw_payload_path": zip_path.name
+        })
+from pipeline.global_capital_rotation_overlay import load_observations
+loaded = load_observations(csv_path)
+admitted = loaded.get("fed_h10_nominal_broad_dollar_index", [])
+if len(admitted) != broad["observation_count"]:
+    raise SystemExit(f"parser admission mismatch: expected {broad['observation_count']}, got {len(admitted)}")
+if not admitted or admitted[-1]["date"] != broad["latest_observation"]["TIME_PERIOD"]:
+    raise SystemExit("parser-admitted latest observation does not match official XML")
+parser_admission = {
+    "status": "PASS", "indicator": "fed_h10_nominal_broad_dollar_index",
+    "admitted_observation_count": len(admitted),
+    "first_observation_date": admitted[0]["date"], "latest_observation_date": admitted[-1]["date"],
+    "latest_observation_value": admitted[-1]["value"], "manifest_id": broad_id
+}
+(OUT / "fed_h10_parser_admission.json").write_text(json.dumps(parser_admission, indent=2) + "\\n", encoding="utf-8")
 manifest = {
     "schema_version": 1,
     "evidence_type": "official_http_transport_capture",
