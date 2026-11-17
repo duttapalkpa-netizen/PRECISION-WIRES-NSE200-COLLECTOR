@@ -1,0 +1,33 @@
+name: H10 vintage diff offline tests
+
+on:
+  push:
+    branches:
+      - research/taxonomy-crosswalk-contract-20261117
+    paths:
+      - "scripts/h10_vintage_diff.py"
+      - "qa/test_h10_vintage_diff.py"
+      - ".github/workflows/h10-vintage-diff-tests.yml"
+  pull_request:
+    paths:
+      - "scripts/h10_vintage_diff.py"
+      - "qa/test_h10_vintage_diff.py"
+      - ".github/workflows/h10-vintage-diff-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  h10-vintage-diff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile diff utility and tests
+        run: python -m py_compile scripts/h10_vintage_diff.py qa/test_h10_vintage_diff.py
+      - name: Run offline vintage diff regression tests
+        run: python -m unittest qa.test_h10_vintage_diff -v
