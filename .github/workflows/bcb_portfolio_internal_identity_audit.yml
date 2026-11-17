@@ -9,7 +9,6 @@ on:
       - 'data/raw/bcb/instrument_net_capture_20261117/**'
       - 'scripts/research/audit_bcb_portfolio_internal_identities.py'
       - '.github/workflows/bcb_portfolio_internal_identity_audit.yml'
-  workflow_dispatch:
 
 permissions:
   contents: read
