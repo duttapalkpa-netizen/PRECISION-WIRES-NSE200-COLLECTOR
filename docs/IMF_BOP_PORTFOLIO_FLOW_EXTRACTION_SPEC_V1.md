@@ -320,3 +320,16 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Exact portfolio-investment table/series mapping, raw workbook/API payload, retrieval timestamp, byte count, SHA-256, units/sign/series-key QA and release-vintage reconciliation: UNKNOWN / NOT_DONE.
 - No BOP_AGG value is admitted into `em_portfolio_flow_usd_bn` until those extraction and validation gates pass.
 - Detailed checkpoint: `docs/GLOBAL_CAPITAL_ROTATION_IMF_BOP_AGGREGATE_SOURCE_CHECKPOINT_20261117.md`.
+
+
+## 2N. IMF SDMX Central service-scope correction — 2026-11-17
+
+A direct review of the IMF SDMX Central Web Services Guide (last updated May 2025) requires a strict service-scope distinction:
+- Official structure REST entry point: `https://sdmxcentral.imf.org/sdmx/v2/` (public GET for metadata structures such as dataflows, codelists, concepts and data structures).
+- The guide separately identifies `https://sdmxcentral.imf.org/ws/public/data` as the entry point for FMR data-processing services (validation, conversion and registration). It explicitly says there is no official REST API for those data-processing services under the structure service.
+- Therefore neither the structure endpoint nor the FMR processing endpoint may be represented as an established public BOP observation-data endpoint. The earlier legacy route discussion concerns structure/catalogue metadata only; it does not prove access to country observations or BOP_AGG values.
+- The modern IMF Data Portal API link on the BOP dataset page redirects to the API developer portal sign-in. Anonymous observation retrieval remains NOT_DEMONSTRATED.
+- The SDMX Central catalogue lists dataflows from multiple agencies (including national and international providers); appearance of an IMF:BOP DSD is not proof of an IMF BOP observation dataflow hosted there.
+- The exact BOP DSD 2.6.0 metadata URL was also attempted through the available browser reader but returned an inaccessible response; no raw XML bytes, HTTP headers, byte count or SHA-256 were obtained.
+
+Corrected status: BOP DSD metadata route documented; raw DSD retrieval NOT_DONE; public IMF BOP/BOP_AGG observation API NOT_VERIFIED; no IMF observations extracted. This correction supersedes any interpretation that the legacy SDMX Central service route is a public BOP observation endpoint.
