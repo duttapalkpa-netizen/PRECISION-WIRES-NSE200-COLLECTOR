@@ -882,3 +882,13 @@
 - Acceptance: parser fail-closed matching STATIC_REVIEW_PASS; payload hash/length recomputation STATIC_REVIEW_PASS; registry population BLOCKED/EMPTY_BY_DESIGN; manifest resolution/binding GAP_CONFIRMED_STATIC; runtime tests NOT_RUN; trusted ingestion NOT_DONE; PIT/predictive validation NOT_DONE; production NOT_AUTHORIZED.
 - Next bounded remediation: immutable manifest schema + manifest-to-row binding, then offline negative/positive tests; only after tests pass qualify individual source registry tuples from already audited official sources. Do not repeat taxonomy or H.10 discovery.
 - ₹0; no synthetic market data/timestamps/hashes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and collector workflows unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-17 — Immutable Evidence Manifest V1 implemented (runtime pending)
+- Implemented immutable manifest resolution and row binding in pipeline/global_capital_rotation_overlay.py; manifest JSON path is evidence_manifests/<id>.json, schema_version=1. Required fields include source identity, source/final URL, indicator/unit/quality, published/retrieved timestamps, HTTP status, content type, byte length, SHA-256 and raw payload path.
+- UTC-normalized timestamp binding, exact row-manifest comparisons, HTTPS final URL, registry-controlled allowed_final_urls exception, path containment and independent raw-byte SHA-256/length checks are implemented.
+- Added config/global_capital_rotation_evidence_manifest_schema_v1.json; registry remains empty by design. No guessed or unverified source tuples admitted.
+- Added six positive/negative manifest tests in qa/test_global_capital_rotation_overlay.py and updated CI path filters for registry/schema changes. Runtime tests NOT_RUN; do not claim PASS until GitHub Actions result is inspected.
+- Commits: parser 924b0be2cf6be5cdbc27c7752c410b2ea2b8d8b2; tests 79182c8d765d36fc6dbcc593d9c13bf66f9aa4b6; schema 88e0a4bb0997e476ea506cb8b387a736dcfd8789; workflow update and documentation follow in branch history.
+- Status: schema 100%; parser implementation 100% static; tests authored 100%; CI filters 100%; runtime tests NOT_RUN; registry population EMPTY_BY_DESIGN; trusted ingestion NOT_DONE; production NOT_AUTHORIZED.
+- No data observations, registry entries, production logic, selector, ranking, engines or collector workflows changed. ₹0; no synthetic market data/timestamps/hashes. UNKNOWN is not PASS.
