@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-17T13:18:28.417081+00:00",
+  "source_url": "https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202609_External_sector_statistics_text.pdf",
+  "path": "data/raw/bcb/revision_release_202609/202609_External_sector_statistics_text.pdf",
+  "bytes": 852292,
+  "sha256": "2120db15085716f0c2a76270149cfbd2b40e8b9d57eb69d611b05bae8e72625e",
+  "pdf_signature": "PASS",
+  "http_headers": "HTTP/2 200 \ndate: Tue, 17 Nov 2026 13:18:28 GMT\ncontent-type: application/pdf\ncontent-length: 852292\ncache-control: max-age=604800\nexpires: Mon, 02 Nov 2026 13:18:27 GMT\nlast-modified: Mon, 05 Oct 2026 13:41:16 GMT\netag: \"{C787B82C-7CA4-44BD-8D0E-4EF02C296B0D},6\"\nresourcetag: rt:C787B82C-7CA4-44BD-8D0E-4EF02C296B0D@00000000006\npublic-extension: http://schemas.microsoft.com/repl-2\nrequest-id: 58bd4fa2-1e32-e089-3d98-10a5b35e604e\nx-frame-options: SAMEORIGIN\ncontent-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;\nx-content-type-options: nosniff\nx-ms-invokeapp: 1; RequireReadOnly\nframe-ancestors: 'self' https://*.bcb.gov.br\nstrict-transport-security: max-age=16070400; includeSubDomains\nx-azure-ref: 20261117T131827Z-1656f8b79d7rrltchC1BN1nvr000000041sg000000007vts\nx-cache: TCP_MISS\nx-fd-int-roxy-purgeid: 0\naccept-ranges: bytes\n\n"
+}

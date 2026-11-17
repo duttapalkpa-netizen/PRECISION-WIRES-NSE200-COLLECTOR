@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "purpose": "bcb_2025_annual_portfolio_liability_revision_bridge",
+  "unit": "USD million",
+  "sources": {
+    "22924": {
+      "path": "data/raw/bcb/priority_series_capture_20261117/sgs_22924.csv",
+      "bytes": 8809,
+      "sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+      "months": 12
+    },
+    "22930": {
+      "path": "bcb_domestic_market_crosscheck_202609/sgs_22930.csv",
+      "bytes": 8669,
+      "sha256": "c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776",
+      "months": 12
+    },
+    "22936": {
+      "path": "data/raw/bcb/instrument_net_capture_20261117/sgs_22936.csv",
+      "bytes": 8006,
+      "sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+      "months": 12
+    },
+    "22942": {
+      "path": "data/raw/bcb/instrument_net_capture_20261117/sgs_22942.csv",
+      "bytes": 8579,
+      "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+      "months": 12
+    }
+  },
+  "january_2026_table10_2025_annual_values": {
+    "portfolio_liabilities_total": "15139.982135850001",
+    "domestic_equity_22930": "-4642.025357449998",
+    "fund_liabilities_22936": "-302.7145406999996",
+    "domestic_debt_22942": "20229.11860895",
+    "domestic_portfolio_total": "15284.378710800003"
+  },
+  "latest_archived_sgs_2025_annual_sums": {
+    "22924": "17569.2",
+    "22930": "-4525.9",
+    "22936": "1628.4",
+    "22942": "20468.7"
+  },
+  "latest_archived_sgs_domestic_market_sum": "17571.2",
+  "latest_minus_january_table_usd_mn": {
+    "portfolio_liabilities_parent_22924_vs_table_total": "2429.217864149999",
+    "domestic_equity_22930_vs_row14": "116.125357449998",
+    "fund_liabilities_22936_vs_row20": "1931.1145406999996",
+    "domestic_debt_22942_vs_row24": "239.58139105",
+    "domestic_market_total_vs_row40": "2286.821289199997"
+  },
+  "bcb_september_2026_release": {
+    "previous_portfolio_investment_liabilities_usd_bn": "15.1",
+    "revised_portfolio_investment_liabilities_usd_bn": "17.6",
+    "published_revision_usd_bn": "2.5",
+    "reclassification_mechanism": "Direct investment / portfolio investment reclassification under the 10% ownership criterion; BCB says this information was not available in FX contracts."
+  },
+  "interpretation": {
+    "current_22924_annual_sum_rounds_to_revised_17_6bn": true,
+    "annual_revision_supported_at_published_precision": true,
+    "monthly_december_2025_component_allocation": "NOT_ATTRIBUTED",
+    "february_2026_debt_difference": "NOT_ATTRIBUTED"
+  }
+}

@@ -1,0 +1,22 @@
+HTTP/2 200 
+date: Tue, 17 Nov 2026 13:18:28 GMT
+content-type: application/pdf
+content-length: 852292
+cache-control: max-age=604800
+expires: Mon, 02 Nov 2026 13:18:27 GMT
+last-modified: Mon, 05 Oct 2026 13:41:16 GMT
+etag: "{C787B82C-7CA4-44BD-8D0E-4EF02C296B0D},6"
+resourcetag: rt:C787B82C-7CA4-44BD-8D0E-4EF02C296B0D@00000000006
+public-extension: http://schemas.microsoft.com/repl-2
+request-id: 58bd4fa2-1e32-e089-3d98-10a5b35e604e
+x-frame-options: SAMEORIGIN
+content-security-policy: frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;
+x-content-type-options: nosniff
+x-ms-invokeapp: 1; RequireReadOnly
+frame-ancestors: 'self' https://*.bcb.gov.br
+strict-transport-security: max-age=16070400; includeSubDomains
+x-azure-ref: 20261117T131827Z-1656f8b79d7rrltchC1BN1nvr000000041sg000000007vts
+x-cache: TCP_MISS
+x-fd-int-roxy-purgeid: 0
+accept-ranges: bytes
+
