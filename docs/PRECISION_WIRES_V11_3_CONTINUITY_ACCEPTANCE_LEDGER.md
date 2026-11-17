@@ -740,3 +740,14 @@
 - Decision: quarantine both NSDL pilot annual rows from registry/signal use; route/vintage verified, arithmetic FAIL, raw export/bytes/headers/HTTP metadata/length/retrieval timestamp/SHA NOT_ACQUIRED, independent clarification/reconciliation 0%, parser/registry/production not approved. No repairs, normalization or inferred values.
 - Scoped progress: route discovery 100%; vintage assessment 100%; FY2025-26 arithmetic test 100% (FAIL); FY2024-25 arithmetic test 100% (FAIL); raw export/hash 0%; independent reconciliation 0%; parser/registry 0%; production 0%. Overall Overlay NOT_CALCULABLE.
 - No data ingestion, parser, tests, workflows or production changes; no synthetic values/timestamps/hashes; ₹0; all hard invariants unchanged. Source Register updated in preceding commit.
+
+
+## 2026-11-17 — CDSL 16-Nov-2026 confirmed daily FPI snapshot QA
+
+- Added one current official daily FPI snapshot from CDSL Daily Trends, report date 16-Nov-2026. CDSL states the data are compiled from custodian reports submitted to depositories and represent trades on/up to previous trading day(s): https://www.cdslindia.com/eservices/publications/fiidaily .
+- INR crore net subtotals: Equity +5,564.90; Debt-General +389.47; Debt-VRR +51.60; Debt-FAR -1,163.67; Hybrid +3.63; Mutual Funds -18.74; AIF 0; Total +4,827.19. Segment net sum exactly +4,827.19. Gross purchases 19,958.74 minus gross sales 15,131.55 = 4,827.19.
+- USD mn segment sum +512.4422 vs total +512.442, USD0.0002mn rounding residual. CDSL conversion 94.1997 INR/USD; 4,827.19 crore ×10 /94.1997 ≈ USD512.442mn. CDSL says it uses RBI reference rate on trading day, or prior working-day rate for bank holidays; its note allows rounding differences.
+- CDSL coverage includes secondary/primary securities transactions and corporate actions; Hybrid includes REITs/InvITs. This is broad securities FPI flow, not equity-only. Distinguish confirmed custodian/depository rows from provisional exchange T-day rows.
+- Decision: QUALIFIED_FOR_DAILY_CONFIRMED_FPI_CONTEXT_ONLY; single-day arithmetic QA PASS; conversion cross-check PASS to displayed precision; USD rounding residual documented. No evidence yet for historical PIT, persistent attraction, predictive edge or production readiness. Previously quarantined NSDL annual rows remain quarantined.
+- Raw export/bytes/headers/length/payload retrieval timestamp/SHA-256 0%; historical PIT 0%; independent NSDL reconciliation 0%; parser/registry/tests 0%; production not authorized. Scoped progress: source semantics 100%; INR arithmetic 100%; USD arithmetic 100% (rounding residual); FX conversion 100%; raw payload/hash 0%; PIT 0%; NSDL cross-check 0%; parser/registry/tests 0%. Overall Overlay NOT_CALCULABLE.
+- No raw data, parser, registry, tests, workflow or production changes; no synthetic values/timestamps/hashes; ₹0; all hard invariants unchanged. Source Register updated in preceding commit.
