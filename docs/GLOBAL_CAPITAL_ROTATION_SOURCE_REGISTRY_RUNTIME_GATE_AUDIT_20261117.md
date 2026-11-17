@@ -90,3 +90,9 @@ Documentation-only audit. No parser, registry, tests, workflows, observations or
 - Existing `load_observations` parser accepted 5,445 rows with the exact registered tuple and independently rehashed payload. Parser admission result: PASS. This is a genuine runtime parser admission, not only a static implementation check.
 - The artifact has 90-day retention and expires 2027-02-15; it is not a permanent archive. Long-term repo retention remains NOT_DONE.
 - One publication vintage only: full PIT vintage validation remains NOT_DONE. Derived 20-observation change, classifier integration, and production use remain NOT_AUTHORIZED.
+
+
+## Correction — H.10 ND numeric sentinel excluded (2026-11-17)
+- Initial 5,445 row parser-admission count is superseded: 214 records had OBS_STATUS=ND with numeric -9999.0 and were incorrectly included by the first collector version.
+- Corrected filter accepts only OBS_STATUS=A and finite numeric values. Workflow #8 / ID 44036104490 PASS; 5,231 admitted, 214 excluded. Regression #232 / ID 44036012995 PASS (72 tests).
+- Current 20-valid-observation candidate = +0.8892047581%; details docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Still one publication vintage, no classifier or production use.
