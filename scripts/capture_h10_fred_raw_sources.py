@@ -21,7 +21,7 @@ TARGET_FRED = "DTWEXBGS"
 
 def fetch(name: str, url: str) -> dict:
     req = urllib.request.Request(url, headers={"User-Agent": "PRECISION-WIRES-research/1.0"})
-    with urllib.request.urlopen(req, timeout=90) as response:
+    with urllib.request.urlopen(req, timeout=180) as response:
         data = response.read()
         meta = {
             "url": url,
@@ -92,7 +92,43 @@ if "fed_h10_xml.zip" in manifest["sources"]:
     except Exception as exc:
         errors.append(f"H.10 ZIP parse failed: {type(exc).__name__}: {exc}")
 
-manifest["errors"] = errors
+
+if "fed_h10_xml.zip" in manifest["sources"]:
+    try:
+        with zipfile.ZipFile(OUT / "fed_h10_xml.zip") as z:
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(z.read("H10_data.xml"))
+            target = []
+            for element in root.iter():
+                if element.tag.endswith("Series") and element.attrib.get("SERIES_NAME") == TARGET_BOARD:
+                    observations = [x for x in element if x.tag.endswith("Obs")]
+                    target.append((element.attrib, observations))
+            if len(target) != 1:
+                errors.append(f"Expected one H.10 target series, found {len(target)}")
+            else:
+                attrs, observations = target[0]
+                statuses = {}
+                dates = []
+                for obs in observations:
+                    status = obs.attrib.get("OBS_STATUS", "")
+                    statuses[status] = statuses.get(status, 0) + 1
+                    dates.append(obs.attrib.get("TIME_PERIOD", ""))
+                manifest["checks"]["h10_target_series"] = {
+                    "series_name": TARGET_BOARD,
+                    "series_attributes": attrs,
+                    "observation_count": len(observations),
+                    "status_counts": statuses,
+                    "first_date": min(dates) if dates else None,
+                    "last_date": max(dates) if dates else None,
+                    "duplicate_date_count": len(dates) - len(set(dates)),
+                    "active_observation_count": statuses.get("A", 0),
+                    "nd_observation_count": statuses.get("ND", 0),
+                }
+                if len(dates) != len(set(dates)):
+                    errors.append("Duplicate dates in H.10 target series")
+    except Exception as exc:
+        errors.append(f"H.10 target-series parse failed: {type(exc).__name__}: {exc}")
+\nmanifest["errors"] = errors
 manifest["status"] = "PASS_CAPTURE" if not errors and len(manifest["sources"]) == 3 else "PARTIAL_BLOCKED"
 (OUT / "capture_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 print(json.dumps(manifest, indent=2, sort_keys=True))
