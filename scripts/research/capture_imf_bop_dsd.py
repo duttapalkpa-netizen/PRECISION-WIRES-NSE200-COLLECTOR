@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 BASE = ROOT / "evidence" / "imf_bop_dsd"
 SOURCES = {
     "dsd": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
@@ -114,9 +114,15 @@ def verify_dataflow(root: ET.Element) -> dict:
     for element in flow.iter():
         if local(element.tag) == "Ref":
             refs.append({k: element.attrib.get(k) for k in ("agencyID", "id", "version", "class", "package")})
-    if not any(r.get("agencyID") == "IMF" and r.get("id") == "BOP" and r.get("version") == "2.6.0" for r in refs):
-        raise RuntimeError(f"Dataflow does not explicitly reference IMF:BOP:2.6.0: {refs}")
-    return {"status": "PASS", "identity": identity, "structure_refs": refs}
+    structure_refs = [r for r in refs if r.get("class") == "DataStructure"]
+    if len(structure_refs) != 1:
+        raise RuntimeError(f"Expected exactly one DataStructure reference, found {structure_refs}")
+    ref = structure_refs[0]
+    if not all(ref.get(k) for k in ("agencyID", "id", "version")):
+        raise RuntimeError(f"Incomplete DataStructure reference: {ref}")
+    return {"status": "PASS", "identity": identity, "structure_refs": refs,
+            "referenced_dsd": {k: ref.get(k) for k in ("agencyID", "id", "version")},
+            "bop_dsd_2_6_0_match": ref.get("agencyID") == "IMF" and ref.get("id") == "BOP" and ref.get("version") == "2.6.0"}
 
 
 def verify_constraint(root: ET.Element) -> dict:
@@ -164,9 +170,33 @@ def main() -> int:
             errors.append(str(exc))
     if not errors:
         try:
-            manifest["semantic_qa"]["dsd"] = verify_dsd(parse_xml(out / "dsd.xml"))
-            manifest["semantic_qa"]["dataflow"] = verify_dataflow(parse_xml(out / "dataflow.xml"))
+            manifest["semantic_qa"]["bop_dsd_2_6_0"] = verify_dsd(parse_xml(out / "dsd.xml"))
+            flow_qa = verify_dataflow(parse_xml(out / "dataflow.xml"))
+            manifest["semantic_qa"]["dataflow"] = flow_qa
+            ref = flow_qa["referenced_dsd"]
+            from urllib.parse import quote
+            ref_url = (
+                "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/"
+                f"{quote(ref['agencyID'], safe='')}/{quote(ref['id'], safe='')}/{quote(ref['version'], safe='')}/"
+                "?format=sdmx-2.1&references=children&detail=full&prettyPrint=true"
+            )
+            manifest["sources"]["dataflow_referenced_dsd"] = fetch("dataflow_referenced_dsd", ref_url, out)
+            referenced_root = parse_xml(out / "dataflow_referenced_dsd.xml")
+            actual_nodes = [e for e in referenced_root.iter() if local(e.tag) == "DataStructure"
+                            and e.attrib.get("agencyID") == ref["agencyID"]
+                            and e.attrib.get("id") == ref["id"]
+                            and e.attrib.get("version") == ref["version"]]
+            if len(actual_nodes) != 1:
+                raise RuntimeError(f"Referenced DSD payload does not contain exactly one {ref}")
+            manifest["semantic_qa"]["dataflow_referenced_dsd"] = {
+                "status": "PASS", "identity": ref,
+                "component_count": sum(1 for e in actual_nodes[0].iter()
+                                       if local(e.tag) in {"Dimension", "TimeDimension", "MeasureDimension", "PrimaryMeasure", "Attribute"})
+            }
             manifest["semantic_qa"]["constraint"] = verify_constraint(parse_xml(out / "constraint.xml"))
+            manifest["semantic_qa"]["bop_dataflow_structure_relation"] = (
+                "SAME_DSD" if flow_qa["bop_dsd_2_6_0_match"] else "DIFFERENT_DSD_REFERENCE_REQUIRES_EXPLICIT_CROSSWALK"
+            )
             manifest["overall_status"] = "PASS_STRUCTURE_METADATA_ONLY"
         except Exception as exc:
             errors.append(str(exc))
