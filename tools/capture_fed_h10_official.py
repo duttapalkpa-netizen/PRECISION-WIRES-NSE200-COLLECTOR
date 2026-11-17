@@ -59,6 +59,6 @@ manifest = {
         "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT")
     }
 }
-(OUT / "FRB_H10_official_response_manifest.json").write_text(json.dumps(manifest, indent=2) + "\\n", encoding="utf-8")
-(OUT / "FRB_H10_official_response.sha256").write_text(f"{manifest['sha256']}  {zip_path.name}\\n", encoding="ascii")
+(OUT / "FRB_H10_official_response_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+(OUT / "FRB_H10_official_response.sha256").write_text(f"{manifest['sha256']}  {zip_path.name}\n", encoding="ascii")
 print(json.dumps({k: manifest[k] for k in ("final_url","retrieved_at_utc","http_status","content_type","byte_length","sha256","zip_integrity_test")}, indent=2))
