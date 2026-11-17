@@ -1005,3 +1005,13 @@
 - Status: official identities 22906/22907/22908/22926 verified; official release cross-check verified; exact scope equivalence UNKNOWN; methodology content BLOCKED; raw bounded payload bytes/HTTP metadata/byte lengths/SHA-256 NOT_DONE; series arithmetic NOT_DONE; pilot NOT_ACCEPTED; EM panel UNKNOWN; production integration NOT_AUTHORIZED.
 - No observation values were copied from charts; no raw bytes, timestamps, hashes, or synthetic data invented. No parser/registry/seed/workflow/production code changed; ₹0 spend.
 - Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows untouched.
+
+
+## 2026-11-17 — BCB portfolio-investment taxonomy hierarchy map (next-step correction)
+- Expanded beyond the prior 22906–22908 asset-side view using BCB's official Portuguese topic catalogue. Identified top-level total portfolio investment net 22905; asset net/receipt/expense 22906/22907/22908; liability net/receipt/expense 22924/22925/22926; and instrument-level equity, fund-share and debt-security branches. Catalogue also separates domestic-market and foreign-market equity liabilities.
+- Critical interpretation: Portuguese catalogue labels distinguish receita (receipts/inflows), despesa (expenses/outflows), aquisição (acquisition), venda (sale), ingresso (inflow) and saída (outflow). Do not infer sign conventions from English titles alone. 22907/22908 and 22925/22926 are component series, not stand-alone equity FPI flows.
+- Exact code families and hierarchy recorded in `docs/BRAZIL_BCB_PORTFOLIO_INVESTMENT_HIERARCHY_MAP_20261117.md`. Direct metadata opened for 22905–22908; 22926 retained from prior verified pilot. Child-series English resource metadata/payloads not all opened; sign/arithmetic remains UNKNOWN.
+- Official sources: BCB topic catalogue https://dadosabertos.bcb.gov.br/pages/temas ; BCB dataset pages for 22905–22908; prior verified 22926 page.
+- Status: hierarchy mapping 100% (catalogue labels); exact child metadata PARTIAL; raw payload/manifest NOT_DONE; accounting sign/reconciliation NOT_DONE; pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED.
+- No observations, raw hashes, timestamps, or calculations fabricated. No code, parser, registry, seed, tests, workflow or production component changed. ₹0.
+- Invariants preserved: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and collector workflows unchanged.
