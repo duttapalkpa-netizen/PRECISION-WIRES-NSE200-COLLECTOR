@@ -202,3 +202,15 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Status: series crosswalk PASS; latest Sep-2026 component validation PASS; Dec-2025 and Feb-2026 vintage differences CONFIRMED; exact original-vintage file proof UNKNOWN; revision attribution NOT_DONE; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next: seek a documented BCB revision notice or immutable as-of-publication values for Dec-2025 and Feb-2026 only. Do not re-download existing raw SGS or repeat Sep-2026 validation.
 - Invariants preserved: ₹0; official free sources; no synthetic values; no raw source overwrite; no Production Selector/RANKING_SCORE/+1 PRESSURE_FADE/CORE-672/Engines A–E/Hard Gate/seed/parser/production changes.
+
+## 18. 2026-11-17 — BCB 2025 annual revision bridge confirmed
+- Archived official BCB September-28-2026 External Sector Statistics release PDF: 852,292 bytes; SHA-256 2120db15085716f0c2a76270149cfbd2b40e8b9d57eb69d611b05bae8e72625e; HTTP 200; Last-Modified 05-Oct-2026.
+- BCB explicitly states 2025 net portfolio-investment liabilities revised from USD 15.1bn to USD 17.6bn; direct/portfolio reclassifications follow the 10% nonresident ownership criterion. September revision cycle covers definitive 2025 and revised 2026 estimates.
+- Current archived SGS 22924 12-month sum for 2025 = USD 17,569.2m, rounds to BCB revised USD 17.6bn. January-2026 Table 10 prior total = USD 15,139.9821m. Latest minus prior = +USD 2,429.2179m. Annual parent-level revision bridge PASS at published precision.
+- Annual component comparison (latest SGS minus Jan-2026 Table 10, USD mn): 22930 +116.1254; 22936 +1,931.1145; 22942 +239.5814; domestic-market total +2,286.8213. Fund-liability component has the largest annual movement, consistent with BCB's stated direct/portfolio reclassification mechanism; exact monthly allocation is not established.
+- December-2025 month-specific component deltas remain as previously measured; do not claim all are directly attributable to the 10% reclassification.
+- February-2026 22942 debt discrepancy remains USD +203.7078m vs the March-2026 Table 10 value. BCB says 2026 estimates were revised but does not identify this specific series/month cause. Attribution UNKNOWN.
+- Script: scripts/research/audit_bcb_2025_annual_revision_bridge.py; output: data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json; PDF archive: data/raw/bcb/revision_release_202609/.
+- Run #1 ID 44091390515 SUCCESS; artifact 14330869727; digest 15d99f469b7cb9d461c47125dc9d1dec513e2edaa3deb744b7900c92e0ada971.
+- Status: 2025 annual revision bridge PASS; Dec-2025 monthly attribution PARTIAL/NOT_ATTRIBUTED; Feb-2026 debt attribution UNKNOWN; Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Next: investigate only Feb-2026 22942 debt and month-specific 2025 revision allocation through official revision history or preserved SGS vintages. No repeat source capture or Sep-2026 check.
