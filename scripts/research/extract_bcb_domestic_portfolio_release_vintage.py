@@ -48,8 +48,14 @@ def month_columns(ws):
     return months
 def main():
     sgs = {code: load_sgs(path) for code, path in SGS_FILES.items()}
-    manifest = json.loads((ROOT / "data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json").read_text())
+    manifest_path = ROOT / "data/raw/bcb/BCB_HISTORICAL_RELEASE_TABLES_VINTAGE_MANIFEST_20261117.json"
+    manifest_raw = manifest_path.read_bytes()
+    manifest = json.loads(manifest_raw)
     manifest_by_period = {x["publication_period"]: x for x in manifest["files"]}
+    if manifest.get("purpose") != "immutable_official_bcb_historical_release_table_vintage_capture":
+        raise SystemExit("Unexpected historical release-table manifest purpose")
+    if set(manifest_by_period) != set(WORKBOOKS):
+        raise SystemExit(f"Release-table manifest periods differ from configured workbooks: {sorted(manifest_by_period)}")
     result = {"schema_version": 3, "purpose": "BCB_domestic_portfolio_historical_table_vintage_and_latest_SGS_comparison",
               "unit": "USD million", "source_sgs": {}, "workbooks": [],
               "acceptance": "PASS_TABLE_EXTRACTION_AND_INTERNAL_IDENTITIES; VINTAGE_DIFFERENCES_QUANTIFIED_NOT_ATTRIBUTED"}
@@ -60,13 +66,23 @@ def main():
     for vintage, meta in WORKBOOKS.items():
         path = meta["path"]
         raw = path.read_bytes()
+        manifest_entry = manifest_by_period[vintage]
+        actual_sha256 = hashlib.sha256(raw).hexdigest()
+        if len(raw) != manifest_entry.get("bytes"):
+            raise SystemExit(f"{vintage}: workbook byte length differs from immutable manifest")
+        if actual_sha256 != manifest_entry.get("sha256"):
+            raise SystemExit(f"{vintage}: workbook SHA-256 differs from immutable manifest")
+        if not path.is_file() or path.stat().st_size == 0:
+            raise SystemExit(f"{vintage}: missing or empty official workbook")
         wb = load_workbook(path, read_only=True, data_only=True)
+        if "Tabela 10" not in wb.sheetnames:
+            raise SystemExit(f"{vintage}: official workbook missing Tabela 10")
         ws = wb["Tabela 10"]
         cols = month_columns(ws)
-        manifest_entry = manifest_by_period[vintage]
         last_modified = re.search(r"last-modified: ([^\r\n]+)", manifest_entry["http_headers"], re.I)
         entry = {"publication_period_file": vintage, "path": str(path.relative_to(ROOT)),
-                 "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(),
+                 "bytes": len(raw), "sha256": actual_sha256,
+                 "manifest_sha256": manifest_entry["sha256"], "manifest_byte_length": manifest_entry["bytes"],
                  "http_last_modified": last_modified.group(1) if last_modified else None,
                  "table": "Tabela 10 – Investimentos em carteira – passivos",
                  "header_year_row_5": [ws.cell(5,c).value for c in range(1,min(ws.max_column,12)+1)],
@@ -135,6 +151,18 @@ def main():
     if not all(all(p["table_internal_identities"].values()) for w in result["workbooks"] for p in w["periods"]):
         result["acceptance"] = "FAIL_TABLE_INTERNAL_IDENTITY"
         raise SystemExit("BCB Table 10 internal identities failed")
+    result["manifest"] = {
+        "path": str(manifest_path.relative_to(ROOT)),
+        "sha256": hashlib.sha256(manifest_raw).hexdigest(),
+        "publication_periods": sorted(manifest_by_period),
+        "workbook_hash_and_length_verification": "PASS_ALL_CONFIGURED_VINTAGES",
+    }
+    result["vintage_comparison_guardrails"] = {
+        "comparison_is_current_sgs_snapshot_minus_archived_release_table": True,
+        "differences_are_revision_or_definition_differences_not_attributed": True,
+        "february_2026_sgs_22942_revision_cause": "UNKNOWN_NOT_PROVEN",
+        "no_original_vintage_inference_from_latest_snapshot": True,
+    }
     dest = ROOT / "data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json"
     dest.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))
