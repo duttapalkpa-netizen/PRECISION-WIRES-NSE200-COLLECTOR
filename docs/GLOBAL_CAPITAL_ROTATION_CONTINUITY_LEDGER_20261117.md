@@ -197,3 +197,10 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Updated source register commit: 25f1a32402b68f7a26ebee517c6d492b1473f1d6; blob: a05537f917efd3bddbee9af59ba4940f60f787a3.
 - Updated IMF extraction spec commit: 6c6dcf41ec17352d14147e0d49d1bcec5e331fd0; blob: 194e2a4561d2faabbcd964e73ca7a8a4e37a6f21.
 - API response inspection PASS; raw archive, byte count, SHA-256, full-history QA, vintage and sign reconciliation NOT_DONE. No value admitted to global EM flow input; synchronized panel and relative-attraction gates remain NOT_DONE. Production unchanged.
+
+
+## 3O. BCB 22905 comparability guard — 2026-11-17
+- Official BCB Dstat dataset 22905 is a distinct monthly portfolio-investment-net series in the BOP6/BPM6 hierarchy; unit USD million; stated publication timeliness up to four weeks after reference period.
+- SGS 22906/22924 are separately catalogued Depec asset/liability component series. No arithmetic equivalence or sign mapping assumed.
+- 22905 promoted only to cross-series control candidate; direct API observation not acquired in this browser verification. No series substitution or net-flow calculation permitted until methodology and overlapping observations reconcile.
+- Source register update commit: 2218f35e427a90733f9ba3768e6ee1a342d9b193; blob: beb4874d05c4560d392af9fbbe919a96bf481c06. Extraction spec update commit: d04cf751dcb3706dad15c32f4c1c58905cd8a2cd; blob: 4a0b6468834cb96817cb2c7dfa6113e4f9513470.
