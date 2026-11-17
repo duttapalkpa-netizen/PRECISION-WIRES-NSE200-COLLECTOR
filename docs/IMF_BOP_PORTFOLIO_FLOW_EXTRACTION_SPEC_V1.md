@@ -402,3 +402,13 @@ The CSV links also resolve to the same API route with `formato=csv`, but the bro
 Official API JSON browser inspection returned 2026-09-01 values: SGS 22905 = +4,967.8 million USD and SGS 22906 = +3,269.3 million USD. Their arithmetic difference is +1,698.5 million USD. A prior inspection had reported SGS 22924 = -1,698.5 million USD for the same month, but the 22924 endpoint could not be freshly re-fetched in this turn. This exact magnitude match is a one-period reconciliation lead only; it does not establish the formula, signs, accounting treatment or full-history identity.
 
 Acceptance remains blocked until SGS 22924 is freshly captured, all three series are compared over their full common monthly period, official methodology confirms the financial-account sign conventions and any revisions, and raw bytes + retrieval metadata + SHA-256 are archived. No values are admitted to the global EM flow panel or relative-attraction calculation. Keep 22905 catalogue owner/classification as CONFLICT / UNKNOWN.
+
+
+
+## BCB liabilities component cross-check discovery — 2026-11-17
+
+Official BCB Open Data Portal catalogues distinguish SGS 22924 (net incurrence of portfolio-investment liabilities, monthly net), SGS 22925 (same liabilities, monthly inflows), and SGS 22926 (same liabilities, monthly outflows). The catalogue describes these as monthly USD-million SGS series beginning 1995-01 and identifies BCB/Depec. This discovery enables a targeted reconciliation test but does not prove a formula or sign orientation.
+
+A direct browser open of the 22924 JSON API URL was inaccessible in this verification; no fresh observation or raw bytes acquired. The previously observed Sep-2026 value is not revalidated here. BCB's September-2026 External Sector Statistics publication reports domestic-market portfolio investment liabilities net outflows USD 2.1bn, including USD 1.7bn equity/fund and USD 0.4bn debt securities, plus USD 5.1bn 12-month net inflows. This publication is contextual cross-check evidence only; do not equate it to SGS 22924 without scope, instrument and period reconciliation.
+
+Required acceptance: retrieve raw 22924/22925/22926 payloads; archive retrieval timestamp, status, content-type, bytes and SHA-256; compare common monthly date keys and missing markers; test candidate net/inflow/outflow identities across every overlapping month; reconcile units, sign convention, gross/net scope, instrument coverage and revisions against BCB methodology; only then consider country-level Brazil pilot admission. No global EM aggregate is inferred.
