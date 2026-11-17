@@ -717,3 +717,9 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Decision: contract/specification milestone COMPLETE; actual code-level crosswalk NOT_STARTED (0%); issuer-level mapping NOT_STARTED (0%); PIT taxonomy history NOT_STARTED; parser/registry NOT_AUTHORIZED. Preserve CDSL "Others" as a coverage residual, not an NSE sector. No mapping rows were invented or promoted.
 - Scoped progress: official NSE methodology/source review 100%; BSE/NSE source identities 100%; discrepancy detection 100%; acceptance contract 100%; raw codebook payload/hash 0%; complete code-level diff 0%; mismatch explanation 0%; issuer-level mapping 0%; PIT history 0%; parser/registry 0%. Overall Overlay NOT_CALCULABLE.
 - No observations, mappings, parser, registry, tests, workflow or production changes; no synthetic data/timestamps/hashes; ₹0. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and collector workflows unchanged.
+
+
+## 2026-11-17 — Taxonomy raw-source access status addendum
+- NSE Indices July-2023 codebook PDF was retrievable as a 23-page document through the web document layer; extracted text confirms four-tier code columns and Copper code IN010302002 under Non-Ferrous Metals / Metals & Mining. This is document-text evidence only, not raw-byte evidence.
+- BSE official codebook PDF and BSE classification page both returned HTTP 403 to the retrieval layer. A separate runtime byte-fetch attempt failed at DNS resolution before HTTP. Do not infer BSE source unavailability; mark raw payload acquisition BLOCKED in this environment.
+- No raw payload bytes, HTTP headers, byte lengths, retrieval timestamps or SHA-256 captured for either taxonomy PDF in this task. No row-level crosswalk, issuer mapping or parser promotion is authorized. Do not repeat the same blocked URL attempts; require a separately verified official BSE-hosted route or preserve BLOCKED.
