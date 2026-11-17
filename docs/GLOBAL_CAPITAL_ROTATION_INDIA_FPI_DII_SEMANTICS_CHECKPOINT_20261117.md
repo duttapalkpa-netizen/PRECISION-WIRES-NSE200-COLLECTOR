@@ -82,3 +82,17 @@ No change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Eng
 - Matched daily FPI/DII panel: 0%.
 - Historical relative-attraction validation: 0%.
 - Overall Global Capital Rotation overlay: NOT RE-CALCULATED; this bounded checkpoint does not change the prior 62.5% status.
+
+## 10. MSEI combined FPI/DII snapshot — 17-Nov-2026
+
+Official source: https://www.msei.in/downloads/equity-reports/fii-dii-activities
+
+The official MSEI page displays combined MSE+NSE+BSE capital-market activity for 17-Nov-2026:
+- FII/FPI: buy ₹19,930.98cr; sell ₹15,735.60cr; net +₹4,195.38cr.
+- DII: buy ₹14,903.80cr; sell ₹14,706.87cr; net +₹196.93cr.
+- Arithmetic checks: 19,930.98 - 15,735.60 = +4,195.38; 14,903.80 - 14,706.87 = +196.93.
+- MSEI states FII/DII classifications use trading-member client codes/UCC classification and are provisional, subject to custodial confirmation and modifications. NSE and BSE data use their respective exchange classification fields.
+
+This is a combined exchange-provisional cash-market series. Keep it separate from CDSL custodian-confirmed FPI, NSE-only scope and any NSDL/other custodian final series. CDSL 17-Nov reporting page covers trades on/up to previous trading day(s), while MSEI page is dated 17-Nov; displayed dates alone do not prove identical trade-period coverage. Do not reconcile CDSL Equity +₹5,107.61cr to MSEI combined provisional FPI +₹4,195.38cr as though they were the same population or vintage.
+
+Evidence: official MSEI page opened 17-Nov-2026, turn591741view0 lines 335-364. This is displayed-page evidence only. No official downloadable raw file, exact export URL, raw bytes, retrieval timestamp, byte count or SHA-256 was captured. Raw ingestion = NOT_DONE; displayed arithmetic = PASS; matched panel admission = BLOCKED.
