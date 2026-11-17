@@ -394,3 +394,11 @@ Both official BCB portal JSON resource links were resolved and point to the iden
 The catalogue metadata conflict remains: one page identifies BCB/Depec and English title “Portfolio investment - monthly - net”; the other identifies BCB/Dstat and places the dataset under BPM6 / financial account / portfolio investment. A shared endpoint does not decide which metadata hierarchy/owner record is authoritative, nor does it prove a methodology/version history. Preserve both metadata provenance records and keep classification CONFLICT / UNKNOWN until official methodology/version evidence resolves it.
 
 The CSV links also resolve to the same API route with `formato=csv`, but the browser reader rejected the `text/csv` content type; no CSV bytes were acquired. Browser-inspected JSON is not a raw archive: byte count, retrieval timestamp, complete payload capture, SHA-256, full-history row QA and vintage/revision QA remain NOT_DONE. No observations admitted to the global EM flow panel. No relationship with SGS 22906/22924 inferred.
+
+
+
+## BCB SGS live-value cross-check — 2026-11-17
+
+Official API JSON browser inspection returned 2026-09-01 values: SGS 22905 = +4,967.8 million USD and SGS 22906 = +3,269.3 million USD. Their arithmetic difference is +1,698.5 million USD. A prior inspection had reported SGS 22924 = -1,698.5 million USD for the same month, but the 22924 endpoint could not be freshly re-fetched in this turn. This exact magnitude match is a one-period reconciliation lead only; it does not establish the formula, signs, accounting treatment or full-history identity.
+
+Acceptance remains blocked until SGS 22924 is freshly captured, all three series are compared over their full common monthly period, official methodology confirms the financial-account sign conventions and any revisions, and raw bytes + retrieval metadata + SHA-256 are archived. No values are admitted to the global EM flow panel or relative-attraction calculation. Keep 22905 catalogue owner/classification as CONFLICT / UNKNOWN.
