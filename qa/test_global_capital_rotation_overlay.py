@@ -1,7 +1,7 @@
 import csv, hashlib, tempfile, unittest
 from decimal import Decimal
 from pathlib import Path
-from pipeline.global_capital_rotation_overlay import load_observations, classify, derive_fed_h10_broad_dollar_change_20obs
+from pipeline.global_capital_rotation_overlay import load_observations, classify, derive_fed_h10_broad_dollar_change_20obs, filter_fed_h10_valid_xml_observations
 FIELDS=["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status","evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length","raw_payload_path"]
 class TestGlobalCapitalRotation(unittest.TestCase):
     def make(self,rows):
@@ -40,6 +40,20 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         return load_observations(self.make(rows),registry_path=self.registry_path)
     def row(self,k,v,q="VERIFIED_OFFICIAL",asof="2026-11-06",published="2026-11-07T00:00:00Z"):
         return dict(date=asof,indicator=k,value=v,unit="test",source="test-source",source_url="https://example.org/data",published_at=published,as_of_date=asof,quality_status=q,evidence_manifest_id="fixture-001",raw_sha256="a"*64,retrieved_at="2026-11-08T01:00:00Z",http_status="200",content_type="text/csv",byte_length="19",raw_payload_path="payloads/fixture-0.bin")
+    def test_h10_xml_filter_rejects_nd_status_even_with_numeric_sentinel(self):
+        from pipeline.global_capital_rotation_overlay import filter_fed_h10_valid_xml_observations
+        rows=[{"TIME_PERIOD":"2026-11-11","OBS_VALUE":"-9999.0","OBS_STATUS":"ND"},
+              {"TIME_PERIOD":"2026-11-12","OBS_VALUE":"122.5433","OBS_STATUS":"A"}]
+        out=filter_fed_h10_valid_xml_observations(rows)
+        self.assertEqual(len(out),1)
+        self.assertEqual(out[0]["OBS_STATUS"],"A")
+
+    def test_h10_xml_filter_rejects_unknown_status_and_nonfinite_values(self):
+        from pipeline.global_capital_rotation_overlay import filter_fed_h10_valid_xml_observations
+        rows=[{"TIME_PERIOD":"2026-11-11","OBS_VALUE":"100","OBS_STATUS":"P"},
+              {"TIME_PERIOD":"2026-11-12","OBS_VALUE":"nan","OBS_STATUS":"A"}]
+        self.assertEqual(filter_fed_h10_valid_xml_observations(rows),[])
+
     def h10_rows(self, count=21, published="2026-11-16T16:47:01Z"):
         from datetime import date, timedelta
         start=date(2026,10,1)
