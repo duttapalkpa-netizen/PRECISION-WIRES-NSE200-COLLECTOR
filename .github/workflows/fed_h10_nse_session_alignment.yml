@@ -1,0 +1,64 @@
+name: Fed H10 exact NSE 200-session alignment
+on:
+  push:
+    branches: [research/fed-h10-library-ingestion-20261112]
+    paths:
+      - "pipeline/fed_h10_nse_session_alignment.py"
+      - ".github/workflows/fed_h10_nse_session_alignment.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: fed-h10-nse-session-alignment
+  cancel-in-progress: false
+jobs:
+  align-and-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned source runs and artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/h10 inputs/nse
+          gh api "repos/$GH_REPO/actions/runs/43276577238" > inputs/h10/source_run.json
+          gh api "repos/$GH_REPO/actions/artifacts/13970661965" > inputs/h10/source_artifact.json
+          gh api "repos/$GH_REPO/actions/runs/43245527846" > inputs/nse/source_run.json
+          gh api "repos/$GH_REPO/actions/artifacts/13955899352" > inputs/nse/source_artifact.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          h=Path("inputs/h10"); n=Path("inputs/nse")
+          hr=json.loads((h/"source_run.json").read_text()); ha=json.loads((h/"source_artifact.json").read_text())
+          nr=json.loads((n/"source_run.json").read_text()); na=json.loads((n/"source_artifact.json").read_text())
+          assert hr["conclusion"]=="success" and hr["head_sha"]=="35c73345fc55c5c6f7e4de24da291061e9d0c19f",hr
+          assert ha["id"]==13970661965 and ha["name"]=="fed-h10-full-history-daily-panel-20261112"
+          assert not ha["expired"] and ha["digest"]=="sha256:a6f6af42226ed689ceba8e9c2d843867d82e9aa8f9a7761022c86bd719ef3691",ha
+          assert nr["conclusion"]=="success" and nr["head_sha"]=="a44434fda193c1d8246cc44e4e6c7527b40c2488",nr
+          assert na["id"]==13955899352 and na["name"]=="nse-200-session-cache-verification-331"
+          assert not na["expired"] and na["digest"]=="sha256:1833c75c09c89e7610ad3fbdff62bbdf9a67737e2b39c1e4bf223bddc3a1e070",na
+          print("Pinned H10 and NSE source run/artifact metadata: PASS")
+          PY
+      - name: Download exact pinned source artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh run download 43276577238 -n fed-h10-full-history-daily-panel-20261112 -D inputs/h10
+          gh run download 43245527846 -n nse-200-session-cache-verification-331 -D inputs/nse
+      - name: Align all H10 series to exact NSE 200-session calendar
+        timeout-minutes: 4
+        run: timeout 220s python pipeline/fed_h10_nse_session_alignment.py
+      - name: Upload aligned 200-session panel and reconciliation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fed-h10-nse-200-session-alignment-20261112
+          path: outputs/fed_h10_nse_alignment/
+          if-no-files-found: error
+          retention-days: 90
