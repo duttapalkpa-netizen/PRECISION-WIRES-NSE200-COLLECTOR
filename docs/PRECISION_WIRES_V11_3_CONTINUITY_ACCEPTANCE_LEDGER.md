@@ -1340,3 +1340,11 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Updated decision: collector integrity PASS; 15-series current API/archive snapshot equality PASS; 5,715/5,715 equality PASS; exact original March XLSX vintage NOT_PROVEN; revision date UNKNOWN; cause UNKNOWN / NOT_ATTRIBUTED; Brazil pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED.
 - Next action: no rerun of API comparison or accounting identities. Seek exact original March-2026 Table 10 XLSX or official pre-18-Oct-2026 immutable version history. If not available, keep provenance blocker and do not infer cause.
 - Invariants unchanged: ₹0, official/free sources only, no synthetic data, invented timestamps, forward-fill, raw overwrites or duplicate audits; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate and production workflows unchanged.
+
+
+# Chapter 35 — Official BCB SGS Live API vs Archived 15-Series Snapshot Equality (2026-11-18)
+- Outcome: 15/15 series, 381/381 months each, 5,715/5,715 overlapping observations exact match, 0 changed observations.
+- Feb-2026 SGS 22942 live=archive=USD 2,783.2m. The previously quantified USD 203.70779636m gap is between the March-labelled captured Table 10 snapshot and current SGS; not archive corruption and not a post-17-Nov change.
+- Run 44155240821 SUCCESS; artifact 14361126097; downloaded ZIP SHA-256 767fd57b7307552beea3135da86220e6a45943c9ea5b2e91160b80c504355216; extracted JSON SHA-256 5a81ad698557bb4de61b24704a88cce226229004980efaf3cbf8eaec3a72f860.
+- Summary QA: data/qa/BCB_SGS_LIVE_VS_ARCHIVED_15_SERIES_20261118_SUMMARY.json; full report: docs/BCB_SGS_LIVE_VS_ARCHIVED_15_SERIES_AUDIT_20261118.md.
+- Exact original March XLSX NOT_PROVEN; revision date/cause UNKNOWN; Brazil pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED. Do not repeat this 15-series comparison or the six accounting identities.
