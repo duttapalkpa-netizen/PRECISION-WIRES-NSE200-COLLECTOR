@@ -1,0 +1,20 @@
+name: Federal Reserve H.10 raw collector contract tests
+on:
+  pull_request:
+    paths:
+      - "pipeline/collect_fed_h10_raw.py"
+      - "qa/test_fed_h10_raw_collector.py"
+      - "docs/FED_H10_RAW_INGESTION_MILESTONE6.md"
+      - ".github/workflows/fed_h10_raw_collector_tests.yml"
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest qa.test_fed_h10_raw_collector -v
