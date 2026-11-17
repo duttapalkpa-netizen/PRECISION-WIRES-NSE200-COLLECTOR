@@ -49,3 +49,16 @@ Scope: static inspection only; no runtime execution, no data ingestion, no produ
 
 ## Invariants
 Documentation-only audit. No parser, registry, tests, workflows, observations or production files changed. No synthetic market data, timestamps or hashes. ₹0. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and collector workflows unchanged. UNKNOWN is never PASS.
+
+
+## 2026-11-17 — Immutable evidence manifest V1 implementation
+
+- Implemented manifest resolution in pipeline/global_capital_rotation_overlay.py. Trusted observations now require evidence_manifests/<evidence_manifest_id>.json with schema_version=1 and all required identity, source, publication/retrieval, HTTP, content-type, byte-length, payload path and SHA-256 fields.
+- Parser binds manifest values to the observation row (timestamps normalized to UTC), requires HTTPS final_url, permits a different final_url only if explicitly listed in the exact source registry entry's allowed_final_urls, and continues to independently recompute raw payload byte length and SHA-256 with path containment.
+- Added config/global_capital_rotation_evidence_manifest_schema_v1.json. Registry remains intentionally empty; no official source has been promoted and no guessed source tuples were added.
+- Extended qa/test_global_capital_rotation_overlay.py with six tests: missing manifest, final URL mismatch, publication timestamp mismatch, HTTP status mismatch, payload hash mismatch, and valid manifest acceptance. Test fixtures now write manifest JSON records per fixture payload.
+- Updated .github/workflows/global_capital_rotation_overlay_tests.yml path filters so source registry/schema changes trigger the bounded test workflow.
+- GitHub commits: parser 924b0be2cf6be5cdbc27c7752c410b2ea2b8d8b2; tests 79182c8d765d36fc6dbcc593d9c13bf66f9aa4b6; schema 88e0a4bb0997e476ea506cb8b387a736dcfd8789; workflow  (commit recorded in branch history).
+- Static implementation state: code/test/schema/workflow changes committed. Runtime test execution has NOT been performed in this environment; therefore no test PASS is claimed. Workflow is configured for push on its existing mainline branch, pull_request, and workflow_dispatch; this research branch push alone does not guarantee a run. Verify a GitHub Actions run before acceptance.
+- Acceptance: manifest schema authored 100%; parser manifest resolution/binding implemented 100% (static review only); negative/positive test cases authored 100%; CI path triggers updated 100%; runtime tests NOT_RUN; registry population BLOCKED/EMPTY_BY_DESIGN; trusted source ingestion NOT_DONE; PIT/predictive validation NOT_DONE; production NOT_AUTHORIZED.
+- No market observations or official registry entries added; no production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate or collector workflows changed. ₹0; no synthetic market observations, timestamps or hashes.
