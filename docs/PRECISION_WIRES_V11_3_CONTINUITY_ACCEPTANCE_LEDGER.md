@@ -946,3 +946,13 @@
 - Capture run #3 failed due to malformed Python line escaping; run #5 failed due to repository-root import path. Both causes corrected; only #6 is the parser admission PASS.
 - Other three H.10 series were discovered but NOT admitted. No ICE DXY mapping. PIT multi-vintage validation, 20-session derived series, and classifier/production integration remain NOT_DONE/NOT_AUTHORIZED.
 - Full evidence report: docs/FED_H10_RAW_EVIDENCE_AND_PARSER_ADMISSION_20261117.md. Next task: specify and test a separate Fed H.10 broad-dollar 20-valid-observation change series, no forward-fill, with Prepared-vintage PIT cutoff and explicit H.10 observation-calendar semantics.
+
+
+## 2026-11-17 — Fed H.10 20-valid-observation change specification + QA PASS
+- Added research-only helper `derive_fed_h10_broad_dollar_change_20obs` in `pipeline/global_capital_rotation_overlay.py`. Output name `fed_h10_nominal_broad_dollar_change_pct_20obs`; input is Fed H.10 JRXWTFB_N.B / `fed_h10_nominal_broad_dollar_index`. Explicitly not ICE DXY and not `dxy_change_pct_20d`.
+- Window definition: 20 prior valid H.10 observation records plus current record = 21 observations. Formula (latest/base - 1)*100. Calendar counts actual H.10 observation dates, not Indian exchange sessions or calendar days. No forward-fill/interpolation; <21 valid rows => None; zero base => fail closed.
+- PIT: mandatory UTC decision_at; only published_at/date/as_of_date <= decision cutoff; choose latest publication vintage per observation date; conflicting same-vintage values rejected. One H.10 package vintage cannot reconstruct earlier historical knowledge; full vintage archive remains NOT_DONE.
+- Six dedicated QA cases added: 21-row formula, insufficient 20 rows, missing row/no fill, publication cutoff, later revision selection, same-vintage conflict rejection.
+- GitHub Actions #229 / ID 44035746086 SUCCESS; full suite 70 tests in 0.055s, OK. Helper commit f7af7e6acaa12d2a22f01457fd96bbf2787dd970; QA commit 83d2e1f4c6d2056e83d7249c2158a7e87817f85d; specification doc commit 9d56133b4b9538c92d048cb9a96daf47e53ec8a0.
+- Bounded task state: formula/calendar specification 100%; helper implementation 100%; dedicated QA 100%; CI runtime 100% PASS; actual live derived output NOT_COMPUTED; multi-vintage historical PIT replay NOT_DONE; permanent archive NOT_DONE; classifier/production integration NOT_AUTHORIZED.
+- Next: compute a separate research-only result from captured raw H.10 ZIP with exact 21 valid observations and independently cross-check against a second official package. Do not change dxy_change_pct_20d, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or Hard Gate.
