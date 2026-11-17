@@ -15,7 +15,10 @@ outputs/backtest/behavioral_dna_library.json
 outputs/backtest/diagnostic_separation_672.csv
 """
 from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
 import json
+import os
 import numpy as np
 import pandas as pd
 
@@ -28,6 +31,46 @@ STEP_NAMES=[
 "EARNINGS_SHOCK","PRICE_ENERGY","PRICE_VOLUME","RVOL_PARTICIPATION","SUPPLY_ABSORPTION","DEMAND_SUPPLY_IMBALANCE","RELATIVE_STRENGTH","ENERGY_COMPRESSION","COMPRESSION_EXPANSION","WHY_NOW_CATALYST","CATALYST_REPRICING","EXTERNAL_THEME","CORPORATE_EVENT","HIDDEN_REPRICING","HISTORICAL_20DNA","LEAD_TIME","LATE_MOVE","PATH_RR","MULTI_ENGINE_FUSION","PREMARKET_RANK","LIVE_1PCT","PROGRESSION","REVERSAL_TIME_DECAY","EVENT_SHOCK_LIVE",
 "CHINA_MACRO","CNY_SHOCK","CHINA_STIMULUS","US_CREDIT","USD_REAL_YIELD","GLOBAL_VIX","GLOBAL_BANKING","ECB_POLICY","EU_UK_BONDS","US_FISCAL_TREASURY","CENTRAL_BANK_DIVERGENCE","OIL_SHIPPING","COPPER_METALS","FOOD_COMMODITIES","FREIGHT_LOGISTICS","US_AI_VALUATION","GLOBAL_PASSIVE_FLOW","TAIWAN_SEMI","DOLLAR_FUNDING","GEOPOLITICAL_TRADE_WAR"]
 FILTERS=["FRESHNESS","MATERIALITY","SURPRISE","INFORMATION_GAP","PRICE_REACTION","VOLUME_REACTION","DELIVERY_REACTION","EARNINGS_IMPACT","INSTITUTIONAL_REACTION","REMAINING_REPRICING","RISK","PATH"]
+
+def _sha256_file(path):
+    digest=hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024*1024),b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+def build_behavioral_dna_artifact(dna, source_path, cutoff_start, cutoff_end,
+                                  label_maturity_cutoff, run_id, commit_sha,
+                                  generated_at_utc=None):
+    """Attach verifiable producer/data lineage without changing calibration values.
+
+    Missing GitHub run/commit context stays null so the consumer's fail-closed
+    validator classifies the artifact as UNKNOWN instead of inventing lineage.
+    """
+    states={}
+    for state,record in dna.items():
+        states[state]={
+            "sample_count":record.get("samples"),
+            "hit10_h3_count":record.get("hit10_h3_count"),
+            "hit10_h3_rate":record.get("hit10_h3"),
+        }
+    return {
+        **dna,
+        "schema_version":"1.0",
+        "producer_engine":"V11.4 Historical Winner Separation Engine",
+        "producer_engine_version":"11.4",
+        "feature_contract_version":"V11.4-WF-100-v1",
+        "producer_run_id":run_id,
+        "producer_commit_sha":commit_sha,
+        "dataset_sha256":_sha256_file(source_path),
+        "cutoff_start":str(cutoff_start),
+        "cutoff_end":str(cutoff_end),
+        "generated_at_utc":generated_at_utc or datetime.now(timezone.utc).isoformat(),
+        "target_definition":"FUT3_HIGH_PCT >= 10.0; next 3 sessions; maximum future HIGH",
+        "label_maturity_cutoff":str(label_maturity_cutoff),
+        "states":states,
+    }
+
 
 def safe_div(a,b):
     return a/b.replace(0,np.nan)
@@ -759,11 +802,18 @@ def main():
     dna={}
     if not pred.empty:
         for st,g in pred.groupby("STATE"):
-            dna[st]={"samples":int(len(g)),"hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
+            dna[st]={"samples":int(len(g)),"hit10_h3_count":int((g.FUT3_HIGH_PCT>=10).sum()),
+                     "hit5_h1":float((g.FUT1_HIGH_PCT>=5).mean()),
                      "hit10_h3":float((g.FUT3_HIGH_PCT>=10).mean()),
                      "hit20_h5":float((g.FUT5_HIGH_PCT>=20).mean()),
                      "median_winner_probability":float(g.WINNER_PROBABILITY.median())}
-    (OUT/"behavioral_dna_library.json").write_text(json.dumps(dna,indent=2))
+    if not cutoffs or not dates:
+        raise RuntimeError("Cannot write calibration provenance without matured cutoff dates")
+    dna_artifact=build_behavioral_dna_artifact(
+        dna,SRC,pd.Timestamp(cutoffs[0]).date(),pd.Timestamp(cutoffs[-1]).date(),
+        pd.Timestamp(dates[-1]).date(),os.environ.get("GITHUB_RUN_ID"),
+        os.environ.get("GITHUB_SHA"))
+    (OUT/"behavioral_dna_library.json").write_text(json.dumps(dna_artifact,indent=2))
     (OUT/"walk_forward_metrics.json").write_text(json.dumps(metrics,indent=2))
     pd.DataFrame(miss_rows).sort_values(["WINNER_PROBABILITY","FUT5_HIGH_PCT"],ascending=[False,False]).to_csv(OUT/"missed_winner_lab.csv",index=False)
     print(json.dumps(metrics,indent=2))
