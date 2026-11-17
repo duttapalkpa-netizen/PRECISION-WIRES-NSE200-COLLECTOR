@@ -8,6 +8,14 @@ from pathlib import Path
 
 REQUIRED = {"date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status"}
 ALLOWED_QUALITY = {"VERIFIED_OFFICIAL","VERIFIED_SECONDARY","PROVISIONAL","UNKNOWN"}
+SYNC_MAX_DATE_SPREAD_DAYS = 3
+DAILY_MARKET_SYNC_KEYS = (
+    "india_fpi_equity_inr_cr", "india_fpi_debt_inr_cr", "india_dii_equity_inr_cr",
+    "usd_inr_change_pct_20d", "brent_change_pct_20d", "vix_change_pct_20d",
+    "india_vs_world_relative_return_pct_20d", "dxy_change_pct_20d",
+    "fed_broad_usd_change_pct_20d", "us10y_change_bp_20d",
+)
+
 MAX_AGE_DAYS = {
     "em_portfolio_flow_usd_bn":45,
     "india_fpi_equity_inr_cr":7,"india_fpi_debt_inr_cr":7,"india_dii_equity_inr_cr":7,
@@ -129,8 +137,28 @@ def classify(grouped,as_of_date=None):
     elif v("fed_broad_usd_change_pct_20d")>0: broad_usd="BROAD_USD_STRENGTHENING"
     elif v("fed_broad_usd_change_pct_20d")<0: broad_usd="BROAD_USD_WEAKENING"
     else: broad_usd="FLAT"
+    sync_rows={k:x[k] for k in DAILY_MARKET_SYNC_KEYS if x.get(k) is not None}
+    sync_dates={k:date.fromisoformat(row["date"]) for k,row in sync_rows.items()}
+    if len(sync_dates)<2:
+        sync_status="NOT_ASSESSED"
+        sync_spread=None
+    else:
+        sync_spread=(max(sync_dates.values())-min(sync_dates.values())).days
+        sync_status="ALIGNED_WITHIN_3D" if sync_spread<=SYNC_MAX_DATE_SPREAD_DAYS else "UNSYNCHRONIZED"
+    temporal_alignment={
+      "daily_india_market_panel":{
+        "status":sync_status,
+        "max_date_spread_days":sync_spread,
+        "threshold_days":SYNC_MAX_DATE_SPREAD_DAYS,
+        "observation_dates":{k:d.isoformat() for k,d in sync_dates.items()},
+        "included_indicators":list(sync_dates),
+        "excluded_missing_or_stale_indicators":[k for k in DAILY_MARKET_SYNC_KEYS if k not in sync_dates],
+        "note":"Calendar-date proximity check only; it does not prove same-session availability, publication-vintage synchronization, or causal comparability."
+      }
+    }
     return {
       "status":"RESEARCH_ONLY_NO_PRODUCTION_SCORE","as_of_date":asof.isoformat(),
+      "temporal_alignment":temporal_alignment,
       "global_em_flow":global_flow,"india_fpi_equity":india_fpi,"india_fpi_horizon_divergence":horizon,"fx_transmission":fx,
       "fed_broad_usd_transmission":broad_usd,
       "us_rates_transmission":rates,"relative_attraction":relative,"oil_transmission":oil,
