@@ -57,3 +57,6 @@ Acquire the official H.10 preview payload directly from the exact URL above thro
 - Registry commit 380918fc008ad96bccabbbab06b18b4ae6683df5 triggered workflow run #221 / ID 44030991201; conclusion SUCCESS. The tests job and Python unittest step both succeeded.
 - Source Register commit d970737f9bb2cdc682ad5c8bd256c2b7fdf84d24 triggered workflow run #222 / ID 44031034467; conclusion SUCCESS. The tests job and Python unittest step both succeeded.
 - These CI passes validate the current overlay test suite with the one-entry registry. They do not establish official raw-payload acquisition, manifest creation, any admitted observation, 20-session derivation, or production authorization.
+
+
+- Follow-up documentation commit c1c252ad635bff9429c13f4e0d14ccb7918dde20 was also exercised by workflow run #223 / ID 44031095909; final run status COMPLETED / SUCCESS, test job and unittest step passed. This verifies the documentation-updated branch head used for that run; it still does not satisfy raw payload acquisition or observation manifest admission.
