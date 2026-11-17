@@ -262,3 +262,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - BCB's September-2026 External Sector Statistics publication reports domestic-market portfolio investment liabilities net outflows USD 2.1bn, equity/fund outflows USD 1.7bn and debt-security outflows USD 0.4bn; 12-month net inflows USD 5.1bn. This is contextual official cross-check only, not proven identical to SGS 22924.
 - Source register, IMF extraction spec and this ledger updated. Acceptance remains BLOCKED: raw 22924/22925/22926 capture, byte counts, retrieval timestamps, SHA-256, full common-period QA, formula/sign reconciliation, vintage/revision QA all NOT_DONE. No values admitted to overlay.
 - No production changes. PR #20 remains open/draft/unmerged pending fresh status verification.
+
+
+
+## 3V. Brazil Sep-2026 outflow: India transmission relevance classification — 2026-11-17
+- BCB official External Sector Statistics (release 26-Oct-2026): Brazil domestic-market portfolio investment net outflow USD 2.1bn in Sep-2026, split equity/funds -USD 1.7bn and debt securities -USD 0.4bn; trailing 12-month portfolio investment net inflows remained +USD 5.1bn.
+- RBI official preliminary India BoP release (13-Nov-2026): Sep-2026 net FPI -USD 6.7bn, including FPI investment in India -USD 6.5bn; Apr-Sep 2026 cumulative net FPI -USD 8.9bn.
+- RBI official macro-financial commentary reports India and other EM portfolio flows net sold since September, attributing the environment to West Asia tensions, elevated crude oil and rising global bond yields; RBI also describes Indian equities as bearish in Sep and Oct (through 19-Oct), with DII net buying providing support.
+- Interpretation: BCB Sep outflow is **contextual cross-country risk-appetite corroboration only**. It does not quantify an India market impact or establish causality. Do not compare the Brazil USD 2.1bn and India USD 6.7bn figures as apples-to-apples market impact; definitions/perimeters differ. Brazil's positive trailing-12-month net inflow argues against reading one month as structural outflow.
+- Overlay disposition: `BRAZIL_PORTFOLIO_FLOW_CONTEXT` = contextual only / low direct India-transmission confidence. No independent NIFTY/sector/stock weight, ranking score, buy/sell trigger or production selector input. Direct India FPI, FX, yields, crude, VIX and domestic breadth/flows remain the testable transmission channels.
+- Updated Overlay V1 doc and this ledger. This is a research classification decision; no production change.
