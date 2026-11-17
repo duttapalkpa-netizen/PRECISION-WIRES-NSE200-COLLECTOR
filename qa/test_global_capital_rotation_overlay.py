@@ -73,6 +73,13 @@ class TestGlobalCapitalRotation(unittest.TestCase):
         out=classify(load_observations(self.make(rows)),"2026-11-07")
         self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
 
+    def test_latest_publication_orders_timezone_offsets_by_utc_instant(self):
+        rows=[self.row("india_fpi_equity_inr_cr",10,published="2026-11-07T00:30:00+02:00"),
+              self.row("india_fpi_equity_inr_cr",-5,published="2026-11-06T23:00:00Z")]
+        out=classify(load_observations(self.make(rows)),"2026-11-07")
+        # 00:30+02:00 is 22:30Z on the previous day, so 23:00Z is newer.
+        self.assertEqual(out["india_fpi_equity"],"FPI_EQUITY_NET_SELL")
+
     def test_short_term_fpi_inflow_does_not_hide_ytd_outflow(self):
         rows=[self.row("india_fpi_equity_mtd_inr_cr",53738.78),
               self.row("india_fpi_equity_ytd_inr_cr",-241407.13)]
