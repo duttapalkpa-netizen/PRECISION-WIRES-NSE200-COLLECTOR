@@ -5,8 +5,6 @@ on:
       - research/bcb-priority-metadata-audit-20261117
     paths:
       - 'docs/IMF_BOP_DSD_ACQUISITION_TRIGGER.txt'
-      - 'scripts/research/capture_imf_bop_dsd.py'
-      - '.github/workflows/imf_bop_dsd_official_acquisition.yml'
 permissions:
   contents: write
   actions: write
