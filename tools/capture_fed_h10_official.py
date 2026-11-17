@@ -5,6 +5,7 @@ import csv, hashlib, json, os, sys, urllib.request, urllib.error, zipfile, xml.e
 from datetime import datetime, timezone
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from pipeline.global_capital_rotation_overlay import filter_fed_h10_valid_xml_observations
 
 URL = "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10"
 OUT = Path(os.environ.get("OUTPUT_DIR", "fed_h10_capture"))
@@ -55,7 +56,8 @@ for series in xml_root.findall(".//kf:Series", ns):
         series_summary.append({
             "series_id": code, "indicator": series_map[code][0],
             "unit": series.attrib.get("UNIT"), "unit_multiplier": series.attrib.get("UNIT_MULT"),
-            "observation_count": len(observations),
+            "source_observation_count": len(observations),
+            "valid_observation_count": len(filter_fed_h10_valid_xml_observations([x.attrib for x in observations])),
             "first_observation": observations[0].attrib if observations else None,
             "latest_observation": observations[-1].attrib if observations else None
         })
@@ -82,10 +84,11 @@ for item in series_summary:
 # Build a parser-ingestion fixture for the one registry-qualified broad-dollar series.
 broad = next(x for x in series_summary if x["series_id"] == "JRXWTFB_N.B")
 broad_id = "fed-h10-jrxwtfb_n-b"
-broad_observations = next(
-    series.findall("frb:Obs", ns) for series in xml_root.findall(".//kf:Series", ns)
+broad_observations = filter_fed_h10_valid_xml_observations([
+    obs.attrib for series in xml_root.findall(".//kf:Series", ns)
     if series.attrib.get("SERIES_NAME") == "JRXWTFB_N.B"
-)
+    for obs in series.findall("frb:Obs", ns)
+])
 csv_path = OUT / "fed_h10_broad_dollar_observations.csv"
 columns = ["date","indicator","value","unit","source","source_url","published_at","as_of_date","quality_status",
            "evidence_manifest_id","raw_sha256","retrieved_at","http_status","content_type","byte_length","raw_payload_path"]
@@ -93,11 +96,9 @@ with csv_path.open("w", encoding="utf-8", newline="") as handle:
     writer = csv.DictWriter(handle, fieldnames=columns)
     writer.writeheader()
     for obs in broad_observations:
-        value = obs.attrib.get("OBS_VALUE")
-        if value in (None, "", "ND"):
-            continue
+        value = obs["OBS_VALUE"]
         writer.writerow({
-            "date": obs.attrib["TIME_PERIOD"], "indicator": "fed_h10_nominal_broad_dollar_index",
+            "date": obs["TIME_PERIOD"], "indicator": "fed_h10_nominal_broad_dollar_index",
             "value": value, "unit": "Index:_1997_Jan_100",
             "source": "Federal Reserve Board H.10 Data Download Program", "source_url": URL,
             "published_at": prepared, "as_of_date": prepared[:10], "quality_status": "VERIFIED_OFFICIAL",
@@ -108,13 +109,15 @@ with csv_path.open("w", encoding="utf-8", newline="") as handle:
 from pipeline.global_capital_rotation_overlay import load_observations
 loaded = load_observations(csv_path)
 admitted = loaded.get("fed_h10_nominal_broad_dollar_index", [])
-if len(admitted) != broad["observation_count"]:
-    raise SystemExit(f"parser admission mismatch: expected {broad['observation_count']}, got {len(admitted)}")
+if len(admitted) != broad["valid_observation_count"]:
+    raise SystemExit(f"parser admission mismatch: expected {broad['valid_observation_count']} valid A-status observations, got {len(admitted)}")
 if not admitted or admitted[-1]["date"] != broad["latest_observation"]["TIME_PERIOD"]:
     raise SystemExit("parser-admitted latest observation does not match official XML")
 parser_admission = {
     "status": "PASS", "indicator": "fed_h10_nominal_broad_dollar_index",
     "admitted_observation_count": len(admitted),
+    "source_observation_count": broad["source_observation_count"],
+    "excluded_non_available_count": broad["source_observation_count"] - broad["valid_observation_count"],
     "first_observation_date": admitted[0]["date"], "latest_observation_date": admitted[-1]["date"],
     "latest_observation_value": admitted[-1]["value"], "manifest_id": broad_id
 }
