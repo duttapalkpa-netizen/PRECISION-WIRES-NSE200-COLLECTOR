@@ -1028,3 +1028,45 @@
 - Brazil pilot remains NOT_ACCEPTED; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
 - Next step: bounded byte-capable runner capture for seven official CSV payloads with immutable response metadata and SHA-256, then date-level reconciliation. Do not retry already completed metadata discovery absent new evidence.
 - No code, parser, registry, seed, test, workflow, production selector, ranking score, pressure fade, CORE-672, Engines A–E, Hard Gate or collector workflow changed. ₹0.
+
+
+## 2026-11-17 — Chapter 32 Brazil BCB portfolio hierarchy, raw archives and country-period evidence
+Continuation branch: `research/bcb-priority-metadata-audit-20261117`.
+Chapter log: `docs/BRAZIL_BCB_CHAPTER_32_PROGRESS_LOG_20261117.md`.
+Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
+
+### Verified completed work
+- Seven priority aggregate SGS series 22905, 22906, 22907, 22908, 22924, 22925, 22926 captured from official BCB BCData/SGS; Run 44075768714 SUCCESS; artifact 14324188933; raw ZIP digest `40a1ff44317b16ffb789b4669496628a048a94010113d55cd40161d6570ee6c8`; all seven per-file SHA-256 and byte lengths independently verified.
+- Seven aggregate series each have 381 unique ordered monthly rows, 1995-01 through 2026-09; no missing numeric values.
+- Permanent aggregate raw archive commit `73bf04f6333fd90d8c0d24c7ba9e71eb1ba3f568`, path `data/raw/bcb/priority_series_capture_20261117/`; post-commit git-show SHA-256 re-fetch PASS 7/7.
+- Official BCB monthly historical BOP ZIP captured and archived as a distinct 2019 BPM6 vintage: Run 44076495816; raw ZIP 2,813,472 bytes; SHA-256 `e58d64374d13ae62fb2af95e4bd26acaf924f0da113a825842307c95219dec4b`; archive commit `88eebada24c1619d82292bb757df64e4372851ad`; path `data/raw/bcb/monthly_bop_history_20190322/`.
+- The 2019 workbook's explicit SGS code column mapped rows 220/221/222/223/241/242/243 to 22905/22906/22907/22908/22924/22925/22926. All three accounting identities held across 290 months to floating-point residuals <= approximately 1e-11. This validates sign orientation in that historical BPM6 vintage, not equality with current values.
+- Current seven-series CSVs vs 2019 vintage have revisions/vintage differences from 2015 onward in several series; preserve both vintages, never overwrite current observations with the 2019 workbook.
+- Eight selected instrument-level net series metadata verified and raw captured: 22909, 22912, 22915, 22927, 22936, 22939, 22942, 22945. Run 44077406268 SUCCESS; artifact 14326096168; artifact SHA-256 `37dcb1d5f4ad2938741953a1b8aad0cea3030a34c4e83d565379f2dd43fa0090`. Each series 381 months 1995-01 through 2026-09; SHA-256 verified.
+- Permanent instrument-level archive commit `527a8d41c434609c980eb3181d491eac4fa6e822`, path `data/raw/bcb/instrument_net_capture_20261117/`; post-commit SHA-256 re-fetch PASS 8/8.
+- Instrument identities across all 381 months: 22906 = 22909+22912+22915; 22924 = 22927+22936+22939; 22939 = 22942+22945. All differences 0 or ±0.1 USD million; maximum residual 0.1. Rounding-consistent only; no general tolerance approved.
+- September-2026 country-period validation against BCB's 26-Oct-2026 release: SGS 22930 raw capture HTTP 200, 8,669 bytes, SHA-256 `c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776`; values 22930=-2,110.8, 22936=+416.8, 22942=-382.4 USD million; derived outflows USD 1.694bn / 0.3824bn / 2.0764bn round to BCB-reported 1.7bn / 0.4bn / 2.1bn. Run 44077864021 SUCCESS; permanent data commit `446971a0da670d69e6dcb2c9efe0208ea50db572`; raw SHA re-fetch PASS. Country-period QA PASS for this single reference month.
+- All details, hashes, exact source links, residuals, and next gates are in the Chapter 32 log and linked result documents.
+
+### Acceptance status
+- Selected aggregate metadata and hierarchy: PASS.
+- Selected aggregate raw capture + SHA-256 + permanent archive: PASS 7/7.
+- Selected instrument-level child metadata: PASS 8/8.
+- Selected instrument raw capture + SHA-256 + permanent archive: PASS 8/8.
+- Historical BPM6 vintage archival: PASS; old-vintage/current-vintage reconciliation PARTIAL.
+- Conceptual accounting sign orientation: CONFIRMED.
+- Current parent/child arithmetic: ROUNDING-CONSISTENT; formal tolerance and series-specific perimeter acceptance pending.
+- September-2026 official country-period check: PASS for one release period only.
+- Full multi-period country-period QA: NOT_DONE.
+- Brazil pilot acceptance: NOT_ACCEPTED.
+- EM-wide panel: NOT_DONE.
+- Production integration: NOT_AUTHORIZED.
+
+### Next actions — do not repeat completed capture
+1. Complete multi-period country-period cross-checks using official BCB releases and exact matching domestic/foreign-market perimeters.
+2. Resolve current-series ±0.1 residuals and all historical-vintage divergences with official precision/revision methodology; do not invent tolerance.
+3. Capture further instrument children only when the exact selected purpose and metadata are defined; avoid bulk indiscriminate ingestion.
+4. Complete Brazil pilot acceptance only after data lineage, revisions, sign/perimeter, and multiple independent release periods pass.
+5. EM-wide panel remains separate and must use consistent country coverage, flow concepts, and vintages.
+6. No production integration or selector changes without explicit user approval.
+
