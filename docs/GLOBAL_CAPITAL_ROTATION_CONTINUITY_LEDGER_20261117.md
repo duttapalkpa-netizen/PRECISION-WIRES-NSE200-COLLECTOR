@@ -334,3 +334,24 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 2. Acquire BCB 22907, 22925, 22926 and net controls 22906/22924 as immutable raw responses; record final URL, response status/content-type, byte count, UTC retrieval timestamp, SHA-256, parsed row count, min/max period, duplicate/missing checks and revision/vintage evidence.
 3. Reconcile gross components against net controls over every common month before admitting any Brazil portfolio flow. Until then all BCB components remain contextual/discovery-only, not EM aggregate.
 4. Daily synchronized India panel, IMF BOP_AGG observation panel, Relative-Attraction calculation and predictive validation remain NOT_DONE/BLOCKED. No composite score or production integration.
+
+## 3AB. Fresh official BCB SGS 22907 JSON inspection + CDSL archive page revalidation — 2026-11-17
+
+### BCB SGS 22907
+- Followed the official Open Data Portal JSON resource link for SGS 22907. The browser returned the visible JSON series from 1995-01 through 2026-09; latest visible observation: 2026-09-01 = USD 2,685.9 million.
+- SGS 22907 metadata: Portfolio investment - Net acquisition of financial assets - monthly - inflows; BCB/Depec; monthly; USD million; coverage starts 1995-01; portal metadata updated 2026-03-26. This is an assets-side inflow component only, not a global/EM portfolio aggregate and not a substitute for SGS 22906 net asset acquisition.
+- Official JSON resource: https://api.bcb.gov.br/dados/serie/bcdata.sgs.22907/dados?formato=json . Official catalogue/resource refs: turn159489view2, turn333578view0.
+- Browser-visible JSON is inspection evidence only. CSV resource click timed out at browser fetch; a separate direct request failed DNS resolution. No immutable raw response bytes, HTTP headers/status, byte count, exact retrieval timestamp, SHA-256, full row-count/duplicate/missing QA or vintage history were captured. Therefore 22907 remains DISCOVERED / BROWSER-INSPECTED, NOT_RAW_VERIFIED, and EXCLUDED from calculated/netted overlay features.
+- No formula or sign relation between 22907 and 22906 inferred. Any component reconciliation must be tested across full common monthly coverage against official methodology and corresponding controls.
+
+### CDSL official archive page revalidation
+- Reopened the official CDSL archive page. Its current header reads Daily Trends in FII/FPI Investments upto 17-Nov-2026; the live daily page independently displays 17-NOV-2026 investment reporting date.
+- Archive rows expose daily category tables in rendered HTML, but page inspection finds no visible CSV or Download link. This is not raw-file acquisition. Do not convert rendered table text into a purported official CSV or hash it as if it were the source response.
+- Live 17-Nov category values: Equity +₹5,107.61cr; Debt-General +₹137.23cr; Debt-VRR -₹2,379.67cr; Debt-FAR -₹424.29cr; Hybrid -₹4.74cr; FPI subtotal +₹2,436.14cr. Mutual Funds +₹37.68cr remain separate; total including MF +₹2,473.82cr. CDSL says custodian reports received 17-Nov and trades on/up to previous trading day(s).
+- Official evidence refs: archive turn159489view0 (header and table), live daily turn159489view1 (17-Nov rows and custodian/reporting-date caveat). This confirms rendered-page coverage only, not raw archive bytes.
+
+### Disposition / next action
+- BCB 22907 latest visible Sep-2026 component observation = browser-inspected only; no calculation admitted.
+- CDSL current page/archive display = bounded verification PASS; immutable raw payload + SHA-256 = NOT_DONE.
+- Continue only with an actual retrievable official raw payload and preserve byte-level provenance. If the available browser/download route continues to time out and no alternative official export is exposed, record a bounded access BLOCKER rather than synthesizing data.
+- IMF BOP_AGG raw observation archive, synchronized India daily panel, Relative-Attraction calculation and predictive validation remain NOT_DONE/BLOCKED. No production changes; PR #20 remains research-only.
