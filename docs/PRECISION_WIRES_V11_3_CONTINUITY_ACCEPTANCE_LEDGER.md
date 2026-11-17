@@ -965,3 +965,10 @@
 - Regression workflow #232 / ID 44036012995 PASS; 72 tests in 0.056s, including ND sentinel, unknown status and non-finite tests.
 - Actual current-vintage 20-observation change: 20 prior valid H.10 records + current = 21; 2026-10-15 value 121.5693 to 2026-11-13 value 122.6503; +0.8892047581% (+0.8892%). 2026-11-11 ND omitted; no forward-fill. This counts H.10 observation dates, not Indian trading sessions.
 - Full result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. One Prepared vintage only; historical PIT replay and second-vintage cross-check NOT_DONE; long-term archive NOT_DONE; classifier/production integration NOT_AUTHORIZED.
+
+
+## 2026-11-17 — H.10 ND sentinel correction and verified derived window
+- Critical correction: 214 H.10 rows were OBS_STATUS=ND with numeric sentinel values. Initial count 5,445 admitted was wrong and is superseded. Only 5,231 OBS_STATUS=A records qualify; 214 ND excluded. The collector now filters status before CSV/parser admission.
+- Corrected capture run #8 / ID 44036104490 PASS; artifact ID 14306134441, archive SHA-256 2d9a4808cd9e48ac21175b8a79ccf42173f57f2370086e24832e4d460afbe4ba; raw ZIP SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77.
+- Independent local inspection of downloaded artifact confirms 5,231 CSV rows and the 21-valid-observation window: 2026-10-15 121.5693 → 2026-11-13 122.6503 = +0.8892047581091633%. 2026-11-11 ND is absent, no forward-fill. Regression run #232 / ID 44036012995 PASS, 72 tests.
+- Detailed result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. This is one package vintage only; second-vintage comparison and historical PIT replay NOT_DONE; classifier/production integration NOT_AUTHORIZED.
