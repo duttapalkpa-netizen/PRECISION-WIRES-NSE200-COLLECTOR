@@ -5,8 +5,12 @@ on:
       - research/global-capital-rotation-overlay-mainline-20261113
     paths:
       - "pipeline/global_capital_rotation_overlay.py"
+      - "config/global_capital_rotation_source_registry.json"
+      - "config/global_capital_rotation_evidence_manifest_schema_v1.json"
       - "pipeline/security_master_intake.py"
       - "qa/test_global_capital_rotation_overlay.py"
+      - "config/global_capital_rotation_source_registry.json"
+      - "config/global_capital_rotation_evidence_manifest_schema_v1.json"
       - "docs/GLOBAL_CAPITAL_ROTATION_OVERLAY_V1.md"
       - "docs/GLOBAL_CAPITAL_ROTATION_OFFICIAL_SOURCE_REGISTER_V1.md"
       - "data/global_capital_rotation/**"
