@@ -1,0 +1,70 @@
+name: Archive BCB Instrument-Level Net SGS Capture
+on:
+  push:
+    branches:
+      - "research/bcb-priority-metadata-audit-20261117"
+    paths:
+      - ".github/workflows/archive_bcb_instrument_net_artifact.yml"
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Successful eight-series instrument net capture run ID"
+        required: true
+        default: "44077406268"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: archive-bcb-instrument-net-csv
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Download existing eight-series artifact without source re-fetch
+        uses: actions/download-artifact@v4
+        with:
+          name: bcb-instrument-net-eight-series
+          run-id: ${{ github.event.inputs.source_run_id || '44077406268' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: data/raw/bcb/instrument_net_capture_20261117
+      - name: Verify raw files against manifest
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("data/raw/bcb/instrument_net_capture_20261117")
+          m=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
+          assert m["status"]=="RAW_CAPTURE_8_OF_8_PASS"
+          assert len(m["series"])==8
+          for code,meta in m["series"].items():
+              b=(root/f"sgs_{code}.csv").read_bytes()
+              assert len(b)==meta["byte_length"],code
+              assert hashlib.sha256(b).hexdigest()==meta["sha256"],code
+              print("PASS",code,len(b),meta["sha256"])
+          PY
+      - name: Commit exact raw CSV bytes
+        run: |
+          printf '*.csv -text\n' > data/raw/bcb/instrument_net_capture_20261117/.gitattributes
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/bcb/instrument_net_capture_20261117
+          git commit -m "data: archive BCB instrument-level net SGS capture 2026-11-17"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Re-fetch committed files and verify SHA-256
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          root=Path("data/raw/bcb/instrument_net_capture_20261117")
+          m=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
+          for code,meta in m["series"].items():
+              path=f"data/raw/bcb/instrument_net_capture_20261117/sgs_{code}.csv"
+              b=subprocess.check_output(["git","show",f"HEAD:{path}"])
+              assert hashlib.sha256(b).hexdigest()==meta["sha256"],code
+              print("RE-FETCH PASS",code)
+          PY
