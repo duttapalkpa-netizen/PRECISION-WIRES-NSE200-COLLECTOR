@@ -96,3 +96,22 @@ The official MSEI page displays combined MSE+NSE+BSE capital-market activity for
 This is a combined exchange-provisional cash-market series. Keep it separate from CDSL custodian-confirmed FPI, NSE-only scope and any NSDL/other custodian final series. CDSL 17-Nov reporting page covers trades on/up to previous trading day(s), while MSEI page is dated 17-Nov; displayed dates alone do not prove identical trade-period coverage. Do not reconcile CDSL Equity +₹5,107.61cr to MSEI combined provisional FPI +₹4,195.38cr as though they were the same population or vintage.
 
 Evidence: official MSEI page opened 17-Nov-2026, turn591741view0 lines 335-364. This is displayed-page evidence only. No official downloadable raw file, exact export URL, raw bytes, retrieval timestamp, byte count or SHA-256 was captured. Raw ingestion = NOT_DONE; displayed arithmetic = PASS; matched panel admission = BLOCKED.
+
+## 11. NSE-only vs combined NSE+BSE+MSEI CSV snapshot — byte and arithmetic QA — 2026-11-17
+
+The two Library-held CSV files were materialized as original raw bytes and independently hashed:
+- Combined snapshot `fii-dii-combined-latest.csv`: 218 bytes; SHA-256 `2697546fa012f4c08449b37a3eb7d0f8298f296c25fd8ce4b7ca134c37999eb2`.
+- NSE-only snapshot `fii-dii-nse-latest.csv`: 218 bytes; SHA-256 `b733444b5a846abb672226bc96448bc0baea2da0ad15fe810207fbe93aad7f18`.
+- Both contain only 13-Nov-2026 DII and FII/FPI rows, in INR crore. These are one-date snapshots, not historical panels.
+
+Recomputed net = buy - sell; 4/4 values match the stored net:
+- Combined FII/FPI: 18,339.57 - 12,603.02 = +5,736.55.
+- Combined DII: 11,745.95 - 13,999.53 = -2,253.58.
+- NSE-only FII/FPI: 17,376.50 - 12,122.52 = +5,253.98.
+- NSE-only DII: 10,561.32 - 12,532.05 = -1,970.73.
+
+Combined minus NSE-only scope differences (crore): FII/FPI buy +963.07, sell +480.50, net +482.57; DII buy +1,184.63, sell +1,467.48, net -282.85. These are differences between two provisional exchange-scope datasets, not a third flow series or CDSL residual.
+
+Important hash-label correction: `2697546f...99eb2` is COMBINED; `b733444b...7f18` is NSE-ONLY. Preserve this mapping.
+
+Official NSE report page separately exposes the two CSV downloads and notes provisional/custodial-confirmation semantics: https://www.nseindia.com/reports/fii-dii . Evidence: `turn119296view0` lines 128-134 and 118-127. The exact original download URLs and HTTP response metadata were not captured; Library byte integrity is verified, upstream transport provenance remains PARTIAL. Do not claim full raw-ingestion or daily-panel PASS.
