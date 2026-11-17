@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "purpose": "official_BCB_SGS_live_API_vs_immutable_archived_15_series_snapshot_comparison",
+  "provider": "Banco Central do Brasil / BCData SGS",
+  "capture_started_utc": "2026-11-17T19:07:59Z",
+  "api_pattern": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados?formato=json",
+  "archive_capture": "2026-11-17T11:38:06Z–11:49:19Z",
+  "archive_period": "1995-01 through 2026-09",
+  "live_api_period": "1995-01 through 2026-09",
+  "series_count": 15,
+  "overlapping_series_month_observations": 5715,
+  "changed_series_month_observations": 0,
+  "unchanged_series_month_observations": 5715,
+  "result": "NO_DIFFERENCES_IN_OVERLAP",
+  "series": {
+    "22905": {
+      "archived_csv_sha256": "76391aef708216f537ead5fb140730c2dbd55164373b9689634aaa45f96b4837",
+      "live_api_json_response_sha256": "bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "-5610.6",
+        "live": "-5610.6",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22906": {
+      "archived_csv_sha256": "dfdcec3b7c1618c070063ce76f3b722fdd4dadeac5d5fe0f1205fad61af64eaf",
+      "live_api_json_response_sha256": "110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "4248.2",
+        "live": "4248.2",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22907": {
+      "archived_csv_sha256": "14105f48a0954c0da0615f136fb8e95885259a47c3395164ef922667dee8bbbf",
+      "live_api_json_response_sha256": "920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "2108.6",
+        "live": "2108.6",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22908": {
+      "archived_csv_sha256": "82917f2f093a87f95733ecadabda2d59e8ddbf782b64c150bbc41e1627c5f1d7",
+      "live_api_json_response_sha256": "7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "6356.7",
+        "live": "6356.7",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22909": {
+      "archived_csv_sha256": "cbfe7caa331d814ef4801940d08bd1966f8bca9d9cd6a024b4e1cacf79a34382",
+      "live_api_json_response_sha256": "1af669fbdbed965aa6d4c89abf78e985cb0fe216377620c39a216a3bf58aaa3f",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "249.4",
+        "live": "249.4",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22912": {
+      "archived_csv_sha256": "f9552bad9d7aac7d6190fca1783a81c25ad0593d802b2b4570706ae270a8087f",
+      "live_api_json_response_sha256": "d44693492310a5721f8027b232c54107fe8803cb78d4db03f4177de8913cf6ed",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "1226.2",
+        "live": "1226.2",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22915": {
+      "archived_csv_sha256": "0b2275648eb640cae39f3a900451aef316913ada7ca5ba9505324da24780faa1",
+      "live_api_json_response_sha256": "45e9938565f4c31fb61ac773a413a24e43e436bf2b562677bd6a2a6e135c25a5",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "2772.5",
+        "live": "2772.5",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22924": {
+      "archived_csv_sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+      "live_api_json_response_sha256": "2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "9858.8",
+        "live": "9858.8",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22925": {
+      "archived_csv_sha256": "44f5e93d196355fa9c99d649667d240aff1c217bfa7f2448a1e6863da59ab75e",
+      "live_api_json_response_sha256": "807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "33194.9",
+        "live": "33194.9",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22926": {
+      "archived_csv_sha256": "b03dfecbc6617a4ce772388b2b3131943df4e1921e7637d6c8a6ee84ec3e463e",
+      "live_api_json_response_sha256": "519fcd8c068716f80f300202a1ae970fbcf312cfcd902f147143ccc5b4031e8e",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "23336.2",
+        "live": "23336.2",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22927": {
+      "archived_csv_sha256": "6108baede8f25e95dce65943699fe915c5ebaa97e5c57f7b894ab62a56e0549c",
+      "live_api_json_response_sha256": "61604856435774e6ffd30af6e3b0f3cd915b794a2d5a6962559cba6806382f10",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "3131.9",
+        "live": "3131.9",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22936": {
+      "archived_csv_sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+      "live_api_json_response_sha256": "fecb753b6d33d9b159a6baab0b1d27e57d7df1ec2cb657ce150e970c02ebdb74",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "-346.0",
+        "live": "-346.0",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22939": {
+      "archived_csv_sha256": "24080225e1758010a0f4f6fd995b0a5887a77395caa90a7365d74bab18a240ca",
+      "live_api_json_response_sha256": "b4fa7bf40f3d0ea0d790cec9523b6c7a48af6a7940f2752304f12700f39072d5",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "7073.0",
+        "live": "7073.0",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22942": {
+      "archived_csv_sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+      "live_api_json_response_sha256": "274abd347a049905eb58c5e92ce4d13e2ef13c5d47e75ca341206f67ce2bc81e",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "2783.2",
+        "live": "2783.2",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    },
+    "22945": {
+      "archived_csv_sha256": "452695200d21d72ae34fa972304b76f4418aaa6be1e838395cf4bba22061d563",
+      "live_api_json_response_sha256": "e3e4e610c10e995fab9db2236e1587ab78849fd8eec43882606569de630c4cff",
+      "archived_rows": 381,
+      "live_rows": 381,
+      "overlap_rows": 381,
+      "changed_overlap_count": 0,
+      "february_2026": {
+        "archived": "4289.8",
+        "live": "4289.8",
+        "delta": "0.0"
+      },
+      "latest_period": "2026-09"
+    }
+  },
+  "focus_finding": {
+    "sgs_22942_february_2026_current_value_usd_million": "2783.2",
+    "archived_value_usd_million": "2783.2",
+    "live_api_value_usd_million": "2783.2",
+    "live_minus_archive_usd_million": "0.0",
+    "march_2026_table_10_captured_snapshot_usd_million": "2579.49220364",
+    "march_table_snapshot_minus_current_sgs_usd_million": "-203.70779636",
+    "interpretation": "Current SGS value is stable versus the 2026-11-17 archive. The discrepancy is between the later-modified 2026-03 workbook snapshot and the current SGS observation, not an archive corruption or a change between 2026-11-17 archive and live API."
+  },
+  "workflow": {
+    "run_id": 44155240821,
+    "run_number": 1,
+    "conclusion": "success",
+    "commit": "e5287c4056789cfc2387498d7d67174c40187fd9",
+    "job_id": 134294094688,
+    "artifact_id": 14361126097,
+    "artifact_name": "bcb-sgs-live-vs-archived-15-series-44155240821",
+    "artifact_bytes": 2951,
+    "github_artifact_digest": "sha256:767fd57b7307552beea3135da86220e6a45943c9ea5b2e91160b80c504355216",
+    "downloaded_zip_sha256": "767fd57b7307552beea3135da86220e6a45943c9ea5b2e91160b80c504355216",
+    "extracted_json_sha256": "5a81ad698557bb4de61b24704a88cce226229004980efaf3cbf8eaec3a72f860",
+    "expires_at": "2027-02-15T19:07:52Z",
+    "url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44155240821"
+  },
+  "interpretation": "This is a current-snapshot equality test only. It does not reconstruct the March as-published XLSX, identify when the 203.70779636m difference entered, or attribute a revision cause.",
+  "production_integration": "NOT_AUTHORIZED"
+}
