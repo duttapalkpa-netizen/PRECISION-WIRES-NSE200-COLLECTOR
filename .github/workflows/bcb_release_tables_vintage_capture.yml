@@ -71,7 +71,7 @@ jobs:
             echo "No content changes; existing immutable capture retained."
           else
             git commit -m "data: archive official BCB historical release table vintages"
-            git push origin "HEAD:\${GITHUB_REF_NAME}"
+            git push origin "HEAD:$GITHUB_REF_NAME"
           fi
       - name: Upload capture artifact
         if: always()
