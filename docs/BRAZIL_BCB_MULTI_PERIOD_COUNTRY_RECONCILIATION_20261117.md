@@ -160,3 +160,38 @@ BCB/IMF metadata indicates published data may be revised when source information
 
 ## Next bounded action
 Retrieve any documented BCB revision notice or preserved as-of-publication data for Dec-2025 and Feb-2026, then reconcile against the 2026-10/2026-11 latest series. If no immutable original vintage is available, keep the exact revision attribution UNKNOWN and retain both published PDF values and latest SGS values as separate vintages. No synthetic values, no tolerance relaxation, no production integration.
+
+## 2026-11-17 — 2025 annual revision bridge confirmed at published precision
+The BCB September 28, 2026 official release explicitly states:
+- The 2025 annual ordinary revision changed net portfolio-investment liabilities from USD 15.1bn to USD 17.6bn.
+- It identifies reclassifications between direct investment and portfolio investment under the 10% ownership criterion for nonresident investors; the relevant ownership information was not available in foreign-exchange contracts.
+- The September revision cycle covers definitive 2025 statistics and revised estimates for 2026.
+
+A reproducible annual bridge was computed from the January-2026 Table 10 (2025 annual column) and the 12 monthly values in the current archived SGS snapshot:
+| Measure | Jan-2026 Table 10 / prior value (USD mn) | Latest SGS 2025 sum (USD mn) | Latest minus prior (USD mn) |
+|---|---:|---:|---:|
+| Portfolio liabilities parent 22924 vs Table 10 total | 15,139.9821 | 17,569.2 | +2,429.2179 |
+| Domestic equity 22930 vs Table 10 row 14 | -4,642.0254 | -4,525.9 | +116.1254 |
+| Fund liabilities 22936 vs Table 10 row 20 | -302.7145 | +1,628.4 | +1,931.1145 |
+| Domestic debt 22942 vs Table 10 row 24 | 20,229.1186 | 20,468.7 | +239.5814 |
+| Domestic-market total vs Table 10 row 40 | 15,284.3787 | 17,571.2 | +2,286.8213 |
+
+The current SGS 22924 2025 sum of USD 17,569.2m rounds to USD 17.6bn, matching the BCB September-2026 revised portfolio-liabilities figure at its published precision. This independently supports that the latest archived parent series reflects the 2025 annual revision. The largest domestic component movement is the fund-liability series 22936 (+USD 1.931bn year-on-year versus the January-2026 Table 10 vintage), consistent with the BCB-described direct/portfolio reclassification mechanism. This does **not** prove that every monthly Dec-2025 difference is caused by that mechanism; monthly allocation remains NOT_ATTRIBUTED.
+
+For Feb-2026, the latest 22942 domestic-debt series exceeds the March-2026 historical Table 10 value by USD 203.708m. BCB's September release says 2026 estimates were revised, but the published text does not identify this specific Feb-2026 debt-series change. Its cause remains UNKNOWN / NOT_ATTRIBUTED.
+
+### Revision evidence archive
+- Official BCB release PDF: data/raw/bcb/revision_release_202609/202609_External_sector_statistics_text.pdf
+- PDF bytes: 852,292; SHA-256: 2120db15085716f0c2a76270149cfbd2b40e8b9d57eb69d611b05bae8e72625e; HTTP 200; Last-Modified 05-Oct-2026.
+- Reproducible bridge: scripts/research/audit_bcb_2025_annual_revision_bridge.py
+- Machine-readable output: data/qa/BRAZIL_BCB_2025_ANNUAL_REVISION_BRIDGE_20261117.json
+- Run #1 / ID 44091390515 SUCCESS; artifact ID 14330869727; archive digest 15d99f469b7cb9d461c47125dc9d1dec513e2edaa3deb744b7900c92e0ada971.
+- Parent SGS 22924 raw file SHA-256: f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2.
+
+### Revised status
+- 2025 annual parent-level revision bridge: PASS at published 0.1bn precision.
+- 2025 annual component-level changes: quantified; fund liabilities carry the largest observed component delta.
+- Dec-2025 monthly component revision attribution: PARTIAL / NOT_ATTRIBUTED.
+- Feb-2026 debt revision attribution: UNKNOWN / NOT_ATTRIBUTED.
+- Original immutable 202601/202603 XLSX as-of-publication snapshots: UNKNOWN; served files have Oct-2026 Last-Modified dates.
+- Brazil pilot: NOT_ACCEPTED; EM-wide panel NOT_DONE; production integration NOT_AUTHORIZED.
