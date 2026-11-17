@@ -1,0 +1,323 @@
+{
+  "capture_completed_at_utc": "2026-11-17T13:45:00.314236+00:00",
+  "capture_id_utc": "20261117T134325Z",
+  "capture_started_at_utc": "2026-11-17T13:43:25.131443+00:00",
+  "errors": [],
+  "limitations": [
+    "Structure metadata capture is not observation-data capture.",
+    "A registered dataflow is not proof of a public country-level portfolio-investment panel.",
+    "No BOP observations, country coverage, or trading feature are admitted by this workflow."
+  ],
+  "overall_status": "PASS_STRUCTURE_METADATA_ONLY",
+  "schema_version": 1,
+  "semantic_qa": {
+    "bop_dataflow_structure_relation": "DIFFERENT_DSD_REFERENCE_REQUIRES_EXPLICIT_CROSSWALK",
+    "bop_dsd_2_6_0": {
+      "codelist_count": 22,
+      "codelists": [
+        {
+          "agencyID": "ESTAT",
+          "code_count": 443,
+          "id": "CL_INSTR_ASSET",
+          "version": "1.15.0"
+        },
+        {
+          "agencyID": "ESTAT",
+          "code_count": 120,
+          "id": "CL_MATURITY",
+          "version": "1.8"
+        },
+        {
+          "agencyID": "ESTAT",
+          "code_count": 21,
+          "id": "CL_OBS_STATUS",
+          "version": "2.3"
+        },
+        {
+          "agencyID": "ESTAT",
+          "code_count": 13,
+          "id": "CL_REF_PERIOD_DTL",
+          "version": "1.0"
+        },
+        {
+          "agencyID": "ESTAT",
+          "code_count": 236,
+          "id": "CL_SECTOR",
+          "version": "1.14"
+        },
+        {
+          "agencyID": "ESTAT",
+          "code_count": 19,
+          "id": "CL_VALUATION",
+          "version": "1.6"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 375,
+          "id": "CL_ACCOUNTS_ITEM",
+          "version": "1.8.0"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 31,
+          "id": "CL_ACCOUNT_ENTRY",
+          "version": "1.5.0"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 197,
+          "id": "CL_ADJUSTMENT",
+          "version": "1.4"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 931,
+          "id": "CL_AREA",
+          "version": "2.0.0"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 3,
+          "id": "CL_COMP_METHOD",
+          "version": "1.2"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 13,
+          "id": "CL_FSENTRY",
+          "version": "1.1"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 27,
+          "id": "CL_FUNCTIONAL_CAT",
+          "version": "1.10.1"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 1016,
+          "id": "CL_ORGANISATION",
+          "version": "2.0.0"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 10,
+          "id": "CL_TIME_COLLECT",
+          "version": "1.0"
+        },
+        {
+          "agencyID": "IMF",
+          "code_count": 547,
+          "id": "CL_UNIT",
+          "version": "1.19.0"
+        },
+        {
+          "agencyID": "OECD",
+          "code_count": 6,
+          "id": "CL_TYPE_ENTITY",
+          "version": "1.1"
+        },
+        {
+          "agencyID": "SDMX",
+          "code_count": 12,
+          "id": "CL_CONF_STATUS",
+          "version": "1.3"
+        },
+        {
+          "agencyID": "SDMX",
+          "code_count": 16,
+          "id": "CL_DECIMALS",
+          "version": "1.0"
+        },
+        {
+          "agencyID": "SDMX",
+          "code_count": 9,
+          "id": "CL_FREQ",
+          "version": "2.0"
+        },
+        {
+          "agencyID": "SDMX",
+          "code_count": 21,
+          "id": "CL_TIME_FORMAT",
+          "version": "1.0"
+        },
+        {
+          "agencyID": "SDMX",
+          "code_count": 31,
+          "id": "CL_UNIT_MULT",
+          "version": "1.1"
+        }
+      ],
+      "component_count": 203,
+      "identity": {
+        "agencyID": "IMF",
+        "id": "BOP",
+        "version": "2.6.0"
+      },
+      "status": "PASS"
+    },
+    "constraint": {
+      "cube_region_count": 1,
+      "dataflow_refs": [
+        {
+          "agencyID": "IMF",
+          "id": "BOP_BPM6",
+          "version": "1.0"
+        }
+      ],
+      "identity": {
+        "agencyID": "IMF",
+        "id": "BOP_BP6_CONSTRAINT",
+        "type": "Allowed",
+        "version": "1.0"
+      },
+      "status": "PASS"
+    },
+    "dataflow": {
+      "bop_dsd_2_6_0_match": false,
+      "identity": {
+        "agencyID": "IMF",
+        "id": "BOP_BPM6",
+        "version": "1.0"
+      },
+      "referenced_dsd": {
+        "agencyID": "IMF",
+        "id": "ECOFIN_DSD",
+        "version": "1.0"
+      },
+      "status": "PASS",
+      "structure_refs": [
+        {
+          "agencyID": "IMF",
+          "class": "DataStructure",
+          "id": "ECOFIN_DSD",
+          "package": "datastructure",
+          "version": "1.0"
+        }
+      ]
+    },
+    "dataflow_referenced_dsd": {
+      "component_count": 28,
+      "identity": {
+        "agencyID": "IMF",
+        "id": "ECOFIN_DSD",
+        "version": "1.0"
+      },
+      "status": "PASS"
+    }
+  },
+  "sources": {
+    "constraint": {
+      "attempt": 1,
+      "byte_length": 18675,
+      "content_length_header": "",
+      "content_type": "application/xml;charset=UTF-8",
+      "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/contentconstraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "http_status": 200,
+      "request_started_at_utc": "2026-11-17T13:43:27.689133+00:00",
+      "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/contentconstraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "response_headers": {
+        "cache-control": "private",
+        "connection": "close",
+        "content-disposition": "inline; filename=\"structure.xml\"",
+        "content-type": "application/xml;charset=UTF-8",
+        "date": "Tue, 17 Nov 2026 13:43:27 GMT",
+        "etag": "06069072290a50cd",
+        "set-cookie": "31f6526d02c8da12a5917dc065c770e5=52eaad15b14dc4bdf700745552fbea93; path=/; HttpOnly; Secure; SameSite=None",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "transfer-encoding": "chunked",
+        "vary": "Access-Control-Request-Headers",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "x-xss-protection": "1; mode=block"
+      },
+      "retrieved_at_utc": "2026-11-17T13:43:28.443251+00:00",
+      "sha256": "aa6c002fb3a2498420ed8796621664b492c18f58d75918d5c1bf8737fc917656",
+      "source_name": "constraint"
+    },
+    "dataflow": {
+      "attempt": 1,
+      "byte_length": 22078,
+      "content_length_header": "",
+      "content_type": "application/xml;charset=UTF-8",
+      "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "http_status": 200,
+      "request_started_at_utc": "2026-11-17T13:43:26.517400+00:00",
+      "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "response_headers": {
+        "cache-control": "private",
+        "connection": "close",
+        "content-disposition": "inline; filename=\"structure.xml\"",
+        "content-type": "application/xml;charset=UTF-8",
+        "date": "Tue, 17 Nov 2026 13:43:27 GMT",
+        "etag": "06185101b86f8efe",
+        "set-cookie": "31f6526d02c8da12a5917dc065c770e5=52eaad15b14dc4bdf700745552fbea93; path=/; HttpOnly; Secure; SameSite=None",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "transfer-encoding": "chunked",
+        "vary": "Access-Control-Request-Headers",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "x-xss-protection": "1; mode=block"
+      },
+      "retrieved_at_utc": "2026-11-17T13:43:27.688666+00:00",
+      "sha256": "74a8f3a58ff3e0bc6e6681c4143cd042cc642edee06f8080e86c29dc3b64e919",
+      "source_name": "dataflow"
+    },
+    "dataflow_referenced_dsd": {
+      "attempt": 1,
+      "byte_length": 42707649,
+      "content_length_header": "",
+      "content_type": "application/xml;charset=UTF-8",
+      "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "http_status": 200,
+      "request_started_at_utc": "2026-11-17T13:43:28.467428+00:00",
+      "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "response_headers": {
+        "cache-control": "private",
+        "connection": "close",
+        "content-disposition": "inline; filename=\"structure.xml\"",
+        "content-type": "application/xml;charset=UTF-8",
+        "date": "Tue, 17 Nov 2026 13:43:29 GMT",
+        "etag": "ac227f16cc5b808c",
+        "set-cookie": "31f6526d02c8da12a5917dc065c770e5=52eaad15b14dc4bdf700745552fbea93; path=/; HttpOnly; Secure; SameSite=None",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "transfer-encoding": "chunked",
+        "vary": "Access-Control-Request-Headers",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "x-xss-protection": "1; mode=block"
+      },
+      "retrieved_at_utc": "2026-11-17T13:44:59.689502+00:00",
+      "sha256": "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045",
+      "source_name": "dataflow_referenced_dsd"
+    },
+    "dsd": {
+      "attempt": 1,
+      "byte_length": 895438,
+      "content_length_header": "",
+      "content_type": "application/xml;charset=UTF-8",
+      "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "http_status": 200,
+      "request_started_at_utc": "2026-11-17T13:43:25.131453+00:00",
+      "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+      "response_headers": {
+        "cache-control": "private",
+        "connection": "close",
+        "content-disposition": "inline; filename=\"structure.xml\"",
+        "content-type": "application/xml;charset=UTF-8",
+        "date": "Tue, 17 Nov 2026 13:43:25 GMT",
+        "etag": "4bdae06e01cf2967",
+        "set-cookie": "31f6526d02c8da12a5917dc065c770e5=52eaad15b14dc4bdf700745552fbea93; path=/; HttpOnly; Secure; SameSite=None",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "transfer-encoding": "chunked",
+        "vary": "Access-Control-Request-Headers",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "x-xss-protection": "1; mode=block"
+      },
+      "retrieved_at_utc": "2026-11-17T13:43:26.516128+00:00",
+      "sha256": "073afeeb971dfa797460ba2233c7af4aa7dfffe4908657b5364e24fc77314f2f",
+      "source_name": "dsd"
+    }
+  }
+}

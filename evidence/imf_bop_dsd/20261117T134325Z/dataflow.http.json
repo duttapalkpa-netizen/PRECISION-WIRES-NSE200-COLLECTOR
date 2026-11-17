@@ -1,0 +1,28 @@
+{
+  "attempt": 1,
+  "byte_length": 22078,
+  "content_length_header": "",
+  "content_type": "application/xml;charset=UTF-8",
+  "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+  "http_status": 200,
+  "request_started_at_utc": "2026-11-17T13:43:26.517400+00:00",
+  "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+  "response_headers": {
+    "cache-control": "private",
+    "connection": "close",
+    "content-disposition": "inline; filename=\"structure.xml\"",
+    "content-type": "application/xml;charset=UTF-8",
+    "date": "Tue, 17 Nov 2026 13:43:27 GMT",
+    "etag": "06185101b86f8efe",
+    "set-cookie": "31f6526d02c8da12a5917dc065c770e5=52eaad15b14dc4bdf700745552fbea93; path=/; HttpOnly; Secure; SameSite=None",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "Access-Control-Request-Headers",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block"
+  },
+  "retrieved_at_utc": "2026-11-17T13:43:27.688666+00:00",
+  "sha256": "74a8f3a58ff3e0bc6e6681c4143cd042cc642edee06f8080e86c29dc3b64e919",
+  "source_name": "dataflow"
+}

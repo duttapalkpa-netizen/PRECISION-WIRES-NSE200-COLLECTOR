@@ -1,0 +1,28 @@
+{
+  "attempt": 1,
+  "byte_length": 42707649,
+  "content_length_header": "",
+  "content_type": "application/xml;charset=UTF-8",
+  "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+  "http_status": 200,
+  "request_started_at_utc": "2026-11-17T13:43:28.467428+00:00",
+  "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+  "response_headers": {
+    "cache-control": "private",
+    "connection": "close",
+    "content-disposition": "inline; filename=\"structure.xml\"",
+    "content-type": "application/xml;charset=UTF-8",
+    "date": "Tue, 17 Nov 2026 13:43:29 GMT",
+    "etag": "ac227f16cc5b808c",
+    "set-cookie": "31f6526d02c8da12a5917dc065c770e5=52eaad15b14dc4bdf700745552fbea93; path=/; HttpOnly; Secure; SameSite=None",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "Access-Control-Request-Headers",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block"
+  },
+  "retrieved_at_utc": "2026-11-17T13:44:59.689502+00:00",
+  "sha256": "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045",
+  "source_name": "dataflow_referenced_dsd"
+}
