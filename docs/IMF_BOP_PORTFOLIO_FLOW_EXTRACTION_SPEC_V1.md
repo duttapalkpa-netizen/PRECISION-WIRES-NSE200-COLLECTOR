@@ -308,3 +308,15 @@ The parser correction and fixture are committed. The GitHub Actions run, live IM
 - Re-fetched the committed workflow blob `9d7ba026b42a50108e4f9fec06e39f687ad26a5e` and independently executed the two-CubeRegion fixture structure in local Python. Both regions correctly retain repeated dimension IDs across regions while each region's own keys remain unique.
 - Executed focused negative-case assertions for the same acceptance rule: a valid region with unique IDs is accepted; duplicate IDs within one region are rejected; a KeyValue missing its ID is rejected. All assertions passed.
 - This is local logic/fixture validation, not a GitHub Actions run, XSD validation, or live IMF payload check. Runtime acquisition remains NOT DONE; no PR merge or production integration.
+
+
+## 8. 2026-11-17 official BOP aggregate candidate discovered — not yet extracted
+- IMF official dataset: **BOP/IIP World and Country Group Aggregates (BOP_AGG; historically BOPSY)**: https://data.imf.org/en/datasets/IMF.STA%3ABOP_AGG
+- Official November 2025 explanatory notes: https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf
+- The IMF describes BOP_AGG as an annual November publication using BPM6. Its published World and country-group aggregates combine reported country data with estimates for nonreporting economies (including WEO-derived estimates). This applies to financial-account transactions as well as other components.
+- The official EMDE grouping is IMF's own classification and must not be labelled MSCI EM. The published annual aggregate is low-frequency strategic context, not a daily trading trigger.
+- BOP_AGG includes both transactions and IIP positions. Only financial-account portfolio-investment transactions may be considered for the flow indicator; IIP positions remain excluded.
+- Source discovery and high-level methodology assessment: PASS.
+- Exact portfolio-investment table/series mapping, raw workbook/API payload, retrieval timestamp, byte count, SHA-256, units/sign/series-key QA and release-vintage reconciliation: UNKNOWN / NOT_DONE.
+- No BOP_AGG value is admitted into `em_portfolio_flow_usd_bn` until those extraction and validation gates pass.
+- Detailed checkpoint: `docs/GLOBAL_CAPITAL_ROTATION_IMF_BOP_AGGREGATE_SOURCE_CHECKPOINT_20261117.md`.
