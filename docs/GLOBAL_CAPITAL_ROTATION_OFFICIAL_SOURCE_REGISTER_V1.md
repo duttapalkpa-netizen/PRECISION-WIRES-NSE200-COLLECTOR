@@ -129,3 +129,15 @@ Verified catalogue facts for 22905: title “Portfolio investment - monthly - ne
 22905 remains a third BCB/Depec series that may be compared against 22906 and 22924, but no algebraic identity, sign convention, or aggregation relation is inferred from titles. Reconcile BCB methodology and overlapping raw observations before calculating or replacing any series. Prior reported Sep-2026 22906/22924 figures remain historical claims from earlier response inspection and are not revalidated by this catalogue correction.
 
 Official evidence: BCB 22905 dataset page (organization, definition, resources, coverage, frequency, unit); BCB 22906 dataset page (same organization, coverage, frequency, unit); BCB 22924 dataset catalogue (same organization and unit/frequency/coverage).
+
+
+## Critical dual-catalogue conflict for SGS 22905 — 2026-11-17
+
+A second official BCB portal instance was inspected and reveals an unresolved catalogue conflict for the same SGS code 22905:
+- `opendata.bcb.gov.br` page title “Portfolio investment - monthly - net” classifies it as BCB/Depec, with metadata updated 2026-03-26; it links the JSON resource for SGS 22905.
+- `dadosabertos.bcb.gov.br` page title “Investimentos em carteira - líquido” classifies it as BCB/Dstat, explicitly places it under Balanço de Pagamentos - BPM6 / Conta financeira / Investimentos em carteira, reports timeliness up to four weeks, and metadata updated 2026-09-08; it also links a JSON resource for SGS 22905.
+- Both pages identify monthly frequency, USD million, and start date 1995-01. Both resource links refer to the same SGS code family. This is not safely resolvable from catalogue text alone. Do not assert that 22905 is definitively Depec or Dstat, do not assume the pages describe distinct numerical series, and do not merge or select either taxonomy as authoritative until the exact resource URLs, live payloads, series metadata and publication vintages are compared.
+- The latest metadata date on the Dstat page is later, but recency alone does not prove ownership or supersession. Treat classification as CONFLICT / UNKNOWN.
+- Next validation: resolve each portal's JSON resource link and capture final URL, HTTP status, content type, response bytes, retrieval timestamp and SHA-256; compare payload values/date keys and SGS series metadata. If payloads are byte/value-identical, treat as duplicate catalogue records and preserve both provenance records. If payloads differ, quarantine both until BCB methodology clarifies the canonical series.
+- Evidence: official BCB portal pages `opendata.bcb.gov.br` SGS 22905 and `dadosabertos.bcb.gov.br` SGS 22905. Both catalogues are official but disagree on organization and classification.
+- Current decision: SGS 22905 excluded from any calculation; SGS 22906 and 22924 remain separate Depec series pending their own raw archive and reconciliation. No net-flow identity inferred.
