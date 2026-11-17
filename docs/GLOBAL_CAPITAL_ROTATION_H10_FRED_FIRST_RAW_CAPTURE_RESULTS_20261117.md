@@ -59,3 +59,13 @@ Status: H.10 RAW + OFFICIAL CROSSWALK CAPTURED; EXACT CROSSWALK ROW VERIFIED; FR
 
 ## Invariants
 Research-only; no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN never PASS. No synthetic values, fabricated hashes or timestamps. ₹0 spend.
+
+## Follow-up verification and segmented-retrieval correction (2026-11-17)
+- Capture Run #4: 44060344559; conclusion FAILURE. Job 133960296156 completed capture step successfully and uploaded artifact ID 14318466122, but acceptance step failed because FRED graph CSV read timed out. Artifact ZIP SHA-256 reported by GitHub: 342c3555026d5ffcc8104e71ce02a5998530d513a5367dbba4856c2d9910f7e1.
+- Run #4 manifest independently printed: H.10 ZIP integrity PASS; H.10 target series 5,445 rows (A=5,231; ND=214), zero duplicate dates; crosswalk 50,313 rows and exactly one target mapping. Only error: fred_dtwexbgs.csv TimeoutError. Thus the syntax error was fixed; persistent blocker is the monolithic FRED download latency.
+- Overlay Run #239: 44060344569; tests job 133960300838 SUCCESS; raw capture job failed for the same FRED timeout. Do not label the complete workflow PASS.
+- New corrective implementation committed after Run #4: bounded five-window FRED retrieval (2006–2010, 2011–2015, 2016–2020, 2021–2025, 2026 YTD through 2026-11-13), each raw CSV saved separately with independent URL, retrieval time, byte length, SHA-256, row/date coverage and missing-value count. No synthetic concatenated raw payload. Each window has a 45-second request timeout.
+- Code commit: 4fc63d7727e08aac8140540abb9a830a07fd7993.
+- Script blob SHA after re-fetch: d7d5a731135b538b54aed4e1ae3f579c984f50a4.
+- Segmented capture execution: PENDING at checkpoint creation; no new run ID/artifact or capture PASS claimed yet.
+- New acceptance remains BLOCKED until all five windows are fetched and independently validated, then full date/value/missingness reconciliation is performed. XML UNIT metadata conflict remains open.
