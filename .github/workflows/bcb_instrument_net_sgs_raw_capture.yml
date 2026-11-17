@@ -1,0 +1,33 @@
+name: Brazil BCB Instrument-Level Net SGS Raw Capture
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/capture_bcb_instrument_net_sgs_csv.py"
+      - ".github/workflows/bcb_instrument_net_sgs_raw_capture.yml"
+permissions:
+  contents: read
+concurrency:
+  group: bcb-instrument-net-sgs-raw-capture
+  cancel-in-progress: false
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax-check
+        run: python -m py_compile scripts/research/capture_bcb_instrument_net_sgs_csv.py
+      - name: Capture eight official BCB instrument-net series
+        run: python scripts/research/capture_bcb_instrument_net_sgs_csv.py
+      - name: Upload raw files and manifest even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-instrument-net-eight-series
+          path: bcb_instrument_net_capture/
+          if-no-files-found: warn
+          retention-days: 90
