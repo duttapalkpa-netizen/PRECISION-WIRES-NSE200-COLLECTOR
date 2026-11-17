@@ -178,3 +178,12 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Updated extraction spec commit: 3c93551577c32ec584173f62c76d24c333251d8f; blob: 808021c9239c35a77b445611fff62dfb83371f13.
 - Updated official source register commit: 19758b6d62da532f960b05d1ce2836b81d701c81; blob: b1d7c4f9d1e5ccd8080c35dc761a4f1c6703f03c.
 - No panel or calculation gate advanced; no production changes.
+
+
+## 3M. IMF current BOP dataset route and stale pilot rejection — 2026-11-17
+- Current IMF BOP dataset page is distinct from BOP_AGG and describes resident/nonresident transactions; page exposes API/VIEW DATA/DOWNLOAD, but API redirects to sign-in and no current raw payload/direct download URL was acquired.
+- SDMX Central contains provider-specific national BOP dataflows/registrations, not a unified IMF global observation panel. Treat as leads only pending provider-level QA.
+- Historic IMF BOP pilot regional SDMX files explicitly last updated 2013-01-09; rejected for current overlay signal, retained only as historical format/reference.
+- Updated IMF extraction spec commit: ecea657c2cf515933eeedbaeb51c8f0928bdf5c8; blob: 2d85316df371b56e88ffb2cef33e1b65e420e023.
+- Updated source register commit: 910399d2e9e893233dd402197d0a454dea0a6db4; blob: 85ab457b8b9cbc198aa50d21d38867ccc3f28b64.
+- No observations admitted; BOP/BOP_AGG panel, synchronized panel and relative-attraction gates remain NOT_DONE. Production unchanged.
