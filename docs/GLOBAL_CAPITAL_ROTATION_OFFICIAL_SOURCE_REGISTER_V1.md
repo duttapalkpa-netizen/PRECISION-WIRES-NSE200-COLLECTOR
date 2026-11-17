@@ -781,3 +781,9 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Schema: config/global_capital_rotation_evidence_manifest_schema_v1.json. Six offline test cases added for missing manifest, final URL mismatch, publication timestamp mismatch, HTTP mismatch, hash mismatch and valid binding. CI path filters include schema/registry changes.
 - Runtime test execution NOT_RUN; no PASS claim. Registry remains empty intentionally; source admission remains blocked until individual source tuples are independently qualified. No guessed source mappings.
 - Detailed audit: docs/GLOBAL_CAPITAL_ROTATION_SOURCE_REGISTRY_RUNTIME_GATE_AUDIT_20261117.md. No production integration.
+
+
+## 2026-11-17 — Manifest test CI trigger repair / execution state
+- Workflow branch filter now includes research/taxonomy-crosswalk-contract-20261117; duplicate path entries removed; registry and manifest schema paths included for push and pull_request. Timeout remains five minutes.
+- Commit d0c7022c43c60035ba3ed5eab2633f884c6ed859 (blob 33bd663af8536677cac711899ded32a73ce0f755).
+- Actions API query for this branch returned zero runs. Runtime test state remains NOT_RUN, not PASS. If no qualifying push run appears, invoke workflow_dispatch manually in GitHub UI. Registry remains empty by design; no trusted source ingestion.
