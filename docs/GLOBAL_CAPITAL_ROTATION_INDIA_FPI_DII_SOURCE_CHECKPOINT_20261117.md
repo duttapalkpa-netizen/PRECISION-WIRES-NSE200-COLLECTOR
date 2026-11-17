@@ -1,53 +1,46 @@
-# Global Capital Rotation — India FPI/DII Source Checkpoint
+# CORRECTION — India FPI/DII Source Checkpoint
 Date: 2026-11-17 (Asia/Kolkata)
 Branch: research/global-capital-rotation-overlay-v1
-Scope: bounded official-page verification; not full overlay acceptance.
+Supersedes the unsupported 17-Nov CDSL figures in the earlier draft.
 
-## Fresh CDSL daily page observation
+## Correction notice
+Fresh official-source recheck shows CDSL's latest visible investment reporting date is 16-NOV-2026, not 17-NOV-2026. The earlier draft's 17-Nov values (+₹5,107.61 crore Equity; +₹2,436.14 crore FPI subtotal; +₹2,473.82 crore page total) are NOT VERIFIED and are withdrawn from accepted evidence.
+
+## CDSL verified displayed observation
 Official URL: https://www.cdslindia.com/eservices/publications/fiidaily
-Page heading: Daily Trends in FII/FPI Investments on 17-NOV-2026
-Reporting date: 17-NOV-2026
-The page states that figures are compiled from custodian reports submitted to depositories on 17-Nov and represent trades conducted on and up to previous trading day(s). Reporting date is not an intraday execution timestamp.
+Visible reporting date: 16-NOV-2026.
+Net investment (INR crore): Equity +5,564.90; Debt-General +389.47; Debt-VRR +51.60; Debt-FAR -1,163.67; Hybrid +3.63. FPI category subtotal +4,845.93. Mutual Funds, separately displayed, -18.74. Page Total +4,827.19.
+Arithmetic: 5,564.90 + 389.47 + 51.60 - 1,163.67 + 3.63 = 4,845.93; adding MF -18.74 = page Total +4,827.19.
+CDSL says figures are compiled from custodian reports received on 16-Nov and represent trades conducted on and up to previous trading day(s); reporting date is not intraday execution timestamp.
 
-Displayed net investment (INR crore):
-- Equity subtotal: +5,107.61
-- Debt-General subtotal: +137.23
-- Debt-VRR subtotal: -2,379.67
-- Debt-FAR subtotal: -424.29
-- Hybrid subtotal: -4.74
-- FPI category subtotal (sum above): +2,436.14
-- Mutual Funds subtotal, separately displayed: +37.68
-- CDSL page Total: +2,473.82
-
-Arithmetic: 5,107.61 + 137.23 - 2,379.67 - 424.29 - 4.74 = 2,436.14. Adding separately displayed MF +37.68 gives page Total +2,473.82. Therefore page Total is not pure FPI.
-
-## NSE source route observation
-Official URL: https://www.nseindia.com/reports/fii-dii (redirected to https://www.nseindia.in/reports/fii-dii)
-The page exposes two distinct CSV download controls:
-1. FII/FPI & DII trading activity on NSE in Capital Market Segment.
-2. FII/FPI & DII trading activity on NSE, BSE and MSEI in Capital Market Segment.
-The page text alone does not expose the underlying download URLs or raw CSV bytes in this checkpoint. Do not infer or invent an endpoint. Keep these two scopes separate.
+## NSE verified displayed observation
+Official URL: https://www.nseindia.in/reports/fii-dii
+Latest visible date: 13-NOV-2026.
+NSE-only Capital Market Segment: DII buy ₹10,561.32 crore; sell ₹12,532.05 crore; net -₹1,970.73 crore. FII/FPI buy ₹17,376.50 crore; sell ₹12,122.52 crore; net +₹5,253.98 crore.
+Combined NSE+BSE+MSEI Capital Market Segment: DII buy ₹11,745.95 crore; sell ₹13,999.53 crore; net -₹2,253.58 crore. FII/FPI buy ₹18,339.57 crore; sell ₹12,603.02 crore; net +₹5,736.55 crore.
+NSE explicitly says these values are provisional and subject to custodial confirmation/modifications. DII classification is based on trading-member-entered codes and client-category classification. Keep both exchange scopes separate.
 
 ## Evidence boundary
-- CDSL displayed-page observation and arithmetic: PASS (bounded source-display check).
-- CDSL raw response bytes, byte count, retrieval timestamped immutable archive and SHA-256: NOT_DONE.
-- NSE-only CSV raw bytes, exact download URL, byte count and SHA-256: NOT_DONE.
-- Combined NSE+BSE+MSEI CSV raw bytes, exact download URL, byte count and SHA-256: NOT_DONE.
-- Matched lag-aware FPI/DII panel, duplicate/calendar/schema QA: NOT_DONE.
-- Global EM flow, synchronized relative-return study, sector-to-stock transmission and matured predictive validation: remain UNKNOWN / NOT_DONE as per continuity ledger.
+- CDSL displayed-page arithmetic for 16-Nov: PASS (bounded display check).
+- NSE displayed-table arithmetic for 13-Nov: PASS (bounded display check).
+- CDSL raw response bytes, retrieval timestamp, byte count and SHA-256: NOT_DONE.
+- NSE-only and combined CSV raw bytes, exact final download URLs, byte counts and SHA-256: NOT_DONE.
+- Matched lag-aware daily panel: NOT_DONE.
+- IMF BOP actual observation payload, country coverage and reproducible EM aggregate: NOT_DONE. IMF BOP is transaction data; PIP/CPIS is positions and cannot substitute.
+- This checkpoint is not a full overlay gate and does not update overall percentage.
 
 ## Next bounded actions
-1. Obtain the two NSE CSVs through the official browser download controls; record exact final URLs, retrieval timestamp, byte length and SHA-256. Do not substitute guessed API endpoints.
-2. Capture CDSL daily/archive raw bytes with exact URL, retrieval timestamp, byte length and SHA-256.
-3. Parse each source independently; validate headers, categories, sign convention, duplicate dates, arithmetic, missingness and session alignment.
-4. Build a matched date panel only after raw evidence passes; preserve CDSL custodian-reported lag and NSE provisional/exchange-scope semantics.
-5. Then proceed to IMF BOP actual transaction extraction and synchronized global-vs-India relative-attraction validation.
+1. Acquire official CDSL and NSE raw files via actual official download routes; record final URL, retrieved_at, byte count, SHA-256 and source publication/reporting date.
+2. Parse each source separately; validate schema, categories, buy/sell/net arithmetic, duplicate dates and calendar.
+3. Build matched panel distinguishing CDSL custodian-reported values, NSE provisional values and exchange scopes.
+4. Acquire IMF BOP DSD/codelists and actual transaction observations; declare instrument, sign, currency, reporter coverage, country membership, weights and missingness before any EM aggregate.
+5. Only then continue synchronized rates/FX/oil/volatility and India-vs-world relative-return analysis.
 
 ## Protected invariants
-No change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56x12), Engines A-E or Hard Gate. Research-only; no composite stock score, ranking, buy/sell instruction, automatic trigger, PR merge or production integration. ₹0 spend; official/free sources only. Missing/stale values remain UNKNOWN; no forward-fill or synthetic observations.
+No change to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56x12), Engines A-E or Hard Gate. Research-only; no stock score/ranking, buy/sell instruction, automatic trigger, PR merge or production integration. ₹0 spend; official/free sources only. Missing/stale data remains UNKNOWN; no synthetic observations or forward-fill.
 
-## Sources
+## Official sources
 - CDSL daily: https://www.cdslindia.com/eservices/publications/fiidaily
-- CDSL archive: https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx
-- NSE FII/DII: https://www.nseindia.com/reports/fii-dii
-- SEBI FPI directory: https://www.sebi.gov.in/curation/fpi.html
+- NSE FII/DII: https://www.nseindia.in/reports/fii-dii
+- IMF BOP: https://data.imf.org/Datasets/BOP
+- IMF BOP DSD registry information: https://sdmx.org/sdmx-data-structure-definitions-for-balance-of-payments-sdmx-bop/
