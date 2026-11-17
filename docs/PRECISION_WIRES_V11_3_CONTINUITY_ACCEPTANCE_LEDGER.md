@@ -905,3 +905,11 @@
 - Workflow run #219 / ID 44030545512, branch research/taxonomy-crosswalk-contract-20261117, head SHA cd25be239b5c9be6b85fd14536073ce7d0a220b1, event push, conclusion success; 06:20:59Z–06:21:07Z.
 - Job `tests` succeeded; Python 3.12 setup and `python -m unittest qa.test_global_capital_rotation_overlay -v` step succeeded. No artifacts produced. This validates runtime tests on the recorded HEAD only; it is not evidence of source ingestion or production acceptance.
 - Update prior NOT_RUN status: runtime test gate is now PASS for this run. Source registry still intentionally empty; trusted data admission 0 / BLOCKED. Keep all source qualification and historical PIT gates open. No production invariants changed.
+
+
+## 2026-11-17 — First exact Fed H.10 source tuple qualified
+- Reviewed existing Library H.10 files rather than repeating acquisition. Selected broad-dollar series H10/H10/JRXWTFB_N.B (Nominal Broad Dollar Index, Index:_1997_Jan_100) as the relevant Global Capital Rotation broad-USD source. It is distinct from ICE DXY, Fed DTWEXBGS and H.10 bilateral INR series RXI_N.B.IN.
+- Official Fed preview metadata and current observations checked; H.10 release schedule is weekly Monday 4:15 p.m. ET for prior business week. Official preview showed 2026-11-11=ND; do not forward-fill.
+- Added one exact metadata-qualified VERIFIED_OFFICIAL source tuple to config/global_capital_rotation_source_registry.json (commit 380918fc008ad96bccabbbab06b18b4ae6683df5; blob 1f36e9f57b19dcec434903744963c234cadc43e5). Source qualification note: docs/FED_H10_BROAD_DOLLAR_INDEX_SOURCE_QUALIFICATION_20261117.md (commit 8ebd01c07246e9e6eb0f06d4c81cdbb6ae0017ae).
+- Existing user Library FRB_H10(1).csv is 813 bytes, SHA-256 c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1; it cross-checks displayed values for 2026-10-26 to 2026-11-06 against official Fed rendering, but is not raw official payload and cannot satisfy the manifest evidence gate.
+- Official raw response bytes and manifest not acquired. Therefore trusted observation admission remains BLOCKED; 20-session derivation and classifier integration NOT_DONE. This source metadata qualification is not a data-ingestion PASS or production authorization.
