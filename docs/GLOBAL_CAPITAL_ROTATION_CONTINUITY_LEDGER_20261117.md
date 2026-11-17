@@ -312,3 +312,25 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Official page refs inspected: https://www.cdslindia.com/eservices/publications/fiidaily and https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx. This checkpoint is HTML/display evidence only.
 - Acceptance boundary: current displayed page + arithmetic recheck = PASS (bounded); immutable raw HTML/CSV/response bytes, exact download URL, byte count, retrieved_at header capture and SHA-256 = NOT_DONE. Do not ingest this display-only checkpoint into the raw daily panel or claim raw archive acquisition.
 - Next action remains actual CDSL archive/raw-byte capture through a verified official download route, then independent hash + schema/vintage QA. If no downloadable raw payload is exposed, record BLOCKED with the exact route limitation; do not fabricate a CSV from rendered page text.
+
+## 3AA. CDSL archive-route and BCB component-series follow-up — 2026-11-17
+
+### CDSL
+- Reopened the official CDSL archive page. Its current page header explicitly says daily FII/FPI investment archive is available through 17-Nov-2026; the archive page exposes historical daily rows and a cumulative table. This confirms archive-page coverage is fresher than the earlier 06-Nov archive snapshot.
+- Reopened the official live Daily Trends page. It displays 17-NOV-2026 investment reporting date. FPI category subtotals: Equity +₹5,107.61cr; Debt-General +₹137.23cr; Debt-VRR -₹2,379.67cr; Debt-FAR -₹424.29cr; Hybrid -₹4.74cr; arithmetic FPI subtotal +₹2,436.14cr. Mutual Funds are separate +₹37.68cr; page total including MF +₹2,473.82cr. CDSL says values are custodian reports received 17-Nov and trades on/up to previous trading day(s).
+- Official archive page: https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx ; live page: https://www.cdslindia.com/eservices/publications/fiidaily .
+- Important: archive HTML exposure is not immutable raw-file capture. The page-reader exposes rendered HTML/table rows but no verified CSV/XLS download payload, exact export URL, HTTP response headers, byte count or raw response SHA-256. Therefore raw archive acceptance remains NOT_DONE. Do not synthesize a CSV from page text and do not ingest the 17-Nov display as immutable raw data.
+- Web evidence refs: CDSL archive page turn807292view0 (header through 17-Nov-2026; historical daily table and cumulative rows) and live page turn807292view1 (17-Nov detailed category rows and source caveat).
+
+### BCB Brazil component series
+- New official catalogue verification: SGS 22907 is “Portfolio investment - Net acquisition of financial assets - monthly - inflows”, BCB/Depec, monthly, USD million, starts 1995-01, with up to four weeks' reporting timeliness. Official dataset exposes JSON and CSV resource links. This is a component series, not a verified substitute for the monthly net-acquisition series 22906.
+- SGS 22926 is “Portfolio investment - Net incurrence of liabilities - monthly - outflows”, BCB/Depec, monthly, USD million, starts 1995-01. Official dataset exposes JSON and CSV resources. This is a component series, not a verified substitute for liabilities net series 22924.
+- Official catalogue sources: https://opendata.bcb.gov.br/dataset/22907-portfolio-investment---net-acquisition-of-financial-assets---monthly---inflows ; https://opendata.bcb.gov.br/dataset/22926-portfolio-investment---net-incurrence-of-liabilities---monthly---outflows .
+- Direct official SGS API JSON opens for 22907 and 22926 were inaccessible to the web inspection layer. A separate execution-environment request failed DNS resolution before HTTP response. This is a tool/network access limitation, not evidence that BCB is down. No raw bytes, HTTP status, response size, retrieved_at, SHA-256 or full-history values were acquired. No values admitted.
+- No relationship such as 22906 = 22907 - another component, or 22924 = inflows - 22926, is inferred from labels. Need raw common-period observations, BCB methodology and sign/unit/vintage checks before any formula.
+
+### Next action and acceptance boundary
+1. Acquire CDSL official downloadable raw payload only if an actual official export/download resource can be followed; otherwise retain display-only checkpoint and mark raw capture BLOCKED by access-layer limitation.
+2. Acquire BCB 22907, 22925, 22926 and net controls 22906/22924 as immutable raw responses; record final URL, response status/content-type, byte count, UTC retrieval timestamp, SHA-256, parsed row count, min/max period, duplicate/missing checks and revision/vintage evidence.
+3. Reconcile gross components against net controls over every common month before admitting any Brazil portfolio flow. Until then all BCB components remain contextual/discovery-only, not EM aggregate.
+4. Daily synchronized India panel, IMF BOP_AGG observation panel, Relative-Attraction calculation and predictive validation remain NOT_DONE/BLOCKED. No composite score or production integration.
