@@ -23,6 +23,14 @@ Protected: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×1
 - Treasury TIC Securities A was added as a monthly transaction/flow candidate. Its post-February-2023 SLT regime has a structural break and changed country attribution; raw country files, SHA-256, vintage reconstruction and India-row QA remain pending. It is U.S.-centric and cannot prove direct India FPI.
 - NSE daily FII/FPI & DII ingestion contract: docs/NSE_FII_DII_DAILY_ACTIVITY_INGESTION_CONTRACT_V1.md. NSE-only and combined NSE+BSE+MSEI series are distinct; raw bytes, exact CSV URLs, SHA-256 and parsed daily DII panel were not acquired in the prior audit.
 
+## 3A. 2026-11-17 fresh India FPI/DII source checkpoint
+- File: docs/GLOBAL_CAPITAL_ROTATION_INDIA_FPI_DII_SOURCE_CHECKPOINT_20261117.md
+- Commit: e766e11df9b9bf11cd632db55f702005b6c058d8
+- Post-commit fetch verified; blob SHA: 91156ae69c8cb180698475eb865bca8cd0d0e335; 54 lines.
+- CDSL 17-Nov displayed-page arithmetic: FPI category subtotal +₹2,436.14 crore; separately displayed MF +₹37.68 crore; page total +₹2,473.82 crore. Bounded display/arithmetic PASS only.
+- NSE official page exposes two distinct CSV download controls (NSE-only and NSE+BSE+MSEI); exact download URLs/raw bytes were not available in this check. Both CSV raw acquisition and SHA-256 remain NOT_DONE.
+- No change to prior gate status or overall overlay percentage; this is not a full overlay gate.
+
 ## 3. 2026-11-17 new checkpoint
 Created docs/GLOBAL_CAPITAL_ROTATION_INDIA_FPI_DII_SEMANTICS_CHECKPOINT_20261117.md.
 Commit: 66271d77c685f348943af804945ec1e9e3f65684.
