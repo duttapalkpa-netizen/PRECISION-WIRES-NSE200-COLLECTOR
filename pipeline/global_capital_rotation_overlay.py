@@ -38,6 +38,25 @@ def _load_source_registry(path: Path):
         entries[key]=item
     return entries
 
+def _load_evidence_manifest(input_dir: Path, manifest_id: str, row_number: int):
+    if not re.fullmatch(r"[0-9A-Za-z._:-]{1,128}", manifest_id):
+        raise ValueError(f"row {row_number}: invalid evidence_manifest_id")
+    root=input_dir.resolve()
+    manifest_path=(root / "evidence_manifests" / f"{manifest_id}.json").resolve()
+    manifest_root=(root / "evidence_manifests").resolve()
+    if manifest_root not in manifest_path.parents:
+        raise ValueError(f"row {row_number}: evidence manifest path escapes manifest directory")
+    try:
+        manifest=json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"row {row_number}: evidence manifest unavailable or invalid") from exc
+    required={"schema_version","evidence_manifest_id","source","source_url","final_url","indicator","unit","quality_status","published_at","retrieved_at","http_status","content_type","byte_length","sha256","raw_payload_path"}
+    if not isinstance(manifest,dict) or not required.issubset(manifest) or manifest.get("schema_version") != 1:
+        raise ValueError(f"row {row_number}: evidence manifest schema_version=1 and required fields are required")
+    if manifest["evidence_manifest_id"] != manifest_id:
+        raise ValueError(f"row {row_number}: evidence manifest ID mismatch")
+    return manifest
+
 def _validate_trusted_evidence(row, registry, row_number):
     if row["quality_status"] not in TRUSTED_QUALITIES:
         return
@@ -47,10 +66,37 @@ def _validate_trusted_evidence(row, registry, row_number):
         raise ValueError(f"row {row_number}: trusted quality has no exact source-registry match")
     if not all(row.get(k,"").strip() for k in EVIDENCE_FIELDS):
         raise ValueError(f"row {row_number}: trusted quality missing evidence manifest fields")
+    manifest=_load_evidence_manifest(Path(row["_input_dir"]),row["evidence_manifest_id"],row_number)
+    row_manifest_fields={
+        "source":row["source"],"source_url":row["source_url"],"indicator":row["indicator"],
+        "unit":row["unit"],"quality_status":row["quality_status"],"published_at":row["published_at"],
+        "retrieved_at":row["retrieved_at"],"http_status":row["http_status"],
+        "content_type":row["content_type"],"byte_length":row["byte_length"],
+        "sha256":row["raw_sha256"],"raw_payload_path":row["raw_payload_path"]
+    }
+    for field,expected in row_manifest_fields.items():
+        actual=manifest.get(field)
+        if field in {"published_at","retrieved_at"}:
+            try:
+                matches=_published_key(actual)==_published_key(expected)
+            except (TypeError,ValueError):
+                matches=False
+        elif field=="http_status":
+            matches=str(actual)==str(expected)
+        elif field=="byte_length":
+            matches=str(actual)==str(expected)
+        else:
+            matches=actual==expected
+        if not matches:
+            raise ValueError(f"row {row_number}: evidence manifest {field} mismatch")
+    if manifest["final_url"] != row["source_url"]:
+        allowed_final_urls=entry.get("allowed_final_urls",[row["source_url"]])
+        if manifest["final_url"] not in allowed_final_urls:
+            raise ValueError(f"row {row_number}: evidence manifest final_url not allowed by source registry")
+    if not isinstance(manifest["final_url"],str) or not manifest["final_url"].startswith("https://"):
+        raise ValueError(f"row {row_number}: evidence manifest final_url must use HTTPS")
     if not re.fullmatch(r"[0-9a-f]{64}",row["raw_sha256"]):
         raise ValueError(f"row {row_number}: raw_sha256 must be 64 lowercase hex characters")
-    if not re.fullmatch(r"[0-9A-Za-z._:-]{1,128}",row["evidence_manifest_id"]):
-        raise ValueError(f"row {row_number}: invalid evidence_manifest_id")
     try:
         retrieved=_published_key(row["retrieved_at"])
         status=int(row["http_status"])
