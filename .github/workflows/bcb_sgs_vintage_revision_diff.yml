@@ -1,0 +1,46 @@
+name: BCB SGS Vintage Revision Diff Audit
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'scripts/research/diff_bcb_sgs_vintages.py'
+      - 'data/raw/bcb/sgs_vintage_snapshots/**'
+      - '.github/workflows/bcb_sgs_vintage_revision_diff.yml'
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: bcb-sgs-vintage-revision-diff
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify raw snapshots and compare the two latest vintages
+        run: python scripts/research/diff_bcb_sgs_vintages.py
+      - name: Commit deterministic QA result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
+          if git diff --cached --quiet; then
+            echo "No QA result produced" >&2
+            exit 1
+          fi
+          git commit -m "qa: record BCB SGS vintage revision diff audit"
+          git push origin HEAD:research/bcb-priority-metadata-audit-20261117
+      - name: Upload QA result
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-sgs-vintage-revision-diff
+          path: data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
+          if-no-files-found: error
+          retention-days: 90
