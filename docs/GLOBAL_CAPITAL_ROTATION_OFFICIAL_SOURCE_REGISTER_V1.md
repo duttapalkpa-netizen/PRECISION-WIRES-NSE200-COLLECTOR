@@ -831,3 +831,10 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - PIT cutoff mandatory; publication-vintage-aware; latest eligible revision per observation date; same-vintage conflicts rejected.
 - Helper QA passed in workflow #229, ID 44035746086 (70 tests). Specification: docs/FED_H10_20OBS_DERIVED_SERIES_SPEC_20261117.md.
 - No live derived value computed yet. Historical multi-vintage replay NOT_DONE. Not approved for classifier or production use.
+
+
+## Fed H.10 ND sentinel correction and derived 20-observation value — 2026-11-17
+- Supersede prior provisional count 5,445 parser-admitted: H.10 JRXWTFB_N.B contains 5,445 source rows, 5,231 OBS_STATUS=A, 214 OBS_STATUS=ND (numeric sentinel -9999.0). Corrected collector/parser gate accepts only A rows with finite numeric values; runtime admitted 5,231 and excluded 214.
+- Corrected capture run #8 / ID 44036104490 PASS; artifact 14306134441; raw ZIP SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77.
+- Derived candidate `fed_h10_nominal_broad_dollar_change_pct_20obs`: +0.8892047581% from 2026-10-15 121.5693 to 2026-11-13 122.6503, 20 prior valid H.10 records plus current; 2026-11-11 ND omitted without fill. Not ICE DXY / not dxy_change_pct_20d.
+- QA workflow #232 / ID 44036012995 PASS, 72 tests. Detailed result docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. Single current vintage only; no historical PIT or production approval.
