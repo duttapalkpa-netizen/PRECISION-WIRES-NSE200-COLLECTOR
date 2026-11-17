@@ -807,3 +807,11 @@ Acceptance: official identity/frequency/unit and latest-row extraction for USD c
 - Workflow run #221 / ID 44030991201 on registry commit 380918fc008ad96bccabbbab06b18b4ae6683df5: SUCCESS; test job and Python unittest command passed.
 - Workflow run #222 / ID 44031034467 on source-register commit d970737f9bb2cdc682ad5c8bd256c2b7fdf84d24: SUCCESS; test job and Python unittest command passed.
 - Registry JSON now contains exactly one metadata-qualified source tuple. These CI runs validate code/tests against that registry state; they do not mean a source payload or observation has passed the immutable evidence manifest gate.
+
+
+## 2026-11-17 — Fed H.10 official ZIP transport capture
+- New bounded collector `tools/capture_fed_h10_official.py` and workflow `.github/workflows/fed_h10_official_evidence_capture.yml` capture the official DDP ZIP response and HTTP metadata. Workflow run #2 / ID 44031614252 completed SUCCESS; artifact ID 14305441931, expires 2027-02-15.
+- Official URL: https://www.federalreserve.gov/datadownload/Output.aspx?filetype=zip&rel=H10; HTTP 200; Content-Type application/x-zip-compressed; retrieved 2026-11-17T06:29:48.056078+00:00; payload 2,088,268 bytes; SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77; ZIP test PASS.
+- XML Header Prepared 2026-11-16T16:47:01 (timezone unspecified; not retrieval timestamp). Broad index JRXWTFB_N.B has 5,445 observations through 2026-11-13, latest 122.6503; advanced index 116.2360; EM index 130.8877; bilateral INR RXI_N.B.IN latest 94.2400. Distinct series, distinct meaning.
+- Artifact SHA-256: 05928613d892fafd3ac904c3ae325794535fcc643613f39c8d3dd968d79620f2. Run #1 was superseded due to malformed escaped newline sidecars; only run #2 is canonical. Detailed checks and acceptance boundary are in the H.10 qualification document.
+- Raw transport capture PASS does not yet mean per-observation manifest admission. XSD validation NOT_DONE; parser row/manifest validation NOT_DONE; durable GitHub archival NOT_DONE; derived 20-session change NOT_DONE; classifier integration NOT_DONE; production use NOT_AUTHORIZED.
