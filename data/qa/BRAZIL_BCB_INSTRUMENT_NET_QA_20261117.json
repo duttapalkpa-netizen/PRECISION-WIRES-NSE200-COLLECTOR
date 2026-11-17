@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "purpose": "research_only_bcb_instrument_net_reconciliation",
+  "capture_run_id": 44077406268,
+  "artifact_id": 14326096168,
+  "artifact_sha256": "37dcb1d5f4ad2938741953a1b8aad0cea3030a34c4e83d565379f2dd43fa0090",
+  "capture_status": "RAW_CAPTURE_8_OF_8_PASS",
+  "date_coverage": {
+    "first": "1995-01-01",
+    "last": "2026-09-01",
+    "rows_per_series": 381,
+    "monthly_complete": true,
+    "unique_dates": true,
+    "strictly_increasing": true,
+    "missing_numeric_values": 0
+  },
+  "series": {
+    "22909": {
+      "bytes": 8209,
+      "sha256": "cbfe7caa331d814ef4801940d08bd1966f8bca9d9cd6a024b4e1cacf79a34382"
+    },
+    "22912": {
+      "bytes": 8385,
+      "sha256": "f9552bad9d7aac7d6190fca1783a81c25ad0593d802b2b4570706ae270a8087f"
+    },
+    "22915": {
+      "bytes": 8357,
+      "sha256": "0b2275648eb640cae39f3a900451aef316913ada7ca5ba9505324da24780faa1"
+    },
+    "22927": {
+      "bytes": 8666,
+      "sha256": "6108baede8f25e95dce65943699fe915c5ebaa97e5c57f7b894ab62a56e0549c"
+    },
+    "22936": {
+      "bytes": 8006,
+      "sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24"
+    },
+    "22939": {
+      "bytes": 8757,
+      "sha256": "24080225e1758010a0f4f6fd995b0a5887a77395caa90a7365d74bab18a240ca"
+    },
+    "22942": {
+      "bytes": 8579,
+      "sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169"
+    },
+    "22945": {
+      "bytes": 8705,
+      "sha256": "452695200d21d72ae34fa972304b76f4418aaa6be1e838395cf4bba22061d563"
+    }
+  },
+  "identity_diagnostics": {
+    "22906 = 22909 + 22912 + 22915": {
+      "tested": 381,
+      "exact": 253,
+      "within_plus_minus_0_1": 381,
+      "greater_than_0_1": 0,
+      "max_abs_difference": "0.1"
+    },
+    "22924 = 22927 + 22936 + 22939": {
+      "tested": 381,
+      "exact": 266,
+      "within_plus_minus_0_1": 381,
+      "greater_than_0_1": 0,
+      "max_abs_difference": "0.1"
+    },
+    "22939 = 22942 + 22945": {
+      "tested": 381,
+      "exact": 295,
+      "within_plus_minus_0_1": 381,
+      "greater_than_0_1": 0,
+      "max_abs_difference": "0.1"
+    }
+  },
+  "instrument_sum_reconciliation": "PARTIAL_EMPIRICAL_ALIGNMENT",
+  "rounding_tolerance_formally_approved": false,
+  "country_period_qa": "NOT_DONE",
+  "brazil_pilot_acceptance": "NOT_ACCEPTED",
+  "em_wide_panel": "NOT_DONE",
+  "production_integration": "NOT_AUTHORIZED",
+  "errors": []
+}
