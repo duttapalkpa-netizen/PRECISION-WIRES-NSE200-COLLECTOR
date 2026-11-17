@@ -81,3 +81,14 @@ Inspect the GitHub Actions run for the newly added bounded workflow and download
 - Workflow Run #1 ID 44150706922 also SUCCESS. Canonical 15-series identity workflow Run #1 ID 44148019785 SUCCESS; all six identities 381/381 PASS, 2,286/2,286 checks, 0 failures; artifact ID 14356334010, ZIP SHA-256 fcf6c72dec436f7847e293c1b179b628a0c0625b420be90aa1460dfdb6baba77, independently re-hashed.
 - Official BCB 28-Sep-2026 revision note confirms 2025 portfolio-liability aggregate revised USD 15.1bn to USD17.6bn with reclassification for nonresident individual fund ownership >=10%; it does not attribute February-2026 SGS 22942's +USD203.70779636m delta. Keep cause UNKNOWN.
 - Runtime gate: PASS. Original as-published vintage: NOT_PROVEN. Brazil pilot: NOT_ACCEPTED. EM-wide panel: NOT_DONE. Production integration: NOT_AUTHORIZED.
+
+
+## Follow-on source-scope check (2026-11-18)
+- Further targeted official BCB search found no original as-published March-2026 workbook copy and no direct revision notice naming SGS 22942 / February-2026 / USD 203.70779636m.
+- BCB 28-Sep-2026 policy note explicitly states the annual review covers definitive 2025 statistics and current-year 2026 estimates. Its documented portfolio-liability change is an annual 2025 aggregate revision from USD 15.1bn to USD 17.6bn, with fund ownership >=10% reclassification between direct and portfolio investment. It does not identify the February-2026 domestic debt monthly-series discrepancy. The same note's 2026 estimate adjustments listed in section 3.3 concern current-account aggregates and direct-investment profits; no 22942-specific amount is disclosed. This is contextual evidence only, not attribution.
+- BCB Open Data metadata for SGS 22942 identifies it as monthly, USD million, source Department of Economics/Statistics, temporal coverage from 1995-01; metadata updated 26-Mar-2026 (the localized dataset mirror separately shows metadata update 8-Sep-2026). No revision log/versioned observation history exposed in the metadata record.
+- Decision: retain Feb-2026 SGS 22942 cause UNKNOWN / NOT_PROVEN. Original as-published workbook vintage NOT_PROVEN. No further inference from the general revision policy.
+
+## Verified workflow evidence
+- Release-vintage QA Run #2 44150764171 SUCCESS; artifact 14358771813; ZIP SHA-256 a8ea641748f3c7410aeb6dceda7eeaee8ea0c904a0ceb659ebffa174c4772d86; independently downloaded and re-hashed.
+- Canonical 15-series identity QA Run #1 44148019785 SUCCESS; all six identities 381/381 PASS, 2,286/2,286 monthly checks, 0 failures; artifact 14356334010; ZIP SHA-256 fcf6c72dec436f7847e293c1b179b628a0c0625b420be90aa1460dfdb6baba77; independently downloaded and re-hashed.
