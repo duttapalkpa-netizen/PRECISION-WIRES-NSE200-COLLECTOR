@@ -87,3 +87,13 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 3. Complete a separate country-period cross-check against a BCB official release/table where the perimeter is explicit; document that aggregate press-release series may not equal the SGS series.
 4. Commit the raw ZIP archive permanently only after verifying the repository binary-archive upload and re-fetch SHA-256; meanwhile artifact ID 14324188933 is the 90-day raw evidence source.
 5. Keep Brazil pilot acceptance blocked until the above gates pass; then proceed to the instrument-level equity/fund/debt split and only later EM-wide panel.
+
+
+## 9. 2026-11-17 — Permanent raw-byte archive PASS
+- Added `.github/workflows/archive_bcb_priority_sgs_artifact.yml`; workflow downloads the exact already successful Run #3 artifact ID 14324188933, does not re-fetch BCB source data, validates manifest byte lengths and SHA-256, commits original CSVs with `*.csv -text`, then re-fetches committed Git blobs and recomputes SHA-256.
+- Archive workflow Run #1 / ID `44076318974`: SUCCESS.
+- Permanent archive commit: `73bf04f6333fd90d8c0d24c7ba9e71eb1ba3f568`.
+- Durable path: `data/raw/bcb/priority_series_capture_20261117/`.
+- Confirmed tree entries: `.gitattributes`, `manifest.json`, and `sgs_22905.csv`, `sgs_22906.csv`, `sgs_22907.csv`, `sgs_22908.csv`, `sgs_22924.csv`, `sgs_22925.csv`, `sgs_22926.csv`.
+- Re-fetch SHA-256 validation: PASS 7/7 after commit. Original CRLF bytes preserved via `.gitattributes`.
+- This closes the permanent raw CSV archive gate. The Actions artifact is still useful provenance but no longer the only copy.
