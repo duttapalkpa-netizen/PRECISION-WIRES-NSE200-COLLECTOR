@@ -1,6 +1,17 @@
 {
   "schema_version": 1,
   "policy": "fail_closed_exact_match_and_raw_payload_manifest_required",
-  "sources": [],
-  "note": "No source is eligible for VERIFIED_OFFICIAL or VERIFIED_SECONDARY until exact source identity, indicator, unit, quality class, allowed content type and raw-payload evidence contract have been independently qualified. Empty registry is intentional; do not add guessed mappings."
+  "sources": [
+    {
+      "source": "Federal Reserve Board H.10 Data Download Program",
+      "source_url": "https://www.federalreserve.gov/datadownload/Preview.aspx?pi=400&preview=H10%2FH10%2FJRXWTFB_N.B&rel=H10",
+      "indicator": "fed_h10_nominal_broad_dollar_index",
+      "unit": "Index:_1997_Jan_100",
+      "quality_status": "VERIFIED_OFFICIAL",
+      "allowed_content_types": [
+        "text/html"
+      ]
+    }
+  ],
+  "note": "Only the exact H.10 Nominal Broad Dollar Index raw-series tuple is metadata-qualified here. Every observation still requires an evidence_manifest_id, a manifest bound to the exact row metadata, and independently rehashed raw payload bytes. This series is not ICE DXY and is not the H.10 bilateral USD/INR series. Do not map it to dxy_change_pct_20d without a separately tested derivation and explicit naming."
 }
