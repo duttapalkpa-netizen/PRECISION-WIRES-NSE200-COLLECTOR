@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "task": "bcb_sgs_prospective_vintage_revision_diff",
+  "accepted_series": [
+    "22924",
+    "22930",
+    "22936",
+    "22942"
+  ],
+  "input_validation": [
+    "raw_byte_length",
+    "raw_sha256",
+    "http_status",
+    "csv_header",
+    "chronological_unique_dates",
+    "row_count",
+    "manifest_month_set",
+    "raw_manifest_value_equality",
+    "timezone_aware_capture_and_retrieval_timestamps",
+    "same_source_url_across_vintages"
+  ],
+  "comparison": [
+    "unchanged",
+    "changed",
+    "added",
+    "removed"
+  ],
+  "outputs": "timestamped JSON under data/qa/",
+  "one_snapshot_status": "WAITING_FOR_SECOND_VINTAGE",
+  "two_snapshot_status": "PASS_TWO_VINTAGES_COMPARED",
+  "revision_attribution": "UNKNOWN_NOT_PROVEN",
+  "production_integration": "NOT_AUTHORIZED"
+}
