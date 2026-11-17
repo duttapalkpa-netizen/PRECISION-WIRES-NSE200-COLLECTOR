@@ -237,3 +237,19 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - New report: docs/BRAZIL_BCB_SGS22942_FEB2026_REVISION_ATTRIBUTION_DISPOSITION_20261117.md. Machine-readable QA: data/qa/BRAZIL_BCB_SGS22942_FEB2026_REVISION_ATTRIBUTION_DISPOSITION_20261117.json.
 - Next action: obtain an immutable official BCB historical version or documented SGS revision log for February-2026 22942. If unavailable, document the limitation and begin prospective monthly vintage snapshots. Do not repeat raw capture, Table 10 extraction, January inference, or September validation.
 - Invariants unchanged: ₹0, official free sources only, no synthetic data or invented provenance; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched.
+
+## 21. 2026-11-17 — First prospective BCB SGS vintage baseline PASS
+- Public official BCB Open Data dataset for SGS 22942 exposes current BCData JSON/CSV/WSDL resources and metadata (monthly, USD million, coverage from 1995-01); no immutable as-of-publication vintage endpoint or public SGS revision log was identified in the inspected source pages. Do not infer that no such internal source exists; disposition is only "not identified in inspected public resources".
+- Implemented `scripts/research/capture_bcb_sgs_prospective_vintage.py` and `.github/workflows/bcb_sgs_prospective_vintage_snapshot.yml`.
+- Scheduled monthly on day 28 at 12:17 UTC; manual dispatch available. Each run creates a unique timestamped directory, stores four exact raw CSVs and a manifest with URLs, response headers, UTC retrieval times, byte lengths, SHA-256, period counts and observation values. 6-minute timeout; no paid API.
+- Captured four official series: SGS 22924 aggregate comparator, 22930 domestic equity, 22936 fund liabilities, 22942 domestic debt.
+- Run #1 / ID 44093241898 SUCCESS; all 4 HTTP 200; strict CSV/date/numeric/duplicate checks PASS; 381 observations per series (1995-01 to 2026-09).
+- Snapshot ID `20261117T132939Z`; durable directory `data/raw/bcb/sgs_vintage_snapshots/20261117T132939Z/`; immutable Git commit `6237baa` (manifest + four raw CSVs).
+- Raw hashes: 22924 `f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2`; 22930 `c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776`; 22936 `0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24`; 22942 `4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169`.
+- Manifest SHA-256 `4821d71e2308c7ac35ebf765c70c465baa9d9c1ec50be3ca1f44fd2af8a7ed0b`.
+- Artifact ID 14333041266; 26,480 bytes; digest `7955c0f65379130939258cbd9fcd25c5d1108d49346b4eae0bf1297132897dca`.
+- Snapshot confirms current SGS 22942 Feb-2026 = USD 2,783.2m; it is not the original publication vintage. February revision cause remains UNKNOWN / NOT_PROVEN.
+- Report `docs/BRAZIL_BCB_SGS_PROSPECTIVE_VINTAGE_SNAPSHOT_20261117.md`; structured baseline QA `data/qa/BRAZIL_BCB_SGS_PROSPECTIVE_VINTAGE_BASELINE_20261117.json`.
+- Next: preserve the next scheduled/manual point-in-time snapshot; compare common months across at least two manifests to detect revisions. Historical Feb-2026 cause remains blocked unless BCB provides immutable historical vintage/revision log. No repeated capture or re-run of the same snapshot.
+- Acceptance: first prospective baseline PASS; revision detector NOT_DONE (needs second snapshot); Brazil pilot NOT_ACCEPTED; EM panel NOT_DONE; production integration NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official free sources; no synthetic values, no overwrite; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, parser admission, seed observations and production workflows untouched.
