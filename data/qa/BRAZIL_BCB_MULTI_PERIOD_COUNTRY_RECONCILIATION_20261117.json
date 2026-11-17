@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "purpose": "research_only_bcb_multi_period_domestic_portfolio_release_crosscheck",
   "audit_date": "2026-11-17",
   "branch": "research/bcb-priority-metadata-audit-20261117",
@@ -161,7 +161,7 @@
       "2025-12",
       "2026-02"
     ],
-    "country_period_acceptance": "PARTIAL_SCOPE_UNKNOWN",
+    "country_period_acceptance": "SCOPE_SUPPORTED_VINTAGE_DIFFERENCES_CONFIRMED",
     "brazil_pilot_acceptance": "NOT_ACCEPTED",
     "em_wide_panel": "NOT_DONE",
     "production_integration": "NOT_AUTHORIZED",
@@ -171,7 +171,28 @@
     "numeric_comparisons_matched": 23,
     "series_22942_hierarchy_correction": "DOMESTIC_MARKET_DEBT_NOT_SHORT_TERM",
     "fund_22936_market_perimeter": "UNKNOWN",
-    "same_vintage_revision_bridge": "NOT_DONE"
+    "same_vintage_revision_bridge": "NOT_DONE",
+    "series_22936_scope_evidence": "Table 10 row20 funds in Brazil; footnote1 defines nonresident quota-holder share <10% of NAV in Brazil",
+    "sep_2026_latest_table_match": "PASS_ALL_THREE_COMPONENTS_WITHIN_0.1_USD_MN",
+    "historical_deltas_usd_mn": {
+      "2025-12": {
+        "22930": 116.1748415899965,
+        "22936": 211.68297984,
+        "22942": 39.37705925,
+        "equity_funds": 327.8578214299965,
+        "domestic_total": 367.2348806799966
+      },
+      "2026-02": {
+        "22930": -0.0374446199956,
+        "22936": 0.0394717499999,
+        "22942": 203.707796359998,
+        "equity_funds": 0.0020271300043,
+        "domestic_total": 203.709823490003
+      }
+    },
+    "exact_original_vintage_xlsx": "UNKNOWN; period-indexed 202601/202603 files served with HTTP Last-Modified 2026-10-19 and 2026-10-18",
+    "revision_cause": "UNKNOWN_NOT_ATTRIBUTED",
+    "latest_release_table_extract": "data/qa/BCB_DOMESTIC_PORTFOLIO_RELEASE_VINTAGE_EXTRACT_20261117.json"
   },
   "revision_context": {
     "bcb_september_2026_release_says_2025_statistics_definitive_and_2026_estimates_revised": true,
@@ -179,7 +200,7 @@
     "source_url": "https://bcb.gov.br/estatisticas/estatisticassetorexterno?kclid=KywNUB4ZA5A0GUTk"
   },
   "errors": [
-    "Earlier hierarchy map incorrectly labelled 22942 as short-term debt; corrected from official BCB catalogue. No raw data changed."
+    "Historical XLSX Last-Modified dates are Oct-2026; they are not proven immutable original-vintage files. Keep exact revision attribution UNKNOWN."
   ],
   "runtime_validation": {
     "workflow_run_number": 2,
@@ -199,8 +220,8 @@
   "perimeter_assessment": {
     "debt_22942_vs_release_domestic_debt": "SCOPE_CONFIRMED",
     "equity_22930_vs_release_domestic_equity": "SCOPE_CONFIRMED",
-    "funds_22936_vs_release_domestic_fund_shares": "SCOPE_UNKNOWN_MARKET_QUALIFIER_NOT_STATED_IN_CATALOGUE",
-    "equity_funds_composite_country_validation": "PARTIAL_NOT_ACCEPTED",
-    "total_composite_country_validation": "PARTIAL_NOT_ACCEPTED"
+    "funds_22936_vs_release_domestic_fund_shares": "SUPPORTED_BY_BCB_TABLE10_ROW20_AND_FOOTNOTE1; NOT_EXPLICIT_IN_SHORT_CATALOGUE_LABEL",
+    "equity_funds_composite_country_validation": "SCOPE_SUPPORTED_BY_TABLE10_COMPONENTS; TWO_HISTORICAL_VALUE_DIFFERENCES",
+    "total_composite_country_validation": "SCOPE_SUPPORTED; TWO_HISTORICAL_VALUE_DIFFERENCES"
   }
 }
