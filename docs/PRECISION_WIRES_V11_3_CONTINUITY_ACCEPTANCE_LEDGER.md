@@ -972,3 +972,13 @@
 - Corrected capture run #8 / ID 44036104490 PASS; artifact ID 14306134441, archive SHA-256 2d9a4808cd9e48ac21175b8a79ccf42173f57f2370086e24832e4d460afbe4ba; raw ZIP SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77.
 - Independent local inspection of downloaded artifact confirms 5,231 CSV rows and the 21-valid-observation window: 2026-10-15 121.5693 → 2026-11-13 122.6503 = +0.8892047581091633%. 2026-11-11 ND is absent, no forward-fill. Regression run #232 / ID 44036012995 PASS, 72 tests.
 - Detailed result: docs/FED_H10_20OBS_DERIVED_SERIES_RESULT_20261117.md. This is one package vintage only; second-vintage comparison and historical PIT replay NOT_DONE; classifier/production integration NOT_AUTHORIZED.
+
+
+## 2026-11-17 — Python pattern scan of existing H.10 data (no redownload)
+- Reused the exact corrected raw ZIP from capture #8 / ID 44036104490 (SHA-256 c424bcdfe0947e48d9bc3937fd3a9e82bf144e5ac6454ae95a68346196394c77). Python parsed H10_data.xml and H10_struct.xml, confirmed series descriptions, filtered OBS_STATUS=A, aligned exact dates; no synthetic values or forward fill.
+- Analyzed three separately defined indices: Broad JRXWTFB_N.B, Advanced Foreign Economies JRXWTFN_N.B, Emerging Market Economies JRXWTFO_N.B. Each 5,231 valid observations.
+- 5 prior valid obs + current (Nov 5–13): Broad +0.941681%, Advanced +1.951566%, EM -0.028413%.
+- 20 prior valid obs + current (Oct 15–Nov 13): Broad +0.889205%, Advanced +1.056856%, EM +0.726701%; EM/Advanced index ratio change -0.326702%.
+- 60 prior valid obs + current (Aug 18–Nov 13): Broad +3.082118%, Advanced +3.484809%, EM +2.692781%.
+- Latest 60 aligned daily-return correlations: Broad/Advanced 0.887519, Broad/EM 0.853091, Advanced/EM 0.516721.
+- Interpretation strictly limited to relative USD FX-basket pressure; it does not prove capital flows, FII positioning, or equity-sector attraction. No production feature authorized. Full report: docs/FED_H10_RELATIVE_DOLLAR_BASKET_PATTERN_SCAN_20261117.md (commit 8b89086a7e2968bc20a38472375ebb5922c363e8).
