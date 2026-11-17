@@ -1,0 +1,42 @@
+name: BCB Portfolio Internal Identity Audit
+
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - 'data/raw/bcb/priority_series_capture_20261117/**'
+      - 'data/raw/bcb/instrument_net_capture_20261117/**'
+      - 'scripts/research/audit_bcb_portfolio_internal_identities.py'
+      - '.github/workflows/bcb_portfolio_internal_identity_audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bcb-portfolio-internal-identity-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/bcb-priority-metadata-audit-20261117
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run strict raw-integrity and monthly identity audit
+        run: python scripts/research/audit_bcb_portfolio_internal_identities.py
+      - name: Upload machine-readable QA result
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-portfolio-internal-identity-audit-${{ github.run_id }}
+          path: data/qa/BCB_PORTFOLIO_INTERNAL_IDENTITY_AUDIT_20261118.json
+          if-no-files-found: error
+          retention-days: 90
