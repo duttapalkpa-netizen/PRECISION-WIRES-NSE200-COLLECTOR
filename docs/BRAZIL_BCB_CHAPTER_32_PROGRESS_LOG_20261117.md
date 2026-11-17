@@ -120,3 +120,15 @@ Current branch head after this work: `9813ec5b884712461aa59ec9664e66915e7bf94b`
 - Added reproducible audit script `scripts/research/audit_bcb_instrument_net_sgs.py` (commit `539efaff548f33780b28a7c041d4aa4123481018`), machine-readable QA record `data/qa/BRAZIL_BCB_INSTRUMENT_NET_QA_20261117.json` (commit `a536e3ea6c475d1fe03405fd071050ed434f972a`), and results doc (commit `4418653074ecd39e72da1187bb8c3a4d2a53b5d4`).
 - Permanent archive workflow Run #1 / ID `44077573395`: SUCCESS; archive commit `527a8d41c434609c980eb3181d491eac4fa6e822`; durable path `data/raw/bcb/instrument_net_capture_20261117/`; post-commit Git-blob re-fetch and SHA-256 PASS for all eight.
 - Instrument hierarchy coverage is now metadata-verified and raw-archived. Country-period QA remains NOT_DONE; Brazil pilot remains NOT_ACCEPTED; EM-wide panel remains NOT_DONE; production integration remains NOT_AUTHORIZED.
+
+
+## 12. 2026-11-17 — Official September-2026 country-period cross-check PASS
+- BCB official 26-Oct-2026 release reports domestic portfolio net outflows of USD 2.1bn in Sep-2026: equity/funds domestic-market outflows USD 1.7bn; domestic debt-security outflows USD 0.4bn.
+- Added exact domestic equity SGS 22930 metadata verification (BCB/Dstat, monthly, USD million, start 1995-01, BPM6 / portfolio liabilities / equities / domestic market).
+- Workflow Run #1 / ID `44077864021`: SUCCESS. Captured only missing series 22930; reused already archived 22936 and 22942 (no re-fetch of those series).
+- 22930 raw CSV: HTTP 200, 8,669 bytes, SHA-256 `c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776`.
+- Input Sep-2026 values (USD mn): 22930=-2,110.8; 22936=+416.8; 22942=-382.4.
+- Derived equity+funds net outflow = USD 1.694bn → rounds to 1.7bn; domestic debt net outflow = USD 0.3824bn → 0.4bn; total = USD 2.0764bn → 2.1bn. All three match BCB's published release at its stated USD 0.1bn precision.
+- Country-period QA: PASS for the September-2026 release comparison only.
+- Raw CSV, manifest and crosscheck report committed at `bcb_domestic_market_crosscheck_202609/`; permanent commit `446971a0da670d69e6dcb2c9efe0208ea50db572`; commit push plus post-commit SHA-256 re-fetch PASS.
+- This is a one-period validation, not full-history country-period acceptance. Brazil pilot remains NOT_ACCEPTED pending full instrument/perimeter and revision gates; EM-wide panel and production integration remain NOT_DONE / NOT_AUTHORIZED.
