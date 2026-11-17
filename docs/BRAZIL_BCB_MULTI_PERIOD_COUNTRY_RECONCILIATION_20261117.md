@@ -74,3 +74,35 @@ Capture a matched-vintage bridge for the two exceptions only. Prefer official ar
 
 ## Safety and invariants
 Research-only; ₹0 spend; official free BCB sources only. No synthetic data, no forward-fill, no invented timestamp/hash, no inferred revision cause. Keep BOP transactions distinct from IIP/CPIS positions. Do not modify Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, Hard Gate, seed observations, parser admission, or production workflows.
+
+## 2026-11-17 correction — authoritative hierarchy and scope qualification
+A re-check against the current official BCB “Temas” catalogue found that the separate hierarchy map had mislabelled the debt codes. The authoritative catalogue states:
+- 22942–22944 = debt-security liabilities negotiated in the **domestic market** (net / inflow / outflow).
+- 22945–22947 = debt-security liabilities negotiated in the **foreign market** (net / inflow / outflow).
+- 22948–22950 = foreign-market short-term debt; 22951–22953 = foreign-market long-term debt.
+Therefore 22942 is **not** a short-term-only series. The previously archived 22942 raw CSV is the correct domestic-market debt net series. The hierarchy map was corrected in a separate commit; no raw data changed.
+
+A second scope qualification remains: BCB's official topic catalogue labels 22930 as domestic-market equity liabilities, but labels 22936 only as investment-fund liabilities, without a domestic/foreign-market qualifier in the catalogue entry. Accordingly:
+- Debt comparison (22942 against the release's domestic-market debt component): scope confirmed.
+- Equity comparison (22930 against domestic-market equity): scope confirmed.
+- Investment-fund component (22936 against domestic-market fund shares): market perimeter UNKNOWN until an authoritative BCB definition establishes the match.
+- The arithmetic 23/27 numerical comparison result is reproducible, but it is **not** a full country-perimeter validation. The 7/9 three-number matches must not be interpreted as Brazil domestic portfolio country validation PASS.
+
+### Revised acceptance
+| Gate | Revised status |
+|---|---|
+| Correct domestic-market debt series mapping (22942) | PASS |
+| Correct domestic-market equity series mapping (22930) | PASS |
+| Investment-fund market perimeter (22936) | UNKNOWN |
+| Nine-period numeric reproduction | PASS |
+| Debt component comparison at release precision | 8/9 numeric matches; Feb-2026 unresolved |
+| Equity+funds composite perimeter | PARTIAL / UNKNOWN |
+| Total domestic-market portfolio perimeter | PARTIAL / NOT_ACCEPTED |
+| Dec-2025 and Feb-2026 same-vintage revision bridge | NOT_DONE |
+| Brazil pilot acceptance | NOT_ACCEPTED |
+| EM-wide panel | NOT_DONE |
+| Production integration | NOT_AUTHORIZED |
+
+Authority: BCB official topic catalogue https://dadosabertos.bcb.gov.br/pages/temas; official dataset page for SGS 22942 https://dadosabertos.bcb.gov.br/dataset/22942-investimentos-em-carteira---titulos-de-renda-fixa---passivos---negociados-no-mercado-domestic; official dataset page for SGS 22936 https://dadosabertos.bcb.gov.br/dataset/22936-sgs.
+
+Next: obtain an authoritative BCB definition for the market perimeter of 22936, then obtain same-vintage evidence for the Dec-2025 and Feb-2026 debt/equity/fund values. No inference from numerical coincidence, no blanket revision attribution, no raw overwrite.
