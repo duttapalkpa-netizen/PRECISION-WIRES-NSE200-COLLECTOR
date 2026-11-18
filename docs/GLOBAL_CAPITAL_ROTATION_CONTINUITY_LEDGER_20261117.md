@@ -582,3 +582,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Each of nine archive-to-IMF series has 180/293 matches for 1995-01–2009-12 and 113/293 mismatches for 2010-01–2019-05.
 - First Run #15 SGS component rollup flags (128/115/96 mismatches) were false positives from using 0.051 on rounded SGS values; superseded by corrected Run #17. Correct tolerance is 0.151 for SGS rollups only; archive/IMF and cross-source comparisons remain 0.051.
 - Next: official BCB/IMF source-lineage and revision matrix for all nine series, dataflow/domain/counterpart/vintage, and 2010-01 transition. Keep source-specific values separate and all admission gates NOT_AUTHORIZED.
+
+
+
+## 2026-11-18 — Chapter 35 Part-8: IMF registration vs BCB payload Dataflow ID
+- Official IMF registrations page lists the BCB URL under `IMF:BOP6(1.0)`, provider `IMF:BR1`, last updated 2026-10-26T11:47:29Z. The actual BCB XML Structure namespace says `IMF:BOP_BPM6(1.0)`. IMF constraints catalogue lists BOP6_CONSTRAINT -> BOP6 and BOP_BP6_CONSTRAINT -> BOP_BPM6. No alias/mapping is proven; exact relationship UNKNOWN.
+- BCB Methodological Note 1 says BPM6 release began April 2015; prior releases since 2001 used BPM5. The observed divergence starts 2010-01, before BPM6 public release. This timing is a key source-lineage clue but does not establish the cause.
+- BCB 2015 Administration Report says BCB retained gross flow compilation/publication for analytical value while aligning to BPM6. SGS 22905 metadata: BCB/Depec, monthly, US$ million, temporal coverage from 1995-01.
+- Added `qa/audit_imf_bop6_registration_alignment.py` and three tests; commits e0515734c684defcd1d6b9c8b95710de0234d59f / ceac9031df02e851ec117a904e4edf5f3a9ffdf2. Workflow now captures registrations page, BOP6 dataflow/constraint, and compares to BOP_BPM6 metadata plus BCB payload namespace; commits 78b8bb9a5fd3b45093359af05e9fb1bd6a2bac64, 9b36aafd60cafafd6f3cab9a844c82e4e2631f8e, bd6a40540c4e24d6ca954241e125c5fa09973df7.
+- Runs #18 (44281693103) and #19 (44281713846) precede final step integration. Await Run #20 to verify the registration alignment report and artifact.
+- 2010-01 divergence remains BLOCKED/UNKNOWN; all flow admission remains NOT_AUTHORIZED.
