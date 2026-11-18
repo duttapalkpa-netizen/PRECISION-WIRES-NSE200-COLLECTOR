@@ -644,3 +644,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report `docs/IMF_BRAZIL_PARSER_REGISTRY_NAMESPACE_CORRECTION_PART19_20261118.md`; commit `b77d39c5406217d37fa0a24b4b5ca2137b323d0a`.
 - PR #39 remains open/draft/unmerged. Latest PR-triggered workflow-run lookup returned empty; Actions NOT_VERIFIED. Formal XSD validation NOT_DONE; complete official XSD bundle/SHA-256 manifest NOT_DONE; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
 - No production changes, merge, workflow dispatch, paid API, market-data modification or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-20: SDMX 2.1 schema dependency scope audit
+- Re-read pinned official SDMX-ML v2.1 source at `sdmx-twg/sdmx-ml@v2.1`, tag commit `bc28a2255966a3b8d33ec8f61e19f42e6e193284`.
+- Recursive Git tree returned `truncated=false` and exactly 58 `schemas/*.xsd` paths. This is inventory evidence only; not a local bundle and not raw-byte SHA-256.
+- Inspected 12 key XSDs and mapped the SDMXMessage root direct imports and Registry branch include/import relationships. Key point: SDMXMessage.xsd directly imports message footer, common, structure, query, registry, generic/structure-specific data, generic/structure-specific metadata and xml schemas; do not call the registry subset the full root dependency closure.
+- Verified from pinned XSDs that RegistrationRequest/@action is required and typed common:ActionType; official enumeration is exactly Append, Replace, Delete, Information. Parser allow-list matches. Confirmed RegistryBase Datasource choice includes SimpleDataSource xs:anyURI and PA reference type permits URN.
+- Full 58-file bundle archive NOT_DONE; complete transitive closure NOT_DONE; raw-byte SHA-256 manifest NOT_DONE; offline formal XSD validation NOT_DONE. Only 12 key schema files inspected. No formal validator executed.
+- Report `docs/IMF_BRAZIL_SDMX21_SCHEMA_DEPENDENCY_SCOPE_AUDIT_PART20_20261118.md`; commit `6f97243c58a3fc60adee486282105861244d1790`.
+- No parser code changes in Part-20; Part-19 namespace fix retained. PR #39 remains open/draft/unmerged. GitHub Actions status remains NOT_VERIFIED. Real Brazil transaction evidence/chronology NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No production changes, merge, workflow dispatch, paid API, market-data modification, macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
