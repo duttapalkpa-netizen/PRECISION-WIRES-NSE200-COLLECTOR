@@ -18,6 +18,9 @@ on:
       - ".github/workflows/imf_registry_transaction_resolver.yml"
       - "scripts/research/imf_registry_transaction_resolver.py"
       - "scripts/research/imf_transaction_resolver_trigger.txt"
+      - ".github/workflows/treasury_macro_history_capture.yml"
+      - "scripts/research/capture_treasury_yield_history.py"
+      - "scripts/research/treasury_macro_capture_trigger.txt"
   schedule:
     - cron: "30 4 * * 1-5"
 
