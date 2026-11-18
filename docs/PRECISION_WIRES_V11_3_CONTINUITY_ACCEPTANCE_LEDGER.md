@@ -655,3 +655,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report `docs/IMF_BRAZIL_SDMX21_SCHEMA_DEPENDENCY_SCOPE_AUDIT_PART20_20261118.md`; commit `6f97243c58a3fc60adee486282105861244d1790`.
 - No parser code changes in Part-20; Part-19 namespace fix retained. PR #39 remains open/draft/unmerged. GitHub Actions status remains NOT_VERIFIED. Real Brazil transaction evidence/chronology NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
 - No production changes, merge, workflow dispatch, paid API, market-data modification, macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-21: required SDMX message Header guard
+- Pinned official SDMX-ML v2.1 `SDMXMessage.xsd` defines RegistryInterfaceType as a sequence with required Header first, followed by an optional payload choice.
+- Parser previously checked root namespace and direct payload count but did not enforce the required direct Header, its first-child position, or uniqueness. Added guard: exactly one direct message-namespace Header and it must be first; otherwise QUARANTINE/FAIL.
+- Added three regression tests: missing Header, Header after payload, duplicate Header. Test execution NOT_VERIFIED; GitHub Actions NOT_VERIFIED. Do not claim test PASS.
+- Parser commit `2b91d3698518b487cf980e89479223cc65632f0b`, blob `85f089d5f9c6f6f1376ab5bd5705c064334cc14c`; tests commit `9247ae489fabc9cbfa383068419ff73a8731f8e2`, blob `636d171940b0b654a9185ebb97fb08f3c3af6ae9`.
+- Report `docs/IMF_BRAZIL_PARSER_REQUIRED_HEADER_GUARD_PART21_20261118.md`; commit `da668b62bf982be52f4d9bdf3525a0fbd7aa5d07`.
+- Local network DNS resolution failed, preventing a byte-exact schema bundle download and local validator run. Full 58-file archive, raw-byte SHA-256 manifest, complete dependency closure and formal XSD validation remain NOT_DONE. This is not replaced by Git tree blob SHAs.
+- PR #39 remains research-only, open/draft/unmerged. Brazil event chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No production changes, merge, workflow dispatch, paid API, market-data modification, macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
