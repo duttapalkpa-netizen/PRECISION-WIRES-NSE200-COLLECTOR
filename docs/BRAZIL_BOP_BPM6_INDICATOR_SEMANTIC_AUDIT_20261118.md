@@ -579,3 +579,34 @@ The current BCB SGS and archived BCB monthly workbook are internally consistent 
 Build a source-lineage/revision matrix from official BCB/IMF documentation for each of the nine indicator codes, Dataflow `BOP_BPM6`, `DATA_DOMAIN=BOP6`, `COUNTERPART_AREA=W1`, publication/vintage timestamps and the 2010-01 transition. Distinguish the BCB historical workbook's 2019 member timestamp from formal publication/revision dates. Do not derive any Brazil portfolio panel or Global EM aggregate until source lineage and quality/status are resolved.
 
 All admissions remain NOT_AUTHORIZED. No selector, ranking, CORE-672, Engines A–E or trading-signal changes.
+
+
+
+## Part-8 — IMF registration vs BCB payload Dataflow identity (2026-11-18)
+
+### New official registration finding
+The IMF SDMX Central official registrations catalogue lists the BCB source URL under Dataflow `IMF:BOP6(1.0)`, Data Provider `IMF:BR1`, last updated `2026-10-26T11:47:29Z`. The exact URL is the same BCB XML payload used in this audit.
+- Official catalogue: https://sdmxcentral.imf.org/data/registrations.html
+- Search evidence: IMF registrations listing for Brazil (BOP6 / BR1).
+
+However, the actual BCB XML `Structure/@namespace` in the downloaded payload declares `Dataflow=IMF:BOP_BPM6(1.0)`. The IMF constraints catalogue lists `BOP6_CONSTRAINT` attached to `BOP6[1.0]` and `BOP_BP6_CONSTRAINT` attached to `BOP_BPM6[1.0]`. This is a registration-vs-payload identifier difference. Do not infer that BOP6 and BOP_BPM6 are aliases, or choose one based on numerical fit. The actual relationship remains UNKNOWN until both dataflow structures, constraints and source registration semantics are compared.
+
+### Official methodological timing/context
+BCB Methodological Note 1 states that BCB began releasing BOP/IIP statistics under BPM6 in April 2015; since 2001 it had released under BPM5. The observed SDMX divergence starts at 2010-01, which predates the public BPM6 release date. This does not prove a fault: historical backcasting, revisions and the registration/payload identity difference are still possible, but no one explanation is established. BCB's 2015 Administration Report also states that it retained gross-flow compilation/publication for analytical value while adopting BPM6's net asset/liability framework. The BCB SGS 22905 metadata describes monthly US$ million series with temporal coverage from 1995-01 and source BCB/Depec.
+
+Official sources:
+- BCB BPM6 adoption note: https://www.bcb.gov.br/ingles/economic/nm1bpm6i.pdf
+- BCB 2015 Administration Report, external-account methodology: https://bcb.gov.br/Pre/Surel/RelAdmBC/2015/index.html
+- BCB SGS 22905 metadata: https://opendata.bcb.gov.br/dataset/22905-portfolio-investment---monthly---net
+- IMF registration catalogue: https://sdmxcentral.imf.org/data/registrations.html
+- IMF constraints catalogue: https://sdmxcentral.imf.org/data/constraints.html
+
+### New reproducible registration-alignment audit
+- Added `qa/audit_imf_bop6_registration_alignment.py` to parse the official registration row, BOP6 dataflow and constraint, BOP_BPM6 dataflow and constraint, and the actual BCB XML namespace. It reports identifier alignment without asserting an alias.
+- Added three tests for BOP6/BR1 registration parsing, missing-row rejection and BCB payload namespace parsing.
+- Script commit `e0515734c684defcd1d6b9c8b95710de0234d59f`; tests commit `ceac9031df02e851ec117a904e4edf5f3a9ffdf2`.
+- Workflow additions capture the IMF registrations HTML, IMF:BOP6:1.0 dataflow and IMF:BOP6_CONSTRAINT:1.0, then compare them with existing BOP_BPM6 metadata and the actual BCB XML. Workflow commits `78b8bb9a5fd3b45093359af05e9fb1bd6a2bac64`, `9b36aafd60cafafd6f3cab9a844c82e4e2631f8e`, `bd6a40540c4e24d6ca954241e125c5fa09973df7`.
+- Runs #18 `44281693103` and #19 `44281713846` were triggered before the final acquisition/audit step was committed; Run #20 (latest final integration) must be inspected for runtime acceptance.
+
+### Current decision
+The 2010-01 break remains BLOCKED / UNKNOWN. Keep all source vintages and Dataflow identities separate. No Brazil portfolio-flow panel, Global EM aggregate or trading signal admission. No selector, CORE-672 or engine changes.
