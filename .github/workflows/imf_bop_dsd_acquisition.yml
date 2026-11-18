@@ -9,6 +9,7 @@ on:
       - "qa/audit_brazil_bop_indicator_codes.py"
       - "qa/build_brazil_bop_indicator_crosswalk.py"
       - "qa/audit_brazil_bop_portfolio_reconciliation.py"
+      - "qa/audit_brazil_bop_sgs_crosscheck.py"
       - "tests/test_brazil_bop_*.py"
   workflow_dispatch:
 
@@ -555,6 +556,41 @@ jobs:
             --output evidence/brazil_bop/portfolio_reconciliation_audit.json
           sha256sum evidence/brazil_bop/portfolio_reconciliation_audit.json \
             > evidence/brazil_bop/PORTFOLIO_RECONCILIATION_SHA256SUMS
+
+      - name: Capture official BCB SGS portfolio investment reference series
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR="evidence/brazil_bop/sgs"
+          mkdir -p "$DIR"
+          for SGS in 22905 22906 22924; do
+            URL="https://api.bcb.gov.br/dados/serie/bcdata.sgs.\${SGS}/dados?formato=json"
+            ITEM="$DIR/\${SGS}"
+            mkdir -p "$ITEM"
+            printf '%s\n' "$URL" > "$ITEM/request_url.txt"
+            date -u --iso-8601=ns > "$ITEM/request_started_at_utc.txt"
+            curl --fail --location --silent --show-error --retry 2 --retry-all-errors \
+              --connect-timeout 15 --max-time 75 \
+              --dump-header "$ITEM/response_headers.txt" \
+              --output "$ITEM/raw.json" \
+              --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+              "$URL" > "$ITEM/transfer_metadata.txt"
+            sha256sum "$ITEM/raw.json" > "$ITEM/SHA256SUMS"
+            cp "$ITEM/raw.json" "$DIR/\${SGS}.json"
+          done
+
+      - name: Compare BCB SGS official series with IMF SDMX portfolio indicators
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_brazil_bop_sgs_crosscheck.py \
+            --imf-xml evidence/brazil_bop/response.xml \
+            --sgs-dir evidence/brazil_bop/sgs \
+            --output evidence/brazil_bop/sgs_cross_source_reconciliation.json
+          sha256sum evidence/brazil_bop/sgs_cross_source_reconciliation.json \
+            > evidence/brazil_bop/SGS_CROSS_SOURCE_SHA256SUMS
 
       - name: Upload raw response and QA evidence
         if: always()
