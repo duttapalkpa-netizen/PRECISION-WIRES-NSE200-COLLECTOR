@@ -1,50 +1,99 @@
 import unittest
-from scripts.research.imf_brazil_event_parser import inspect_bytes, RI_NS, BCB_URL
+from scripts.research.imf_brazil_event_parser import (
+    inspect_bytes, RI_NS, REG_NS, BCB_URL, BRAZIL_PA_URN
+)
+
 
 def doc(body):
-    return (f'<RegistryInterface xmlns="{RI_NS}">{body}</RegistryInterface>').encode()
+    return (f'<RegistryInterface xmlns="{RI_NS}"><Header/>{body}</RegistryInterface>').encode()
+
+
+def registration(action="Replace", pa="", datasource=""):
+    return (f'<SubmitRegistrationsRequest xmlns="{RI_NS}" xmlns:r="{REG_NS}">'
+            f'<r:RegistrationRequest action="{action}">'
+            f'<r:Registration><r:ProvisionAgreement>{pa}</r:ProvisionAgreement>'
+            f'<r:Datasource>{datasource}</r:Datasource></r:Registration>'
+            f'</r:RegistrationRequest></SubmitRegistrationsRequest>')
+
 
 class ParserTests(unittest.TestCase):
-    def test_exact_provider_candidate_never_auto_pass(self):
-        x = doc('<SubmitRegistrationsRequest><Registration><DataProviderRef>IMF:BR1</DataProviderRef><DataflowRef>IMF:BOP6(1.0)</DataflowRef></Registration></SubmitRegistrationsRequest>')
-        r = inspect_bytes(x)
+    def test_exact_brazil_pa_candidate_never_auto_pass(self):
+        r = inspect_bytes(doc(registration(pa=f'<r:Ref xmlns:r="{REG_NS}">{BRAZIL_PA_URN}</r:Ref>')))
         self.assertTrue(r["brazil_registration_candidate"])
         self.assertEqual(r["acceptance"], "REQUIRES_MANUAL_EVIDENCE_REVIEW")
+        self.assertTrue(r["registrations"][0]["action_enum_valid"])
 
-    def test_exact_bcb_url_candidate(self):
-        x = doc(f'<SubmitRegistrationsRequest><Registration><SimpleDataSource>{BCB_URL}</SimpleDataSource></Registration></SubmitRegistrationsRequest>')
-        self.assertTrue(inspect_bytes(x)["brazil_registration_candidate"])
-
-    def test_url_embedded_in_narrative_is_not_exact_match(self):
-        x = doc(f'<SubmitRegistrationsRequest><Registration><Description>See {BCB_URL} for context</Description></Registration></SubmitRegistrationsRequest>')
-        self.assertFalse(inspect_bytes(x)["brazil_registration_candidate"])
-
-    def test_registration_action_attribute_is_captured(self):
-        x = doc('<SubmitRegistrationsRequest><RegistrationRequest action="Replace"><DataProviderRef>IMF:BR1</DataProviderRef><DataflowRef>IMF:BOP6(1.0)</DataflowRef></RegistrationRequest></SubmitRegistrationsRequest>')
-        r = inspect_bytes(x)
+    def test_exact_bcb_datasource_candidate(self):
+        r = inspect_bytes(doc(registration(datasource=f'<r:SimpleDataSource xmlns:r="{REG_NS}">{BCB_URL}</r:SimpleDataSource>')))
         self.assertTrue(r["brazil_registration_candidate"])
-        self.assertIn("Replace", r["action_candidates"])
+        self.assertTrue(r["registrations"][0]["bcb_url_exact_match"])
+
+    def test_narrative_outside_registration_does_not_match(self):
+        inner = registration().replace(f'<SubmitRegistrationsRequest xmlns="{RI_NS}" xmlns:r="{REG_NS}">', '', 1).replace('</SubmitRegistrationsRequest>', '', 1)
+        body = f'<SubmitRegistrationsRequest xmlns="{RI_NS}" xmlns:r="{REG_NS}"><Description>{BCB_URL}</Description>{inner}</SubmitRegistrationsRequest>'
+        self.assertFalse(inspect_bytes(doc(body))["brazil_registration_candidate"])
+
+    def test_brazil_pa_text_outside_registration_does_not_match(self):
+        inner = registration().replace(f'<SubmitRegistrationsRequest xmlns="{RI_NS}" xmlns:r="{REG_NS}">', '', 1).replace('</SubmitRegistrationsRequest>', '', 1)
+        body = f'<SubmitRegistrationsRequest xmlns="{RI_NS}" xmlns:r="{REG_NS}"><Annotation>{BRAZIL_PA_URN}</Annotation>{inner}</SubmitRegistrationsRequest>'
+        self.assertFalse(inspect_bytes(doc(body))["brazil_registration_candidate"])
+
+    def test_missing_required_header_is_quarantined(self):
+        raw = f'<RegistryInterface xmlns="{RI_NS}">{registration()}</RegistryInterface>'.encode()
+        self.assertEqual(inspect_bytes(raw)["classification"], "QUARANTINE")
+
+    def test_header_after_payload_is_quarantined(self):
+        raw = f'<RegistryInterface xmlns="{RI_NS}">{registration()}<Header/></RegistryInterface>'.encode()
+        self.assertEqual(inspect_bytes(raw)["classification"], "QUARANTINE")
+
+    def test_duplicate_header_is_quarantined(self):
+        raw = f'<RegistryInterface xmlns="{RI_NS}"><Header/><Header/>{registration()}</RegistryInterface>'.encode()
+        self.assertEqual(inspect_bytes(raw)["classification"], "QUARANTINE")
+
+    def test_message_namespace_children_are_not_mistaken_for_registry_elements(self):
+        body = f'<SubmitRegistrationsRequest xmlns="{RI_NS}"><RegistrationRequest action="Replace"><Registration><ProvisionAgreement><Ref>{BRAZIL_PA_URN}</Ref></ProvisionAgreement><Datasource><SimpleDataSource>{BCB_URL}</SimpleDataSource></Datasource></Registration></RegistrationRequest></SubmitRegistrationsRequest>'
+        result = inspect_bytes(doc(body))
+        self.assertEqual(result["classification"], "QUARANTINE")
+        self.assertFalse(result["brazil_registration_candidate"])
+
+    def test_action_enum_is_preserved_and_checked(self):
+        for action in ("Append", "Replace", "Delete", "Information"):
+            r = inspect_bytes(doc(registration(action=action, pa=f'<r:Ref xmlns:r="{REG_NS}">{BRAZIL_PA_URN}</r:Ref>')))
+            self.assertTrue(r["registrations"][0]["action_enum_valid"], action)
+            self.assertEqual(r["registrations"][0]["action_raw"], action)
+        r = inspect_bytes(doc(registration(action="ReRegister", pa=f'<r:Ref xmlns:r="{REG_NS}">{BRAZIL_PA_URN}</r:Ref>')))
+        self.assertFalse(r["registrations"][0]["action_enum_valid"])
+
+    def test_source_last_updated_not_renamed_as_event_timestamp(self):
+        body = registration(pa=f'<r:Ref xmlns:r="{REG_NS}">{BRAZIL_PA_URN}</r:Ref>').replace(
+            '<r:Registration>', '<r:Registration lastUpdated="2026-10-26T11:47:29Z">')
+        r = inspect_bytes(doc(body))
+        self.assertEqual(r["registrations"][0]["source_last_updated"], "2026-10-26T11:47:29Z")
+        self.assertNotIn("transaction_timestamp", r["registrations"][0])
 
     def test_structure_request_is_not_registration(self):
-        x = doc('<SubmitStructureRequest><Text>Brazil IMF:BR1</Text></SubmitStructureRequest>')
-        r = inspect_bytes(x)
+        r = inspect_bytes(doc(f'<SubmitStructureRequest xmlns="{RI_NS}"><Text>Brazil IMF:BR1</Text></SubmitStructureRequest>'))
         self.assertEqual(r["classification"], "STRUCTURE_EVENT")
         self.assertFalse(r["brazil_registration_candidate"])
 
     def test_chile_is_not_brazil(self):
-        x = doc('<SubmitRegistrationsRequest><Registration><DataProviderRef>IMF:CL2</DataProviderRef><SimpleDataSource>https://si3.bcentral.cl/data.xml</SimpleDataSource></Registration></SubmitRegistrationsRequest>')
-        self.assertFalse(inspect_bytes(x)["brazil_registration_candidate"])
+        r = inspect_bytes(doc(registration(datasource=f'<r:SimpleDataSource xmlns:r="{REG_NS}">https://si3.bcentral.cl/data.xml</r:SimpleDataSource>')))
+        self.assertFalse(r["brazil_registration_candidate"])
 
     def test_bop6_alone_is_not_brazil(self):
-        x = doc('<SubmitRegistrationsRequest><Registration><DataflowRef>IMF:BOP6(1.0)</DataflowRef></Registration></SubmitRegistrationsRequest>')
-        self.assertFalse(inspect_bytes(x)["brazil_registration_candidate"])
+        r = inspect_bytes(doc(registration(pa=f'<r:Ref xmlns:r="{REG_NS}">IMF:BOP6(1.0)</r:Ref>')))
+        self.assertFalse(r["brazil_registration_candidate"])
 
     def test_wrong_namespace_quarantined(self):
-        x = b'<RegistryInterface><SubmitRegistrationsRequest/></RegistryInterface>'
-        self.assertEqual(inspect_bytes(x)["classification"], "QUARANTINE")
+        self.assertEqual(inspect_bytes(b'<RegistryInterface><SubmitRegistrationsRequest/></RegistryInterface>')["classification"], "QUARANTINE")
 
     def test_malformed_xml_quarantined(self):
         self.assertEqual(inspect_bytes(b'<RegistryInterface>')["classification"], "QUARANTINE")
+
+    def test_nested_fake_request_not_accepted(self):
+        body = f'<SubmitRegistrationsRequest xmlns="{RI_NS}"><Annotation><SubmitRegistrationsRequest>{registration(pa=f"<r:Ref xmlns:r=\'{REG_NS}\'>{BRAZIL_PA_URN}</r:Ref>")}</SubmitRegistrationsRequest></Annotation></SubmitRegistrationsRequest>'
+        self.assertFalse(inspect_bytes(doc(body))["brazil_registration_candidate"])
+
 
 if __name__ == "__main__":
     unittest.main()

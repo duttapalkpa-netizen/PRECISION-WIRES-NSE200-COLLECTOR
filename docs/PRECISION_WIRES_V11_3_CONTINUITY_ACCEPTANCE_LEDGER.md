@@ -596,3 +596,278 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance: official schema catalogue discovery PASS; IMF guide semantics PASS; pinned third-party schema mirror inspection PASS (mirror-only); official raw XSD hash archive NOT_DONE; XSD fixture validation NOT_DONE; parser correction NOT_DONE; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM admission BLOCKED.
 - Next highest-value task: obtain official raw 2.1 XSD bytes and hash them; then build offline schema-validation tests for parser fixtures and patch parser structure/action handling only against verified official schema plus a genuine owner-exported Brazil transaction. No credentials needed.
 - No code/tests/workflow/collector/production changes, no PR merge, no repeated RSS/BCB download, no macro weights, no trading admission, no spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 x 12), Engines A-E unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-16: IMF Brazil event parser schema-path hardening
+- QA-only branch: `qa/imf-brazil-parser-schema-path-hardening`; no merge or production deployment.
+- Parser updated: `scripts/research/imf_brazil_event_parser.py`, blob SHA `e0df76a518fd7d5f9149c1675f53ab4e199b6c94`.
+- Tests updated: `tests/test_imf_brazil_event_parser.py`, blob SHA `e875ee62a4aea19238ae55e728bd299f889aa1a3`.
+- New report: `docs/IMF_BRAZIL_EVENT_PARSER_SCHEMA_PATH_HARDENING_PART16_20261118.md`, commit `41c4ada25bc0d792bf3b90d05d5c8a75a9c0abd0`.
+- Parser now requires a direct RegistryInterface request payload and schema-shaped RegistrationRequest -> Registration -> ProvisionAgreement/Datasource path. Exact Brazil PA URN / exact BCB URL / exact provider evidence is only evaluated inside those relevant subtrees; annotations/narrative and nested fake requests cannot trigger a candidate.
+- Action is preserved verbatim and validated against mirror-derived SDMX 2.1 enum Append/Replace/Delete/Information. No action-to-create/re-register mapping is inferred.
+- Registration/@lastUpdated is retained as source_last_updated, never called transaction_timestamp.
+- Local isolated test run: 12 passed, 0 failed (0.001 sec). Synthetic fixture tests only; NOT XSD validation, NOT GitHub Actions, NOT real Brazil event evidence.
+- Official SDMX catalogue confirms the 2.1 XSD family, but official raw XSD bytes/hash remain NOT_DONE; direct download failed. Third-party mirror provenance remains explicit.
+- Acceptance: code hardening PASS (QA branch only); local fixtures PASS 12/12; official raw XSD hash NOT_DONE; formal XSD validation NOT_DONE; GitHub Actions NOT_VERIFIED; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM admission BLOCKED.
+- No merge, no production integration, no full NSE collector, no repeat RSS/BCB acquisition, no paid API, no macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 x 12), Engines A-E unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-17: official SDMX 2.1 schema source resolution
+- Official source resolved: SDMX Technical Standards Working Group repository `sdmx-twg/sdmx-ml`, immutable release tag `v2.1`, tag target commit `bc28a2255966a3b8d33ec8f61e19f42e6e193284`. Official release is “SDMX-ML v2.1 Schemas and Samples, 2020”; official SDMX schema catalogue lists the 2.1 family.
+- Official `schemas/` directory enumerated: 58 XSD files. Key raw files fetched/inspected include SDMXMessage, SDMXRegistry, SDMXRegistryBase, SDMXRegistryRegistration, SDMXRegistryStructure, SDMXRegistrySubscription, SDMXCommon, SDMXCommonReferences, SDMXStructure, SDMXStructureBase, xml.xsd. Their Git blob SHAs and sizes are recorded in Part-17; Git blob SHAs are not SHA-256.
+- Schema dependency path independently confirmed: SDMXMessage imports SDMXRegistry; SDMXRegistry includes RegistryBase/Registration/Structure/Subscription; RegistryRegistration includes RegistryBase and imports Common/Structure.
+- Report: `docs/IMF_BRAZIL_OFFICIAL_SDMX21_SCHEMA_SOURCE_RESOLUTION_PART17_20261118.md`; commit `08dff56e56b069453ad5a34fa52d63cf800faa6f`.
+- Acceptance: official v2.1 tag/commit PASS; directory enumeration 58 XSD PASS; key XSD retrieval/inspection PASS; complete bundle archive NOT_DONE; per-file SHA-256 manifest NOT_DONE; complete local dependency closure NOT_DONE; offline formal XSD validation NOT_DONE.
+- Important precision: the official xml.sdmx.org raw URL fetch still returned cache miss in this session; however, official SDMX TWG release tag is now a verified authoritative source. No SHA-256 is claimed. Git blob SHA must not be relabelled SHA-256.
+- Part-16 parser remains QA-only on branch `qa/imf-brazil-parser-schema-path-hardening`; PR #39 rechecked open, draft=true, merged=false. No Actions run asserted.
+- Brazil real transaction fixture and PA revision chronology remain NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch remains CONFIRMED/UNRESOLVED; Brazil/EM admission BLOCKED. No production changes, merge, deployment, macro weights, paid API or trading admission.
+- Next: materialize all 58 pinned official XSD raw files; compute SHA-256 from actual bytes; write manifest; resolve all includes/imports locally; run offline XSD validation against existing fixtures. Require genuine Brazil owner-exported event data for chronology. UNKNOWN is not PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-18: parser QA pull-request trigger enablement
+- Found existing `.github/workflows/imf_brazil_event_parser_qa.yml` had `workflow_dispatch` and `push: branches: [main]` only; it did not automatically run for PR #39.
+- Added narrow `pull_request` trigger targeting main with path filters limited to parser, tests, and this workflow. Preserved manual dispatch, main push trigger, read-only contents permission, Python 3.12, 3-minute timeout, and offline unittest command.
+- Workflow commit `1c76b0f6241d1fdcc8be74917f2632a629438ce3`; verified workflow blob `e71c4e27dc336816e7b102de96d6b361da1969f6`.
+- New report `docs/IMF_BRAZIL_PARSER_QA_PULL_REQUEST_TRIGGER_PART18_20261118.md`; commit `80f3e6351088525840cd2418e9b9f13689ada91c`.
+- PR #39 remains open/draft/unmerged. The available PR-triggered workflow-run lookup returned an empty list at verification time; GitHub Actions run remains NOT_VERIFIED. Do not claim CI PASS.
+- Formal XSD validation and complete official XSD bundle/hash manifest remain NOT_DONE; genuine Brazil transaction evidence NOT_DONE; chronology UNKNOWN; BOP6/BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No dispatch, merge, production integration, external API, spend or market data changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-19: SDMX registry namespace parser correction
+- Critical defect found by reading pinned official SDMX-ML v2.1 schemas: RegistryInterface and direct SubmitRegistrationsRequest/SubmitStructureRequest are message namespace, but typed RegistrationRequest, Registration, ProvisionAgreement and Datasource children are registry namespace.
+- Part-16 parser helper incorrectly required the message namespace for all nested children; its synthetic fixtures also inherited the message namespace throughout. Such tests could pass while schema-correct registry elements were missed.
+- Fixed parser: added REG_NS and made children_named match registry namespace. Rebuilt fixtures with explicit r: registry namespace; repaired narrative negative tests and added a wrong-namespace lookalike quarantine test.
+- Parser commit `bfb8aa61a1f2776642523eaa6535c370807b90a8`, blob `6b55c553870a0164da315975107c760394fbc044`; tests commit `bf839e2a6a764674c07edb732e59cb3f79beac8c`, blob `afc6da903771697f98a2d8e84407cf79f188e3f1`.
+- Official schema basis: pinned `sdmx-twg/sdmx-ml@v2.1`, tag target commit `bc28a2255966a3b8d33ec8f61e19f42e6e193284`; inspected SDMXMessage.xsd, SDMXRegistryRegistration.xsd and SDMXRegistryBase.xsd.
+- Local isolated replay of fetched parser logic and all 13 fixture scenarios: 13 passed, 0 failed. This is not GitHub Actions and not formal XSD validation. Targeted XML probe confirmed the message/registry namespace split and exact PA/BCB subtree evidence.
+- Report `docs/IMF_BRAZIL_PARSER_REGISTRY_NAMESPACE_CORRECTION_PART19_20261118.md`; commit `b77d39c5406217d37fa0a24b4b5ca2137b323d0a`.
+- PR #39 remains open/draft/unmerged. Latest PR-triggered workflow-run lookup returned empty; Actions NOT_VERIFIED. Formal XSD validation NOT_DONE; complete official XSD bundle/SHA-256 manifest NOT_DONE; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No production changes, merge, workflow dispatch, paid API, market-data modification or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-20: SDMX 2.1 schema dependency scope audit
+- Re-read pinned official SDMX-ML v2.1 source at `sdmx-twg/sdmx-ml@v2.1`, tag commit `bc28a2255966a3b8d33ec8f61e19f42e6e193284`.
+- Recursive Git tree returned `truncated=false` and exactly 58 `schemas/*.xsd` paths. This is inventory evidence only; not a local bundle and not raw-byte SHA-256.
+- Inspected 12 key XSDs and mapped the SDMXMessage root direct imports and Registry branch include/import relationships. Key point: SDMXMessage.xsd directly imports message footer, common, structure, query, registry, generic/structure-specific data, generic/structure-specific metadata and xml schemas; do not call the registry subset the full root dependency closure.
+- Verified from pinned XSDs that RegistrationRequest/@action is required and typed common:ActionType; official enumeration is exactly Append, Replace, Delete, Information. Parser allow-list matches. Confirmed RegistryBase Datasource choice includes SimpleDataSource xs:anyURI and PA reference type permits URN.
+- Full 58-file bundle archive NOT_DONE; complete transitive closure NOT_DONE; raw-byte SHA-256 manifest NOT_DONE; offline formal XSD validation NOT_DONE. Only 12 key schema files inspected. No formal validator executed.
+- Report `docs/IMF_BRAZIL_SDMX21_SCHEMA_DEPENDENCY_SCOPE_AUDIT_PART20_20261118.md`; commit `6f97243c58a3fc60adee486282105861244d1790`.
+- No parser code changes in Part-20; Part-19 namespace fix retained. PR #39 remains open/draft/unmerged. GitHub Actions status remains NOT_VERIFIED. Real Brazil transaction evidence/chronology NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No production changes, merge, workflow dispatch, paid API, market-data modification, macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-21: required SDMX message Header guard
+- Pinned official SDMX-ML v2.1 `SDMXMessage.xsd` defines RegistryInterfaceType as a sequence with required Header first, followed by an optional payload choice.
+- Parser previously checked root namespace and direct payload count but did not enforce the required direct Header, its first-child position, or uniqueness. Added guard: exactly one direct message-namespace Header and it must be first; otherwise QUARANTINE/FAIL.
+- Added three regression tests: missing Header, Header after payload, duplicate Header. Test execution NOT_VERIFIED; GitHub Actions NOT_VERIFIED. Do not claim test PASS.
+- Parser commit `2b91d3698518b487cf980e89479223cc65632f0b`, blob `85f089d5f9c6f6f1376ab5bd5705c064334cc14c`; tests commit `9247ae489fabc9cbfa383068419ff73a8731f8e2`, blob `636d171940b0b654a9185ebb97fb08f3c3af6ae9`.
+- Report `docs/IMF_BRAZIL_PARSER_REQUIRED_HEADER_GUARD_PART21_20261118.md`; commit `da668b62bf982be52f4d9bdf3525a0fbd7aa5d07`.
+- Local network DNS resolution failed, preventing a byte-exact schema bundle download and local validator run. Full 58-file archive, raw-byte SHA-256 manifest, complete dependency closure and formal XSD validation remain NOT_DONE. This is not replaced by Git tree blob SHAs.
+- PR #39 remains research-only, open/draft/unmerged. Brazil event chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No production changes, merge, workflow dispatch, paid API, market-data modification, macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-22: fixture repair and verified parser CI PASS
+- Run #19 logs retrieved (job 134885419360). Root cause: test helper malformed RegistryInterface XML by adding an extra '<' before an already complete body; fixtures also failed to model message-vs-registry namespace split. Run #19: 3 failures, 2 errors.
+- Fixture repair commit `b83eab54be1cb73dd0a227e05cedb50cb8e3587c` fixed body wrapper and namespace declarations. Run #20 isolated one remaining incorrect expected classification in the deliberate wrong-namespace negative control.
+- Follow-up commit `36653b0e1ebd718693a79b07da5f9f665e2a8ae1` restored the correct QUARANTINE expectation for wrong-namespace children.
+- Final GitHub Actions Run #21 `44329119370` completed SUCCESS. Job `parser-qa` success; exact command `python -m unittest discover -s tests -p 'test_imf_brazil_event_parser.py' -v`; log reports 16 tests, 0 failures, 0 errors, `OK`. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44329119370.
+- Final test file blob `16ba53cc872aa99456fe75982269e9dc7b7e7b10` (Git blob SHA, not SHA-256). Report: `docs/IMF_BRAZIL_PARSER_FIXTURE_REPAIR_CI_PASS_PART22_20261118.md`.
+- This PASS applies only to offline parser fixture/unit tests. Formal XSD validation, complete 58-XSD byte archive and SHA-256 manifest remain NOT_DONE. Actual Brazil transaction chronology remains UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM remains BLOCKED.
+- PR #39 remains open/draft/unmerged. No production changes or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-23: official IMF registration timestamp semantics and history-access gate
+- Rechecked the live official IMF SDMX Central Registrations table: IMF:BOP6(1.0), provider IMF:BR1, BCB URL, Last Updated 2026-10-26T11:47:29.000Z. Official page: https://sdmxcentral.imf.org/data/registrations.html.
+- Inspected the official IMF SDMX Central Web Services API Guide (May 2025), section 7.2: explicitly says selecting an existing registration and using Re-Register updates the Last Updated timestamp. Therefore that field cannot be interpreted as original create time or Brazil transaction timestamp.
+- Guide section 7.1 describes registration endpoint access as private (admin/agency/data provider for the PA); section 7.2 says UI registration requires login. This audit has not established a public unauthenticated read API for complete Brazil PA/registration history. Official guide: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf.
+- The guide's registration message fields confirm why original events must be exported: action, PA, Dataflow, provider and SimpleDataSource. Current listing cannot replace event rows.
+- Reconfirmed previously established current-state mismatch: registry listing Dataflow IMF:BOP6(1.0) vs byte-captured BCB XML payload Dataflow IMF:BOP_BPM6(1.0). IDs differ; same DSD does not prove equivalence.
+- Report created: docs/IMF_BRAZIL_OFFICIAL_REGISTRATION_TIMESTAMP_SEMANTICS_PART23_20261118.md; commit 9be8f126786f600e9869827edf52e6261511cac2.
+- Acceptance: current registry row PASS (current-state only); Last Updated as original create timestamp REJECTED; Brazil historical event rows NOT_DONE; PA history NOT_DONE; chronology UNKNOWN; mismatch CONFIRMED/UNRESOLVED; event-to-current-state reconciliation BLOCKED. Parser offline unit suite remains 16/16 PASS (Run #21). Formal XSD validation and complete raw XSD archive/hash manifest NOT_DONE.
+- Exact blocker: official IMF SDMX Central authenticated/authorized Brazil-filtered Activity/Registration Details and PA history export, or equivalent authorized provider export, containing dated actions and exact URNs/URL. No password requested. Do not use guessed IDs, undocumented endpoints, RSS order, or Last Updated as substitute.
+- Brazil Reconstruction remains INCOMPLETE/BLOCKED; no percentage claimed. No production integration, merge or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-24: BCB NSDP and BPM6 historical source crosswalk
+- Official BCB NSDP page `https://www.bcb.gov.br/en/statistics/nsdp` directly lists External Sector → Balance of Payments → National Presentation BCB → SDMX Data SDMX-ML, with separate Metadata link. It also lists IIP, external debt and reserve/liquidity categories. Source discovery PASS; exact Balance of Payments SDMX URL target was not extracted because direct page is JS shell.
+- Official BCB historical BPM6 page `https://www.bcb.gov.br/ingles/economic/seriehist_i_bpm6.asp?frame=1` exposes Monthly ZIP `https://www.bcb.gov.br/ftp/notaecon/balpaym.zip` (2.7 Mb), Quarterly ZIP `https://www.bcb.gov.br/ftp/notaecon/balpayq.zip` (1.0 Mb), Annual ZIP `https://www.bcb.gov.br/ftp/notaecon/balpaya.zip` (280 Kb). Page link discovery PASS. Browser binary retrieval and direct container download failed in this environment; no ZIP bytes, archive content, SHA-256 or coverage are claimed.
+- BCB Feb-2026 External Sector Statistics explanatory note states BCB external-sector statistics are compiled/disseminated according to BPM6 and EDS 2013; methodology evidence only, not registration history.
+- BCB Open Data Portal current-account dataset 22701: monthly USD-million series, BCB Department of Statistics, SGS source, reported timeliness up to four weeks after period. Balance-on-goods dataset 22707: monthly USD-million BPM6 series; metadata notes trade adjustments. These are distinct cross-check series, not substitutes for the SDMX registration payload.
+- Current IMF Registrations listing still says Dataflow IMF:BOP6(1.0), Provider IMF:BR1, BCB URL, Last Updated 2026-10-26T11:47:29.000Z. Prior byte-captured BCB XML payload says IMF:BOP_BPM6(1.0). Mismatch remains CONFIRMED/UNRESOLVED; do not infer equivalence from BPM6 wording or same DSD.
+- Report: `docs/IMF_BRAZIL_BCB_NSDP_BPM6_SOURCE_CROSSWALK_PART24_20261118.md`; commit `8d8797fa071b7c2efe3336f6bd7dcc20e038bc87`.
+- Acceptance: NSDP source discovery PASS; historical ZIP link discovery PASS; ZIP byte acquisition/inspection NOT_DONE; exact NSDP SDMX URL target NOT_DONE; IMF event chronology and PA changelog NOT_DONE/UNKNOWN; Brazil Reconstruction INCOMPLETE/BLOCKED. No new SHA-256 was generated.
+- Next: download the three official ZIPs from a normal/authorized browser or local network, record raw bytes/size/SHA-256 and inspect; extract exact NSDP SDMX URL. These do not replace IMF historical event/PA evidence.
+- No production changes, merge, paid APIs, synthetic history, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-25: BCB SGS API direct read and freshness audit
+- Directly opened official BCB BCData/SGS JSON endpoints: `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22701/dados?formato=json` (current-account balance) and `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22707/dados?formato=json` (balance-on-goods balance). Both responses visibly begin 1995-01 and end 2026-02.
+- Latest common observations, USD million: 2026-01: SGS 22701 -8,886.3; SGS 22707 +2,990.7. 2026-02: SGS 22701 -5,613.8; SGS 22707 +3,507.5. 2025-12 preceding values: -3,670.0 and +8,505.4 respectively. These are distinct statistical concepts, not interchangeable series.
+- SGS 22701 portal definition: current account aggregates goods, services, primary income and secondary income. SGS 22707 definition: balance on goods with BCB adjustments for broader coverage (electricity purchases not in Siscomex, fictitious operations, international postal shipments). Both are monthly USD-million series.
+- Freshness warning: at audit date 2026-11-18, latest visible reference month is 2026-02. Portal metadata describes normal timeliness up to four weeks after reference period. Mark STALE/WARNING for current macro use; this is not proof of outage or data error. Do not forward-fill or treat Feb-2026 as current Nov-2026 data.
+- Raw JSON files could not be downloaded into working container; no byte count, HTTP headers, raw SHA-256 or local archive claimed. Historical ZIP bytes remain NOT_DONE. No IMF event/PA history obtained.
+- Report: `docs/IMF_BRAZIL_BCB_SGS_API_FRESHNESS_AUDIT_PART25_20261118.md`; commit `990427d8660e140c2d8d6280cfad682bf419fad6`.
+- Acceptance: public API read 22701 PASS; 22707 PASS; latest visible month 2026-02; currentness STALE/WARNING; raw response archive/SHA-256 NOT_DONE; BPM6 ZIP acquisition NOT_DONE; BOP6 vs BOP_BPM6 CONFIRMED/UNRESOLVED; IMF registration chronology/PA history NOT_DONE/UNKNOWN; Brazil Reconstruction INCOMPLETE/BLOCKED.
+- No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-26: BCB September 2026 official release freshness reconciliation
+- New official BCB primary source inspected: `https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202610_External_sector_statistics_text.pdf`, Press Release dated 2026-10-26. It explicitly reports September 2026 data: current-account deficit USD 5.1bn (vs USD 8.8bn Sep-2025); 12-month current-account deficit USD 60.0bn / 2.33% GDP; goods surplus USD 6.9bn (vs USD 2.5bn); exports USD 34.6bn and imports USD 27.7bn; services deficit USD 5.2bn; primary income deficit USD 7.2bn; direct-investment-liability net inflows USD 11.3bn; portfolio investment domestic-market net outflows USD 2.1bn; reserves USD 362.8bn.
+- This corrects/supersedes Part-25's broad stale-source interpretation: the earlier web-opened SGS JSON responses appeared to end Feb-2026, but BCB's official bulletin proves external-sector publication coverage through Sep-2026. Underlying SGS series should not be called stale on that basis. Revised finding: official bulletin coverage through 2026-09 PASS; SGS API response-coverage discrepancy OPEN.
+- Exact date-filtered SGS 22701/22707 API rows for Mar-Sep 2026 were not exposed by web retrieval; no API refresh claimed. No raw PDF/JSON byte archive or SHA-256 generated. Do not copy PDF headline values into SGS raw series without series-level reconciliation.
+- Report `docs/IMF_BRAZIL_BCB_SEPT2026_OFFICIAL_RELEASE_FRESHNESS_RECONCILIATION_PART26_20261118.md`; commit `9f91f18c9bec7e36a85a91624b3e22c1eaccd622`.
+- Acceptance: BCB Sep-2026 bulletin evidence PASS; earlier Feb-2026 API response boundary retained as historical observation only; API-vs-bulletin discrepancy OPEN; raw byte archives/hashes NOT_DONE; BPM6 ZIP acquisition NOT_DONE; IMF registration chronology/PA history NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED.
+- Macro-Geo: use BCB release reference month 2026-09 and publication date 2026-10-26 as latest located official monthly bulletin in this audit; keep current account, goods, services, primary income, FDI liabilities, portfolio flows and reserves separate. Do not imply complete BoP coverage.
+- No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-27: official SGS latest-period reconciliation and Part-25 correction
+- Official BCB SGS public series page for code 22701 was found and inspected: `https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?hdOidSeriesSelecionadas=22701&method=consultarGraficoPorId`. Page identifies Current account - monthly - net, US$ million, monthly, start 01/01/1995, Last value `set/2026` (Sep-2026), page timestamp 17/11/2026 19:27. This directly supersedes Part-25's broad conclusion that the series was stale through Feb-2026.
+- Official BCB Open Data Portal confirms SGS 22701 is monthly current-account net in USD million, comprising goods, services, primary income and secondary income; official BCB portal confirms SGS 22707 is monthly BPM6 balance on goods in USD million with normal timeliness up to four weeks.
+- Official BCB 2026-10-26 external-sector release reports Sep-2026 monthly current-account deficit USD 5.1bn, goods surplus USD 6.9bn, exports USD 34.6bn, imports USD 27.7bn, and trailing-12-month current-account deficit USD 60.0bn / 2.33% GDP. Do not confuse monthly flow with 12-month rolling deficit.
+- Corrected statuses: 22701 official SGS latest-period metadata PASS through Sep-2026; 22707 SGS page latest-period metadata NOT_VERIFIED, though official bulletin coverage through Sep-2026 PASS. Raw date-filtered JSON values and byte-exact SHA-256 remain NOT_DONE. Part-25 broad stale conclusion SUPERSEDED.
+- Do not use third-party mirrored values to override BCB primary release. Exact Sep-2026 SGS JSON extraction/value reconciliation remains PARTIAL; no raw bytes/hash claimed.
+- Report: `docs/IMF_BRAZIL_OFFICIAL_SGS_LATEST_PERIOD_RECONCILIATION_PART27_20261118.md`; commit `d5d83e0ebcf1eb53554f26c6a396431bff705818`.
+- IMF registration history/PA changelog still NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil Reconstruction remains INCOMPLETE/BLOCKED. No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-28: SGS 22707 metadata and September coverage check
+- Official BCB Open Data Portal dataset 22707 inspected: monthly BPM6 balance-on-goods series, USD million, SGS source, BCB Department of Statistics, normal timeliness up to four weeks, coverage begins 1995-01; metadata last updated 2026-09-08. Official dataset: `https://dadosabertos.bcb.gov.br/dataset/22707-balanca-comercial---balanco-de-pagamentos---mensal---saldo`.
+- Official public SGS metadata page for 22707 found; public module confirms series identity, but accessible page capture did not expose last-observation field. Direct value/chart retrieval attempt was inaccessible in this browser environment. Thus official SGS latest-value metadata remains NOT_VERIFIED.
+- Secondary corroboration only: Econograma page attributing data to BCB SGS 22707 reports Sep-2026 = USD 6,869m and coverage Jan-1995–Sep-2026, collected 2026-11-11. This is not promoted to primary evidence. It is consistent with BCB's official 2026-10-26 bulletin reporting Sep goods balance approximately USD 6.9bn. Keep exact 6,869m as secondary-only until primary SGS CSV/JSON captured.
+- Report `docs/IMF_BRAZIL_SGS22707_METADATA_SEPTEMBER_CROSSCHECK_PART28_20261118.md`; commit `107177ffc9814f282d799f6c39ce29f4ec2022ba`.
+- Acceptance: official 22707 series identity/metadata PASS; official expected timeliness up to four weeks PASS; BCB Sep-2026 bulletin-level goods balance PASS; exact Sep-2026 22707 mirror value secondary-only; official SGS last-observation field NOT_VERIFIED; exact official JSON/CSV and raw SHA-256 NOT_DONE; value-level official reconciliation PARTIAL. 22701 latest period Sep-2026 remains Part-27 PASS.
+- Other blockers unchanged: historical BPM6 ZIP acquisition NOT_DONE; NSDP exact SDMX URL NOT_DONE; IMF registration history/PA changelog NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED.
+- No third-party data promoted to primary, no synthetic data, guessed timestamps, paid APIs, production integration, merge, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 37, Part-29: SGS 22707 official API response-boundary audit
+- Official BCB dataset 22707 confirms monthly BPM6 balance-on-goods, USD million, SGS source, BCB Statistics, expected timeliness up to four weeks; official dataset exposes JSON/CSV resources. Official JSON resource page documents `dataInicial`/`dataFinal` DD/MM/YYYY filters and `ultimos/{N}` endpoint.
+- Followed official JSON resource to `https://api.bcb.gov.br/dados/serie/bcdata.sgs.22707/dados?formato=json`. Retrieved web snapshot ends 2026-02; the retrieval record was crawled seven months ago. This is a cached/stale snapshot, NOT proof of live endpoint freshness on 2026-11-18.
+- Official `ultimos/10` resource snapshot also ends 2026-02. A direct date-filtered Sep-2026 request could not be retrieved by the available browser tool. No live response, HTTP headers, raw bytes, byte count, or SHA-256 captured.
+- Official BCB bulletin dated 2026-10-26 reports Sep-2026 goods surplus approx USD 6.9bn. Secondary Econograma reports 6,869m for SGS 22707, but remains SECONDARY_ONLY; exact primary 22707 value not verified.
+- Corrected status: official dataset identity/API contract PASS; cached JSON response-boundary observed only; live 22707 latest period Sep-2026 NOT_VERIFIED; exact primary September value NOT_DONE; 6,869m SECONDARY_ONLY; rounded official bulletin corroboration PASS; raw response archive/hash NOT_DONE; value-level reconciliation PARTIAL/OPEN.
+- Report: `docs/IMF_BRAZIL_SGS22707_PRIMARY_API_RESPONSE_BOUNDARY_PART29_20261118.md`; commit `363dbcc42a484c25d6a2b74756414e65529392a8`.
+- Next: use normal browser/local network to fetch official date-filtered 22707 JSON/CSV for Sep-2026, archive exact bytes, HTTP metadata and SHA-256, and reconcile exact value. Do not promote third-party values.
+- IMF registration history/PA changelog NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED. PR #39 remains research-only, open/draft/unmerged. No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 38, Part-30: live SGS 22707 date-filter request blocked by DNS
+- Attempted official BCB date-filtered JSON URL for 01/09/2026–30/09/2026 (encoded and unescaped date forms) and official latest-ten JSON endpoint.
+- Web open of the exact date-filtered URL returned inaccessible/internal-error; no BCB HTTP response metadata was exposed. Three direct container urllib attempts failed before HTTP connection with `Temporary failure in name resolution` for api.bcb.gov.br.
+- This is a local retrieval-environment DNS/network block, NOT evidence of an empty BCB response, HTTP failure, or stale live series. No response bytes, headers/status, byte count or SHA-256 captured.
+- Status: official 22707 identity/unit/frequency/API resource discovery PASS; live September date-filter query BLOCKED_BY_NETWORK_DNS; latest-ten live query BLOCKED_BY_NETWORK_DNS; exact primary September value NOT_VERIFIED/NOT_DONE; secondary 6,869m remains SECONDARY_ONLY; official BCB bulletin rounded ~USD 6.9bn remains bulletin-level corroboration only.
+- Report: `docs/IMF_BRAZIL_SGS22707_LIVE_DATE_FILTER_NETWORK_BLOCK_PART30_20261118.md`; commit `6f60f55f645b14c322c3f734996d7410711634d2`.
+- Next: use a normal browser/network with DNS access to fetch the official date-filtered JSON/CSV; archive original bytes, timezone-aware retrieval time, HTTP status/headers, byte count and SHA-256. Do not infer API failure or use secondary value as primary.
+- IMF registration history/PA changelog NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED. PR #39 remains research-only, open/draft/unmerged. No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 37, Part-31: official SDMX-ML 2.1 XSD authority map
+- User supplied screenshot of the SDMX community homepage (sdmx.org). It establishes homepage context only; it does not by itself prove schema versions, file inventory or validation.
+- Follow-up verification located SDMX's official XSD publication index: https://xml.sdmx.org/. The index states it publishes official SDMX-ML XSDs for structural metadata, data, reference metadata and registry operations for versions 2.0, 2.1, 3.0.0 and 3.1.0.
+- The official 2.1 index lists 52 XSD entries (opened index links 92–143 inclusive). The 2.1 message schema location is https://xml.sdmx.org/2.1/SDMXMessage.xsd; message namespace is http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message. Relevant registry schemas include SDMXRegistry.xsd, SDMXRegistryBase.xsd, SDMXRegistryRegistration.xsd, SDMXRegistryStructure.xsd and SDMXRegistrySubscription.xsd.
+- Official SDMX standards page identifies Section 3B as SDMX-ML schemas/samples and Section 5 as Registry Specification: https://sdmx.org/standards-2/. Official Section 5 PDF: https://sdmx.org/wp-content/uploads/SDMX_2-1_SECTION_5_RegistrySpecification_2020-07.pdf.
+- Parser decision: pin Brazil XML validation to SDMX-ML 2.1 where supported by the captured payload; validate the message envelope and registry content against the relevant 2.1 schemas/imports. Preserve the already-corrected message-vs-registry namespace split. Do not silently upgrade to 3.x.
+- Do not equate the 52 index entries with the transitive import/include closure or reuse an unverified 58-file count. Generate the closure from actual imports/includes; archive exact bytes, URLs, retrieval metadata, byte counts and raw-byte SHA-256; then run offline XSD validation.
+- Report: docs/IMF_BRAZIL_OFFICIAL_SDMX21_XSD_AUTHORITY_MAP_PART31_20261118.md; commit 1f6d15f9b434f90566ed112a8f16e9c8040964ed.
+- Acceptance: SDMX official homepage context PASS; official SDMX XSD authority and 2.1 index discovery PASS; 52 listed 2.1 XSD entries observed; schema byte archive NOT_DONE; dependency closure/raw SHA-256 manifest NOT_DONE; offline XSD validation NOT_DONE. Existing parser unit tests remain 16/16 PASS (Run #21 / 44329119370), but are not XSD validation.
+- Registration chronology/PA history remains UNKNOWN/NOT_DONE; IMF:BOP6(1.0) vs IMF:BOP_BPM6(1.0) remains CONFIRMED/UNRESOLVED; Brazil Reconstruction remains INCOMPLETE/BLOCKED. No production integration, merge, paid APIs, synthetic data, guessed timestamps or trading admission. Protected V11.3 invariants unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 37, Part-32: exact SDMX-ML 2.1 tag and schema dependency roots
+- Official SDMX-ML release page identifies v2.1 tag `v2.1`, commit prefix `bc28a22`, and describes it as the current SDMX-ML 2.1 specification corrected in July 2020. Inspected exact release ref `bc28a22` in `sdmx-twg/sdmx-ml`, not the repository default branch (which is v3.1).
+- Official XSD publication index `https://xml.sdmx.org/` lists 52 files under 2.1. Exact source repository release tag: `https://github.com/sdmx-twg/sdmx-ml/tree/v2.1/schemas`.
+- Fetched and inspected direct import/include edges for 10 schema files at tag `bc28a22`: SDMXMessage, SDMXRegistry, SDMXRegistryBase, SDMXRegistryRegistration, SDMXRegistryStructure, SDMXRegistrySubscription, SDMXCommon, SDMXMessageFooter, SDMXStructure and SDMXQuery.
+- Root `SDMXMessage.xsd` imports MessageFooter, Common, Structure, Query, Registry, DataGeneric, DataStructureSpecific, MetadataGeneric, MetadataStructureSpecific and W3C xml.xsd. Registry includes four modules (Base, Registration, Structure, Subscription); Registration/Structure/Subscription additionally import Common and Structure. Common includes CommonReferences and imports xml.xsd. Structure includes 17 modules; Query includes 21 modules and imports Common.
+- Git blob SHAs and exact edges are recorded in `docs/IMF_BRAZIL_SDMX21_TAGGED_SCHEMA_DEPENDENCY_ROOTS_PART32_20261118.md`; these blob SHAs are NOT raw-byte SHA-256.
+- Critical correction: current default branch schema files are v3.1; do not fetch default-branch schemas for a v2.1 validation run. Pin the v2.1 release tag/commit.
+- Acceptance: official v2.1 tag/commit pin PASS; direct dependency edges for 10 key schemas PASS; full recursive closure NOT_DONE; exact bytes archive/retrieval metadata NOT_DONE; raw-byte SHA-256 manifest NOT_DONE; offline XSD validation NOT_DONE. Existing parser tests 16/16 PASS (Run #21 / 44329119370), but not XSD validation.
+- Report commit: 356a71328627cd3d0fce2557c643298b97d0cd00.
+- Registration chronology/PA history remains UNKNOWN/NOT_DONE; BOP6 vs BOP_BPM6 remains CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED. No production integration, merge, paid APIs, synthetic data, guessed timestamps or trading admission. Protected V11.3 invariants unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 38, Part-33: Brazil registration chronology + BOP6/BOP_BPM6
+- New official evidence: IMF SDMX Central Web Services Guide (May 2025) demonstrates Dataflow `IMF:BOP_BPM6(1.0)` alongside DataStructure `IMF:ECOFIN_DSD(1.0)` and separate `DATA_DOMAIN=BOP6` field. Therefore a BOP6 DATA_DOMAIN value must never be compared to a Dataflow URN; this semantic false-positive risk is RESOLVED. Source PDF lines 220-249; official guide URL recorded in report.
+- Current public IMF Registrations page lists BR1 as `IMF:BOP6(1.0)`, URL the BCB External Sector SDMX XML, Last Updated `2026-10-26T11:47:29.000Z`. The project's prior byte-captured BCB XML declared `IMF:BOP_BPM6(1.0)`.
+- Official IMF constraints listing separately shows `BOP6[1.0]` and `BOP_BPM6[1.0]` as separate constrained Dataflows. Do not infer alias/equivalence from same DSD or labels. Actual BR1 registry-vs-XML Dataflow mismatch remains CONFIRMED / UNRESOLVED.
+- Public IMF Data Registrations activity UI exposes breakdown by PA/Dataflow/Data Provider/Show All and details for Date, Data URL, Action, Data Store, Series, Provision URN, Dataflow URN, Data Provider URN and User. Public SDMX Transactions UI exposes date range, transaction time/type/action and Download Transaction. Extracted public snapshots did not provide the filtered BR1 history or downloadable event payload; no event chronology invented.
+- IMF Web Services Guide says registration POST endpoint `/ws/secure/sdmxapi/rest` is private (admin/agency/provider for PA) and authenticated. This is not a public history endpoint; no write action attempted and no credentials requested.
+- Report: `docs/IMF_BRAZIL_REGISTRATION_CHRONOLOGY_AND_BOP6_BOP_BPM6_RECONCILIATION_PART33_20261118.md`.
+- Report commit: 87ebd31b1d95e23b4bbdee9523ee5d7f14a81322.
+- Status: DATA_DOMAIN-vs-Dataflow semantic distinction PASS; current BR1 registration row observed PASS; BCB XML Dataflow observed from prior byte-captured evidence PASS; BOP6 vs BOP_BPM6 equivalence NOT_PROVEN and mismatch remains CONFIRMED/UNRESOLVED; Brazil registration/PA chronology BLOCKED/NOT_DONE; full transaction/history export NOT_DONE. Brazil Reconstruction remains INCOMPLETE/BLOCKED.
+- Closure evidence needed: exact live BCB XML bytes + HTTP metadata + SHA-256; official structures for both Dataflows and any explicit alias/crosswalk; BR1/PA filtered registration history and full relevant transaction download with event timestamps/actions/URNs. No production integration, mutation, merge, paid API, external contact or guessed timestamps. Invariants unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 38, Part-34: IMF public activity exportability audit
+- Fresh official Data Registrations page `https://sdmxcentral.imf.org/activity/data-log.html` confirms historical activity UI, breakdown modes (by Provision Agreement, Dataflow, Data Provider, Show All), row fields Date/Data URL/Action/Data Store/Series and detail fields Data URL/Provision URN/Dataflow URN/Data Provider URN/User. Current extracted static snapshot returned empty selector table/0 rows; this is a dynamic extraction limitation, not evidence of no events.
+- Fresh official SDMX Transactions page `https://sdmxcentral.imf.org/activity/activity-log.html` exposes selected date period, Transaction Time/Type/Action and Download Transaction control. Extracted selected range is 2025-07-06 to 2026-11-18; table is bounded at 100 entries and visible samples are Structure Submission events, including latest visible 2026-10-08. No BR1/Brazil registration record or downloadable transaction bytes were exposed in the snapshot; no absence conclusion is drawn.
+- Public Provision Agreement listing `https://sdmxcentral.imf.org/data/provisionAgreements.html` exposes URN, URL, Revisions, Description, Annotations, Valid From/To and References/Changelog/Export/View controls. Brazil PA was not surfaced in the extracted first-page sample; no Brazil PA URN/revisions captured.
+- Fresh registrations listing again shows BR1 registered under `IMF:BOP6(1.0)`, BCB source URL, Last Updated 2026-10-26T11:47:29.000Z. The listing separately includes other providers under `IMF:BOP_BPM6(1.0)`; they remain distinct IDs in current registry listing.
+- Status: public history UI/fields PASS; transaction UI/download control PASS; PA details/changelog UI PASS; BR1 filtered history/export bytes NOT_DONE; Brazil PA URN/changelog NOT_DONE; chronology BLOCKED; Dataflow equivalence NOT_PROVEN, actual mismatch CONFIRMED/UNRESOLVED.
+- Report: `docs/IMF_BRAZIL_PUBLIC_ACTIVITY_EXPORTABILITY_AUDIT_PART34_20261118.md`; commit a49c1568104a695be268df0cd1b3f1557a1ac080.
+- Next exact action requires interactive browser selection: Data Registrations > Breakdown By Data Provider > IMF:BR1; export full selected date-range transactions; locate Brazil PA and capture URN/revisions/changelog. If authentication required, record boundary; no credentials/write actions.
+- No event inferred from Last Updated or empty static extraction. No registration mutation, POST, external contact, credentials, paid API, production integration or merge. V11.3 invariants unchanged. UNKNOWN is not PASS.
+
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 39, Part-35: Brazil PA archive reinspection + Global Capital Rotation consolidated gate
+- Re-opened and re-parsed the user's uploaded IMF PA archive; archive SHA-256 `8cb2ed4bd96c0b1c4d3f24d0530771a5868f55bba256213404d5acf22a3f2b45`.
+- Exact raw-byte member hashes: legacy_all.xml `75b7a55f5daafb0ce566593542f76874f202eeae6b4f09cb572f5372ef44be85`; v2_imf_all.xml `9c8e9c9157da0e3ce33ca23db5afbc25e2517e02f481c8688d3ad0ed7f13ff0e`; v2_all_agencies.xml `85b951126342dc1e5be7b104e676b519b1e9d1a857fa78a4d91b2a3e35637453`; manifest.json `0954644ea442a76e380cfc3e8ee2d95503fd9b05da088c853f17fd4c320aa903`.
+- Parsed ProvisionAgreement counts: legacy 1,003; IMF-only v2 992; all-agencies v2 1,004. All three contain exact PA `IMF:BR_BOP_BP6(1.0)`, Name Brazil Balance of Payments, StructureUsage Dataflow `IMF:BOP6(1.0)`, Provider `IMF:BR1`. This PA crosswalk is now directly verified from the uploaded raw XML.
+- This does NOT resolve the separate prior byte-captured BCB XML Dataflow `IMF:BOP_BPM6(1.0)`. BOP6 vs BOP_BPM6 remains distinct IDs and registry-vs-payload mismatch CONFIRMED/UNRESOLVED. No alias inferred. The current PA snapshot is not event history.
+- BR1 filtered registration activity/transaction export, PA changelog bytes, live BCB XML raw bytes/HTTP metadata/hash, official Dataflow alias/mapping evidence remain NOT_DONE. Last Updated remains non-equivalent to original registration timestamp.
+- Brazil parser unit tests remain 16/16 PASS (Run #21 / 44329119370); full recursive pinned SDMX-ML 2.1 XSD closure/archive/hash/offline validation NOT_DONE. Exact primary SGS 22707 Sep-2026 JSON/CSV/hash NOT_VERIFIED; 6,869m remains SECONDARY_ONLY.
+- Revalidated Global Capital Rotation acceptance matrix GCR-01–GCR-13 from saved page-27 source. Statuses: GCR-01 PARTIAL; GCR-02 PARTIAL; GCR-03 PARTIAL/UNKNOWN; GCR-04 PARTIAL; GCR-05 PARTIAL; GCR-06 PARTIAL; GCR-07 PARTIAL; GCR-08 PARTIAL/UNKNOWN; GCR-09 UNKNOWN; GCR-10 PARTIAL; GCR-11 UNKNOWN (35 factor schemas: prior audit 0 fully available, 31 partial, 4 disconnected); GCR-12 UNKNOWN; GCR-13 INCOMPLETE. No overlay acceptance/backtest/production admission.
+- New report: `docs/BRAZIL_RECONSTRUCTION_GLOBAL_CAPITAL_ROTATION_CONSOLIDATED_EVIDENCE_GATE_PART35_20261118.md`; commit `d0ca40e0ff489681f01ba0da4cb60299da49a614`.
+- Acceptance: Brazil Reconstruction INCOMPLETE/BLOCKED; Global Capital Rotation INCOMPLETE/BLOCKED; combined 100% acceptance NOT MET. This checkpoint is documentation/evidence reconciliation, not a code fix or production release.
+- Next: fetch live BCB XML + headers/hash; obtain official structures/mapping and BR1 activity/PA changelog; complete XSD recursive closure; obtain SGS 22707 primary response. For GCR, ingest official final/provisional flows separately, RBI/FBIL FX, official US/India nominal-real yield curves, then complete 35-factor schemas and point-in-time cost-adjusted rolling backtest.
+- Protected invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E. No paid APIs, synthetic data, guessed timestamps, production integration, trading admission or merge. PR #39 remains open/draft/unmerged. UNKNOWN is not PASS.
+
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 40, Part-36: official source acquisition paths expanded
+- Fresh official-source discovery added executable paths for GCR flows, FX, yields, MF data, volatility/index history, commodities and macro:
+  - SEBI FPI directory links NSDL and CDSL daily/current-month/archive/yearwise reports; CDSL explains provisional exchange data vs custodian-confirmed depository data; NSE explicitly labels its combined FPI/DII data provisional and points to NSDL/CDSL final data.
+  - AMFI monthly page lists monthly PDF/Excel downloads; SEBI MF directory links monthly/quarterly/AUM.
+  - RBI Reference Rate Archive offers date-range Excel download; RBI states FBIL took over USD/INR, EUR/INR, GBP/INR, JPY/INR reference rates from 2018-07-10.
+  - US Treasury provides separate daily nominal and real yield curves, CSV archives, and paginated XML feeds (nominal from 1990, real from 2003).
+  - NSE official historical reports expose India VIX, historical indices and TRI endpoints.
+  - EIA weekly Brent historical series and World Bank Pink Sheet monthly/annual XLS identified.
+  - e-Sankhyiki CPI API docs describe paginated public API with optional bearer token; IIP API endpoint discovered. CPI catalogue provides release date, period, table ID and provisional status.
+- Brazil:
+  - IMF Registrations and Provision Agreements official UI opened. Registration table exposes Registration ID/Registered URL/Dataflow/Provider. PA UI exposes URN/Revisions/Valid From/To and Changelog/Export controls. Static extraction does not reveal Brazil's selected record/history; interactive filter/export still required.
+  - Live BCB SDMX XML URL retrieval attempted through web and container download; neither produced response bytes/HTTP metadata. Treat as retrieval boundary, not source error.
+  - Official BCB SGS 22707 dataset documents JSON/CSV/WSDL/HTML resources, monthly USD-million series, coverage since 1995-01; exact Sep-2026 primary response/hash remains NOT_DONE.
+- New report: `docs/BRAZIL_GCR_OFFICIAL_SOURCE_ACQUISITION_MAP_PART36_20261118.md`; commit `1eba30ce708891f90195b6d9b4a8254835ff659d`.
+- This checkpoint expands source discovery only. It does not claim raw data ingestion, historical completeness, factor completion, event-study validation or production acceptance.
+- Brazil Reconstruction remains INCOMPLETE/BLOCKED: live BCB XML bytes, official BOP6/BOP_BPM6 mapping/history, recursive XSD archive/offline validation, SGS 22707 exact primary data remain open.
+- Global Capital Rotation remains INCOMPLETE/BLOCKED: official raw source archives/revision joins, India G-Sec/FBIL yields, DXY/carry, GCR-09 event taxonomy, 35-factor registry, point-in-time H+1/H+3/H+5 backtest and operational controls remain open.
+- Next immediate work: execute downloads/archives from SEBI/NSDL/CDSL/NSE, FBIL/RBI, Treasury, AMFI, EIA/World Bank and e-Sankhyiki; keep provisional/final vintages and frequencies distinct; hash all raw bytes. For Brazil, obtain selected PA changelog + BR1 transaction export through official UI, then validate live BCB XML against pinned SDMX 2.1 schemas.
+- Invariants unchanged; no paid APIs, synthetic values, inferred timestamps, production changes, merge or trading admission. PR #39 remains open/draft/unmerged. UNKNOWN is not PASS.
+
+
+
+## 2026-11-19 — গবেষণা যাচাই অব্যাহত 40, Part-36: official source recovery path verification
+- IMF official registrations listing rechecked: BR1 currently listed under IMF:BOP6(1.0), BCB SDMX XML URL, Last Updated 2026-10-26T11:47:29Z. This timestamp is not original registration creation time.
+- IMF Provision Agreements UI exposes URN, URL, revisions, valid-from/to, References, Changelog, Export SDMX-ML 3.0 and Export Excel. Static extraction did not expose selected Brazil PA details/changelog bytes. IMF SDMX Transactions UI exposes transaction time/type/action and Download Transaction; no BR1-specific payload captured. Interactive export/auth boundary remains open; no login/mutation attempted.
+- Direct BCB XML web retrieval failed at the browser fetch layer (400 OK) with no body/headers/raw bytes/hash. This is not evidence of BCB source failure. Existing PA-vs-payload mismatch remains unresolved.
+- Official BCB SGS 22707 dataset page and resource contract were freshly re-opened. Dataset defines monthly USD million, expected timeliness up to four weeks, BCB Statistics source and BCB adjustments to MDIC/Siscomex trade data. JSON API contract documents DD/MM/YYYY dataInicial/dataFinal and ultimos/{N}; exact live Sep-2026 response still NOT_VERIFIED due retrieval/DNS boundary.
+- New official GCR source routes verified: RBI Reference Rate Archive has currency/date filters and Excel download; NSDL FPI portal lists FPI/DII archives, calendar/FY/quarterly flows, top-country, fortnightly sector, AUC country/category/client and debt/equity detail (web fetch timed out; no raw export); U.S. Treasury nominal daily yield curve CSV/XML; Treasury TIPS real yield curve CSV/XML; EIA daily Brent historical series; IMF PIP/CPIS official annual/half-yearly/semester portfolio positions.
+- Modelling constraints explicitly retained: IMF PIP/CPIS positions are not daily flows; FPI AUC changes are not net flows; RBI reference rate is not cross-currency basis/carry; Treasury nominal and TIPS real series remain separate; EIA Brent alone does not close freight/broad commodities.
+- New report: docs/BRAZIL_GCR_OFFICIAL_SOURCE_RECOVERY_PART36_20261119.md; commit 3af1d7745064785560152d116248eba97fe0077c.
+- Acceptance remains Brazil INCOMPLETE/BLOCKED and Global Capital Rotation INCOMPLETE/BLOCKED. This checkpoint verifies source routes/contracts, not raw archive completion, factor readiness, backtest or production acceptance.
+- Next: interactive IMF BR1 transaction + PA changelog exports; fresh BCB XML raw capture; RBI and NSDL historical raw downloads; Treasury nominal/real and EIA raw archives; then complete remaining CDSL/AMFI/NSE/FBIL/DXY/geopolitical sources, 35 factor contracts, point-in-time H+1/H+3/H+5 backtest and ablation.
+- Invariants unchanged: ₹0, official free sources only, no synthetic data/guessed timestamps/forward-fill; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E unchanged; PR #39 unmerged; UNKNOWN is not PASS.
+
+
+## 2026-11-19 — গবেষণা যাচাই অব্যাহত 41, Part-37: raw retrieval boundary checkpoint
+- Treasury official XML feed contract verified for separate daily nominal and real yield curves; documented year query and paginated all-years retrieval. IMF API SDMX 2.1/3.0 contract also verified.
+- Attempted actual raw retrieval of Treasury nominal 2026 XML, Treasury real 2026 XML, and BCB SGS 22707 Sep-2026 JSON. Browser fetch rejected XML content type / could not access BCB; container HTTP attempts failed at DNS resolution before any HTTP response.
+- No body, HTTP status, row count, or raw SHA-256 captured. This is an execution-network boundary, not source invalidity. No synthetic data or substitute values inserted.
+- New report: docs/BRAZIL_GCR_RAW_RETRIEVAL_BOUNDARY_PART37_20261119.md; commit 1c2b1db333d80ca0d3c68840cba3f4e4c7817604.
+- Brazil remains INCOMPLETE/BLOCKED: BCB raw XML, BR1 transaction/PA changelog, BOP6/BOP_BPM6 authoritative mapping/history, recursive XSD closure/offline validation and SGS 22707 raw observations/hash open.
+- GCR remains INCOMPLETE/BLOCKED: raw Treasury/RBI/FBIL/NSDL/CDSL/AMFI/NSE/EIA/World Bank datasets, DXY/carry, event taxonomy, 35-factor registry, point-in-time H+1/H+3/H+5 cost-adjusted validation and ablation open.
+- Next execution should run pinned official-source acquisition in a network-enabled GitHub Actions runner; capture response headers, raw bytes, row counts, retrieval timestamps, SHA-256 and immutable manifest before any factor computation.
+- Invariants unchanged: ₹0, official free sources only, no synthetic data/guessed timestamps/forward-fill; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; PR #39 unmerged; UNKNOWN is not PASS.

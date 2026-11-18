@@ -1,6 +1,12 @@
 name: IMF Brazil Event Parser QA (Offline)
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/research/imf_brazil_event_parser.py"
+      - "tests/test_imf_brazil_event_parser.py"
+      - ".github/workflows/imf_brazil_event_parser_qa.yml"
   push:
     branches: [main]
     paths:
