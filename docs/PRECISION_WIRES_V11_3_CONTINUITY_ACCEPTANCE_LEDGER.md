@@ -1414,13 +1414,20 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Invariants unchanged: ₹0, official/free sources only, no synthetic data or fabricated timestamps; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and collector workflows unchanged; no PR/merge/production integration.
 
 
-## Chapter 41 — IMF BOP DSD V2.6.0 Official Endpoint Probe Implementation (2026-11-18)
-- Revisited the outstanding IMF BOP metadata retrieval blocker; did not repeat prior BOP DSD semantics/specification review or claim any BOP observations.
-- Official IMF SDMX Central catalogue lists IMF:BOP DSD version 2.6.0; official web-service page documents the public structure-service entry point. Official web evidence: IMF SDMX Central DSD catalogue and web-service guide.
-- Added bounded route-probe script testing only two candidate paths on `sdmxcentral.imf.org`: current `/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/` and previously documented legacy `/ws/public/sdmxapi/rest/datastructure/IMF/BOP/2.6.0/`. It records retrieval timestamp, HTTP status, final URL, content type, byte length, SHA-256 and XML parse result; saves raw response bytes when received. No BOP observations downloaded.
-- Script `scripts/research/probe_imf_bop_dsd_endpoints.py`, commit `45850a0d04d4548d056f21bc22a2c1734eeb8d59`; workflow `.github/workflows/imf-bop-dsd-endpoint-probe.yml`, commit `7029fe9fbe00e8855c12c7629b84dd435677c6e6`. Workflow timeout 5 minutes, artifact retention 90 days, manual dispatch plus active branch push trigger.
-- Runtime limitation: connected GitHub interface surfaced no check-run for either commit at audit time. Therefore endpoint execution NOT_VERIFIED / NOT_RUN; no HTTP status or response bytes may be claimed. Absence of a surfaced run is not evidence that endpoint failed.
-- Detailed report: `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md`.
-- Acceptance: probe code/workflow authored and committed PASS; actual Actions execution NOT_VERIFIED; XML retrieval/parsing UNKNOWN; dimension/codelist mapping UNKNOWN; BOP observations and EM aggregation NOT_DONE.
-- Next action: obtain a real run for “IMF BOP DSD Official Endpoint Probe” through repository Actions UI, then inspect artifact/logs and only then decide exact route. No alternative guessed URLs, third-party mirrors, inferred dimensions, synthetic values or fabricated timestamps.
-- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched; no PR/merge/production integration.
+## Chapter 34 — Part-1: IMF BOP DSD V2.6.0 Endpoint Verification (2026-11-18)
+- Continued the existing Chapter 34 workstream; this is Part-1, not a new chapter. No chapter number increment.
+- Objective: resolve the IMF BOP DSD metadata retrieval blocker using only the two already documented official IMF SDMX Central routes.
+- Initial runtime Run `44249890707`: SUCCESS, but exposed a parser bug (BOP DSD identifier searched only in the first 200 KB). Corrected exact XML identity detection: agencyID=IMF, id=BOP, version=2.6.0.
+- Corrected descriptor extraction to count only direct members of DimensionList and AttributeList; avoided counting nested codelist elements as dimensions/attributes.
+- Corrected decision state to derive METADATA_ROUTE_VERIFIED from actual parsed DSD evidence, not a hard-coded UNKNOWN string.
+- Final validation Run `44250316163`: SUCCESS; job/check `134619103234`; head SHA `42606d3687fe8dc0b6d2b64a740795cde4c883f9`; 5-minute workflow limit respected.
+- Both official routes returned HTTP 200, Content-Type `application/xml;charset=UTF-8`, valid SDMX 2.1 Structure XML, and exact IMF:BOP DSD version 2.6.0:
+  - Current route retrieved 2026-11-18T06:18:14.598091Z; 895,438 bytes; SHA-256 `f4df050115748bc0d20f07c47b33bd9bd7157cf6132e9c36a70a6f868bedd075`.
+  - Legacy route retrieved 2026-11-18T06:18:25.216081Z; 895,438 bytes; SHA-256 `145fb6eeceb259564384b7e927ddae39d991a144713c5b57af82d7d66b4973cb`.
+- Parsed DSD metadata: **18 dimensions** (including TIME_PERIOD), **15 attributes**, DSD version 2.6.0. Current route is preferred verified route; legacy route also resolves to same DSD identity.
+- Artifact ID `14403372899`, size 191,791 bytes, SHA-256 `1321f32274b48eca7a66dc1220c656be1a54faf2270fa76edc020f60cdf95def`.
+- Detailed report: `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md`, commit `0cc3c4aefd8ae9b418a0e6c6a5410628f1bd2b33`.
+- Acceptance: official metadata endpoint qualification PASS; XML parse PASS; exact DSD identity PASS; dimension/attribute structural extraction PASS.
+- Still NOT_DONE: complete codelist semantic audit; BOP observation download; country-period validation; EM membership/aggregation; source coverage and extraction mapping. BOP remains annual/quarterly context, not a daily market trigger. No observations or aggregates created.
+- Next exact action: perform a bounded DSD semantic/codelist audit from the captured XML, map only evidenced dimension/codelist IDs to the extraction contract, and preserve UNKNOWN for unverified signs, units, frequencies, countries and aggregates.
+- Invariants unchanged: ₹0, official/free sources only, no synthetic data or fabricated timestamps; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched; no production integration.
