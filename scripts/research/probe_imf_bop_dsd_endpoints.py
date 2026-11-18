@@ -34,7 +34,31 @@ for label, url in BASES:
             root = ET.fromstring(body)
             record["xml_parse"] = "PASS"
             record["xml_root_tag"] = root.tag
-            record["contains_bop_dsd_id"] = b'BOP' in body[:200000]
+            structures = [
+                node for node in root.iter()
+                if node.tag.rsplit("}", 1)[-1] == "DataStructure"
+                and node.attrib.get("agencyID") == "IMF"
+                and node.attrib.get("id") == "BOP"
+                and node.attrib.get("version") == "2.6.0"
+            ]
+            record["contains_bop_dsd_id"] = bool(structures)
+            if structures:
+                dsd = structures[0]
+                dimensions = [
+                    {"id": node.attrib.get("id"), "position": node.attrib.get("position")}
+                    for node in dsd.iter()
+                    if node.tag.rsplit("}", 1)[-1] in ("Dimension", "TimeDimension")
+                ]
+                attributes = [
+                    {"id": node.attrib.get("id"), "assignment_status": node.attrib.get("assignmentStatus")}
+                    for node in dsd.iter()
+                    if node.tag.rsplit("}", 1)[-1] == "Attribute"
+                ]
+                record["dsd_version"] = dsd.attrib.get("version")
+                record["dimension_count"] = len(dimensions)
+                record["dimensions"] = dimensions
+                record["attribute_count"] = len(attributes)
+                record["attributes"] = attributes
         except Exception as exc:
             record["xml_parse"] = "FAIL"
             record["xml_error"] = str(exc)[:300]
@@ -54,5 +78,11 @@ summary = {
 }
 (OUT / "probe_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(summary, indent=2))
-if not any(r.get("http_status") == 200 and r.get("xml_parse") == "PASS" for r in results):
-    raise SystemExit("No official BOP DSD endpoint returned parseable XML; route remains UNKNOWN")
+if not any(
+    r.get("http_status") == 200
+    and r.get("xml_parse") == "PASS"
+    and r.get("contains_bop_dsd_id") is True
+    and r.get("dsd_version") == "2.6.0"
+    for r in results
+):
+    raise SystemExit("No official endpoint returned the expected IMF:BOP(2.6.0) DSD; route remains UNKNOWN")
