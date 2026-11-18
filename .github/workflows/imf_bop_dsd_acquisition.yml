@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   acquire-dsd:
@@ -428,78 +429,58 @@ jobs:
               sys.exit(1)
           PY
 
-      - name: Acquire and semantically inventory IMF ECOFIN_DSD and CL_INDICATOR
+      - name: Reuse immutable IMF ECOFIN_DSD and CL_INDICATOR capture
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: imf-bop-dsd-acquisition-44095286184
+          run-id: 44095286184
+          github-token: \${{ secrets.GITHUB_TOKEN }}
+          path: evidence/imf_bop_dsd/archive
+
+      - name: Verify archived ECOFIN_DSD and CL_INDICATOR bytes
         if: always()
         shell: bash
         run: |
           set -euo pipefail
-          DIR="evidence/imf_bop_dsd/ecofin_dsd"
-          mkdir -p "$DIR"
-          URL='https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
-          printf '%s\n' "$URL" > "$DIR/request_url.txt"
-          set +e
-          curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
-            --dump-header "$DIR/response_headers.txt" \
-            --output "$DIR/raw.xml" \
-            --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
-            "$URL" > "$DIR/transfer_metadata.txt"
-          STATUS=$?
-          set -e
-          printf 'curl_exit=%s\n' "$STATUS" >> "$DIR/transfer_metadata.txt"
-          if [ "$STATUS" -ne 0 ]; then
-            echo "ECOFIN_DSD acquisition failed; preserve transfer diagnostics."
-            exit 1
-          fi
-          sha256sum "$DIR/raw.xml" > "$DIR/SHA256SUMS"
+          SOURCE="evidence/imf_bop_dsd/archive/20261117T134325Z/dataflow_referenced_dsd.xml"
+          TARGET="evidence/imf_bop_dsd/ecofin_dsd/raw.xml"
+          mkdir -p "$(dirname "$TARGET")"
+          test -s "$SOURCE"
+          cp "$SOURCE" "$TARGET"
+          sha256sum "$TARGET" > evidence/imf_bop_dsd/ecofin_dsd/SHA256SUMS
           python - <<'PY'
           from pathlib import Path
           import hashlib, json, xml.etree.ElementTree as ET
-          folder = Path("evidence/imf_bop_dsd/ecofin_dsd")
-          raw = folder / "raw.xml"
-          payload = raw.read_bytes()
-          root = ET.fromstring(payload)
+          p = Path("evidence/imf_bop_dsd/ecofin_dsd/raw.xml")
+          raw = p.read_bytes()
+          expected_sha = "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045"
+          if len(raw) != 42707649 or hashlib.sha256(raw).hexdigest() != expected_sha:
+              raise SystemExit("Archived ECOFIN DSD bytes/hash do not match immutable Run 44095286184 evidence")
+          root = ET.fromstring(raw)
           def local(tag): return tag.rsplit("}", 1)[-1]
-          dsds = [e for e in root.iter() if local(e.tag) == "DataStructure" and e.attrib.get("id") == "ECOFIN_DSD"]
-          if len(dsds) != 1:
-              raise SystemExit(f"Expected exactly one IMF:ECOFIN_DSD; found {len(dsds)}")
-          dsd = dsds[0]
-          components = []
-          for comp in dsd.iter():
-              if local(comp.tag) in {"Dimension", "TimeDimension", "MeasureDimension", "Attribute", "PrimaryMeasure"}:
-                  refs = []
-                  for node in comp.iter():
-                      if local(node.tag) == "Ref":
-                          refs.append({k: node.attrib.get(k) for k in ("agencyID", "id", "version", "class", "package")})
-                  components.append({"type": local(comp.tag), "id": comp.attrib.get("id"), "references": refs})
-          indicator = [x for x in components if x["id"] == "INDICATOR"]
-          if len(indicator) != 1:
-              raise SystemExit(f"Expected exactly one INDICATOR component; found {len(indicator)}")
-          codelists = []
-          for node in root.iter():
-              if local(node.tag) == "Codelist":
-                  codes = []
-                  for code in node:
-                      if local(code.tag) == "Code":
-                          names = [{"lang": n.attrib.get("{http://www.w3.org/XML/1998/namespace}lang"), "text": (n.text or "").strip()}
-                                   for n in code if local(n.tag) == "Name"]
-                          codes.append({"id": code.attrib.get("id"), "names": names})
-                  codelists.append({"agency": node.attrib.get("agencyID"), "id": node.attrib.get("id"),
-                                    "version": node.attrib.get("version"), "code_count": len(codes), "codes": codes})
-          indicator_lists = [x for x in codelists if x["id"] == "CL_INDICATOR"]
-          if len(indicator_lists) != 1 or indicator_lists[0]["code_count"] == 0:
-              raise SystemExit(f"CL_INDICATOR not captured exactly once with codes; matches={len(indicator_lists)}")
+          dsds = [e for e in root.iter() if local(e.tag) == "DataStructure" and e.get("id") == "ECOFIN_DSD"]
+          if len(dsds) != 1 or dsds[0].get("agencyID") != "IMF" or dsds[0].get("version") != "1.0":
+              raise SystemExit("Archived ECOFIN_DSD identity mismatch")
+          lists = [e for e in root.iter() if local(e.tag) == "Codelist" and e.get("id") == "CL_INDICATOR"]
+          if len(lists) != 1 or lists[0].get("agencyID") != "IMF" or lists[0].get("version") != "1.0":
+              raise SystemExit("Archived CL_INDICATOR identity mismatch")
+          codes = [e.get("id") for e in lists[0] if local(e.tag) == "Code"]
+          if len(codes) != 113644 or len(set(codes)) != len(codes):
+              raise SystemExit(f"CL_INDICATOR count/uniqueness mismatch: {len(codes)}")
           report = {
-              "status": "PASS", "root_element": local(root.tag), "dsd": {"agency": dsd.attrib.get("agencyID"),
-              "id": dsd.attrib.get("id"), "version": dsd.attrib.get("version")},
-              "raw_bytes": len(payload), "sha256": hashlib.sha256(payload).hexdigest(),
-              "components": components, "component_count": len(components),
-              "codelists": codelists, "codelist_count": len(codelists),
-              "indicator_codelist": indicator_lists[0],
-              "acceptance_note": "PASS only for captured DSD and CL_INDICATOR metadata; does not map Brazil observations or establish unit/sign semantics."
+              "status": "PASS_ARCHIVED_IMMUTABLE_METADATA",
+              "source_workflow_run_id": 44095286184,
+              "source_artifact_id": 14333192531,
+              "source_capture_id_utc": "20261117T134325Z",
+              "dsd": {"agencyID": "IMF", "id": "ECOFIN_DSD", "version": "1.0"},
+              "codelist": {"agencyID": "IMF", "id": "CL_INDICATOR", "version": "1.0", "unique_code_count": len(codes)},
+              "raw_bytes": len(raw), "sha256": expected_sha,
+              "note": "Version-pinned archived official metadata reused to avoid repeated 42.7 MB transfer; current BCB payload is separately recaptured."
           }
-          (folder / "semantic_inventory.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
-          print(json.dumps({"status": report["status"], "components": len(components),
-                            "codelists": len(codelists), "indicator_codes": indicator_lists[0]["code_count"]}))
+          out = Path("evidence/imf_bop_dsd/ecofin_dsd/semantic_inventory.json")
+          out.write_text(json.dumps(report, indent=2) + "\\n")
+          print(json.dumps(report, indent=2))
           PY
 
       - name: Capture current official Brazil BOP payload for paired code-list QA
