@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source": "IMF SDMX Central official registrations catalogue",
+  "source_url": "https://sdmxcentral.imf.org/data/registrations.html",
+  "observed_date": "2026-11-18",
+  "row": {
+    "dataflow": "IMF:BOP6(1.0)",
+    "provider": "IMF:BR1",
+    "registered_url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "last_updated": "2026-10-26T11:47:29.000Z"
+  },
+  "capture_note": "The registrations page table is client-rendered. The raw HTML capture has an empty table body; this snapshot preserves the official registry row returned by the rendered IMF page/search result. It is not represented as a parsed row from the raw HTML bytes.",
+  "verification_status": "OFFICIAL_PAGE_OBSERVED; LIVE_RAW_HTML_TABLE_NOT_MACHINE_READABLE"
+}
