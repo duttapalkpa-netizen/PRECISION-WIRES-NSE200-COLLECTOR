@@ -1478,3 +1478,14 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Detailed evidence appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 528f7cf1af7a7182434d32d9492c9a8af335b37b).
 - Next action: raw HTTP capture in authorized environment that accepts text/xml, preserve headers/body and SHA-256, validate SDMX-ML, then compare dataflow/DSD. Brazil data cannot stand in for India or a global EM panel. No guessed keys, synthetic values or production integration.
 - Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
+
+
+## Chapter 34 — Part-6: Brazil BOP6 Registered XML Raw-Capture Attempt & Provenance Gate (2026-11-18)
+- Rechecked official IMF registration catalogue: `IMF:BOP6(1.0)`, provider `IMF:BR1`, Brazil registered URL `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`, updated 2026-10-26T11:47:29Z.
+- Official IMF Brazil SDDS/DQAF page confirms BCB compiles/disseminates Brazil BOP under BPM6 and disseminates public data free in USD million, current non-seasonally-adjusted values. This is publisher/methodology context only, not payload capture or global panel evidence.
+- Direct HTTPS raw capture via Python urllib with application/xml Accept header and 20-second timeout failed before HTTP: `URLError: [Errno -3] Temporary failure in name resolution`.
+- HTTP status/headers unavailable; zero bytes captured; SHA-256 unavailable; XML parse not run. This is a runtime DNS/egress blocker, not proof the endpoint is down or malformed. No empty raw artifact or fabricated manifest created.
+- Acceptance: registration metadata PASS; official BCB publisher/methodology context PASS; raw XML capture BLOCKED; response metadata/hash NOT_AVAILABLE; SDMX parse and dimension audit NOT_DONE; Brazil observations NOT_DONE; India/global panel/EM aggregate UNKNOWN/NOT_DONE.
+- Detailed Part-6 appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 9cd8445a9120c5cfb206fc90d03155601b9e38de).
+- Next step: repeat the exact raw capture only from an environment with working DNS/HTTPS egress, archive exact headers/body and SHA-256, then parse. Brazil remains schema/transport candidate only; never substitute for India/global EM panel. No production integration.
+- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
