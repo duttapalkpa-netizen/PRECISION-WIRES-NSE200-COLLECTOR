@@ -1399,3 +1399,16 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Same-run capture→diff chain now validated; future trigger-file push on research branch starts capture and comparison without a second manual workflow push. This short interval is a pipeline validation only, not monthly revision monitoring.
 - Original March-2026 vintage remains NOT_PROVEN; specific Feb-2026 revision cause UNKNOWN; Brazil pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED.
 - No production logic changed. Invariants preserved: ₹0, official/free sources only, no synthetic observations, fabricated timestamps, raw overwrite, or unsupported attribution; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and Hard Gate unchanged.
+
+
+## Chapter 40 — Global Capital Rotation Overlay QA Trigger Repair & Runtime Validation (2026-11-18)
+- Found why the isolated QA workflow had no verified execution: its push branch allowlist contained only `research/global-capital-rotation-overlay-mainline-20261113`, while the active continuation branch was `research/bcb-priority-metadata-audit-20261117`. Branch and path filters both must match.
+- Added the active continuation branch while preserving the original branch and all path filters; kept the 5-minute timeout, Python 3.12 compile and focused unittest steps.
+- Workflow commit `1f46bcdeb1f6a17dc4e389f9468f5bb52179d133`; workflow blob `ad0efc3644047247045847c8c15f89cb23d5fe9b`.
+- Push-triggered GitHub Actions Run `44245756372`, job/check `134604186428`, completed SUCCESS from `2026-11-18T05:39:29Z` to `05:39:40Z`; all steps PASS.
+- Python compile PASS; focused regression suite **72/72 PASS**, 0 failures/errors, 0.112s; job duration ~11s.
+- Audit report: `docs/GLOBAL_CAPITAL_ROTATION_OVERLAY_QA_TRIGGER_REPAIR_AUDIT_20261118.md`.
+- Acceptance: trigger repair PASS; actual runtime compile PASS; 72-test focused suite PASS. This closes only the QA workflow execution blocker; it does not complete source qualification, raw-payload manifest coverage, or production acceptance.
+- Current source registry has one qualified Federal Reserve H.10 nominal broad dollar index route; all other unqualified source/indicator mappings remain UNKNOWN. No source routes or units guessed; no seed values promoted.
+- Next bounded action: qualify the next exact official source route and capture immutable raw payload evidence/manifest; preserve UNKNOWN for unqualified inputs. Do not rerun this suite absent code/test changes.
+- Invariants unchanged: ₹0, official/free sources only, no synthetic data or fabricated timestamps; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and collector workflows unchanged; no PR/merge/production integration.
