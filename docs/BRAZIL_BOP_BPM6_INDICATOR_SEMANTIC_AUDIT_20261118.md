@@ -141,3 +141,59 @@ Updated `.github/workflows/imf_bop_dsd_acquisition.yml` on `research/global-capi
 | India / global EM flow admission | NOT_AUTHORIZED |
 
 No production integration or protected-selector change.
+
+
+
+## 9. Chapter 35 Part-3 — fail-closed IMF indicator code-list gate (2026-11-18)
+
+### Official IMF validation rule added
+The IMF SDMX Central User Guide (last updated May 2025), Section 2.2, lines 181–196, documents two ECOFIN-specific checks:
+- An indicator absent from IMF:CL_INDICATOR fails when it also does not begin with the reporting country's three-letter ISO code.
+- An indicator absent from CL_INDICATOR but beginning with that three-letter country code is a warning (country-specific indicator), not a standard IMF codelist match.
+The same guide describes Valid Representation as checking reported dimension values against the DSD representation. Official source: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralUserGuide.pdf (Section 2.2, pp. 5–6).
+
+### New reusable QA implementation
+Added `qa/audit_brazil_bop_indicator_codes.py`:
+- Validates the exact `IMF:ECOFIN_DSD:1.0` structure.
+- Requires exactly one `INDICATOR` dimension whose representation references `IMF:CL_INDICATOR:1.0`.
+- Validates the codelist agency, ID, version, non-empty code inventory and duplicate IDs.
+- Parses Brazil's actual StructureSpecificData header namespace for `Dataflow=IMF:BOP_BPM6(1.0)`; this parser shape is based on the recovered BCB payload, which does not emit a separate Dataflow element.
+- Requires all series to have `REF_AREA=BR` and a non-empty `INDICATOR`.
+- Classifies each observed code as official CL_INDICATOR match, Brazil ISO3-prefixed country-specific warning, or fail/quarantine.
+- Keeps country-specific warning codes semantically UNKNOWN when no official IMF label exists. Official codelist matches also require further economic semantic review.
+- Explicitly blocks portfolio-flow, global EM aggregate and trading-signal admission. Code-list compliance alone cannot establish transaction direction, unit, sign, observation quality or vintage.
+
+Added `tests/test_brazil_bop_indicator_codes.py` with four regression cases: official-vs-country-specific distinction; unlisted non-country-prefixed code fail-closed; wrong codelist identity; wrong dataflow identity. These tests are wired into the GitHub Actions workflow. No workflow execution is claimed yet.
+
+### Actual prior Brazil payload parser check
+The previously archived Part-7 BCB XML was re-read locally. Exact observed values remain: dataflow `IMF:BOP_BPM6(1.0)`, REF_AREA `BR`, 237 Series, 237 unique INDICATOR codes, 89,097 observations. The nine BFP/BFPL-prefixed codes remain lexical candidates only; they are not semantically classified from prefixes. This is a re-parse of the existing archived bytes, not a new upstream capture.
+
+### Workflow integration
+Updated `.github/workflows/imf_bop_dsd_acquisition.yml`:
+- Added repository checkout.
+- Added the unit-test step for the new QA gate.
+- Extended the job timeout to 8 minutes (within the project's under-10-minute run constraint).
+- Retains version-pinned ECOFIN DSD + referenced codelist acquisition.
+- Acquires the current official BCB Brazil BOP XML as a paired payload, recording request URL, response headers, transfer metadata, request-start and completion timestamps, raw byte count and SHA-256.
+- Runs the code-list audit against the captured BCB XML and the ECOFIN DSD/codelist response; output is retained in the workflow artifact.
+- Final workflow commit: `9a17d6fd0144708ffee152d4af233945dfee98bf`.
+- Final workflow blob SHA: `c5caacbe917d16d108f74bc28047aa60ff89c5e0`.
+- QA script commit: `1924fc0c1290435ed9db5a76168bf0b2b6f95e66`; fetched blob SHA: `b2dbb6b9a63b02c57293f316fc5218fe743161fa`.
+- Test commit: `0516defffc320cb26c5acc98745c9d3fb265330c`; fetched blob SHA: `42f8e83fc9ed13f9683a9bfab698fbd98b9809e9`.
+- Static re-fetch verification: checkout, test step, 8-minute timeout, BCB URL, audit invocation, ECOFIN request and CL_INDICATOR checks all present.
+
+### Runtime status and guardrails
+The GitHub workflow has not been dispatched in this session. Therefore the newly added committed tests have not yet been executed by GitHub Actions, and no live ECOFIN codelist or paired current BCB payload has been acquired by this workflow. The previous Part-7 artifact remains the only raw Brazil capture currently evidenced. No 237-code crosswalk is claimed complete. No code is admitted to the Brazil portfolio-flow panel, global EM aggregate or trading signal.
+
+| Gate | State |
+|---|---|
+| IMF ECOFIN country-specific indicator validation rule documented | PASS (official IMF guide) |
+| New fail-closed code-list audit implementation committed | PASS (static re-fetch) |
+| Four regression tests committed and wired into workflow | PASS (static re-fetch; runtime NOT_DONE) |
+| Existing Brazil raw XML re-parse: 237 series / 89,097 observations | PASS (archived payload) |
+| Live ECOFIN DSD/CL_INDICATOR capture | NOT_DONE |
+| Actual 237-code vs official codelist comparison | NOT_DONE |
+| Economic semantic classification of portfolio codes | NOT_DONE |
+| Brazil flow panel / global EM aggregate / trading signal admission | NOT_AUTHORIZED |
+
+No production integration or protected selector changes.
