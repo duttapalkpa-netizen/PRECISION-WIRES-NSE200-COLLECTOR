@@ -13,6 +13,7 @@ on:
       - "scripts/research/acquire_nic_concordance_source.py"
       - ".github/workflows/nic_concordance_source_acquisition.yml"
       - ".github/workflows/nse_collector.yml"
+      - ".github/workflows/imf_sdmx_rss_registration_audit.yml"
   schedule:
     - cron: "30 4 * * 1-5"
 
