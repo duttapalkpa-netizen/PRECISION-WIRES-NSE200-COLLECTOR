@@ -8,7 +8,8 @@ on:
       - ".github/workflows/imf_bop_dsd_acquisition.yml"
       - "qa/audit_brazil_bop_indicator_codes.py"
       - "qa/build_brazil_bop_indicator_crosswalk.py"
-      - "tests/test_brazil_bop_indicator_*.py"
+      - "qa/audit_brazil_bop_portfolio_reconciliation.py"
+      - "tests/test_brazil_bop_*.py"
   workflow_dispatch:
 
 permissions:
@@ -27,7 +28,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m unittest discover -s tests -p 'test_brazil_bop_indicator_*.py' -v
+          python -m unittest discover -s tests -p 'test_brazil_bop_*.py' -v
 
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
         shell: bash
@@ -543,6 +544,17 @@ jobs:
             --codelist-dsd-xml evidence/imf_bop_dsd/ecofin_dsd/raw.xml \
             --output evidence/brazil_bop/indicator_semantic_crosswalk.json
           sha256sum evidence/brazil_bop/indicator_semantic_crosswalk.json > evidence/brazil_bop/CROSSWALK_SHA256SUMS
+
+      - name: Emit BPM6 portfolio aggregate reconciliation diagnostic
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_brazil_bop_portfolio_reconciliation.py \
+            --brazil-xml evidence/brazil_bop/response.xml \
+            --output evidence/brazil_bop/portfolio_reconciliation_audit.json
+          sha256sum evidence/brazil_bop/portfolio_reconciliation_audit.json \
+            > evidence/brazil_bop/PORTFOLIO_RECONCILIATION_SHA256SUMS
 
       - name: Upload raw response and QA evidence
         if: always()
