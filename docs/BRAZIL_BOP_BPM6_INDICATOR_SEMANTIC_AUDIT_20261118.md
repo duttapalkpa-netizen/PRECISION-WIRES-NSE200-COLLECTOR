@@ -543,3 +543,11 @@ These are observed reconciliation facts, not proof of an IMF source error or a s
 
 ### Guardrail / next decision
 No production selector, ranking, CORE-672 or Engines A–E changes. Brazil flow panel, Global EM aggregate and trading signal remain NOT_AUTHORIZED. Next: complete the nine-series runtime audit; inspect exact per-series diffs and SGS API metadata; then pursue BCB/IMF official revision/lineage documentation for the 2010-01 break and current-SGS revisions. Do not promote any series until both value reconciliation and quality/status metadata are accepted.
+
+
+### Part-7 QA correction — source-specific rounding tolerance (2026-11-18)
+The first nine-series component artifact (Run #15) used 0.051 million USD for all source roll-ups. Review of BCB SGS metadata/actual returned precision showed SGS values are rounded to one decimal million USD; summing three independently rounded components can differ from the rounded parent by 0.1 million USD. The initial SGS roll-up mismatch counts (assets 128, liabilities 115, net 96) were therefore false positives caused by an overly strict tolerance, not accepted data failures.
+
+Corrected rule: archive and IMF-SDMX high-precision roll-ups use 0.051 million USD; current SGS one-decimal roll-ups use 0.151 million USD. Recomputed over all 381 SGS months, maximum residuals were 0.10 million USD for assets, liabilities and net, so all three SGS roll-ups pass within the 0.151 tolerance. Cross-source point comparisons retain the 0.051 tolerance because the expected display-rounding allowance for comparing a high-precision value with one-decimal SGS is 0.051.
+
+Updated `qa/audit_brazil_bop6_portfolio_components.py` to record source-specific tolerances; commit `21ba07f1ab17128cdb61ed8e2c025f1df3a51afa`. Added regression test for one-decimal SGS rounding vs material difference; commit `8af623974a8c8dc22944a5e5ba30199acb66a783`. Run #17 `44281174648` includes both corrections and is the acceptance run; runtime result pending.
