@@ -292,3 +292,30 @@ A separate value scan of all 89,097 captured observations found 88,764 numeric f
 Updated `qa/build_brazil_bop_indicator_crosswalk.py` to count numeric observations and explicit `...` tokens, fail on unrecognized nonnumeric values, missing OBS_VALUE, non-finite values, and duplicate periods; never impute missing markers as zero. Commit `2275348648ac97efeb0a72358dbae54528e8769b`; blob SHA `1a1828c0b2e5fb7c918b8a348265844971ed54ff`.
 
 Expanded crosswalk regression tests for explicit missing-token accounting, unexpected nonnumeric values, and duplicate periods. Commit `c7210113190afef7627e71212f043e0afe521b02`; blob SHA `a3e6f9a9110a52be2a12c1620ae9d3227bed6513`. The push-triggered workflows are running on commits `2275348648ac97efeb0a72358dbae54528e8769b` (Run `44270990383`) and `c7210113190afef7627e71212f043e0afe521b02` (Run `44271011602`). Their final conclusions are pending.
+
+
+
+### Part-5 final runtime acceptance — GitHub Actions SUCCESS (2026-11-18)
+
+**Successful run:** `44271446838` — commit `9298d8638b9ed471ed6d0411899bd11ae5e6e72d`; completed 2026-11-18T08:57:54Z; conclusion `success`. **Artifact:** `14412253203`, `imf-bop-dsd-acquisition-44271446838`, ZIP 4,860,541 bytes, artifact digest SHA-256 `ccec2f3d88e7bd572d09a9c09a4bb8675cd88f14a7171353d1f9a6d31c45e4ba`. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44271446838.
+
+All 15 regression tests passed (0.006 seconds). Every job step passed, including: IMF BOP DSD acquisition; SDMX dataflow and constraint parser fixtures; live BOP_BPM6 dataflow + constraint fetch and exact ECOFIN_DSD reference validation; component inventory; immutable ECOFIN/CL_INDICATOR archive retrieval and byte/hash/code-count verification; current BCB payload capture; code-list audit; full crosswalk generation; artifact upload.
+
+Current run metadata QA:
+- Live BOP_BPM6 dataflow XML: 26,581 bytes; SHA-256 `705fd14cef5bbc8cc9c4f23662ceab8daa3e2be768be2d1a4fbdeca0643e6075`; exact referenced DSD IMF:ECOFIN_DSD:1.0 — PASS.
+- Live constraint XML: 22,025 bytes; SHA-256 `60d31fbf8fa7f76102f68981e5666579b1982b59b5c500d30d057c29402f6b96`; attached to IMF:BOP_BPM6:1.0; one CubeRegion, three unique dimension keys — PASS.
+- ECOFIN/CL_INDICATOR raw metadata was reused from immutable official Run 44095286184 / Artifact 14333192531 after SHA and byte verification; this avoids repeating a slow 42.7 MB transfer. The archived CL_INDICATOR remains version 1.0 with 113,644 unique codes.
+- Current BCB URL capture returned HTTP 200, text/xml, 4,840,062 bytes, SHA-256 `3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c`; same immutable content as the prior Part-7 payload.
+- Code audit JSON: `PASS`; 237 official CL_INDICATOR matches; 0 unmatched; Brazil BOP_BPM6; REF_AREA BR.
+- Crosswalk JSON: 257,449 bytes; SHA-256 `6161f9929e02474bc9db11fb07c865f1c0e4febb00cdb1300dbbdebd707f12b4`; `PASS_CODELIST_CROSSWALK_ONLY`; 237 indicators, 89,097 observations, 88,764 numeric finite observations, 333 literal `...` missing tokens; 9 Financial Account portfolio-investment series and 9 separate Current Account portfolio-investment income series. Nine Financial Account portfolio series each have 381 monthly observations from 1995-01 to 2026-09.
+- Crosswalk checksum is retained in `brazil_bop/CROSSWALK_SHA256SUMS`; BCB raw XML checksum in `brazil_bop/SHA256SUMS`.
+
+**Downloadable run evidence:** https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44271446838/artifacts/14412253203.
+
+### Runtime lessons / failed attempts retained
+- Run `44270663838` failed at the live 42.7 MB ECOFIN DSD fetch because three 75-second curl attempts timed out after partial downloads (6.46 MB, 12.36 MB, 4.74 MB). The other validation and test steps before it succeeded; downstream steps were skipped; diagnostic artifact `14412855873` retained.
+- Run `44271396745` tested cross-run artifact reuse but failed because the token expression was escaped incorrectly (Bad credentials). Diagnostic artifact `14412202990` retained.
+- Corrected the GitHub Actions token expression and reused the immutable, version-pinned IMF metadata artifact from Run `44095286184`. Final Run `44271446838` completed SUCCESS. Do not repeat the failed large transfer or the malformed token expression.
+
+### Final acceptance boundary
+The full code-list crosswalk and workflow QA are PASS. This does **not** authorize a Brazil portfolio-flow panel or trading signal: observation quality attributes are absent; 333 missing-value tokens have no source-specified reason; unit multiplier/scale has not been applied; the BCB registration catalogue lists the Brazil URL under IMF:BOP6(1.0) while the payload header and live IMF dataflow say IMF:BOP_BPM6(1.0). This registration-vs-payload discrepancy remains OPEN. No net portfolio flow was calculated. Global EM aggregation and trading-signal admission remain NOT_AUTHORIZED.
