@@ -106,3 +106,37 @@ Sources checked (official):
 - https://sdmxcentral.imf.org/data/constraints.html
 - https://sdmxcentral.imf.org/data/registrations.html
 - https://data.imf.org/en/Resource-Pages/IMF-API
+
+
+## Chapter 34 — Part-4: IMF Official API Access Boundary & Historical BOP_BPM6 Submission Contract Audit (2026-11-18)
+
+### New official documentation evidence
+- Re-opened the IMF Data API page. It confirms SDMX 2.1 and 3.0 APIs, but explicitly directs users to the Swagger page using a beta-portal account sign-in. This confirms an access boundary; it does not prove that all API data require authentication.
+- Re-opened the official IMF SDMX Central Web Services (API) Guide, last updated May 2025. It documents the public structure-service entry point `https://sdmxcentral.imf.org/sdmx/v2/` and says structures include Dataflows, Codelists, Concepts and Data Structures. The guide distinguishes public structure queries from private/credentialed registration actions; do not conflate registration authentication with read-only structure-query authentication.
+- The same official guide contains a historical SDMX submission example explicitly naming `IMF:BOP_BPM6(1.0)` as Dataflow and `IMF:ECOFIN_DSD(1.0)` as DataStructure, with `DATA_DOMAIN=BOP6`, `REF_AREA`, `COUNTERPART_AREA`, `FREQ`, `UNIT_MULT`, `TIME_FORMAT`, `OBS_STATUS`, and `INDICATOR`. Its examples show annual and quarterly submissions and illustrative indicator codes. This is evidence of an IMF BOP6 reporting/submission contract in the guide, not proof of a current public dissemination dataset or observation API.
+- The guide's May-2025 generic structure-query documentation plus its older illustrative BOP_BPM6 example must not be silently equated with the separate IMF:BOP DSD 2.6.0 already audited in Part-1/2, or with the IMF:BOP6(1.0) provider registrations and BOP6_CONSTRAINT catalogue entry from Part-3. These are distinct identifiers/structure roles until a direct current structure response proves their relationships.
+
+### Bounded direct check
+- Attempted the documented public Structure Web Service query for `IMF:BOP_BPM6(1.0)` requesting its DSD reference, and for `IMF:ECOFIN_DSD(1.0)` requesting referenced children. The retrieval route returned inaccessible/internal-error responses without XML body, HTTP status or checksum. Record `PROBE_BLOCKED`; do not infer that the structures do not exist.
+- IMF Swagger access remains beta-portal sign-in gated. No credentials were supplied or used; no authentication bypass attempted.
+
+### Acceptance matrix
+| Gate | Status |
+|---|---|
+| Official IMF API protocol (SDMX 2.1/3.0) confirmed | PASS |
+| Swagger beta-portal sign-in requirement documented | PASS |
+| Official May-2025 SDMX Central structure-service contract reviewed | PASS |
+| Historical IMF:BOP_BPM6(1.0) / IMF:ECOFIN_DSD(1.0) submission example identified | PASS (historical documentation only) |
+| Current live BOP_BPM6 → DSD structure response captured | UNKNOWN / PROBE_BLOCKED |
+| Relationship among BOP_BPM6, BOP6, BOP DSD 2.6.0 and BOP6_CONSTRAINT established | UNKNOWN |
+| Current public IMF BOP observation endpoint / valid query key | UNKNOWN / BLOCKED |
+| Observation rows, India panel, EM aggregate | NOT_DONE |
+
+### Decision and next action
+Part-4 successfully qualifies an additional official historical submission-contract route and clarifies the API access boundary, but does **not** qualify current observation access. The exact historical example must not be used as a current dataflow/key. Next useful step, if the user has legitimate beta-portal access, is to export the current BOP dataset's Swagger/OpenAPI metadata or a current Data Portal API query definition (no password/token should be pasted into chat). Without that user-authorized metadata, retain UNKNOWN/BLOCKED and do not build a guessed query. No observations or aggregates created; no production integration or production logic changes.
+
+Official references:
+- https://data.imf.org/en/Resource-Pages/IMF-API
+- https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf (May 2025; especially lines 77-99, 116-120, and historical BOP_BPM6 example around printed page 9)
+- https://sdmxcentral.imf.org/data/overview.html
+- https://sdmxcentral.imf.org/data/constraints.html
