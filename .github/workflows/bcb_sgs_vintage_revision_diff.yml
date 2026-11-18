@@ -44,3 +44,5 @@ jobs:
           path: data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
           if-no-files-found: error
           retention-days: 90
+
+# Manual workflow-file touch on research branch can re-run the comparator after a GITHUB_TOKEN snapshot commit.
