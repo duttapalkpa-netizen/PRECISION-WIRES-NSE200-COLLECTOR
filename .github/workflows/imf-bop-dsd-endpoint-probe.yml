@@ -1,0 +1,33 @@
+name: IMF BOP DSD Official Endpoint Probe
+
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - "scripts/research/probe_imf_bop_dsd_endpoints.py"
+      - ".github/workflows/imf-bop-dsd-endpoint-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe official IMF SDMX Central DSD routes
+        run: python scripts/research/probe_imf_bop_dsd_endpoints.py
+      - name: Upload raw response and retrieval metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd-endpoint-probe
+          path: artifacts/imf_bop_dsd_probe/
+          if-no-files-found: error
+          retention-days: 90
