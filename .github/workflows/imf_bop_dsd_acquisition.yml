@@ -574,7 +574,7 @@ jobs:
           set -euo pipefail
           DIR="evidence/brazil_bop/sgs"
           mkdir -p "$DIR"
-          for SGS in 22905 22906 22924; do
+          for SGS in 22905 22906 22909 22912 22915 22924 22927 22936 22939; do
             URL="https://api.bcb.gov.br/dados/serie/bcdata.sgs.${SGS}/dados?formato=json"
             ITEM="$DIR/${SGS}"
             mkdir -p "$ITEM"
