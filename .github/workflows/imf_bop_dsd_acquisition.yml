@@ -14,6 +14,7 @@ on:
       - "qa/audit_brazil_bop6_archive_reconciliation.py"
       - "qa/audit_brazil_bop6_portfolio_components.py"
       - "qa/audit_imf_bop6_registration_alignment.py"
+      - "config/imf_bop6_registration_snapshot_20261118.json"
       - "tests/test_brazil_bop_*.py"
       - "tests/test_inspect_brazil_bop6_archive.py"
       - "tests/test_brazil_bop6_archive_reconciliation.py"
@@ -670,6 +671,7 @@ jobs:
         run: |
           set -euo pipefail
           python qa/audit_imf_bop6_registration_alignment.py \
+            --registration-snapshot config/imf_bop6_registration_snapshot_20261118.json \
             --registration-html evidence/imf_bop_dsd/registrations/raw.html \
             --bop6-dataflow evidence/imf_bop_dsd/bop6_dataflow/raw.xml \
             --bop6-constraint evidence/imf_bop_dsd/bop6_constraint/raw.xml \
