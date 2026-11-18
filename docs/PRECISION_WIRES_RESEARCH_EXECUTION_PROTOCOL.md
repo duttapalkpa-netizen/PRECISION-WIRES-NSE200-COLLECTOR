@@ -79,3 +79,10 @@ The workflow `.github/workflows/imf_bop_dsd_acquisition.yml` now ignores workflo
 - The IMF SDMX Central overview distinguishes Dataflow-level and Provision Agreement-level constraints. Keep their attachment points separate; do not infer that shared DSDs or similar labels make Dataflow IDs interchangeable.
 - A public registration row and generic validation description are evidence of the registry association, not evidence that a contradictory source Header is acceptable. For a mismatch, preserve UNKNOWN/BLOCKED until a country-specific authoritative registration/source correction is visible.
 - Documentation-only reviews must be recorded as such; do not invent a workflow run, artifact, source capture timestamp or SHA-256. Do not trigger a full acquisition workflow for a metadata-only documentation update.
+
+## 12. Registration history evidence hierarchy (2026-11-18)
+- For a country-specific registration-history question, prefer the official Data Registrations activity page, filtered by Provision Agreement, Dataflow, or Data Provider. Capture detail fields (Data URL, Provision URN, Dataflow URN, Data Provider URN, User) and every event row with its action/time if actually returned.
+- The public Registrations table's Last Updated field is an event-time indicator for the current registration; it is not a full event history. The User Guide documents that Re-Register updates Last Updated for the same URL.
+- The IMF SDMX Central RSS feed is documented to emit transactions including data registrations/deletions and to link each event to a RegistryInterface SubmitRegistrationRequest/SubmitStructureRequest. Preserve the raw event document and SHA-256 if retrievable. Do not infer event history from the current registration table alone.
+- An empty/unpopulated client-side history extraction is NOT evidence of zero events. Classify Brazil-specific history as NOT_RETRIEVED/UNKNOWN until a filtered event or a complete bounded feed capture is inspected.
+- The generic SDMX Transactions page may show structure submissions; do not treat it as the dedicated Data Registrations history.

@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "part": "13",
+  "status": "PASS_HISTORY_SURFACE_DISCOVERY_BRAZIL_EVENT_NOT_RETRIEVED",
+  "scope": "Read-only discovery of official IMF SDMX Central registration history and event-feed evidence routes",
+  "official_surfaces": {
+    "data_registration_history": {
+      "url": "https://sdmxcentral.imf.org/activity/data-log.html",
+      "page_purpose": "Historical activity for provision agreements",
+      "filters": ["Provision Agreement", "Dataflow", "Data Provider", "Show All Data Registrations"],
+      "detail_fields": ["Data URL", "Provision URN", "Dataflow URN", "Data Provider URN", "User"],
+      "brazil_event_rows_retrieved": false,
+      "classification": "NOT_RETRIEVED_UNKNOWN_NOT_NOT_FOUND"
+    },
+    "rss_event_feed": {
+      "url": "https://sdmxcentral.imf.org/rss.xml",
+      "documented_event_types": ["structure additions", "structure modifications", "structure deletions", "data registrations", "data deletions"],
+      "documented_payload": "RegistryInterface SDMX 2.1 SubmitRegistrationRequest or SubmitStructureRequest linked from each transaction",
+      "retrieved_in_this_review": false,
+      "classification": "NOT_RETRIEVED"
+    },
+    "generic_sdmx_transactions": {
+      "url": "https://sdmxcentral.imf.org/activity/activity-log.html",
+      "visible_extracted_rows": "Structure Submission only",
+      "use_for_brazil_registration_absence_claim": false
+    },
+    "current_registration_table": {
+      "url": "https://sdmxcentral.imf.org/data/registrations.html",
+      "current_row": "IMF:BOP6(1.0) / IMF:BR1 / exact BCB URL / Last Updated 2026-10-26T11:47:29Z",
+      "history_completeness": "CURRENT_STATE_ONLY_NOT_FULL_EVENT_SEQUENCE"
+    }
+  },
+  "source_guide_findings": {
+    "user_guide": "IMF SDMX Central User Guide, May 2025, sections 6 and 7.1",
+    "registration_table": "Shows registrations by Dataflow and Data Provider; filter by provider is supported.",
+    "reregister": "Re-Register updates Last Updated for the same URL.",
+    "rss": "Feed updated on each transaction; includes data registration/deletion and links to underlying RegistryInterface submission document."
+  },
+  "prior_mismatch": {
+    "registration": "IMF:BOP6(1.0)",
+    "payload_header": "IMF:BOP_BPM6(1.0)",
+    "mismatch": "CONFIRMED",
+    "intent_or_correction": "UNKNOWN"
+  },
+  "admission": {
+    "source_or_header_rewrite": "PROHIBITED",
+    "registration_rewrite": "PROHIBITED",
+    "constraint_substitution": "PROHIBITED",
+    "brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "global_em_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "new_observations_acquired": false,
+  "workflow_triggered": false,
+  "runtime_artifact": null,
+  "decision": "History surfaces discovered, but the Brazil-specific registration event was not retrieved. Preserve NOT_RETRIEVED/UNKNOWN; P0 remains blocked."
+}
