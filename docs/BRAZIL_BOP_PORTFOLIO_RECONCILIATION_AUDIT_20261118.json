@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "status": "FAIL_RECONCILIATION",
+  "scope": "Diagnostic only; no source-value repair, rescaling, flow admission or trading signal.",
+  "rule": "BPM6 financial-account balance diagnostic: net acquisition of financial assets minus net incurrence of liabilities.",
+  "official_sign_rule": "Positive values indicate increases in assets or liabilities; negative values indicate decreases. Financial-account balance is assets minus liabilities.",
+  "official_reference": "https://www.imf.org/external/pubs/ft/bop/2013/13-13.pdf",
+  "unit_interpretation": "Millions of US dollars: IMF CL_UNIT_MULT code 6 is labelled Millions; the matched CL_INDICATOR labels specify US Dollars. Raw values were not rescaled.",
+  "series_semantics_caveat": "BFP label is 'Portfolio investment' and does not explicitly say 'balance'. This is a BPM6-consistent reconciliation diagnostic, not proof that BFP is contractually defined as assets minus liabilities.",
+  "series": {
+    "total": "BFP_BP6_USD",
+    "assets": "BFPA_BP6_USD",
+    "liabilities": "BFPL_BP6_USD"
+  },
+  "coverage": {
+    "common_period_count": 381,
+    "matched_period_count": 180,
+    "mismatch_count": 201,
+    "missing_period_count": 0,
+    "first_mismatch_period": "2010-01",
+    "last_mismatch_period": "2026-09",
+    "max_absolute_difference_million_usd": 8402.74195204,
+    "mean_absolute_difference_among_mismatches_million_usd": 1249.2619595526864
+  },
+  "structural_break": {
+    "matched_periods": "1995-01 through 2009-12",
+    "mismatch_periods": "2010-01 through 2026-09",
+    "interpretation": "A sharp, persistent reconciliation break begins in 2010-01. Cause not established; do not infer whether this is a source methodology break, aggregate-definition difference or data error."
+  },
+  "mismatch_samples_first_3": [
+    {"period":"2010-01","reported_total":88.38340538,"assets_minus_liabilities":1194.6754148,"difference":-1106.29200942},
+    {"period":"2010-02","reported_total":173.83328506,"assets_minus_liabilities":194.35309446,"difference":-20.5198094},
+    {"period":"2010-03","reported_total":744.74873386,"assets_minus_liabilities":216.0962297,"difference":528.65250416}
+  ],
+  "source": {
+    "url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "raw_bytes": 4840062,
+    "sha256": "3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c",
+    "dataflow": "IMF:BOP_BPM6:1.0",
+    "data_domain": "BOP6",
+    "ref_area": "BR",
+    "frequency": "M",
+    "unit_multiplier": "6"
+  },
+  "quality_gate": "UNKNOWN_NOT_PASS",
+  "admission": {
+    "brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "global_em_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "next_required_evidence": [
+    "BCB/IMF official definition and lineage for BFP_BP6_USD",
+    "Explanation of the 2010-01 break",
+    "Independent series-level quality/status and revision/vintage metadata",
+    "Reconciliation rule for parent/child instrument series"
+  ]
+}
