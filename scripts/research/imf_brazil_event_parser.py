@@ -1,30 +1,52 @@
 #!/usr/bin/env python3
-"""Conservative, offline parser for IMF SDMX RegistryInterface 2.1 event payloads.
+"""Conservative offline parser for SDMX 2.1 RegistryInterface registration events.
 
-It never fetches URLs and never promotes a record to Brazil PASS: it emits a
-candidate only when exact provider/BCB URL evidence is present in a genuine
-SubmitRegistrationRequest. Missing semantics remain UNKNOWN.
+No network access. A Brazil candidate requires an exact Brazil PA URN or exact
+BCB URL inside a schema-shaped RegistrationRequest/Registration subtree.
+This is candidate extraction only; it never establishes transaction chronology
+or promotes a record to PASS.
 """
 from __future__ import annotations
-import argparse, hashlib, json
+import argparse
+import hashlib
+import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
 RI_NS = "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
 BCB_URL = "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml"
 BRAZIL_PROVIDER = "IMF:BR1"
+BRAZIL_PA_URN = "urn:sdmx:org.sdmx.infomodel.registry.ProvisionAgreement=IMF:BR_BOP_BP6(1.0)"
+ACTION_ENUM = {"Append", "Replace", "Delete", "Information"}
+
 
 def lname(tag: str) -> str:
     return tag.rsplit("}", 1)[-1]
 
+
 def namespace(tag: str) -> str:
     return tag[1:].split("}", 1)[0] if tag.startswith("{") else ""
+
+
+def children_named(parent: ET.Element, name: str) -> list[ET.Element]:
+    return [child for child in list(parent) if lname(child.tag) == name and namespace(child.tag) == RI_NS]
+
+
+def element_values(element: ET.Element) -> list[str]:
+    values = []
+    for node in element.iter():
+        if node.text and node.text.strip():
+            values.append(node.text.strip())
+        for value in node.attrib.values():
+            if value and value.strip():
+                values.append(value.strip())
+    return values
+
 
 def inspect_bytes(raw: bytes) -> dict:
     digest = hashlib.sha256(raw).hexdigest()
     base = {"sha256": digest, "byte_count": len(raw), "classification": "UNKNOWN",
-            "brazil_registration_candidate": False, "acceptance": "UNKNOWN",
-            "reasons": []}
+            "brazil_registration_candidate": False, "acceptance": "UNKNOWN", "reasons": []}
     try:
         root = ET.fromstring(raw)
     except ET.ParseError as exc:
@@ -34,54 +56,67 @@ def inspect_bytes(raw: bytes) -> dict:
         return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
                 "root": lname(root.tag), "root_namespace": namespace(root.tag),
                 "reasons": ["unexpected_root_or_registryinterface_namespace"]}
-    requests = [e for e in root.iter() if lname(e.tag) in
-                ("SubmitRegistrationRequest", "SubmitRegistrationsRequest", "SubmitStructureRequest")]
-    kinds = sorted({lname(e.tag) for e in requests})
-    if len(requests) != 1:
+
+    # The SDMX 2.1 RegistryInterface payload is a direct child of the root.
+    payloads = [child for child in list(root) if namespace(child.tag) == RI_NS and
+                lname(child.tag) in ("SubmitRegistrationsRequest", "SubmitStructureRequest")]
+    if len(payloads) != 1:
         return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
-                "root": "RegistryInterface", "request_types": kinds,
-                "reasons": ["expected_exactly_one_supported_submit_request"]}
-    request = requests[0]
+                "request_types": sorted(lname(x.tag) for x in payloads),
+                "reasons": ["expected_exactly_one_direct_supported_request_payload"]}
+    request = payloads[0]
     kind = lname(request.tag)
-    if namespace(request.tag) != RI_NS:
-        return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
-                "request_types": [kind], "reasons": ["request_namespace_mismatch"]}
     if kind == "SubmitStructureRequest":
         return {**base, "classification": "STRUCTURE_EVENT", "acceptance": "NOT_APPLICABLE",
                 "request_types": [kind], "reasons": ["structure_submission_is_not_data_registration"]}
-    # Inspect request subtree only. Namespace-aware XML parse; retain exact values.
-    values = []
-    for elem in request.iter():
-        for key, value in elem.attrib.items():
-            if value.strip():
-                values.append({"element": lname(elem.tag), "field": "@" + lname(key), "value": value.strip()})
-        if elem.text and elem.text.strip():
-            values.append({"element": lname(elem.tag), "field": "text", "value": elem.text.strip()})
-    provider_match = any(v["value"] == BRAZIL_PROVIDER for v in values)
-    # Exact whole-value match only; never accept a URL embedded in narrative text.
-    url_match = any(v["value"].lower() == BCB_URL.lower() for v in values)
-    dataflows = sorted({v["value"] for v in values if "BOP6" in v["value"] or "BOP_BPM6" in v["value"]})
-    actions = sorted({v["value"] for v in values if v["field"].lower() in ("@action", "@type")
-                      and v["value"].lower() in ("register", "reregister", "re-register", "delete", "replace")})
-    candidate = provider_match or url_match
+
+    registration_requests = children_named(request, "RegistrationRequest")
+    if not registration_requests:
+        return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
+                "request_types": [kind], "reasons": ["no_direct_RegistrationRequest_children"]}
+
+    records = []
+    for rr in registration_requests:
+        registrations = children_named(rr, "Registration")
+        action = rr.attrib.get("action")
+        for registration in registrations:
+            pa_nodes = children_named(registration, "ProvisionAgreement")
+            ds_nodes = children_named(registration, "Datasource")
+            pa_values = [v for node in pa_nodes for v in element_values(node)]
+            ds_values = [v for node in ds_nodes for v in element_values(node)]
+            # Exact whole-value matching only, and only in schema-relevant subtrees.
+            pa_match = BRAZIL_PA_URN in pa_values
+            url_match = any(v.lower() == BCB_URL.lower() for v in ds_values)
+            provider_match = any(v == BRAZIL_PROVIDER for v in pa_values + ds_values)
+            candidate = pa_match or url_match or provider_match
+            records.append({
+                "action_raw": action,
+                "action_enum_valid": action in ACTION_ENUM,
+                "provision_agreement_values": pa_values,
+                "datasource_values": ds_values,
+                "brazil_pa_exact_match": pa_match,
+                "provider_exact_match": provider_match,
+                "bcb_url_exact_match": url_match,
+                "brazil_registration_candidate": candidate,
+                "source_last_updated": registration.attrib.get("lastUpdated"),
+            })
+
+    candidates = [r for r in records if r["brazil_registration_candidate"]]
     reasons = []
-    if not candidate:
-        reasons.append("no_exact_brazil_provider_or_bcb_url_in_registration_request")
-    if provider_match and not url_match:
-        reasons.append("provider_exact_match_but_bcb_url_not_present")
-    if url_match and not provider_match:
-        reasons.append("bcb_url_exact_match_but_provider_not_present")
-    if not actions:
-        reasons.append("event_action_not_extracted_from_payload")
-    if not dataflows:
-        reasons.append("bop_dataflow_identifier_not_present")
-    # Candidate is deliberately not PASS; downstream PA/dataflow/provenance review required.
-    return {**base, "classification": "REGISTRATION_EVENT_CANDIDATE" if candidate else "REGISTRATION_EVENT",
-            "brazil_registration_candidate": candidate, "acceptance": "REQUIRES_MANUAL_EVIDENCE_REVIEW" if candidate else "NOT_BRAZIL",
+    if not candidates:
+        reasons.append("no_exact_brazil_pa_provider_or_bcb_url_in_schema_shaped_registration")
+    if any(not r["action_enum_valid"] for r in records):
+        reasons.append("one_or_more_actions_missing_or_outside_sdmx21_action_enum")
+    if candidates:
+        reasons.append("candidate_requires_external_pa_resolution_and_transaction_time_evidence")
+    return {**base,
+            "classification": "REGISTRATION_EVENT_CANDIDATE" if candidates else "REGISTRATION_EVENT",
+            "brazil_registration_candidate": bool(candidates),
+            "acceptance": "REQUIRES_MANUAL_EVIDENCE_REVIEW" if candidates else "NOT_BRAZIL",
             "root": "RegistryInterface", "request_types": [kind],
-            "provider_exact_match": provider_match, "bcb_url_exact_match": url_match,
-            "dataflow_identifiers": dataflows, "action_candidates": actions,
-            "evidence_values": values, "reasons": reasons + (["provision_agreement_and_transaction_time_must_be_verified"] if candidate else [])}
+            "registration_count": len(records), "registrations": records,
+            "reasons": reasons}
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -97,5 +132,7 @@ def main():
     print(json.dumps({"output": args.output, "count": len(results),
                       "candidates": sum(r["brazil_registration_candidate"] for r in results),
                       "all_acceptance_pass": False}, ensure_ascii=False))
+
+
 if __name__ == "__main__":
     main()
