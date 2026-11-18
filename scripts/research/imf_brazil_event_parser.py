@@ -14,6 +14,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 RI_NS = "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+REG_NS = "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/registry"
 BCB_URL = "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml"
 BRAZIL_PROVIDER = "IMF:BR1"
 BRAZIL_PA_URN = "urn:sdmx:org.sdmx.infomodel.registry.ProvisionAgreement=IMF:BR_BOP_BP6(1.0)"
@@ -29,7 +30,7 @@ def namespace(tag: str) -> str:
 
 
 def children_named(parent: ET.Element, name: str) -> list[ET.Element]:
-    return [child for child in list(parent) if lname(child.tag) == name and namespace(child.tag) == RI_NS]
+    return [child for child in list(parent) if lname(child.tag) == name and namespace(child.tag) == REG_NS]
 
 
 def element_values(element: ET.Element) -> list[str]:
