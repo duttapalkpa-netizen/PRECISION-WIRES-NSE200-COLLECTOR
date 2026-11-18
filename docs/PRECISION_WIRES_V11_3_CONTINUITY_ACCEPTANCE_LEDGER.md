@@ -1456,3 +1456,15 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Detailed Part-3 evidence appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 23c8230ff44a45a417b28d0c134f2a795413bbd6).
 - Decision: catalogue cross-check complete; IMF BOP extraction gate remains BLOCKED pending authenticated official Swagger/API metadata or a current official BOP6 structure response. No guessed key, no ESTAT substitution, no sample-as-panel, no synthetic data, no production integration.
 - Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
+
+
+## Chapter 34 — Part-4: IMF Official API Access Boundary & Historical BOP_BPM6 Submission Contract Audit (2026-11-18)
+- Rechecked official IMF Data API page: SDMX 2.1/3.0 APIs are available; Swagger exploration requires beta-portal sign-in. This does not prove all API data require authentication.
+- Reviewed official IMF SDMX Central Web Services Guide (last updated May 2025): public structure-service entry point is `https://sdmxcentral.imf.org/sdmx/v2/`; it covers Dataflows, Codelists, Concepts and DSDs. Read-only structure queries must not be confused with private registration actions.
+- Guide's historical submission example explicitly names `IMF:BOP_BPM6(1.0)` with `IMF:ECOFIN_DSD(1.0)`, DATA_DOMAIN=BOP6 and dimensions/fields REF_AREA, COUNTERPART_AREA, FREQ, UNIT_MULT, TIME_FORMAT, OBS_STATUS and INDICATOR. It demonstrates annual/quarterly reporting examples only; it is not proof of a current public observation endpoint or current query key.
+- Kept identifiers distinct: IMF:BOP_BPM6(1.0), IMF:BOP6(1.0), IMF:BOP DSD 2.6.0 and BOP6_CONSTRAINT are not assumed interchangeable. Their current structural relationships remain UNKNOWN.
+- Direct official structure queries for BOP_BPM6/1.0 and ECOFIN_DSD/1.0 returned inaccessible/internal-error without response body/status/checksum: PROBE_BLOCKED, not nonexistence. No credentials or bypass used.
+- Acceptance: official API access boundary and historical submission-contract review PASS; current live flow-to-DSD response UNKNOWN/PROBE_BLOCKED; current observation endpoint/key UNKNOWN/BLOCKED; observations/India panel/EM aggregate NOT_DONE.
+- Detailed Part-4 appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 7498017346b96b3e1213e7ccbefbf2f77d174120).
+- Next step requires user-authorized beta-portal Swagger/OpenAPI export or current Data Portal API query definition; do not share credentials in chat. No guessed key, no synthetic data, no production integration.
+- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
