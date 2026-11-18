@@ -55,6 +55,31 @@ class IndicatorAuditTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.run_audit(data=DATA.replace("Dataflow=IMF:BOP_BPM6(1.0)", "Dataflow=IMF:OTHER(1.0)"))
 
+    def test_wrong_reference_area_fails(self):
+        with self.assertRaises(ValueError):
+            self.run_audit(data=DATA.replace('REF_AREA="BR"', 'REF_AREA="IN"'))
+
+    def test_wrong_country_iso3_does_not_whitelist_local_code(self):
+        r = self.run_audit()
+        # The actual audit call uses BRA; a non-BRA local code is quarantined.
+        bad_data = DATA.replace("BRA_LOCAL_TEST", "IND_LOCAL_TEST")
+        with tempfile.TemporaryDirectory() as tmp:
+            d, e = Path(tmp) / "brazil.xml", Path(tmp) / "ecofin.xml"
+            d.write_text(bad_data, encoding="utf-8")
+            e.write_text(ECOFIN, encoding="utf-8")
+            result = audit(d, e, "BR", "BRA")
+        self.assertEqual(result["status"], "FAIL")
+        row = next(x for x in result["indicators"] if x["indicator"] == "IND_LOCAL_TEST")
+        self.assertEqual(row["semantic_status"], "UNKNOWN_QUARANTINE")
+
+    def test_duplicate_codelist_code_fails(self):
+        duplicate = ECOFIN.replace(
+            '</str:Codelist>',
+            '<str:Code id="BFP_BP6_USD"><com:Name>Duplicate</com:Name></str:Code></str:Codelist>'
+        )
+        with self.assertRaises(ValueError):
+            self.run_audit(ecofin=duplicate)
+
 
 if __name__ == "__main__":
     unittest.main()
