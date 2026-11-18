@@ -2,11 +2,6 @@ name: IMF SDMX RSS + Brazil Registration Audit
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/imf_sdmx_rss_registration_audit.yml"
-      - "scripts/research/imf_audit_trigger.txt"
 
 permissions:
   contents: read
@@ -30,6 +25,7 @@ jobs:
           import urllib.request
           import urllib.error
           import xml.etree.ElementTree as ET
+          import re
 
           OUT = pathlib.Path("imf_audit_evidence")
           OUT.mkdir(exist_ok=True)
@@ -94,10 +90,17 @@ jobs:
               try:
                   root = ET.fromstring(bcb)
                   bcb_parse = "PASS"
+                  schema_location = root.attrib.get("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation", "")
+                  dataflow_match = re.search(r"Dataflow=([^ ]+?):ObsLevelDim", schema_location)
+                  if dataflow_match:
+                      bcb_refs.append({"element": "DataflowFromSchemaLocation", "text": dataflow_match.group(1)})
                   for elem in root.iter():
                       local = elem.tag.rsplit("}", 1)[-1]
-                      if local in ("DataflowRef", "ProviderRef", "DataProviderRef"):
+                      if local in ("Structure", "DataflowRef", "ProviderRef", "DataProviderRef", "ID", "Prepared"):
                           bcb_refs.append({"element": local, "text": (elem.text or "").strip(), "attributes": dict(elem.attrib)})
+                  for elem in root.iter():
+                      if elem.attrib.get("structureRef"):
+                          bcb_refs.append({"element": "DataSetStructureRef", "text": elem.attrib["structureRef"], "attributes": dict(elem.attrib)})
               except ET.ParseError as exc:
                   bcb_parse = "FAIL"
                   results["bcb_parse_error"] = str(exc)
