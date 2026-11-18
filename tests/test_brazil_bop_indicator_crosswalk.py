@@ -58,6 +58,26 @@ class CrosswalkTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.run_build(brazil=BRAZIL.replace('REF_AREA="BR"', 'REF_AREA="IN"'))
 
+    def test_explicit_missing_token_is_counted_not_zero_imputed(self):
+        data = BRAZIL.replace('OBS_VALUE="10"', 'OBS_VALUE="..."')
+        r = self.run_build(brazil=data)
+        self.assertEqual(r["coverage"]["missing_value_token_counts"], {"...": 1})
+        self.assertEqual(r["coverage"]["numeric_observation_count"], 3)
+        self.assertEqual(r["quality_and_units"]["quality_gate"], "UNKNOWN_NOT_PASS")
+
+    def test_unrecognized_nonnumeric_value_fails_closed(self):
+        data = BRAZIL.replace('OBS_VALUE="10"', 'OBS_VALUE="unknown"')
+        with self.assertRaises(ValueError):
+            self.run_build(brazil=data)
+
+    def test_duplicate_time_period_fails_closed(self):
+        data = BRAZIL.replace(
+            '<mes:Obs TIME_PERIOD="2026-09" OBS_VALUE="11"/>',
+            '<mes:Obs TIME_PERIOD="2026-08" OBS_VALUE="11"/>'
+        )
+        with self.assertRaises(ValueError):
+            self.run_build(brazil=data)
+
 
 if __name__ == "__main__":
     unittest.main()
