@@ -1,0 +1,1 @@
+Run the isolated official U.S. Treasury nominal and real par-yield all-history XML capture. Start at page 0, retain raw page bytes and manifest, stop only on an explicit empty entry page. Research-only; no production changes.
