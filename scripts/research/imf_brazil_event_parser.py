@@ -35,7 +35,7 @@ def inspect_bytes(raw: bytes) -> dict:
                 "root": lname(root.tag), "root_namespace": namespace(root.tag),
                 "reasons": ["unexpected_root_or_registryinterface_namespace"]}
     requests = [e for e in root.iter() if lname(e.tag) in
-                ("SubmitRegistrationRequest", "SubmitStructureRequest")]
+                ("SubmitRegistrationRequest", "SubmitRegistrationsRequest", "SubmitStructureRequest")]
     kinds = sorted({lname(e.tag) for e in requests})
     if len(requests) != 1:
         return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
@@ -64,7 +64,7 @@ def inspect_bytes(raw: bytes) -> dict:
     if not url_match:
         url_match = any(v["value"].lower() == BCB_URL.lower() for v in values)
     dataflows = sorted({v["value"] for v in values if "BOP6" in v["value"] or "BOP_BPM6" in v["value"]})
-    actions = sorted({v["value"] for v in values if v["field"].lower() in ("@action", "@type", "text")
+    actions = sorted({v["value"] for v in values if v["field"].lower() in ("@action", "@type")
                       and v["value"].lower() in ("register", "reregister", "re-register", "delete", "replace")})
     candidate = provider_match or url_match
     reasons = []
