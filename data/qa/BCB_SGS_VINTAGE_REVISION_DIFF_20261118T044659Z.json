@@ -1,0 +1,80 @@
+{
+  "comparison_performed": true,
+  "diff": {
+    "series": {
+      "22924": {
+        "changes": [],
+        "counts": {
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "unchanged": 381
+        },
+        "new_row_count": 381,
+        "new_sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2",
+        "old_row_count": 381,
+        "old_sha256": "f3769425aed38b4ab6ddfce555f10d886d875d21e7c3e46338b7d9bc131524b2"
+      },
+      "22930": {
+        "changes": [],
+        "counts": {
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "unchanged": 381
+        },
+        "new_row_count": 381,
+        "new_sha256": "c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776",
+        "old_row_count": 381,
+        "old_sha256": "c4730c84ee81765a1c5ae41d91c1ea6f153bcb51ac70ee14b45b453b4dcab776"
+      },
+      "22936": {
+        "changes": [],
+        "counts": {
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "unchanged": 381
+        },
+        "new_row_count": 381,
+        "new_sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24",
+        "old_row_count": 381,
+        "old_sha256": "0d1b040d5b11af0b1b98704a70f4972f2790bdfe3c6e78bb16948c7a31640e24"
+      },
+      "22942": {
+        "changes": [],
+        "counts": {
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "unchanged": 381
+        },
+        "new_row_count": 381,
+        "new_sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169",
+        "old_row_count": 381,
+        "old_sha256": "4c09c850decf3317d27d1c0f4dc4aa68dc4f0b3aa2aafacfece113ff7f9c7169"
+      }
+    },
+    "totals": {
+      "added": 0,
+      "changed": 0,
+      "removed": 0,
+      "unchanged": 1524
+    }
+  },
+  "message": "The comparison identifies value changes between two captured current-response vintages. It does not prove why or when BCB changed a value.",
+  "new_snapshot": {
+    "captured_at_utc": "2026-11-18T04:46:59.635249+00:00",
+    "manifest_sha256": "0e72d5c572ca1a86cd4a4be3fbf3d2b415d0376ef4df3994a7f06beda54ef1c3",
+    "snapshot_id": "20261118T044659Z"
+  },
+  "old_snapshot": {
+    "captured_at_utc": "2026-11-17T13:29:39.897799+00:00",
+    "manifest_sha256": "4821d71e2308c7ac35ebf765c70c465baa9d9c1ec50be3ca1f44fd2af8a7ed0b",
+    "snapshot_id": "20261117T132939Z"
+  },
+  "revision_attribution": "UNKNOWN_NOT_PROVEN",
+  "schema_version": 1,
+  "snapshot_count": 2,
+  "status": "PASS_TWO_VINTAGES_COMPARED"
+}
