@@ -546,3 +546,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Workflow configuration remains scoped to parser/test/workflow paths, Python 3.12, read-only contents, 3-minute timeout. Configuration PASS; runtime NOT_YET_VERIFIED.
 - Real Brazil XML/CSV NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED; Brazil/EM/market admission BLOCKED. No RSS/BCB acquisition, full NSE collector, code changes, production integration, PR merge or spend.
 - Next: if runtime CI evidence is needed, inspect GitHub Actions → IMF Brazil Event Parser QA (Offline) and record exact run ID/conclusion/log. Then test a genuine owner-exported transaction document only when available. UNKNOWN is not PASS; all protected production invariants remain unchanged.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-11: Brazil Reconstruction acceptance gap matrix
+- Added `docs/IMF_BRAZIL_RECONSTRUCTION_ACCEPTANCE_GAP_MATRIX_PART11_20261118.md`; commit `d7cdd1c62fd754b99ece616a21a869a2e4eacc96`.
+- Reconciled the current-state registry row, BCB payload Dataflow mismatch, 33-item RSS transaction window, IMF historical GUI/API boundary, Part-9 parser and Part-10 local 9/9 QA result.
+- Formal decision: **Brazil Reconstruction INCOMPLETE / BLOCKED**. Historical Brazil-specific event rows NOT_DONE; Provision Agreement URN/changelog NOT_DONE; create/replace/delete/re-register chronology UNKNOWN; event-to-current-row reconciliation BLOCKED. Parser local tests PASS 9/9; GitHub Actions runtime NOT_YET_VERIFIED; real Brazil transaction fixture NOT_DONE.
+- Next closure dependency is actual official GUI-exported IMF:BR1 history rows, linked Provision Agreement details and transaction XML/CSV. If GUI requires authentication or export is unavailable, repository owner must provide the official exports. No guessed endpoints, IDs, chronology, or repeated RSS/BCB downloads.
+- No production code/invariants changed; no collector run, PR merge, Brazil/EM admission or spend. UNKNOWN is not PASS.
