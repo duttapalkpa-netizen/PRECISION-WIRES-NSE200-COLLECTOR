@@ -1431,3 +1431,15 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Still NOT_DONE: complete codelist semantic audit; BOP observation download; country-period validation; EM membership/aggregation; source coverage and extraction mapping. BOP remains annual/quarterly context, not a daily market trigger. No observations or aggregates created.
 - Next exact action: perform a bounded DSD semantic/codelist audit from the captured XML, map only evidenced dimension/codelist IDs to the extraction contract, and preserve UNKNOWN for unverified signs, units, frequencies, countries and aggregates.
 - Invariants unchanged: ₹0, official/free sources only, no synthetic data or fabricated timestamps; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched; no production integration.
+
+
+## Chapter 34 — Part-2: IMF BOP DSD Semantic & Codelist Audit (2026-11-18)
+- Reused raw XML from final verified artifact `14403372899`; did not repeat endpoint retrieval. Current XML hash `f4df050115748bc0d20f07c47b33bd9bd7157cf6132e9c36a70a6f868bedd075`, 895,438 bytes.
+- Parsed exact DSD component lists and embedded references: 18 dimensions, 15 attributes, one measure, 22 codelists and 4,097 embedded codes.
+- Created `data/global_capital_rotation/IMF_BOP_DSD_2_6_0_SEMANTIC_INVENTORY_V1.json`; commit `52658916787c1f31ea6d5a58f6541261a5a18e83`.
+- Confirmed from embedded codelists: INT_ACC_ITEM=FA (Financial account); FUNCTIONAL_CAT=P (Portfolio Investment); FLOW_STOCK_ENTRY=T (Transactions); ACCOUNTING_ENTRY=A (Assets / Net Acquisition of) and L (Liabilities / Net Incurrence of); INSTR_ASSET=F3 (Debt securities) and F5 (Equity and investment fund shares/units). Preserve assets/liabilities separately and never apply an extra sign flip.
+- DSD requires retention of UNIT_MULT and DECIMALS (mandatory attributes); OBS_STATUS and CONF_STATUS are also mandatory. UNIT_MEASURE and CURRENCY_DENOM remain separate dimensions although both reference IMF:CL_UNIT(1.19.0).
+- Metadata semantic acceptance PASS for raw hash, dimension-codelist links, embedded codelist inventory and critical code labels. The instrument and sector codelists include ESTAT/OECD agencies referenced by the IMF DSD; agency/version provenance retained.
+- Still UNKNOWN/BLOCKED: exact IMF dissemination dataflow linkage and permitted series key. NOT_DONE: observation payload, country-period rows, EM membership and aggregate. Prior spec documents the IMF BOP6 registration as a 2023 sample URL; it is not accepted as a complete current panel. Do not substitute ESTAT dataflows or guess keys.
+- Detailed report appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md`; report commit `729b718643f8709bf4dfe512d7cd83b856f249cf`.
+- Next action: verify official IMF BOP dataflow-to-DSD linkage and permitted query dimensions from a direct official catalogue/constraint response; stop if authentication is required. No synthetic data, no production integration, and all hard invariants unchanged.
