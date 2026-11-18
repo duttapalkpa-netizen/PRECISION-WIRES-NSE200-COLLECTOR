@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "status": "PASS_REGISTRATION_PAYLOAD_ALIGNMENT_AUDIT_EXECUTED_WITH_P0_COVERAGE_BLOCKER",
+  "workflow": {
+    "run_id": 44282235752,
+    "run_number": 23,
+    "conclusion": "success",
+    "head_sha": "27e26095b482f24e65bafca69cca9d870922fffd",
+    "artifact_id": 14416443972,
+    "artifact_bytes": 7835957,
+    "artifact_sha256": "53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0"
+  },
+  "alignment_report": {
+    "path": "evidence/brazil_bop/bop6_registration_alignment.json",
+    "sha256": "e994a95813dc302091cfff286505a80b0db1bbf413ef13c596d07d8d5bf2b58f"
+  },
+  "registration": {
+    "source_url": "https://sdmxcentral.imf.org/data/registrations.html",
+    "dataflow": "IMF:BOP6(1.0)",
+    "provider": "IMF:BR1",
+    "registered_url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "last_updated": "2026-10-26T11:47:29.000Z",
+    "evidence": "Versioned official page snapshot; raw HTML table is client-rendered and not parsed."
+  },
+  "payload": {
+    "dataflow": "IMF:BOP_BPM6(1.0)",
+    "observed_unique_indicator_count": 237
+  },
+  "dataflows": {
+    "BOP6": {
+      "description": "Balance of Payments (BPM6) for Collection",
+      "dsd": "IMF:ECOFIN_DSD:1.0",
+      "constraint": "IMF:BOP6_CONSTRAINT:1.0"
+    },
+    "BOP_BPM6": {
+      "description": "Balance of Payments -- BPM6",
+      "dsd": "IMF:ECOFIN_DSD:1.0",
+      "constraint": "IMF:BOP_BP6_CONSTRAINT:1.0"
+    }
+  },
+  "constraints": {
+    "BOP6_CONSTRAINT": {
+      "allowed_indicators": 4313,
+      "observed_covered": 234,
+      "observed_not_covered": 3,
+      "missing": [
+        "BMSOBL_USD",
+        "BSOBL_USD",
+        "BXSOBL_USD"
+      ],
+      "coverage_ratio": 0.987342,
+      "status": "FAIL_PARTIAL_COVERAGE"
+    },
+    "BOP_BP6_CONSTRAINT": {
+      "allowed_indicators": 98,
+      "observed_covered": 27,
+      "observed_not_covered": 210,
+      "coverage_ratio": 0.113924,
+      "status": "FAIL_PARTIAL_COVERAGE"
+    }
+  },
+  "interpretation": "The registered BOP6 collection Dataflow and BCB payload BOP_BPM6 Dataflow share ECOFIN_DSD 1.0 but have materially different constraints. The BCB payload codes fit BOP6_CONSTRAINT much more closely than BOP_BP6_CONSTRAINT. This is a P0 registration/payload/constraint alignment issue. Alias semantics and intended constraint are not proven.",
+  "guardrails": [
+    "Do not substitute constraints without official contract evidence",
+    "Do not rewrite payload dataflow ID",
+    "No source substitution or splicing",
+    "Brazil portfolio flow panel NOT_AUTHORIZED",
+    "Global EM aggregate NOT_AUTHORIZED",
+    "Trading signal NOT_AUTHORIZED"
+  ]
+}
