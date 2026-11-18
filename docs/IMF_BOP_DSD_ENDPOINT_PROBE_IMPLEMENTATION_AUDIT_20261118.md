@@ -140,3 +140,33 @@ Official references:
 - https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf (May 2025; especially lines 77-99, 116-120, and historical BOP_BPM6 example around printed page 9)
 - https://sdmxcentral.imf.org/data/overview.html
 - https://sdmxcentral.imf.org/data/constraints.html
+
+
+## Chapter 34 — Part-5: Current IMF BOP6 Provider Registration Discovery & Safe Access Qualification (2026-11-18)
+
+### New discovery from official IMF SDMX Central registration catalogue
+- The indexed official Registrations catalogue exposes a newer national-provider registration: `IMF:BOP6(1.0)`, provider `IMF:BR1` (Brazil), registered URL `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`, last updated `2026-10-26T11:47:29Z`.
+- This is a material improvement over the IMF-owned 2023 sample registration: it provides a current-ish, official, country-provider SDMX BOP6 registration candidate. It is still Brazil's provider file, not an IMF-hosted consolidated global panel and not an India observation source.
+- The same catalogue also lists Chile `IMF:BOP6(1.0)` provider `IMF:CL2` updated 2026-10-07, and other country-specific `IMF:BOP_BPM6` registrations. Do not merge different dataflow IDs/versions or assume identical DSDs without structure-level verification.
+
+### Access test and result
+- Attempted to open the exact Brazil registered XML URL from the official catalogue. The available web retrieval layer rejected the response because its content type is `text/xml` (unsupported content type); it returned no XML body, HTTP status, byte count or checksum.
+- Result: `REGISTERED_URL_DISCOVERED`; payload capture = `BLOCKED_BY_RETRIEVAL_CONTENT_TYPE`; no claim of URL failure, no parsed DSD, no observation extraction, and no SHA-256 fabricated.
+- The official Registrations page describes SDMX Central as providing web services for querying structures and data, and identifies the SDMX Central Web Services Guide. Registration-page actions that create/modify registrations require re-authentication; no such action was attempted.
+
+### Acceptance matrix
+| Gate | Status |
+|---|---|
+| Official catalogue exposes current Brazil IMF:BOP6(1.0) provider registration | PASS (discovery) |
+| Registered URL and last-updated timestamp captured | PASS (catalogue metadata) |
+| Brazil XML payload fetched and parsed | UNKNOWN / BLOCKED (text/xml unsupported by retrieval layer) |
+| BOP6(1.0) DSD identity / version / dimension order verified from payload | NOT_DONE |
+| Brazil BOP6 observation values / latest period validated | NOT_DONE |
+| India BOP6 source or consolidated IMF panel verified | UNKNOWN / NOT_DONE |
+| EM membership and aggregate | NOT_DONE |
+
+### Decision and next action
+This is a valid new official-provider discovery and a bounded access test, not an extraction pass. Preserve the Brazil registration as a **schema/transport candidate only**. The next safe task is to use a raw HTTP client in an authorized execution environment that can accept `text/xml`, archive response headers and exact bytes, validate SDMX-ML, and calculate SHA-256; then compare its declared dataflow/DSD to the Part-2 IMF BOP DSD inventory. Until that is done, do not parse or query guessed keys. Even if Brazil payload validates, it cannot be used as India's data or as a full EM panel. No observation rows or aggregates created; no production integration or production logic changes.
+
+Official catalogue source: https://sdmxcentral.imf.org/data/registrations.html
+Registered provider URL (Brazil): https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml
