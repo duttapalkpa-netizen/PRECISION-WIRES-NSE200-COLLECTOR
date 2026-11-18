@@ -5,7 +5,6 @@ on:
     branches:
       - research/global-capital-rotation-overlay-v1
     paths:
-      - ".github/workflows/imf_bop_dsd_acquisition.yml"
       - "qa/audit_brazil_bop_indicator_codes.py"
       - "qa/build_brazil_bop_indicator_crosswalk.py"
       - "qa/audit_brazil_bop_portfolio_reconciliation.py"
@@ -26,8 +25,15 @@ permissions:
   contents: read
   actions: read
 
+# Expensive source acquisition runs only for a deliberate, consolidated batch.
+# Normal code/docs commits must not trigger repeated full downloads.
+concurrency:
+  group: imf-bop-dsd-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   acquire-dsd:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[run-bop-audit]')
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

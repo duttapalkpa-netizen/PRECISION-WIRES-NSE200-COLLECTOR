@@ -660,3 +660,16 @@ Permanent machine-readable summary: `docs/BRAZIL_BOP6_REGISTRATION_ALIGNMENT_AUD
 
 ### Next exact action
 Obtain the authoritative IMF SDMX Central registration/provision-agreement semantics for why the BCB provider is registered to BOP6 while its payload declares BOP_BPM6, and establish which constraint is contractually applicable. Until then, keep both constraints and their coverage reports, quarantine the three BOP6-uncovered codes, and do not admit the 210 BOP_BPM6-constraint-excluded observed codes. This is a metadata gate independent of the unresolved 2010+ numerical divergence.
+
+
+## Execution discipline and latest verified component audit — 2026-11-18
+
+The accepted integrated evidence is GitHub Actions Run #23 / ID 44282235752, commit `27e26095b482f24e65bafca69cca9d870922fffd`, artifact #14416443972 (7,835,957 bytes; SHA-256 `53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0`). The nine-series component audit report SHA-256 is `8cdc08da5e788f7fdf2d6f64d5e7f272aba22bd5d4b068d6b0cfd383a224335d`.
+
+Source-specific roll-up outcomes at the report's stated tolerances:
+- BCB monthly historical workbook: assets, liabilities and net each 293/293 PASS.
+- Current BCB SGS: assets, liabilities and net each 381/381 PASS at 0.151 million USD tolerance (rounded SGS display precision).
+- BCB-published IMF-SDMX: assets, liabilities and net each 180/381 PASS and 201/381 FAIL; first mismatch 2010-01, last 2026-09. This is a measured source reconciliation failure, not proof of which source is wrong.
+- Nine-series archive-vs-IMF comparisons: 180/293 match and 113/293 mismatch per series, from 2010-01 to 2019-05.
+
+Do not use Run #12 as evidence for component rollups; that run preceded component-audit integration. Run #23 is the relevant runtime artifact. The workflow is now batch-gated: manual dispatch or commit marker `[run-bop-audit]` only, and serialized per branch. See `docs/PRECISION_WIRES_RESEARCH_EXECUTION_PROTOCOL.md` for the required execution and evidence discipline.
