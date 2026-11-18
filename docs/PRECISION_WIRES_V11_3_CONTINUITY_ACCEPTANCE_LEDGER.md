@@ -1385,3 +1385,17 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Capture→diff chain is NOT fully automatic: capture trigger is research-branch push; after the GITHUB_TOKEN snapshot commit, comparator requires an explicit workflow-file push. Do not claim unattended or automatic chaining.
 - Brazil pilot NOT_ACCEPTED; original vintage reconciliation BLOCKED; production integration NOT_AUTHORIZED. No production logic changed.
 - Invariants preserved: ₹0, official/free data only, no synthetic observations, invented timestamps, raw overwrite, or production changes; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and Hard Gate unchanged.
+
+
+## Chapter 39 — BCB SGS Capture-to-Diff Same-Run Automation (2026-11-18)
+- Objective: eliminate the separate manual comparator workflow push after each prospective vintage capture.
+- Updated `.github/workflows/bcb_sgs_prospective_vintage_snapshot.yml`: capture → immutable snapshot commit → comparator script → QA JSON commit → artifact upload, all in one run.
+- Two initial workflow parse failures (Run IDs `44240725826`, `44240735245`) were caused by malformed escaped newlines in the artifact path block. No jobs started and no source data changed. YAML block was corrected before successful run.
+- End-to-end validation Run `44240790343`: SUCCESS. Capture, commit, comparator, QA commit and artifact upload all succeeded.
+- Third genuine snapshot `20261118T045654Z`; captured `2026-11-18T04:56:54.577207Z`; manifest SHA-256 `958b09b6c6538d3c4adebbae8343f8c01ea5448aa315edaafc4fb1a9fc3c5cc5`.
+- QA `data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_20261118T045654Z.json`; blob SHA `8a4af300c2d7e21942b1adb0fa15132755a6c97d`. Latest two snapshots 044659Z and 045654Z: 1,524 unchanged, 0 changed, 0 added, 0 removed.
+- Artifact ID `14400155068`, 83,206 bytes, digest `6b3988ee2ea3b3f20b1df934d496106ffff02b6ef48d775c12404f7b095e6c11`.
+- Detailed report: `docs/BCB_SGS_VINTAGE_CAPTURE_TO_DIFF_AUTOMATION_AUDIT_20261118.md` (commit 988b0248cd7c719563295d3ecf2939a1c1b68a2d); prospective-vintage contract updated in `data/qa/BRAZIL_BCB_SGS_PROSPECTIVE_VINTAGE_SNAPSHOT_CONTRACT_20261117.json`.
+- Same-run capture→diff chain now validated; future trigger-file push on research branch starts capture and comparison without a second manual workflow push. This short interval is a pipeline validation only, not monthly revision monitoring.
+- Original March-2026 vintage remains NOT_PROVEN; specific Feb-2026 revision cause UNKNOWN; Brazil pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED.
+- No production logic changed. Invariants preserved: ₹0, official/free sources only, no synthetic observations, fabricated timestamps, raw overwrite, or unsupported attribution; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and Hard Gate unchanged.
