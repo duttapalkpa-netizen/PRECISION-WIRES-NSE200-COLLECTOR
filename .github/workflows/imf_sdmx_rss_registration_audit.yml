@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/imf_sdmx_rss_registration_audit.yml"
+      - "scripts/research/imf_audit_trigger.txt"
 
 permissions:
   contents: read
