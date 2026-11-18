@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "status": "PASS_COMPONENT_AUDIT_EXECUTED",
+  "scope": "Nine official BCB portfolio parent/component series compared across the historical workbook, current SGS API and BCB-published IMF-SDMX XML. Diagnostic only; no flow admission.",
+  "workflow": {
+    "run_id": 44281174648,
+    "run_number": 17,
+    "conclusion": "success",
+    "head_sha": "8af623974a8c8dc22944a5e5ba30199acb66a783",
+    "artifact_id": 14416138359,
+    "artifact_bytes": 7784632,
+    "artifact_sha256": "599c639ccb5d7f35c5800858b289bb0f8668f1afb1ca23be1c164f048c12fbd7"
+  },
+  "component_report": {
+    "path": "evidence/brazil_bop/bpm6_monthly_archive/portfolio_component_audit.json",
+    "sha256": "8cdc08da5e788f7fdf2d6f64d5e7f272aba22bd5d4b068d6b0cfd383a224335d"
+  },
+  "source_provenance": {
+    "bcb_monthly_zip_sha256": "a7e66aad377851d2969dbc07d4555e8f79839282c5355a3ad3af77459cdb2473",
+    "bcb_workbook_sha256": "dfe3e2ee268bd29a9b9dda8d6e5ff62bf8e84c1c30c1d01e5aa8b4497903189d",
+    "imf_ecoﬁn_dsd_sha256": "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045",
+    "bcb_imf_sdmx_payload_sha256": "3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c"
+  },
+  "tolerance_million_usd": {
+    "archive_rollup": 0.051,
+    "current_sgs_rollup": 0.151,
+    "imf_sdmx_rollup": 0.051,
+    "cross_source_comparison": 0.051,
+    "note": "SGS observations are displayed to one decimal million USD; three independently rounded components can produce up to 0.15 residual."
+  },
+  "rollups": {
+    "bcb_monthly_archive": {
+      "months": 293,
+      "assets_mismatches": 0,
+      "liabilities_mismatches": 0,
+      "net_mismatches": 0,
+      "status": "PASS_WITHIN_TOLERANCE"
+    },
+    "bcb_current_sgs": {
+      "months": 381,
+      "assets_mismatches": 0,
+      "liabilities_mismatches": 0,
+      "net_mismatches": 0,
+      "status": "PASS_WITHIN_TOLERANCE",
+      "max_absolute_rounding_residual_million_usd": 0.1
+    },
+    "bcb_published_imf_sdmx": {
+      "months": 381,
+      "assets_matches": 180,
+      "assets_mismatches": 201,
+      "liabilities_matches": 180,
+      "liabilities_mismatches": 201,
+      "net_matches": 180,
+      "net_mismatches": 201,
+      "first_mismatch": "2010-01",
+      "last_mismatch": "2026-09",
+      "status": "FAIL_RECONCILIATION"
+    }
+  },
+  "archive_vs_imf": {
+    "months": 293,
+    "series_count": 9,
+    "each_series_matches_1995_01_to_2009_12": 180,
+    "each_series_mismatches_2010_01_to_2019_05": 113,
+    "first_mismatch": "2010-01",
+    "last_mismatch": "2019-05",
+    "affected_series": [
+      "BFP_BP6_USD",
+      "BFPA_BP6_USD",
+      "BFPAEEO_BP6_USD",
+      "BFPAEIS_BP6_USD",
+      "BFPAD_BP6_USD",
+      "BFPL_BP6_USD",
+      "BFPLEEO_BP6_USD",
+      "BFPLEIS_BP6_USD",
+      "BFPLD_BP6_USD"
+    ]
+  },
+  "interpretation": "The BCB archive and current SGS each reconcile internally at their source-appropriate precision. The BCB-published IMF-SDMX data fail parent-child rollups from 2010-01. All nine archived component series match IMF-SDMX before 2010 and diverge thereafter. The cause, revision lineage and intended source vintage are not established.",
+  "admission": {
+    "brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "global_em_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "guardrails": [
+    "No source substitution",
+    "No series shifting",
+    "No splicing",
+    "No rescaling",
+    "No synthetic repair",
+    "No production selector or CORE-672 changes",
+    "UNKNOWN is not PASS"
+  ]
+}
