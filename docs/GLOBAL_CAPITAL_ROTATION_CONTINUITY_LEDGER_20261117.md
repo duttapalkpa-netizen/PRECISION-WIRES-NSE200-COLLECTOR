@@ -602,3 +602,5 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Corrected alignment audit to read snapshot, parse both constraints and compare code coverage; script commit 29221dee9993a6d9042eb9c0d64aeafc68c3d485, tests commit b172e716d589d8fbb1576aa8b8e291b82910d077, workflow snapshot invocation commit 27e26095b482f24e65bafca69cca9d870922fffd.
 - Run #20 ID 44281736564 FAIL at obsolete HTML parser; artifact #14417810859 preserves evidence. Run #21 was before final workflow invocation commit; Run #22 is acceptance run.
 - Do not replace BOP_BPM6 constraint with BOP6 constraint without proving registration semantics. All flow admission remains NOT_AUTHORIZED.
+
+- Raw Dataflow descriptions: BOP6 = “Balance of Payments (BPM6) for Collection”; BOP_BPM6 = “Balance of Payments -- BPM6”. Both use ECOFIN_DSD 1.0, but BOP6_CONSTRAINT covers 234/237 observed codes while BOP_BP6_CONSTRAINT covers 27/237. Registration uses collection Dataflow BOP6; BCB XML header declares BOP_BPM6. This is a scope/registration mismatch clue, not a proven alias or confirmed cause. Do not substitute constraints without official contract evidence.
