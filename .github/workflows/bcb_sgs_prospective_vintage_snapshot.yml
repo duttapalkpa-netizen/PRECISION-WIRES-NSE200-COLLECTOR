@@ -35,11 +35,24 @@ jobs:
           fi
           git commit -m "data: archive BCB SGS point-in-time vintage snapshot"
           git push origin HEAD:research/bcb-priority-metadata-audit-20261117
+      - name: Verify all immutable snapshots and compare the two latest vintages
+        run: python scripts/research/diff_bcb_sgs_vintages.py
+      - name: Commit deterministic two-vintage QA result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
+          if git diff --cached --quiet; then
+            echo "No two-vintage QA result produced" >&2
+            exit 1
+          fi
+          git commit -m "qa: compare BCB SGS vintages after prospective capture"
+          git push origin HEAD:research/bcb-priority-metadata-audit-20261117
       - name: Upload snapshot manifest artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bcb-sgs-prospective-vintage-snapshot
-          path: data/raw/bcb/sgs_vintage_snapshots/
+          path: |\n            data/raw/bcb/sgs_vintage_snapshots/\n            data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
           if-no-files-found: warn
           retention-days: 90
