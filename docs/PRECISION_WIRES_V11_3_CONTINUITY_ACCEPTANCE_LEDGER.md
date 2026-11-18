@@ -528,3 +528,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Unit fixtures are synthetic test inputs only, not market observations or evidence of Brazil registration. Parser is not a complete SDMX semantic validator; it preserves candidate values and never auto-accepts Brazil. Exact event action/time, Dataflow URN and Provision Agreement URN require real payload review.
 - Next: verify the scoped GitHub Actions run; fix only failures in this isolated QA path. When owner-exported real IMF XML/CSV is available, hash and inspect it separately; do not promote Brazil before full provenance/URN checks.
 - ₹0, no guessed endpoints, no fabricated timestamps, no production integration, no PR merge, no Brazil/EM admission or macro overlay weights. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged; UNKNOWN is not PASS.
+
+
+### Part-9 correction — SDMX 2.1 registration request envelope and exact URL gate
+- Official IMF Web Services Guide example shows `SubmitRegistrationsRequest` (plural) containing `RegistrationRequest action="Replace"`. Parser initially accepted singular only; corrected to accept documented plural plus singular compatibility form. Source: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf.
+- Parser commit `9004edf15e86befb841ee2c5a48761f6131b913c5` adds plural request envelope; commit `59efd1a51dac3d4390fc4530613d68c033c22cb3` tightens BCB URL match to exact whole-value only (no embedded narrative substring).
+- Test commit `1669ee9cd0be3a589fb1a0539169a016cd42f537` updates fixtures to plural envelope; `d3a3b9c9936fa78d7939821096f4dc2b167cbecc` adds exact-URL negative control and action-attribute test. Test count now 9.
+- Report corrected: `docs/IMF_BRAZIL_REGISTRATION_EVENT_PARSER_PART9_20261118.md`, commit `ff755717bf542ab6c4f83b45e85b8865a07fafa7`, blob SHA `a7d73193f0cfe00d8d1a98fb4f1af037e05789d3`.
+- Official source confirms the request envelope syntax only; it does not prove a Brazil transaction. GitHub Actions result remains NOT_YET_VERIFIED. Real Brazil event fixture NOT_DONE; chronology UNKNOWN; mismatch CONFIRMED; Brazil admission BLOCKED. No production integration.
