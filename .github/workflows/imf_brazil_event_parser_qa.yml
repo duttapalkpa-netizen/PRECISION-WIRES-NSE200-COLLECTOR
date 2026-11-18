@@ -1,0 +1,22 @@
+name: IMF Brazil Event Parser QA (Offline)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/research/imf_brazil_event_parser.py"
+      - "tests/test_imf_brazil_event_parser.py"
+      - ".github/workflows/imf_brazil_event_parser_qa.yml"
+permissions:
+  contents: read
+jobs:
+  parser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline parser negative-control tests
+        run: python -m unittest discover -s tests -p 'test_imf_brazil_event_parser.py' -v
