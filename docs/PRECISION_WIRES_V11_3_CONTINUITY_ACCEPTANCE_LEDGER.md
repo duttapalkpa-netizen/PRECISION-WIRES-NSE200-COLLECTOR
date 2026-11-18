@@ -632,3 +632,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - PR #39 remains open/draft/unmerged. The available PR-triggered workflow-run lookup returned an empty list at verification time; GitHub Actions run remains NOT_VERIFIED. Do not claim CI PASS.
 - Formal XSD validation and complete official XSD bundle/hash manifest remain NOT_DONE; genuine Brazil transaction evidence NOT_DONE; chronology UNKNOWN; BOP6/BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
 - No dispatch, merge, production integration, external API, spend or market data changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-19: SDMX registry namespace parser correction
+- Critical defect found by reading pinned official SDMX-ML v2.1 schemas: RegistryInterface and direct SubmitRegistrationsRequest/SubmitStructureRequest are message namespace, but typed RegistrationRequest, Registration, ProvisionAgreement and Datasource children are registry namespace.
+- Part-16 parser helper incorrectly required the message namespace for all nested children; its synthetic fixtures also inherited the message namespace throughout. Such tests could pass while schema-correct registry elements were missed.
+- Fixed parser: added REG_NS and made children_named match registry namespace. Rebuilt fixtures with explicit r: registry namespace; repaired narrative negative tests and added a wrong-namespace lookalike quarantine test.
+- Parser commit `bfb8aa61a1f2776642523eaa6535c370807b90a8`, blob `6b55c553870a0164da315975107c760394fbc044`; tests commit `bf839e2a6a764674c07edb732e59cb3f79beac8c`, blob `afc6da903771697f98a2d8e84407cf79f188e3f1`.
+- Official schema basis: pinned `sdmx-twg/sdmx-ml@v2.1`, tag target commit `bc28a2255966a3b8d33ec8f61e19f42e6e193284`; inspected SDMXMessage.xsd, SDMXRegistryRegistration.xsd and SDMXRegistryBase.xsd.
+- Local isolated replay of fetched parser logic and all 13 fixture scenarios: 13 passed, 0 failed. This is not GitHub Actions and not formal XSD validation. Targeted XML probe confirmed the message/registry namespace split and exact PA/BCB subtree evidence.
+- Report `docs/IMF_BRAZIL_PARSER_REGISTRY_NAMESPACE_CORRECTION_PART19_20261118.md`; commit `b77d39c5406217d37fa0a24b4b5ca2137b323d0a`.
+- PR #39 remains open/draft/unmerged. Latest PR-triggered workflow-run lookup returned empty; Actions NOT_VERIFIED. Formal XSD validation NOT_DONE; complete official XSD bundle/SHA-256 manifest NOT_DONE; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No production changes, merge, workflow dispatch, paid API, market-data modification or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
