@@ -637,6 +637,19 @@ jobs:
           sha256sum evidence/brazil_bop/bpm6_monthly_archive/three_way_reconciliation.json \
             > evidence/brazil_bop/bpm6_monthly_archive/THREE_WAY_RECONCILIATION_SHA256SUMS
 
+      - name: Audit nine-series portfolio component rollups across BCB and IMF sources
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_brazil_bop6_portfolio_components.py \
+            --monthly-zip evidence/brazil_bop/bpm6_monthly_archive/balpaym.zip \
+            --imf-xml evidence/brazil_bop/response.xml \
+            --sgs-dir evidence/brazil_bop/sgs \
+            --output evidence/brazil_bop/bpm6_monthly_archive/portfolio_component_audit.json
+          sha256sum evidence/brazil_bop/bpm6_monthly_archive/portfolio_component_audit.json \
+            > evidence/brazil_bop/bpm6_monthly_archive/PORTFOLIO_COMPONENT_AUDIT_SHA256SUMS
+
       - name: Upload raw response and QA evidence
         if: always()
         uses: actions/upload-artifact@v4
