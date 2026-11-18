@@ -68,3 +68,41 @@ This is a metadata-semantic mapping, not proof that an IMF-owned public dissemin
 
 ### Decision and next action
 Part-2 metadata semantic audit: PASS for the captured DSD and embedded codelists. Observation access remains UNKNOWN/BLOCKED; no country rows or EM aggregates created. Next bounded task: qualify the official IMF BOP dataflow-to-DSD linkage and its permitted query dimensions from an official, directly accessible catalogue/constraint response. Stop if authentication is required; no bypass or guessed key. All production invariants remain unchanged.
+
+
+## Chapter 34 — Part-3: Official IMF BOP6 Dataflow / Constraint Catalogue Cross-check (2026-11-18)
+
+### Scope and method
+- Reused the already archived IMF:BOP DSD 2.6.0 XML and Part-2 semantic inventory; no repeated DSD download, no observation request, and no guessed series key.
+- Checked the live official IMF SDMX Central Dataflows overview, Reporting Constraints catalogue, and Registrations catalogue, plus the official IMF Data API page.
+
+### Directly evidenced catalogue facts
+- The official Reporting Constraints catalogue lists `IMF:BOP6_CONSTRAINT` as a Cube Region Constraint targeting `BOP6[1.0]`; it separately lists `IMF:BOP_BP6_CONSTRAINT` targeting `BOP_BPM6[1.0]`. The BPM5 legacy flow is separately listed as `BOP5_COLLECTION[1.0]` and remains excluded.
+- The current Dataflows overview (216 entries in the rendered catalogue) shows ESTAT-owned `BPM6_BOP_M(2.6.0)` and `BPM6_BOP_Q(2.6.0)`; it does not show an IMF-owned BOP6 dataflow in the visible listing. These ESTAT flows are not substituted for IMF BOP6.
+- The Registrations catalogue lists multiple provider registrations for `IMF:BOP6(1.0)`, including Brazil (`IMF:BR1`), Chile (`IMF:CL2`), Romania, Sweden and the IMF's own sample compact registration. These are provider-specific SDDS registrations, not proof of a unified IMF country panel. The IMF-owned registration still points to a 2023 sample compact URL; Brazil's current provider URL is a national-provider file and cannot be treated as IMF-wide dissemination.
+- The official IMF Data API page confirms SDMX 2.1/3.0 availability but states that the Swagger explorer requires beta-portal sign-in.
+
+### Exact unresolved test
+- Direct official Structure Web Service requests for `dataflow/IMF/BOP6/1.0` and `constraint/IMF/BOP6_CONSTRAINT/1.0` were attempted through the available retrieval route; both returned inaccessible/internal-error responses without an XML body, HTTP status, or checksum. This is `PROBE_BLOCKED`, not proof that the structures do not exist.
+- Therefore the exact BOP6-to-DSD reference, BOP6 dimension order, constraint-cube permitted values, and a valid query key are still not established from a directly captured structure response. The DSD 2.6.0 dimension/codelist inventory alone cannot fill this gap.
+
+### Acceptance matrix
+| Gate | Status |
+|---|---|
+| Official catalogue confirms BOP6_CONSTRAINT targets BOP6[1.0] | PASS |
+| Official catalogue distinguishes BOP_BPM6 and legacy BPM5 | PASS |
+| Provider-specific BOP6 registrations identified | PASS |
+| Exact IMF:BOP6 dataflow-to-DSD reference | UNKNOWN / PROBE_BLOCKED |
+| BOP6 dimension order and permitted constraint values | UNKNOWN / PROBE_BLOCKED |
+| Anonymous current IMF BOP observation endpoint and valid key | UNKNOWN / BLOCKED (Swagger sign-in required) |
+| Observation payload / India rows / country panel | NOT_DONE |
+| Versioned EM membership / aggregate | NOT_DONE |
+
+### Decision
+Part-3 closes the public catalogue cross-check, but **does not close the IMF BOP extraction gate**. Do not treat provider registrations as a consolidated panel, do not substitute ESTAT dataflows, do not query the 2023 sample as current data, and do not infer the BOP6 DSD/key from the BOP DSD 2.6.0 alone. Next legitimate action requires an IMF-authenticated Swagger/API specification or a current official IMF-distributed BOP6 dataflow structure response. If unavailable, keep this source UNKNOWN/BLOCKED. No observations or aggregates were created; no production integration or production logic changes.
+
+Sources checked (official):
+- https://sdmxcentral.imf.org/data/overview.html
+- https://sdmxcentral.imf.org/data/constraints.html
+- https://sdmxcentral.imf.org/data/registrations.html
+- https://data.imf.org/en/Resource-Pages/IMF-API
