@@ -12,9 +12,11 @@ on:
       - "qa/audit_brazil_bop_sgs_crosscheck.py"
       - "qa/inspect_brazil_bop6_archive.py"
       - "qa/audit_brazil_bop6_archive_reconciliation.py"
+      - "qa/audit_brazil_bop6_portfolio_components.py"
       - "tests/test_brazil_bop_*.py"
       - "tests/test_inspect_brazil_bop6_archive.py"
       - "tests/test_brazil_bop6_archive_reconciliation.py"
+      - "tests/test_brazil_bop6_portfolio_components.py"
   workflow_dispatch:
 
 permissions:
@@ -36,6 +38,7 @@ jobs:
           python -m pip install --disable-pip-version-check openpyxl==3.1.5
           python -m unittest discover -s tests -p 'test_brazil_bop_*.py' -v
           python -m unittest discover -s tests -p 'test_brazil_bop6_archive_reconciliation.py' -v
+          python -m unittest discover -s tests -p 'test_brazil_bop6_portfolio_components.py' -v
           python -m unittest discover -s tests -p 'test_inspect_brazil_bop6_archive.py' -v
 
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
