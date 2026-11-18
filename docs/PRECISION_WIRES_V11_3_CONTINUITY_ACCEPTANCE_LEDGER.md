@@ -1412,3 +1412,15 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Current source registry has one qualified Federal Reserve H.10 nominal broad dollar index route; all other unqualified source/indicator mappings remain UNKNOWN. No source routes or units guessed; no seed values promoted.
 - Next bounded action: qualify the next exact official source route and capture immutable raw payload evidence/manifest; preserve UNKNOWN for unqualified inputs. Do not rerun this suite absent code/test changes.
 - Invariants unchanged: ₹0, official/free sources only, no synthetic data or fabricated timestamps; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and collector workflows unchanged; no PR/merge/production integration.
+
+
+## Chapter 41 — IMF BOP DSD V2.6.0 Official Endpoint Probe Implementation (2026-11-18)
+- Revisited the outstanding IMF BOP metadata retrieval blocker; did not repeat prior BOP DSD semantics/specification review or claim any BOP observations.
+- Official IMF SDMX Central catalogue lists IMF:BOP DSD version 2.6.0; official web-service page documents the public structure-service entry point. Official web evidence: IMF SDMX Central DSD catalogue and web-service guide.
+- Added bounded route-probe script testing only two candidate paths on `sdmxcentral.imf.org`: current `/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/` and previously documented legacy `/ws/public/sdmxapi/rest/datastructure/IMF/BOP/2.6.0/`. It records retrieval timestamp, HTTP status, final URL, content type, byte length, SHA-256 and XML parse result; saves raw response bytes when received. No BOP observations downloaded.
+- Script `scripts/research/probe_imf_bop_dsd_endpoints.py`, commit `45850a0d04d4548d056f21bc22a2c1734eeb8d59`; workflow `.github/workflows/imf-bop-dsd-endpoint-probe.yml`, commit `7029fe9fbe00e8855c12c7629b84dd435677c6e6`. Workflow timeout 5 minutes, artifact retention 90 days, manual dispatch plus active branch push trigger.
+- Runtime limitation: connected GitHub interface surfaced no check-run for either commit at audit time. Therefore endpoint execution NOT_VERIFIED / NOT_RUN; no HTTP status or response bytes may be claimed. Absence of a surfaced run is not evidence that endpoint failed.
+- Detailed report: `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md`.
+- Acceptance: probe code/workflow authored and committed PASS; actual Actions execution NOT_VERIFIED; XML retrieval/parsing UNKNOWN; dimension/codelist mapping UNKNOWN; BOP observations and EM aggregation NOT_DONE.
+- Next action: obtain a real run for “IMF BOP DSD Official Endpoint Probe” through repository Actions UI, then inspect artifact/logs and only then decide exact route. No alternative guessed URLs, third-party mirrors, inferred dimensions, synthetic values or fabricated timestamps.
+- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched; no PR/merge/production integration.
