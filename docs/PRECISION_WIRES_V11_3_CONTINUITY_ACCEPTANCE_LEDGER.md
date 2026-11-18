@@ -1357,3 +1357,16 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Existing verified facts unchanged: March-labelled Table 10 Feb-2026 row 24 USD 2,579.492203640002m; contemporaneous 27-Mar-2026 BCB rounded release USD 2.6bn; live SGS and immutable 17-Nov archive USD 2,783.2m; delta +USD 203.707796359998m; 15-series comparison 5,715/5,715 exact, 0 changed. March workbook Last-Modified 18-Oct-2026; original as-published XLSX NOT_PROVEN.
 - Next high-value action: only seek series-specific BCB compilation/source record or exact original March XLSX/pre-18-Oct official file version. Do not repeat 15-series comparison, six accounting identities, or general revision-policy review. Brazil pilot NOT_ACCEPTED; production integration NOT_AUTHORIZED.
 - Invariants: ₹0, official/free sources only; no fabricated values/timestamps, no raw overwrite, no production selector/scoring/CORE-672/Engines A-E changes.
+
+
+## Chapter 37 — BCB SGS 22942 Source-Level Compilation Provenance Investigation (2026-11-18)
+- Reviewed three distinct official evidence layers without repeating prior vintage/revision-policy audits:
+  1. BCB BPM6 methodological note (Nov-2014): Sistema Câmbio is the major BOP transaction source and BOP is mainly microdata/ITRS; other monthly sources include MDIC, COSIF, reserves, RDE, CBE, Censo and supplementary questionnaires. This is BOP-wide, not a specific SGS 22942 mapping.
+  2. BCB Banking Report 2020: broader non-resident portfolio-flow sources include Sistema Câmbio, SGS 22924, SGS 11047 and SGS 11050; stock sources are CBLC/Selic; B3 data are used for non-resident equity purchases. This does not identify SGS 22942 as an input or map its instrument-level debt flow.
+  3. BCB Banking Report 2021: domestic securities issuer-position statistics use B3/Selic custody records and certain BCB bank-balance-sheet data. This is position-statistics lineage, not proof of monthly SGS 22942 transaction-flow construction.
+- New report: docs/BCB_SGS_22942_SOURCE_LEVEL_COMPILATION_PROVENANCE_AUDIT_20261118.md (commit 2d0a1e0ac0e5bdff75719421f6a0db55c4c2aa40).
+- Decision: BCB/Depec publisher PASS; general BOP compilation lineage PARTIAL; direct SGS 22942 input/source mapping UNKNOWN; transaction-level reporting entities UNKNOWN; SGS 22942 monthly net-flow formula UNKNOWN; February-2026 revision cause/date UNKNOWN; original March workbook vintage NOT_PROVEN.
+- Explicitly rejected unsupported equivalences: BOP-wide Sistema Câmbio source ≠ proven exclusive SGS 22942 input; B3/Selic positions ≠ monthly flows; SGS 22924 broader portfolio-liability series ≠ SGS 22942 debt-only domestic-market series.
+- Brazil pilot NOT_ACCEPTED; SGS 22942 reconciliation BLOCKED; production integration NOT_AUTHORIZED. No production logic changed.
+- Next action only if new official series-specific documentation or immutable vintage evidence becomes available; do not repeat generic BOP source review, securities-position lineage review, 15-series live/archive equality audit, six accounting identities, or revision-policy applicability audit.
+- Invariants preserved: ₹0; official/free sources only; no synthetic values, fabricated timestamps, guessed mappings, raw overwrite; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and Hard Gate unchanged.
