@@ -57,12 +57,9 @@ def inspect_bytes(raw: bytes) -> dict:
                 values.append({"element": lname(elem.tag), "field": "@" + lname(key), "value": value.strip()})
         if elem.text and elem.text.strip():
             values.append({"element": lname(elem.tag), "field": "text", "value": elem.text.strip()})
-    flat = "\n".join(v["value"] for v in values)
     provider_match = any(v["value"] == BRAZIL_PROVIDER for v in values)
-    url_match = BCB_URL in flat
-    # Also accept URI-escaped/case-insensitive exact URL only; no host substring matching.
-    if not url_match:
-        url_match = any(v["value"].lower() == BCB_URL.lower() for v in values)
+    # Exact whole-value match only; never accept a URL embedded in narrative text.
+    url_match = any(v["value"].lower() == BCB_URL.lower() for v in values)
     dataflows = sorted({v["value"] for v in values if "BOP6" in v["value"] or "BOP_BPM6" in v["value"]})
     actions = sorted({v["value"] for v in values if v["field"].lower() in ("@action", "@type")
                       and v["value"].lower() in ("register", "reregister", "re-register", "delete", "replace")})
