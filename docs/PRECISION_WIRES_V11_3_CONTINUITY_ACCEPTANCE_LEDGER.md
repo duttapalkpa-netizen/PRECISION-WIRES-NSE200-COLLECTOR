@@ -1443,3 +1443,16 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Still UNKNOWN/BLOCKED: exact IMF dissemination dataflow linkage and permitted series key. NOT_DONE: observation payload, country-period rows, EM membership and aggregate. Prior spec documents the IMF BOP6 registration as a 2023 sample URL; it is not accepted as a complete current panel. Do not substitute ESTAT dataflows or guess keys.
 - Detailed report appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md`; report commit `729b718643f8709bf4dfe512d7cd83b856f249cf`.
 - Next action: verify official IMF BOP dataflow-to-DSD linkage and permitted query dimensions from a direct official catalogue/constraint response; stop if authentication is required. No synthetic data, no production integration, and all hard invariants unchanged.
+
+
+## Chapter 34 — Part-3: Official IMF BOP6 Dataflow / Constraint Catalogue Cross-check (2026-11-18)
+- Reused the verified IMF:BOP DSD 2.6.0 evidence and Part-2 semantic inventory; no repeat download and no observation query.
+- Official SDMX Central Reporting Constraints catalogue confirms `IMF:BOP6_CONSTRAINT` targets `BOP6[1.0]`; distinct `IMF:BOP_BP6_CONSTRAINT` targets `BOP_BPM6[1.0]`; legacy `BOP5_COLLECTION[1.0]` remains excluded.
+- Current Dataflows overview shows ESTAT BPM6 monthly/quarterly flows at 2.6.0 but does not expose an IMF-owned BOP6 flow in the visible catalogue. Do not substitute ESTAT.
+- Registrations catalogue lists provider-specific IMF:BOP6(1.0) registrations (including Brazil and Chile) plus the IMF-owned 2023 sample compact URL. These are not a unified IMF country panel; provider registrations do not prove a current anonymous IMF observation endpoint.
+- Official IMF API page confirms SDMX 2.1/3.0 but Swagger exploration requires beta-portal sign-in.
+- Direct Structure Web Service retrieval attempts for IMF:BOP6/1.0 dataflow and BOP6_CONSTRAINT/1.0 returned inaccessible/internal-error with no response body/status/checksum: PROBE_BLOCKED, not evidence of nonexistence.
+- Exact BOP6-to-DSD reference, dimension order, constraint permitted values and valid query key remain UNKNOWN/BLOCKED. Observation payload, India rows, country panel and EM aggregate remain NOT_DONE.
+- Detailed Part-3 evidence appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 23c8230ff44a45a417b28d0c134f2a795413bbd6).
+- Decision: catalogue cross-check complete; IMF BOP extraction gate remains BLOCKED pending authenticated official Swagger/API metadata or a current official BOP6 structure response. No guessed key, no ESTAT substitution, no sample-as-panel, no synthetic data, no production integration.
+- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
