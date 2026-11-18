@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - research/global-capital-rotation-overlay-mainline-20261113
+      - research/bcb-priority-metadata-audit-20261117
     paths:
       - "pipeline/global_capital_rotation_overlay.py"
       - "config/global_capital_rotation_source_registry.json"
