@@ -209,3 +209,77 @@ Final workflow review caught that the artifact upload initially included only `e
 - Expanded `tests/test_brazil_bop_indicator_codes.py` with three further fail-closed cases: wrong REF_AREA; non-matching country ISO3 prefix (IND_ code while the reporting REF_AREA is BR / ISO3 BRA); duplicate CL_INDICATOR code ID. Total committed regression cases: seven. Commit: `1f8b07b7111a218880e247997e4cc8f010d8c7fd`; final test blob to be re-fetched for exact verification.
 - The code remains deliberately conservative: an official codelist match is `LABEL_AVAILABLE_REVIEW_REQUIRED`; a Brazil-specific code not in the IMF codelist is `UNKNOWN_NO_IMF_LABEL`; a code neither listed nor correctly BRA_-prefixed is `UNKNOWN_QUARANTINE`. No semantic portfolio classification is implied.
 - Live XML retrieval, workflow dispatch, execution of the seven tests, 237-code codelist comparison and economic semantic mapping remain NOT_DONE. Do not treat catalogue listings as substitutes for raw SDMX XML, checksums or workflow artifacts.
+
+
+
+## 10. Chapter 35 Part-5 — full 237-code historical crosswalk and portfolio split (2026-11-18)
+
+### Exact source artefacts re-opened and independently parsed
+1. IMF official metadata acquisition Run `44095286184`, Artifact `14333192531`, created 2026-11-17. Manifest reports successful HTTP 200 capture of the `IMF:BOP_BPM6(1.0)` dataflow, its referenced `IMF:ECOFIN_DSD(1.0)`, and the BOP constraint. Raw metadata facts:
+   - Dataflow XML: 22,078 bytes; SHA-256 `74a8f3a58ff3e0bc6e6681c4143cd042cc642edee06f8080e86c29dc3b64e919`.
+   - Constraint XML: 18,675 bytes; SHA-256 `aa6c002fb3a2498420ed8796621664b492c18f58d75918d5c1bf8737fc917656`.
+   - Referenced ECOFIN DSD + child codelists XML: 42,707,649 bytes; SHA-256 `81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045`.
+   - The referenced DSD contains exactly one `IMF:CL_INDICATOR(1.0)` with 113,644 unique code IDs.
+2. Brazil BCB raw capture Run `44256602275`, Artifact `14405348744`. Re-downloaded ZIP and independently extracted `response.xml`: 4,840,062 bytes; SHA-256 `3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c`.
+3. Parsed Brazil XML Header `Structure/@namespace` explicitly identifies `Dataflow=IMF:BOP_BPM6(1.0)`; all 237 series have `REF_AREA=BR`, `DATA_DOMAIN=BOP6`, `COUNTERPART_AREA=W1`, `FREQ=M`, `UNIT_MULT=6`, `TIME_FORMAT=P1M`.
+
+### Exact code-list join result
+- Brazil unique indicator codes: 237.
+- Exact matches against the official IMF `CL_INDICATOR(1.0)`: 237 / 237.
+- Unmatched: 0.
+- Duplicate Brazil series keys: 0.
+- Observations: 89,097; monthly coverage 1995-01 through 2026-09 (381 distinct months).
+- Series observation-count distribution: 217 series × 381 observations; 16 × 345; 2 × 249; 2 × 201.
+- Rule-based domain counts from the exact official English labels: Current Account 146; Financial Account 79; Capital Account 9; Other BOP 3. Classification is label-based and reviewable, not a model-generated inference.
+
+### Portfolio investment — critical separation
+The exact official labels identify 18 portfolio-related indicators, but only 9 are Financial Account portfolio-investment transaction series. A separate 9 are Current Account portfolio-investment income; they are not portfolio capital-flow transactions and must not be mixed into the capital-flow panel.
+
+**Financial Account — Portfolio investment (9 codes):**
+- `BFP_BP6_USD` — Portfolio investment total (side not split in the label).
+- `BFPA_BP6_USD` — Net acquisition of financial assets total.
+- `BFPAD_BP6_USD` — Assets: debt securities.
+- `BFPAEEO_BP6_USD` — Assets: equity securities other than investment fund shares.
+- `BFPAEIS_BP6_USD` — Assets: investment fund shares or units.
+- `BFPL_BP6_USD` — Net incurrence of liabilities total.
+- `BFPLD_BP6_USD` — Liabilities: debt securities.
+- `BFPLEEO_BP6_USD` — Liabilities: equity securities other than investment fund shares.
+- `BFPLEIS_BP6_USD` — Liabilities: investment fund shares or units.
+
+Each of these nine series has 381 monthly observations from 1995-01 to 2026-09.
+
+**Portfolio investment income — Current Account (9 separate codes):**
+`BIPIPED_BP6_USD`, `BIPIPI_BP6_USD`, `BIPIP_BP6_USD`, `BMIPIPED_BP6_USD`, `BMIPIPI_BP6_USD`, `BMIPIP_BP6_USD`, `BXIPIPED_BP6_USD`, `BXIPIPI_BP6_USD`, `BXIPIP_BP6_USD`.
+These describe investment-income receipts/payments or balances in the current account, not acquisition/incurrence of portfolio financial assets/liabilities.
+
+### Unit, sign, quality and aggregation gates
+- Series metadata contains `UNIT_MULT=6`; the official IMF code labels specify US Dollars. The payload does not expose a separate `UNIT_MEASURE` attribute. Raw values have not been rescaled; do not multiply/convert until the exact scale convention is independently checked against the DSD representation and source documentation.
+- Observation elements expose only `TIME_PERIOD` and `OBS_VALUE`; no observation-level `OBS_STATUS` or `CONF_STATUS` attributes are present in this captured Brazil XML. Quality status is therefore `UNKNOWN`, not PASS.
+- IMF BPM6 sign convention: increases in financial assets and liabilities are positive; decreases are negative. Financial-account balance/net lending (+)/net borrowing (-) is calculated as net acquisition of financial assets minus net incurrence of liabilities. Official sources: https://data.imf.org/-/media/iData/External-Storage/Documents/73FBCD5B6CDE4D289C60B9B0CAA40622/en/2-bpm6.pdf (paragraph 3.31); https://data.imf.org/-/media/iData/External-Storage/Documents/FB1F86C7158646DDB554D0882F1F2A3B/en/3-BPM6-com-guide.pdf (paragraphs 8.102–8.104, Tables 8.9–8.10).
+- For Brazil, positive net acquisition of external assets means an increase in residents' external assets; positive net incurrence of liabilities means an increase in liabilities to non-residents. Do not treat either series alone as net inflow. Do not sum the portfolio total `BFP`, assets total `BFPA`, liabilities total `BFPL` and their component series together; that would double-count hierarchy levels. No net series has been computed.
+
+### Dataflow registration discrepancy retained as an open provenance issue
+The Brazil XML Header identifies `IMF:BOP_BPM6(1.0)`, and the captured official IMF dataflow metadata confirms that this dataflow references `IMF:ECOFIN_DSD(1.0)`. Separately, the current IMF SDMX Central Registrations page lists the BCB Brazil URL under `IMF:BOP6(1.0)`. These catalogue registration and payload-header identifiers conflict. Do not silently rewrite the raw header or claim the registration discrepancy resolved. Record it as `REGISTRATION_CATALOGUE_VS_PAYLOAD_HEADER_CONFLICT`; obtain a current BCB registration confirmation or matching IMF registration metadata before production admission.
+
+### Reproducible implementation and current run
+- Added `qa/build_brazil_bop_indicator_crosswalk.py` (commit `2b355b9ea5db9b4e934454fe877b18a17d6a6036`) to join the actual Brazil XML against official CL_INDICATOR, emit every matched label, per-series observations/periods, label-based domain/portfolio separation, and fail closed on unmatched codes or unexpected dataflow/area.
+- Added `tests/test_brazil_bop_indicator_crosswalk.py` (commit `94e48d826ca1cce865fc0eab8143b6d30e008fd1`) covering portfolio financial-account vs income separation, absent quality remaining UNKNOWN, unmatched-code failure, wrong dataflow and wrong REF_AREA.
+- Local independent execution against the two recovered source XML files: `PASS_CODELIST_CROSSWALK_ONLY`; output 237/237 exact matches, 89,097 observations, 9 financial-account portfolio series and 9 separate portfolio-income series. Local JSON output SHA-256 `637c64cffdc37e250704e6ac560d5167cdefec1e7e417b33c999644c7fbfcf1f` (238,180 bytes). This local file hash is not a GitHub artifact hash.
+- Updated workflow to execute both indicator test files, capture current BCB + IMF metadata, build `evidence/brazil_bop/indicator_semantic_crosswalk.json`, hash it, and upload the full evidence directories. Push trigger is limited to the research branch and relevant workflow/QA/test paths. Commit `7584d5a1292356741716ce4540d4e0a693ed948d`.
+- Workflow Run `44270663838` started on 2026-11-18 08:51:57 UTC from that commit. At the last check it was `in_progress`; the initial unit-test step and prior metadata validation steps were successful, and the ECOFIN DSD/codelist acquisition step was still running. Final runtime result/artifact must be recorded after completion.
+
+### Acceptance status
+| Gate | State |
+|---|---|
+| Official dataflow -> ECOFIN_DSD link (archived metadata) | PASS |
+| Official CL_INDICATOR version 1.0 / 113,644 codes | PASS |
+| Historical Brazil 237/237 exact code matches | PASS (recovered immutable artifacts) |
+| 9 financial-account portfolio codes separated from 9 portfolio-income codes | PASS (official labels) |
+| 9 portfolio FA series coverage 1995-01 to 2026-09 | PASS (captured observations) |
+| Unit rescaling / observation quality | UNKNOWN |
+| BCB registration vs payload dataflow identity discrepancy | OPEN / UNKNOWN |
+| Current live paired capture and GitHub run 44270663838 | IN_PROGRESS at audit cut-off |
+| Brazil portfolio flow panel admission | NOT_AUTHORIZED |
+| Global EM aggregate / trading-signal admission | NOT_AUTHORIZED |
+
+No production integration or protected selector changes.
