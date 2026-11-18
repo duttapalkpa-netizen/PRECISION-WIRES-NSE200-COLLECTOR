@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "part": "12",
+  "status": "PASS_PUBLIC_DOCUMENTATION_REVIEW_COMPLETED_P0_CONTRACT_STILL_BLOCKED",
+  "scope": "Read-only review of official IMF SDMX Central registration and validation documentation; no observation acquisition",
+  "official_evidence": [
+    {"title":"IMF SDMX Central Web Services Guide, section 7","url":"https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf","supports":"Registration links a Dataflow, Data Provider and URL; registration request carries metadata rather than the data payload."},
+    {"title":"IMF SDMX Central User Guide, section 6","url":"https://dsbb.imf.org/content/pdfs/IMFSDMXCentralUserGuide.pdf","supports":"Register URL causes SDMX Central to query the URL to validate the data file; successful validation makes data available through SDMX Central."},
+    {"title":"IMF SDMX Central current registrations","url":"https://sdmxcentral.imf.org/data/registrations.html","supports":"Public row remains IMF:BOP6(1.0) / IMF:BR1 / exact BCB URL / 2026-10-26T11:47:29Z."},
+    {"title":"IMF SDMX Central overview","url":"https://sdmxcentral.imf.org/overview.html","supports":"Dataflow and Provision Agreement can each carry restrictions/constraints applied when selected."},
+    {"title":"SDMX Provision Agreement model reference","url":"https://fmrwiki.sdmxcloud.org/Data_Provision_Agreement","supports":"A Provision Agreement links a Data Provider to a Dataflow and must reference both."}
+  ],
+  "limits": [
+    "Public generic documentation does not reveal the exact validation algorithm for this BCB registration.",
+    "No authoritative country-specific explanation or correction of BOP6 vs BOP_BPM6 was found.",
+    "No alias equivalence is established."
+  ],
+  "prior_source_finding_unchanged": {
+    "registration_dataflow": "IMF:BOP6(1.0)",
+    "payload_header_dataflow": "IMF:BOP_BPM6(1.0)",
+    "mismatch": "CONFIRMED",
+    "correct_dataflow_for_payload": "UNKNOWN_PENDING_AUTHORITATIVE_BCB_OR_IMF_REGISTRATION_CORRECTION"
+  },
+  "admission": {
+    "source_or_header_rewrite": "PROHIBITED",
+    "constraint_substitution": "PROHIBITED",
+    "brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "global_em_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "new_observations_acquired": false,
+  "workflow_triggered": false,
+  "runtime_artifact": null,
+  "decision": "Keep P0 contract gate BLOCKED/UNKNOWN pending authoritative Brazil-specific correction."
+}

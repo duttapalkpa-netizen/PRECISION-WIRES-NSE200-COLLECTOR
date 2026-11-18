@@ -72,3 +72,10 @@ The workflow `.github/workflows/imf_bop_dsd_acquisition.yml` now ignores workflo
 - Calculate indicator membership for the exact payload against each candidate Allowed constraint. Report counts and excluded codes; do not pick the highest-coverage constraint as an automatic correction.
 - If registration and payload Dataflow disagree, classify the selected Dataflow as UNKNOWN and block downstream use until an authoritative source/registry correction. Preserve the original payload; do not rewrite headers, change registration rows, or silently remap.
 - Prefer re-analysis of a verified prior artifact. Record both source archive digest and per-file SHA-256. No observation reacquisition for a metadata-only contract issue.
+
+
+## 11. Public registration documentation is not a country-specific contract correction (2026-11-18)
+- The IMF Web Services Guide describes registration as a Dataflow + Data Provider + URL association; the IMF User Guide says SDMX Central queries the URL to validate the data file. These documents do not, by themselves, establish the exact validation algorithm or resolve an individual provider's header-vs-registration mismatch.
+- The IMF SDMX Central overview distinguishes Dataflow-level and Provision Agreement-level constraints. Keep their attachment points separate; do not infer that shared DSDs or similar labels make Dataflow IDs interchangeable.
+- A public registration row and generic validation description are evidence of the registry association, not evidence that a contradictory source Header is acceptable. For a mismatch, preserve UNKNOWN/BLOCKED until a country-specific authoritative registration/source correction is visible.
+- Documentation-only reviews must be recorded as such; do not invent a workflow run, artifact, source capture timestamp or SHA-256. Do not trigger a full acquisition workflow for a metadata-only documentation update.
