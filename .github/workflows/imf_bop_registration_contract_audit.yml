@@ -1,4 +1,5 @@
 name: IMF Brazil BOP Registration Contract Audit
+# v2: bounded references=none structure capture; avoid unbounded dependency expansion
 
 on:
   push:
