@@ -1,0 +1,79 @@
+name: IMF Brazil BOP Registration Contract Audit
+
+on:
+  push:
+    branches:
+      - research/global-capital-rotation-overlay-v1
+    paths:
+      - ".github/workflows/imf_bop_registration_contract_audit.yml"
+      - "qa/audit_imf_brazil_bop_registration_contract.py"
+      - "tests/test_imf_brazil_bop_registration_contract.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: imf-brazil-registration-contract-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  registry-contract-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+      - name: Unit-test registry contract parser
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_imf_brazil_bop_registration_contract.py' -v
+      - name: Capture official IMF public registry structures (no source-data reacquisition)
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR="evidence/imf_registration_contract"
+          mkdir -p "$DIR"
+          BASE="https://sdmxcentral.imf.org/sdmx/v2/structure"
+          declare -A URLS=(
+            [dataproviders]="$BASE/dataproviderscheme/IMF/all/latest/?references=all&format=sdmx-2.1"
+            [provision_agreements]="$BASE/provisionagreement/IMF/all/latest/?references=all&format=sdmx-2.1"
+            [content_constraints]="$BASE/contentconstraint/IMF/all/latest/?references=all&format=sdmx-2.1"
+          )
+          for NAME in dataproviders provision_agreements content_constraints; do
+            URL="${URLS[$NAME]}"
+            printf '%s\n' "$URL" > "$DIR/${NAME}_request_url.txt"
+            date -u --iso-8601=ns > "$DIR/${NAME}_request_started_at_utc.txt"
+            curl --fail --location --silent --show-error --retry 2 --retry-all-errors \
+              --connect-timeout 15 --max-time 90 \
+              --dump-header "$DIR/${NAME}_response_headers.txt" \
+              --output "$DIR/${NAME}.xml" \
+              --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+              "$URL" > "$DIR/${NAME}_transfer_metadata.txt"
+            test -s "$DIR/${NAME}.xml"
+            sha256sum "$DIR/${NAME}.xml" > "$DIR/${NAME}_SHA256SUMS"
+          done
+          cp config/imf_bop6_registration_snapshot_20261118.json "$DIR/"
+      - name: Parse provider, provision agreement and provider-constraint references
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_imf_brazil_bop_registration_contract.py \
+            --provider-xml evidence/imf_registration_contract/dataproviders.xml \
+            --provision-xml evidence/imf_registration_contract/provision_agreements.xml \
+            --constraint-xml evidence/imf_registration_contract/content_constraints.xml \
+            --registration-snapshot evidence/imf_registration_contract/imf_bop6_registration_snapshot_20261118.json \
+            --output evidence/imf_registration_contract/brazil_registration_contract_audit.json
+          sha256sum evidence/imf_registration_contract/brazil_registration_contract_audit.json \
+            > evidence/imf_registration_contract/REGISTRATION_CONTRACT_AUDIT_SHA256SUMS
+          date -u --iso-8601=ns > evidence/imf_registration_contract/capture_completed_at_utc.txt
+      - name: Upload immutable registry contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-brazil-registration-contract-${{ github.run_id }}
+          path: evidence/imf_registration_contract/
+          if-no-files-found: warn
+          retention-days: 90
