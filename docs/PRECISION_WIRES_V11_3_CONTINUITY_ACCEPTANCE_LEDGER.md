@@ -462,7 +462,7 @@ Report workstream percentages separately from evidence status. Percentage means 
 - ₹0, official/free sources only; no synthetic data, fabricated timestamps, guessed IDs/endpoints. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; UNKNOWN is not PASS.
 
 
-## 2026-11-18 — Continuation page 40: official registration/export boundary re-check
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-4: official registration/export boundary re-check
 - New report: `docs/IMF_BRAZIL_REGISTRATION_HISTORY_PART6_20261118.md`; commit `4bd387a29560950b9ffba5c6177451e30e955b65`.
 - Re-checked the official current Registrations page: it still displays `IMF:BOP6(1.0)` / `IMF:BR1` / the BCB URL with Last Updated `2026-10-26T11:47:29.000Z`. This is current-state metadata, not a historical create/replace/delete event.
 - Official Data Registrations activity page still exposes provider/dataflow/provision-agreement filter modes, but accessible static extraction contains no event rows. Exact interactive `IMF:BR1` filter remains NOT_DONE.
