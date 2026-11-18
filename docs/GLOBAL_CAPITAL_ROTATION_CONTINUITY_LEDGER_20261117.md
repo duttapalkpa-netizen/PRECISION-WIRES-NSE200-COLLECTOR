@@ -572,3 +572,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - All flow admission remains NOT_AUTHORIZED. No source substitution, series shifts, splicing, synthetic repair or production integration.
 
 - QA correction: Run #15's SGS component roll-up false-positive counts were caused by using 0.051 tolerance on one-decimal SGS values. Corrected SGS roll-up tolerance to 0.151 (max residual 0.10); archive/IMF remain 0.051. Cross-source comparisons stay 0.051. Script commit 21ba07f1ab17128cdb61ed8e2c025f1df3a51afa; regression test commit 8af623974a8c8dc22944a5e5ba30199acb66a783. Run #17 is the corrected runtime acceptance run.
+
+
+
+## 2026-11-18 — Chapter 35 Part-7 runtime closeout: nine-series portfolio components
+- Corrected Run #17 / ID 44281174648 SUCCESS; head 8af623974a8c8dc22944a5e5ba30199acb66a783; all 21 substantive steps passed. Artifact #14416138359, 7,784,632 bytes, SHA 599c639ccb5d7f35c5800858b289bb0f8668f1afb1ca23be1c164f048c12fbd7.
+- Component audit JSON SHA 8cdc08da5e788f7fdf2d6f64d5e7f272aba22bd5d4b068d6b0cfd383a224335d. Permanent summary `docs/BRAZIL_BOP_PORTFOLIO_COMPONENT_AUDIT_20261118.json`, commit da7ed0a0a928d6a461c597019bf01d771ee55f6b.
+- Corrected source-specific roll-up results: BCB archive assets/liabilities/net all 293/293 PASS; current SGS assets/liabilities/net all 381/381 PASS at 0.151 tolerance (max residual 0.10 due one-decimal source display); BCB-published IMF-SDMX assets/liabilities/net each 180/381 PASS and 201/381 FAIL from 2010-01 to 2026-09 at 0.051.
+- Each of nine archive-to-IMF series has 180/293 matches for 1995-01–2009-12 and 113/293 mismatches for 2010-01–2019-05.
+- First Run #15 SGS component rollup flags (128/115/96 mismatches) were false positives from using 0.051 on rounded SGS values; superseded by corrected Run #17. Correct tolerance is 0.151 for SGS rollups only; archive/IMF and cross-source comparisons remain 0.051.
+- Next: official BCB/IMF source-lineage and revision matrix for all nine series, dataflow/domain/counterpart/vintage, and 2010-01 transition. Keep source-specific values separate and all admission gates NOT_AUTHORIZED.
