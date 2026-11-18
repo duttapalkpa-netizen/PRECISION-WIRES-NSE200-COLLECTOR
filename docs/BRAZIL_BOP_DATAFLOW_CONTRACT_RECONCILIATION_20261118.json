@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "status": "PASS_RECONCILIATION_EXECUTED_P0_REGISTRATION_HEADER_MISMATCH_CONFIRMED",
+  "workflow": {
+    "run_id": 44290101769,
+    "conclusion": "success",
+    "head_sha": "2405cf63b5b1e527c1d2c8acf092a3871d3981e6",
+    "artifact_id": 14420378420,
+    "artifact_bytes": 5186,
+    "artifact_sha256": "6435b5df856889ae1a48742681f0b127b04e1a4057c361b054c329a5049fc8aa",
+    "report_sha256": "262a7e434f405e77e72651df157aadc0010038e63789a86a799f6f3426e78aea",
+    "tests": "4/4 PASS"
+  },
+  "source_archive": {
+    "prior_run_id": 44282235752,
+    "prior_artifact_id": 14416443972,
+    "artifact_sha256": "53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0",
+    "archive_download_reverified": true,
+    "no_observation_reacquisition": true
+  },
+  "bcb_payload": {
+    "url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "http_status": 200,
+    "content_type": "text/xml",
+    "bytes": 4840062,
+    "sha256": "3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c",
+    "last_modified": "2026-10-26T11:44:11Z",
+    "header_id": "IREF149528",
+    "prepared": "2026-10-26T11:42:36Z",
+    "structure_dataflow": "IMF:BOP_BPM6(1.0)",
+    "schema_location_dataflow": "IMF:BOP_BPM6(1.0)",
+    "series": 237,
+    "observations": 89097,
+    "period_min": "1995-01",
+    "period_max": "2026-09"
+  },
+  "imf_registration": {
+    "dataflow": "IMF:BOP6(1.0)",
+    "provider": "IMF:BR1",
+    "provider_name": "Central Bank of Brazil",
+    "registered_url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "last_updated": "2026-10-26T11:47:29Z"
+  },
+  "dataflow_definitions": {
+    "BOP6": {
+      "name": "Balance of Payments (BPM6) for Collection",
+      "dsd": "IMF:ECOFIN_DSD(1.0)",
+      "sha256": "3348ad4db1c70ce8de758e2f4130d15cb694f41140aadf5d63604002a0435aec"
+    },
+    "BOP_BPM6": {
+      "name": "Balance of Payments -- BPM6",
+      "dsd": "IMF:ECOFIN_DSD(1.0)",
+      "sha256": "57066fd263f76788ef1a8113d7842e53817d062bfcde6bfda33089c8f987003a"
+    },
+    "same_dsd": true,
+    "distinct_dataflow_ids": true,
+    "alias_equivalence": "NOT_ESTABLISHED"
+  },
+  "constraints": {
+    "BOP6_CONSTRAINT": {
+      "attached_to": "IMF:BOP6(1.0)",
+      "allowed_indicators": 4313,
+      "payload_allowed": 234,
+      "payload_not_allowed": 3,
+      "coverage_ratio": 0.987342,
+      "excluded_codes": [
+        "BMSOBL_USD",
+        "BSOBL_USD",
+        "BXSOBL_USD"
+      ],
+      "sha256": "1aea2741effb80fd6804200e50b7df01d4d6478ae5af2b124d1bd3acf6ddb9be"
+    },
+    "BOP_BP6_CONSTRAINT": {
+      "attached_to": "IMF:BOP_BPM6(1.0)",
+      "allowed_indicators": 98,
+      "payload_allowed": 27,
+      "payload_not_allowed": 210,
+      "coverage_ratio": 0.113924,
+      "sha256": "f7136dba3a749860a84c8dc4cfe9f39d67230483f652deef60425d88a76a37fe"
+    }
+  },
+  "finding": {
+    "registration_vs_payload": "CONFIRMED_MISMATCH_BOP6_VS_BOP_BPM6",
+    "common_dsd": "ECOFIN_DSD(1.0)",
+    "interpretation": "The Dataflows are distinct and have different names/constraints despite sharing the same DSD. Constraint coverage cannot authorize substitution or establish aliases.",
+    "correct_dataflow_for_bcb_payload": "UNKNOWN_PENDING_AUTHORITATIVE_BCB_OR_IMF_REGISTRATION_CORRECTION",
+    "source_or_header_rewrite": "PROHIBITED",
+    "Brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "Global_EM_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "next_action": "Wait for authoritative correction of the IMF BR1 registration Dataflow or BCB XML/constraint contract; no external contact and no production changes."
+}

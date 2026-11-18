@@ -64,3 +64,11 @@ The workflow `.github/workflows/imf_bop_dsd_acquisition.yml` now ignores workflo
 - Measure observed series membership against each attached allowed constraint; report allowed/total, excluded codes and exact hashes. Do not select the constraint with the higher coverage as a substitute for an authoritative contract.
 - If registration and payload disagree, classify the contract as UNKNOWN/BLOCKED, preserve the raw payload, and keep all downstream admissions NOT_AUTHORIZED. Resolve only through authoritative BCB/IMF metadata or a formal registry/source correction; no guessed remapping.
 - Prefer reusing prior workflow artifacts for re-analysis. Do not reacquire BOP observations to investigate a metadata-only mismatch.
+
+
+## 10. Dataflow identity reconciliation acceptance (2026-11-18)
+- For country SDMX payloads, compare all three identities: registration Dataflow, SDMX Header `Structure/@namespace` and root `xsi:schemaLocation` Dataflow. Preserve exact source bytes and hashes.
+- A shared DSD is not a Dataflow alias. Compare maintainable IDs, labels, version, structure reference, and attached constraints separately.
+- Calculate indicator membership for the exact payload against each candidate Allowed constraint. Report counts and excluded codes; do not pick the highest-coverage constraint as an automatic correction.
+- If registration and payload Dataflow disagree, classify the selected Dataflow as UNKNOWN and block downstream use until an authoritative source/registry correction. Preserve the original payload; do not rewrite headers, change registration rows, or silently remap.
+- Prefer re-analysis of a verified prior artifact. Record both source archive digest and per-file SHA-256. No observation reacquisition for a metadata-only contract issue.

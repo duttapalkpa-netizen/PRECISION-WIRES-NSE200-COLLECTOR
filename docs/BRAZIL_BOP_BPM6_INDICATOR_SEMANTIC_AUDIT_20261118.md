@@ -718,3 +718,11 @@ The original BCB XML from prior Run #44282235752 / artifact #14416443972 was re-
 The IMF Dataflow definitions call BOP6 “Balance of Payments (BPM6) for Collection” and BOP_BPM6 “Balance of Payments -- BPM6”. Both reference ECOFIN_DSD(1.0), but have distinct IDs and separate constraints. The BCB payload has 237 series / 89,097 observations. BOP6_CONSTRAINT allows 4,313 indicators and matches 234/237 observed codes (3 excluded); BOP_BP6_CONSTRAINT allows 98 and matches only 27/237 (210 excluded). These membership ratios do not prove Dataflow alias equivalence or resolve which registration is wrong.
 
 Finding: CONFIRMED registration/header mismatch; same DSD does not make the two Dataflows interchangeable. BCB payload's correct registration remains UNKNOWN pending authoritative BCB/IMF contract correction. Do not rewrite either side or admit this payload downstream. The focused reconciliation workflow reads only the existing archived source artifact.
+
+
+### Part-11 final execution result — 2026-11-18
+Focused workflow Run #44290101769 completed SUCCESS with 4/4 regression tests, archive retrieval, exact parser and artifact upload. Artifact #14420378420, 5,186 bytes, SHA-256 6435b5df856889ae1a48742681f0b127b04e1a4057c361b054c329a5049fc8aa. Report SHA-256 262a7e434f405e77e72651df157aadc0010038e63789a86a799f6f3426e78aea.
+
+The original BCB XML in prior Run #44282235752 artifact #14416443972 was reused, with archive digest reverified; no BOP observations were reacquired. Its exact Header Structure namespace and schemaLocation identify IMF:BOP_BPM6(1.0), while the IMF BR1 registration row identifies IMF:BOP6(1.0) for the same BCB URL. BOP6 and BOP_BPM6 are distinct Dataflow IDs and names (“Balance of Payments (BPM6) for Collection” vs “Balance of Payments -- BPM6”), although both reference ECOFIN_DSD(1.0). Alias equivalence is not established.
+
+Payload: 237 series / 89,097 observations. BOP6_CONSTRAINT membership 234/237 (3 excluded); BOP_BP6_CONSTRAINT membership 27/237 (210 excluded). The coverage difference does not authorize substituting constraints. The correct Dataflow for the BCB payload remains UNKNOWN pending authoritative correction of the IMF registration or BCB payload contract. Downstream admissions remain NOT_AUTHORIZED.
