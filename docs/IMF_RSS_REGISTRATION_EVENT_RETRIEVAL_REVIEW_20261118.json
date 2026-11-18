@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "part": "14",
+  "status": "PASS_VALIDATION_SEMANTICS_REVIEW_RSS_NOT_RETRIEVED",
+  "scope": "Official IMF SDMX Central User Guide and activity surfaces; direct RSS retrieval attempt",
+  "guide": {
+    "url": "https://dsbb.imf.org/content/pdfs/IMFSDMXCentralUserGuide.pdf",
+    "last_updated": "2025-05",
+    "section_2_1": "Semantic compliance includes XML namespaces and Header compliance with SDMX specification.",
+    "section_2_2": "Valid Constraint checks depend on selected Dataflow and/or Provision Agreement.",
+    "section_6": "Register URL queries URL to validate data file; successful validation makes data available; failed registration requires review of SDMX file structure or URL; Last Updated records registration event time.",
+    "section_7_1": "RSS updates on each transaction including data registrations/deletions; linked SDMX 2.1 RegistryInterface contains SubmitStructureRequest or SubmitRegistrationRequest."
+  },
+  "rss": {
+    "url": "https://sdmxcentral.imf.org/rss.xml",
+    "retrieval_attempted": true,
+    "retrieval_result": "ACCESS_OR_INTERNAL_ERROR_FROM_AVAILABLE_WEB_RETRIEVAL",
+    "feed_xml_retrieved": false,
+    "rss_items_retrieved": 0,
+    "brazil_registration_event_retrieved": false,
+    "classification": "NOT_RETRIEVED_NOT_EMPTY_NOT_NOT_FOUND"
+  },
+  "registration_history_ui": {
+    "url": "https://sdmxcentral.imf.org/activity/data-log.html",
+    "extracted_state": "No selected rows; blank registration details",
+    "classification": "FILTER_DRIVEN_UNPOPULATED_EXTRACTION_NOT_EVIDENCE_OF_NO_EVENTS"
+  },
+  "generic_transactions_ui": {
+    "url": "https://sdmxcentral.imf.org/activity/activity-log.html",
+    "visible_rows": "Structure Submission events",
+    "not_a_substitute_for_registration_history": true
+  },
+  "validator_semantics": {
+    "header_namespace_spec_compliance_documented": true,
+    "dataflow_or_pa_constraint_validation_documented": true,
+    "explicit_header_dataflow_vs_selected_registration_dataflow_identity_comparison_documented": false,
+    "exact_validator_behavior_for_brazil_case": "UNKNOWN"
+  },
+  "current_brazil_mismatch": {
+    "registration": "IMF:BOP6(1.0) / IMF:BR1",
+    "payload_header": "IMF:BOP_BPM6(1.0)",
+    "mismatch": "CONFIRMED",
+    "correct_dataflow": "UNKNOWN"
+  },
+  "admission": {
+    "header_or_registry_rewrite": "PROHIBITED",
+    "constraint_substitution": "PROHIBITED",
+    "brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "global_em_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "new_observations_acquired": false,
+  "workflow_triggered": false,
+  "runtime_artifact": null,
+  "decision": "Documented validation behaviour more precisely, but RSS transaction evidence and Brazil-specific registration event remain NOT_RETRIEVED/UNKNOWN. Keep P0 blocked."
+}
