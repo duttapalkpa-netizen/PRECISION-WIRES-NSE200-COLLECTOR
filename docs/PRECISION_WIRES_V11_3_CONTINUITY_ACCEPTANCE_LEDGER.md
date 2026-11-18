@@ -1489,3 +1489,16 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Detailed Part-6 appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 9cd8445a9120c5cfb206fc90d03155601b9e38de).
 - Next step: repeat the exact raw capture only from an environment with working DNS/HTTPS egress, archive exact headers/body and SHA-256, then parse. Brazil remains schema/transport candidate only; never substitute for India/global EM panel. No production integration.
 - Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
+
+
+## Chapter 34 — Part-7: Brazil BOP6 Registered SDMX Payload Capture & Structural QA (2026-11-18)
+- Added isolated workflow `.github/workflows/brazil-bop6-raw-capture.yml`, script `scripts/research/capture_brazil_bop6_registered_xml.py`, trigger `docs/BRAZIL_BOP6_RAW_CAPTURE_TRIGGER.txt`. Commits: workflow `3eaa17e087d7c9713b56d695a0cbbf68088a0723`; script `1e29d81a06b438b0ba4f19899b4d1b5fb82d557a`; trigger `36c64268b41ef86a7c19a3271c925415496a90d9`.
+- GitHub Actions Run `44256602275` SUCCESS; job `134639674269`; all steps pass; 3-minute timeout. Artifact ID `14405348744`, 832,358-byte ZIP, digest `sha256:608906789259365455bb02844a5fc11486c0e24ac62dd2fde6d9e44bbba40c24`, expires 2027-02-16.
+- Official BCB registered XML returned HTTP 200, Content-Type `text/xml`, Content-Length 4,840,062, ETag `"{17DF776C-4B09-4CB5-BADC-3578A00C00E9},153"`, Last-Modified 2026-10-26T11:44:11Z; captured 2026-11-18T07:09:07.318958Z.
+- Exact raw XML SHA-256 `3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c`, 4,840,062 bytes; XML well-formedness PASS; root SDMX 2.1 StructureSpecificData. Raw `response.xml` and `capture_manifest.json` retained in artifact.
+- Header ID IREF149528; Prepared 2026-10-26T11:42:36Z; DataSetID a39e5b75-1fc9-4528-abda-fd8d203f99c1; source IMF SDMX Central; StructureUsage explicitly references `IMF:BOP_BPM6(1.0)`; observation dimension TIME_PERIOD.
+- Structural inventory: 237 unique Series keys, 89,097 observations, monthly 1995-01 to 2026-09; zero duplicate series keys. Distribution: 217 series×381 observations, 16×345, 2×249, 2×201. All series REF_AREA=BR, COUNTERPART_AREA=W1, FREQ=M, UNIT_MULT=6, TIME_FORMAT=P1M, DATA_DOMAIN=BOP6; 237 distinct INDICATOR codes.
+- OBS_STATUS is absent from Obs attributes; do not infer status from zero values. Indicator meanings, sign/unit conventions, quality flags and exact DSD/codelist mapping remain UNKNOWN/NOT_DONE.
+- Detailed report appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 95ecc7d134d9dadd63d2b4e8664986471eff4c53).
+- Decision: Brazil-only registered payload raw capture and structural inventory PASS; no India data, no consolidated EM panel, no semantic indicator approval, no signal or production integration. Next: fetch exact official Data Structure referenced by IMF:BOP_BPM6(1.0) and its indicator codelists; map only verified codes.
+- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
