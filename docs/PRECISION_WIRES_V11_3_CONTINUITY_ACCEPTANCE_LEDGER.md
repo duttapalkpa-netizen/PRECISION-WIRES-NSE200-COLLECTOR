@@ -471,3 +471,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance: current Brazil row PASS (current-state only); provider identity PASS; history filter schema PASS; actual Brazil event rows NOT_DONE; Brazil Provision Agreement URN/changelog NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED; Brazil admission BLOCKED / EM market use NOT_AUTHORIZED.
 - Next single action: interactive official GUI -> Data Registrations -> Breakdown By Data Provider -> exact `IMF:BR1`; capture actual dated rows/details, then linked Provision Agreement URN and Changelog/exports. If authorization or UI access is required, preserve limitation and remain UNKNOWN. No guessed IDs/endpoints.
 - No repeat RSS/BCB downloads; no production changes, PR merge, trading admission, or macro integration. ₹0 official/free sources only; no synthetic data. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-5: IMF SDMX Transactions Activity
+- New report: `docs/IMF_BRAZIL_REGISTRATION_HISTORY_PART5_TRANSACTION_ACTIVITY_20261118.md`; commit `27d6398aa9fcf96113e9e2dad53a308b5d8c85cc`.
+- Official IMF SDMX Transactions view exposes Transaction Time / Transaction Type / Action and Download Transaction. Search-indexed rendering showed a bounded 18-row sample of generic Structure Submission Replace/Delete entries, timestamps 2026-05-15 through 2026-10-08. Same rendering inconsistently says “Showing 1 to 2 of 100 entries”; sample is not treated as complete.
+- Static extraction provides no row payload/IDs and visible rows identify no agency, dataflow, provider, Provision Agreement or Brazil URL. No row can be attributed to Brazil.
+- Login and confirmation/re-authentication UI is visible; no credentials used. No selected-row SDMX-XML or CSV View Details artifact available. FMR View Activity docs describe those controls, but that is capability documentation only.
+- Did not repeat archived 33 RSS transaction downloads or BCB XML retrieval; no guessed transaction ID or undocumented endpoint.
+- Acceptance: official page/schema PASS; bounded timestamp sample PASS (sample only); Brazil-specific transaction NOT_DONE; transaction XML/CSV NOT_DONE; chronology UNKNOWN; mismatch CONFIRMED; Brazil admission BLOCKED / market use NOT_AUTHORIZED.
+- Next: authorized interactive GUI selection -> Download Transaction / View Details; inspect actual XML/CSV for exact IMF:BR1, BCB URL, BOP6/BOP_BPM6 and Provision Agreement identifiers. If login required, owner supplies downloaded file. No timestamp-only attribution.
+- ₹0 official/free only; no synthetic data, guessed IDs/endpoints. Macro Overlay deferred. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; UNKNOWN is not PASS.
