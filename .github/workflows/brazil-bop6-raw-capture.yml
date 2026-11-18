@@ -1,0 +1,29 @@
+name: Brazil BOP6 Registered XML Raw Capture (Chapter 34 Part-7)
+on:
+  push:
+    branches:
+      - research/bcb-priority-metadata-audit-20261117
+    paths:
+      - "docs/BRAZIL_BOP6_RAW_CAPTURE_TRIGGER.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture registered Brazil BOP6 XML and provenance
+        run: python scripts/research/capture_brazil_bop6_registered_xml.py
+      - name: Upload capture manifest and raw XML if received
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brazil-bop6-raw-capture-${{ github.run_id }}
+          path: artifacts/brazil_bop6_raw_capture/
+          if-no-files-found: error
+          retention-days: 90
