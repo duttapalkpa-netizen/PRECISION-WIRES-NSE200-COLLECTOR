@@ -11,8 +11,10 @@ on:
       - "qa/audit_brazil_bop_portfolio_reconciliation.py"
       - "qa/audit_brazil_bop_sgs_crosscheck.py"
       - "qa/inspect_brazil_bop6_archive.py"
+      - "qa/audit_brazil_bop6_archive_reconciliation.py"
       - "tests/test_brazil_bop_*.py"
       - "tests/test_inspect_brazil_bop6_archive.py"
+      - "tests/test_brazil_bop6_archive_reconciliation.py"
   workflow_dispatch:
 
 permissions:
@@ -31,7 +33,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python -m pip install --disable-pip-version-check openpyxl==3.1.5
           python -m unittest discover -s tests -p 'test_brazil_bop_*.py' -v
+          python -m unittest discover -s tests -p 'test_brazil_bop6_archive_reconciliation.py' -v
           python -m unittest discover -s tests -p 'test_inspect_brazil_bop6_archive.py' -v
 
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
@@ -616,6 +620,19 @@ jobs:
             --zip "$DIR/balpaym.zip" \
             --output "$DIR/archive_inventory.json"
           date -u --iso-8601=ns > "$DIR/capture_completed_at_utc.txt"
+
+      - name: Reconcile BCB BPM6 historical archive against SGS and IMF-SDMX
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_brazil_bop6_archive_reconciliation.py \
+            --monthly-zip evidence/brazil_bop/bpm6_monthly_archive/balpaym.zip \
+            --imf-xml evidence/brazil_bop/response.xml \
+            --sgs-dir evidence/brazil_bop/sgs \
+            --output evidence/brazil_bop/bpm6_monthly_archive/three_way_reconciliation.json
+          sha256sum evidence/brazil_bop/bpm6_monthly_archive/three_way_reconciliation.json \
+            > evidence/brazil_bop/bpm6_monthly_archive/THREE_WAY_RECONCILIATION_SHA256SUMS
 
       - name: Upload raw response and QA evidence
         if: always()
