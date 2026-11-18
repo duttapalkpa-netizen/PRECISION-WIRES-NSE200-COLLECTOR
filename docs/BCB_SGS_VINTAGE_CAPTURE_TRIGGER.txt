@@ -5,3 +5,5 @@ Series: 22924, 22930, 22936, 22942.
 This is not an original publication vintage and does not attribute revision causes.
 
 End-to-end chain validation requested: 2026-11-18 UTC. Capture is followed by the comparator in the same workflow run.
+
+Workflow YAML fix validation trigger: 2026-11-18T05:00Z.
