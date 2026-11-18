@@ -1,1 +1,2 @@
 Run the bounded resolver against the 33 archived IMF RSS transaction links from source run 44301482210. Do not fetch RSS or BCB source again.
+Manual evidence-closure trigger refreshed 2026-11-19: resolve archived 33-item transaction window only; no RSS/BCB re-download; no production changes.
