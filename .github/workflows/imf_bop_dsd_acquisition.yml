@@ -182,7 +182,9 @@ jobs:
           declare -A REQUESTS
           REQUESTS[dataflow]='https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
           REQUESTS[constraint]='https://sdmxcentral.imf.org/sdmx/v2/structure/contentconstraint/IMF/BOP_BP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
-          for ITEM in dataflow constraint; do
+          REQUESTS[bop6_dataflow]='https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF/BOP6/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          REQUESTS[bop6_constraint]='https://sdmxcentral.imf.org/sdmx/v2/structure/contentconstraint/IMF/BOP6_CONSTRAINT/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          for ITEM in dataflow constraint bop6_dataflow bop6_constraint; do
             URL="${REQUESTS[$ITEM]}"
             DIR="evidence/imf_bop_dsd/$ITEM"
             mkdir -p "$DIR"
@@ -202,6 +204,15 @@ jobs:
             fi
             sha256sum "$DIR/raw.xml" > "$DIR/SHA256SUMS"
           done
+          REG_DIR="evidence/imf_bop_dsd/registrations"
+          mkdir -p "$REG_DIR"
+          REG_URL='https://sdmxcentral.imf.org/data/registrations.html'
+          printf '%s\n' "$REG_URL" > "$REG_DIR/request_url.txt"
+          curl --fail --location --silent --show-error --retry 2 --retry-all-errors \
+            --connect-timeout 15 --max-time 75 \
+            --dump-header "$REG_DIR/response_headers.txt" \
+            --output "$REG_DIR/raw.html" "$REG_URL"
+          sha256sum "$REG_DIR/raw.html" > "$REG_DIR/SHA256SUMS"
 
       - name: Validate exact dataflow reference and constraint coverage structure
         if: always()
