@@ -412,3 +412,14 @@ Official BCB Open Data Portal catalogues distinguish SGS 22924 (net incurrence o
 A direct browser open of the 22924 JSON API URL was inaccessible in this verification; no fresh observation or raw bytes acquired. The previously observed Sep-2026 value is not revalidated here. BCB's September-2026 External Sector Statistics publication reports domestic-market portfolio investment liabilities net outflows USD 2.1bn, including USD 1.7bn equity/fund and USD 0.4bn debt securities, plus USD 5.1bn 12-month net inflows. This publication is contextual cross-check evidence only; do not equate it to SGS 22924 without scope, instrument and period reconciliation.
 
 Required acceptance: retrieve raw 22924/22925/22926 payloads; archive retrieval timestamp, status, content-type, bytes and SHA-256; compare common monthly date keys and missing markers; test candidate net/inflow/outflow identities across every overlapping month; reconcile units, sign convention, gross/net scope, instrument coverage and revisions against BCB methodology; only then consider country-level Brazil pilot admission. No global EM aggregate is inferred.
+
+
+## Collection DSD correction — 2026-11-18 (Chapter 35 Part-2)
+The IMF SDMX Central Web Services Guide's BOP_BPM6 example identifies `IMF:BOP_BPM6(1.0)` with `IMF:ECOFIN_DSD(1.0)`; the IMF SDDS Plus Technical Implementation Guide defines ECOFIN as the six-dimension dissemination DSD and identifies `INDICATOR` as a mixed dimension with IMF codelist `CL_INDICATOR`. This is distinct from the global-use `IMF:BOP(2.6.0)` DSD. Do not require BOP_BPM6 to reference the global BOP DSD. Preserve the global BOP DSD as a separate metadata artefact, and verify the live dataflow reference from the actual IMF XML before acceptance.
+
+Official references:
+- https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf
+- https://dsbb.imf.org/content/pdfs/SDDS%20Plus%20Technical%20Implementation%20Guide.pdf
+- https://sdmxcentral.imf.org/data/datastructure.html
+
+The Chapter 35 Part-2 GitHub workflow now expects `IMF:ECOFIN_DSD:1.0`, requests the version-pinned ECOFIN DSD with `references=children`, and inventories its `INDICATOR` component and `CL_INDICATOR` codes/labels. Commits: workflow correction `70b640f8d010d6145819ed5ec15cea1e49e364b9`; shell escaping correction `83fd95e67c6f73f6f7405dd1f0758e92153c38da`; final workflow blob `226daa294d329b501b19312eb94cec290f17e160`. Static file re-fetch verification PASS. Runtime acquisition NOT_DONE: container DNS lookup for sdmxcentral.imf.org failed before HTTP response, and no workflow-dispatch action is exposed in the current GitHub connector. No DSD/codelist bytes or new hashes claimed.
