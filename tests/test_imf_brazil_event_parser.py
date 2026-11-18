@@ -1,6 +1,6 @@
 import unittest
 from scripts.research.imf_brazil_event_parser import (
-    inspect_bytes, RI_NS, BCB_URL, BRAZIL_PA_URN
+    inspect_bytes, RI_NS, REG_NS, BCB_URL, BRAZIL_PA_URN
 )
 
 
@@ -9,10 +9,10 @@ def doc(body):
 
 
 def registration(action="Replace", pa="", datasource=""):
-    return (f'<SubmitRegistrationsRequest><RegistrationRequest action="{action}">'
-            f'<Registration><ProvisionAgreement>{pa}</ProvisionAgreement>'
-            f'<Datasource>{datasource}</Datasource></Registration>'
-            f'</RegistrationRequest></SubmitRegistrationsRequest>')
+    return (f'<SubmitRegistrationsRequest xmlns:r="{REG_NS}"><r:RegistrationRequest action="{action}">'
+            f'<r:Registration><r:ProvisionAgreement>{pa}</r:ProvisionAgreement>'
+            f'<r:Datasource>{datasource}</r:Datasource></r:Registration>'
+            f'</r:RegistrationRequest></SubmitRegistrationsRequest>')
 
 
 class ParserTests(unittest.TestCase):
