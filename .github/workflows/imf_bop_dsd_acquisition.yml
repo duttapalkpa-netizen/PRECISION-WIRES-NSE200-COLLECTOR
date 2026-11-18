@@ -435,7 +435,7 @@ jobs:
         with:
           name: imf-bop-dsd-acquisition-44095286184
           run-id: 44095286184
-          github-token: \${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           path: evidence/imf_bop_dsd/archive
 
       - name: Verify archived ECOFIN_DSD and CL_INDICATOR bytes
@@ -479,7 +479,7 @@ jobs:
               "note": "Version-pinned archived official metadata reused to avoid repeated 42.7 MB transfer; current BCB payload is separately recaptured."
           }
           out = Path("evidence/imf_bop_dsd/ecofin_dsd/semantic_inventory.json")
-          out.write_text(json.dumps(report, indent=2) + "\\n")
+          out.write_text(json.dumps(report, indent=2) + "\n")
           print(json.dumps(report, indent=2))
           PY
 
