@@ -86,7 +86,17 @@ summary = {
     "purpose": "route-discovery-only; no BOP observations downloaded or inferred",
     "source_host_allowlist": ["sdmxcentral.imf.org"],
     "results": results,
-    "decision": "METADATA_ROUTE_UNVERIFIED"
+    "decision": (
+        "METADATA_ROUTE_VERIFIED"
+        if any(
+            r.get("http_status") == 200
+            and r.get("xml_parse") == "PASS"
+            and r.get("contains_bop_dsd_id") is True
+            and r.get("dsd_version") == "2.6.0"
+            for r in results
+        )
+        else "METADATA_ROUTE_UNVERIFIED"
+    )
 }
 (OUT / "probe_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(summary, indent=2))
