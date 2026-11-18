@@ -700,3 +700,13 @@ The complete public ContentConstraint catalogue contains 84 constraints. BOP6_CO
 Run #2 / ID 44288520760 SUCCESS; artifact #14420935493 (264,592 bytes; digest SHA-256 104bfa8b0cfe79bd4a3d60b41ebbd9a00335b979347aa7a897bb96616693db31). Source XML SHA-256: provider 0865a1127fcc3c205bc3e21a4b55358183c5a923b953940fa6f0a67e548fb469; provision agreements beddaca5badb350e31cc44042ff5ecf4e1b97632d8c3b1c52ea10d5d266d0d07; content constraints ef4fa1e71ca09591f382f971965ed4b861b6f684105a55e480f6365ba2d8a48e. Run #1's 41.9 MB truncated references=all response is retained as failed capture evidence and not used for conclusions.
 
 The first report's broad OR-match logic returned 46 loosely relevant agreements; corrected parser now requires exact Dataflow BOP6 AND Provider BR1 references and separates attachment levels. Tests cover exact link, wrong provider, absent provider/PA constraints, malformed XML and snapshot identity. Admission gates remain NOT_AUTHORIZED.
+
+
+### Part-10 final acceptance — exact registration contract (2026-11-18)
+Run #4 / ID 44288831427 completed SUCCESS with all workflow steps successful. Artifact #14419763992, 260,905 bytes, SHA-256 5c114648c17ba6cfd54319f3ddbcd0bd9e0f7583ccb974410128d0cf0dd6dfbe; machine-readable audit SHA-256 d4448669f65bf99dc0990ffd468ce646f3be2c1e6b55cdda363f58be1799b504.
+
+Exact result: IMF:BR1 = Central Bank of Brazil. IMF:BR_BOP_BP6(1.0) (“Brazil Balance of Payments”) explicitly links Dataflow IMF:BOP6(1.0) and Data Provider IMF:BR1. The registration row also names BOP6 / BR1. Registration and Provision Agreement are therefore aligned. The complete public constraint catalogue has 84 records: BOP6_CONSTRAINT attaches to BOP6; BOP_BP6_CONSTRAINT attaches to BOP_BPM6; no BR1 provider-level constraint and no BR_BOP_BP6 PA-level constraint were found. Only US3 has a provider-level constraint in this catalogue.
+
+The BCB XML header's BOP_BPM6 declaration is a confirmed mismatch with the registered/provision-agreement BOP6 contract. Alias semantics remain unproven. Do not rewrite or substitute constraints; current payload admission and all downstream Brazil/Global EM/trading gates remain NOT_AUTHORIZED pending authoritative BCB resolution. Run #5 is a duplicate verification run, not independent source evidence.
+
+Permanent machine-readable evidence summary: docs/BRAZIL_BOP_REGISTRATION_CONTRACT_AUDIT_20261118.json. Next action: inspect the exact BCB XML header and official BCB technical metadata for the declared Dataflow ID and registration contract; do not reacquire BOP observations.

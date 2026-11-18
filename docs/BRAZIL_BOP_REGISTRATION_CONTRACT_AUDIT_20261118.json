@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-18",
+  "status": "PASS_AUDIT_EXECUTED_P0_PAYLOAD_MISMATCH_REMAINS",
+  "workflow": {
+    "primary_run_id": 44288831427,
+    "run_number": 4,
+    "conclusion": "success",
+    "head_sha": "025c0e4f33a151fa6e097d15f6e89f6f6bab58eb",
+    "artifact_id": 14419763992,
+    "artifact_bytes": 260905,
+    "artifact_sha256": "5c114648c17ba6cfd54319f3ddbcd0bd9e0f7583ccb974410128d0cf0dd6dfbe",
+    "audit_report_sha256": "d4448669f65bf99dc0990ffd468ce646f3be2c1e6b55cdda363f58be1799b504"
+  },
+  "duplicate_verification_run": {
+    "run_id": 44288864477,
+    "run_number": 5,
+    "conclusion": "success",
+    "head_sha": "9a6ba5a68c12a2b00a2687a03312a018db2110f9",
+    "artifact_id": 14420152608,
+    "artifact_bytes": 260910,
+    "artifact_sha256": "dc2cfc4ebe636562041cc7eac2c31de0b58b2599887c40778060574e463ce996",
+    "note": "Same bounded metadata capture and exact parser; duplicate verification, not independent source evidence."
+  },
+  "sources": {
+    "data_provider_scheme": {
+      "http_status": 200,
+      "bytes": 26382,
+      "sha256": "0865a1127fcc3c205bc3e21a4b55358183c5a923b953940fa6f0a67e548fb469"
+    },
+    "provision_agreements": {
+      "http_status": 200,
+      "bytes": 583838,
+      "sha256": "beddaca5badb350e31cc44042ff5ecf4e1b97632d8c3b1c52ea10d5d266d0d07",
+      "records_returned": 992
+    },
+    "content_constraints": {
+      "http_status": 200,
+      "bytes": 3072059,
+      "sha256": "ef4fa1e71ca09591f382f971965ed4b861b6f684105a55e480f6365ba2d8a48e",
+      "records_returned": 84
+    },
+    "registration_snapshot_sha256": "7e513deac4f8ac1efa94788f75031daa327a80f0c680986f203d039c171ddeba"
+  },
+  "provider": {
+    "id": "IMF:BR1",
+    "name": "Central Bank of Brazil",
+    "matches": 1,
+    "status": "FOUND"
+  },
+  "provision_agreement": {
+    "id": "IMF:BR_BOP_BP6(1.0)",
+    "name": "Brazil Balance of Payments",
+    "matches": 1,
+    "dataflow": "IMF:BOP6(1.0)",
+    "provider": "IMF:BR1",
+    "status": "EXACT_BOP6_BR1_LINK_CONFIRMED"
+  },
+  "constraints": {
+    "BOP6_CONSTRAINT": {
+      "attachment": "Dataflow IMF:BOP6(1.0)",
+      "count": 1
+    },
+    "BOP_BP6_CONSTRAINT": {
+      "attachment": "Dataflow IMF:BOP_BPM6(1.0)",
+      "count": 1
+    },
+    "provider_BR1": {
+      "count": 0,
+      "status": "NOT_FOUND_IN_COMPLETE_PUBLIC_CATALOGUE"
+    },
+    "provision_agreement_BR_BOP_BP6": {
+      "count": 0,
+      "status": "NOT_FOUND_IN_COMPLETE_PUBLIC_CATALOGUE"
+    },
+    "only_provider_level_constraint_seen": {
+      "id": "US_CONSTRAINT",
+      "provider": "IMF:US3"
+    }
+  },
+  "conclusion": {
+    "registration": "IMF:BOP6(1.0) / IMF:BR1",
+    "provision_agreement": "IMF:BOP6(1.0) / IMF:BR1",
+    "payload_header": "IMF:BOP_BPM6(1.0)",
+    "registration_and_PA": "ALIGNED_ON_BOP6_AND_BR1",
+    "payload_vs_registered_contract": "CONFIRMED_MISMATCH",
+    "alias_semantics": "NOT_ESTABLISHED",
+    "constraint_application_to_current_payload": "NOT_AUTHORIZED_PENDING_BCB_RESOLUTION",
+    "rewrite_registration_or_payload": "PROHIBITED_WITHOUT_AUTHORITATIVE_BCB_CONTRACT_EVIDENCE",
+    "Brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "Global_EM_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED"
+  },
+  "next_action": "Inspect the exact BCB-published XML header and official BCB metadata/technical notes for the declared Dataflow ID and its registration contract. Do not reacquire BOP observations or change any production logic."
+}
