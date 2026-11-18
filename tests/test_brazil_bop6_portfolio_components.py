@@ -37,6 +37,21 @@ class PortfolioComponentTests(unittest.TestCase):
         self.assertEqual(r["assets"]["status"], "FAIL")
         self.assertEqual(r["net"]["status"], "PASS_WITHIN_TOLERANCE")
 
+    def test_one_decimal_sgs_component_rounding_tolerance(self):
+        src = {
+            "22906": {"2010-01": 10.0},
+            "22909": {"2010-01": 2.0},
+            "22912": {"2010-01": 3.0},
+            "22915": {"2010-01": 4.9},
+            "22924": {"2010-01": 7.0},
+            "22927": {"2010-01": 1.0},
+            "22936": {"2010-01": 2.0},
+            "22939": {"2010-01": 4.0},
+            "22905": {"2010-01": 3.0},
+        }
+        self.assertEqual(rollup(src, tolerance=0.151)["assets"]["status"], "PASS_WITHIN_TOLERANCE")
+        self.assertEqual(rollup(src, tolerance=0.051)["assets"]["status"], "FAIL")
+
     def test_comparison_detects_post_2010_divergence(self):
         r = compare({"2009-12": 1.0, "2010-01": 2.0},
                     {"2009-12": 1.02, "2010-01": 8.0})
