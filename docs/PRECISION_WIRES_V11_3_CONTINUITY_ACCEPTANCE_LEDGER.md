@@ -554,3 +554,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Formal decision: **Brazil Reconstruction INCOMPLETE / BLOCKED**. Historical Brazil-specific event rows NOT_DONE; Provision Agreement URN/changelog NOT_DONE; create/replace/delete/re-register chronology UNKNOWN; event-to-current-row reconciliation BLOCKED. Parser local tests PASS 9/9; GitHub Actions runtime NOT_YET_VERIFIED; real Brazil transaction fixture NOT_DONE.
 - Next closure dependency is actual official GUI-exported IMF:BR1 history rows, linked Provision Agreement details and transaction XML/CSV. If GUI requires authentication or export is unavailable, repository owner must provide the official exports. No guessed endpoints, IDs, chronology, or repeated RSS/BCB downloads.
 - No production code/invariants changed; no collector run, PR merge, Brazil/EM admission or spend. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-12: SDMX 2.1 schema boundary and Brazil evidence handoff
+- Added `docs/IMF_BRAZIL_RECONSTRUCTION_SCHEMA_BOUNDARY_PART12_20261118.md`; commit `3fecf9eb82f28e97bff4d7e1b967b9695b627434`.
+- Official SDMX XML Schemas index confirms the SDMX 2.1 schema set includes registry XSDs (`SDMXRegistry.xsd`, `SDMXRegistryBase.xsd`, `SDMXRegistryRegistration.xsd`). Linked XSD retrieval returned an unsupported XML content-type error in the browser; XSD body was not inspected or locally validated. This is schema-index discovery only.
+- Re-fetched parser/test default-branch blobs `a51dc69b28d244642736eca47e945bdd5b3d3459` / `a75a68e170fb18eab8c7480b05cc22debc249d5f`. Parser is a conservative envelope/evidence candidate parser, not a full SDMX XSD or semantic validator. Part-10 local fixture tests remain 9/9 PASS only; no actual Brazil transaction tested and GitHub Actions runtime NOT_YET_VERIFIED.
+- No code change made: actual Brazil transaction payload and inspected XSD semantics are prerequisites to avoid speculative parser changes.
+- Exact closure dependency remains owner-exported IMF:BR1 historical registration rows, linked Provision Agreement URN/changelog, and original transaction SDMX-XML/CSV with source URL/retrieval time/raw bytes/SHA-256. No credentials requested.
+- Acceptance: official schema index PASS; XSD body/local validation NOT_DONE; historical Brazil rows NOT_DONE; PA URN/changelog NOT_DONE; chronology UNKNOWN; event reconciliation BLOCKED; Brazil/EM admission BLOCKED / NOT_AUTHORIZED.
+- No repeated RSS/BCB fetch, no guessed endpoint/ID, no fabricated chronology, no synthetic data, no production integration/PR merge/macro weighting/trading admission. ₹0 official/free only. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged; UNKNOWN is not PASS.
