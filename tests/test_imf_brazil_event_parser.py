@@ -37,6 +37,18 @@ class ParserTests(unittest.TestCase):
         body = f'<SubmitRegistrationsRequest xmlns:r="{REG_NS}"><Annotation>{BRAZIL_PA_URN}</Annotation>{inner}</SubmitRegistrationsRequest>'
         self.assertFalse(inspect_bytes(doc(body))["brazil_registration_candidate"])
 
+    def test_missing_required_header_is_quarantined(self):
+        raw = f'<RegistryInterface xmlns="{RI_NS}">{registration(pa=f"<Ref>{BRAZIL_PA_URN}</Ref>")}</RegistryInterface>'.encode()
+        self.assertEqual(inspect_bytes(raw)["classification"], "QUARANTINE")
+
+    def test_header_after_payload_is_quarantined(self):
+        raw = f'<RegistryInterface xmlns="{RI_NS}">{registration(pa=f"<Ref>{BRAZIL_PA_URN}</Ref>")}<Header/></RegistryInterface>'.encode()
+        self.assertEqual(inspect_bytes(raw)["classification"], "QUARANTINE")
+
+    def test_duplicate_header_is_quarantined(self):
+        raw = f'<RegistryInterface xmlns="{RI_NS}"><Header/><Header/>{registration(pa=f"<Ref>{BRAZIL_PA_URN}</Ref>")}</RegistryInterface>'.encode()
+        self.assertEqual(inspect_bytes(raw)["classification"], "QUARANTINE")
+
     def test_message_namespace_children_are_not_mistaken_for_registry_elements(self):
         body = f'<SubmitRegistrationsRequest><RegistrationRequest action="Replace"><Registration><ProvisionAgreement><Ref>{BRAZIL_PA_URN}</Ref></ProvisionAgreement><Datasource><SimpleDataSource>{BCB_URL}</SimpleDataSource></Datasource></Registration></RegistrationRequest></SubmitRegistrationsRequest>'
         result = inspect_bytes(doc(body))
