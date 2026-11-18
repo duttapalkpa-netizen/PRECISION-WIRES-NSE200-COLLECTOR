@@ -14,6 +14,12 @@ jobs:
       - name: Checkout research branch
         uses: actions/checkout@v4
 
+      - name: Unit-test Brazil indicator code-list gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_brazil_bop_indicator_codes.py' -v
+
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
         shell: bash
         run: |
@@ -497,6 +503,7 @@ jobs:
           mkdir -p "$DIR"
           URL='https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml'
           printf '%s\n' "$URL" > "$DIR/request_url.txt"
+          date -u --iso-8601=ns > "$DIR/request_started_at_utc.txt"
           curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
             --dump-header "$DIR/response_headers.txt" \
             --output "$DIR/response.xml" \
@@ -515,7 +522,8 @@ jobs:
               raise SystemExit("Brazil payload is not SDMX StructureSpecificData")
           meta = {
               "status": "PASS_RAW_XML_PARSE",
-              "retrieved_at_utc": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+              "capture_completed_at_utc": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+              "request_started_at_utc": (d / "request_started_at_utc.txt").read_text().strip(),
               "raw_bytes": len(raw),
               "sha256": hashlib.sha256(raw).hexdigest(),
               "root_element": root.tag.rsplit("}", 1)[-1],
