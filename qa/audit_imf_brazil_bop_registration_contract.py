@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Resolve the exact IMF Brazil BOP registration / Provision Agreement contract."""
+# Exact-reference parser v2: distinguishes Dataflow, Provider and ProvisionAgreement attachments.
 import argparse, hashlib, json
 from pathlib import Path
 import xml.etree.ElementTree as ET
