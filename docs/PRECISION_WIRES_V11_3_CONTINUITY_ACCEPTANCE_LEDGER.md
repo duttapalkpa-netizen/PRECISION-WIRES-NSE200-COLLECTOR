@@ -596,3 +596,17 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance: official schema catalogue discovery PASS; IMF guide semantics PASS; pinned third-party schema mirror inspection PASS (mirror-only); official raw XSD hash archive NOT_DONE; XSD fixture validation NOT_DONE; parser correction NOT_DONE; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM admission BLOCKED.
 - Next highest-value task: obtain official raw 2.1 XSD bytes and hash them; then build offline schema-validation tests for parser fixtures and patch parser structure/action handling only against verified official schema plus a genuine owner-exported Brazil transaction. No credentials needed.
 - No code/tests/workflow/collector/production changes, no PR merge, no repeated RSS/BCB download, no macro weights, no trading admission, no spend. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 x 12), Engines A-E unchanged; UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-16: IMF Brazil event parser schema-path hardening
+- QA-only branch: `qa/imf-brazil-parser-schema-path-hardening`; no merge or production deployment.
+- Parser updated: `scripts/research/imf_brazil_event_parser.py`, blob SHA `e0df76a518fd7d5f9149c1675f53ab4e199b6c94`.
+- Tests updated: `tests/test_imf_brazil_event_parser.py`, blob SHA `e875ee62a4aea19238ae55e728bd299f889aa1a3`.
+- New report: `docs/IMF_BRAZIL_EVENT_PARSER_SCHEMA_PATH_HARDENING_PART16_20261118.md`, commit `41c4ada25bc0d792bf3b90d05d5c8a75a9c0abd0`.
+- Parser now requires a direct RegistryInterface request payload and schema-shaped RegistrationRequest -> Registration -> ProvisionAgreement/Datasource path. Exact Brazil PA URN / exact BCB URL / exact provider evidence is only evaluated inside those relevant subtrees; annotations/narrative and nested fake requests cannot trigger a candidate.
+- Action is preserved verbatim and validated against mirror-derived SDMX 2.1 enum Append/Replace/Delete/Information. No action-to-create/re-register mapping is inferred.
+- Registration/@lastUpdated is retained as source_last_updated, never called transaction_timestamp.
+- Local isolated test run: 12 passed, 0 failed (0.001 sec). Synthetic fixture tests only; NOT XSD validation, NOT GitHub Actions, NOT real Brazil event evidence.
+- Official SDMX catalogue confirms the 2.1 XSD family, but official raw XSD bytes/hash remain NOT_DONE; direct download failed. Third-party mirror provenance remains explicit.
+- Acceptance: code hardening PASS (QA branch only); local fixtures PASS 12/12; official raw XSD hash NOT_DONE; formal XSD validation NOT_DONE; GitHub Actions NOT_VERIFIED; real Brazil event fixture NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM admission BLOCKED.
+- No merge, no production integration, no full NSE collector, no repeat RSS/BCB acquisition, no paid API, no macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 x 12), Engines A-E unchanged; UNKNOWN is not PASS.
