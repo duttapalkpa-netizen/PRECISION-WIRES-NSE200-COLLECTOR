@@ -19,7 +19,7 @@
   "source_provenance": {
     "bcb_monthly_zip_sha256": "a7e66aad377851d2969dbc07d4555e8f79839282c5355a3ad3af77459cdb2473",
     "bcb_workbook_sha256": "dfe3e2ee268bd29a9b9dda8d6e5ff62bf8e84c1c30c1d01e5aa8b4497903189d",
-    "imf_ecoﬁn_dsd_sha256": "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045",
+    "imf_ecofin_dsd_sha256": "81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045",
     "bcb_imf_sdmx_payload_sha256": "3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c"
   },
   "tolerance_million_usd": {
