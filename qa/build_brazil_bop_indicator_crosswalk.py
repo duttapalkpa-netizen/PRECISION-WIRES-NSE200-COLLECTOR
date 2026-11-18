@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+import math
 from collections import Counter
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -113,10 +114,30 @@ def build(brazil_path, codelist_path):
         periods = [e.get("TIME_PERIOD") for e in observations]
         if not observations or any(not p for p in periods):
             raise ValueError(f"Empty/missing observations for {code}")
+        if len(periods) != len(set(periods)):
+            raise ValueError(f"Duplicate TIME_PERIOD within series {code}")
+        missing_tokens = Counter()
+        numeric_count = 0
+        for obs in observations:
+            value = obs.get("OBS_VALUE")
+            if value is None:
+                raise ValueError(f"Missing OBS_VALUE attribute in {code}")
+            if value == "...":
+                missing_tokens[value] += 1
+                continue
+            try:
+                number = float(value)
+            except ValueError as exc:
+                raise ValueError(f"Unexpected nonnumeric OBS_VALUE {value!r} in {code}") from exc
+            if not math.isfinite(number):
+                raise ValueError(f"Non-finite OBS_VALUE {value!r} in {code}")
+            numeric_count += 1
         label = codes[code]["names"][0] if codes[code]["names"] else ""
         by_code[code] = {
             "series_attributes": node.attrib,
             "observation_count": len(observations),
+            "numeric_observation_count": numeric_count,
+            "missing_value_token_counts": dict(missing_tokens),
             "first_period": min(periods),
             "last_period": max(periods),
             "period_count": len(set(periods)),
@@ -136,6 +157,10 @@ def build(brazil_path, codelist_path):
         })
 
     observation_total = sum(row["observation_count"] for row in rows)
+    numeric_total = sum(row["numeric_observation_count"] for row in rows)
+    missing_token_totals = Counter()
+    for row in rows:
+        missing_token_totals.update(row["missing_value_token_counts"])
     domain_counts = Counter(row["bop_domain"] for row in rows)
     portfolio_fa = [row for row in rows if row["portfolio_investment_financial_account"]]
     portfolio_income = [row for row in rows if row["portfolio_investment_income_current_account"]]
@@ -157,6 +182,8 @@ def build(brazil_path, codelist_path):
         "coverage": {
             "series_count": len(series), "unique_indicator_count": len(by_code),
             "observation_count": observation_total,
+            "numeric_observation_count": numeric_total,
+            "missing_value_token_counts": dict(missing_token_totals),
             "period_min": min(row["first_period"] for row in rows),
             "period_max": max(row["last_period"] for row in rows),
             "series_observation_count_distribution": dict(Counter(
@@ -177,6 +204,8 @@ def build(brazil_path, codelist_path):
             ],
             "observation_quality_attributes_observed": quality_keys,
             "observation_quality_status": "NOT_PRESENT_IN_CAPTURED_PAYLOAD",
+            "explicit_missing_value_tokens": dict(missing_token_totals),
+            "missing_value_token_reason": "NOT_SPECIFIED_IN_CAPTURED_PAYLOAD; DO_NOT_RECODE_AS_ZERO",
             "unit_measure_attribute": "NOT_PRESENT_AS_EXPLICIT_ATTRIBUTE",
             "unit_from_label": "USD", "unit_multiplier": "6",
             "value_rescaling": "NOT_PERFORMED", "quality_gate": "UNKNOWN_NOT_PASS"
