@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "status": "FAIL_SOURCE_DIVERGENCE",
+  "scope": "Independent comparison of BCB official SGS portfolio series against same-concept indicators in the BCB-published IMF SDMX BOP_BPM6 XML. Concept mapping is supported by BCB series titles and common history; this is not a production-admission decision.",
+  "run": {
+    "workflow_run_id": 44278280236,
+    "workflow_run_number": 10,
+    "head_sha": "40765b42efce31255c35abe1e3ade3a91246eccd",
+    "conclusion": "success",
+    "artifact_id": 14415646956,
+    "artifact_zip_sha256": "e0cc555c3d85348ab430fcd2c1c2c92750be99219aec5d4b23ede0b3c382bae3"
+  },
+  "method": {
+    "common_periods": 381,
+    "period_range": "1995-01 to 2026-09",
+    "rounding_tolerance_million_usd": 0.051,
+    "all_three_sgs_series_have_381_months": true,
+    "bcb_sgs_internal_identity": "SGS 22905 = SGS 22906 - SGS 22924",
+    "bcb_sgs_internal_identity_mismatches": 0,
+    "bcb_sgs_internal_identity_status": "PASS_WITHIN_ROUNDING"
+  },
+  "comparisons": {
+    "22905": {
+      "indicator": "BFP_BP6_USD",
+      "matches_1995_to_2009": 180,
+      "mismatches_2010_to_2026": 201,
+      "first_mismatch": "2010-01",
+      "last_mismatch": "2026-09",
+      "max_abs_difference_million_usd": 19427.157519,
+      "bcb_sgs_raw_bytes": 14989,
+      "bcb_sgs_sha256": "bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3",
+      "sample_2010_01": {
+        "period": "2010-01",
+        "sgs_value": -4441.7,
+        "imf_sdmx_value": 88.38340538,
+        "sgs_minus_imf": -4530.08340538
+      }
+    },
+    "22906": {
+      "indicator": "BFPA_BP6_USD",
+      "matches_1995_to_2009": 180,
+      "mismatches_2010_to_2026": 201,
+      "first_mismatch": "2010-01",
+      "last_mismatch": "2026-09",
+      "max_abs_difference_million_usd": 11346.551073010001,
+      "bcb_sgs_raw_bytes": 14594,
+      "bcb_sgs_sha256": "110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30",
+      "sample_2010_01": {
+        "period": "2010-01",
+        "sgs_value": 332.1,
+        "imf_sdmx_value": 1194.68277602,
+        "sgs_minus_imf": -862.5827760199999
+      }
+    },
+    "22924": {
+      "indicator": "BFPL_BP6_USD",
+      "matches_1995_to_2009": 180,
+      "mismatches_2010_to_2026": 201,
+      "first_mismatch": "2010-01",
+      "last_mismatch": "2026-09",
+      "max_abs_difference_million_usd": 22286.52238714,
+      "bcb_sgs_raw_bytes": 14890,
+      "bcb_sgs_sha256": "2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb",
+      "sample_2010_01": {
+        "period": "2010-01",
+        "sgs_value": 4773.7,
+        "imf_sdmx_value": 0.00736122,
+        "sgs_minus_imf": 4773.6926387799995
+      }
+    }
+  },
+  "source": {
+    "imf_sdmx_bcb_xml_url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "imf_sdmx_raw_bytes": 4840062,
+    "imf_sdmx_sha256": "3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c",
+    "bcb_sgs_22905_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22905/dados?formato=json",
+    "bcb_sgs_22906_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=json",
+    "bcb_sgs_22924_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=json",
+    "unit": "Million US dollars"
+  },
+  "interpretation": {
+    "confirmed": [
+      "The three BCB SGS series are internally consistent with net = assets - liabilities over all 381 common months within rounding tolerance.",
+      "Each SGS series matches its provisional IMF-SDMX indicator mapping for 180 months from 1995-01 through 2009-12.",
+      "All three comparisons diverge for every month from 2010-01 through 2026-09."
+    ],
+    "not_established": "The reason for the post-2010 divergence is not established. Do not assume which source is wrong, or that the BOP_BPM6 XML's 2010+ values are valid/invalid without BCB/IMF source clarification.",
+    "required": "Obtain BCB/IMF clarification on intended Dataflow/series lineage and the 2010-01 discontinuity; inspect version/vintage, domain, and source-series mapping."
+  },
+  "admission": {
+    "brazil_portfolio_flow_panel": "NOT_AUTHORIZED",
+    "global_em_aggregate": "NOT_AUTHORIZED",
+    "trading_signal": "NOT_AUTHORIZED",
+    "quality": "UNKNOWN_NOT_PASS"
+  }
+}
