@@ -3,3 +3,5 @@ Requested capture window: 2026-11-18 UTC.
 Purpose: create an independent second current-response vintage after the verified 2026-11-17 baseline; preserve raw bytes and never overwrite prior snapshots.
 Series: 22924, 22930, 22936, 22942.
 This is not an original publication vintage and does not attribute revision causes.
+
+End-to-end chain validation requested: 2026-11-18 UTC. Capture is followed by the comparator in the same workflow run.
