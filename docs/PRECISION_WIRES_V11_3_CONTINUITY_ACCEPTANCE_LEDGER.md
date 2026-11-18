@@ -1468,3 +1468,13 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Detailed Part-4 appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 7498017346b96b3e1213e7ccbefbf2f77d174120).
 - Next step requires user-authorized beta-portal Swagger/OpenAPI export or current Data Portal API query definition; do not share credentials in chat. No guessed key, no synthetic data, no production integration.
 - Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
+
+
+## Chapter 34 — Part-5: Current IMF BOP6 Provider Registration Discovery & Safe Access Qualification (2026-11-18)
+- New official SDMX Central registration catalogue entry: `IMF:BOP6(1.0)`, provider `IMF:BR1` (Brazil), registered URL `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`, last updated `2026-10-26T11:47:29Z`. This is newer than the IMF-owned 2023 sample registration, but remains a Brazil national-provider file, not a consolidated IMF panel or India source.
+- Catalogue also lists Chile IMF:BOP6(1.0) and other distinct BOP_BPM6 provider registrations; do not assume DSD identity across dataflow IDs/versions.
+- Exact Brazil XML URL open attempt was rejected by retrieval layer due unsupported `text/xml`; no response body/status/bytes/hash. Status: REGISTERED_URL_DISCOVERED; payload capture BLOCKED_BY_RETRIEVAL_CONTENT_TYPE; not endpoint failure and not PASS.
+- Brazil payload parse, DSD/dimension validation and observations NOT_DONE; India source/global panel UNKNOWN; EM aggregate NOT_DONE.
+- Detailed evidence appended to `docs/IMF_BOP_DSD_ENDPOINT_PROBE_IMPLEMENTATION_AUDIT_20261118.md` (commit 528f7cf1af7a7182434d32d9492c9a8af335b37b).
+- Next action: raw HTTP capture in authorized environment that accepts text/xml, preserve headers/body and SHA-256, validate SDMX-ML, then compare dataflow/DSD. Brazil data cannot stand in for India or a global EM panel. No guessed keys, synthetic values or production integration.
+- Invariants unchanged: ₹0, official/free sources only; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows untouched.
