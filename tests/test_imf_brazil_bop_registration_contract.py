@@ -19,6 +19,10 @@ class BrazilRegistrationContractTests(unittest.TestCase):
   r=audit(self.root/"provider.xml",self.root/"provision.xml",self.root/"constraint.xml",self.root/"snapshot.json")
   self.assertEqual(r["provider"]["status"],"NOT_FOUND_IN_RETURNED_SCHEME")
   self.assertEqual(r["decision"]["provision_agreement_semantics"],"UNKNOWN_PENDING_STRUCTURE_INTERPRETATION")
+ def test_truncated_xml_fails_closed_with_capture_path(self):
+  (self.root/"provision.xml").write_text("<Structure><ProvisionAgreements>")
+  with self.assertRaisesRegex(ValueError,"Incomplete or malformed SDMX XML capture"):
+   audit(self.root/"provider.xml",self.root/"provision.xml",self.root/"constraint.xml",self.root/"snapshot.json")
  def test_snapshot_identity_fail_closed(self):
   (self.root/"snapshot.json").write_text(json.dumps({"row":{"dataflow":"IMF:BOP_BPM6(1.0)","provider":"IMF:BR1","registered_url":"https://bcb.gov.br/example.xml","last_updated":"2026-10-26T11:47:29.000Z"}}))
   with self.assertRaises(ValueError): audit(self.root/"provider.xml",self.root/"provision.xml",self.root/"constraint.xml",self.root/"snapshot.json")

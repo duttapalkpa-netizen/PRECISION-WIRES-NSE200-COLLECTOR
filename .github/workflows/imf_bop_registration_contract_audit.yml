@@ -38,16 +38,16 @@ jobs:
           mkdir -p "$DIR"
           BASE="https://sdmxcentral.imf.org/sdmx/v2/structure"
           declare -A URLS=(
-            [dataproviders]="$BASE/dataproviderscheme/IMF/all/latest/?references=all&format=sdmx-2.1"
-            [provision_agreements]="$BASE/provisionagreement/IMF/all/latest/?references=all&format=sdmx-2.1"
-            [content_constraints]="$BASE/contentconstraint/IMF/all/latest/?references=all&format=sdmx-2.1"
+            [dataproviders]="$BASE/dataproviderscheme/IMF/all/latest/?references=none&format=sdmx-2.1"
+            [provision_agreements]="$BASE/provisionagreement/IMF/all/latest/?references=none&format=sdmx-2.1"
+            [content_constraints]="$BASE/contentconstraint/IMF/all/latest/?references=none&format=sdmx-2.1"
           )
           for NAME in dataproviders provision_agreements content_constraints; do
             URL="${URLS[$NAME]}"
             printf '%s\n' "$URL" > "$DIR/${NAME}_request_url.txt"
             date -u --iso-8601=ns > "$DIR/${NAME}_request_started_at_utc.txt"
-            curl --fail --location --silent --show-error --retry 2 --retry-all-errors \
-              --connect-timeout 15 --max-time 90 \
+            curl --fail --location --silent --show-error --retry 1 --retry-delay 2 \
+              --connect-timeout 15 --max-time 60 \
               --dump-header "$DIR/${NAME}_response_headers.txt" \
               --output "$DIR/${NAME}.xml" \
               --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \

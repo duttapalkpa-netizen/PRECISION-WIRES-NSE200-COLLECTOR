@@ -27,7 +27,12 @@ def element_record(node):
 
 def load_xml(path):
     raw=Path(path).read_bytes()
-    root=ET.fromstring(raw)
+    try:
+        root=ET.fromstring(raw)
+    except ET.ParseError as exc:
+        raise ValueError(f"Incomplete or malformed SDMX XML capture at {path}: {exc}") from exc
+    if local(root.tag) != "Structure":
+        raise ValueError(f"Unexpected SDMX root element in {path}: {local(root.tag)}")
     return root,{"path":str(path),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"root":local(root.tag)}
 
 def find_elements(root,target):

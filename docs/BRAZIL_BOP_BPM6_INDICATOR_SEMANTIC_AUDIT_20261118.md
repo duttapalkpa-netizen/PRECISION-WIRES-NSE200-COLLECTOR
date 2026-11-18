@@ -684,3 +684,9 @@ A focused read-only workflow was added to capture the official public structures
 Sources: IMF SDMX Central overview (https://sdmxcentral.imf.org/overview.html), Provision Agreements catalogue (https://sdmxcentral.imf.org/data/provisionAgreements.html), Data Providers catalogue (https://sdmxcentral.imf.org/organisations/dataproviders.html), Registrations catalogue (https://sdmxcentral.imf.org/data/registrations.html), IMF SDMX Central Web Services Guide (https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf).
 
 Admission gates remain NOT_AUTHORIZED; no constraint substitution, dataflow rewrite, source splicing or trading signal.
+
+
+### Part-10 Run #1 — capture failure and correction (2026-11-18)
+GitHub Actions Run #1 / ID 44286951595 completed FAILURE after its unit tests passed. The provider-scheme XML was complete (HTTP 200, 673,441 bytes, SHA-256 01e86f8ecc0242adfcd16d5ba8d3ff971dcd6700384955c1f4315b3c1dbe8b96) and identifies IMF:BR1 as Central Bank of Brazil. The Provision Agreement response returned HTTP 200 but was 41,901,260 bytes and truncated; SHA-256 d927c504950379fd04e340018dce69ec4fad01406046128b549d126cef5ecc50. It was fetched with references=all, which expanded the response and exhausted the capture window. The parser did not run; Content Constraint capture was not reached. The immutable workflow artifact #14419587288 has digest SHA-256 7886e4a5ce6c852f295765dca893818046ba65fb852221093b138321afcc04f6.
+
+Correction: use references=none for provider scheme, provision agreements and content constraints, preserve raw structure references, cap each request at 60 seconds with one retry, and fail closed on malformed/truncated XML. Add a truncation regression test. This failure does not establish that a Provision Agreement or provider-level constraint is absent. Contract semantics remain UNKNOWN / NOT_RUN. No flow admission or constraint substitution.
