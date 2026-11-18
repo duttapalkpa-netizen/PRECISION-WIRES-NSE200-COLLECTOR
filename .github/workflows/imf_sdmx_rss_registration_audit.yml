@@ -1,0 +1,142 @@
+name: IMF SDMX RSS + Brazil Registration Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/imf_sdmx_rss_registration_audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  imf-source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Retrieve and validate official IMF RSS and registered Brazil XML
+        shell: bash
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import hashlib
+          import json
+          import pathlib
+          import urllib.request
+          import urllib.error
+          import xml.etree.ElementTree as ET
+
+          OUT = pathlib.Path("imf_audit_evidence")
+          OUT.mkdir(exist_ok=True)
+          RSS_URL = "https://sdmxcentral.imf.org/rss.xml"
+          BCB_URL = "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml"
+          results = {}
+
+          def retrieve(name, url):
+              req = urllib.request.Request(url, headers={"User-Agent": "PRECISION-WIRES-Research-Audit/1.0", "Accept": "application/xml, application/rss+xml, text/xml, */*"})
+              started = dt.datetime.now(dt.timezone.utc).isoformat()
+              try:
+                  with urllib.request.urlopen(req, timeout=35) as response:
+                      body = response.read()
+                      meta = {
+                          "requested_url": url,
+                          "final_url": response.geturl(),
+                          "http_status": response.status,
+                          "content_type": response.headers.get("Content-Type"),
+                          "retrieved_at_utc": started,
+                          "byte_count": len(body),
+                          "sha256": hashlib.sha256(body).hexdigest(),
+                      }
+              except Exception as exc:
+                  body = b""
+                  meta = {
+                      "requested_url": url,
+                      "final_url": None,
+                      "http_status": getattr(exc, "code", None),
+                      "content_type": None,
+                      "retrieved_at_utc": started,
+                      "byte_count": 0,
+                      "sha256": None,
+                      "error": repr(exc),
+                  }
+              if body:
+                  (OUT / name).write_bytes(body)
+              results[name] = meta
+              return body, meta
+
+          rss, rss_meta = retrieve("imf_rss.xml", RSS_URL)
+          rss_items = []
+          rss_parse = "NOT_DONE"
+          if rss:
+              try:
+                  root = ET.fromstring(rss)
+                  rss_parse = "PASS"
+                  for item in root.findall(".//item"):
+                      rss_items.append({
+                          "title": item.findtext("title"),
+                          "link": item.findtext("link"),
+                          "guid": item.findtext("guid"),
+                          "pubDate": item.findtext("pubDate"),
+                      })
+              except ET.ParseError as exc:
+                  rss_parse = "FAIL"
+                  results["rss_parse_error"] = str(exc)
+
+          bcb, bcb_meta = retrieve("bcb_bop_bpm6.xml", BCB_URL)
+          bcb_parse = "NOT_DONE"
+          bcb_refs = []
+          if bcb:
+              try:
+                  root = ET.fromstring(bcb)
+                  bcb_parse = "PASS"
+                  for elem in root.iter():
+                      local = elem.tag.rsplit("}", 1)[-1]
+                      if local in ("DataflowRef", "ProviderRef", "DataProviderRef"):
+                          bcb_refs.append({"element": local, "text": (elem.text or "").strip(), "attributes": dict(elem.attrib)})
+              except ET.ParseError as exc:
+                  bcb_parse = "FAIL"
+                  results["bcb_parse_error"] = str(exc)
+
+          summary = {
+              "audit_scope": "IMF RSS retrieval and Brazil registered XML retrieval only",
+              "registry_listing_reference": {
+                  "dataflow": "IMF:BOP6(1.0)",
+                  "provider": "IMF:BR1",
+                  "registered_url": BCB_URL,
+                  "last_updated_utc_from_prior_official_listing_snapshot": "2026-10-26T11:47:29.000Z"
+              },
+              "retrievals": results,
+              "rss": {
+                  "parse_status": rss_parse,
+                  "item_count": len(rss_items),
+                  "items": rss_items
+              },
+              "bcb_xml": {
+                  "parse_status": bcb_parse,
+                  "header_reference_elements": bcb_refs
+              },
+              "acceptance": {
+                  "rss_transport": "PASS" if rss_meta.get("http_status") == 200 and rss and rss_parse == "PASS" else "NOT_RETRIEVED_OR_INVALID",
+                  "bcb_transport": "PASS" if bcb_meta.get("http_status") == 200 and bcb and bcb_parse == "PASS" else "NOT_RETRIEVED_OR_INVALID",
+                  "historical_registration_event": "UNKNOWN",
+                  "bcb_dataflow_provider_compatibility": "UNKNOWN",
+                  "em_flow_or_trading_admission": "NOT_AUTHORIZED"
+              },
+              "generated_at_utc": dt.datetime.now(dt.timezone.utc).isoformat()
+          }
+          (OUT / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          print(json.dumps(summary, indent=2, ensure_ascii=False))
+          PY
+
+      - name: Upload immutable audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-sdmx-rss-registration-audit-${{ github.run_id }}
+          path: imf_audit_evidence/
+          if-no-files-found: warn
+          retention-days: 90
