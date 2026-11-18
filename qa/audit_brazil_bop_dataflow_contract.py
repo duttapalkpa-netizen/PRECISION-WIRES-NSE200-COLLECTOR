@@ -140,7 +140,8 @@ def audit(source_dir, verify_hashes=True):
                                   if line.lower().startswith("last-modified:")), None),
         "bcb_payload_sha256": sha256(bcb_path),
         "bcb_payload_bytes": bcb_path.stat().st_size,
-        "bcb_capture_manifest": manifest,\n        "verified_source_sha256": actual_hashes,
+        "bcb_capture_manifest": manifest,
+        "verified_source_sha256": actual_hashes,
         "registration_snapshot": row
       },
       "bcb_header": {

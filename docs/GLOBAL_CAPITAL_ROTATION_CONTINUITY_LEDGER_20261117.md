@@ -701,3 +701,7 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 ### Part-11 second runtime failure and correction — 2026-11-18
 - Run #44289959370 successfully downloaded the prior artifact (SHA-256 matched), but the parser module failed to import because a generated dictionary entry contained a literal escaped newline (`\\n`) rather than a source-code line break. Regression tests were therefore not executed in that attempt. This was a source-generation syntax defect, not an evidence or source-data failure.
 - Corrected the source-code line break; the next run will reuse the same archived artifact and run the focused tests before parsing. No source observations reacquired.
+
+
+### Part-11 parser source-generation correction — 2026-11-18
+- The prior fix commit still contained a literal backslash-n in the report dictionary because the replacement string was over-escaped. Replaced it with a real source line break. This is a code-generation formatting correction only; no source or research decision changed.
