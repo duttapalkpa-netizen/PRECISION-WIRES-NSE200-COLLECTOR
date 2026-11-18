@@ -48,3 +48,11 @@ Reduce elapsed time, repeated acquisition, fragmented commits, and research erro
 
 ## 7. Initial enforcement change (2026-11-18)
 The workflow `.github/workflows/imf_bop_dsd_acquisition.yml` now ignores workflow-file-only pushes and requires either manual dispatch or the explicit `[run-bop-audit]` commit marker. It also serializes runs by branch. This prevents each intermediate code/documentation commit from triggering a full IMF/BCB download.
+
+
+## 8. Trigger deduplication (2026-11-18)
+- After any branch ref update or contents-API write that can trigger a workflow, immediately inspect the latest Actions runs for the intended workflow and commit SHA.
+- If a matching run exists (queued, pending, in progress, or completed), do not make another workflow-path write merely to trigger it.
+- Do not combine a Git Data API ref update with a second contents-API update to the same workflow path as a trigger; both can dispatch separate runs for the same research batch.
+- One research batch must have one deliberate workflow trigger. Treat any duplicate run on the same code/input as duplicate verification only, not independent evidence.
+- If a ref update does not trigger a run, verify that no matching run exists before issuing one contents-API trigger commit.

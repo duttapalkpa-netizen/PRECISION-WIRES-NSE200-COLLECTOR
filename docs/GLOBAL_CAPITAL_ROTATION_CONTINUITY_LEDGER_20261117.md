@@ -676,3 +676,9 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - BCB payload header remains BOP_BPM6, so the registration/PA-vs-payload Dataflow mismatch is CONFIRMED. Alias semantics are NOT_ESTABLISHED. The current payload cannot be admitted under either constraint until BCB's authoritative contract resolves the mismatch. No source substitution, header rewrite, registration rewrite, or flow admission.
 - Run #5 / ID 44288864477 also SUCCESS with duplicate artifact #14420152608 (260,910 bytes; digest SHA-256 dc2cfc4ebe636562041cc7eac2c31de0b58b2599887c40778060574e463ce996); same code/data capture, recorded as duplicate verification only, not independent evidence.
 - Permanent machine-readable result: docs/BRAZIL_BOP_REGISTRATION_CONTRACT_AUDIT_20261118.json. Next: inspect the exact BCB-published XML header and official BCB technical metadata for its declared Dataflow ID and registration contract. Do not reacquire BOP observations or change production logic.
+
+
+## 2026-11-18 — Execution lesson: duplicate workflow trigger avoided going forward
+- Part-10 exact parser batch produced Run #4 (ID 44288831427) on commit 025c0e4f33a151fa6e097d15f6e89f6f6bab58eb and a second same-batch Run #5 (ID 44288864477) after a subsequent contents-API trigger write. Both succeeded; Run #4 is the inspected evidence artifact. Run #5 is duplicate verification only, not independent evidence.
+- Root cause: a Git Data API ref update already dispatched Run #4; a follow-up contents-API workflow-path update dispatched Run #5. Do not issue a second trigger write without first checking the Actions run list for the target commit/workflow.
+- Added section 8 “Trigger deduplication” to the research execution protocol. Future batches must use one deliberate trigger and immediately inspect existing runs before any further write.
