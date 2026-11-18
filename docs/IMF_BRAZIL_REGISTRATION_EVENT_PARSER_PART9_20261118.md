@@ -55,3 +55,13 @@ Check the isolated GitHub Actions run triggered by these scoped commits. If it f
 
 ## Guardrails
 ₹0 official/free sources only. No guessed endpoints, no synthetic market data, no invented timestamps. No production integration, no PR merge, no Brazil/EM admission, no macro overlay weights. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## Part-9 correction — SDMX 2.1 registration envelope verified
+- Official IMF Web Services Guide example uses the plural request element `SubmitRegistrationsRequest`, containing `RegistrationRequest action="Replace"`; the earlier parser initially accepted only the singular form. This was corrected to accept the documented plural form while retaining the singular compatibility form.
+- Tightened the BCB URL gate: it now requires the exact full URL as a complete XML text/attribute value. A URL merely embedded in descriptive prose is not accepted.
+- Expanded unit coverage from 7 to 9 tests: added exact URL whole-value negative control and RegistrationRequest action-attribute capture. Fixtures now use the documented plural envelope.
+- Parser correction commits: `9004edf15e86befb841ee2c5a48761f6131b913c5` (plural envelope), `59efd1a51dac3d4390fc4530613d68c033c22cb3` (exact URL gate).
+- Test correction commits: `1669ee9cd0be3a589fb1a0539169a016cd42f537` (plural fixtures), `d3a3b9c9936fa78d7939821096f4dc2b167cbecc` (two additional tests).
+- This correction is grounded in the IMF Web Services Guide example, which identifies SubmitRegistrationsRequest and RegistrationRequest action. It is not a claim that a Brazil transaction was found.
+- GitHub Actions execution remains NOT_YET_VERIFIED; the workflow is path-triggered by parser/test changes, but no run result has been independently fetched in this review.
