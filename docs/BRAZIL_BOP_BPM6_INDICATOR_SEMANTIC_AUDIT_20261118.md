@@ -283,3 +283,12 @@ The Brazil XML Header identifies `IMF:BOP_BPM6(1.0)`, and the captured official 
 | Global EM aggregate / trading-signal admission | NOT_AUTHORIZED |
 
 No production integration or protected selector changes.
+
+
+
+### Additional value-level QA — explicit missing tokens (2026-11-18)
+A separate value scan of all 89,097 captured observations found 88,764 numeric finite values and 333 literal `...` values. All 333 occur in only two series: `BFDLERV_BP6_USD` (132) and `BFOR_BP6_USD` (201). These tokens are not zero and their reason is not specified in the payload; retain them as missing/unknown. No duplicate TIME_PERIOD values were found within any of the 237 series. No OBS_VALUE attributes were absent. The 333 tokens reinforce that observation quality remains UNKNOWN because OBS_STATUS/CONF_STATUS are not present.
+
+Updated `qa/build_brazil_bop_indicator_crosswalk.py` to count numeric observations and explicit `...` tokens, fail on unrecognized nonnumeric values, missing OBS_VALUE, non-finite values, and duplicate periods; never impute missing markers as zero. Commit `2275348648ac97efeb0a72358dbae54528e8769b`; blob SHA `1a1828c0b2e5fb7c918b8a348265844971ed54ff`.
+
+Expanded crosswalk regression tests for explicit missing-token accounting, unexpected nonnumeric values, and duplicate periods. Commit `c7210113190afef7627e71212f043e0afe521b02`; blob SHA `a3e6f9a9110a52be2a12c1620ae9d3227bed6513`. The push-triggered workflows are running on commits `2275348648ac97efeb0a72358dbae54528e8769b` (Run `44270990383`) and `c7210113190afef7627e71212f043e0afe521b02` (Run `44271011602`). Their final conclusions are pending.
