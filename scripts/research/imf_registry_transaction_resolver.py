@@ -110,7 +110,9 @@ def fetch_one(item: dict) -> dict:
         for elem in root.iter():
             lname = local_name(elem.tag)
             if lname in ("SubmitRegistrationRequest", "SubmitStructureRequest",
-                         "SubmitRegistrationResponse", "SubmitStructureResponse"):
+                         "SubmitRegistrationResponse", "SubmitStructureResponse",
+                         "QueryRegistrationRequest", "QueryRegistrationResponse",
+                         "QueryStructureRequest", "QueryStructureResponse"):
                 request_types.add(lname)
             vals = []
             if elem.text and elem.text.strip():
@@ -124,9 +126,10 @@ def fetch_one(item: dict) -> dict:
                             "element": lname, "field": field,
                             "value": value[:1200], "marker": marker_name,
                         })
-            if lname in ("Registration", "DataRegistration", "ProvisionAgreementRef",
-                         "DataflowRef", "DataProviderRef", "DataSource",
-                         "SimpleDataSource", "QueryableDataSource", "Ref"):
+            if lname in ("Registration", "DataRegistration", "ProvisionAgreement",
+                         "ProvisionAgreementRef", "DataflowRef", "DataProviderRef",
+                         "DataSource", "Datasource", "SimpleDataSource",
+                         "QueryableDataSource", "Ref", "StatusMessage"):
                 registrations.append({
                     "element": lname, "text": (elem.text or "").strip()[:500],
                     "attributes": dict(elem.attrib),
@@ -134,9 +137,23 @@ def fetch_one(item: dict) -> dict:
         result["request_types"] = sorted(request_types)
         result["matches"] = matches[:250]
         result["registration_elements"] = registrations[:500]
-        is_registration = "SubmitRegistrationRequest" in request_types
-        has_brazil_marker = any(m["marker"] in ("provider_imf_br1", "bcb_registered_url") for m in matches)
-        result["brazil_registration_candidate"] = bool(is_registration and has_brazil_marker)
+        is_registration_result = "QueryRegistrationResponse" in request_types and any(
+            entry["element"] == "Registration" for entry in registrations
+        )
+        has_brazil_marker = any(
+            m["marker"] in ("provider_imf_br1", "bcb_registered_url") for m in matches
+        )
+        result["registration_response_status"] = next(
+            (entry["attributes"].get("status") for entry in registrations
+             if entry["element"] == "StatusMessage"), None
+        )
+        result["provision_agreement_urns"] = [
+            entry["text"] for entry in registrations if entry["element"] == "ProvisionAgreement"
+        ]
+        result["datasource_urls"] = [
+            entry["text"] for entry in registrations if entry["element"] == "SimpleDataSource"
+        ]
+        result["brazil_registration_candidate"] = bool(is_registration_result and has_brazil_marker)
         return result
     except Exception as exc:
         return {
@@ -163,6 +180,10 @@ def main() -> None:
         "http_200_and_xml_parse_pass_count": len(successful),
         "transaction_detail_failures": [x for x in results if x not in successful],
         "transactions_with_any_target_marker": [x["tx_id"] for x in matches],
+        "query_registration_response_count": sum("QueryRegistrationResponse" in x.get("request_types", []) for x in results),
+        "successful_registration_record_count": sum(
+            x.get("registration_response_status") == "Success" for x in results
+        ),
         "brazil_registration_candidate_tx_ids": [x["tx_id"] for x in candidates],
         "bounded_window_conclusion": (
             "BRAZIL_REGISTRATION_EVENT_FOUND_IN_WINDOW" if candidates
