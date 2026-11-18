@@ -664,6 +664,22 @@ jobs:
           sha256sum evidence/brazil_bop/bpm6_monthly_archive/portfolio_component_audit.json \
             > evidence/brazil_bop/bpm6_monthly_archive/PORTFOLIO_COMPONENT_AUDIT_SHA256SUMS
 
+      - name: Compare IMF Brazil BOP6 registration with BCB BOP_BPM6 payload reference
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_imf_bop6_registration_alignment.py \
+            --registration-html evidence/imf_bop_dsd/registrations/raw.html \
+            --bop6-dataflow evidence/imf_bop_dsd/bop6_dataflow/raw.xml \
+            --bop6-constraint evidence/imf_bop_dsd/bop6_constraint/raw.xml \
+            --bop-bpm6-dataflow evidence/imf_bop_dsd/dataflow/raw.xml \
+            --bop-bp6-constraint evidence/imf_bop_dsd/constraint/raw.xml \
+            --bcb-payload evidence/brazil_bop/response.xml \
+            --output evidence/brazil_bop/bop6_registration_alignment.json
+          sha256sum evidence/brazil_bop/bop6_registration_alignment.json \
+            > evidence/brazil_bop/BOP6_REGISTRATION_ALIGNMENT_SHA256SUMS
+
       - name: Upload raw response and QA evidence
         if: always()
         uses: actions/upload-artifact@v4
