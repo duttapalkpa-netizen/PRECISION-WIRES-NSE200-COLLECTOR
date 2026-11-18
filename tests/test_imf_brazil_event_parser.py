@@ -34,7 +34,7 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(inspect_bytes(x)["classification"], "QUARANTINE")
 
     def test_malformed_xml_quarantined(self):
-        self.assertEqual(inspect_bytes(b'<RegistryInterface>'), "QUARANTINE")
+        self.assertEqual(inspect_bytes(b'<RegistryInterface>')["classification"], "QUARANTINE")
 
 if __name__ == "__main__":
     unittest.main()
