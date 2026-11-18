@@ -696,3 +696,8 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 ### Part-11 first runtime failure and correction — 2026-11-18
 - Run #44289825292 downloaded the original source artifact successfully (downloaded digest matched 53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0); all four regression tests passed. The audit guard then failed because the schemaLocation URL path uses `/IMF/BOP_BPM6/1.0`, not the incorrectly assumed literal `IMF:BOP_BPM6/1.0`. This was a parser guard defect, not source evidence failure.
 - Corrected the exact schemaLocation check to the actual SDMX Central URL path, updated the fixture to mirror the source, and added production-time SHA-256 verification for the original BCB payload plus both Dataflow and both constraint XMLs, including manifest cross-check. Unit fixtures explicitly bypass only the production hash pin. Rerun once; no source observation reacquisition.
+
+
+### Part-11 second runtime failure and correction — 2026-11-18
+- Run #44289959370 successfully downloaded the prior artifact (SHA-256 matched), but the parser module failed to import because a generated dictionary entry contained a literal escaped newline (`\\n`) rather than a source-code line break. Regression tests were therefore not executed in that attempt. This was a source-generation syntax defect, not an evidence or source-data failure.
+- Corrected the source-code line break; the next run will reuse the same archived artifact and run the focused tests before parsing. No source observations reacquired.
