@@ -170,3 +170,34 @@ This is a valid new official-provider discovery and a bounded access test, not a
 
 Official catalogue source: https://sdmxcentral.imf.org/data/registrations.html
 Registered provider URL (Brazil): https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml
+
+
+## Chapter 34 — Part-6: Brazil BOP6 Registered XML Raw-Capture Attempt & Provenance Gate (2026-11-18)
+
+### Reused official registration evidence
+- Rechecked the official IMF SDMX Central Registrations catalogue. It still lists `IMF:BOP6(1.0)`, provider `IMF:BR1`, Brazil registered XML URL `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`, last updated `2026-10-26T11:47:29Z`.
+- IMF's official Brazil BOP SDDS/DQAF page states BCB compiles and disseminates Brazil BOP statistics, the framework is BPM6, and public BOP data are disseminated free of charge in USD million, current non-seasonally-adjusted values. This is country-level publisher/methodology context, not evidence that the registered XML has been captured or that it is an India/global panel.
+
+### Raw capture attempt
+- Attempted direct HTTPS retrieval of the exact registered XML URL using Python `urllib`, with explicit `Accept: application/xml,text/xml,*/*`, 20-second timeout and a research User-Agent.
+- Runtime failed before an HTTP response: `URLError: [Errno -3] Temporary failure in name resolution`.
+- Consequently: HTTP status = UNKNOWN; response headers = unavailable; response bytes = 0 captured; SHA-256 = NOT AVAILABLE; XML parse = NOT RUN. No empty file or synthetic manifest was created.
+- The previous web retrieval content-type rejection and this runtime DNS failure are transport/environment blockers, not evidence that the BCB endpoint is down or that the file is invalid.
+
+### Acceptance matrix
+| Gate | Status |
+|---|---|
+| Official Brazil IMF:BOP6(1.0) registration and URL | PASS (catalogue metadata) |
+| BCB Brazil BOP publisher / BPM6 / free public dissemination context | PASS (official DQAF metadata) |
+| Raw registered XML HTTP response captured | BLOCKED (runtime DNS resolution failure before HTTP) |
+| Exact response headers, bytes and SHA-256 | NOT_AVAILABLE |
+| SDMX-ML parse, DSD identity, dimensions and codelists | NOT_DONE |
+| Brazil observation period/series validation | NOT_DONE |
+| India source / consolidated IMF panel / EM aggregate | UNKNOWN / NOT_DONE |
+
+### Decision
+Part-6 completes the bounded attempt and documents why it cannot pass in this runtime. No claim of endpoint failure, no payload hash, no parsed DSD, and no observations are asserted. Next action is to run the exact URL capture in an environment with working DNS/HTTPS egress and preserve raw headers/body before parsing. Brazil remains a schema/transport candidate only, never an India substitute or a global EM panel. No production integration or production logic changes.
+
+Official sources:
+- https://sdmxcentral.imf.org/data/registrations.html
+- https://dsbb.imf.org/sdds/dqaf-base/country/BRA/category/BOP00
