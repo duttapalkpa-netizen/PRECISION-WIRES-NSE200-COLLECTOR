@@ -673,3 +673,14 @@ Source-specific roll-up outcomes at the report's stated tolerances:
 - Nine-series archive-vs-IMF comparisons: 180/293 match and 113/293 mismatch per series, from 2010-01 to 2019-05.
 
 Do not use Run #12 as evidence for component rollups; that run preceded component-audit integration. Run #23 is the relevant runtime artifact. The workflow is now batch-gated: manual dispatch or commit marker `[run-bop-audit]` only, and serialized per branch. See `docs/PRECISION_WIRES_RESEARCH_EXECUTION_PROTOCOL.md` for the required execution and evidence discipline.
+
+
+## Part-10 — IMF Brazil provider/provision contract investigation (2026-11-18; runtime pending)
+
+The previous registration audit showed registry row `IMF:BOP6(1.0) / IMF:BR1` and a BCB XML header declaring `IMF:BOP_BPM6(1.0)`. This section extends the investigation to all three possible constraint attachment levels. IMF SDMX Central documentation explicitly states that Dataflow, Provision Agreement, and Data Provider constraints may all apply and cascade. Its public REST structure service supports querying Data Provider Schemes, Provision Agreements and Content Constraints. The May 2025 API Guide states that registration requests link a Dataflow, Data Provider and data URL, and its registration message contains a ProvisionAgreement reference; registration writes require authentication and are not attempted.
+
+A focused read-only workflow was added to capture the official public structures and preserve raw XML plus SHA-256. Unit tests passed. GitHub Actions Run #1 / ID 44286951595 was still IN_PROGRESS at registry capture on last inspection; no structure parser output or artifact had yet been verified. Therefore actual provider-level and provision-agreement constraints remain UNKNOWN / NOT_RUN, not PASS. If the all-structure API calls exceed the time budget, replace them with a targeted DataProvider item query using `references=parents` per the official API Guide.
+
+Sources: IMF SDMX Central overview (https://sdmxcentral.imf.org/overview.html), Provision Agreements catalogue (https://sdmxcentral.imf.org/data/provisionAgreements.html), Data Providers catalogue (https://sdmxcentral.imf.org/organisations/dataproviders.html), Registrations catalogue (https://sdmxcentral.imf.org/data/registrations.html), IMF SDMX Central Web Services Guide (https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf).
+
+Admission gates remain NOT_AUTHORIZED; no constraint substitution, dataflow rewrite, source splicing or trading signal.

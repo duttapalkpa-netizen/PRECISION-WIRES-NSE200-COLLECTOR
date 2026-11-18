@@ -623,3 +623,28 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Registration report: Run #23 artifact `brazil_bop/bop6_registration_alignment.json`, SHA e994a95813dc302091cfff286505a80b0db1bbf413ef13c596d07d8d5bf2b58f. Registry BOP6 collection vs BCB payload BOP_BPM6 mismatch; BOP6 constraint covers 234/237; BOP_BPM6 constraint covers 27/237. Registration semantics/contract remains UNKNOWN; no constraint substitution.
 - Workflow execution gate: only manual `workflow_dispatch` or consolidated commit message marker `[run-bop-audit]` launches the expensive run; workflow-file-only commits no longer trigger it; concurrency serialized per branch. Protocol and workflow update are committed atomically in this batch. No new data-acquisition run is required to verify this documentation/control-only patch.
 - Admission remains NOT_AUTHORIZED for Brazil portfolio panel, Global EM aggregate and trading signal. Production invariants unchanged.
+
+
+## 2026-11-18 — Chapter 35 Part-10: IMF Brazil registration/provision contract investigation (runtime pending)
+
+### Reused verified baseline — no repeated source-data acquisition
+- Previous accepted baseline remains Run #23 / ID 44282235752, commit 27e26095b482f24e65bafca69cca9d870922fffd, artifact #14416443972, SHA-256 53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0.
+- Registration snapshot `config/imf_bop6_registration_snapshot_20261118.json`, blob SHA bb5b3f4d41b3d273cda9e76b9cd8990e4a4a7b74; exact observed row: IMF:BOP6(1.0), IMF:BR1, BCB URL, last updated 2026-10-26T11:47:29.000Z.
+- Official IMF Data Providers catalogue identifies IMF:BR1 as Central Bank of Brazil. Official registrations catalogue shows BOP6(1.0) / BR1 / same BCB URL. Do not infer an alias with BOP_BPM6.
+
+### Official SDMX semantics established from public IMF documentation
+- SDMX Central overview says constraints may attach to Dataflow, Provision Agreement and Data Provider, and can cascade; this confirms the prior Dataflow-only audit was incomplete for contract interpretation.
+- IMF Web Services Guide (last updated May 2025) documents public REST structure queries and explicitly lists `dataproviderscheme`, `provisionagreement`, and `contentconstraint` resources; REST query blueprint is `/sdmx/v2/structure/{resource}/{agencyID}/{resourceID}/{version}/{itemID}`, with `references=parents|all` options.
+- Same guide says registration is a link between Dataflow, Data Provider and a URL; the registration request message also contains a ProvisionAgreement reference. Registration API is private/authenticated; do not attempt write/registration operations. Read-only public structure queries are the only intended action.
+- Official references: https://sdmxcentral.imf.org/overview.html ; https://sdmxcentral.imf.org/data/provisionAgreements.html ; https://sdmxcentral.imf.org/organisations/dataproviders.html ; https://sdmxcentral.imf.org/data/registrations.html ; https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf .
+
+### Focused, non-duplicative implementation
+- Added `qa/audit_imf_brazil_bop_registration_contract.py`, three regression tests, and dedicated workflow `.github/workflows/imf_bop_registration_contract_audit.yml`. This workflow only queries the public registry structure metadata; it does not redownload IMF BOP observations or BCB source datasets.
+- Unit tests completed SUCCESS in GitHub Actions Run #1 (ID 44286951595), head 599c87c1ff4469b31ac2f26b3d0bec20d46f1c76.
+- At the last status inspection, Run #1 remained IN_PROGRESS at the official registry structure capture step; provider/provision/constraint parse and artifact upload had not yet completed. Therefore no real registry result is claimed. Runtime state: IN_PROGRESS; metadata contract result: NOT_RUN pending raw XML.
+- Current run page: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44286951595 .
+
+### Guardrails and next action
+- Do not interpret absence in a public structure query as proof that no private/unexposed agreement exists.
+- Do not substitute BOP6_CONSTRAINT for BOP_BP6_CONSTRAINT; do not rewrite the BCB payload Dataflow; do not admit Brazil flow panel, Global EM aggregate or trading signal.
+- Next: obtain Run #1 completion and raw structure artifact; inspect provider BR1 identity, any ProvisionAgreement whose StructureUsage/StructureProvider links BOP6 and BR1, and any ContentConstraint attached at provider or agreement level. If all-structure queries are too slow, switch to a targeted provider-scheme item query with `references=parents`, preserving the same 8-minute job cap and raw response hashes.
