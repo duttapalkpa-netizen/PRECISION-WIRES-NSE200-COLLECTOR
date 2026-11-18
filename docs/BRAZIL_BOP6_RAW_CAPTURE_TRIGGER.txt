@@ -1,0 +1,1 @@
+Chapter 34 Part-7 bounded raw capture trigger. Official IMF registration URL only; preserve HTTP headers, exact response bytes and SHA-256. No observations or production integration.
