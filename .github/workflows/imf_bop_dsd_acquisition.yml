@@ -565,8 +565,8 @@ jobs:
           DIR="evidence/brazil_bop/sgs"
           mkdir -p "$DIR"
           for SGS in 22905 22906 22924; do
-            URL="https://api.bcb.gov.br/dados/serie/bcdata.sgs.\${SGS}/dados?formato=json"
-            ITEM="$DIR/\${SGS}"
+            URL="https://api.bcb.gov.br/dados/serie/bcdata.sgs.${SGS}/dados?formato=json"
+            ITEM="$DIR/${SGS}"
             mkdir -p "$ITEM"
             printf '%s\n' "$URL" > "$ITEM/request_url.txt"
             date -u --iso-8601=ns > "$ITEM/request_started_at_utc.txt"
@@ -577,7 +577,7 @@ jobs:
               --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
               "$URL" > "$ITEM/transfer_metadata.txt"
             sha256sum "$ITEM/raw.json" > "$ITEM/SHA256SUMS"
-            cp "$ITEM/raw.json" "$DIR/\${SGS}.json"
+            cp "$ITEM/raw.json" "$DIR/${SGS}.json"
           done
 
       - name: Compare BCB SGS official series with IMF SDMX portfolio indicators
