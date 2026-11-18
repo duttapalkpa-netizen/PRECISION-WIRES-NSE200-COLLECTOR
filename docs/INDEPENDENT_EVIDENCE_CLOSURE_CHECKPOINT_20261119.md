@@ -76,7 +76,7 @@ For every source and derived output, require:
 ## Immediate next actions
 1. Resolve/inspect run 44376631635 terminal state and artifact; if it is stuck beyond the 8-minute timeout, record failure and fix the workflow runner/trigger rather than rerunning blindly.
 2. Obtain owner-exported IMF:BR1 registration history rows, exact PA changelog and transaction XML/CSV; no passwords/cookies.
-3. In parallel, build isolated under-8-minute official Treasury nominal+real paginated capture and validator, preserving every page's raw bytes and manifest.
+3. Treasury nominal+real acquisition and independent raw-to-CSV reconciliation are now complete for run 44376975144; next add a committed reusable validator and retain artifact/manifest references.
 4. Retrieve and archive public H.10 XML ZIP and FRED DTWEXBGS CSV via a byte-capable runner; full date-by-date comparison.
 5. Parse IMF BOP DSD/codelists before any observation key is formed; if the public observation endpoint requires authenticated beta portal access, keep that gate BLOCKED rather than inventing a route.
 6. Only after raw panels pass, proceed to formula, sector bridge and rolling event study.
@@ -97,3 +97,16 @@ For every source and derived output, require:
 
 ## No-change statement
 No production code, selector, ranking score, pressure fade, CORE-672, Engines A-E, macro weights, or trading admission changed. No paid source, synthetic observation, inferred timestamp, guessed transaction ID, or undocumented endpoint used.
+
+
+## Treasury artifact independent audit — 2026-11-19
+- Run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44376975144 (completed SUCCESS); artifact ID 14462186283; artifact digest / ZIP SHA-256: aedf0578d96539b2a70c3222fc7b84355a92f6f4d20d9c61b3469c603005ce9c.
+- Independent ZIP inspection confirmed raw page hashes and byte counts match the manifest, all HTTP statuses are 200, XML pages parse, and pagination terminates only at empty feeds.
+- Nominal: 32 pages including empty terminator (31 populated), 9,226 raw observations and 9,226 CSV rows, 1990-01-02 through 2026-11-17, zero duplicate dates, exact raw-to-CSV date/value match. CSV SHA-256 94678bc88b52ad5ed8e260cf3a16f407de882bd17f7f3a212c00c054530ff4cf.
+- Real: 21 pages including empty terminator (20 populated), 5,973 raw observations and 5,973 CSV rows, 2003-01-02 through 2026-11-17, zero duplicate dates, exact raw-to-CSV date/value match. CSV SHA-256 9851ca6ca08e758d73d0188a08f9958f7eb97ab960ee9da8e3e5978db9fb662a.
+- No interpolation/fill was applied; blank source cells remain blank. This is a bounded PASS for the Treasury capture and its normalization only.
+
+## New official BOP structure route discovered
+- SDMx Global Registry's official BOP package page states BOP DSD V2.6.0 (published December 2025), IMF maintenance agency, downloadable in SDMx-ML 2.1 and 3.0 without authentication; registry stores related codelists, dataflows and constraints: https://sdmx.org/sdmx-data-structure-definitions-for-balance-of-payments-sdmx-bop/ .
+- The IMF SDMX Central legacy registration listing still displays IMF:BOP6(1.0) for IMF:BR1; BCB XML declares IMF:BOP_BPM6(1.0). New BOP DSD V2.6.0 must be versioned and compared, not treated as an automatic fix or as identical to the legacy dataflow/PA. Exact DSD + codelist + constraint archive and schema compatibility are still NOT_DONE.
+- Official structure docs explain DSD components/codelists and dataflow/provision-agreement constraints; web-service entry point is https://sdmxcentral.imf.org/sdmx/v2/ . No guessed observation query key has been used.
