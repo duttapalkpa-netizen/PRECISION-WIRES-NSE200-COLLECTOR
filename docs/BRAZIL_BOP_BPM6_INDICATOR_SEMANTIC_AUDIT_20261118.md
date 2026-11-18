@@ -93,3 +93,51 @@ Protected invariants unchanged: Production Selector, `RANKING_SCORE`, `+1 PRESSU
 
 ## 7. Screenshot-vs-raw-byte discrepancy
 The Chapter 34 Part-7 screenshot visually reports the raw XML size as 4,840,052 bytes. The downloaded artifact's `capture_manifest.json` reports 4,840,062 bytes, and the ZIP member's independently inspected uncompressed size is also 4,840,062 bytes; the independently computed raw XML SHA-256 matches the manifest. Record the screenshot value as a 10-byte display/evidence discrepancy, not as the accepted raw byte count. Accepted byte count for the downloaded artifact is 4,840,062; preserve the screenshot discrepancy for audit traceability.
+
+
+## 8. Chapter 35 Part-2 — authoritative collection-DSD correction and workflow repair (2026-11-18)
+
+### Standards evidence
+The IMF SDMX Central Web Services Guide (last updated May 2025) explicitly shows the `IMF:BOP_BPM6(1.0)` dataflow example using `IMF:ECOFIN_DSD(1.0)` and describes ECOFIN as the six-dimension dissemination DSD. The IMF SDDS Plus Technical Implementation Guide specifies the six dimensions and identifies `INDICATOR` as a mixed dimension encoding economic concept, statistical adjustment and unit of measure. It identifies the associated codelist as IMF `CL_INDICATOR`. Sources and relevant guide locations:
+- IMF SDMX Central Web Services Guide, PDF pages/lines 0–4 and its BOP_BPM6/ECOFIN example: https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf
+- IMF SDDS Plus Technical Implementation Guide, Section III, paragraphs 16–21 and Table 1: https://dsbb.imf.org/content/pdfs/SDDS%20Plus%20Technical%20Implementation%20Guide.pdf
+- Live IMF SDMX Central DSD catalogue lists IMF:ECOFIN_DSD latest version 1.0: https://sdmxcentral.imf.org/data/datastructure.html
+
+### Corrected interpretation
+The prior workflow's assertion that `BOP_BPM6` must reference the global-use `IMF:BOP(2.6.0)` DSD was over-specific and contradicted by the official IMF collection/dissemination example. The global-use BOP DSD remains a separate standard and should not be confused with the ECOFIN collection DSD used by this BOP_BPM6 example. The prior generic BOP DSD capture remains useful as a separate metadata artefact; it is not the collection DSD for this six-dimension indicator encoding.
+
+### Brazil payload recheck
+Independent local re-read of the exact Part-7 XML confirms the dataflow Header reference is `IMF:BOP_BPM6(1.0)`; the dataset's `Structure` element exposes a local structure identifier `IMF_BOP_BPM6_1_0` and an ObsLevelDim namespace. It does not itself name the DSD maintainable reference. The payload still has 237 distinct `INDICATOR` values and 89,097 observations. A code-family inventory found nine codes beginning `BFP` / `BFPL`:
+- `BFP_BP6_USD`, `BFPA_BP6_USD`, `BFPAD_BP6_USD`, `BFPAEEO_BP6_USD`, `BFPAEIS_BP6_USD`, `BFPL_BP6_USD`, `BFPLD_BP6_USD`, `BFPLEEO_BP6_USD`, `BFPLEIS_BP6_USD`.
+This is a lexical candidate list only. Do not map these codes to specific instruments or directions from prefixes alone. The published standard-presentation code labels previously checked remain bounded evidence only.
+
+### GitHub workflow repair
+Updated `.github/workflows/imf_bop_dsd_acquisition.yml` on `research/global-capital-rotation-overlay-v1`:
+- Dataflow QA now expects exactly `IMF:ECOFIN_DSD:1.0`, not `IMF:BOP:2.6.0`.
+- Added an explicit raw acquisition request for the version-pinned ECOFIN DSD with `references=children`.
+- Added XML parsing/inventory for DSD components, the INDICATOR dimension and the referenced `CL_INDICATOR` codelist, including all captured code IDs and labels.
+- Added exact byte count and SHA-256 output for the captured ECOFIN metadata.
+- Workflow still retains the separately version-pinned global BOP DSD request and the dataflow/constraint acquisitions.
+- First workflow edit commit: `70b640f8d010d6145819ed5ec15cea1e49e364b9`.
+- Shell-escaping correction commit: `83fd95e67c6f73f6f7405dd1f0758e92153c38da`.
+- Final workflow blob SHA: `226daa294d329b501b19312eb94cec290f17e160`.
+- Final workflow file re-fetched and inspected; corrected expected reference and new ECOFIN/CL_INDICATOR step are present.
+
+### Runtime limitation and exact status
+- A direct runtime GET attempt from the current container failed at DNS resolution (`curl: (6) Could not resolve host: sdmxcentral.imf.org`); it returned no HTTP response. This is an execution-environment failure, not evidence that the IMF endpoint is down.
+- The available GitHub connector in this session has no workflow-dispatch action. The updated workflow is committed but has NOT been run. No new ECOFIN DSD bytes, metadata response headers, codelist rows, byte count or SHA-256 are claimed.
+- The official guide is standards evidence for the six-dimension ECOFIN structure and the CL_INDICATOR association. It is not a substitute for the required version-pinned live XML acquisition.
+
+### Gate state after Part-2
+| Gate | State |
+|---|---|
+| IMF standard confirms ECOFIN dissemination DSD and CL_INDICATOR association | PASS (official documentation) |
+| Brazil payload confirms BOP_BPM6 dataflow and 237 indicator codes | PASS (captured XML) |
+| Existing workflow corrected to test ECOFIN_DSD 1.0 and acquire CL_INDICATOR | PASS (committed and re-fetched; static verification) |
+| Live dataflow-to-ECOFIN_DSD reference | UNKNOWN pending workflow run |
+| Raw ECOFIN_DSD and CL_INDICATOR capture + hashes | NOT_DONE |
+| 237-code semantic mapping | NOT_DONE |
+| Brazil portfolio investment subset accepted | NOT_ACCEPTED |
+| India / global EM flow admission | NOT_AUTHORIZED |
+
+No production integration or protected-selector change.
