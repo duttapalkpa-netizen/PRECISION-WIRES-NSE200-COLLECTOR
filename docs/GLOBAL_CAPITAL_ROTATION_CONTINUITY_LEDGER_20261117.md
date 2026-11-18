@@ -559,3 +559,14 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Added `qa/audit_brazil_bop6_archive_reconciliation.py` and 4 tests (commits 70a7818c62f51890094c0c7fa19e6c70bf137601 / b3879e01790fd9888e2755af7dc3fc411d21c5f7); workflow integration d3b52f78e71d18d7c9c81ae0c541fa5dd100d691. Uses pinned openpyxl 3.1.5, parses exact row labels/code column, period coverage and three-way differences, does not rescale or replace.
 - Run #12 ID 44280444665 was in progress when this entry was drafted; no runtime PASS claim until jobs/artifact are checked.
 - Admission: Brazil panel, Global EM aggregate and trading signal NOT_AUTHORIZED. Next: validate Run #12, capture three-way reconciliation JSON/hash, then pursue official BCB/IMF source lineage and revision metadata. Keep 2010 break and later revision differences UNKNOWN until explained.
+
+
+
+## 2026-11-18 — Chapter 35 Part-6 runtime closeout and Part-7 component-level audit
+- Run #12 / ID 44280444665 SUCCESS, head d3b52f78e71d18d7c9c81ae0c541fa5dd100d691; artifact #14416134135, 7,741,512 bytes, SHA 85820e487a4313d89ced5aad88d1f18fe4e122b35fe609a210349a78b84e37b7. Three-way JSON SHA 093bf56e463fd5392b4f76729ecbe7c4703600a0d2f0251d39e3690701068cc7. ZIP and workbook hashes as above.
+- BCB archive hierarchy manually checked for 293 months: 22906 assets = 22909 equity assets + 22912 investment fund shares assets + 22915 debt securities; 22924 liabilities = 22927 equity liabilities + 22936 investment fund shares liabilities + 22939 debt securities; 22905 net = 22906 - 22924. All three parent-child identities 293/293 within 0.051 million USD.
+- Nine archive-to-IMF series (BFP, BFPA, BFPAEEO, BFPAEIS, BFPAD, BFPL, BFPLEEO, BFPLEIS, BFPLD): each 180/293 match pre-2010 and 113/293 mismatch 2010-01 to 2019-05.
+- IMF-SDMX internal parent-child rollups: assets parent BFPA vs three components 180/381 match, 201/381 mismatch; liabilities parent BFPL vs three components 180/381 match, 201/381 mismatch. Both mismatches begin 2010-01. Cause not established.
+- Added nine-series component audit script `qa/audit_brazil_bop6_portfolio_components.py` (commit 881425f4c7706051f7de0c8a55c34c891fa37105) and 3 tests (commit e94e48acc46f73a4cdb7108081ddcd276dfb9c88). Workflow now captures all nine SGS codes and runs component audit (commits b0dbd5f33fcc2e1a2815ed765aaab09adde21123, d5797a4842d0200a726e84d6a75e09e703d5ed34, bf423222d7624f9eec20044dee93996ca5906a2e).
+- Runs #13 44280922280 and #14 44280941633 were in progress at ledger entry; runtime status pending. Inspect both; prioritize #14 as latest workflow integration.
+- All flow admission remains NOT_AUTHORIZED. No source substitution, series shifts, splicing, synthetic repair or production integration.
