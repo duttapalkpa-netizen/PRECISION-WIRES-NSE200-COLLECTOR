@@ -630,3 +630,12 @@ Corrected `qa/audit_imf_bop6_registration_alignment.py` to use the versioned reg
 - Run #20 `44281736564` ended FAIL only at the initial static-HTML parser step; artifact #14417810859 retains both Dataflows, constraints, registration HTML and BCB payload. Run #21 `44282211603` was triggered before the final workflow invocation update; Run #22 (latest) is required for acceptance.
 
 No constraint is silently substituted. Keep the observed codes, DSD, Dataflow and constraints separate. Brazil portfolio flow panel, Global EM aggregate and trading signal remain NOT_AUTHORIZED until this metadata alignment and the 2010+ value break are resolved.
+
+
+
+### Part-8C — Dataflow descriptions clarify the registry distinction (2026-11-18)
+The raw Dataflow metadata titles/descriptions show these are distinct collection scopes, not interchangeable labels:
+- `IMF:BOP6:1.0` — “Balance of Payments (BPM6) for Collection”. It references `IMF:ECOFIN_DSD:1.0`; its `BOP6_CONSTRAINT` contains 4,313 allowed INDICATOR codes and covers 234/237 codes observed in the BCB payload.
+- `IMF:BOP_BPM6:1.0` — “Balance of Payments -- BPM6”. It also references `IMF:ECOFIN_DSD:1.0`; its `BOP_BP6_CONSTRAINT` contains 98 allowed INDICATOR codes and covers 27/237 observed BCB payload codes.
+
+The IMF registration row for BCB uses the collection Dataflow BOP6, whereas the BCB XML header uses the narrower BOP_BPM6 Dataflow. This is stronger evidence of a registration/payload scope mismatch than an alias. It may indicate the BCB payload is being labelled with the wrong Dataflow, or that the collection registration and payload reference have distinct intended roles. Neither interpretation is yet proven. Do not switch constraints or rewrite the payload reference until official source semantics and BCB provider metadata establish the intended contract.
