@@ -536,3 +536,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Test commit `1669ee9cd0be3a589fb1a0539169a016cd42f537` updates fixtures to plural envelope; `d3a3b9c9936fa78d7939821096f4dc2b167cbecc` adds exact-URL negative control and action-attribute test. Test count now 9.
 - Report corrected: `docs/IMF_BRAZIL_REGISTRATION_EVENT_PARSER_PART9_20261118.md`, commit `ff755717bf542ab6c4f83b45e85b8865a07fafa7`, blob SHA `a7d73193f0cfe00d8d1a98fb4f1af037e05789d3`.
 - Official source confirms the request envelope syntax only; it does not prove a Brazil transaction. GitHub Actions result remains NOT_YET_VERIFIED. Real Brazil event fixture NOT_DONE; chronology UNKNOWN; mismatch CONFIRMED; Brazil admission BLOCKED. No production integration.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-10: IMF parser QA verification
+- New report: `docs/IMF_BRAZIL_REGISTRATION_EVENT_QA_VERIFICATION_PART10_20261118.md`; commit `d322b3bf33f210458daf7e72f8752d63e99e35ad`.
+- Re-fetched current parser blob `a51dc69b28d244642736eca47e945bdd5b3d3459`, test blob `a75a68e170fb18eab8c7480b05cc22debc249d5f`, workflow blob `43d9f5c77c7abe4d05ffb446d2ed1c9b0a343b9b`, and Part-9 report blob `a7d73193f0cfe00d8d1a98fb4f1af037e05789d3` from default branch before validation.
+- Executed the exact fetched parser + test source in an isolated local temporary directory with `python -m unittest discover -s tests -p 'test_imf_brazil_event_parser.py' -v`: **9 tests PASS, 0 FAIL**, approximately 0.002 seconds. This is local unit-test execution only; not a GitHub Actions run and not real Brazil event validation.
+- Attempted connected GitHub commit-workflow-run lookup for test commit `d3a3b9c9936fa78d7939821096f4dc2b167cbecc`; returned an empty list. The connected action is explicitly PR-triggered-only and first-page-only. No general Actions run-list or dispatch action is exposed. Therefore Actions run ID/conclusion/log/artifact remain **NOT_YET_VERIFIED**; empty result is neither FAIL nor PASS.
+- Workflow configuration remains scoped to parser/test/workflow paths, Python 3.12, read-only contents, 3-minute timeout. Configuration PASS; runtime NOT_YET_VERIFIED.
+- Real Brazil XML/CSV NOT_DONE; chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED; Brazil/EM/market admission BLOCKED. No RSS/BCB acquisition, full NSE collector, code changes, production integration, PR merge or spend.
+- Next: if runtime CI evidence is needed, inspect GitHub Actions → IMF Brazil Event Parser QA (Offline) and record exact run ID/conclusion/log. Then test a genuine owner-exported transaction document only when available. UNKNOWN is not PASS; all protected production invariants remain unchanged.
