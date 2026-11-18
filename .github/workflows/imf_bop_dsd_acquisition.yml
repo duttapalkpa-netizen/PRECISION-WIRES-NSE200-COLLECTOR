@@ -215,12 +215,12 @@ jobs:
                                           if local(ref.tag) == "Ref":
                                               refs.append({k: ref.attrib.get(k) for k in ("agencyID", "id", "version")})
                               report["data_structure_refs"] = refs
-                              expected_ref = {"agencyID": "IMF", "id": "BOP", "version": "2.6.0"}
+                              expected_ref = {"agencyID": "IMF", "id": "ECOFIN_DSD", "version": "1.0"}
                               report["expected_data_structure_ref"] = expected_ref
                               exact_matches = [r for r in refs if r == expected_ref]
                               report["exact_expected_reference_count"] = len(exact_matches)
                               if len(refs) != 1 or len(exact_matches) != 1:
-                                  report.update(status="FAIL", reason="Dataflow must reference exactly IMF:BOP:2.6.0")
+                                  report.update(status="FAIL", reason="Dataflow must reference exactly IMF:ECOFIN_DSD:1.0")
                                   failed = True
                               else:
                                   report["status"] = "PASS"
@@ -409,6 +409,80 @@ jobs:
           (root_dir / "qa_report.json").write_text(json.dumps(report, indent=2) + "\n")
           if not valid:
               sys.exit(1)
+          PY
+
+      - name: Acquire and semantically inventory IMF ECOFIN_DSD and CL_INDICATOR
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR="evidence/imf_bop_dsd/ecofin_dsd"
+          mkdir -p "$DIR"
+          URL='https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true'
+          printf '%s\\n' "$URL" > "$DIR/request_url.txt"
+          set +e
+          curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \\
+            --dump-header "$DIR/response_headers.txt" \\
+            --output "$DIR/raw.xml" \\
+            --write-out 'http_code=%{http_code}\\ncontent_type=%{content_type}\\nfinal_url=%{url_effective}\\nsize_download=%{size_download}\\n' \\
+            "$URL" > "$DIR/transfer_metadata.txt"
+          STATUS=$?
+          set -e
+          printf 'curl_exit=%s\\n' "$STATUS" >> "$DIR/transfer_metadata.txt"
+          if [ "$STATUS" -ne 0 ]; then
+            echo "ECOFIN_DSD acquisition failed; preserve transfer diagnostics."
+            exit 1
+          fi
+          sha256sum "$DIR/raw.xml" > "$DIR/SHA256SUMS"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, xml.etree.ElementTree as ET
+          folder = Path("evidence/imf_bop_dsd/ecofin_dsd")
+          raw = folder / "raw.xml"
+          payload = raw.read_bytes()
+          root = ET.fromstring(payload)
+          def local(tag): return tag.rsplit("}", 1)[-1]
+          dsds = [e for e in root.iter() if local(e.tag) == "DataStructure" and e.attrib.get("id") == "ECOFIN_DSD"]
+          if len(dsds) != 1:
+              raise SystemExit(f"Expected exactly one IMF:ECOFIN_DSD; found {len(dsds)}")
+          dsd = dsds[0]
+          components = []
+          for comp in dsd.iter():
+              if local(comp.tag) in {"Dimension", "TimeDimension", "MeasureDimension", "Attribute", "PrimaryMeasure"}:
+                  refs = []
+                  for node in comp.iter():
+                      if local(node.tag) == "Ref":
+                          refs.append({k: node.attrib.get(k) for k in ("agencyID", "id", "version", "class", "package")})
+                  components.append({"type": local(comp.tag), "id": comp.attrib.get("id"), "references": refs})
+          indicator = [x for x in components if x["id"] == "INDICATOR"]
+          if len(indicator) != 1:
+              raise SystemExit(f"Expected exactly one INDICATOR component; found {len(indicator)}")
+          codelists = []
+          for node in root.iter():
+              if local(node.tag) == "Codelist":
+                  codes = []
+                  for code in node:
+                      if local(code.tag) == "Code":
+                          names = [{"lang": n.attrib.get("{http://www.w3.org/XML/1998/namespace}lang"), "text": (n.text or "").strip()}
+                                   for n in code if local(n.tag) == "Name"]
+                          codes.append({"id": code.attrib.get("id"), "names": names})
+                  codelists.append({"agency": node.attrib.get("agencyID"), "id": node.attrib.get("id"),
+                                    "version": node.attrib.get("version"), "code_count": len(codes), "codes": codes})
+          indicator_lists = [x for x in codelists if x["id"] == "CL_INDICATOR"]
+          if len(indicator_lists) != 1 or indicator_lists[0]["code_count"] == 0:
+              raise SystemExit(f"CL_INDICATOR not captured exactly once with codes; matches={len(indicator_lists)}")
+          report = {
+              "status": "PASS", "root_element": local(root.tag), "dsd": {"agency": dsd.attrib.get("agencyID"),
+              "id": dsd.attrib.get("id"), "version": dsd.attrib.get("version")},
+              "raw_bytes": len(payload), "sha256": hashlib.sha256(payload).hexdigest(),
+              "components": components, "component_count": len(components),
+              "codelists": codelists, "codelist_count": len(codelists),
+              "indicator_codelist": indicator_lists[0],
+              "acceptance_note": "PASS only for captured DSD and CL_INDICATOR metadata; does not map Brazil observations or establish unit/sign semantics."
+          }
+          (folder / "semantic_inventory.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\\n")
+          print(json.dumps({"status": report["status"], "components": len(components),
+                            "codelists": len(codelists), "indicator_codes": indicator_lists[0]["code_count"]}))
           PY
 
       - name: Upload raw response and QA evidence
