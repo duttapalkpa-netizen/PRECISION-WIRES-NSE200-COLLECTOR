@@ -201,3 +201,11 @@ No production integration or protected selector changes.
 
 ### Artifact retention path correction — 2026-11-18
 Final workflow review caught that the artifact upload initially included only `evidence/imf_bop_dsd/`, omitting the paired BCB payload and code-audit report. Corrected the upload-artifact path to include both `evidence/imf_bop_dsd/` and `evidence/brazil_bop/`. Correction commit: `9b793dfc10476dcd83d272e8a36275c8bd978b2b`; workflow blob SHA: `affcbdf7166a4dc1bdbbb104c2877975631109e1`. Re-fetch verification still pending final audit closeout. This correction ensures the actual Brazil payload, manifest, checksums and indicator audit JSON are retained with the IMF metadata artifact.
+
+
+
+### Part-4 — independent IMF registry listing and regression expansion (2026-11-18)
+- Independently checked the IMF SDMX Central registry listing surfaced by its official catalogue: IMF `ECOFIN_DSD` latest version `1.0`; IMF `CL_INDICATOR` label `Economic Indicator`, version `1.0`. This corroborates the version-pinned IDs in the workflow, but is catalogue-page evidence only, not a raw XML acquisition or code-list payload. Sources: https://sdmxcentral.imf.org/data/datastructure.html and https://sdmxcentral.imf.org/items/codelist.html.
+- Expanded `tests/test_brazil_bop_indicator_codes.py` with three further fail-closed cases: wrong REF_AREA; non-matching country ISO3 prefix (IND_ code while the reporting REF_AREA is BR / ISO3 BRA); duplicate CL_INDICATOR code ID. Total committed regression cases: seven. Commit: `1f8b07b7111a218880e247997e4cc8f010d8c7fd`; final test blob to be re-fetched for exact verification.
+- The code remains deliberately conservative: an official codelist match is `LABEL_AVAILABLE_REVIEW_REQUIRED`; a Brazil-specific code not in the IMF codelist is `UNKNOWN_NO_IMF_LABEL`; a code neither listed nor correctly BRA_-prefixed is `UNKNOWN_QUARANTINE`. No semantic portfolio classification is implied.
+- Live XML retrieval, workflow dispatch, execution of the seven tests, 237-code codelist comparison and economic semantic mapping remain NOT_DONE. Do not treat catalogue listings as substitutes for raw SDMX XML, checksums or workflow artifacts.
