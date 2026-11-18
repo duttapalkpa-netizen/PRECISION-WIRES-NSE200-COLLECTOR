@@ -1,6 +1,14 @@
 name: IMF BOP DSD raw acquisition and metadata QA
 
 on:
+  push:
+    branches:
+      - research/global-capital-rotation-overlay-v1
+    paths:
+      - ".github/workflows/imf_bop_dsd_acquisition.yml"
+      - "qa/audit_brazil_bop_indicator_codes.py"
+      - "qa/build_brazil_bop_indicator_crosswalk.py"
+      - "tests/test_brazil_bop_indicator_*.py"
   workflow_dispatch:
 
 permissions:
@@ -18,7 +26,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m unittest discover -s tests -p 'test_brazil_bop_indicator_codes.py' -v
+          python -m unittest discover -s tests -p 'test_brazil_bop_indicator_*.py' -v
 
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
         shell: bash
@@ -543,6 +551,17 @@ jobs:
             --ref-area BR \
             --country-iso3 BRA \
             --output evidence/brazil_bop/indicator_code_audit.json
+
+      - name: Build complete 237-code Brazil BOP semantic crosswalk
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/build_brazil_bop_indicator_crosswalk.py \
+            --brazil-xml evidence/brazil_bop/response.xml \
+            --codelist-dsd-xml evidence/imf_bop_dsd/ecofin_dsd/raw.xml \
+            --output evidence/brazil_bop/indicator_semantic_crosswalk.json
+          sha256sum evidence/brazil_bop/indicator_semantic_crosswalk.json > evidence/brazil_bop/CROSSWALK_SHA256SUMS
 
       - name: Upload raw response and QA evidence
         if: always()
