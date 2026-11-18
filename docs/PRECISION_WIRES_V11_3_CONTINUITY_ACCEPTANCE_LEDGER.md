@@ -824,3 +824,25 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance: Brazil Reconstruction INCOMPLETE/BLOCKED; Global Capital Rotation INCOMPLETE/BLOCKED; combined 100% acceptance NOT MET. This checkpoint is documentation/evidence reconciliation, not a code fix or production release.
 - Next: fetch live BCB XML + headers/hash; obtain official structures/mapping and BR1 activity/PA changelog; complete XSD recursive closure; obtain SGS 22707 primary response. For GCR, ingest official final/provisional flows separately, RBI/FBIL FX, official US/India nominal-real yield curves, then complete 35-factor schemas and point-in-time cost-adjusted rolling backtest.
 - Protected invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E. No paid APIs, synthetic data, guessed timestamps, production integration, trading admission or merge. PR #39 remains open/draft/unmerged. UNKNOWN is not PASS.
+
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 40, Part-36: official source acquisition paths expanded
+- Fresh official-source discovery added executable paths for GCR flows, FX, yields, MF data, volatility/index history, commodities and macro:
+  - SEBI FPI directory links NSDL and CDSL daily/current-month/archive/yearwise reports; CDSL explains provisional exchange data vs custodian-confirmed depository data; NSE explicitly labels its combined FPI/DII data provisional and points to NSDL/CDSL final data.
+  - AMFI monthly page lists monthly PDF/Excel downloads; SEBI MF directory links monthly/quarterly/AUM.
+  - RBI Reference Rate Archive offers date-range Excel download; RBI states FBIL took over USD/INR, EUR/INR, GBP/INR, JPY/INR reference rates from 2018-07-10.
+  - US Treasury provides separate daily nominal and real yield curves, CSV archives, and paginated XML feeds (nominal from 1990, real from 2003).
+  - NSE official historical reports expose India VIX, historical indices and TRI endpoints.
+  - EIA weekly Brent historical series and World Bank Pink Sheet monthly/annual XLS identified.
+  - e-Sankhyiki CPI API docs describe paginated public API with optional bearer token; IIP API endpoint discovered. CPI catalogue provides release date, period, table ID and provisional status.
+- Brazil:
+  - IMF Registrations and Provision Agreements official UI opened. Registration table exposes Registration ID/Registered URL/Dataflow/Provider. PA UI exposes URN/Revisions/Valid From/To and Changelog/Export controls. Static extraction does not reveal Brazil's selected record/history; interactive filter/export still required.
+  - Live BCB SDMX XML URL retrieval attempted through web and container download; neither produced response bytes/HTTP metadata. Treat as retrieval boundary, not source error.
+  - Official BCB SGS 22707 dataset documents JSON/CSV/WSDL/HTML resources, monthly USD-million series, coverage since 1995-01; exact Sep-2026 primary response/hash remains NOT_DONE.
+- New report: `docs/BRAZIL_GCR_OFFICIAL_SOURCE_ACQUISITION_MAP_PART36_20261118.md`; commit `1eba30ce708891f90195b6d9b4a8254835ff659d`.
+- This checkpoint expands source discovery only. It does not claim raw data ingestion, historical completeness, factor completion, event-study validation or production acceptance.
+- Brazil Reconstruction remains INCOMPLETE/BLOCKED: live BCB XML bytes, official BOP6/BOP_BPM6 mapping/history, recursive XSD archive/offline validation, SGS 22707 exact primary data remain open.
+- Global Capital Rotation remains INCOMPLETE/BLOCKED: official raw source archives/revision joins, India G-Sec/FBIL yields, DXY/carry, GCR-09 event taxonomy, 35-factor registry, point-in-time H+1/H+3/H+5 backtest and operational controls remain open.
+- Next immediate work: execute downloads/archives from SEBI/NSDL/CDSL/NSE, FBIL/RBI, Treasury, AMFI, EIA/World Bank and e-Sankhyiki; keep provisional/final vintages and frequencies distinct; hash all raw bytes. For Brazil, obtain selected PA changelog + BR1 transaction export through official UI, then validate live BCB XML against pinned SDMX 2.1 schemas.
+- Invariants unchanged; no paid APIs, synthetic values, inferred timestamps, production changes, merge or trading admission. PR #39 remains open/draft/unmerged. UNKNOWN is not PASS.
