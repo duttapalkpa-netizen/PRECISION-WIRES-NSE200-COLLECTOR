@@ -62,7 +62,7 @@ def constraint_info(path, wanted_id):
             "allowed_indicator_codes": sorted(indicator_values),
             "source_sha256": sha256(path)}
 
-def audit(source_dir):
+def audit(source_dir, verify_hashes=True):
     base = Path(source_dir)
     bcb_path = base / "brazil_bop/response.xml"
     bcb_root = load_xml(bcb_path)
@@ -76,7 +76,7 @@ def audit(source_dir):
         raise ValueError("BCB Header Structure reference missing")
     namespace = structure.get("namespace", "")
     schema_location = bcb_root.get(XSI_SCHEMA_LOCATION, "")
-    if "IMF:BOP_BPM6(1.0)" not in namespace or "IMF:BOP_BPM6/1.0" not in schema_location:
+    if "IMF:BOP_BPM6(1.0)" not in namespace or "/IMF/BOP_BPM6/1.0" not in schema_location:
         raise ValueError("BCB Header/schemaLocation no longer identifies IMF:BOP_BPM6(1.0); review before accepting")
     payload_indicators = {e.get("INDICATOR") for e in bcb_root.iter()
                           if local(e.tag) == "Series" and e.get("INDICATOR")}
@@ -106,6 +106,22 @@ def audit(source_dir):
     response_headers = (base / "brazil_bop/response_headers.txt").read_text(encoding="utf-8", errors="replace")
     transfer = (base / "brazil_bop/transfer_metadata.txt").read_text(encoding="utf-8", errors="replace")
     manifest = json.loads((base / "brazil_bop/capture_manifest.json").read_text(encoding="utf-8"))
+    source_paths = {
+      "brazil_payload": bcb_path,
+      "dataflow_bop6": base / "imf_bop_dsd/bop6_dataflow/raw.xml",
+      "dataflow_bop_bpm6": base / "imf_bop_dsd/dataflow/raw.xml",
+      "constraint_bop6": base / "imf_bop_dsd/bop6_constraint/raw.xml",
+      "constraint_bop_bpm6": base / "imf_bop_dsd/constraint/raw.xml"
+    }
+    actual_hashes = {key: sha256(path) for key, path in source_paths.items()}
+    if verify_hashes:
+        mismatches = {key: {"expected": EXPECTED[key], "actual": actual_hashes[key]}
+                      for key in EXPECTED if actual_hashes[key] != EXPECTED[key]}
+        if mismatches:
+            raise ValueError(f"Archived source SHA-256 mismatch: {mismatches}")
+        if manifest.get("sha256") != EXPECTED["brazil_payload"]:
+            raise ValueError("BCB capture manifest SHA-256 does not match raw payload")
+
     prepared = next(((e.text or "").strip() for e in header if local(e.tag) == "Prepared"), None)
     header_fields = {local(e.tag): (e.text or "").strip() for e in header
                      if local(e.tag) in {"ID", "Test", "Prepared", "DataSetAction", "DataSetID"}}
@@ -124,7 +140,7 @@ def audit(source_dir):
                                   if line.lower().startswith("last-modified:")), None),
         "bcb_payload_sha256": sha256(bcb_path),
         "bcb_payload_bytes": bcb_path.stat().st_size,
-        "bcb_capture_manifest": manifest,
+        "bcb_capture_manifest": manifest,\n        "verified_source_sha256": actual_hashes,
         "registration_snapshot": row
       },
       "bcb_header": {

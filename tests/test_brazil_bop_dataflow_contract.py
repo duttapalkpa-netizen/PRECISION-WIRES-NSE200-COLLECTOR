@@ -7,7 +7,7 @@ class BrazilBOPDataflowContractTests(unittest.TestCase):
   self.tmp=tempfile.TemporaryDirectory(); self.root=Path(self.tmp.name)
   for d in ["brazil_bop","imf_bop_dsd/bop6_dataflow","imf_bop_dsd/dataflow","imf_bop_dsd/bop6_constraint","imf_bop_dsd/constraint"]:
    (self.root/d).mkdir(parents=True,exist_ok=True)
-  (self.root/"brazil_bop/response.xml").write_text('''<StructureSpecificData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:test urn:test IMF:BOP_BPM6/1.0"><Header><ID>IREF149528</ID><Prepared>2026-10-26T11:42:36Z</Prepared><Sender id="ZZZ"/><Structure structureID="IMF_BOP_BPM6_1_0" namespace="urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=IMF:BOP_BPM6(1.0):ObsLevelDim:TIME_PERIOD"/></Header><DataSet><Series DATA_DOMAIN="BOP6" REF_AREA="BR" INDICATOR="A"/><Series DATA_DOMAIN="BOP6" REF_AREA="BR" INDICATOR="B"><Obs TIME_PERIOD="2026-01" OBS_VALUE="1"/></Series></DataSet></StructureSpecificData>''')
+  (self.root/"brazil_bop/response.xml").write_text('''<StructureSpecificData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:test https://sdmxcentral.imf.org/ws/public/sdmxapi/rest/schema/dataflow/IMF/BOP_BPM6/1.0?format=sdmx-2.1"><Header><ID>IREF149528</ID><Prepared>2026-10-26T11:42:36Z</Prepared><Sender id="ZZZ"/><Structure structureID="IMF_BOP_BPM6_1_0" namespace="urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=IMF:BOP_BPM6(1.0):ObsLevelDim:TIME_PERIOD"/></Header><DataSet><Series DATA_DOMAIN="BOP6" REF_AREA="BR" INDICATOR="A"/><Series DATA_DOMAIN="BOP6" REF_AREA="BR" INDICATOR="B"><Obs TIME_PERIOD="2026-01" OBS_VALUE="1"/></Series></DataSet></StructureSpecificData>''')
   (self.root/"brazil_bop/bop6_registration_alignment.json").write_text('''{"registration_snapshot":{"row":{"dataflow":"IMF:BOP6(1.0)","provider":"IMF:BR1","registered_url":"https://www.bcb.gov.br/source.xml"}}}''')
   (self.root/"brazil_bop/response_headers.txt").write_text("Last-Modified: Mon, 26 Oct 2026 11:44:11 GMT\n")
   (self.root/"brazil_bop/transfer_metadata.txt").write_text("http_code=200\nsize_download=1\n")
@@ -23,7 +23,7 @@ class BrazilBOPDataflowContractTests(unittest.TestCase):
    (self.root/path).write_text(f'<Structure><ContentConstraint id="{cid}" type="Allowed"><ConstraintAttachment><Dataflow><Ref class="Dataflow" id="{df}" agencyID="IMF" version="1.0"/></Dataflow></ConstraintAttachment><CubeRegion><KeyValue id="INDICATOR">{vals}</KeyValue></CubeRegion></ContentConstraint></Structure>')
  def tearDown(self): self.tmp.cleanup()
  def test_exact_dataflow_mismatch_and_constraint_membership(self):
-  r=audit(self.root)
+  r=audit(self.root, verify_hashes=False)
   self.assertEqual(r["bcb_header"]["dataflow"],"IMF:BOP_BPM6(1.0)")
   self.assertEqual(r["provenance"]["registration_snapshot"]["dataflow"],"IMF:BOP6(1.0)")
   self.assertEqual(r["imf_dataflows"]["data_structure_id"],"ECOFIN_DSD")
@@ -31,7 +31,7 @@ class BrazilBOPDataflowContractTests(unittest.TestCase):
   self.assertEqual(r["constraints"]["BOP_BP6_CONSTRAINT"]["payload_allowed_count"],1)
  def test_truncated_payload_fails_closed(self):
   (self.root/"brazil_bop/response.xml").write_text("<StructureSpecificData>")
-  with self.assertRaisesRegex(ValueError,"Malformed or truncated XML"): audit(self.root)
+  with self.assertRaisesRegex(ValueError,"Malformed or truncated XML"): audit(self.root, verify_hashes=False)
  def test_header_identity_change_fails_closed(self):
   p=self.root/"brazil_bop/response.xml"
   p.write_text(p.read_text().replace("BOP_BPM6","BOP6"))
