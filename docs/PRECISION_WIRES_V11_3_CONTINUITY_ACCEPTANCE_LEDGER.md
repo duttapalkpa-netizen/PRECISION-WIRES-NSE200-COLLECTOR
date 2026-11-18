@@ -622,3 +622,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Part-16 parser remains QA-only on branch `qa/imf-brazil-parser-schema-path-hardening`; PR #39 rechecked open, draft=true, merged=false. No Actions run asserted.
 - Brazil real transaction fixture and PA revision chronology remain NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch remains CONFIRMED/UNRESOLVED; Brazil/EM admission BLOCKED. No production changes, merge, deployment, macro weights, paid API or trading admission.
 - Next: materialize all 58 pinned official XSD raw files; compute SHA-256 from actual bytes; write manifest; resolve all includes/imports locally; run offline XSD validation against existing fixtures. Require genuine Brazil owner-exported event data for chronology. UNKNOWN is not PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-18: parser QA pull-request trigger enablement
+- Found existing `.github/workflows/imf_brazil_event_parser_qa.yml` had `workflow_dispatch` and `push: branches: [main]` only; it did not automatically run for PR #39.
+- Added narrow `pull_request` trigger targeting main with path filters limited to parser, tests, and this workflow. Preserved manual dispatch, main push trigger, read-only contents permission, Python 3.12, 3-minute timeout, and offline unittest command.
+- Workflow commit `1c76b0f6241d1fdcc8be74917f2632a629438ce3`; verified workflow blob `e71c4e27dc336816e7b102de96d6b361da1969f6`.
+- New report `docs/IMF_BRAZIL_PARSER_QA_PULL_REQUEST_TRIGGER_PART18_20261118.md`; commit `80f3e6351088525840cd2418e9b9f13689ada91c`.
+- PR #39 remains open/draft/unmerged. The available PR-triggered workflow-run lookup returned an empty list at verification time; GitHub Actions run remains NOT_VERIFIED. Do not claim CI PASS.
+- Formal XSD validation and complete official XSD bundle/hash manifest remain NOT_DONE; genuine Brazil transaction evidence NOT_DONE; chronology UNKNOWN; BOP6/BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
+- No dispatch, merge, production integration, external API, spend or market data changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged; UNKNOWN is not PASS.
