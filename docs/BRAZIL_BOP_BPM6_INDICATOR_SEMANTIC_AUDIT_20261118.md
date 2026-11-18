@@ -197,3 +197,7 @@ The GitHub workflow has not been dispatched in this session. Therefore the newly
 | Brazil flow panel / global EM aggregate / trading signal admission | NOT_AUTHORIZED |
 
 No production integration or protected selector changes.
+
+
+### Artifact retention path correction — 2026-11-18
+Final workflow review caught that the artifact upload initially included only `evidence/imf_bop_dsd/`, omitting the paired BCB payload and code-audit report. Corrected the upload-artifact path to include both `evidence/imf_bop_dsd/` and `evidence/brazil_bop/`. Correction commit: `9b793dfc10476dcd83d272e8a36275c8bd978b2b`; workflow blob SHA: `affcbdf7166a4dc1bdbbb104c2877975631109e1`. Re-fetch verification still pending final audit closeout. This correction ensures the actual Brazil payload, manifest, checksums and indicator audit JSON are retained with the IMF metadata artifact.
