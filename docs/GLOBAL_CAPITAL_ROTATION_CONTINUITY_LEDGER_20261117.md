@@ -604,3 +604,12 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Do not replace BOP_BPM6 constraint with BOP6 constraint without proving registration semantics. All flow admission remains NOT_AUTHORIZED.
 
 - Raw Dataflow descriptions: BOP6 = “Balance of Payments (BPM6) for Collection”; BOP_BPM6 = “Balance of Payments -- BPM6”. Both use ECOFIN_DSD 1.0, but BOP6_CONSTRAINT covers 234/237 observed codes while BOP_BP6_CONSTRAINT covers 27/237. Registration uses collection Dataflow BOP6; BCB XML header declares BOP_BPM6. This is a scope/registration mismatch clue, not a proven alias or confirmed cause. Do not substitute constraints without official contract evidence.
+
+
+
+## 2026-11-18 — Chapter 35 Part-8 runtime closeout
+- Run #23 / ID 44282235752 SUCCESS; head 27e26095b482f24e65bafca69cca9d870922fffd; all 22 substantive steps passed. Artifact #14416443972, 7,835,957 bytes, SHA 53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0.
+- Registration alignment report SHA e994a95813dc302091cfff286505a80b0db1bbf413ef13c596d07d8d5bf2b58f. Registry: IMF:BOP6(1.0)/IMF:BR1. BCB XML header: IMF:BOP_BPM6(1.0). Both Dataflows reference ECOFIN_DSD 1.0.
+- BOP6 collection constraint: 4,313 allowed indicators, 234/237 observed covered, 3 excluded: BMSOBL_USD, BSOBL_USD, BXSOBL_USD. BOP_BPM6 constraint: 98 allowed indicators, 27/237 observed covered, 210 excluded. Descriptions differ (collection vs BOP BPM6). This is a P0 contract/constraint alignment blocker, not an alias proof.
+- Permanent JSON summary docs/BRAZIL_BOP6_REGISTRATION_ALIGNMENT_AUDIT_20261118.json, commit ae7e7f41e7631640e222705b669670d579dbb2c0. Run #20 parser failure superseded by Run #23.
+- Next: authoritative IMF registration/provision-agreement semantics; determine correct constraint for registered BCB source. No constraint substitution or flow admission before proof.
