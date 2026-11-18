@@ -319,3 +319,55 @@ Current run metadata QA:
 
 ### Final acceptance boundary
 The full code-list crosswalk and workflow QA are PASS. This does **not** authorize a Brazil portfolio-flow panel or trading signal: observation quality attributes are absent; 333 missing-value tokens have no source-specified reason; unit multiplier/scale has not been applied; the BCB registration catalogue lists the Brazil URL under IMF:BOP6(1.0) while the payload header and live IMF dataflow say IMF:BOP_BPM6(1.0). This registration-vs-payload discrepancy remains OPEN. No net portfolio flow was calculated. Global EM aggregation and trading-signal admission remain NOT_AUTHORIZED.
+
+
+
+## 10. Chapter 35 Part-5 — successful 237-code crosswalk and portfolio reconciliation blocker (2026-11-18)
+
+### Runtime acquisition acceptance
+GitHub Actions Run #44271446838 (run number 5) completed with conclusion SUCCESS on branch `research/global-capital-rotation-overlay-v1`, head SHA `9298d8638b9ed471ed6d0411899bd11ae5e6e72d`, created 2026-11-18T08:57:24Z. All 15 substantive job steps completed successfully, including the seven-case indicator regression suite, official IMF metadata acquisition/verification, current BCB Brazil XML capture, indicator codelist audit, full semantic crosswalk generation and artifact upload. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44271446838.
+Artifact #14412253203, `imf-bop-dsd-acquisition-44271446838`, GitHub-reported digest `sha256:ccec2f3d88e7bd572d09a9c09a4bb8675cd88f14a7171353d1f9a6d31c45e4ba`; downloaded ZIP independently hashes to the same digest. Artifact URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44271446838.
+
+### Captured data and codelist join
+- BCB raw Brazil BOP payload: 4,840,062 bytes; SHA-256 `3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c`; HTTP 200; XML root `StructureSpecificData`.
+- Payload Header dataflow: `IMF:BOP_BPM6:1.0`. Its series attribute `DATA_DOMAIN=BOP6` is a domain code, not the dataflow ID. Do not conflate these fields or substitute a separate `IMF:BOP6` flow reference for the exact Header reference in this payload.
+- Archived IMF metadata used in the run: `IMF:ECOFIN_DSD:1.0` with `IMF:CL_INDICATOR:1.0`, 113,644 unique codelist codes; raw codelist/DSD response 42,707,649 bytes; SHA-256 `81f4bf8bf43d466f94f8a429f8c8c40eccffe480845018421a1c384aae97d045`.
+- Exact join: all 237/237 Brazil indicator codes match official CL_INDICATOR; 237 unique series; 89,097 observations, of which 88,764 numeric and 333 literal `...` missing tokens. Do not recode missing tokens as zero.
+- Period coverage 1995-01 to 2026-09. BOP domain counts: 146 current account, 79 financial account, 9 capital account, 3 other BOP.
+- Portfolio candidates: nine financial-account portfolio-investment series and nine current-account portfolio-investment-income series. Keep the income series separate from financial-account capital-flow measures.
+- IMF `CL_UNIT_MULT` code `6` label is `Millions`; matched indicator labels specify USD. Thus the raw value scale is millions of USD. No rescaling was applied.
+- Captured payload has no observation-level quality/status attributes; explicit UNIT_MEASURE is absent. Quality remains `UNKNOWN_NOT_PASS`.
+
+### Independent portfolio aggregate reconciliation
+BPM6 source references state that positive signs represent increases and negative signs decreases in assets/liabilities, and the financial-account balance is net acquisition of financial assets minus net incurrence of liabilities. References: https://www.imf.org/external/pubs/ft/bop/2013/13-13.pdf and https://www.imf.org/external/pubs/ft/bop/2014/pdf/guidefinal.pdf.
+A separate diagnostic compared `BFP_BP6_USD` against `BFPA_BP6_USD - BFPL_BP6_USD` across all 381 common monthly periods:
+- Exact matches: 180/180 from 1995-01 through 2009-12.
+- Mismatches: 201/201 from 2010-01 through 2026-09.
+- No missing periods in this three-series comparison.
+- Maximum absolute difference: 8,402.74195204 million USD; mean absolute difference among mismatching months: 1,249.2619595526864 million USD.
+- First mismatches: 2010-01 reported BFP 88.38340538 vs assets-minus-liabilities 1,194.6754148 (difference -1,106.29200942); 2010-02 difference -20.5198094; 2010-03 difference +528.65250416.
+- Caveat: official CL_INDICATOR label for BFP is only `Portfolio investment`, not explicitly “balance”. Treat this as an unresolved BPM6-consistent reconciliation discrepancy, not a proven source error. Obtain official BCB/IMF definition/lineage for BFP and explanation of the 2010-01 break before any flow calculation.
+- Diagnostic JSON: `docs/BRAZIL_BOP_PORTFOLIO_RECONCILIATION_AUDIT_20261118.json`. Status `FAIL_RECONCILIATION`; admission NOT_AUTHORIZED.
+- Independent diagnostic script `qa/audit_brazil_bop_portfolio_reconciliation.py`; 3 unit tests committed in `tests/test_brazil_bop_portfolio_reconciliation.py`, all passed locally (3/3). These local tests are separate from GitHub runtime execution.
+
+### Unit / code commits and workflow extension
+- QA script commit: `425dd717f54b05d566ef2a80a8295c1e217deb63`.
+- Tests commit: `d3b8dff403cde26effb1d14c630108be1bd1552f`.
+- Reconciliation report commit: `cb2d16465c90067107d9dd18fc66405739cf5a6b`.
+- Workflow updated to run all `test_brazil_bop_*.py` suites and emit the portfolio reconciliation diagnostic into the retained artifact. Workflow commit: `3cc6191068924322cc819977ae365920e4d61fad`; static update present.
+- The workflow push triggered Run #44277686817 (run number 6) at 2026-11-18T09:37:37Z; status was IN_PROGRESS at the time of this record. Do not claim runtime PASS until this run completes and its jobs/artifact are inspected.
+
+### Admission and hard guardrails
+| Gate | State |
+|---|---|
+| Run #5 acquisition + codelist audit + crosswalk | PASS |
+| 237/237 official codelist join | PASS |
+| 3 independent reconciliation tests (local) | PASS |
+| BFP vs assets-minus-liabilities over full period | FAIL_RECONCILIATION |
+| Observation quality/status metadata | UNKNOWN_NOT_PASS |
+| 2010 break cause and BFP semantics | UNKNOWN / BLOCKED |
+| Brazil portfolio flow panel | NOT_AUTHORIZED |
+| Global EM aggregate | NOT_AUTHORIZED |
+| Trading signal | NOT_AUTHORIZED |
+
+No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Engines A–E changes. No synthetic values or paid APIs.
