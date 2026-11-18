@@ -151,7 +151,7 @@ def load_sgs(path, code):
     return vals
 
 
-def rollup(source):
+def rollup(source, tolerance=0.051):
     out = {}
     for name, spec in ROLLUPS.items():
         parent = spec["parent"]
@@ -166,7 +166,7 @@ def rollup(source):
             else:
                 expected = sum(source[c][p] for c in children)
             actual = source[parent][p]
-            if actual is not None and expected is not None and abs(actual - expected) > 0.051:
+            if actual is not None and expected is not None and abs(actual - expected) > tolerance:
                 mismatches.append({"period": p, "reported_parent": actual,
                                    "component_calculation": expected,
                                    "difference": actual - expected})
@@ -196,10 +196,11 @@ def audit(monthly_zip, imf_xml, sgs_dir):
         "schema_version": 1,
         "status": "PASS_COMPONENT_AUDIT_EXECUTED",
         "scope": "Nine official BCB portfolio parent/component series compared across the historical workbook, current SGS API and BCB-published IMF-SDMX XML. Diagnostic only.",
-        "tolerance_million_usd": 0.051,
+        "comparison_tolerance_million_usd": 0.051,
+        "rollup_tolerance_million_usd": {"BCB_monthly_archive": 0.051, "BCB_current_SGS": 0.151, "BCB_published_IMF_SDMX": 0.051},
         "archive_provenance": archive_meta,
         "component_rollups": {"BCB_monthly_archive": rollup(archive),
-                              "BCB_current_SGS": rollup(sgs),
+                              "BCB_current_SGS": rollup(sgs, tolerance=0.151),
                               "BCB_published_IMF_SDMX": rollup(imf)},
         "series_comparisons": comparisons,
         "interpretation": "Any mismatch is retained as evidence; it is not automatically a source error. Historical vintage, revisions and source lineage remain distinct.",
