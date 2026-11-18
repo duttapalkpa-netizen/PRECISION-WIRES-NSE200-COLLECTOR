@@ -20,9 +20,9 @@
     "strict_csv_validation": true
   },
   "acceptance": {
-    "implementation": "PASS",
+    "implementation": "PASS_CAPTURE_AND_SAME_RUN_COMPARATOR",
     "first_runtime_capture": "PASS",
-    "cross_snapshot_revision_detection": "PASS_TWO_VINTAGES_COMPARED_ZERO_CHANGES_IN_SHORT_INTERVAL",
+    "cross_snapshot_revision_detection": "PASS_TWO_VINTAGES_COMPARED",
     "feb_2026_original_vintage_reconciliation": "BLOCKED",
     "brazil_pilot": "NOT_ACCEPTED",
     "em_panel": "NOT_DONE",
@@ -51,5 +51,23 @@
       "removed": 0,
       "qa_status": "PASS_TWO_VINTAGES_COMPARED"
     }
+  },
+  "capture_to_diff_automation": {
+    "status": "PASS_END_TO_END",
+    "workflow_run_id": 44240790343,
+    "latest_snapshot": "20261118T045654Z",
+    "latest_manifest_sha256": "958b09b6c6538d3c4adebbae8343f8c01ea5448aa315edaafc4fb1a9fc3c5cc5",
+    "qa_path": "data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_20261118T045654Z.json",
+    "qa_blob_sha": "8a4af300c2d7e21942b1adb0fa15132755a6c97d",
+    "compared_snapshots": [
+      "20261118T044659Z",
+      "20261118T045654Z"
+    ],
+    "unchanged": 1524,
+    "changed": 0,
+    "added": 0,
+    "removed": 0,
+    "artifact_id": 14400155068,
+    "artifact_sha256": "6b3988ee2ea3b3f20b1df934d496106ffff02b6ef48d775c12404f7b095e6c11"
   }
 }
