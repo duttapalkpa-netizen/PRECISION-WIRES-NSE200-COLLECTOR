@@ -1,0 +1,56 @@
+name: Brazil BOP Registration vs Payload Dataflow Contract Reconciliation
+on:
+  push:
+    branches:
+      - research/global-capital-rotation-overlay-v1
+    paths:
+      - ".github/workflows/brazil_bop_dataflow_contract_reconciliation.yml"
+      - "qa/audit_brazil_bop_dataflow_contract.py"
+      - "tests/test_brazil_bop_dataflow_contract.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: brazil-bop-dataflow-contract-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+      - name: Retrieve prior immutable source artifact (no source reacquisition)
+        uses: actions/download-artifact@v4
+        with:
+          name: imf-bop-dsd-acquisition-44282235752
+          run-id: 44282235752
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: evidence/source_archive
+      - name: Run focused regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_brazil_bop_dataflow_contract.py' -v
+      - name: Reconcile exact BCB header, IMF Dataflows and constraints
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_brazil_bop_dataflow_contract.py \
+            --source-dir evidence/source_archive \
+            --output evidence/brazil_bop_dataflow_contract/contract_reconciliation.json
+          sha256sum evidence/brazil_bop_dataflow_contract/contract_reconciliation.json \
+            > evidence/brazil_bop_dataflow_contract/CONTRACT_RECONCILIATION_SHA256SUMS
+          cp evidence/source_archive/brazil_bop/response_headers.txt evidence/brazil_bop_dataflow_contract/
+          cp evidence/source_archive/brazil_bop/transfer_metadata.txt evidence/brazil_bop_dataflow_contract/
+          cp evidence/source_archive/brazil_bop/capture_manifest.json evidence/brazil_bop_dataflow_contract/
+      - name: Upload immutable reconciliation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brazil-bop-dataflow-contract-${{ github.run_id }}
+          path: evidence/brazil_bop_dataflow_contract/
+          if-no-files-found: warn
+          retention-days: 90

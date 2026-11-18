@@ -56,3 +56,11 @@ The workflow `.github/workflows/imf_bop_dsd_acquisition.yml` now ignores workflo
 - Do not combine a Git Data API ref update with a second contents-API update to the same workflow path as a trigger; both can dispatch separate runs for the same research batch.
 - One research batch must have one deliberate workflow trigger. Treat any duplicate run on the same code/input as duplicate verification only, not independent evidence.
 - If a ref update does not trigger a run, verify that no matching run exists before issuing one contents-API trigger commit.
+
+
+## 9. Reconcile source headers before accepting registration rows (2026-11-18)
+- A successful registration lookup and an exact ProvisionAgreement link are not sufficient to accept a country payload. Parse the original SDMX Header `Structure/@namespace` and root `xsi:schemaLocation` and compare both against the registered Dataflow ID.
+- Compare Dataflow identities, names, referenced DSDs and attached constraints separately. A shared DSD is not proof that two Dataflow IDs are aliases or that their constraints are interchangeable.
+- Measure observed series membership against each attached allowed constraint; report allowed/total, excluded codes and exact hashes. Do not select the constraint with the higher coverage as a substitute for an authoritative contract.
+- If registration and payload disagree, classify the contract as UNKNOWN/BLOCKED, preserve the raw payload, and keep all downstream admissions NOT_AUTHORIZED. Resolve only through authoritative BCB/IMF metadata or a formal registry/source correction; no guessed remapping.
+- Prefer reusing prior workflow artifacts for re-analysis. Do not reacquire BOP observations to investigate a metadata-only mismatch.

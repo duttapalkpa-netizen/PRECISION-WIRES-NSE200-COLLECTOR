@@ -710,3 +710,11 @@ Exact result: IMF:BR1 = Central Bank of Brazil. IMF:BR_BOP_BP6(1.0) (“Brazil B
 The BCB XML header's BOP_BPM6 declaration is a confirmed mismatch with the registered/provision-agreement BOP6 contract. Alias semantics remain unproven. Do not rewrite or substitute constraints; current payload admission and all downstream Brazil/Global EM/trading gates remain NOT_AUTHORIZED pending authoritative BCB resolution. Run #5 is a duplicate verification run, not independent source evidence.
 
 Permanent machine-readable evidence summary: docs/BRAZIL_BOP_REGISTRATION_CONTRACT_AUDIT_20261118.json. Next action: inspect the exact BCB XML header and official BCB technical metadata for the declared Dataflow ID and registration contract; do not reacquire BOP observations.
+
+
+### Part-11: original BCB payload vs IMF Dataflow contract — 2026-11-18
+The original BCB XML from prior Run #44282235752 / artifact #14416443972 was re-opened, not reacquired. Its SHA-256 is 3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c (4,840,062 bytes). Header ID IREF149528, Prepared 2026-10-26T11:42:36Z; the `Structure` namespace and `xsi:schemaLocation` both name IMF:BOP_BPM6(1.0). The IMF BR1 registration row names IMF:BOP6(1.0) for the same BCB URL.
+
+The IMF Dataflow definitions call BOP6 “Balance of Payments (BPM6) for Collection” and BOP_BPM6 “Balance of Payments -- BPM6”. Both reference ECOFIN_DSD(1.0), but have distinct IDs and separate constraints. The BCB payload has 237 series / 89,097 observations. BOP6_CONSTRAINT allows 4,313 indicators and matches 234/237 observed codes (3 excluded); BOP_BP6_CONSTRAINT allows 98 and matches only 27/237 (210 excluded). These membership ratios do not prove Dataflow alias equivalence or resolve which registration is wrong.
+
+Finding: CONFIRMED registration/header mismatch; same DSD does not make the two Dataflows interchangeable. BCB payload's correct registration remains UNKNOWN pending authoritative BCB/IMF contract correction. Do not rewrite either side or admit this payload downstream. The focused reconciliation workflow reads only the existing archived source artifact.
