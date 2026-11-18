@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "source": {
+    "url": "https://sdmxcentral.imf.org/sdmx/v2/structure/datastructure/IMF/BOP/2.6.0/?format=sdmx-2.1&references=children&detail=full&prettyPrint=true",
+    "retrieved_at_utc": "2026-11-18T06:18:14.598091Z",
+    "http_status": 200,
+    "content_type": "application/xml;charset=UTF-8",
+    "byte_length": 895438,
+    "sha256": "f4df050115748bc0d20f07c47b33bd9bd7157cf6132e9c36a70a6f868bedd075",
+    "artifact_id": 14403372899,
+    "run_id": 44250316163
+  },
+  "dsd": {
+    "agency": "IMF",
+    "id": "BOP",
+    "version": "2.6.0",
+    "dimensions": 18,
+    "attributes": 15,
+    "measures": 1
+  },
+  "dimensions": [
+    {
+      "position": 1,
+      "id": "FREQ",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "SDMX",
+        "id": "CL_FREQ",
+        "version": "2.0"
+      }
+    },
+    {
+      "position": 2,
+      "id": "ADJUSTMENT",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_ADJUSTMENT",
+        "version": "1.4"
+      }
+    },
+    {
+      "position": 3,
+      "id": "REF_AREA",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_AREA",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "position": 4,
+      "id": "COUNTERPART_AREA",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_AREA",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "position": 5,
+      "id": "REF_SECTOR",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "ESTAT",
+        "id": "CL_SECTOR",
+        "version": "1.14"
+      }
+    },
+    {
+      "position": 6,
+      "id": "COUNTERPART_SECTOR",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "ESTAT",
+        "id": "CL_SECTOR",
+        "version": "1.14"
+      }
+    },
+    {
+      "position": 7,
+      "id": "FLOW_STOCK_ENTRY",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_FSENTRY",
+        "version": "1.1"
+      }
+    },
+    {
+      "position": 8,
+      "id": "ACCOUNTING_ENTRY",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_ACCOUNT_ENTRY",
+        "version": "1.5.0"
+      }
+    },
+    {
+      "position": 9,
+      "id": "INT_ACC_ITEM",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_ACCOUNTS_ITEM",
+        "version": "1.8.0"
+      }
+    },
+    {
+      "position": 10,
+      "id": "FUNCTIONAL_CAT",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_FUNCTIONAL_CAT",
+        "version": "1.10.1"
+      }
+    },
+    {
+      "position": 11,
+      "id": "INSTR_ASSET",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "ESTAT",
+        "id": "CL_INSTR_ASSET",
+        "version": "1.15.0"
+      }
+    },
+    {
+      "position": 12,
+      "id": "MATURITY",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "ESTAT",
+        "id": "CL_MATURITY",
+        "version": "1.8"
+      }
+    },
+    {
+      "position": 13,
+      "id": "UNIT_MEASURE",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_UNIT",
+        "version": "1.19.0"
+      }
+    },
+    {
+      "position": 14,
+      "id": "CURRENCY_DENOM",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_UNIT",
+        "version": "1.19.0"
+      }
+    },
+    {
+      "position": 15,
+      "id": "VALUATION",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "ESTAT",
+        "id": "CL_VALUATION",
+        "version": "1.6"
+      }
+    },
+    {
+      "position": 16,
+      "id": "COMP_METHOD",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "IMF",
+        "id": "CL_COMP_METHOD",
+        "version": "1.2"
+      }
+    },
+    {
+      "position": 17,
+      "id": "TYPE_ENTITY",
+      "kind": "Dimension",
+      "codelist": {
+        "agency": "OECD",
+        "id": "CL_TYPE_ENTITY",
+        "version": "1.1"
+      }
+    },
+    {
+      "position": 18,
+      "id": "TIME_PERIOD",
+      "kind": "TimeDimension",
+      "codelist": null
+    }
+  ],
+  "attributes": [
+    {
+      "id": "TIME_FORMAT",
+      "assignment_status": "Conditional",
+      "codelist": "SDMX:CL_TIME_FORMAT:1.0"
+    },
+    {
+      "id": "OBS_STATUS",
+      "assignment_status": "Mandatory",
+      "codelist": "ESTAT:CL_OBS_STATUS:2.3"
+    },
+    {
+      "id": "CONF_STATUS",
+      "assignment_status": "Mandatory",
+      "codelist": "SDMX:CL_CONF_STATUS:1.3"
+    },
+    {
+      "id": "PRE_BREAK_VALUE",
+      "assignment_status": "Conditional",
+      "codelist": null
+    },
+    {
+      "id": "COMMENT_OBS",
+      "assignment_status": "Conditional",
+      "codelist": null
+    },
+    {
+      "id": "COMMENT_TS",
+      "assignment_status": "Conditional",
+      "codelist": null
+    },
+    {
+      "id": "TITLE",
+      "assignment_status": "Conditional",
+      "codelist": null
+    },
+    {
+      "id": "UNIT_MULT",
+      "assignment_status": "Mandatory",
+      "codelist": "SDMX:CL_UNIT_MULT:1.1"
+    },
+    {
+      "id": "DECIMALS",
+      "assignment_status": "Mandatory",
+      "codelist": "SDMX:CL_DECIMALS:1.0"
+    },
+    {
+      "id": "TIME_PER_COLLECT",
+      "assignment_status": "Mandatory",
+      "codelist": "IMF:CL_TIME_COLLECT:1.0"
+    },
+    {
+      "id": "REF_PERIOD_DETAIL",
+      "assignment_status": "Conditional",
+      "codelist": "ESTAT:CL_REF_PERIOD_DTL:1.0"
+    },
+    {
+      "id": "COMPILING_ORG",
+      "assignment_status": "Conditional",
+      "codelist": "IMF:CL_ORGANISATION:2.0.0"
+    },
+    {
+      "id": "DATA_COMP",
+      "assignment_status": "Conditional",
+      "codelist": null
+    },
+    {
+      "id": "DISS_ORG",
+      "assignment_status": "Conditional",
+      "codelist": "IMF:CL_ORGANISATION:2.0.0"
+    },
+    {
+      "id": "TITLE_COMPL",
+      "assignment_status": "Conditional",
+      "codelist": null
+    }
+  ],
+  "measures": [
+    {
+      "id": "OBS_VALUE",
+      "type": "Double"
+    }
+  ],
+  "embedded_codelists": 22,
+  "embedded_code_total": 4097,
+  "critical_codes": [
+    {
+      "dimension": "INT_ACC_ITEM",
+      "codelist": "IMF:CL_ACCOUNTS_ITEM:1.8.0",
+      "code": "FA",
+      "label": "Financial account"
+    },
+    {
+      "dimension": "FUNCTIONAL_CAT",
+      "codelist": "IMF:CL_FUNCTIONAL_CAT:1.10.1",
+      "code": "P",
+      "label": "Portfolio Investment"
+    },
+    {
+      "dimension": "FLOW_STOCK_ENTRY",
+      "codelist": "IMF:CL_FSENTRY:1.1",
+      "code": "T",
+      "label": "Transactions"
+    },
+    {
+      "dimension": "ACCOUNTING_ENTRY",
+      "codelist": "IMF:CL_ACCOUNT_ENTRY:1.5.0",
+      "code": "A",
+      "label": "Assets (Net Acquisition of)"
+    },
+    {
+      "dimension": "ACCOUNTING_ENTRY",
+      "codelist": "IMF:CL_ACCOUNT_ENTRY:1.5.0",
+      "code": "L",
+      "label": "Liabilities (Net Incurrence of)"
+    },
+    {
+      "dimension": "INSTR_ASSET",
+      "codelist": "ESTAT:CL_INSTR_ASSET:1.15.0",
+      "code": "F3",
+      "label": "Debt securities"
+    },
+    {
+      "dimension": "INSTR_ASSET",
+      "codelist": "ESTAT:CL_INSTR_ASSET:1.15.0",
+      "code": "F5",
+      "label": "Equity and investment fund shares/units"
+    }
+  ],
+  "acceptance": {
+    "dsd_identity": "PASS",
+    "dimension_codelist_links": "PASS",
+    "embedded_codelist_inventory": "PASS",
+    "critical_code_labels": "PASS",
+    "observation_dataflow_linkage": "UNKNOWN",
+    "observation_payload": "NOT_DONE",
+    "em_aggregation": "NOT_DONE"
+  },
+  "notes": [
+    "Code labels above are taken from the exact embedded codelists in the captured DSD XML.",
+    "The codes are metadata-level selectors only; no permitted IMF dissemination key or dataflow linkage is established by the DSD alone.",
+    "INSTR_ASSET and some other dimensions reference ESTAT/OECD-maintained codelists from within the IMF DSD; preserve agency and version exactly.",
+    "Do not sum asset and liability legs or infer a net capital-flow sign from the codes."
+  ]
+}
