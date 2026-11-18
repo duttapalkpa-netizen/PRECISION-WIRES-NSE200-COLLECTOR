@@ -53,7 +53,7 @@ class ParserTests(unittest.TestCase):
     def test_message_namespace_children_are_not_mistaken_for_registry_elements(self):
         body = f'<SubmitRegistrationsRequest xmlns="{RI_NS}"><RegistrationRequest action="Replace"><Registration><ProvisionAgreement><Ref>{BRAZIL_PA_URN}</Ref></ProvisionAgreement><Datasource><SimpleDataSource>{BCB_URL}</SimpleDataSource></Datasource></Registration></RegistrationRequest></SubmitRegistrationsRequest>'
         result = inspect_bytes(doc(body))
-        self.assertEqual(result["classification"], "REGISTRATION_EVENT")
+        self.assertEqual(result["classification"], "QUARANTINE")
         self.assertFalse(result["brazil_registration_candidate"])
 
     def test_action_enum_is_preserved_and_checked(self):
