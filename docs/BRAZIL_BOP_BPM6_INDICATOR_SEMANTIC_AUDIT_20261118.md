@@ -437,3 +437,35 @@ BCB's November 2014 Methodological Note No. 1 states that BPM6 external-sector s
 - BCB Methodological Note No. 3 (April 2015) describes the new assets/liabilities criterion for direct investment; it is not evidence that the 2010 portfolio-investment divergence was caused by a methodology change: https://www.bcb.gov.br/content/statistics/methodologicalnotes_docs/BPM6/nm3bpm6i.pdf
 
 Next research action: obtain and hash the exact official BCB BPM6 monthly ZIP (or equivalent source archive) and compare its portfolio series to both SGS 22905/22906/22924 and the SDMX XML. Then inspect the IMF dataflow's `DATA_DOMAIN=BOP6`, counterpart area, vintage and series lineage. Keep the sources separate until this three-way reconciliation is complete.
+
+
+
+## Part-6 — Official BCB BPM6 monthly historical archive capture gate (2026-11-18)
+
+### Why this is the next source-reconciliation action
+Part-5 Run #10 confirmed the BCB SGS internal identity for all 381 months but found all three provisional SGS-to-BCB-published IMF-SDMX mappings diverge from 2010-01 through 2026-09. The unresolved next step is a third independent BCB source: the official BPM6 monthly historical ZIP.
+
+### Official source discovery
+BCB's official Historical Series of the Balance of Payments — BPM6 page explicitly offers Monthly ZIP (2.7 MB), Quarterly ZIP (1.0 MB) and Annual ZIP (280 KB). The exact monthly download link resolves to:
+- `https://www.bcb.gov.br/ftp/notaecon/balpaym.zip`
+- Landing page: `https://www.bcb.gov.br/ingles/economic/seriehist_i_bpm6.asp?frame=1`
+- BCB page describes this as historical BOP series under BPM6. The download itself was not available to the current local container; the new GitHub workflow is designed to capture it.
+
+BCB Open Data Portal metadata for SGS 22905/22906/22924 identifies monthly frequency, million US dollars and BCB/Depec as source. The official BCB FAQ states that BPM6 financial-account positive signs mean increases in assets/liabilities and negative signs mean decreases; financial-account balance is change in assets minus change in liabilities. These definitions do not explain the observed SGS-to-SDMX break by themselves.
+
+### New code and workflow gate
+- Added `qa/inspect_brazil_bop6_archive.py`: safe ZIP validation, CRC check, path-traversal rejection, member inventory, data-file candidate count, archive byte count and SHA-256. It deliberately does not parse workbook cells or infer series semantics.
+- Added `tests/test_inspect_brazil_bop6_archive.py`: four cases (valid inventory/hash, non-ZIP reject, path traversal reject, empty ZIP reject).
+- Script commit `695a35dcc33c06d9cf2070efff82f18e875891a3`; test commit `e91a56ec3bcf4f77544a8065abaa4f3bf431c547`.
+- Updated `.github/workflows/imf_bop_dsd_acquisition.yml`: test the new archive gate; capture the official monthly ZIP with request URL, request-start/completion timestamps, HTTP headers/transfer metadata and SHA-256; run safe archive inventory; upload ZIP and report with the existing evidence artifact. Workflow commit `f1e6dcd1cde2645572c3482b8ce17dd5f32fe111`; workflow blob `2e154a0a84ac802f0f77c260e7c116b662ad654b`.
+- Static re-fetch verification to follow. No new run or ZIP capture is claimed yet. GitHub connector exposes run/job/artifact reads and reruns but no workflow_dispatch action; manual dispatch from repository Actions UI is required if push-triggered run is not created.
+
+### Guardrails
+The ZIP gate reports archive integrity only. It must not label a series match, reconcile values, or promote source values until workbook sheet names, headers, units, periods, portfolio lines and metadata have been inspected. No auto-extraction to an untrusted path; no silent source replacement; no splicing; no unit conversion; no synthetic repair. Brazil panel, Global EM aggregate and trading signal remain NOT_AUTHORIZED.
+
+### Official references
+- BCB BPM6 monthly historical archive landing page: https://www.bcb.gov.br/ingles/economic/seriehist_i_bpm6.asp?frame=1
+- Exact monthly ZIP URL: https://www.bcb.gov.br/ftp/notaecon/balpaym.zip
+- BCB BPM6 FAQ / sign convention: https://www.bcb.gov.br/ingles/economic/faqbpm6i.pdf
+- BCB SGS 22905 metadata: https://opendata.bcb.gov.br/dataset/22905-portfolio-investment---monthly---net
+- BCB SGS 22906 metadata: https://opendata.bcb.gov.br/dataset/22906-portfolio-investment---net-acquisition-of-financial-assets---monthly---net
