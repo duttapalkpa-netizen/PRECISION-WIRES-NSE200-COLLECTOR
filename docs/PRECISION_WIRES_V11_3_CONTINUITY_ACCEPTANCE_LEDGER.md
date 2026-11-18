@@ -752,3 +752,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/IMF_BRAZIL_SGS22707_PRIMARY_API_RESPONSE_BOUNDARY_PART29_20261118.md`; commit `363dbcc42a484c25d6a2b74756414e65529392a8`.
 - Next: use normal browser/local network to fetch official date-filtered 22707 JSON/CSV for Sep-2026, archive exact bytes, HTTP metadata and SHA-256, and reconcile exact value. Do not promote third-party values.
 - IMF registration history/PA changelog NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED. PR #39 remains research-only, open/draft/unmerged. No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 38, Part-30: live SGS 22707 date-filter request blocked by DNS
+- Attempted official BCB date-filtered JSON URL for 01/09/2026–30/09/2026 (encoded and unescaped date forms) and official latest-ten JSON endpoint.
+- Web open of the exact date-filtered URL returned inaccessible/internal-error; no BCB HTTP response metadata was exposed. Three direct container urllib attempts failed before HTTP connection with `Temporary failure in name resolution` for api.bcb.gov.br.
+- This is a local retrieval-environment DNS/network block, NOT evidence of an empty BCB response, HTTP failure, or stale live series. No response bytes, headers/status, byte count or SHA-256 captured.
+- Status: official 22707 identity/unit/frequency/API resource discovery PASS; live September date-filter query BLOCKED_BY_NETWORK_DNS; latest-ten live query BLOCKED_BY_NETWORK_DNS; exact primary September value NOT_VERIFIED/NOT_DONE; secondary 6,869m remains SECONDARY_ONLY; official BCB bulletin rounded ~USD 6.9bn remains bulletin-level corroboration only.
+- Report: `docs/IMF_BRAZIL_SGS22707_LIVE_DATE_FILTER_NETWORK_BLOCK_PART30_20261118.md`; commit `6f60f55f645b14c322c3f734996d7410711634d2`.
+- Next: use a normal browser/network with DNS access to fetch the official date-filtered JSON/CSV; archive original bytes, timezone-aware retrieval time, HTTP status/headers, byte count and SHA-256. Do not infer API failure or use secondary value as primary.
+- IMF registration history/PA changelog NOT_DONE/UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil Reconstruction INCOMPLETE/BLOCKED. PR #39 remains research-only, open/draft/unmerged. No production changes, merge, paid APIs, synthetic data, guessed timestamps, or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
