@@ -469,3 +469,41 @@ The ZIP gate reports archive integrity only. It must not label a series match, r
 - BCB BPM6 FAQ / sign convention: https://www.bcb.gov.br/ingles/economic/faqbpm6i.pdf
 - BCB SGS 22905 metadata: https://opendata.bcb.gov.br/dataset/22905-portfolio-investment---monthly---net
 - BCB SGS 22906 metadata: https://opendata.bcb.gov.br/dataset/22906-portfolio-investment---net-acquisition-of-financial-assets---monthly---net
+
+
+
+## Part-6B — Three-way source evidence from the BCB monthly workbook (2026-11-18)
+
+### Captured official archive — Run #11
+- GitHub Actions Run #44280075026 / run number 11 completed SUCCESS on branch `research/global-capital-rotation-overlay-v1`, head `f1e6dcd1cde2645572c3482b8ce17dd5f32fe111`. Artifact #14417185373; size 7,738,415 bytes; ZIP digest `c2bbc0a6cc330e36c0eda193a73580ae89f40789c7897b9e09cdb1a3adf50a27`.
+- Official BCB monthly ZIP returned HTTP 200, content type `application/x-zip-compressed`, final URL `https://www.bcb.gov.br/ftp/notaecon/balpaym.zip`, downloaded bytes 2,849,867, SHA-256 `a7e66aad377851d2969dbc07d4555e8f79839282c5355a3ad3af77459cdb2473`.
+- ZIP CRC/inventory PASS: exactly one member `BalPayM.xlsx`, uncompressed 2,915,799 bytes, archive member timestamp 2019-06-19 15:14. This is an embedded file timestamp, not asserted as the formal release date.
+- Workbook SHA-256 `dfe3e2ee268bd29a9b9dda8d6e5ff62bf8e84c1c30c1d01e5aa8b4497903189d`; sheets: `Balance`, `Balance 2`, `Financial gap`. Units label: `US$ million`.
+
+### Actual workbook schema and series mapping inspected
+In `Balance`, row 6 carries year headers (1995–2019); row 7 carries month headers. The `SGS Code` column explicitly identifies:
+- 22905 — `Portfolio investment` (row 220)
+- 22906 — `Net acquisition of financial assets` (row 221)
+- 22924 — `Net incurrence of liabilities` (row 241)
+The monthly archive contains 293 months per series, January 1995–May 2019. The archive itself satisfies 22905 = 22906 - 22924 for all 293 common months within 0.051 million USD tolerance (0 mismatches).
+
+### Three-source comparisons (tolerance 0.051 million USD)
+The workbook archive was parsed independently from its actual XLSX rows and compared with the archived SGS JSON and IMF-SDMX XML:
+| SGS series | Archive vs current SGS | Archive vs IMF-SDMX |
+|---|---:|---:|
+| 22905 / BFP | 245/293 match; 48 mismatch | 180/293 match; 113 mismatch |
+| 22906 / BFPA | 291/293 match; 2 mismatch | 180/293 match; 113 mismatch |
+| 22924 / BFPL | 245/293 match; 48 mismatch | 180/293 match; 113 mismatch |
+
+- All archive-vs-IMF mismatches begin at 2010-01; the 180 months 1995-01–2009-12 match within tolerance. The monthly workbook's 2010-01 values exactly reproduce the earlier observed BCB SGS values to displayed precision: net `-4441.66992884`, assets `332.07298376`, liabilities `4773.74291260` million USD. The IMF-SDMX values for the same period are net `88.38340538`, assets `1194.68277602`, liabilities `0.00736122` million USD.
+- Archive-vs-current-SGS differences first appear in 2015-04 for net/liabilities; assets first differ in 2019-04. The current SGS API therefore is not byte-for-byte/equal-value identical to this older workbook vintage for all periods. Do not assume the 2019 member timestamp is the exact revision vintage or infer why values changed.
+- This three-source evidence confirms the 2010-01 SDMX discrepancy is not explained merely by using the current SGS endpoint instead of the official monthly workbook: the archived workbook independently reproduces the pre-break series but diverges from the SDMX payload from 2010-01. Cause, lineage and revision semantics remain UNKNOWN.
+
+### New independent three-way validator
+Added `qa/audit_brazil_bop6_archive_reconciliation.py` using `openpyxl==3.1.5` pinned in the workflow. It checks the actual workbook sheet/header structure, exact SGS Code-to-row mapping, unique periods, finite numeric values, source coverage, archive-vs-SGS and archive-vs-IMF differences, and archive's own assets-minus-liabilities identity. It records archive/workbook hashes and preserves separate sources. It does not alter, rescale, splice or admit observations.
+- Script commit `70a7818c62f51890094c0c7fa19e6c70bf137601`.
+- Four regression tests commit `b3879e01790fd9888e2755af7dc3fc411d21c5f7`.
+- Workflow integration commit `d3b52f78e71d18d7c9c81ae0c541fa5dd100d691`; new run #12 `44280444665` was in progress at the time of this audit note. Its test and reconciliation result must be inspected before calling runtime acceptance PASS.
+
+### Admission and next action
+No source substitution or stitching. The archive's internal arithmetic is a source-specific check; it does not establish whether the BFP total has a contractual balance definition or which source is authoritative after 2010. Brazil portfolio panel, global EM aggregate and trading signal remain NOT_AUTHORIZED. Next: complete Run #12; inspect its three-way JSON and hashes; then obtain official BCB/IMF lineage/revision clarification for the 2010 break and the 2015/2019 archive-vs-current-SGS revisions. Preserve source vintage separately.
