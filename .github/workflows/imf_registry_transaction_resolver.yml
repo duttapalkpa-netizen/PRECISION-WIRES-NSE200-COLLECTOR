@@ -1,0 +1,32 @@
+name: IMF RSS Transaction Detail Resolver (Archived 33-Item Window)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  resolve-transactions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve only archived IMF RSS transaction links
+        run: python scripts/research/imf_registry_transaction_resolver.py
+
+      - name: Upload raw transaction XML and machine-readable findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-registry-transaction-resolution-${{ github.run_id }}
+          path: imf_transaction_evidence/
+          if-no-files-found: warn
+          retention-days: 90
