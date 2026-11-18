@@ -507,3 +507,39 @@ Added `qa/audit_brazil_bop6_archive_reconciliation.py` using `openpyxl==3.1.5` p
 
 ### Admission and next action
 No source substitution or stitching. The archive's internal arithmetic is a source-specific check; it does not establish whether the BFP total has a contractual balance definition or which source is authoritative after 2010. Brazil portfolio panel, global EM aggregate and trading signal remain NOT_AUTHORIZED. Next: complete Run #12; inspect its three-way JSON and hashes; then obtain official BCB/IMF lineage/revision clarification for the 2010 break and the 2015/2019 archive-vs-current-SGS revisions. Preserve source vintage separately.
+
+
+
+## Part-6 runtime closeout and Part-7 component-level integrity investigation (2026-11-18)
+
+### Part-6 runtime acceptance
+GitHub Actions Run #44280444665 / run number 12 completed SUCCESS; head `d3b52f78e71d18d7c9c81ae0c541fa5dd100d691`. Steps 1–20 completed, including new archive reconciliation. Artifact #14416134135, 7,741,512 bytes, SHA-256 `85820e487a4313d89ced5aad88d1f18fe4e122b35fe609a210349a78b84e37b7`.
+- Three-way report: `evidence/brazil_bop/bpm6_monthly_archive/three_way_reconciliation.json`; SHA-256 `093bf56e463fd5392b4f76729ecbe7c4703600a0d2f0251d39e3690701068cc7`.
+- Official BCB monthly ZIP SHA `a7e66aad377851d2969dbc07d4555e8f79839282c5355a3ad3af77459cdb2473`; workbook SHA `dfe3e2ee268bd29a9b9dda8d6e5ff62bf8e84c1c30c1d01e5aa8b4497903189d`.
+- ZIP integrity, four archive tests, and three-way diagnostic step all completed successfully. Diagnostic PASS means execution/integrity; cross-source comparisons themselves retain their mismatch counts.
+
+### Part-7 — component-level series integrity
+Manual independent parse of the actual BCB workbook and IMF XML examined all nine portfolio series:
+- Aggregates: SGS 22905/BFP, 22906/BFPA, 22924/BFPL.
+- Assets children: 22909/BFPAEEO (Equity – assets), 22912/BFPAEIS (Investment fund shares – assets), 22915/BFPAD (Debt securities).
+- Liabilities children: 22927/BFPLEEO (Equity – liabilities), 22936/BFPLEIS (Investment fund shares – liabilities), 22939/BFPLD (Debt securities).
+
+BCB monthly workbook hierarchy roll-ups all PASS within 0.051 million USD for 293 months (1995-01–2019-05): assets parent equals its three components; liabilities parent equals its three components; net equals assets minus liabilities.
+
+The nine archive-to-IMF series comparisons each show 180/293 matches for 1995-01–2009-12 and 113/293 mismatches for 2010-01–2019-05. This indicates the post-2010 divergence affects the detailed component series as well as their parent totals; it is not isolated to only BFP total.
+
+The IMF-SDMX's own hierarchy also fails its component roll-up checks for 201/381 months from 2010-01–2026-09:
+- Financial-account portfolio assets parent BFPA vs BFPAEEO + BFPAEIS + BFPAD: 180 matches, 201 mismatches.
+- Portfolio liabilities parent BFPL vs BFPLEEO + BFPLEIS + BFPLD: 180 matches, 201 mismatches.
+Pre-2010 180 periods match within tolerance for both roll-ups. The BCB historical workbook itself has zero parent-child mismatches in all 293 periods.
+
+These are observed reconciliation facts, not proof of an IMF source error or a specific data-lineage cause. The exact reason remains UNKNOWN. Preserve raw source values and do not map, shift, substitute or splice series based on observed numerical coincidences.
+
+### New independent component audit implementation
+- Added `qa/audit_brazil_bop6_portfolio_components.py` for all nine portfolio series, comparing BCB monthly archive, current SGS and BCB-published IMF-SDMX. It independently checks assets, liabilities and net parent-child identities for each source, records all mismatch periods and keeps sources separate.
+- Added three tests: component roll-up pass, component roll-up fail, and pre/post-2010 divergence detection.
+- Script commit `881425f4c7706051f7de0c8a55c34c891fa37105`; tests commit `e94e48acc46f73a4cdb7108081ddcd276dfb9c88`.
+- Workflow now captures all nine SGS series and runs the new component audit; commits `b0dbd5f33fcc2e1a2815ed765aaab09adde21123`, `d5797a4842d0200a726e84d6a75e09e703d5ed34`, `bf423222d7624f9eec20044dee93996ca5906a2e`. Run #13 `44280922280` and Run #14 `44280941633` were in progress at this note; inspect the latest run and artifact before runtime acceptance.
+
+### Guardrail / next decision
+No production selector, ranking, CORE-672 or Engines A–E changes. Brazil flow panel, Global EM aggregate and trading signal remain NOT_AUTHORIZED. Next: complete the nine-series runtime audit; inspect exact per-series diffs and SGS API metadata; then pursue BCB/IMF official revision/lineage documentation for the 2010-01 break and current-SGS revisions. Do not promote any series until both value reconciliation and quality/status metadata are accepted.
