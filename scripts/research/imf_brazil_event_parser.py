@@ -58,8 +58,15 @@ def inspect_bytes(raw: bytes) -> dict:
                 "root": lname(root.tag), "root_namespace": namespace(root.tag),
                 "reasons": ["unexpected_root_or_registryinterface_namespace"]}
 
+    # SDMXMessage.xsd requires exactly one Header as the first RegistryInterface child.
+    root_children = list(root)
+    headers = [child for child in root_children if namespace(child.tag) == RI_NS and lname(child.tag) == "Header"]
+    if len(headers) != 1 or not root_children or root_children[0] is not headers[0]:
+        return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
+                "reasons": ["expected_exactly_one_first_direct_message_Header"]}
+
     # The SDMX 2.1 RegistryInterface payload is a direct child of the root.
-    payloads = [child for child in list(root) if namespace(child.tag) == RI_NS and
+    payloads = [child for child in root_children if namespace(child.tag) == RI_NS and
                 lname(child.tag) in ("SubmitRegistrationsRequest", "SubmitStructureRequest")]
     if len(payloads) != 1:
         return {**base, "classification": "QUARANTINE", "acceptance": "FAIL",
