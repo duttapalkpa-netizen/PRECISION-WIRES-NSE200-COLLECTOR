@@ -592,3 +592,13 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Added `qa/audit_imf_bop6_registration_alignment.py` and three tests; commits e0515734c684defcd1d6b9c8b95710de0234d59f / ceac9031df02e851ec117a904e4edf5f3a9ffdf2. Workflow now captures registrations page, BOP6 dataflow/constraint, and compares to BOP_BPM6 metadata plus BCB payload namespace; commits 78b8bb9a5fd3b45093359af05e9fb1bd6a2bac64, 9b36aafd60cafafd6f3cab9a844c82e4e2631f8e, bd6a40540c4e24d6ca954241e125c5fa09973df7.
 - Runs #18 (44281693103) and #19 (44281713846) precede final step integration. Await Run #20 to verify the registration alignment report and artifact.
 - 2010-01 divergence remains BLOCKED/UNKNOWN; all flow admission remains NOT_AUTHORIZED.
+
+
+
+## 2026-11-18 — Chapter 35 Part-8B: Constraint coverage blocker
+- IMF raw registration HTML is client-rendered; downloaded page contains empty table body. Run #20 failed only because parser expected static rows. Not an IMF outage. Versioned official rendered-page snapshot saved at `config/imf_bop6_registration_snapshot_20261118.json`, commit 049b0b66d8736cc87d1ae60be7216d7c6387a2b0.
+- Both live IMF Dataflows BOP6 and BOP_BPM6 reference ECOFIN_DSD 1.0. Their constraints differ: BOP6_CONSTRAINT allowed 4,313 indicators and covers 234/237 observed BCB codes (missing BMSOBL_USD, BSOBL_USD, BXSOBL_USD); BOP_BP6_CONSTRAINT allowed 98 and covers only 27/237 (210 observed codes outside constraint).
+- Actual BCB XML uses BOP_BPM6; IMF registration catalogue lists BOP6 / provider BR1 / same BCB URL / updated 2026-10-26. Same DSD does not prove Dataflow alias. Constraint mismatch is a P0 metadata alignment blocker; no observations are rejected or admitted solely from this yet.
+- Corrected alignment audit to read snapshot, parse both constraints and compare code coverage; script commit 29221dee9993a6d9042eb9c0d64aeafc68c3d485, tests commit b172e716d589d8fbb1576aa8b8e291b82910d077, workflow snapshot invocation commit 27e26095b482f24e65bafca69cca9d870922fffd.
+- Run #20 ID 44281736564 FAIL at obsolete HTML parser; artifact #14417810859 preserves evidence. Run #21 was before final workflow invocation commit; Run #22 is acceptance run.
+- Do not replace BOP_BPM6 constraint with BOP6 constraint without proving registration semantics. All flow admission remains NOT_AUTHORIZED.
