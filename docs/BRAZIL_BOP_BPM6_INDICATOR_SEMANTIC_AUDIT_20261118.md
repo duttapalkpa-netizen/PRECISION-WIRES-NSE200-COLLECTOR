@@ -639,3 +639,24 @@ The raw Dataflow metadata titles/descriptions show these are distinct collection
 - `IMF:BOP_BPM6:1.0` — “Balance of Payments -- BPM6”. It also references `IMF:ECOFIN_DSD:1.0`; its `BOP_BP6_CONSTRAINT` contains 98 allowed INDICATOR codes and covers 27/237 observed BCB payload codes.
 
 The IMF registration row for BCB uses the collection Dataflow BOP6, whereas the BCB XML header uses the narrower BOP_BPM6 Dataflow. This is stronger evidence of a registration/payload scope mismatch than an alias. It may indicate the BCB payload is being labelled with the wrong Dataflow, or that the collection registration and payload reference have distinct intended roles. Neither interpretation is yet proven. Do not switch constraints or rewrite the payload reference until official source semantics and BCB provider metadata establish the intended contract.
+
+
+
+## Part-8 runtime closeout — BOP6 registration/constraint coverage audit (2026-11-18)
+
+GitHub Actions Run #44282235752 / run number 23 completed SUCCESS; head `27e26095b482f24e65bafca69cca9d870922fffd`. All 22 substantive steps completed, including the corrected registration/constraint audit. Artifact #14416443972, 7,835,957 bytes, SHA-256 `53d377849e2bf6cdb7db384443076dd091658c04d02468d7a37a088ab66d55d0`.
+
+The registration alignment report `evidence/brazil_bop/bop6_registration_alignment.json` has SHA-256 `e994a95813dc302091cfff286505a80b0db1bbf413ef13c596d07d8d5bf2b58f`. It confirms:
+- IMF registration snapshot: `IMF:BOP6(1.0)`, provider `IMF:BR1`, same BCB URL, last updated 2026-10-26T11:47:29Z.
+- BCB payload header: `IMF:BOP_BPM6(1.0)`; 237 observed indicator codes.
+- Both Dataflows reference `IMF:ECOFIN_DSD:1.0`.
+- BOP6 Dataflow description: “Balance of Payments (BPM6) for Collection”; BOP_BPM6: “Balance of Payments -- BPM6”.
+- BOP6_CONSTRAINT: 4,313 allowed indicators; 234/237 observed codes covered; missing `BMSOBL_USD`, `BSOBL_USD`, `BXSOBL_USD`.
+- BOP_BP6_CONSTRAINT: 98 allowed indicators; only 27/237 observed codes covered; 210 outside its allowed list.
+
+This is now a reproducible P0 registration/payload/constraint alignment blocker. The registry identifies a collection Dataflow; the payload declares the narrower BPM6 Dataflow. The broader collection constraint fits the payload's observed code universe far better, but this is not sufficient evidence to substitute constraints or rewrite the payload Dataflow. Alias/registration contract semantics remain UNKNOWN.
+
+Permanent machine-readable summary: `docs/BRAZIL_BOP6_REGISTRATION_ALIGNMENT_AUDIT_20261118.json`, commit `ae7e7f41e7631640e222705b669670d579dbb2c0`. Run #20's static-HTML parser failure is superseded by Run #23's snapshot-based successful audit; the original failed artifact is retained as a troubleshooting record.
+
+### Next exact action
+Obtain the authoritative IMF SDMX Central registration/provision-agreement semantics for why the BCB provider is registered to BOP6 while its payload declares BOP_BPM6, and establish which constraint is contractually applicable. Until then, keep both constraints and their coverage reports, quarantine the three BOP6-uncovered codes, and do not admit the 210 BOP_BPM6-constraint-excluded observed codes. This is a metadata gate independent of the unresolved 2010+ numerical divergence.
