@@ -1,72 +1,90 @@
 # IMF SDMX Central RSS + Brazil XML Retrieval — Part 2
 Audit date: 2026-11-18 (Asia/Kolkata)
 Continuation: গবেষণা যাচাই অব্যাহত 36
-Scope: isolated GitHub Actions retrieval workflow prepared; execution/result verification pending.
+Scope: official raw retrieval, feed parsing, Brazil payload retrieval and workflow hardening.
 
-## 1. Prior evidence reused
-Part 1: `docs/IMF_SDMXCENTRAL_RSS_REGISTRATION_AUDIT_PART1_20261118.md`
-Part 1 report commit: `80c93853f0abf90e985d6b54cb6be893cd9963e8`
-Part 1 master-ledger update: `7ebf107aa973d5a8e5158a951925297f90c16798`
+## 1. Prior evidence reused — no unnecessary re-acquisition
+- Part-1 source discovery: `docs/IMF_SDMXCENTRAL_RSS_REGISTRATION_AUDIT_PART1_20261118.md`, commit `80c93853f0abf90e985d6b54cb6be893cd9963e8`.
+- Earlier Brazil payload/contract reconciliation was already completed in workflow run `44290101769`, artifact `14420378420`, artifact digest `sha256:6435b5df856889ae1a48742681f0b127b04e1a4057c361b054c329a5049fc8aa`. Its report proves the exact BCB header Dataflow is `IMF:BOP_BPM6(1.0)`, while the registration snapshot says `IMF:BOP6(1.0)`; these are distinct Dataflow identities even though they reference the same DSD `ECOFIN_DSD`. Do not call them aliases.
+- Existing reconciliation reported 237 series, 89,097 observations, 1995-01 through 2026-09; BOP6 constraint accepted 234/237 payload indicators (98.7342%), while BOP_BPM6 constraint accepted 27/237 (11.3924%). This is strong evidence of a registration/payload contract mismatch, not a harmless filename difference. No new observation panel is claimed.
 
-Preserved facts:
-- Official RSS endpoint: https://sdmxcentral.imf.org/rss.xml
-- Official IMF registration listing previously showed Brazil row IMF:BOP6(1.0), provider IMF:BR1, registered BCB XML URL and Last Updated 2026-10-26T11:47:29.000Z.
-- Prior screenshot records BCB header/Dataflow mismatch CONFIRMED.
-- RSS retrieval and raw XML validation were NOT_RETRIEVED / NOT_DONE. No PASS inherited.
-
-## 2. New isolated workflow
-Created:
+## 2. Raw retrieval — actual successful GitHub Actions evidence
+Dedicated workflow:
 `.github/workflows/imf_sdmx_rss_registration_audit.yml`
 
-Commit: `2e5361d2ef46d4ae7b052f0846c8c5e78fe7d430`
-Blob SHA: `82c35eec26a2fd93797c7325553cb727fef04c29`
-Verified by fetching the committed file back from GitHub. It contains:
-- workflow_dispatch trigger and a narrowly scoped push trigger on this workflow file;
-- contents:read permission only;
-- one ubuntu-latest job with timeout-minutes: 8;
-- standard-library urllib retrieval of IMF RSS and the registered BCB XML;
-- response final URL, HTTP status, Content-Type, retrieval timestamp, byte count and SHA-256 capture;
-- raw XML preservation when a body is received;
-- XML parsing and extraction of RSS item fields and BCB DataflowRef / ProviderRef elements;
-- machine-readable summary.json;
-- upload of evidence as a 90-day GitHub Actions artifact, including failed retrieval diagnostics.
+The first dedicated run completed successfully:
+- Run ID: `44301482210`, run #1, conclusion SUCCESS.
+- URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44301482210
+- Artifact ID: `14426565546`
+- Artifact SHA-256 digest: `0a35ddb0f83ae2c14f5ce2a60dc365f5324e56de55a3442227b8a74e786a132f`
+- Artifact size: 834,648 bytes.
 
-## 3. Execution status — do not overclaim
-The workflow definition was committed and fetched back successfully.
-The GitHub workflow-run listing could not be read through the available read interface in this audit. Therefore:
-- workflow execution: NOT_VERIFIED;
-- run ID: NOT_AVAILABLE;
-- RSS retrieval: NOT_RETRIEVED_PENDING_RUN;
-- BCB XML retrieval: NOT_RETRIEVED_PENDING_RUN;
-- raw XML hashes: NOT_AVAILABLE;
-- artifact ID: NOT_AVAILABLE;
-- XML validation: UNKNOWN.
-A committed workflow is not a successful workflow run. Do not mark retrieval PASS until a completed run and artifact are inspected.
+Two subsequent duplicate runs also completed SUCCESS after trigger refinements:
+- Run `44301625778`, artifact `14426296464`, digest `64bdb245a0d6242969615b7f86ba1fea3ea9f1605f721bdd65a396a0134bd66c`.
+- Run `44301659461`, artifact `14425444941`, digest `036e81dd4e7c36ea2d653a05cc8dad4826b27b8fc98e9182d146f8a022422b02`.
+These are duplicate transport checks, not independent economic observations. Preserve all run IDs/artifacts; do not repeat the fetch without a new requirement.
 
-## 4. Known transport limitation
-Direct browser retrieval of the RSS endpoint failed in this research interface with an internal/access error. Direct browser opening of the BCB XML failed because the browser interface does not support text/xml. These are limitations of the browser retrieval interface, not proof that either official endpoint is down. The isolated GitHub Actions runner is intended to perform the raw HTTP request.
+### Run #1 raw evidence
+- IMF RSS: HTTP 200; Content-Type `application/xml`; final URL unchanged; retrieved `2026-11-18T12:11:06.691171+00:00`; 30,110 bytes; SHA-256 `8dcad0ed2f284ad6a3326a031ab81d6a311aa94cb1ab44eb4ad65fa36e3e69a2`.
+- RSS parser: PASS; 33 feed items. Latest item is Transaction #38646, pubDate `Wed, 18 Nov 2026 12:01:46 GMT`; feed includes transaction IDs #38646 down to #38614 in the captured response.
+- Brazil BCB XML: HTTP 200; Content-Type `text/xml`; retrieved `2026-11-18T12:11:07.589328+00:00`; 4,840,062 bytes; SHA-256 `3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c`.
+- BCB XML well-formed parse: PASS; root `StructureSpecificData`.
+- Independent local recomputation over downloaded artifact bytes matched the recorded raw-file SHA-256 values.
+- Run #1 artifact was downloaded and inspected. It contains `imf_rss.xml`, `bcb_bop_bpm6.xml`, and `summary.json`.
 
-## 5. Acceptance matrix
+## 3. RSS event limitation
+The 33 RSS entries are real feed transaction notifications with links such as:
+`https://sdmxcentral.imf.org/ws/registry/tx/transactions?txId=38646`.
+The transaction detail URLs could not be retrieved through the browser interface. No linked RegistryInterface payload was archived or parsed in this part. Thus:
+- RSS transport and feed XML parse: PASS.
+- RSS transaction event details / Brazil-specific historical registration reconstruction: UNKNOWN / NOT_DONE.
+- Do not infer that the latest transaction IDs refer to Brazil.
+
+## 4. BCB header / registry mismatch — independently established earlier
+The current raw BCB payload root attributes include a schemaLocation identifying:
+`IMF:BOP_BPM6(1.0)`
+and the dataflow schema URL:
+`.../schema/dataflow/IMF/BOP_BPM6/1.0?format=sdmx-2.1`.
+The earlier run `44290101769` performed the full authoritative contract reconciliation:
+- Registry snapshot: `IMF:BOP6(1.0)`, provider `IMF:BR1`.
+- BCB payload Header/Structure namespace: `IMF:BOP_BPM6(1.0)`.
+- Both Dataflows reference `IMF:ECOFIN_DSD(1.0)`, but shared DSD does not make their Dataflow IDs equivalent.
+- Constraint compatibility: BOP6 98.7342%; BOP_BPM6 11.3924%.
+Decision: mismatch CONFIRMED; keep Brazil registration/dataflow admission BLOCKED pending IMF-side registration correction or formally authoritative explanation. Do not rewrite the payload ID or registry row.
+
+The first new workflow's generic element scanner returned an empty list for Header reference elements because the BCB file expresses the Dataflow in the root schemaLocation/Structure namespace rather than a literal `DataflowRef` element. This is a parser coverage limitation, not evidence of absent Dataflow. Workflow parser was corrected in commit `0e4fd08428f0fcaf2ae34b2e48a0ceac58e36b00` to extract Dataflow from schemaLocation and Structure/structureRef attributes. That corrected parser has NOT yet been rerun; the prior contract reconciliation remains the accepted evidence.
+
+## 5. Workflow trigger incident and corrective guard
+- Initial workflow commit `2e5361d2ef46d4ae7b052f0846c8c5e78fe7d430` unintentionally also triggered the broad NSE collector workflow, run #169 / ID `44301482238`, because the existing `nse_collector.yml` push paths-ignore list did not exclude the new IMF workflow file.
+- Run #169 was observed in progress at step “Acquire 200 NSE market sessions”. This audit connector has no Actions cancel write operation. Owner should cancel it in GitHub Actions if it is still running: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44301482238
+- Corrective guard commit `00bbdf1f00d3d8ec633df4ca85f004a03c1e20fa` added the IMF workflow path to the main collector's paths-ignore.
+- Further guard commit `e75a1326647c8e256bde8fec2b8fba5035f5edc0` added `scripts/research/imf_audit_trigger.txt` to paths-ignore.
+- Trigger marker commit `a13e30b8414beab8c5a3c9c62769d6550f17f653` started the isolated workflow after its definition existed.
+- IMF workflow was then made manual-only (workflow_dispatch) and parser hardened in commit `0e4fd08428f0fcaf2ae34b2e48a0ceac58e36b00`. Future runs should be deliberately dispatched, avoiding duplicate automatic retrievals.
+
+## 6. Current acceptance matrix
 | Check | Status |
 |---|---|
-| Part 1 evidence reused | PASS |
-| Isolated workflow definition committed | PASS |
-| Workflow file fetched back / blob verified | PASS |
-| Workflow run ID and status independently verified | NOT_VERIFIED |
-| IMF RSS raw response + SHA-256 | NOT_DONE |
-| BCB XML raw response + SHA-256 | NOT_DONE |
-| RSS parse and event extraction | UNKNOWN |
-| BCB DataflowRef / ProviderRef validation | UNKNOWN |
-| Historical Brazil registration event reconstructed | UNKNOWN |
-| EM flow / trading admission | NOT_AUTHORIZED |
+| Official IMF RSS raw HTTP 200 | PASS |
+| RSS raw bytes archived + SHA-256 | PASS |
+| RSS XML parse and 33 items extracted | PASS |
+| BCB raw XML HTTP 200 | PASS |
+| BCB raw bytes archived + SHA-256 | PASS |
+| BCB XML well-formed parse | PASS |
+| Exact BCB Dataflow vs registry mismatch | PASS — CONFIRMED by prior contract audit |
+| Full BCB header scanner in new workflow | PARTIAL — parser fix committed, not rerun |
+| RSS transaction detail / RegistryInterface payload | UNKNOWN / NOT_DONE |
+| Brazil historical registration event reconstruction | UNKNOWN / NOT_DONE |
+| Brazil BOP registration admission | BLOCKED — mismatch confirmed |
+| EM aggregation / trading admission | NOT_AUTHORIZED |
 
-## 6. Next action after execution
-1. Inspect the workflow run triggered by commit `2e5361d2ef46d4ae7b052f0846c8c5e78fe7d430`.
-2. If the push trigger did not fire, ask the repository owner to use the workflow's workflow_dispatch control; this audit connector has no workflow-dispatch write operation.
-3. Inspect the artifact summary and raw files; independently recompute SHA-256 from downloaded bytes.
-4. If RSS returns valid XML, inspect actual items and follow only an actual registration event link; never fabricate an event.
-5. Validate BCB XML references against IMF registry dataflow/provider identifiers. Preserve exact values and namespaces.
-6. If the job fails, keep diagnostics and make only a minimal isolated fix; do not run the 60-minute NSE collector workflow.
+## 7. Next highest-value action
+Do not repeat raw RSS/BCB download. Next work should be a small read-only registry transaction-detail resolver:
+1. Use captured RSS links/transaction IDs and retrieve transaction XML via GitHub runner.
+2. Parse RegistryInterface SubmitRegistrationRequest records, identify whether any event references IMF:BR1 or the BCB registered URL.
+3. If none in the 33-item window, record that bounded window as “no Brazil event found”; do not claim no historical event exists.
+4. Reconcile event Dataflow and URL against the registry snapshot and prior mismatch report.
+5. Keep runtime under 8 minutes; no NSE collector run.
 
-## 7. Protected invariants
-Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 × 12) and Engines A–E remain unchanged. No PR merge, production integration, paid API, synthetic data, guessed timestamp, guessed XML identifier, or trading admission.
+## 8. Protected invariants
+Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56 × 12), Engines A–E unchanged. No PR merge, production integration, paid API, synthetic data, guessed timestamp, guessed identifier or trading admission. UNKNOWN is not PASS.
