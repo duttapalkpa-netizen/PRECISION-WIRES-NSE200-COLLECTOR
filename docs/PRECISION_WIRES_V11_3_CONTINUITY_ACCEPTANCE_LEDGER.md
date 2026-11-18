@@ -1370,3 +1370,18 @@ Latest branch head at ledger update: `35e563c46fa5c1e13889ab7beae5e805fdcdbc76`.
 - Brazil pilot NOT_ACCEPTED; SGS 22942 reconciliation BLOCKED; production integration NOT_AUTHORIZED. No production logic changed.
 - Next action only if new official series-specific documentation or immutable vintage evidence becomes available; do not repeat generic BOP source review, securities-position lineage review, 15-series live/archive equality audit, six accounting identities, or revision-policy applicability audit.
 - Invariants preserved: ₹0; official/free sources only; no synthetic values, fabricated timestamps, guessed mappings, raw overwrite; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and Hard Gate unchanged.
+
+
+## Chapter 38 — BCB SGS Prospective Vintage Second Capture & Two-Vintage Comparator Validation (2026-11-18)
+- Found operational gap: configured push trigger file `docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt` was absent. Created it in commit `f36a5b4e0e423170b1ae1f7dd9bb1989c4f2e83d`.
+- Capture Run #2 ID `44239680043`: SUCCESS. Snapshot `20261118T044659Z`, captured `2026-11-18T04:46:59.635249Z`; manifest SHA-256 `0e72d5c572ca1a86cd4a4be3fbf3d2b415d0376ef4df3994a7f06beda54ef1c3`. Artifact ID `14399231070`, digest `93e8e2663bc80df97e43a986b7fa142fb89cc59f39ff624bcef9715f38d7f228`.
+- Four official BCData SGS CSVs HTTP 200; strict validation PASS; 381 rows each (1995-01 through 2026-09); raw CSV hashes match first snapshot byte-for-byte.
+- Detected workflow chaining nuance: snapshot commit by GITHUB_TOKEN did not automatically trigger comparator. Explicitly touched comparator workflow in commit `3eb60ad0706f0beecc196151ca786e27fc398195`, then Comparator Run #2 ID `44239773135` SUCCESS.
+- Diff QA `data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_20261118T044659Z.json`, blob SHA `316eca24f81f93d7e1fbdeaec21a29ff8a091e1a`; artifact ID `14399146898`, SHA-256 `16b924beb56dd026a417514a65c216ce7e33c137496924a6365d99572fe4d1a3`.
+- Two actual snapshots compared: 2026-11-17T13:29:39.897799Z vs 2026-11-18T04:46:59.635249Z. 1,524/1,524 observations unchanged across SGS 22924, 22930, 22936, 22942; changed=0, added=0, removed=0. Per-series raw SHA-256s unchanged.
+- This proves zero change only between the two capture times; the short ~15-hour interval is not a monthly revision-monitoring window. SGS 22942 February-2026 remains current-response USD 2,783.2m; original March-2026 publication vintage and cause remain UNKNOWN / NOT_PROVEN.
+- Updated snapshot contract JSON: `data/qa/BRAZIL_BCB_SGS_PROSPECTIVE_VINTAGE_SNAPSHOT_CONTRACT_20261117.json`; latest verified snapshot and two-vintage result recorded. Detailed report: `docs/BCB_SGS_PROSPECTIVE_VINTAGE_SECOND_CAPTURE_AND_DIFF_AUDIT_20261118.md` (commit feafc07160b130490b2937c3dbb27b780fe3e3f9).
+- Official BCB calendar lists October-2026 external-sector release for 26-Nov-2026 at 11:30 BCB local time (source: https://www.bcb.gov.br/acessoinformacao/calendariobc?agenda=Estat%C3%ADsticas+do+setor+externo). Next meaningful snapshot is after that release is available.
+- Capture→diff chain is NOT fully automatic: capture trigger is research-branch push; after the GITHUB_TOKEN snapshot commit, comparator requires an explicit workflow-file push. Do not claim unattended or automatic chaining.
+- Brazil pilot NOT_ACCEPTED; original vintage reconciliation BLOCKED; production integration NOT_AUTHORIZED. No production logic changed.
+- Invariants preserved: ₹0, official/free data only, no synthetic observations, invented timestamps, raw overwrite, or production changes; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and Hard Gate unchanged.
