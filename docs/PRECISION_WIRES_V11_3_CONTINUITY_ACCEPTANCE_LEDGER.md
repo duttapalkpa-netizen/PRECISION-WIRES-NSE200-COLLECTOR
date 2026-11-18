@@ -666,3 +666,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Local network DNS resolution failed, preventing a byte-exact schema bundle download and local validator run. Full 58-file archive, raw-byte SHA-256 manifest, complete dependency closure and formal XSD validation remain NOT_DONE. This is not replaced by Git tree blob SHAs.
 - PR #39 remains research-only, open/draft/unmerged. Brazil event chronology UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM BLOCKED.
 - No production changes, merge, workflow dispatch, paid API, market-data modification, macro weights or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-22: fixture repair and verified parser CI PASS
+- Run #19 logs retrieved (job 134885419360). Root cause: test helper malformed RegistryInterface XML by adding an extra '<' before an already complete body; fixtures also failed to model message-vs-registry namespace split. Run #19: 3 failures, 2 errors.
+- Fixture repair commit `b83eab54be1cb73dd0a227e05cedb50cb8e3587c` fixed body wrapper and namespace declarations. Run #20 isolated one remaining incorrect expected classification in the deliberate wrong-namespace negative control.
+- Follow-up commit `36653b0e1ebd718693a79b07da5f9f665e2a8ae1` restored the correct QUARANTINE expectation for wrong-namespace children.
+- Final GitHub Actions Run #21 `44329119370` completed SUCCESS. Job `parser-qa` success; exact command `python -m unittest discover -s tests -p 'test_imf_brazil_event_parser.py' -v`; log reports 16 tests, 0 failures, 0 errors, `OK`. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44329119370.
+- Final test file blob `16ba53cc872aa99456fe75982269e9dc7b7e7b10` (Git blob SHA, not SHA-256). Report: `docs/IMF_BRAZIL_PARSER_FIXTURE_REPAIR_CI_PASS_PART22_20261118.md`.
+- This PASS applies only to offline parser fixture/unit tests. Formal XSD validation, complete 58-XSD byte archive and SHA-256 manifest remain NOT_DONE. Actual Brazil transaction chronology remains UNKNOWN; BOP6 vs BOP_BPM6 mismatch CONFIRMED/UNRESOLVED; Brazil/EM remains BLOCKED.
+- PR #39 remains open/draft/unmerged. No production changes or trading admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged. UNKNOWN is not PASS.
