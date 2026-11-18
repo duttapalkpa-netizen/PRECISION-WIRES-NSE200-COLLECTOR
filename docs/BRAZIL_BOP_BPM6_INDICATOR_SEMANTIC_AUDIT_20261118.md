@@ -427,3 +427,13 @@ Crucially, BCB SGS itself satisfies `22905 = 22906 - 22924` within one-decimal r
 | Trading signal | NOT_AUTHORIZED |
 
 No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Engines A–E changes.
+
+
+
+### Official BCB methodology context — cause remains unresolved
+BCB's November 2014 Methodological Note No. 1 states that BPM6 external-sector statistics would begin release from April 2015. The official BPM6 historical-series page offers a monthly downloadable series archive. This establishes the timing of BPM6 publication, but it does not explain the observed 2010-01 divergence. Since the break begins before the April 2015 BPM6 release, do not attribute it to the BPM6 transition without source-specific evidence.
+- BCB Methodological Note No. 1 (November 2014): https://www.bcb.gov.br/ingles/economic/nm1bpm6i.pdf
+- BCB BPM6 historical series page (monthly/quarterly/annual downloads): https://www.bcb.gov.br/ingles/economic/seriehist_i_bpm6.asp?frame=1
+- BCB Methodological Note No. 3 (April 2015) describes the new assets/liabilities criterion for direct investment; it is not evidence that the 2010 portfolio-investment divergence was caused by a methodology change: https://www.bcb.gov.br/content/statistics/methodologicalnotes_docs/BPM6/nm3bpm6i.pdf
+
+Next research action: obtain and hash the exact official BCB BPM6 monthly ZIP (or equivalent source archive) and compare its portfolio series to both SGS 22905/22906/22924 and the SDMX XML. Then inspect the IMF dataflow's `DATA_DOMAIN=BOP6`, counterpart area, vintage and series lineage. Keep the sources separate until this three-way reconciliation is complete.
