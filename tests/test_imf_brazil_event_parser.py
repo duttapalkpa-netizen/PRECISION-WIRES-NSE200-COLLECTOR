@@ -28,14 +28,20 @@ class ParserTests(unittest.TestCase):
         self.assertTrue(r["registrations"][0]["bcb_url_exact_match"])
 
     def test_narrative_outside_registration_does_not_match(self):
-        body = (f'<SubmitRegistrationsRequest><Description>{BCB_URL}</Description>'
-                f'{registration().replace("<SubmitRegistrationsRequest>", "").replace("</SubmitRegistrationsRequest>", "")}'
-                f'</SubmitRegistrationsRequest>')
+        inner = registration().replace(f'<SubmitRegistrationsRequest xmlns:r="{REG_NS}">', '', 1).replace('</SubmitRegistrationsRequest>', '', 1)
+        body = f'<SubmitRegistrationsRequest xmlns:r="{REG_NS}"><Description>{BCB_URL}</Description>{inner}</SubmitRegistrationsRequest>'
         self.assertFalse(inspect_bytes(doc(body))["brazil_registration_candidate"])
 
     def test_brazil_pa_text_outside_registration_does_not_match(self):
-        body = f'<SubmitRegistrationsRequest><Annotation>{BRAZIL_PA_URN}</Annotation>{registration().split(">",1)[1].rsplit("</SubmitRegistrationsRequest>",1)[0]}</SubmitRegistrationsRequest>'
+        inner = registration().replace(f'<SubmitRegistrationsRequest xmlns:r="{REG_NS}">', '', 1).replace('</SubmitRegistrationsRequest>', '', 1)
+        body = f'<SubmitRegistrationsRequest xmlns:r="{REG_NS}"><Annotation>{BRAZIL_PA_URN}</Annotation>{inner}</SubmitRegistrationsRequest>'
         self.assertFalse(inspect_bytes(doc(body))["brazil_registration_candidate"])
+
+    def test_message_namespace_children_are_not_mistaken_for_registry_elements(self):
+        body = f'<SubmitRegistrationsRequest><RegistrationRequest action="Replace"><Registration><ProvisionAgreement><Ref>{BRAZIL_PA_URN}</Ref></ProvisionAgreement><Datasource><SimpleDataSource>{BCB_URL}</SimpleDataSource></Datasource></Registration></RegistrationRequest></SubmitRegistrationsRequest>'
+        result = inspect_bytes(doc(body))
+        self.assertEqual(result["classification"], "QUARANTINE")
+        self.assertFalse(result["brazil_registration_candidate"])
 
     def test_action_enum_is_preserved_and_checked(self):
         for action in ("Append", "Replace", "Delete", "Information"):
