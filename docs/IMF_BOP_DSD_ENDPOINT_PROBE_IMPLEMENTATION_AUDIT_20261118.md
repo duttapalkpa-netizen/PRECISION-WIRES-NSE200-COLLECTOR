@@ -32,3 +32,39 @@ The parser confirms DSD version 2.6.0, **18 dimensions (including TIME_PERIOD)**
 
 ## Invariants
 ₹0 spend; official/free sources only; no synthetic values, guessed dimensions, inferred signs/units, or fabricated timestamps. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, Hard Gate and production workflows unchanged. No production integration authorized.
+
+
+## Chapter 34 — Part-2: IMF BOP DSD Semantic & Codelist Audit (2026-11-18)
+
+### Evidence inspected
+- Reused the exact raw XML from final verified artifact `14403372899`; no endpoint probe repeated.
+- Current-route raw XML: 895,438 bytes; SHA-256 `f4df050115748bc0d20f07c47b33bd9bd7157cf6132e9c36a70a6f868bedd075`; HTTP 200; SDMX-ML 2.1; DSD IMF:BOP(2.6.0).
+- Parsed the actual DimensionList, AttributeList and MeasureList and followed every embedded codelist reference. Confirmed 18 dimensions, 15 attributes, one measure, 22 embedded codelists and 4,097 embedded codes.
+- Machine-readable inventory committed at `data/global_capital_rotation/IMF_BOP_DSD_2_6_0_SEMANTIC_INVENTORY_V1.json`; commit `52658916787c1f31ea6d5a58f6541261a5a18e83`.
+
+### Key extraction semantics established from the embedded codelists
+- `INT_ACC_ITEM=FA`: Financial account (IMF:CL_ACCOUNTS_ITEM 1.8.0).
+- `FUNCTIONAL_CAT=P`: Portfolio Investment (IMF:CL_FUNCTIONAL_CAT 1.10.1).
+- `FLOW_STOCK_ENTRY=T`: Transactions (IMF:CL_FSENTRY 1.1), distinct from positions/stocks and other changes.
+- `ACCOUNTING_ENTRY=A`: Assets (Net Acquisition of); `L`: Liabilities (Net Incurrence of) (IMF:CL_ACCOUNT_ENTRY 1.5.0). Keep separate; do not collapse or sign-flip.
+- `INSTR_ASSET=F3`: Debt securities; `F5`: Equity and investment fund shares/units (ESTAT:CL_INSTR_ASSET 1.15.0 referenced by this DSD). Preserve agency and version; do not assume all referenced codelists are IMF-maintained.
+- `UNIT_MEASURE` and `CURRENCY_DENOM` both reference IMF:CL_UNIT 1.19.0; unit and currency-denomination dimensions remain distinct. `UNIT_MULT` and `DECIMALS` are mandatory attributes in the DSD and must be retained.
+- `OBS_STATUS` and `CONF_STATUS` are mandatory attributes; missing/suppressed observations must not be coerced to zero.
+
+### Acceptance matrix
+| Gate | Status |
+|---|---|
+| Exact DSD identity and raw hash | PASS |
+| Dimension-to-codelist reference inventory | PASS |
+| Embedded codelist inventory (22 / 4,097 codes) | PASS |
+| Critical FA / P / T / A / L / F3 / F5 code labels | PASS |
+| Unit, multiplier, decimals and observation-status fields identified | PASS |
+| Exact IMF dissemination dataflow linkage and permitted series key | UNKNOWN / BLOCKED |
+| IMF BOP observation payload and country-period rows | NOT_DONE |
+| Versioned EM membership and aggregate | NOT_DONE |
+
+### Important limitation
+This is a metadata-semantic mapping, not proof that an IMF-owned public dissemination dataflow exposes these exact dimensions/codes or that a particular series is available. The earlier extraction specification explicitly reports the IMF BOP6 registration as a 2023 sample compact URL and no verified current public observation endpoint. Do not query the sample registration as if it were a complete panel, do not substitute ESTAT dataflows, and do not infer a valid data key from the DSD alone.
+
+### Decision and next action
+Part-2 metadata semantic audit: PASS for the captured DSD and embedded codelists. Observation access remains UNKNOWN/BLOCKED; no country rows or EM aggregates created. Next bounded task: qualify the official IMF BOP dataflow-to-DSD linkage and its permitted query dimensions from an official, directly accessible catalogue/constraint response. Stop if authentication is required; no bypass or guessed key. All production invariants remain unchanged.
