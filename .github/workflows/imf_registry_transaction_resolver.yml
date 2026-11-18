@@ -2,6 +2,10 @@ name: IMF RSS Transaction Detail Resolver (Archived 33-Item Window)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/research/imf_transaction_resolver_trigger.txt"
 
 permissions:
   contents: read
