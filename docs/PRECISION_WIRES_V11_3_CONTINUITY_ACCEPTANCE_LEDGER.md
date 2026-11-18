@@ -394,3 +394,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Research module commit `b7099903939542edd82cc8b7d37f6a34b50718c3`; test commit `cc4d397f25e735e9f7b63d2da74b40baff1aaab9`. New CI Run #6 ID `43696697367` (code commit) and Run #7 ID `43696699661` (test commit) were observed QUEUED; #7 is the run containing both changes and must be used for next verification.
 - Historical replay remains NOT_STARTED pending Run #7 PASS and source/input gate. The previously inspected 200-session artifact does not contain circuit/price-band fields; the replay cannot claim circuit-feasible execution without a separately validated restriction source or an explicit limitation. Existing V11.4 signal file semantics must also be confirmed before treating it as an accepted V11.3 signal set.
 - No production selector, ranking, pressure-fade, CORE-672, collector, or historical source artifact modified.
+
+
+## 2026-11-18 — Continuation page 36, Part 1: IMF SDMX Central RSS / registration audit
+- New evidence note: `docs/IMF_SDMXCENTRAL_RSS_REGISTRATION_AUDIT_PART1_20261118.md`.
+- Commit: `80c93853f0abf90e985d6b54cb6be893cd9963e8`; file was fetched back from GitHub after commit and verified present (blob SHA `0e6a2ecda679f84362c66cb8e6956333dbb24b68`).
+- Official IMF SDMX Central User Guide documents RSS endpoint `https://sdmxcentral.imf.org/rss.xml` and transaction semantics: structure/data registration events link to SDMX-ML 2.1 RegistryInterface documents containing SubmitStructureRequest or SubmitRegistrationRequest. Endpoint route/documentation discovery PASS; RSS HTTP retrieval remains NOT_RETRIEVED. No status, response headers, raw bytes, item count, retrieved timestamp or SHA-256 claimed.
+- Official live registration listing `https://sdmxcentral.imf.org/data/registrations.html` displays Brazil row IMF:BOP6(1.0), provider IMF:BR1, BCB XML URL ending `BOP_BPM6.xml`, last updated `2026-10-26T11:47:29.000Z`. This is listing evidence only, not RSS event retrieval or XML validation.
+- Prior screenshot records BCB header/Dataflow mismatch CONFIRMED. Preserve exact identifiers; do not normalize BOP_BPM6 to BOP6. Raw BCB XML DataflowRef and ProviderRef validation remains UNKNOWN / NOT_DONE.
+- Part-1 defined source-discovery and registration cross-check scope complete; RSS raw retrieval, XML parse, event reconstruction, BCB XML hash/validation remain NOT_DONE / UNKNOWN. Brazil flow, Global EM and Trading admission remain NOT_AUTHORIZED.
+- Next bounded action: short CI retrieval of RSS with status/final URL/content-type/retrieved_at_utc/byte count/SHA-256; parse only valid RSS; follow actual Brazil event link if present; separately fetch BCB XML and compare exact Header refs with IMF registry. Keep job <10 minutes.
+- No production changes, no PR merge, no synthetic data, no paid API, no changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Engines A-E. UNKNOWN is not PASS.
