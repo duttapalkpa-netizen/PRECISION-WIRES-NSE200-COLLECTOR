@@ -371,3 +371,59 @@ A separate diagnostic compared `BFP_BP6_USD` against `BFPA_BP6_USD - BFPL_BP6_US
 | Trading signal | NOT_AUTHORIZED |
 
 No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Engines A–E changes. No synthetic values or paid APIs.
+
+
+
+## 11. Chapter 35 Part-5 — independent BCB SGS cross-source validation (2026-11-18)
+
+### Runtime result
+GitHub Actions Run #44278280236 (run number 10) completed SUCCESS on branch `research/global-capital-rotation-overlay-v1`, head SHA `40765b42efce31255c35abe1e3ade3a91246eccd`. All 18 substantive steps completed successfully, including the combined Brazil unit-test suite, IMF/BOP metadata and BCB payload acquisition, 237-code crosswalk, portfolio reconciliation diagnostic, BCB SGS reference-series capture, cross-source comparison and evidence upload. Run URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44278280236.
+Artifact #14415646956, size 4,884,893 bytes, GitHub digest and independently downloaded ZIP SHA-256 both `e0cc555c3d85348ab430fcd2c1c2c92750be99219aec5d4b23ede0b3c382bae3`.
+
+### Official BCB SGS reference series captured
+The BCB Open Data Portal identifies these BCB/Depec monthly series, all in million US dollars:
+- SGS 22905 — Portfolio investment, monthly, net: https://opendata.bcb.gov.br/dataset/22905-portfolio-investment---monthly---net
+- SGS 22906 — Portfolio investment, net acquisition of financial assets: https://opendata.bcb.gov.br/dataset/22906-portfolio-investment---net-acquisition-of-financial-assets---monthly---net
+- SGS 22924 — Portfolio investment, net incurrence of liabilities: https://opendata.bcb.gov.br/dataset/22924-portfolio-investment---net-incurrence-of-liabilities---monthly---net
+All three API responses were HTTP 200 JSON and each contained 381 monthly observations from 1995-01 through 2026-09. Raw response sizes and SHA-256:
+| SGS | Bytes | SHA-256 |
+|---|---:|---|
+| 22905 | 14,989 | `bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3` |
+| 22906 | 14,594 | `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30` |
+| 22924 | 14,890 | `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb` |
+
+### Cross-source result — material divergence confirmed
+Provisional concept mapping compared SGS 22905/22906/22924 with IMF-SDMX `BFP_BP6_USD`/`BFPA_BP6_USD`/`BFPL_BP6_USD`, respectively, using 0.051 million USD rounding tolerance. For each of the three mappings:
+- 180/180 months match within rounding from 1995-01 through 2009-12.
+- 201/201 months diverge from 2010-01 through 2026-09.
+- All series have identical 381-month date coverage; no missing/extra periods.
+- Maximum absolute differences: SGS 22905 = 19,427.157519 million USD; SGS 22906 = 11,346.55107301 million USD; SGS 22924 = 22,286.52238714 million USD.
+
+January 2010 examples (SGS vs IMF-SDMX XML):
+- Net 22905 / BFP: `-4,441.7` vs `88.38340538` million USD.
+- Assets 22906 / BFPA: `332.1` vs `1,194.68277602` million USD.
+- Liabilities 22924 / BFPL: `4,773.7` vs `0.00736122` million USD.
+
+Crucially, BCB SGS itself satisfies `22905 = 22906 - 22924` within one-decimal rounding tolerance for all 381 periods (0 mismatches). Thus the BCB SGS internal identity is PASS, while all three SGS-to-IMF-SDMX series mappings diverge after 2010. This localizes the unresolved issue to source-series lineage/content across the BCB SGS and BCB-published IMF-SDMX payloads, rather than a general failure of the SGS financial-account arithmetic. It does NOT establish which source is erroneous or whether the Dataflow/domain/vintage definitions differ.
+
+### Interpretation and admission
+- The 2010-01 discontinuity is confirmed independently across all three corresponding concept series.
+- Obtain official BCB/IMF clarification of exact series lineage, Dataflow, domain, version/vintage and the 2010-01 discontinuity before substituting SGS for SDMX or using either source in the Brazil panel.
+- No silent source substitution, no splice, no synthetic repair, no scaling or gap fill.
+- Cross-source audit: `docs/BRAZIL_BOP_SGS_CROSS_SOURCE_AUDIT_20261118.json`; SHA-256 `3c161e4f27d170a62ab68803f9a25bc8a1e3fe8a9830c288d74415a67d85abd5`.
+- Added `qa/audit_brazil_bop_sgs_crosscheck.py` and `tests/test_brazil_bop_sgs_crosscheck.py`; three additional unit tests cover rounding match, material source divergence and duplicate-date rejection. Run #10's unit-test step passed with the complete `test_brazil_bop_*.py` suite.
+- Workflow variable expansion correction commit: `40765b42efce31255c35abe1e3ade3a91246eccd`. This fixed a shell-escaping defect in the earlier run, where the literal `$SGS` was not expanded and the endpoint returned HTML instead of JSON. The corrected run #10 captured all three JSON endpoints with HTTP 200.
+
+| Gate | State |
+|---|---|
+| IMF metadata and 237-code codelist crosswalk | PASS |
+| BCB SGS capture: 3 × 381 monthly observations | PASS |
+| BCB SGS net = assets - liabilities, all 381 months | PASS_WITHIN_ROUNDING |
+| SGS vs IMF-SDMX: 1995-01 to 2009-12 | PASS_WITHIN_ROUNDING |
+| SGS vs IMF-SDMX: 2010-01 to 2026-09 | FAIL_SOURCE_DIVERGENCE |
+| Cause / lineage / vintage of divergence | UNKNOWN / BLOCKED |
+| Brazil portfolio flow panel | NOT_AUTHORIZED |
+| Global EM aggregate | NOT_AUTHORIZED |
+| Trading signal | NOT_AUTHORIZED |
+
+No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 or Engines A–E changes.
