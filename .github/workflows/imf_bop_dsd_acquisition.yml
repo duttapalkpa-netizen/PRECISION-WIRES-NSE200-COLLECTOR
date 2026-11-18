@@ -549,6 +549,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: imf-bop-dsd-acquisition-${{ github.run_id }}
-          path: evidence/imf_bop_dsd/
+          path: |
+            evidence/imf_bop_dsd/
+            evidence/brazil_bop/
           if-no-files-found: warn
           retention-days: 90
