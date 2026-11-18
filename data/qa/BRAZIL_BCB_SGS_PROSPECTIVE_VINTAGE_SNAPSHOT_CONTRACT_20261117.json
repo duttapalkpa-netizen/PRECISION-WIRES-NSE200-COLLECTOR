@@ -21,8 +21,8 @@
   },
   "acceptance": {
     "implementation": "PASS",
-    "first_runtime_capture": "PENDING",
-    "cross_snapshot_revision_detection": "NOT_DONE_REQUIRES_TWO_SNAPSHOTS",
+    "first_runtime_capture": "PASS",
+    "cross_snapshot_revision_detection": "PASS_TWO_VINTAGES_COMPARED_ZERO_CHANGES_IN_SHORT_INTERVAL",
     "feb_2026_original_vintage_reconciliation": "BLOCKED",
     "brazil_pilot": "NOT_ACCEPTED",
     "em_panel": "NOT_DONE",
@@ -36,5 +36,20 @@
     "path": "docs/BCB_SGS_VINTAGE_CAPTURE_TRIGGER.txt",
     "branch": "research/bcb-priority-metadata-audit-20261117"
   },
-  "default_branch_change": "NOT_AUTHORIZED"
+  "default_branch_change": "NOT_AUTHORIZED",
+  "latest_verified_snapshot": {
+    "snapshot_id_utc": "20261118T044659Z",
+    "captured_at_utc": "2026-11-18T04:46:59.635249+00:00",
+    "manifest_sha256": "0e72d5c572ca1a86cd4a4be3fbf3d2b415d0376ef4df3994a7f06beda54ef1c3",
+    "comparison": {
+      "old_snapshot": "20261117T132939Z",
+      "new_snapshot": "20261118T044659Z",
+      "observations_compared": 1524,
+      "unchanged": 1524,
+      "changed": 0,
+      "added": 0,
+      "removed": 0,
+      "qa_status": "PASS_TWO_VINTAGES_COMPARED"
+    }
+  }
 }
