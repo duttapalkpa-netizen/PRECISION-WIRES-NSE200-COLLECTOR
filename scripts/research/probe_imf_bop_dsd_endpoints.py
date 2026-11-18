@@ -44,14 +44,26 @@ for label, url in BASES:
             record["contains_bop_dsd_id"] = bool(structures)
             if structures:
                 dsd = structures[0]
+                components = next(
+                    (node for node in dsd if node.tag.rsplit("}", 1)[-1] == "DataStructureComponents"),
+                    None,
+                )
+                dimension_list = next(
+                    (node for node in components or [] if node.tag.rsplit("}", 1)[-1] == "DimensionList"),
+                    None,
+                )
+                attribute_list = next(
+                    (node for node in components or [] if node.tag.rsplit("}", 1)[-1] == "AttributeList"),
+                    None,
+                )
                 dimensions = [
                     {"id": node.attrib.get("id"), "position": node.attrib.get("position")}
-                    for node in dsd.iter()
+                    for node in dimension_list or []
                     if node.tag.rsplit("}", 1)[-1] in ("Dimension", "TimeDimension")
                 ]
                 attributes = [
                     {"id": node.attrib.get("id"), "assignment_status": node.attrib.get("assignmentStatus")}
-                    for node in dsd.iter()
+                    for node in attribute_list or []
                     if node.tag.rsplit("}", 1)[-1] == "Attribute"
                 ]
                 record["dsd_version"] = dsd.attrib.get("version")
