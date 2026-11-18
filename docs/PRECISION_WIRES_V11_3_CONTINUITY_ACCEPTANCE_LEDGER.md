@@ -860,3 +860,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Acceptance remains Brazil INCOMPLETE/BLOCKED and Global Capital Rotation INCOMPLETE/BLOCKED. This checkpoint verifies source routes/contracts, not raw archive completion, factor readiness, backtest or production acceptance.
 - Next: interactive IMF BR1 transaction + PA changelog exports; fresh BCB XML raw capture; RBI and NSDL historical raw downloads; Treasury nominal/real and EIA raw archives; then complete remaining CDSL/AMFI/NSE/FBIL/DXY/geopolitical sources, 35 factor contracts, point-in-time H+1/H+3/H+5 backtest and ablation.
 - Invariants unchanged: ₹0, official free sources only, no synthetic data/guessed timestamps/forward-fill; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E unchanged; PR #39 unmerged; UNKNOWN is not PASS.
+
+
+## 2026-11-19 — গবেষণা যাচাই অব্যাহত 41, Part-37: raw retrieval boundary checkpoint
+- Treasury official XML feed contract verified for separate daily nominal and real yield curves; documented year query and paginated all-years retrieval. IMF API SDMX 2.1/3.0 contract also verified.
+- Attempted actual raw retrieval of Treasury nominal 2026 XML, Treasury real 2026 XML, and BCB SGS 22707 Sep-2026 JSON. Browser fetch rejected XML content type / could not access BCB; container HTTP attempts failed at DNS resolution before any HTTP response.
+- No body, HTTP status, row count, or raw SHA-256 captured. This is an execution-network boundary, not source invalidity. No synthetic data or substitute values inserted.
+- New report: docs/BRAZIL_GCR_RAW_RETRIEVAL_BOUNDARY_PART37_20261119.md; commit 1c2b1db333d80ca0d3c68840cba3f4e4c7817604.
+- Brazil remains INCOMPLETE/BLOCKED: BCB raw XML, BR1 transaction/PA changelog, BOP6/BOP_BPM6 authoritative mapping/history, recursive XSD closure/offline validation and SGS 22707 raw observations/hash open.
+- GCR remains INCOMPLETE/BLOCKED: raw Treasury/RBI/FBIL/NSDL/CDSL/AMFI/NSE/EIA/World Bank datasets, DXY/carry, event taxonomy, 35-factor registry, point-in-time H+1/H+3/H+5 cost-adjusted validation and ablation open.
+- Next execution should run pinned official-source acquisition in a network-enabled GitHub Actions runner; capture response headers, raw bytes, row counts, retrieval timestamps, SHA-256 and immutable manifest before any factor computation.
+- Invariants unchanged: ₹0, official free sources only, no synthetic data/guessed timestamps/forward-fill; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; PR #39 unmerged; UNKNOWN is not PASS.
