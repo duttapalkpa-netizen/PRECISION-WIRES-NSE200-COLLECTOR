@@ -201,3 +201,41 @@ Part-6 completes the bounded attempt and documents why it cannot pass in this ru
 Official sources:
 - https://sdmxcentral.imf.org/data/registrations.html
 - https://dsbb.imf.org/sdds/dqaf-base/country/BRA/category/BOP00
+
+
+## Chapter 34 — Part-7: Brazil BOP6 Registered SDMX Payload Capture & Structural QA (2026-11-18)
+
+### Runtime execution
+- Added isolated workflow `.github/workflows/brazil-bop6-raw-capture.yml` and script `scripts/research/capture_brazil_bop6_registered_xml.py`; trigger file `docs/BRAZIL_BOP6_RAW_CAPTURE_TRIGGER.txt`.
+- Workflow commit `3eaa17e087d7c9713b56d695a0cbbf68088a0723`; script commit `1e29d81a06b438b0ba4f19899b4d1b5fb82d557a`; trigger commit `36c64268b41ef86a7c19a3271c925415496a90d9`.
+- GitHub Actions Run `44256602275` completed SUCCESS; job `134639674269`; all steps including raw capture and artifact upload succeeded. Workflow limit 3 minutes.
+- Artifact ID `14405348744`, name `brazil-bop6-raw-capture-44256602275`, 832,358 bytes (ZIP), GitHub artifact digest `sha256:608906789259365455bb02844a5fc11486c0e24ac62dd2fde6d9e44bbba40c24`; expires 2027-02-16.
+
+### Exact raw response provenance
+- Requested URL: `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`.
+- HTTP 200; Content-Type `text/xml`; Content-Length 4,840,062; ETag `"{17DF776C-4B09-4CB5-BADC-3578A00C00E9},153"`; Last-Modified `2026-10-26T11:44:11Z`; final URL unchanged.
+- Retrieval UTC `2026-11-18T07:09:07.318958Z`; response SHA-256 `3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c`; exact bytes 4,840,062.
+- XML well-formedness PASS; root is SDMX 2.1 `StructureSpecificData`. Raw response preserved in the workflow artifact as `response.xml`; capture manifest as `capture_manifest.json`.
+
+### Payload structure QA (not semantic indicator approval)
+- Header ID `IREF149528`; Prepared `2026-10-26T11:42:36Z`; DataSetID `a39e5b75-1fc9-4528-abda-fd8d203f99c1`; Source `IMF SDMX Central`.
+- Header StructureUsage explicitly references `IMF:BOP_BPM6(1.0)`; dimensionAtObservation `TIME_PERIOD`. This is a Brazil-provider submission/payload referencing that dataflow.
+- 237 distinct Series keys; zero duplicate Series keys; 89,097 observations in total; 381 monthly periods from 1995-01 through 2026-09.
+- Per-series observation-count distribution: 217 series × 381 observations; 16 × 345; 2 × 249; 2 × 201. All 237 series have `DATA_DOMAIN=BOP6`, `REF_AREA=BR`, `COUNTERPART_AREA=W1`, `FREQ=M`, `UNIT_MULT=6`, `TIME_FORMAT=P1M`; each has a distinct `INDICATOR` code.
+- The payload has no `OBS_STATUS` attribute on the individual Obs elements in this structure-specific message. Do not infer missing/suppressed status from numeric zero; indicator meanings, sign conventions, units and quality flags still require exact BOP_BPM6 DSD/codelist and indicator-code metadata.
+
+### Acceptance matrix
+| Gate | Status |
+|---|---|
+| Official registered Brazil BOP6 XML HTTP 200 | PASS |
+| Exact raw bytes, headers, ETag, Last-Modified and SHA-256 archived | PASS |
+| SDMX 2.1 XML well-formedness | PASS |
+| IMF:BOP_BPM6(1.0) StructureUsage reference | PASS (payload header) |
+| 237 series / 89,097 observation structural inventory | PASS |
+| Indicator-code semantic mapping and DSD dimension/codelist crosswalk | UNKNOWN / NOT_DONE |
+| Observation status/quality interpretation | UNKNOWN (OBS_STATUS absent in Obs attributes) |
+| Brazil panel economic validation | NOT_DONE |
+| India data / consolidated global EM panel / aggregate | NOT_DONE |
+
+### Decision
+Part-7 closes the raw transport and structural inventory blocker for this **Brazil-only provider payload**. It does not establish the semantic meaning of the 237 INDICATOR codes, their sign/unit conventions, quality status, or a globally comparable flow panel. The file is not an IMF consolidated panel and must not be used as India observations. Next bounded action: acquire the exact `IMF:BOP_BPM6(1.0)` referenced Data Structure and its indicator codelist(s) from official metadata, then map only verified indicator codes and status semantics. No trading signal, EM aggregate, or production integration is authorized.
