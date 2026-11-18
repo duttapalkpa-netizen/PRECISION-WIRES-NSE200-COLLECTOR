@@ -467,3 +467,8 @@ Acquire and reconcile the official India daily flow source panel: (a) CDSL offic
 - Next exact action: manually dispatch the updated workflow on the research branch in GitHub Actions; verify tests and live payload/codelist artifacts; inspect every indicator row; separately review labels, financial-account transaction semantics, assets/liabilities, unit, multiplier, sign, status and vintage. Keep all unproven fields UNKNOWN.
 
 - Final workflow artifact-upload review found the Brazil payload/report directory was not yet included; corrected upload paths to preserve both `evidence/imf_bop_dsd/` and `evidence/brazil_bop/`. Correction commit 9b793dfc10476dcd83d272e8a36275c8bd978b2b; workflow blob affcbdf7166a4dc1bdbbb104c2877975631109e1. Audit documentation update commit 832bf50da23cc1292e70e825acd9da737f12cb42.
+
+
+- Part-4 registry corroboration: official IMF catalogue search results list IMF:ECOFIN_DSD latest version 1.0 and IMF:CL_INDICATOR (Economic Indicator) version 1.0. Catalogue listing is not a raw XML capture; no codelist codes or payload hashes are claimed from it. Official pages: https://sdmxcentral.imf.org/data/datastructure.html and https://sdmxcentral.imf.org/items/codelist.html.
+- Expanded Brazil indicator QA regression tests from four to seven: wrong REF_AREA; country-ISO3 prefix mismatch (IND_ code under REF_AREA BR / BRA); duplicate CL_INDICATOR code. Commit 1f8b07b7111a218880e247997e4cc8f010d8c7fd. Runtime test execution remains NOT_DONE.
+- Current acceptance remains: static QA implementation PASS; live IMF codelist capture NOT_DONE; actual 237-code match NOT_DONE; economic classification NOT_DONE; no Brazil/global EM/trading-signal admission.
