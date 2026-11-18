@@ -10,7 +10,9 @@ on:
       - "qa/build_brazil_bop_indicator_crosswalk.py"
       - "qa/audit_brazil_bop_portfolio_reconciliation.py"
       - "qa/audit_brazil_bop_sgs_crosscheck.py"
+      - "qa/inspect_brazil_bop6_archive.py"
       - "tests/test_brazil_bop_*.py"
+      - "tests/test_inspect_brazil_bop6_archive.py"
   workflow_dispatch:
 
 permissions:
@@ -30,6 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           python -m unittest discover -s tests -p 'test_brazil_bop_*.py' -v
+          python -m unittest discover -s tests -p 'test_inspect_brazil_bop6_archive.py' -v
 
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
         shell: bash
@@ -591,6 +594,28 @@ jobs:
             --output evidence/brazil_bop/sgs_cross_source_reconciliation.json
           sha256sum evidence/brazil_bop/sgs_cross_source_reconciliation.json \
             > evidence/brazil_bop/SGS_CROSS_SOURCE_SHA256SUMS
+
+      - name: Capture official BCB BPM6 monthly historical archive
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR="evidence/brazil_bop/bpm6_monthly_archive"
+          mkdir -p "$DIR"
+          URL='https://www.bcb.gov.br/ftp/notaecon/balpaym.zip'
+          printf '%s\n' "$URL" > "$DIR/request_url.txt"
+          date -u --iso-8601=ns > "$DIR/request_started_at_utc.txt"
+          curl --fail --location --silent --show-error --retry 2 --retry-all-errors \
+            --connect-timeout 15 --max-time 90 \
+            --dump-header "$DIR/response_headers.txt" \
+            --output "$DIR/balpaym.zip" \
+            --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+            "$URL" > "$DIR/transfer_metadata.txt"
+          sha256sum "$DIR/balpaym.zip" > "$DIR/SHA256SUMS"
+          python qa/inspect_brazil_bop6_archive.py \
+            --zip "$DIR/balpaym.zip" \
+            --output "$DIR/archive_inventory.json"
+          date -u --iso-8601=ns > "$DIR/capture_completed_at_utc.txt"
 
       - name: Upload raw response and QA evidence
         if: always()
