@@ -551,3 +551,31 @@ The first nine-series component artifact (Run #15) used 0.051 million USD for al
 Corrected rule: archive and IMF-SDMX high-precision roll-ups use 0.051 million USD; current SGS one-decimal roll-ups use 0.151 million USD. Recomputed over all 381 SGS months, maximum residuals were 0.10 million USD for assets, liabilities and net, so all three SGS roll-ups pass within the 0.151 tolerance. Cross-source point comparisons retain the 0.051 tolerance because the expected display-rounding allowance for comparing a high-precision value with one-decimal SGS is 0.051.
 
 Updated `qa/audit_brazil_bop6_portfolio_components.py` to record source-specific tolerances; commit `21ba07f1ab17128cdb61ed8e2c025f1df3a51afa`. Added regression test for one-decimal SGS rounding vs material difference; commit `8af623974a8c8dc22944a5e5ba30199acb66a783`. Run #17 `44281174648` includes both corrections and is the acceptance run; runtime result pending.
+
+
+
+## Part-7 runtime closeout — nine-series component audit (2026-11-18)
+
+### Corrected runtime acceptance
+GitHub Actions Run #44281174648 / run number 17 completed SUCCESS on branch `research/global-capital-rotation-overlay-v1`, head `8af623974a8c8dc22944a5e5ba30199acb66a783`. All 21 substantive steps completed, including all regression suites, nine SGS captures and the nine-series portfolio component audit. Artifact #14416138359, 7,784,632 bytes, SHA-256 `599c639ccb5d7f35c5800858b289bb0f8668f1afb1ca23be1c164f048c12fbd7`.
+
+Component report `evidence/brazil_bop/bpm6_monthly_archive/portfolio_component_audit.json`, SHA-256 `8cdc08da5e788f7fdf2d6f64d5e7f272aba22bd5d4b068d6b0cfd383a224335d`. Permanent summary: `docs/BRAZIL_BOP_PORTFOLIO_COMPONENT_AUDIT_20261118.json` (commit `da7ed0a0a928d6a461c597019bf01d771ee55f6b`).
+
+### Final source-specific roll-up results
+| Source | Assets roll-up | Liabilities roll-up | Net identity |
+|---|---:|---:|---:|
+| BCB monthly workbook (293 months) | 293/293 PASS | 293/293 PASS | 293/293 PASS |
+| Current BCB SGS API (381 months) | 381/381 PASS | 381/381 PASS | 381/381 PASS |
+| BCB-published IMF-SDMX (381 months) | 180 PASS / 201 FAIL | 180 PASS / 201 FAIL | 180 PASS / 201 FAIL |
+
+SGS precision correction: SGS values are displayed to one decimal million USD. A three-component sum can differ from the rounded parent by up to 0.15 million USD. The corrected SGS roll-up tolerance is 0.151; observed maximum residual was 0.10 million USD. Archive and IMF high-precision roll-ups use 0.051. Cross-source comparisons also retain 0.051. The first Run #15 SGS roll-up mismatch counts were false positives from an overly strict tolerance and are superseded by corrected Run #17.
+
+### Nine-series cross-source finding
+Each of the nine portfolio parent/component series matched archive vs IMF-SDMX for 180 months from 1995-01 to 2009-12, and diverged for 113 months from 2010-01 to 2019-05. This includes aggregate, assets, liabilities, equity assets/liabilities, investment-fund-share assets/liabilities and debt securities assets/liabilities. No cause is inferred.
+
+The current BCB SGS and archived BCB monthly workbook are internally consistent under their respective precisions. Their differences for selected periods may reflect revisions/vintage; do not assume identical vintages. The BCB-published IMF-SDMX parent-child failures from 2010 onward remain unresolved. The BCB FAQ confirms BPM6 sign conventions and assets-minus-liabilities balance, but does not explain these observed source-series differences.
+
+### Next highest-value action
+Build a source-lineage/revision matrix from official BCB/IMF documentation for each of the nine indicator codes, Dataflow `BOP_BPM6`, `DATA_DOMAIN=BOP6`, `COUNTERPART_AREA=W1`, publication/vintage timestamps and the 2010-01 transition. Distinguish the BCB historical workbook's 2019 member timestamp from formal publication/revision dates. Do not derive any Brazil portfolio panel or Global EM aggregate until source lineage and quality/status are resolved.
+
+All admissions remain NOT_AUTHORIZED. No selector, ranking, CORE-672, Engines A–E or trading-signal changes.
