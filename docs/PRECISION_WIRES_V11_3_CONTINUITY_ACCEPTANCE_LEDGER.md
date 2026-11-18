@@ -463,7 +463,7 @@ Report workstream percentages separately from evidence status. Percentage means 
 
 
 ## 2026-11-18 — গবেষণা যাচাই অব্যাহত 36, Part-4: official registration/export boundary re-check
-- New report: `docs/IMF_BRAZIL_REGISTRATION_HISTORY_PART6_20261118.md`; commit `4bd387a29560950b9ffba5c6177451e30e955b65`.
+- New report: `docs/IMF_BRAZIL_REGISTRATION_HISTORY_PART4_20261118.md`; initial report commit `4bd387a29560950b9ffba5c6177451e30e955b65`; corrected canonical file commit `32debb1c7ed7a25718d5faed20c92fd271a3b477.
 - Re-checked the official current Registrations page: it still displays `IMF:BOP6(1.0)` / `IMF:BR1` / the BCB URL with Last Updated `2026-10-26T11:47:29.000Z`. This is current-state metadata, not a historical create/replace/delete event.
 - Official Data Registrations activity page still exposes provider/dataflow/provision-agreement filter modes, but accessible static extraction contains no event rows. Exact interactive `IMF:BR1` filter remains NOT_DONE.
 - IMF generic structure search/export page warns that Data Registrations and Metadata Sets cannot be downloaded through that generic structure-export facility. Do not expect structure export to substitute for registration history.
