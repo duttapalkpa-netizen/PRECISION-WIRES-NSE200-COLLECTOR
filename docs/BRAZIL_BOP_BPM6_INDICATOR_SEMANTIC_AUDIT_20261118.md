@@ -610,3 +610,23 @@ Official sources:
 
 ### Current decision
 The 2010-01 break remains BLOCKED / UNKNOWN. Keep all source vintages and Dataflow identities separate. No Brazil portfolio-flow panel, Global EM aggregate or trading signal admission. No selector, CORE-672 or engine changes.
+
+
+
+### Part-8B — Constraint indicator coverage comparison and parser correction (2026-11-18)
+The raw IMF registrations HTML capture had a client-rendered table: the saved HTML contains table headers but no registration rows. The initial Run #20 alignment script incorrectly expected static <tr>/<td> rows and therefore failed at that step. This is a parser limitation, not an IMF endpoint outage. The rest of Run #20 completed through nine-series audit and uploaded its artifact.
+
+The official rendered IMF registrations page/search result identifies the BCB row as `IMF:BOP6(1.0)`, provider `IMF:BR1`, registered URL equal to the BCB XML URL, last updated `2026-10-26T11:47:29Z`. A dated snapshot is now versioned at `config/imf_bop6_registration_snapshot_20261118.json`; it is explicitly labelled as rendered-page evidence, not a parsed raw HTML table.
+
+The two live IMF constraints were then parsed directly from their raw XML. Both corresponding Dataflows (`BOP6` and `BOP_BPM6`) reference the same `IMF:ECOFIN_DSD:1.0`, but their constraints differ materially:
+- `BOP6_CONSTRAINT` has 4,313 allowed INDICATOR codes; of the 237 observed BCB payload codes, 234 are included and 3 are not: `BMSOBL_USD`, `BSOBL_USD`, `BXSOBL_USD`.
+- `BOP_BP6_CONSTRAINT` has 98 allowed INDICATOR codes; only 27 of the 237 observed payload codes are included, leaving 210 observed codes outside that constraint.
+- BCB payload namespace declares `IMF:BOP_BPM6(1.0)`, while IMF registration catalogue records `IMF:BOP6(1.0)`. Both Dataflows point to the same ECOFIN DSD, but alias/mapping semantics remain unproven. The 27/237 vs 234/237 constraint coverage gap is a P0 metadata alignment blocker, not proof of bad observations.
+
+Corrected `qa/audit_imf_bop6_registration_alignment.py` to use the versioned registration snapshot and to compute observed-indicator coverage under both live constraints. It also hashes the raw HTML capture and marks the table as client-rendered. Four regression tests cover snapshot identity, wrong provider/URL, BCB namespace extraction and constraint coverage gaps.
+- Snapshot commit `049b0b66d8736cc87d1ae60be7216d7c6387a2b0`.
+- Script correction commit `29221dee9993a6d9042eb9c0d64aeafc68c3d485`; test correction commit `b172e716d589d8fbb1576aa8b8e291b82910d077`.
+- Workflow updated to pass the snapshot and trigger on it; commit `27e26095b482f24e65bafca69cca9d870922fffd`.
+- Run #20 `44281736564` ended FAIL only at the initial static-HTML parser step; artifact #14417810859 retains both Dataflows, constraints, registration HTML and BCB payload. Run #21 `44282211603` was triggered before the final workflow invocation update; Run #22 (latest) is required for acceptance.
+
+No constraint is silently substituted. Keep the observed codes, DSD, Dataflow and constraints separate. Brazil portfolio flow panel, Global EM aggregate and trading signal remain NOT_AUTHORIZED until this metadata alignment and the 2010+ value break are resolved.
