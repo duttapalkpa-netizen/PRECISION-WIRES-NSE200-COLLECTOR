@@ -53,6 +53,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bcb-sgs-prospective-vintage-snapshot
-          path: |\n            data/raw/bcb/sgs_vintage_snapshots/\n            data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
+          path: |
+            data/raw/bcb/sgs_vintage_snapshots/
+            data/qa/BCB_SGS_VINTAGE_REVISION_DIFF_*.json
           if-no-files-found: warn
           retention-days: 90
