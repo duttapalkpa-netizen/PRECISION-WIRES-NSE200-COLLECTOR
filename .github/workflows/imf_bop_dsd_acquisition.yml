@@ -9,8 +9,11 @@ permissions:
 jobs:
   acquire-dsd:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+
       - name: Acquire official IMF BOP DSD 2.6.0 (SDMX-ML 2.1)
         shell: bash
         run: |
@@ -484,6 +487,54 @@ jobs:
           print(json.dumps({"status": report["status"], "components": len(components),
                             "codelists": len(codelists), "indicator_codes": indicator_lists[0]["code_count"]}))
           PY
+
+      - name: Capture current official Brazil BOP payload for paired code-list QA
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR="evidence/brazil_bop"
+          mkdir -p "$DIR"
+          URL='https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml'
+          printf '%s\n' "$URL" > "$DIR/request_url.txt"
+          curl --fail --location --silent --show-error --retry 2 --retry-all-errors --connect-timeout 15 --max-time 75 \
+            --dump-header "$DIR/response_headers.txt" \
+            --output "$DIR/response.xml" \
+            --write-out 'http_code=%{http_code}\ncontent_type=%{content_type}\nfinal_url=%{url_effective}\nsize_download=%{size_download}\n' \
+            "$URL" > "$DIR/transfer_metadata.txt"
+          sha256sum "$DIR/response.xml" > "$DIR/SHA256SUMS"
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          d = Path("evidence/brazil_bop")
+          p = d / "response.xml"
+          raw = p.read_bytes()
+          root = ET.fromstring(raw)
+          if root.tag.rsplit("}", 1)[-1] != "StructureSpecificData":
+              raise SystemExit("Brazil payload is not SDMX StructureSpecificData")
+          meta = {
+              "status": "PASS_RAW_XML_PARSE",
+              "retrieved_at_utc": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+              "raw_bytes": len(raw),
+              "sha256": hashlib.sha256(raw).hexdigest(),
+              "root_element": root.tag.rsplit("}", 1)[-1],
+          }
+          (d / "capture_manifest.json").write_text(json.dumps(meta, indent=2) + "\n")
+          print(json.dumps(meta))
+          PY
+
+      - name: Run fail-closed Brazil INDICATOR versus IMF CL_INDICATOR audit
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa/audit_brazil_bop_indicator_codes.py \
+            --brazil-xml evidence/brazil_bop/response.xml \
+            --ecofin-dsd-xml evidence/imf_bop_dsd/ecofin_dsd/raw.xml \
+            --ref-area BR \
+            --country-iso3 BRA \
+            --output evidence/brazil_bop/indicator_code_audit.json
 
       - name: Upload raw response and QA evidence
         if: always()
