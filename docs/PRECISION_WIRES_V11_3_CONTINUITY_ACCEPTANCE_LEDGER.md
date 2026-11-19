@@ -808,3 +808,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - CBN vintage flags retained: Q2 2025 provisional, Q1 2026 revised, Q2 2026 described as provisional in the release narrative. No vintage mixing.
 - India Q1-2026 liability REVIEW and Chile current-vintage revision mismatch remain open. Full 154-member aggregate remains BLOCKED/NOT_AUTHORIZED; no production/backtest admission.
 - A malformed path-ignore edit briefly caused the production NSE workflow to trigger on research commits. The literal `\\n` entries were corrected in `.github/workflows/nse_collector.yml` at commit `9ef1922f63c3091519fe5208ee63e259fcc571c5`. The three unintended collector runs (44484649213, 44484666061 and 44485482464) were subsequently cancelled by bounded helper workflow run 44485600055 (SUCCESS). The malformed path-ignore entries were repaired; subsequent research-only commits are included in paths-ignore. No production code was intentionally changed.
+
+
+## 2026-11-19 — Continuation 38, Part 1: PA transaction-2 alternate serialization probe dispatched
+- The exact Brazil registration lifecycle remains captured (Part-7; run 44465947951; artifact 14502380926; 40/40 event XMLs parsed), but PA transaction ID 2 / Changelog remains unresolved.
+- Added read-only alternate serialization probes for `/ws/registry/tx/transactions?txId=2&format=fusion-json` and `format=sdmx-json` to `scripts/research/probe_imf_brazil_pa_structure_revision.py`; JSON parser records top-level keys and maintainable object counts/IDs. Script commit `5230a74409a96555fe0f598cd5258f55f42ed11a`.
+- Trigger marker commit `032a1871a9713f7330ebaad6455597393639eec3`; production collector ignore rule for the trigger path was checked before triggering.
+- Report: `docs/IMF_BRAZIL_PA_TX2_ALTERNATE_SERIALIZATION_PROBE_PART1_20261119.md`.
+- Status: IMPLEMENTED / TRIGGER COMMITTED; workflow run and artifact inspection NOT_YET_VERIFIED. Brazil Reconstruction remains BLOCKED; do not infer PA changelog or resolve BOP6/BOP_BPM6 mismatch. No production code, selector, score, diagnostics or engines changed; ₹0; UNKNOWN is not PASS.
+- Next: inspect the workflow run/artifact from trigger commit; accept only actual 200 + parsed PA/structure evidence, otherwise preserve exact errors and keep the blocker.
