@@ -1130,3 +1130,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Run `44539721149` SUCCESS; artifact `14537831415`; ZIP SHA-256 `042b32108ccbf42dc906af2b616ce7d5a91abdf5065448c8b96abcec9a5ccf0e`; manifest SHA `3003c20193b5c5518e09555e125c9f91a467cc430f713008d617bfeb91c4af2b`.
 - Transaction-detail lookup HTTP 500 (parameter error); prior txId=2 detail attempts already failed, so no repeat. This history does not prove BR1 data-registration chronology or PA/payload Dataflow equivalence. Brazil Reconstruction remains BLOCKED.
 - Report `docs/IMF_BRAZIL_PUBLIC_REGISTRY_HISTORY_PROBE_CONTINUATION42_PART1_20261119.md`, commit `676f5d771a6f9abc5d7ddbd8fd6b53fde367456a`. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## Continuation 43 — Part-1: Brazil 40-event registration lifecycle integrity audit (2026-11-19)
+- Reused immutable prior run `44465947951`, artifact `14502380926`; original ZIP SHA-256 independently rechecked: `2a3266a0c2d3e1948955e9de789c2a3f9acb5ecd12ffca42cd54bbad0bb37f41`. No IMF/BCB source re-fetch.
+- Added fail-closed offline verifier `scripts/research/audit_imf_brazil_registration_history_artifact.py`; independent execution on original ZIP PASS.
+- 40/40 history rows and transaction XMLs verified; 40 unique IDs, chronological 2023-09-22 09:42:16.389 UTC through 2026-10-26 11:47:33.098 UTC. All 40 XMLs independently carry same Registration ID `D429E36CD161E2F2A34ECAF137994E89`, PA `IMF:BR_BOP_BP6(1.0)`, and exact BCB registered URL. Timestamp minus Registration@lastUpdated is +0.460 to +15.037 seconds.
+- Distinguish layers: registry Action Replace 40/40; embedded RegistrationRequest action Information 40/40. Event-index Type missing in 39 rows, but all 40 XMLs contain Registration element; classify index Type as omitted, not different event type.
+- Report: `docs/IMF_BRAZIL_REGISTRATION_LIFECYCLE_INTEGRITY_AUDIT_CONTINUATION43_PART1_20261119.md`; commit `45e2965f0585842c01e1046d2744f439e9298467`.
+- Returned 40-event snapshot integrity now PASS. It does not prove events outside returned set or resolve PA `BOP6` vs payload `BOP_BPM6`; Brazil Reconstruction remains BLOCKED pending official PA Changelog/owner-side crosswalk. GCR full panel/score remains NOT_READY. No production changes; ₹0; UNKNOWN is not PASS.
