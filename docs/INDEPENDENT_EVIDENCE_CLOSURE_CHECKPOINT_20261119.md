@@ -841,3 +841,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Together with liability-side 22924=22925-22926 PASS 381/381 (Continuation 40 Part-1), both Brazil BCB portfolio gross-flow accounting identities are independently closed. IMF PA BOP6 vs BCB payload BOP_BPM6 remains unresolved; Brazil Reconstruction not 100%.
 - Report `docs/BRAZIL_BCB_PORTFOLIO_ASSET_GROSS_FLOW_IDENTITY_CONTINUATION45_PART1_20261119.md`, commit `e1c2fd590cb1ec343af93bb2a7e812e80b17919d`.
 - GCR country coverage/vintage/BPM gates remain blocked; no EMDE aggregate/relative-attraction score. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## Brazil asset-side gross-flow identity — Continuation 45 (2026-11-19)
+- Official BCB SGS 22906/22907/22908 captured as raw JSON, all HTTP 200, 381 unique monthly rows each, 1995-01 to 2026-09; exact common coverage 381/381.
+- Unique empirical identity: 22906 = 22908 - 22907. Correct convention 381/381 PASS, maximum absolute residual 0.1 USD million at tolerance 0.15. Reverse convention 0/381, maximum residual 17,048.8.
+- Raw SHA-256: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Validator commit `90b1a68aa5c5a36f88293e4c857530268101a86c`; run `44542505681` SUCCESS, job `135624309676`; artifact `14538393352`, 16,753 bytes, ZIP SHA-256 `51ab88b418ebbaa88595a45eb2a94cf8507c454c3c637075b935c8de07dcf762`.
+- Prior run `44542407481` failed because it assumed the wrong sign; preserve as a failed exploratory attempt, not as evidence of bad source data. Do not repeat its sign convention. Corrected validator tests both signs.
+- This closes only the Brazil asset-side gross-flow identity. Brazil Reconstruction remains BLOCKED by IMF PA/Dataflow mismatch and missing authoritative PA revision/history evidence. GCR remains BLOCKED by synchronized coverage, vintage/basis, benchmark TRI, formula/no-lookahead, sector bridge and event-study gates. No production changes.
