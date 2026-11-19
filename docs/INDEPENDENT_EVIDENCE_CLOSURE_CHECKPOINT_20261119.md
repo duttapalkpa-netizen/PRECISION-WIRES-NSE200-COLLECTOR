@@ -771,3 +771,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Combined BCB internal arithmetic checks now 762/762: assets 381/381 plus liabilities Part-1 381/381. Do not count these as 762 independent IMF-vs-BCB comparisons or use gross legs as extra attraction signals (double counting).
 - Detailed report: `docs/BRAZIL_BCB_PORTFOLIO_ASSET_IDENTITY_AUDIT_CONTINUATION41_PART1_20261119.md`; commit `d5ac88260eb6e334cc99b00007f4fb77a6562ef0`.
 - Brazil PA BOP6 vs BCB payload BOP_BPM6 identity and PA chronology remain unresolved; GCR coverage/vintage/BPM gates remain blocked. No aggregate or production admission.
+
+
+## Continuation 42 — Part-1: Brazil public IMF registry history probe (2026-11-19)
+- Added read-only public registry probe `scripts/research/probe_imf_brazil_public_tx_history.py` and 5-minute isolated workflow `.github/workflows/imf_brazil_public_tx_history.yml`.
+- Public history endpoint returned HTTP 200 for Brazil PA `IMF:BR_BOP_BP6(1.0)`, Dataflow `IMF:BOP6(1.0)`, and Dataflow `IMF:BOP_BPM6(1.0)`. Each returned same one-row event: transaction ID 2, action Replace, type Structure Submission, timestamp 2023-09-22T08:26:09.491Z. Each raw body 80 bytes, SHA-256 `335149e69147d8b99c9c6b5d0303cdb3b72401510b5bfed64cb3f519ced0b411`.
+- Run `44539721149` SUCCESS; artifact `14537831415`, ZIP SHA-256 (independently recomputed, equals GitHub digest) `042b32108ccbf42dc906af2b616ce7d5a91abdf5065448c8b96abcec9a5ccf0e`; manifest SHA `3003c20193b5c5518e09555e125c9f91a467cc430f713008d617bfeb91c4af2b`.
+- This is maintainable structure history, not BR1 data-registration history. Transaction detail returned HTTP 500 with missing/illegal txId error; do not retry ID 2 (previous txId=2 formats already failed). PA-to-payload identity and registration chronology remain BLOCKED.
+- Report: `docs/IMF_BRAZIL_PUBLIC_REGISTRY_HISTORY_PROBE_CONTINUATION42_PART1_20261119.md`; commit `676f5d771a6f9abc5d7ddbd8fd6b53fde367456a`.
