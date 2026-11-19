@@ -427,3 +427,15 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Raw RBI HTML, manifest, summary and comparison CSV are committed under `docs/evidence/imf_bop_20261119/india_scale_reconciliation_current_vintage/`; report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`.
 - Workflow run 44477031402 / artifact 14505649659 / ZIP SHA-256 `8db4f9536a57df1e8635855af5bb90225de0f800e6e9164bd20d99d1f355b4e2`.
 - India current-vintage status PARTIAL; 2026-Q1 REVIEW remains open. This supplements but does not invalidate the historical 12/12 baseline.
+
+
+## GCR — Nigeria independent national-source validation added (2026-11-19)
+- Fifth EMDE country benchmark: Nigeria (NGA), CBN Q2 2026 BOP Highlights Table 2, printed page 6.
+- IMF exact-key assets/liabilities quarterly GETs both HTTP 200; Q2 2025, Q1 2026 and Q2 2026 = six comparisons, 6/6 PASS at ±US$5m tolerance based on CBN publication precision (USD 0.01bn).
+- Values: assets −0.66, +0.26, +0.70 USD bn; liabilities +5.28, +6.03, +7.09 USD bn. IMF raw values and exact residuals are in the committed CSV.
+- CBN PDF: 2,206,494 bytes; SHA-256 `b77c0066385cac4bb3bcbe150321c8da28da7d76c91b78423808a31deaea4cf9`; official URL: https://www.cbn.gov.ng/Out/2026/STD/Q2%202026%20BOP%20Highlights_%20revised.pdf.
+- Run 44485137974 SUCCESS; artifact 14510920161; ZIP SHA-256 `bf80b403e072c8eae39f4ec32de77b55d776ef77b7ff4a88e157e3023da7febf`.
+- Five-country benchmark total is now 124/124 vintage-matched comparisons (Brazil 94, India 12, Mexico 6, Chile older vintage 6, Nigeria 6). This remains a sample, not universal validation for 154 members.
+- Durable report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_NIGERIA_20261119.md`; consolidated Part 4: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART4_20261119.md`; raw IMF CSVs, comparison CSV, summary JSON and extracted CBN page text: `docs/evidence/gcr_nigeria_bop_20261119/`.
+- CBN vintage notes: Q2 2025 provisional; Q1 2026 revised; Q2 2026 release narrative describes provisional statistics. Preserve these flags.
+- Decision unchanged: no 154-member aggregate, no universal conversion, no production/backtest admission; India Q1-2026 liability REVIEW and Chile current-vintage revisions remain open. Coverage gaps preserved; UNKNOWN is not PASS.
