@@ -750,3 +750,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - All 4 endpoints HTTP 200; each 381 rows, 1995-01-01 to 2026-09-01; 381 valid; zero invalid; zero duplicate dates; monotonic dates true; overall manifest PASS. Independently recomputed raw hashes match manifest.
 - Retrieval timestamps and response Date/ETag/Content-Length are recorded; Last-Modified absent. This proves raw capture + structural QA only, not semantic/accounting crosswalk.
 - Detailed report updated; commit `3d59e6653f69d201ea5bb5bb2e025b49abe47ad0`. Workflow code commits remain as above. Brazil PA identity/chronology BLOCKED; GCR synchronized panel/score NOT_READY pending cross-country vintage-aligned coverage and semantics. No production changes.
+
+
+## Continuation 40 — Part-1: Brazil BCB liabilities identity PASS (2026-11-19)
+- Added bounded research-only validator `scripts/research/validate_bcb_liability_flow_identity.py` and workflow `.github/workflows/bcb_liability_flow_identity.yml`; isolated from NSE collector via paths-ignore.
+- Official BCB series semantics: 22924 net liabilities; 22925 liability inflows; 22926 liability outflows. Verified identity `22924 = 22925 - 22926` for all 381 matched months, 1995-01 through 2026-09.
+- Run `44538706864` SUCCESS; artifact `14537491095`, ZIP SHA-256 (independently recomputed, matches GitHub digest) `69c0b92a5f5bc7221fde47a75a879e3f7c1bf8e0c4727c5299356204dd70aaa1`.
+- All three raw series HTTP 200; 381 valid rows each; 0 missing months. Raw hashes: 22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`; 22925 `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`; 22926 `519fcd8c068716f80f300202a1ae970fbcf312cfcd902f147143ccc5b4031e8e`.
+- 381/381 PASS; maximum absolute residual USD 0.1m; tolerance USD 0.15m; 98 nonzero residuals within rounding bound. No interpolation or synthetic rows.
+- Detailed report: `docs/BRAZIL_BCB_PORTFOLIO_LIABILITY_IDENTITY_AUDIT_CONTINUATION40_PART1_20261119.md`; commit `ec7f41f9c9383ef5669e653ae4e4ba04f779124f`.
+- This closes BCB gross-liability-flow internal arithmetic only. It does not resolve Brazil PA BOP6 vs BCB payload BOP_BPM6, PA chronology, GCR 154-country coverage/vintage/BPM gates or authorize aggregation/production.
