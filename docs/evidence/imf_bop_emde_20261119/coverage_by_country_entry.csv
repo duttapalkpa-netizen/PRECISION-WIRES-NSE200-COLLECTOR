@@ -1,0 +1,309 @@
+country_code,country_name,entry,observation_count,unit_codes,period_min,period_max
+ABW,"Aruba, Kingdom of the Netherlands",A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+ABW,"Aruba, Kingdom of the Netherlands",L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+AFG,"Afghanistan, Islamic Republic of",A_NFA_T,25,['USD'],2015-Q1,2021-Q1
+AFG,"Afghanistan, Islamic Republic of",L_NIL_T,25,['USD'],2015-Q1,2021-Q1
+AGO,Angola,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+AGO,Angola,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+ALB,Albania,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+ALB,Albania,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+ARE,United Arab Emirates,A_NFA_T,0,[],,
+ARE,United Arab Emirates,L_NIL_T,0,[],,
+ARG,Argentina,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+ARG,Argentina,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+ARM,"Armenia, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+ARM,"Armenia, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+ATG,Antigua and Barbuda,A_NFA_T,0,[],,
+ATG,Antigua and Barbuda,L_NIL_T,0,[],,
+AZE,"Azerbaijan, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+AZE,"Azerbaijan, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+BDI,Burundi,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BDI,Burundi,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+BEN,Benin,A_NFA_T,0,[],,
+BEN,Benin,L_NIL_T,0,[],,
+BFA,Burkina Faso,A_NFA_T,0,[],,
+BFA,Burkina Faso,L_NIL_T,0,[],,
+BGD,Bangladesh,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BGD,Bangladesh,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+BHR,"Bahrain, Kingdom of",A_NFA_T,4,['USD'],2024-Q1,2024-Q4
+BHR,"Bahrain, Kingdom of",L_NIL_T,4,['USD'],2024-Q1,2024-Q4
+BHS,"Bahamas, The",A_NFA_T,40,['USD'],2015-Q1,2024-Q4
+BHS,"Bahamas, The",L_NIL_T,24,['USD'],2016-Q1,2024-Q4
+BIH,Bosnia and Herzegovina,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BIH,Bosnia and Herzegovina,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+BLR,"Belarus, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BLR,"Belarus, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+BLZ,Belize,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BLZ,Belize,L_NIL_T,36,['USD'],2017-Q3,2026-Q2
+BOL,Bolivia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BOL,Bolivia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+BRA,Brazil,A_NFA_T,47,['USD'],2015-Q1,2026-Q3
+BRA,Brazil,L_NIL_T,47,['USD'],2015-Q1,2026-Q3
+BRB,Barbados,A_NFA_T,0,[],,
+BRB,Barbados,L_NIL_T,0,[],,
+BRN,Brunei Darussalam,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+BRN,Brunei Darussalam,L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+BTN,Bhutan,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+BTN,Bhutan,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+BWA,Botswana,A_NFA_T,24,['USD'],2020-Q1,2025-Q4
+BWA,Botswana,L_NIL_T,24,['USD'],2020-Q1,2025-Q4
+CAF,Central African Republic,A_NFA_T,0,[],,
+CAF,Central African Republic,L_NIL_T,0,[],,
+CHL,Chile,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+CHL,Chile,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+CHN,"China, People's Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+CHN,"China, People's Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+CIV,Côte d'Ivoire,A_NFA_T,0,[],,
+CIV,Côte d'Ivoire,L_NIL_T,0,[],,
+CMR,Cameroon,A_NFA_T,38,['USD'],2016-Q1,2025-Q2
+CMR,Cameroon,L_NIL_T,38,['USD'],2016-Q1,2025-Q2
+COD,"Congo, Democratic Republic of the",A_NFA_T,29,['USD'],2018-Q1,2026-Q1
+COD,"Congo, Democratic Republic of the",L_NIL_T,29,['USD'],2018-Q1,2026-Q1
+COG,"Congo, Republic of",A_NFA_T,0,[],,
+COG,"Congo, Republic of",L_NIL_T,0,[],,
+COL,Colombia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+COL,Colombia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+COM,"Comoros, Union of the",A_NFA_T,0,[],,
+COM,"Comoros, Union of the",L_NIL_T,0,[],,
+CPV,Cabo Verde,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+CPV,Cabo Verde,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+CRI,Costa Rica,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+CRI,Costa Rica,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+DJI,Djibouti,A_NFA_T,25,['USD'],2019-Q1,2026-Q1
+DJI,Djibouti,L_NIL_T,25,['USD'],2019-Q1,2026-Q1
+DMA,Dominica,A_NFA_T,0,[],,
+DMA,Dominica,L_NIL_T,0,[],,
+DOM,Dominican Republic,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+DOM,Dominican Republic,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+DZA,Algeria,A_NFA_T,22,['USD'],2021-Q1,2026-Q2
+DZA,Algeria,L_NIL_T,0,[],,
+ECU,Ecuador,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+ECU,Ecuador,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+EGY,"Egypt, Arab Republic of",A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+EGY,"Egypt, Arab Republic of",L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+ERI,"Eritrea, The State of",A_NFA_T,0,[],,
+ERI,"Eritrea, The State of",L_NIL_T,0,[],,
+ETH,"Ethiopia, The Federal Democratic Republic of",A_NFA_T,4,['USD'],2024-Q1,2024-Q4
+ETH,"Ethiopia, The Federal Democratic Republic of",L_NIL_T,0,[],,
+FJI,"Fiji, Republic of",A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+FJI,"Fiji, Republic of",L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+FSM,"Micronesia, Federated States of",A_NFA_T,0,[],,
+FSM,"Micronesia, Federated States of",L_NIL_T,0,[],,
+GAB,Gabon,A_NFA_T,0,[],,
+GAB,Gabon,L_NIL_T,0,[],,
+GEO,Georgia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+GEO,Georgia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+GHA,Ghana,A_NFA_T,21,['USD'],2021-Q1,2026-Q1
+GHA,Ghana,L_NIL_T,44,['USD'],2015-Q1,2026-Q1
+GIN,Guinea,A_NFA_T,34,['USD'],2015-Q1,2026-Q2
+GIN,Guinea,L_NIL_T,45,['USD'],2015-Q1,2026-Q2
+GMB,"Gambia, The",A_NFA_T,5,['USD'],2025-Q2,2026-Q2
+GMB,"Gambia, The",L_NIL_T,5,['USD'],2025-Q2,2026-Q2
+GNB,Guinea-Bissau,A_NFA_T,0,[],,
+GNB,Guinea-Bissau,L_NIL_T,0,[],,
+GNQ,"Equatorial Guinea, Republic of",A_NFA_T,0,[],,
+GNQ,"Equatorial Guinea, Republic of",L_NIL_T,0,[],,
+GRD,Grenada,A_NFA_T,0,[],,
+GRD,Grenada,L_NIL_T,0,[],,
+GTM,Guatemala,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+GTM,Guatemala,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+GUY,Guyana,A_NFA_T,34,['USD'],2016-Q1,2024-Q2
+GUY,Guyana,L_NIL_T,34,['USD'],2016-Q1,2024-Q2
+HND,Honduras,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+HND,Honduras,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+HTI,Haiti,A_NFA_T,0,[],,
+HTI,Haiti,L_NIL_T,0,[],,
+HUN,Hungary,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+HUN,Hungary,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+IDN,Indonesia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+IDN,Indonesia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+IND,India,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+IND,India,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+IRN,"Iran, Islamic Republic of",A_NFA_T,0,[],,
+IRN,"Iran, Islamic Republic of",L_NIL_T,0,[],,
+IRQ,Iraq,A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+IRQ,Iraq,L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+JAM,Jamaica,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+JAM,Jamaica,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+JOR,Jordan,A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+JOR,Jordan,L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+KAZ,"Kazakhstan, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+KAZ,"Kazakhstan, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+KEN,Kenya,A_NFA_T,0,[],,
+KEN,Kenya,L_NIL_T,0,[],,
+KGZ,Kyrgyz Republic,A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+KGZ,Kyrgyz Republic,L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+KHM,Cambodia,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+KHM,Cambodia,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+KIR,Kiribati,A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+KIR,Kiribati,L_NIL_T,12,['USD'],2020-Q1,2024-Q4
+KNA,St. Kitts and Nevis,A_NFA_T,0,[],,
+KNA,St. Kitts and Nevis,L_NIL_T,0,[],,
+KOS,"Kosovo, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+KOS,"Kosovo, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+KWT,Kuwait,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+KWT,Kuwait,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+LAO,Lao People's Democratic Republic,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+LAO,Lao People's Democratic Republic,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+LBN,Lebanon,A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+LBN,Lebanon,L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+LBR,Liberia,A_NFA_T,24,['USD'],2020-Q1,2025-Q4
+LBR,Liberia,L_NIL_T,36,['USD'],2015-Q1,2025-Q4
+LBY,Libya,A_NFA_T,0,[],,
+LBY,Libya,L_NIL_T,0,[],,
+LCA,St. Lucia,A_NFA_T,0,[],,
+LCA,St. Lucia,L_NIL_T,0,[],,
+LKA,Sri Lanka,A_NFA_T,41,['USD'],2015-Q1,2026-Q2
+LKA,Sri Lanka,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+LSO,"Lesotho, Kingdom of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+LSO,"Lesotho, Kingdom of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MAR,Morocco,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MAR,Morocco,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MDA,"Moldova, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MDA,"Moldova, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MDG,"Madagascar, Republic of",A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+MDG,"Madagascar, Republic of",L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+MDV,Maldives,A_NFA_T,0,[],,
+MDV,Maldives,L_NIL_T,0,[],,
+MEX,Mexico,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MEX,Mexico,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MHL,"Marshall Islands, Republic of the",A_NFA_T,0,[],,
+MHL,"Marshall Islands, Republic of the",L_NIL_T,0,[],,
+MKD,"North Macedonia, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MKD,"North Macedonia, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MLI,Mali,A_NFA_T,0,[],,
+MLI,Mali,L_NIL_T,0,[],,
+MMR,Myanmar,A_NFA_T,23,['USD'],2015-Q1,2020-Q3
+MMR,Myanmar,L_NIL_T,23,['USD'],2015-Q1,2020-Q3
+MNE,Montenegro,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MNE,Montenegro,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MNG,Mongolia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MNG,Mongolia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+MOZ,"Mozambique, Republic of",A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+MOZ,"Mozambique, Republic of",L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+MRT,"Mauritania, Islamic Republic of",A_NFA_T,4,['USD'],2015-Q1,2015-Q4
+MRT,"Mauritania, Islamic Republic of",L_NIL_T,4,['USD'],2015-Q1,2015-Q4
+MUS,Mauritius,A_NFA_T,41,['USD'],2015-Q1,2025-Q1
+MUS,Mauritius,L_NIL_T,41,['USD'],2015-Q1,2025-Q1
+MWI,Malawi,A_NFA_T,0,[],,
+MWI,Malawi,L_NIL_T,0,[],,
+MYS,Malaysia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+MYS,Malaysia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+NAM,Namibia,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+NAM,Namibia,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+NER,Niger,A_NFA_T,0,[],,
+NER,Niger,L_NIL_T,0,[],,
+NGA,Nigeria,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+NGA,Nigeria,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+NIC,Nicaragua,A_NFA_T,41,['USD'],2015-Q1,2025-Q1
+NIC,Nicaragua,L_NIL_T,41,['USD'],2015-Q1,2025-Q1
+NPL,Nepal,A_NFA_T,38,['USD'],2017-Q1,2026-Q2
+NPL,Nepal,L_NIL_T,38,['USD'],2017-Q1,2026-Q2
+NRU,"Nauru, Republic of",A_NFA_T,0,[],,
+NRU,"Nauru, Republic of",L_NIL_T,0,[],,
+OMN,Oman,A_NFA_T,0,[],,
+OMN,Oman,L_NIL_T,0,[],,
+PAK,Pakistan,A_NFA_T,47,['USD'],2015-Q1,2026-Q3
+PAK,Pakistan,L_NIL_T,47,['USD'],2015-Q1,2026-Q3
+PAN,Panama,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+PAN,Panama,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+PER,Peru,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+PER,Peru,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+PHL,Philippines,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+PHL,Philippines,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+PLW,"Palau, Republic of",A_NFA_T,0,[],,
+PLW,"Palau, Republic of",L_NIL_T,0,[],,
+PNG,Papua New Guinea,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+PNG,Papua New Guinea,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+POL,"Poland, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+POL,"Poland, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+PRY,Paraguay,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+PRY,Paraguay,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+QAT,Qatar,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+QAT,Qatar,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+ROU,Romania,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+ROU,Romania,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+RUS,Russian Federation,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+RUS,Russian Federation,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+RWA,Rwanda,A_NFA_T,38,['USD'],2017-Q1,2026-Q2
+RWA,Rwanda,L_NIL_T,38,['USD'],2017-Q1,2026-Q2
+SAU,Saudi Arabia,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+SAU,Saudi Arabia,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+SDN,Sudan,A_NFA_T,40,['USD'],2015-Q1,2025-Q4
+SDN,Sudan,L_NIL_T,28,['USD'],2018-Q1,2025-Q4
+SEN,Senegal,A_NFA_T,0,[],,
+SEN,Senegal,L_NIL_T,0,[],,
+SLB,Solomon Islands,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+SLB,Solomon Islands,L_NIL_T,38,['USD'],2017-Q1,2026-Q2
+SLE,Sierra Leone,A_NFA_T,0,[],,
+SLE,Sierra Leone,L_NIL_T,0,[],,
+SLV,El Salvador,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+SLV,El Salvador,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+SOM,Somalia,A_NFA_T,0,[],,
+SOM,Somalia,L_NIL_T,0,[],,
+SRB,"Serbia, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+SRB,"Serbia, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+SSD,"South Sudan, Republic of",A_NFA_T,0,[],,
+SSD,"South Sudan, Republic of",L_NIL_T,0,[],,
+STP,"São Tomé and Príncipe, Democratic Republic of",A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+STP,"São Tomé and Príncipe, Democratic Republic of",L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+SUR,Suriname,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+SUR,Suriname,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+SWZ,"Eswatini, Kingdom of",A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+SWZ,"Eswatini, Kingdom of",L_NIL_T,8,['USD'],2024-Q1,2025-Q4
+SYC,Seychelles,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+SYC,Seychelles,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+SYR,Syrian Arab Republic,A_NFA_T,0,[],,
+SYR,Syrian Arab Republic,L_NIL_T,0,[],,
+TCD,Chad,A_NFA_T,0,[],,
+TCD,Chad,L_NIL_T,0,[],,
+TGO,Togo,A_NFA_T,0,[],,
+TGO,Togo,L_NIL_T,0,[],,
+THA,Thailand,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+THA,Thailand,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+TJK,"Tajikistan, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+TJK,"Tajikistan, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+TKM,Turkmenistan,A_NFA_T,0,[],,
+TKM,Turkmenistan,L_NIL_T,0,[],,
+TLS,"Timor-Leste, Democratic Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+TLS,"Timor-Leste, Democratic Republic of",L_NIL_T,38,['USD'],2017-Q1,2026-Q2
+TON,Tonga,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+TON,Tonga,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+TTO,Trinidad and Tobago,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+TTO,Trinidad and Tobago,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+TUN,Tunisia,A_NFA_T,32,['USD'],2018-Q1,2025-Q4
+TUN,Tunisia,L_NIL_T,32,['USD'],2018-Q1,2025-Q4
+TUR,"Türkiye, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+TUR,"Türkiye, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+TUV,Tuvalu,A_NFA_T,0,[],,
+TUV,Tuvalu,L_NIL_T,0,[],,
+TZA,"Tanzania, United Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+TZA,"Tanzania, United Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+UGA,Uganda,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+UGA,Uganda,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+UKR,Ukraine,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+UKR,Ukraine,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+URY,Uruguay,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+URY,Uruguay,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+UZB,"Uzbekistan, Republic of",A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+UZB,"Uzbekistan, Republic of",L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+VCT,St. Vincent and the Grenadines,A_NFA_T,0,[],,
+VCT,St. Vincent and the Grenadines,L_NIL_T,0,[],,
+VEN,"Venezuela, República Bolivariana de",A_NFA_T,44,['USD'],2015-Q1,2025-Q4
+VEN,"Venezuela, República Bolivariana de",L_NIL_T,44,['USD'],2015-Q1,2025-Q4
+VNM,Vietnam,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+VNM,Vietnam,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+VUT,Vanuatu,A_NFA_T,34,['USD'],2015-Q1,2023-Q2
+VUT,Vanuatu,L_NIL_T,34,['USD'],2015-Q1,2023-Q2
+WBG,West Bank and Gaza,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+WBG,West Bank and Gaza,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+WSM,Samoa,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+WSM,Samoa,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+YEM,"Yemen, Republic of",A_NFA_T,8,['USD'],2015-Q1,2016-Q4
+YEM,"Yemen, Republic of",L_NIL_T,8,['USD'],2015-Q1,2016-Q4
+ZAF,South Africa,A_NFA_T,46,['USD'],2015-Q1,2026-Q2
+ZAF,South Africa,L_NIL_T,46,['USD'],2015-Q1,2026-Q2
+ZMB,Zambia,A_NFA_T,45,['USD'],2015-Q1,2026-Q1
+ZMB,Zambia,L_NIL_T,45,['USD'],2015-Q1,2026-Q1
+ZWE,Zimbabwe,A_NFA_T,0,[],,
+ZWE,Zimbabwe,L_NIL_T,36,['USD'],2017-Q1,2025-Q4

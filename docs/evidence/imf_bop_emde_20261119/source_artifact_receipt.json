@@ -1,0 +1,12 @@
+{
+  "panel_workflow_run_id": 44474218174,
+  "panel_artifact_id": 14505862034,
+  "panel_artifact_sha256": "1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f",
+  "sample_validation_workflow_run_id": 44474458684,
+  "sample_validation_artifact_id": 14505009889,
+  "sample_validation_artifact_sha256": "588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7",
+  "weo_october_2026_workbook_sha256": "2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c",
+  "imf_bop_country_codelist_sha256": "190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39",
+  "authentication": "none; public anonymous GET",
+  "validation": "154/154 WEO member codes map to BOP codelist; 9,299 unique observations; 24 exact queries; 1,106/1,106 observation/attribute matches"
+}
