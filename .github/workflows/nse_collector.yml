@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
     paths-ignore:
+      - ".github/workflows/bceao_2024_raw_archive.yml"
+      - "scripts/research/bceao_2024_raw_archive_trigger.txt"
+      - "scripts/research/archive_bceao_2024_annual_report.py"
       - "docs/**"
       - "scripts/research/nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_parser.py"
