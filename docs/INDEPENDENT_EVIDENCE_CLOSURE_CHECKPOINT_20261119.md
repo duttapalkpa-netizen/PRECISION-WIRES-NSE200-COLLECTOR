@@ -491,3 +491,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 
 
 - Arithmetic QA correction (2026-11-19): the report and ledger initially misstated the count. Correct result is **5/8 exact component sums and 3/8 residuals of 0.1 FCFA billion** (BFA −0.1, CIV −0.1, TGO +0.1). Published total values remain unchanged. Corrected report commit: `9fa25ec6a9c3d642df8dcc96405e5dfa69985a97`.
+
+
+## BCEAO 2024 Annual Report raw PDF archive — 2026-11-19
+- Focused workflow run `44494766325`: SUCCESS. Official URL returned HTTP 200, application/pdf; retrieved UTC `2026-11-19T09:15:44.644765+00:00`; 7,076,916 bytes; PDF magic `%PDF-1.5`.
+- Raw PDF SHA-256: `d1d69c4772e244174c754552b52f4206e8eaf98a6b839bdcd5af1990cf1a3d84`.
+- Artifact ID `14514282771`, name `bceao-annual-report-2024-raw`, ZIP size 6,167,993 bytes, artifact digest `7b5865d7c38f45b3d311c7e3cea0e9381ba35f4ed46d0025411ffdcb27e060df`, retention through 2027-02-17. Artifact downloaded and raw PDF byte count/hash independently rechecked.
+- Script commit `1afcc080a25467cc814c1654b5da03d61e899c85`; workflow `37ea952bd3083e6238424a6dedd5d587dd88e7d2`; collector paths-ignore fix `ca27927d0e1e706ed43bc48c01075a8af14a1efe`; trigger `9be9ab68b06b5ff51bebc393c889afd19201ebe0`.
+- Accidental NSE collector runs `44494746703` and `44494753220` were cancelled before market data acquisition; both job step 5 (Acquire 200 NSE market sessions) concluded CANCELLED and later production steps SKIPPED. Cancellation helper run `44494822191` SUCCESS. No production source code changed.
+- Benchmark report: `docs/GCR_BCEAO_2024_ANNUAL_NET_BOP_BENCHMARK_20261119.md`.
