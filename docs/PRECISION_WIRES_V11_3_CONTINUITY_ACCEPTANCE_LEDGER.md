@@ -1556,3 +1556,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/RECOVERED_WALK_FORWARD_ARTIFACT_METRICS_AUDIT_20261119.md`.
 - GCR remains UNKNOWN/BLOCKED pending timestamp/vintage-aligned macro panel, official sector TRI, exact index IDs and verified symbol-sector crosswalk. V11.3 cost-aware replay remains NOT_AUTHORIZED / NOT_RUN pending G0 approval.
 - Protected invariants unchanged; ₹0; no new NSE collection; UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Winner Recovery / False-Positive Diagnostic from Existing Walk-Forward Artifact
+- Reused run #319 artifact only; no NSE download, no workflow rerun, no production code change. ZIP SHA-256 matched GitHub artifact digest.
+- Inspected exact metrics JSON and walk-forward source. Clarified two separate probability diagnostics: generic `WINNER_PROBABILITY` separation is Top-30 only (H+3 winner mean 0.086364 vs nonwinner 0.086580; gap -0.000216), whereas target-specific full-universe Platt-calibrated probability mean gaps are positive: T5_H1 +0.008946, T10_H3 +0.003695, T20_H5 +0.000611. Do not conflate the two.
+- Top-30 state diagnostic (3,000 rows): CONTINUATION_READY 2,541 rows; hit rates +5 H+1 34.23%, +10 H+3 23.32%, +15 H+5 15.75%, +20 H+5 7.96%. HIDDEN_WINNER_RECOVERY 459 rows; 28.05%, 19.18%, 12.14%, 7.04%. Continuation leads by 6.18/4.13/3.61/0.92 percentage points. Descriptive only; no per-cutoff CIs.
+- Transition signature: DEMAND_CONFIRMATION (1,222 rows) leads +10 H+3 24.96%, +15 H+5 16.28%; EXHAUSTION_BUILD (283 rows) trails with 19.71%, 13.53%, +20 H+5 5.26%. PRESSURE_FADE +20 H+5 is 8.31%, effectively tied with DEMAND_CONFIRMATION 8.31%; no change to protected +1 PRESSURE_FADE.
+- Research diagnosis: investigate HIDDEN_WINNER_RECOVERY thresholds and EXHAUSTION_BUILD admission as shadow-only hypotheses; audit score/percentile ordering and target-specific probability fields. No evidence yet supports production tuning.
+- Full false-positive/missed-winner symbol lists, per-cutoff paired CIs and shadow challenger validation remain BLOCKED because run #319 ZIP lacks row-level `walk_forward_predictions.csv` and `walk_forward_universe_probabilities.csv`. Recover from an existing successful non-cancelled artifact only; if absent, stop. Do not recollect NSE data.
+- Report: `docs/WINNER_RECOVERY_FALSE_POSITIVE_DIAGNOSTIC_20261120.md`.
+- No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2. GCR remains UNKNOWN/BLOCKED; V11.3 cost-aware replay NOT_AUTHORIZED/NOT_RUN. ₹0; UNKNOWN is never PASS.
