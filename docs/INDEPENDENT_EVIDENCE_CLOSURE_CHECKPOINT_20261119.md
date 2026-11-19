@@ -205,3 +205,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Cross-match of the 40 exact Registration-URN history rows against this global index: 40/40 transaction IDs found; 40/40 millisecond timestamps exactly equal; 40/40 Registry Action values exactly equal; no missing IDs and no date/action mismatches.
 - Global index Type field is populated as `Registration` for tx667 only among these 40; absent/null for 39. This is preserved as missing/UNKNOWN, not filled from expectation. The embedded original payloads independently parse as SubmitRegistrationsRequest for all 40.
 - This provides independent confirmation that the 40 event timestamps/actions are consistent with the global transaction index as captured at retrieval time.
+
+
+## Brazil PA / BOP structure route probe — 2026-11-19
+- Run 44466544327 completed SUCCESS; artifact 14502018034; ZIP SHA-256 `9bee1463dc3db65055e31a374d6f0300a04b42ebbe7b0d38eb48711a9afe29ec`.
+- Historical tx2 item retrieval tested for exact PA URN, Dataflow BOP6, DSD ECOFIN_DSD and Provider Scheme IMF:DATA_PROVIDERS(1.0); all four returned HTTP 400 HTML (94,438 bytes each). This does not disprove tx2 history; it establishes the tested item-download route did not return those old structure items.
+- Current SDMX v2 structure retrieval succeeded:
+  - BOP6 Dataflow: HTTP 200, 43,060,682 bytes, SHA-256 `fdaa5fbb6836469da9e7d87b19c623ef921c93c1ef614b3a4195f4aad5cbe664`.
+  - BOP_BPM6 Dataflow: HTTP 200, 42,897,366 bytes, SHA-256 `a1ab2015713003424a2488897030f02686f9a99865fdfb8fc9359b96550de676`.
+  - ECOFIN_DSD structure response: HTTP 200, 42,892,145 bytes, SHA-256 `46996db04da7bc764927ec330fe943fcb42e2fdefb92008206e31e9304562f08`.
+- Both Dataflow structures reference the same DSD `IMF:ECOFIN_DSD(1.0)`, but their exact Dataflow URNs and names remain distinct: BOP6 = “Balance of Payments (BPM6) for Collection”; BOP_BPM6 = “Balance of Payments -- BPM6”. This confirms the prior accepted interpretation: shared DSD is not Dataflow alias equivalence. The BOP6 structure response also includes the Brazil PA `IMF:BR_BOP_BP6(1.0)` in its referenced structures.
+- This re-confirms structure identities only; it does not authorize rewriting the BCB header, substituting Dataflow IDs, or resolving the constraint mismatch. Existing contract reconciliation run 44290101769 / artifact 14420378420 remains the accepted 237-series evidence (234/237 allowed by BOP6 constraint vs 27/237 by BOP_BPM6 constraint).
