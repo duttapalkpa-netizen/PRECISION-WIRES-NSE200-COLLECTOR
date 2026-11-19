@@ -478,3 +478,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - No raw national files archived and no exact IMF A_NFA_T/L_NIL_T reconciliations performed yet. Source discovery only; no series admission, no synthetic quarterly data, no aggregation.
 - Next work: retrieve original files for cohort A in short batches; extract financial-account assets/liabilities separately; reconcile frequency, BPM6 classification, sign, currency/scale, and vintage before assigning country-entry-period PASS/REVIEW/BLOCKED/UNKNOWN.
 - Report: `docs/GCR_ALTERNATE_NATIONAL_BOP_SOURCE_COVERAGE_MAP_20261119.md`.
+
+
+## BCEAO 2024 Annual Report UEMOA BOP extraction — 2026-11-19
+- Official BCEAO-hosted Annual Report 2024 PDF Annexes A23–A27 was inspected; source text identifies eight individual UEMOA BOP tables, reference years 2022–2024(*), unit FCFA billion; 2024(*) is marked estimate.
+- Extracted 2024 financial-account net balances and net subcomponents (direct investment, portfolio investment, derivatives, other investment) for BEN/BFA/CIV/GNB/MLI/NER/SEN/TGO. Component sum residuals: 6/8 zero; BFA -0.1 and CIV -0.1, TGO +0.1? Correction: 3/8 nonzero residuals, BFA -0.1, CIV -0.1, TGO +0.1. All are within one-decimal presentation precision; reported totals preserved.
+- Crucial limitation: source reports only net component balances, not the separate asset and liability legs. A_NFA_T and L_NIL_T mapping remains NOT_SEPARATELY_DISCLOSED; no mapping, sign transform, or annual-to-quarterly imputation performed.
+- Raw PDF bytes not yet archived; no raw-byte hash claimed. Extracted CSV and report are evidence transcriptions from the official indexed PDF text, pending raw-PDF archival and second-person/source-image verification.
+- CSV: `docs/evidence/gcr_bceao_2024/bceao_2024_uemoa_financial_account_net.csv`; report: `docs/GCR_BCEAO_2024_ANNUAL_NET_BOP_BENCHMARK_20261119.md`.
+- CSV commit `67483e3af1782abde81c5d1800ae49694623e9ac`; report commit `5d4c01bd634c697086a40347a9209192f68ed1ba`.
+- Decision: annual net benchmark PARTIAL PASS (8 rows); IMF leg reconciliation BLOCKED; quarterly repair and aggregate BLOCKED / NOT_AUTHORIZED. Production and CORE-672 invariants unchanged; ₹0.
