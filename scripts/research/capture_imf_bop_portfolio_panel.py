@@ -59,7 +59,7 @@ for country in COUNTRIES:
    except Exception as e:row["csv_parse"]="FAIL";row["parse_error"]=str(e)
   records.append(row)
 # Preserve a normalized panel, without unit conversion or scale manipulation.
-fields=["COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY","TIME_PERIOD","OBS_VALUE","SCALE","PRECISION","STATUS","OVERLAP","DERIVATION_TYPE","source_file","source_sha256"]
+fields=["STRUCTURE[;]","STRUCTURE_ID","ACTION","COUNTRY","BOP_ACCOUNTING_ENTRY","INDICATOR","UNIT","FREQUENCY","TIME_PERIOD","OBS_VALUE","SCALE","PRECISION","DECIMALS_DISPLAYED","INSTR_ASSET","FUNCTIONAL_CAT","INT_ACC_ITEM","SECTOR","ACCOUNTING_ENTRY","ACCOUNTS","FLOW_STOCK_ENTRY","FI_MATURITY","VALUATION","AL_TYPE","DERIVATION_TYPE","BOP_TYPE","OVERLAP","FR_ADJ","IFS_FLAG","BPM6_BASIS_START_DATE","STATUS","source_file","source_sha256"]
 with (OUT/"portfolio_flows_panel.csv").open("w",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(panel)
 # Exact uniqueness and coverage checks.
