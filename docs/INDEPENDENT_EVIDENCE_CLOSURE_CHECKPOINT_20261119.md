@@ -500,3 +500,15 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Script commit `1afcc080a25467cc814c1654b5da03d61e899c85`; workflow `37ea952bd3083e6238424a6dedd5d587dd88e7d2`; collector paths-ignore fix `ca27927d0e1e706ed43bc48c01075a8af14a1efe`; trigger `9be9ab68b06b5ff51bebc393c889afd19201ebe0`.
 - Accidental NSE collector runs `44494746703` and `44494753220` were cancelled before market data acquisition; both job step 5 (Acquire 200 NSE market sessions) concluded CANCELLED and later production steps SKIPPED. Cancellation helper run `44494822191` SUCCESS. No production source code changed.
 - Benchmark report: `docs/GCR_BCEAO_2024_ANNUAL_NET_BOP_BENCHMARK_20261119.md`.
+
+
+## BCEAO Côte d'Ivoire 2024 report — partial gross FDI legs (2026-11-19)
+- Official 63-page national BOP report PDF archived: HTTP 200, 3,596,808 bytes, retrieved UTC `2026-11-19T09:18:58.398586Z`, SHA-256 `99aee45e2f75464e85b9b319c9acd93bfd706779119e8c6bfac8db0f5a1a2f28`, PDF 1.7.
+- Focused workflow run `44495255971` SUCCESS; artifact `14515150693`, ZIP digest `6ad9941564fbed0c144e6d65e7065acbef5c6511df19fb7cd5c59ce5f9659baa`, expires 2027-02-17.
+- Report printed pages 24–25 (PDF pages 27–28) separately state outward direct-investment net acquisition of financial assets 138.1 FCFA bn and inward direct-investment net incurrence of liabilities 1,892.8 FCFA bn. Difference 138.1 − 1,892.8 = −1,754.7, exactly matching Table 13 direct-investment net balance. Liability subcomponents 1,176.9 + 426.3 + 289.6 = 1,892.8; asset subcomponents 92.7 + 45.4 = 138.1.
+- Table 13 also reports portfolio net −1,055.5, derivatives +0.1, other investment net −1,233.0, total financial account net −4,043.1. These non-FDI components are net only in this report. It explicitly says BCEAO optical presentation excludes banking-system flows for certain categories.
+- Result: direct-investment component gross-leg extraction PARTIAL PASS; not whole financial account. IMF A_NFA_T/L_NIL_T aggregate mapping remains BLOCKED / NOT_MAPPED; do not use the FDI-only legs as aggregate entries.
+- CSV `docs/evidence/gcr_bceao_2024/civ_2024_fdi_gross_legs.csv`, commit `9c7731c2e1ba68035f384848db13df7aa5fbb517`; report `docs/GCR_BCEAO_CIV_2024_FDI_GROSS_LEGS_PARTIAL_20261119.md`, commit `738c4cfd0aea326d50a11ad2b1be8581a5bddebf`.
+- Script commit `20b3637ecc7169558df15456e5cd204d45f7dbb0`; workflow `247b88e5c06bd6f91eaa2eca8f0c0c8a86991a2c`; collector guard `f82444e347be43490c643dd7894066020f572ce6`; trigger `ac0b8977db9fc48a735793d14e64c206d15ff673`.
+- Two accidental collector runs `44495237321` and `44495240272` cancelled before market data acquisition; cancellation helper run `44495300530` SUCCESS. Production collector step 5 was cancelled and later steps skipped. No production source code changed.
+- Historical source lead: BCEAO Côte d'Ivoire 2021 report Table 1 also contains separate aggregate acquisition-of-assets and incurrence-of-liabilities columns, but it is a different vintage and must not be mixed with the 2024 vintage without reconciliation.
