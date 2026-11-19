@@ -1,0 +1,40 @@
+name: India IMF BOP Scale and Sign Crosswalk
+on:
+  push:
+    branches: [research/gcr-india-bop-scale-crosswalk-20261119]
+    paths:
+      - "scripts/research/india_bop_scale_crosswalk_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  crosswalk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/gcr-india-bop-scale-crosswalk-20261119
+          fetch-depth: 0
+      - name: Capture RBI BPM6 tables and compare IMF India BOP flows
+        run: python scripts/research/crosscheck_india_bop_scale_sign.py
+      - name: Persist crosswalk and raw source evidence
+        run: |
+          mkdir -p docs/evidence/imf_bop_20261119/india_scale_reconciliation
+          cp india_bop_scale_crosswalk/raw/* docs/evidence/imf_bop_20261119/india_scale_reconciliation/
+          cp india_bop_scale_crosswalk/india_bop_scale_sign_crosswalk.csv docs/evidence/imf_bop_20261119/india_scale_reconciliation/
+          cp india_bop_scale_crosswalk/summary.json docs/evidence/imf_bop_20261119/india_scale_reconciliation/
+          cp india_bop_scale_crosswalk/manifest.json docs/evidence/imf_bop_20261119/india_scale_reconciliation/
+          cp india_bop_scale_crosswalk/report.md docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/evidence/imf_bop_20261119/india_scale_reconciliation docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md
+          git diff --cached --quiet || git commit -m "Archive India IMF BOP scale and sign crosswalk"
+          git push origin research/gcr-india-bop-scale-crosswalk-20261119
+      - name: Upload RBI and IMF comparison evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: india-bop-scale-crosswalk-${{ github.run_id }}
+          path: india_bop_scale_crosswalk/
+          if-no-files-found: error
+          retention-days: 90
