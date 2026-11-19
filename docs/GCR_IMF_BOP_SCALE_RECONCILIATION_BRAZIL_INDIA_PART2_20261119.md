@@ -65,3 +65,7 @@ For the tested IMF Data Portal `IMF.STA:BOP(21.0.0)` / `IMF.STA:DSD_BOP(24.0.0)`
 
 ## Invariants
 ₹0 spend; free official sources only. No synthetic observations or fabricated timestamps. Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 and Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+## Supersession note — expanded national benchmarks
+This Part-2 report records the initial 18/18 Brazil+India pilot. It is superseded for current benchmark counts by `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`: Brazil is now 94/94 across 47 quarters, India 12/12 across six quarters, Mexico 6/6, and Chile 6/6 against the 2026-09 vintage. Latest Chile 2026-11 vintage has a separate revision mismatch (2 PASS, 4 REVIEW, 2 IMF_PANEL_MISSING). The vintage-aligned combined benchmark is 118/118; no universal 154-country admission or aggregate is authorized.
