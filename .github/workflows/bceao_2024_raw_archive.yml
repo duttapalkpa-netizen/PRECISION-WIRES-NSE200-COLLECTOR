@@ -1,0 +1,26 @@
+name: BCEAO 2024 Annual Report raw evidence archive
+on:
+  push:
+    paths:
+      - "scripts/research/archive_bceao_2024_annual_report.py"
+      - "scripts/research/bceao_2024_raw_archive_trigger.txt"
+permissions:
+  contents: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download official BCEAO PDF and verify bytes
+        run: python scripts/research/archive_bceao_2024_annual_report.py
+      - name: Upload immutable source receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: bceao-annual-report-2024-raw
+          path: bceao_2024_raw/
+          if-no-files-found: error
+          retention-days: 90
