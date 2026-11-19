@@ -88,3 +88,7 @@ The earlier “SCALE numeric transformation BLOCKED” decision is superseded fo
 - Combined 18/18 PASS. Raw Data Portal OBS_VALUE divided by 1e6 matches official national US$ million values. Do not multiply by 1e6 a second time; preserve raw values and SCALE=6.
 - Scope remains two countries, not all 154. Full aggregation is still BLOCKED by 40 no-data countries, 3 one-sided countries, 13 series with interior gaps, only 2 countries with both legs in 2026-Q3, and unresolved revision/vintage alignment.
 - Full two-country evidence: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`.
+
+
+## Supersession note — empirical scale benchmark expanded
+The initial SCALE semantic BLOCKED status has been refined by national-source empirical tests. The current tested-vintage evidence is documented in `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`: 118/118 vintage-aligned comparisons pass across Brazil, India, Mexico and Chile's 2026-09 page vintage. The latest Chile 2026-11 vintage has four review differences and two missing IMF rows. Therefore `OBS_VALUE/1e6` is empirically validated for the tested country/vintage sample, but is not universalized to all 154 EMDEs; raw values remain unchanged and source-vintage alignment remains a hard gate.
