@@ -10,7 +10,8 @@ OUT=Path("imf_bop_dsd_codelists"); OUT.mkdir(exist_ok=True)
 TARGETS=[
  ("DSD_BOP","datastructure","IMF.STA","DSD_BOP","24.0.0"),
  ("CS_BOP","conceptscheme","IMF.STA","CS_BOP","17.0.0"),
- ("CS_MASTER_SYSTEM","conceptscheme","IMF","CS_MASTER_SYSTEM","+"),\n ("CL_UNIT_MULT","codelist","IMF","CL_UNIT_MULT","+"),
+ ("CS_MASTER_SYSTEM","conceptscheme","IMF","CS_MASTER_SYSTEM","+"),
+ ("CL_UNIT_MULT","codelist","IMF","CL_UNIT_MULT","+"),
  ("CL_BOP_COUNTRY","codelist","IMF.STA","CL_BOP_COUNTRY","1.0.0"),
  ("CL_BOP_ACCOUNTING_ENTRY","codelist","IMF.STA","CL_BOP_ACCOUNTING_ENTRY","3.3.0"),
  ("CL_BOP_INDICATOR","codelist","IMF.STA","CL_BOP_INDICATOR","10.0.0"),
@@ -58,5 +59,6 @@ for name,typ,agency,obj,ver in TARGETS:
     row["maintainables"]=[{"tag":local(e.tag),"attributes":e.attrib} for e in root.iter() if local(e.tag) in ("Codelist","ConceptScheme","DataStructure") and e.attrib.get("id")]
   except Exception as e:row["xml_parse"]="FAIL";row["parse_error"]=str(e)
  results.append(row)
-(OUT/"manifest.json").write_text(json.dumps({"scope":"BOP DSD exact dimension order and concept/codelist validation; no data observations queried","responses":results},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+(OUT/"manifest.json").write_text(json.dumps({"scope":"BOP DSD exact dimension order and concept/codelist validation; no data observations queried","responses":results},indent=2,ensure_ascii=False)+"
+",encoding="utf-8")
 print(json.dumps(results,indent=2,ensure_ascii=False))
