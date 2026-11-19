@@ -1567,3 +1567,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Full false-positive/missed-winner symbol lists, per-cutoff paired CIs and shadow challenger validation remain BLOCKED because run #319 ZIP lacks row-level `walk_forward_predictions.csv` and `walk_forward_universe_probabilities.csv`. Recover from an existing successful non-cancelled artifact only; if absent, stop. Do not recollect NSE data.
 - Report: `docs/WINNER_RECOVERY_FALSE_POSITIVE_DIAGNOSTIC_20261120.md`.
 - No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2. GCR remains UNKNOWN/BLOCKED; V11.3 cost-aware replay NOT_AUTHORIZED/NOT_RUN. ₹0; UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Existing Artifact Recovery Exhaustion for Row-Level Winner Analysis
+- Searched existing prospective-watchlist workflow artifacts; inspected runs #319, #302, #301, #300, #299, #298 and earlier artifact-bearing failed/cancelled runs. The 43 run records returned for workflow ID 381790326 on the audit branch were CANCELLED or FAILURE; no successful completed validation run was identified in this inspected set.
+- Downloaded run #302 artifact ID 12550639923 (8,858,141 bytes). GitHub digest and independently recomputed ZIP SHA-256 both equal `6e20634289f2b2838ee79d156bfce52f6ee2bff68a0a40adeefa732fe9c52da5`.
+- Run #302 ZIP contains 110-row `outputs/prospective/watchlist_ledger.csv` (SHA-256 `1bc2712ef3b3bb36faa82346a496a16aecec8971748cb3133705364ceb3c8166`) and `data/qa/qa_report.json` (SHA-256 `e914f2fce4693acef7f4e89feceaafe6da7732f25df7dd0fa51fb4d2b55d25ee`). QA JSON says 200 raw files/sessions/processed dates, 2,963 symbols, 100% delivery coverage, no issues. This QA content does not override run status.
+- ZIP listing does not contain `walk_forward_predictions.csv`, `walk_forward_universe_probabilities.csv`, prediction outputs or dataset manifest. Other inspected large artifact from run #319 likewise lacks these files. Tiny ~3.9 KB failed-run artifacts are not usable validation bundles.
+- False-positive and missed-winner identities, per-cutoff TP/FP/FN/TN, paired bootstrap CIs and shadow challenger results remain NOT_AVAILABLE / NOT_RECOMPUTABLE / NOT_RUN. Do not infer identities or tune production weights from aggregate state/signature rates.
+- Report: `docs/EXISTING_ARTIFACT_RECOVERY_EXHAUSTION_ROW_LEVEL_EVIDENCE_20261120.md`.
+- Next: wait for/reuse any existing complete successful artifact; if absent, ask explicit approval before a bounded audit-only export job reusing existing processed dataset. No new NSE data collection under current instruction.
+- No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2. GCR UNKNOWN/BLOCKED; V11.3 cost-aware replay NOT_AUTHORIZED/NOT_RUN. ₹0; UNKNOWN is never PASS.
