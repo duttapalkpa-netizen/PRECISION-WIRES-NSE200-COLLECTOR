@@ -50,3 +50,13 @@
 - Report: `docs/GCR_IMF_BOP_PUBLIC_OBSERVATION_ACCESS_PART1_20261119.md`
 - Machine summary: `docs/evidence/IMF_BOP_PORTFOLIO_PILOT_BRA_IND_2015Q1_2026Q3.json`
 - Compressed normalized panel and four raw series: `docs/evidence/IMF_BOP_PORTFOLIO_*.csv.gz`
+
+
+## Status update — 2026-11-19 (supersedes earlier access BLOCKED conclusion)
+- The public observation route is now verified for `IMF.STA:BOP(21.0.0)` via anonymous SDMX 3.0 GET:
+  `https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/{series-key}?c[TIME_PERIOD]=ge:2015-Q1&c[TIME_PERIOD]=le:2026-Q3&format=csvdata`
+- No API key, cookie, login or paid service used.
+- A 154-member WEO October-2026 G200 EMDE panel has been retrieved (9,299 unique rows); 154/154 membership codes map to the BOP country codelist. Exact-key sample check: 24/24 requests PASS, 1,106/1,106 exact-to-broad observation/attribute matches.
+- Durable report: `docs/GCR_IMF_BOP_EMDE_PORTFOLIO_PANEL_20261119.md`; evidence folder: `docs/evidence/imf_bop_emde_20261119/`.
+- The prior sign-in redirect only applies to the Swagger/API explorer link; it does not prevent the tested public SDMX 3.0 observation GET route.
+- Remaining blockers are not access: coverage gaps (40/154 members with no observations for the selected entries; 83/308 country-entry pairs empty), `SCALE=6` unit interpretation mismatch requiring national-source reconciliation, revision/vintage and BPM basis controls, and no EMDE aggregate yet. Preserve all missingness; no scale conversion or aggregation until cleared.
