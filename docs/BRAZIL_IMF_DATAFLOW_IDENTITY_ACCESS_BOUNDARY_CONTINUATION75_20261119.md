@@ -46,3 +46,14 @@ Scope: official public IMF registry and IMF SDMX Central Web Services Guide. No 
 - IMF reporting constraints: https://sdmxcentral.imf.org/data/constraints.html
 - IMF SDMX Central Web Services Guide (May 2025): https://dsbb.imf.org/content/pdfs/IMFSDMXCentralWebServicesGuide.pdf
 - IMF BOP dataset: https://data.imf.org/Datasets/BOP
+
+
+## GCR replay result addendum
+- Controlled replay Actions run `44521501249` completed SUCCESS; capture job and artifact upload steps SUCCESS.
+- Artifact ID `14527843295`, `gcr-india-fpi-raw-pages-4`, 195,431 bytes; GitHub digest equals independently recomputed ZIP SHA-256 `2c8952476f58637c0f346e695793d2b8c8fd170dac551386ace1e37e0e7aea99`.
+- Manifest: 8/8 HTTP 200, zero non-200/error.
+- Replay CDSL archive raw body: 70,430 bytes, SHA-256 `3cd92be518721d84e697d42e3f2f8dc8cd6a03df6efea75a3576bf384132c2ec`; visible archive date in body is only `01-Jul-2021`.
+- Three captures of same archive route now show materially inconsistent body/date coverage: 13 dates 02–18-Nov-2026 (artifact 14524707532); one 02-Mar-2026 (artifact 14527092174); one 01-Jul-2021 (artifact 14527843295). All HTTP 200. This strongly indicates the initial GET is a date-selection landing/state response rather than a stable complete archive extract. It does not prove the archive itself is missing; archive completeness remains BLOCKED pending documented selection/export semantics.
+- Do not infer coverage, merge snapshots, or treat HTTP 200 as valid archive data. No POST or form submission attempted.
+- Replay ZIP entry `cdsl_daily_archive.html` hash above; manifest hash `80dd5662a619f44fe9a661dcc64d4895286efddce1d2ea2ce01529661a43c239`; summary reports 8 sources, 8 HTTP 200, 0 errors.
+- Replay run/artifact result is research-only. India daily matched-date reconciliation remains NOT_DONE; production ingestion BLOCKED.
