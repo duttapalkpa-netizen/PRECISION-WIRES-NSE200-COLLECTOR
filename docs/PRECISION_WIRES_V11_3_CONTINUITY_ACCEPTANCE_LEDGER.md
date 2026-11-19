@@ -758,3 +758,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`, raw SGS 22906/22924 JSONs. Full run 44476176136 / artifact 14505944936 / SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`.
 - Scope limitation: this is Brazil only. India and other EMDE countries still need independent source-to-source scale/sign validation before GCR aggregation.
 - Updated research note: `docs/GCR_IMF_BOP_PUBLIC_OBSERVATION_ACCESS_PART1_20261119.md`; prior access boundary updated with the 94-check result.
+
+
+### 2026-11-19 — India BOP scale/sign validation PASS; two-country normalization gate
+- RBI Table197 official BPM6 quarterly USD-million page (31-Jul-2026) raw HTML archived: 146,017 bytes, SHA-256 `391c549c5b64c0b7f9204eb9634975f77d4ba2d7796542ed23932fb8d740813d`.
+- RBI 3.2.A Portfolio Investment in India credit-minus-debit net maps directly to IMF L_NIL_T; RBI 3.2.B Portfolio Investment by India maps to IMF A_NFA_T with sign reversal.
+- Six calendar quarters 2024-Q2–2025-Q3 × 2 entries = 12/12 PASS using IMF raw OBS_VALUE / 1e6; max residual 0.4899709189 USD million, within 0.5 million integer rounding bound.
+- Run 44476434148 / artifact 14506542277 / ZIP SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`; durable evidence commit `451b9e203fd6edb1541c42432b47a393e030372c`.
+- Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`, commit `4a3bcc34a19d92e747f50609a7cabebe489af69a`.
+- Combined pilot-country scale/sign evidence: Brazil BCB 10/10 + India RBI 12/12 = 22/22 PASS. Scale normalization `USD_million=OBS_VALUE/1e6` validated for BRA and IND tested series/quarters; no sign flip applied to IMF raw values.
+- Remaining 152 EMDE countries remain UNKNOWN pending national source validation; no full 154-member conversion or aggregate. Coverage remains PARTIAL; BPM/revision/vintage controls NOT_DONE; daily swing use NOT_SUITABLE.
