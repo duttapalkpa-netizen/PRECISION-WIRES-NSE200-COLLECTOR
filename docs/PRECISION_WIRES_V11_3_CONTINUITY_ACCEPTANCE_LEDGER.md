@@ -1405,3 +1405,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Limits: published table extraction verified, but independent replication from raw quarterly BOPS not done; no daily market/FX/sector response; high-frequency raw event-study panel not acquired.
 - Stage: Annex A2 extraction increment complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; production admission NOT_AUTHORIZED.
 - Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed classifications; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 43 — Part-4: RBI sudden-stop replication method and India source mapping (2026-11-19)
+- Transcribed the official RBI algorithm from the article text and its two methodology images: four-quarter moving sum of gross inflows C_t; year-on-year change ΔC_t = C_t − C_(t−4); previous-five-year rolling mean and standard deviation; symmetric sudden-stop phase starts below mean−1 SD, contains at least one observation at/below mean−2 SD, and ends when it rises above mean−1 SD. Similar method is applied to net capital flows and gross FPI inflows.
+- Mapped RBI Table 42 as a free official national cross-check: quarterly, US$ million, BPM6, credit/debit/net separately, includes financial-account functional categories, preliminary labels and revision policy. It is not proven identical to the IMF BOPS data vintage/definitions used in the paper and cannot substitute for the original IMF replication.
+- IMF BOP dataset landing page confirms quarterly frequency and API/download entry points; API click redirected to sign-in in this inspection. No raw IMF India series, item codes, dataflow or codelists acquired/verified.
+- Report: docs/GCR_RBI_SUDDEN_STOP_REPLICATION_METHOD_AND_INDIA_SOURCE_MAPPING_CONTINUATION43_PART4_20261119.md; commit 82f2fbe795630593c69c33e1bc41f6fa49c4b886.
+- Sources: RBI research https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4517 (method text and linked images); RBI Table 42 metadata https://www.rbi.org.in/scriptS/PublicationsView.aspx?id=24094; IMF BOP dataset https://data.imf.org/en/datasets/IMF.STA%3ABOP.
+- Next: resolve public IMF BOP dataflow/item codes and acquire India quarterly raw series, preserving vintage/sign/units; if API access remains gated, use RBI Table 42 only as separately labelled national cross-check after exact component mapping.
+- Limits: method transcription is source-verified, but independent reproduction NOT_DONE; raw IMF/RBI quarterly exports NOT_ACQUIRED; no daily market response.
+- Stage: methodology/source mapping increment complete; Observation overall OPEN; Planning/Organizing NOT_STARTED; GCR NOT COMPLETE; production admission NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; no synthetic data/fabricated timestamps/guessed codes/sign conversions/missing-quarter interpolation; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
