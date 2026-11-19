@@ -21,9 +21,9 @@ jobs:
       - name: Download immutable prior evidence (no source re-fetch)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh run download 44465947951 -n imf-brazil-public-api-probe-44465947951 -D prior_artifact
+        run: curl --fail --location --silent --show-error -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/artifacts/14502380926/zip -o prior_artifact.zip
       - name: Verify exact Brazil registration lifecycle
-        run: python scripts/research/audit_imf_brazil_registration_history_artifact.py prior_artifact/imf-brazil-public-api-probe-44465947951.zip --out artifacts/brazil_registration_history_audit
+        run: python scripts/research/audit_imf_brazil_registration_history_artifact.py prior_artifact.zip --out artifacts/brazil_registration_history_audit
       - name: Upload independent audit output
         uses: actions/upload-artifact@v4
         with:
