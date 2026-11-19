@@ -28,9 +28,25 @@ jobs:
           cp imf_emde_coverage_qa/report.md docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
           mkdir -p docs/evidence/imf_bop_emde_20261119/scale_semantics
           cp imf_bop_scale_semantics/* docs/evidence/imf_bop_emde_20261119/scale_semantics/
+          cat >> docs/INDEPENDENT_EVIDENCE_CLOSURE_CHECKPOINT_20261119.md <<EOF
+
+## WEO G200 EMDE BOP coverage QA — ${{ github.run_id }}
+- Independent full raw-to-normalized audit: 9,299/9,299 exact keys; 278,970 source-field cells; zero duplicates, missing keys or attribute mismatches.
+- Coverage: 225/308 country-entry pairs with data; 111/154 both legs; 3 one-sided; 40 no data; 43/154 lack at least one leg. Only 4 series have 47/47 quarters; 13 series have internal gaps (71 missing quarters); 2026-Q3 only Brazil and Pakistan.
+- SCALE concept metadata: official IMF CS_MASTER_SYSTEM(1.0.2); Arabic label translates to number of decimal places; no English description or code list. No unit multiplier or rounding applied.
+- Aggregate remains BLOCKED / NOT_AUTHORIZED; sign, FX and point-in-time vintage remain open. Report: docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+EOF
+          cat >> docs/PRECISION_WIRES_V11_3_CONTINUITY_ACCEPTANCE_LEDGER.md <<EOF
+
+## 2026-11-19 — GCR Part-3: WEO G200 EMDE coverage and SCALE metadata
+- Coverage QA run ${{ github.run_id }} PASS; 9,299/9,299 raw-to-normalized exact; 278,970 source-field cells; zero mismatches/duplicates.
+- 111/154 members have both flow legs; 3 one-sided; 40 no data; 43/154 missing at least one leg. 4 series complete 47/47; 13 internal-gap series (71 missing quarters); only BRA/PAK reach 2026-Q3.
+- SCALE concept English Name=Scale; Arabic label means number of decimal places; no formal English description/codelist; preserve metadata, no numeric rescaling.
+- Full aggregate remains BLOCKED / NOT_AUTHORIZED. No production selector/ranking/pressure-fade/CORE-672/Engine A–E changes.
+EOF
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/evidence/imf_bop_emde_20261119/coverage_qa docs/evidence/imf_bop_emde_20261119/scale_semantics docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+          git add docs/evidence/imf_bop_emde_20261119/coverage_qa docs/evidence/imf_bop_emde_20261119/scale_semantics docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md docs/INDEPENDENT_EVIDENCE_CLOSURE_CHECKPOINT_20261119.md docs/PRECISION_WIRES_V11_3_CONTINUITY_ACCEPTANCE_LEDGER.md
           git diff --cached --quiet || git commit -m "Archive WEO EMDE BOP quarterly coverage and missingness audit"
           git push origin research/gcr-emde-coverage-qa-main-sync-20261119
       - name: Upload SCALE concept metadata probe
