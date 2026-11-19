@@ -788,3 +788,7 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Distinguish layers: registry Action Replace 40/40; embedded RegistrationRequest action Information 40/40. Event-index Type missing in 39 rows, but all 40 XMLs contain Registration element; classify index Type as omitted, not different event type.
 - Report: `docs/IMF_BRAZIL_REGISTRATION_LIFECYCLE_INTEGRITY_AUDIT_CONTINUATION43_PART1_20261119.md`; commit `45e2965f0585842c01e1046d2744f439e9298467`.
 - Returned 40-event snapshot integrity now PASS. It does not prove events outside returned set or resolve PA `BOP6` vs payload `BOP_BPM6`; Brazil Reconstruction remains BLOCKED pending official PA Changelog/owner-side crosswalk. GCR full panel/score remains NOT_READY. No production changes; ₹0; UNKNOWN is not PASS.
+
+
+### Audit execution boundary / failed CI attempts (Continuation 43)
+- Offline verifier passed locally against the original downloaded ZIP with the exact expected SHA-256. The optional GitHub Actions wrapper was not accepted as a PASS: run `44540443480` failed because `gh run download` extracted the artifact directory instead of creating the ZIP path expected by the script; run `44540559439` completed with zero jobs. The unverified wrapper workflow was deleted in commit `960d509e2b17532dddb7fea91ba2cc6d141e72b9`. Keep the Python verifier and report; do not cite an Actions PASS for this audit.
