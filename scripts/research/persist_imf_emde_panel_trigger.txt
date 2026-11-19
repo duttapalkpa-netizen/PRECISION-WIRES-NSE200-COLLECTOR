@@ -5,3 +5,5 @@
 2026-11-19 persist-WEO-Appendix-G200-154-crosswalk-and-EMDE-panel-evidence
 
 2026-11-19 retry-persist-weo-appendix-after-yaml-fix
+
+2026-11-19 persist-coverage-qa-and-scale-semantics-evidence
