@@ -27,7 +27,9 @@ jobs:
         run: python scripts/research/probe_imf_bop_broad_observation_queries.py
       - name: Capture exact Brazil and India portfolio-investment flow panel
         run: python scripts/research/capture_imf_bop_portfolio_panel.py
-      - name: Compare BCB registered XML with IMF Brazil BOP panel\n        run: python scripts/research/compare_bcb_xml_to_imf_bop_panel.py\n      - name: Independently reconcile exact BOP panel against broad raw observations
+      - name: Compare BCB registered XML with IMF Brazil BOP panel
+        run: python scripts/research/compare_bcb_xml_to_imf_bop_panel.py
+      - name: Independently reconcile exact BOP panel against broad raw observations
         run: python scripts/research/validate_imf_bop_portfolio_panel.py
 
       - name: Commit durable IMF BOP pilot evidence (raw DSD + exact CSV panel)
@@ -66,6 +68,7 @@ jobs:
             imf_bop_observation_smoketest/
             imf_bop_broad_probe/
             imf_bop_portfolio_exact_panel/
-            imf_bop_portfolio_panel_validation/\n            bcb_bop_scale_crosscheck/
+            imf_bop_portfolio_panel_validation/
+            bcb_bop_scale_crosscheck/
           if-no-files-found: error
           retention-days: 90
