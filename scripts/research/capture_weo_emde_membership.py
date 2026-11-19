@@ -1,132 +1,92 @@
 #!/usr/bin/env python3
-"""Capture October 2026 WEO workbook, Appendix and IMF BOP country codelist.
+"""Capture October 2026 WEO EMDE membership from workbook composition sheet.
 
-No fuzzy code assignment: only normalized exact label matches and a small,
-versioned explicit alias table are allowed. Unmatched names remain UNKNOWN.
+Authoritative membership source is the exact WEO vintage workbook's
+'Country Group Composition' sheet, group code G200. Crosswalk to IMF BOP
+COUNTRY codelist by exact code ID only; no fuzzy country-name matching.
 """
 from pathlib import Path
 from datetime import datetime,timezone
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError,URLError
-from urllib.parse import quote
-import hashlib,json,re,unicodedata,csv,zipfile,io
-from openpyxl import load_workbook
-from pypdf import PdfReader
-import xml.etree.ElementTree as ET
+import hashlib,json,csv,io,unicodedata,re
+import openpyxl,xml.etree.ElementTree as ET
 
-OUT=Path("weo_emde_oct2026"); RAW=OUT/"raw"; RAW.mkdir(parents=True,exist_ok=True)
+OUT=Path("weo_emde_oct2026");RAW=OUT/"raw";RAW.mkdir(parents=True,exist_ok=True)
 URLS={
  "weo_workbook":"https://data.imf.org/-/media/iData/External-Storage/Documents/0FA3DC49A04D446E9D69DBEB29979E1C/en/WEOOct2026all.xlsx",
  "weo_appendix":"https://data.imf.org/-/media/iData/External-Storage/Documents/C4182C5C54794FC48892DE8F6C74FF82/en/October-2026-WEO-Database-Appendix.pdf",
  "bop_country_codelist":"https://api.imf.org/external/sdmx/3.0/structure/codelist/IMF.STA/CL_BOP_COUNTRY/1.0.0?references=none"
 }
-ALIASES={
- "naoero":"nauru","the gambia":"gambia","the bahamas":"bahamas",
- "kyrgyz republic":"kyrgyzstan","lao p.d.r.":"lao people's democratic republic",
- "republic of congo":"congo","democratic republic of the congo":"democratic republic of the congo",
- "west bank and gaza":"west bank and gaza","korea":"korea, republic of",
- "iran":"iran, islamic republic of","moldova":"moldova, republic of",
- "russia":"russian federation","syria":"syrian arab republic",
- "tanzania":"tanzania, united republic of","venezuela":"venezuela, bolivarian republic of",
- "bolivia":"bolivia, plurinational state of","micronesia":"micronesia, federated states of",
- "taiwan province of china":"taiwan, province of china","cape verde":"cabo verde",
- "cote d'ivoire":"côte d'ivoire","turkiye":"türkiye"
-}
 def norm(s):
  s=unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode().lower()
- s=s.replace("&","and")
- s=re.sub(r"[^a-z0-9]+"," ",s)
- return " ".join(s.split())
+ return " ".join(re.sub(r"[^a-z0-9]+"," ",s).split())
 def fetch(name,url):
  ts=datetime.now(timezone.utc).isoformat()
- req=Request(url,headers={"User-Agent":"PRECISION-WIRES-WEO-membership-audit/1.0","Accept":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/pdf, application/vnd.sdmx.structure+xml, application/xml, */*"})
+ req=Request(url,headers={"User-Agent":"PRECISION-WIRES-WEO-membership-audit/1.1","Accept":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/pdf, application/vnd.sdmx.structure+xml, application/xml, */*"})
  try:
-  with urlopen(req,timeout=90) as r:
-   status=r.status; headers=dict(r.headers.items()); body=r.read()
- except HTTPError as e:
-  status=e.code; headers=dict(e.headers.items()) if e.headers else {}; body=e.read()
- except (URLError,TimeoutError) as e:
-  status=0; headers={}; body=str(e).encode()
+  with urlopen(req,timeout=90) as r:status=r.status;final=r.geturl();headers=dict(r.headers.items());body=r.read()
+ except HTTPError as e:status=e.code;final=e.geturl();headers=dict(e.headers.items()) if e.headers else {};body=e.read()
+ except (URLError,TimeoutError) as e:status=0;final=url;headers={};body=str(e).encode()
  safe={k:v for k,v in headers.items() if k.lower() not in {"set-cookie","authorization","www-authenticate"}}
  ext={"weo_workbook":"xlsx","weo_appendix":"pdf","bop_country_codelist":"xml"}[name]
- p=RAW/(name+"."+ext); p.write_bytes(body)
- return {"name":name,"url":url,"retrieved_at_utc":ts,"http_status":status,
+ p=RAW/(name+"."+ext);p.write_bytes(body)
+ return {"name":name,"url":url,"final_url":final,"retrieved_at_utc":ts,"http_status":status,
   "headers":safe,"byte_count":len(body),"sha256":hashlib.sha256(body).hexdigest(),"file":str(p)}
-def local(tag): return tag.split("}")[-1]
+def local(tag):return tag.split("}")[-1]
 def main():
  manifest=[fetch(k,v) for k,v in URLS.items()]
- for r in manifest:
-  if r["http_status"]!=200: raise SystemExit(f"{r['name']} HTTP {r['http_status']}")
- paths={r["name"]:Path(r["file"]) for r in manifest}
- # Workbook: preserve workbook sheet names and locate country/group worksheets.
- wb=load_workbook(paths["weo_workbook"],read_only=True,data_only=True)
- workbook_info={"sheet_names":wb.sheetnames,"sheets":[],"country_group_composition_preview":[]}
- for ws in wb.worksheets:
-  workbook_info["sheets"].append({"title":ws.title,"max_row":ws.max_row,"max_column":ws.max_column})
- (OUT/"workbook_structure.json").write_text(json.dumps(workbook_info,indent=2)+"\n")
- # PDF page 6 has the exact WEO classification list.
- pdf=PdfReader(str(paths["weo_appendix"]))
- pages=[p.extract_text() or "" for p in pdf.pages]
- alltext="\n".join(pages)
- start=alltext.find("Emerging and Developing Economies")
- if start<0: raise SystemExit("EMDE heading not found in October 2026 WEO appendix")
- tail=alltext[start+len("Emerging and Developing Economies"):]
- stops=[tail.find(x) for x in ["Emerging and Developing Asia","Emerging and Developing Europe","Latin America and the Caribbean"] if tail.find(x)>=0]
- if not stops: raise SystemExit("Could not locate next WEO regional group heading")
- block=tail[:min(stops)]
- lines=[re.sub(r"\s+"," ",x).strip(" \t\r\n-") for x in block.splitlines()]
- lines=[x for x in lines if x and x not in {"WORLD ECONOMIC OUTLOOK","DATABASE APPENDIX"} and not x.startswith("International Monetary Fund |")]
- # repair PDF line wraps only when the next line starts with a continuation
- names=[]; pending=""
- for line in lines:
-  if pending:
-   pending += " "+line
-   names.append(pending); pending=""
-  elif line in {"Democratic Republic","St. Vincent and the"}:
-   pending=line
-  else: names.append(line)
- if pending: names.append(pending)
- names=[x for x in names if x]
- # exact unique list, retain order
- seen=set(); unique=[]
- for n in names:
-  k=norm(n)
-  if k not in seen: seen.add(k); unique.append(n)
- # parse official BOP country codelist
- root=ET.fromstring(paths["bop_country_codelist"].read_bytes())
- codes=[]
+ for x in manifest:
+  if x["http_status"]!=200:raise SystemExit(f"{x['name']} HTTP {x['http_status']}")
+ paths={x["name"]:Path(x["file"]) for x in manifest}
+ wb=openpyxl.load_workbook(paths["weo_workbook"],read_only=True,data_only=True)
+ if "Country Group Composition" not in wb.sheetnames:raise SystemExit("WEO workbook missing Country Group Composition sheet")
+ ws=wb["Country Group Composition"]
+ headers=next(ws.iter_rows(min_row=1,max_row=1,values_only=True))
+ members=[]
+ for row in ws.iter_rows(min_row=2,values_only=True):
+  if str(row[0]).strip()=="G200":
+   members.append({"group_code":str(row[0]).strip(),"group_name":str(row[1]).strip(),
+    "country_code":str(row[3]).strip(),"country_name":str(row[4]).strip()})
+ wb_info={"sheet_names":wb.sheetnames,"composition_headers":list(headers),
+  "composition_max_row":ws.max_row,"composition_max_column":ws.max_column}
+ wb.close()
+ if not members:raise SystemExit("No G200 EMDE rows found in WEO Country Group Composition")
+ # Exact ISO-like country code IDs from official BOP codelist.
+ root=ET.parse(paths["bop_country_codelist"]).getroot()
+ codes={}
  for el in root.iter():
-  if local(el.tag)=="Code":
-   cid=el.attrib.get("id")
-   label=next((x.text for x in el if local(x.tag)=="Name" and x.text),None)
-   if cid and label: codes.append({"bop_country_code":cid,"bop_country_label":label,"norm":norm(label)})
- bynorm={}
- for c in codes: bynorm.setdefault(c["norm"],[]).append(c)
+  if local(el.tag)=="Code" and el.attrib.get("id"):
+   code=el.attrib["id"]
+   names=[x.text.strip() for x in el.iter() if local(x.tag)=="Name" and x.text and x.text.strip()]
+   codes.setdefault(code,{"bop_country_code":code,"bop_country_names":sorted(set(names))})
  rows=[]
- for name in unique:
-  n=norm(name); target=norm(ALIASES.get(n,name))
-  hits=bynorm.get(target,[])
-  rows.append({"weo_edition":"October 2026","weo_group":"Emerging and Developing Economies",
-   "weo_country_name":name,"normalized_name":n,"alias_used":ALIASES.get(n,""),
-   "bop_country_code":hits[0]["bop_country_code"] if len(hits)==1 else "",
-   "bop_country_label":hits[0]["bop_country_label"] if len(hits)==1 else "",
-   "mapping_status":"EXACT_LABEL" if len(hits)==1 and target==n else ("EXPLICIT_ALIAS" if len(hits)==1 else ("AMBIGUOUS" if len(hits)>1 else "UNMAPPED")),
-   "candidate_codes":";".join(x["bop_country_code"] for x in hits)})
+ for m in members:
+  hit=codes.get(m["country_code"])
+  rows.append({"weo_edition":"October 2026","weo_group_code":m["group_code"],
+   "weo_group_name":m["group_name"],"weo_country_code":m["country_code"],
+   "weo_country_name":m["country_name"],
+   "bop_country_code":hit["bop_country_code"] if hit else "",
+   "bop_country_names":";".join(hit["bop_country_names"]) if hit else "",
+   "mapping_status":"EXACT_CODE" if hit else "UNMAPPED",
+   "name_label_normalized_match":bool(hit and any(norm(m["country_name"])==norm(n) for n in hit["bop_country_names"]))})
  with (OUT/"weo_emde_to_bop_country_crosswalk.csv").open("w",newline="",encoding="utf-8") as f:
   w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
- summary={"scope":"October 2026 WEO official classification Appendix + Entire Dataset workbook + IMF BOP COUNTRY codelist",
-  "manifest":manifest,"pdf_page_count":len(pdf.pages),"workbook":workbook_info,
-  "emde_member_count":len(unique),"unique_member_count":len(set(norm(x) for x in unique)),
-  "expected_154_check":len(unique)==154,
-  "bop_codelist_code_count":len(codes),\n  "bop_codelist_first_30":codes[:30],
-  "mapping_status_counts":{s:sum(x["mapping_status"]==s for x in rows) for s in ["EXACT_LABEL","EXPLICIT_ALIAS","UNMAPPED","AMBIGUOUS"]},
-  "unmapped":[x["weo_country_name"] for x in rows if x["mapping_status"]=="UNMAPPED"],
-  "ambiguous":[x for x in rows if x["mapping_status"]=="AMBIGUOUS"],
-  "notes":["WEO Appendix is the authority for WEO EMDE classification; workbook is captured as the vintage's complete data file.",
-   "Country-code mapping is a separate exact/explicit-alias operation against IMF BOP CL_BOP_COUNTRY.",
-   "No fuzzy matching, guessed code, or imputed mapping. Unmapped/ambiguous names remain unresolved.",
-   "A 154-member count is a validation assertion, not a forced target; a different observed count must be reported, not silently edited."]}
+ counts={s:sum(x["mapping_status"]==s for x in rows) for s in ("EXACT_CODE","UNMAPPED")}
+ summary={"scope":"October 2026 WEO G200 EMDE composition sheet to IMF BOP COUNTRY codelist exact-code crosswalk",
+  "weo_group_code":"G200","weo_group_name":"Emerging Market and Developing Economies",
+  "weo_membership_count":len(members),"unique_weo_country_codes":len({x["country_code"] for x in members}),
+  "duplicate_weo_codes":sorted(c for c in {x["country_code"] for x in members} if sum(y["country_code"]==c for y in members)>1),
+  "bop_codelist_code_count":len(codes),"mapping_status_counts":counts,
+  "unmapped":[x["weo_country_code"]+":"+x["weo_country_name"] for x in rows if x["mapping_status"]=="UNMAPPED"],
+  "name_label_nonmatches":[x["weo_country_code"]+":"+x["weo_country_name"]+" => "+x["bop_country_names"] for x in rows if x["mapping_status"]=="EXACT_CODE" and not x["name_label_normalized_match"]],
+  "workbook":wb_info,"manifest":manifest,
+  "membership_authority":"WEO October 2026 workbook Country Group Composition sheet, G200; not PDF text extraction.",
+  "crosswalk_rule":"Exact country code ID only; no fuzzy name matching or guessed aliases."}
  (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
  print(json.dumps(summary,indent=2,ensure_ascii=False))
- if summary["emde_member_count"]!=154: raise SystemExit("WEO EMDE count differs from expected 154; inspect extracted list before acceptance")\n if not codes: raise SystemExit("BOP country codelist contained no parsed codes")
-if __name__=="__main__": main()
+ if len(members)!=154 or len({x["country_code"] for x in members})!=154:
+  raise SystemExit("WEO G200 membership count/uniqueness not 154; inspect source rows, do not force count")
+ if counts["UNMAPPED"]:
+  raise SystemExit("Some WEO G200 country codes are absent from IMF BOP codelist")
+if __name__=="__main__":main()
