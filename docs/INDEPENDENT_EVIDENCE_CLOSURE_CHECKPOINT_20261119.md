@@ -238,3 +238,23 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - IMF states BOPSY country-level data are reported to IMF or obtained from country NSDP (with IMF-counterparty exceptions); World/country-group aggregates other than Euro Area combine reported country data and estimates for nonreporting economies using sources including WEO and External Wealth of Nations; Euro Area data are ECB-reported. Hence BOPSY can be a separate annual macro benchmark, but not a substitute for quarterly country-reported BOP portfolio flow observations or a pure reported-data EM aggregate.
 - BOPSY dashboard: https://data.imf.org/en/dashboards/bopsy%20dashboard. November 2026 Explanatory Notes target: https://data.imf.org/-/media/BOPSY-Explanatory-Notes-November-2026.docx (static web extractor did not parse DOCX; not represented as downloaded/validated).
 - Status: BOP dataset route discovery PASS; actual direct download URL NOT_RESOLVED; anonymous BOP observations BLOCKED; BOPSY supplementary annual benchmark ELIGIBLE_FOR_SEPARATE_VALIDATION but numeric data ingestion NOT_DONE. Full detailed caveats: `docs/GCR_IMF_BOP_PUBLIC_RELEASE_DISCOVERY_20261119.md`.
+
+
+## IMF BOP public observation access + validated BRA/IND pilot — 2026-11-19
+- Corrected previous API access assumption: official IMF docs say IMF data are available through SDMX 2.1 and 3.0; Swagger explorer requires beta portal sign-in, but the tested public SDMX 3.0 metadata and observation routes work without an API key/cookie. Official BOP dataset page describes Annual and Quarterly frequency. Sources: https://data.imf.org/en/Resource-Pages/IMF-API and https://data.imf.org/en/datasets/IMF.STA%3ABOP.
+- Public Dataflow metadata: `IMF.STA:BOP(21.0.0)`; DSD `IMF.STA:DSD_BOP(24.0.0)`; DSD SHA-256 `1541c0e65af5801acb86767a183a124537aa4b6a04d2a4e528c23d73d4b2019b`.
+- DSD dimension order: COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, UNIT, FREQUENCY. Code lists independently retrieved: CL_BOP_COUNTRY(1.0.0), CL_BOP_ACCOUNTING_ENTRY(3.3.0), CL_BOP_INDICATOR(10.0.0), CL_UNIT(2.13.0), CL_FREQ(1.2.0).
+- Exact series used: indicator `P_F` = Portfolio investment, Total financial assets/liabilities; accounting entries `A_NFA_T` = Assets, Net acquisition of financial assets; `L_NIL_T` = Liabilities, Net incurrence of liabilities; unit USD; quarterly. The first `P_MV` exact-key test returned HTTP 200 with no observations; rejected from this panel. `P_F` was confirmed populated in broad raw country responses, then extracted with exact keys.
+- Panel: 4 exact series; BRA assets 47 quarters 2015-Q1–2026-Q3; BRA liabilities 47 same; IND assets 46 quarters 2015-Q1–2026-Q2; IND liabilities 46 same. Total 186 non-empty observations. India 2026-Q3 remains missing; no fill.
+- Final validation run 44472944620 / artifact 14504732476 / ZIP size 7,784,894 / ZIP SHA-256 `2e00a175837e1ad5e98346b114c4ec5a9d55ddf38833938711e9a3106a331d6c`.
+- Independent QA: 4/4 HTTP 200; 4/4 CSV parse; 186/186 exact-query vs broad-raw values match; 186/186 raw source attributes preserved in normalized panel; zero duplicate keys; zero missing/mismatched values; all observed quarter sequences contiguous; PASS.
+- Normalized CSV SHA-256 `8ef39ecdefc4dd042d6e7a74e84aaf95aa9c66162de36164667d2bc6ad74e778`; compressed SHA-256 `7de9dd096eb7eae1dde5fbd38bc8d8dd09f07737e108fcfbe6d333c1642ff869`.
+- Durable compressed evidence committed:
+  - normalized panel `docs/evidence/IMF_BOP_PORTFOLIO_PILOT_BRA_IND_2015Q1_2026Q3.csv.gz`, blob `2da01b588eb113931689555608ca5e1f225cf59f`.
+  - BRA A_NFA_T raw CSV.gz blob `96b8fbee5c214a40d5c279f579c3e2942c87c89c`.
+  - BRA L_NIL_T raw CSV.gz blob `2f7d9aab5b647b8ab997043458e384afd6ff905b`.
+  - IND A_NFA_T raw CSV.gz blob `d0fbc5b6f2fc98fa365afc2328ff8aa4e210bbd1`.
+  - IND L_NIL_T raw CSV.gz blob `e2b27069e0c489b078332a3a4b5727f0b454449f`.
+  - report `docs/GCR_IMF_BOP_PUBLIC_OBSERVATION_ACCESS_PART1_20261119.md`; machine summary `docs/evidence/IMF_BOP_PORTFOLIO_PILOT_BRA_IND_2015Q1_2026Q3.json`.
+- Data interpretation limits: `SCALE=6` and `PRECISION=6` preserved; no rescaling or currency conversion until SCALE semantics are independently resolved. BOP quarterly flows are not daily SEBI FPI/FII flows. Brazil/India are only a pilot, not approved EM universe. Do not aggregate or admit to production.
+- Next exact tasks: resolve SCALE semantics; version an approved EM membership list; inspect BOP_AGG as a separate annual aggregate (official IMF says group totals include estimates for non-reporting economies); then expand country panel and validate vintage/missingness. CPIS/IIP positions remain separate from BOP transactions.
