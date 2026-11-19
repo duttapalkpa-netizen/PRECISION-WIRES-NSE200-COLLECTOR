@@ -28,7 +28,7 @@ def get(name,url):
   if name=="bop_dsd":
    attrs=[]
    for e in root.iter():
-    if local(e.tag)=="Attribute" and e.attrib.get("id")=="SCALE":
+    if local(e.tag)=="Attribute" and e.attrib.get("id") in ("SCALE","PRECISION","DECIMALS_DISPLAYED"):
      item={"id":e.attrib.get("id"),"attributes":e.attrib,"children":[]}
      for x in e:
       item["children"].append({"tag":local(x.tag),"attributes":x.attrib,"text":(x.text or "").strip()})
@@ -39,7 +39,7 @@ def get(name,url):
   elif name=="master_concept_scheme":
    concepts=[]
    for e in root.iter():
-    if local(e.tag)=="Concept" and e.attrib.get("id") in ("SCALE","UNIT_MULT","PREFERRED_SCALE"):
+    if local(e.tag)=="Concept" and e.attrib.get("id") in ("SCALE","UNIT_MULT","PREFERRED_SCALE","PRECISION","DECIMALS_DISPLAYED"):
      concepts.append({"id":e.attrib.get("id"),"urn":e.attrib.get("urn"),
       "names":[{"lang":x.attrib.get("{http://www.w3.org/XML/1998/namespace}lang"),"text":(x.text or "").strip()} for x in e if local(x.tag)=="Name"],
       "descriptions":[{"lang":x.attrib.get("{http://www.w3.org/XML/1998/namespace}lang"),"text":(x.text or "").strip()} for x in e if local(x.tag)=="Description"],
