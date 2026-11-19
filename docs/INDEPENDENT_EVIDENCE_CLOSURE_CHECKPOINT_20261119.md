@@ -410,3 +410,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Operational numeric representation `OBS_VALUE/10^6` is cross-validated for Brazil 94/94 and India 10/12 (two REVIEW). Keep raw values unchanged; do not apply a global conversion to remaining 152 WEO G200 members without their own national-source crosswalks.
 - Detailed India report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; authoritative scale report: `docs/GCR_IMF_BOP_SCALE_SEMANTICS_20261119.md`.
 - Overall: metadata meaning PASS; Brazil numeric crosswalk PASS; India numeric crosswalk PARTIAL; full EMDE aggregate remains BLOCKED / NOT_AUTHORIZED due missing/asynchronous reporting, India 2026-Q1 discrepancy, remaining country scale crosswalks, FX policy and point-in-time vintages.
+
+
+
+## Correction: authoritative IMF SCALE enumeration and India validation — 2026-11-19
+- The earlier Arabic-label-only reading is superseded. Exact concept scheme response `IMF:CS_MASTER_SYSTEM` HTTP 200, 6,402 bytes, SHA-256 `50e82604b231e9e02ba8472d46e227276acec393360e60071c980f8d5caf2768`; its SCALE CoreRepresentation references `IMF:CL_UNIT_MULT(1.0.2)`.
+- CL_UNIT_MULT HTTP 200, 54,278 bytes, SHA-256 `24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561`; code 6 = Millions; official English description states 10^6. This is the controlling unit multiplier definition; the Arabic display label is inconsistent.
+- India RBI Table 42 BPM6 crosswalk: 12 comparisons, 10 PASS and 2 REVIEW; three quarters (2025-Q1, 2025-Q2, 2026-Q2) fully match within ±US$0.5m. 2026-Q1 liability and combined net mismatch by approximately US$1.512bn; no correction/override applied.
+- India raw RBI pages, exact comparison CSV and manifest are committed under `docs/evidence/imf_bop_20261119/india_scale_reconciliation/`; report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`.
+- Empirical API numeric representation `OBS_VALUE/10^6`: Brazil 94/94 PASS; India 10/12 PASS, 2 REVIEW. Preserve raw values and do not generalize to the other 152 WEO G200 members without national-source crosswalks.
+- Latest evidence: India crosswalk run 44477031402 / artifact 14505649659 / ZIP SHA-256 `8db4f9536a57df1e8635855af5bb90225de0f800e6e9164bd20d99d1f355b4e2`; codelist capture same run / artifact 14506293939 / ZIP SHA-256 `ffac629793da363b934321e00f43aaec7eabcd609bc9a029cb46356712a01858`.
+- Final decision: SCALE code meaning PASS; Brazil numeric crosswalk PASS; India numeric crosswalk PARTIAL; EMDE aggregate remains BLOCKED / NOT_AUTHORIZED.
