@@ -22,13 +22,13 @@ jobs:
         run: python scripts/research/capture_imf_brazil_registration_lifecycle.py
       - name: Cross-check Brazil registration history against global transaction index
         run: python scripts/research/validate_imf_brazil_history_against_global_index.py
-      - name: Upload raw responses and manifest
+      - name: Probe Brazil PA transaction 2 and current BOP6/BOP_BPM6 structures\n        run: python scripts/research/probe_imf_brazil_pa_structure_revision.py\n      - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-brazil-public-api-probe-${{ github.run_id }}
           path: |
             imf_brazil_exact_registration/
             imf_brazil_registration_lifecycle/
-            imf_brazil_history_index_reconciliation/
+            imf_brazil_history_index_reconciliation/\n            imf_brazil_pa_structure_revision/
           if-no-files-found: error
           retention-days: 90
