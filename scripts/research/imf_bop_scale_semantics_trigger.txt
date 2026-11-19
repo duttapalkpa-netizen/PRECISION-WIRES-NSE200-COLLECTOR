@@ -1,1 +1,3 @@
 2026-11-19 exact DSD SCALE and CL_UNIT_MULT semantic validation
+
+2026-11-19 include-PRECISION-and-DECIMALS_DISPLAYED-concepts
