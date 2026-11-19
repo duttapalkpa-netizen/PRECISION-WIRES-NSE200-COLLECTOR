@@ -160,3 +160,9 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Run 44465302480 completed SUCCESS; artifact 14502051707; ZIP SHA-256 `1d4e6caa2667d5e1d777e4f76be18b7e692581497bb7e8d1732ab4c00383a4a8`.
 - Independent ZIP inspection: 200/200 HTTP 200; 200/200 Fusion-JSON parse PASS; 200 Registration objects; zero exact matches to target Brazil PA; no non-200 or parse failures.
 - Cumulative contiguous transaction-ID scan 13–412: 400/400 Registration snapshots inspected; 0 exact target PA matches. Still not exhaustive for the September transaction index because IDs 413 onward remain uninspected.
+
+
+## Brazil registration transaction batch 413–612 — 2026-11-19
+- Run 44465408909 completed SUCCESS; artifact 14501124987; ZIP SHA-256 `11d864620e92b0c50bd9c8ffb470926bb8fbf8c856bd4afd23c5764291902516`.
+- Independent ZIP inspection: 200/200 HTTP 200; 200/200 Fusion-JSON parse PASS; 200 Registration objects; 0 exact matches to target Brazil PA; no non-200 or parse failures.
+- Cumulative contiguous scan 13–612: 600/600 registration snapshots inspected; zero exact matches. Transaction IDs 613–1000 remain to be inspected; this is still a bounded negative result, not full chronology.
