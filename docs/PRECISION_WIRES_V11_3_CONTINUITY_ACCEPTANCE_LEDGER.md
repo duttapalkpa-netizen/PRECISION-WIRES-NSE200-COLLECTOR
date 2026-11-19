@@ -1051,3 +1051,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Detailed report `docs/BRAZIL_IMF_DATAFLOW_IDENTITY_ACCESS_BOUNDARY_CONTINUATION75_20261119.md`, commit `030bc37c0495244af3888accc069e1b7b26f1a33`.
 - GCR controlled CDSL archive replay trigger commit `85e89033c37c6f5f00071446c195b00694c16af9`; Actions run `44521501249` was IN_PROGRESS at checkpoint time; no artifact/hash/conclusion claimed yet.
 - No production changes; ₹0; UNKNOWN is never PASS; all invariants preserved.
+
+
+- Continuation 75 GCR archive replay: run `44521501249` SUCCESS; artifact `14527843295`, 195,431 bytes; ZIP SHA-256 / GitHub digest `2c8952476f58637c0f346e695793d2b8c8fd170dac551386ace1e37e0e7aea99`; 8/8 HTTP 200.
+- CDSL archive replay body 70,430 bytes, SHA-256 `3cd92be518721d84e697d42e3f2f8dc8cd6a03df6efea75a3576bf384132c2ec`, visible date 01-Jul-2021 only. Same archive URL across three captures returned (a) 13 dates 02–18 Nov-2026, (b) one date 02-Mar-2026, (c) one date 01-Jul-2021; all HTTP 200. Initial GET is not stable complete archive export; exact date selection semantics must be established before extraction. Do not infer coverage or merge snapshots.
+- Detailed GCR replay report `docs/GCR_CDSL_ARCHIVE_CONTROLLED_REPLAY_CONTINUATION75_20261119.md`, commit `2bbad10a038820572adb05e40d68dc3a39dafc6e`.
+- Brazil official IMF access boundary: public structure GET queries are distinct from private authenticated registration/re-registration POST; BOP6 DATA_DOMAIN in IMF guide example is not the same field as Dataflow BOP_BPM6. No Brazil-specific crosswalk; PA Changelog and BOP6/BOP_BPM6 identity remain BLOCKED. Detailed report latest commit `e91ec3d3f5a5cd519be289509359aa354bd50f39`.
