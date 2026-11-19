@@ -612,3 +612,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Detailed report: docs/GCR_INDIA_FPI_RAW_CAPTURE_SCHEMA_AUDIT_CONTINUATION72_20261119.md (commit b7f5896459c7710af3b12c369a072062129c86a2). Continuity ledger update commit 9f35ceaad69178406ec904447ca271dfea225145.
 - Brazil remains unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED. Do not repeat known failing transaction-2 JSON probes.
 - Next highest-value action: capture exact CDSL 15-Nov-2026 sector report raw bytes, then matched-date NSDL/CDSL cash reconciliation. No production changes; ₹0; UNKNOWN is never PASS.
+
+
+## Continuation 73 — exact CDSL fortnightly sector report
+- Official CDSL dated page discovered: https://www.cdslindia.com/publications/FII/FortnightlySecWisePages/Nov%2015%202026.html (web inspection ref turn900033view0).
+- Page structure explicitly distinguishes AUC 31-Oct-2026, net investment 16–31-Oct, net investment 01–15-Nov, and AUC 15-Nov; asset classes and INR crore/USD million separately labelled. Preserve fortnightly frequency and stock-vs-flow separation.
+- GET-only capture script updated at commit 0c4a2115b38c4b70eda0fb404858f57dea35d159; trigger commit abb848a203bd21d0be03fd8eaa2362edc8028953.
+- Actions run 44519322726 was IN_PROGRESS when checked; artifact/hash not yet available. Raw sector capture PENDING.
+- Detailed report commit 94626aca617e5977ea0f61401118f63858f31eee; continuity ledger commit 6d8f9747ba5b16475a10c266af4d58ba63908a69.
+- Matched-date NSDL/CDSL flow reconciliation NOT_DONE; India production BLOCKED.
+- Brazil remains unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; owner-side exact PA GUI/export remains required.
+- No production invariants changed; ₹0; UNKNOWN is never PASS.
