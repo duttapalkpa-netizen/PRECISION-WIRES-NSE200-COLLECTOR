@@ -575,3 +575,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Official route links: SEBI FPI directory https://www.sebi.gov.in/curation/fpi.html ; CDSL archive https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx ; CDSL daily https://www.cdslindia.com/Publications/FIIDailyData.aspx ; CDSL landing https://www.cdslindia.com/Publications/ForeignPortInvestor.html ; CDSL sector Nov15 https://www.cdslindia.com/publications/FII/FortnightlySecWisePages/Nov%2015%202026.html.
 - Report `docs/GCR_BRAZIL_SOURCE_FRESHNESS_AND_BLOCKER_AUDIT_CONTINUATION68_20261119.md`, commit b420dbc5b140a4873959f3c1372e9f0fd3a09d90. Ledger update commit c991f259bd1fcf6669c7a78d5ab4d4d6413d8cb5.
 - GCR status: official route/sector page availability PASS; daily investment freshness PARTIAL/BLOCKED; raw archive/parser/reconciliation NOT_DONE. Brazil lifecycle PASS; PA tx2 and dataflow identity BLOCKED. No production admission or invariant change.
+
+
+## Continuation 69 — NSDL/CDSL FPI freshness reconciliation
+- SEBI official curation directory confirms NSDL Latest, Current Month, Archive and Fortnightly sector-selector routes. URLs preserved in detailed report.
+- Direct retrieval of NSDL Latest.aspx, Archive.aspx and FPI_Fortnightly_Selection.aspx returned HTTP 502 in this environment; this does not prove data absence or outage.
+- CDSL archive evidence conflict: official search-index snapshot reports daily investment through 18-Nov-2026; direct opened official page displays heading through 31-Oct-2026 and October rows. Cash investment freshness is CONFLICT/UNKNOWN pending raw byte capture. Do not infer cash freshness from derivatives date.
+- Public third-party scraper README indicates NSDL ASP.NET postback mechanics and different query cost for FPI vs DII; implementation lead only, not accepted source data.
+- Report `docs/GCR_NSDL_CDSL_DAILY_FPI_FRESHNESS_RECONCILIATION_CONTINUATION69_20261119.md`, commit feb159eee99fe312b8bf23586a014867c9ce96da. Ledger commit 9809b93c7a7a6d6737f7ab21bf338ec4c0b7bc31.
+- Brazil remains: 40-event Registration lifecycle PASS; PA tx2 Changelog BLOCKED; BOP6/BOP_BPM6 identity mismatch BLOCKED. No repeated probes.
+- Next: bounded GitHub Actions direct HTTP raw capture of NSDL and CDSL official pages; preserve status/headers/UTC/raw bytes/SHA-256/form fields; parse only after raw capture. Reconcile same-date NSDL/CDSL confirmed flows with NSE provisional flows. No production admission.
