@@ -718,3 +718,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Durable report docs/GCR_IMF_BOP_SCALE_SEMANTICS_20261119.md; detailed Part-2 report updated; coverage QA and WEO source files persisted to main.
 - Latest main persistence commit from successful archive workflow: 13bdd96d; coverage and scale reports committed as c57913487aa3915da0a88c2622a1ab42b649e059 and 3cd7c4b0eb7de639750ee030cccb1eb50ee8108f; Part-2 report update committed separately.
 - Acceptance: membership PASS; acquisition PASS; raw integrity PASS; coverage PARTIAL; scale code semantics PASS but numeric application BLOCKED; EMDE net-flow aggregation BLOCKED/NOT_AUTHORIZED; vintage/revision controls NOT_DONE; relative-attraction formula/sector transmission/backtest NOT_DONE. All production invariants unchanged.
+
+
+## 2026-11-19 — GCR IMF BOP SCALE/sign benchmark extended to Brazil + India
+- Brazil official BCB SGS 22906 (net acquisition financial assets) and 22924 (net incurrence liabilities), both monthly USD million, independently reconcile to IMF quarterly Data Portal `A_NFA_T` and `L_NIL_T` after summing three months and dividing IMF raw `OBS_VALUE) by 1,000,000. Selected quarters 2015-Q1, Q2, Q3, Q4 and 2026-Q3: 10/10 PASS; max residual 0.121925 USD million under 0.15 tolerance.
+- India official RBI Table 197 (BPM6 quarterly, USD million), 2024-Q2 through 2025-Q1: 8/8 PASS within ±0.5 million displayed rounding.
+- Combined two-country benchmark 18/18 PASS. For the tested Data Portal API payloads, raw observations are base USD; divide by 1e6 for USD million comparisons. Do not apply ×1e6 again. Preserve raw values and SCALE=6 metadata.
+- Brazil CSV `docs/evidence/IMF_BOP_BRA_SCALE_RECONCILIATION_2015Q1_2026Q3.csv`; report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`.
+- Global all-154 rule is not automatically authorized; this proves two country benchmarks for this exact dataflow/series. Full panel remains BLOCKED for aggregation: 40 members have no data, 3 one-sided, 13 series have interior gaps, only 2 countries have both legs at 2026-Q3; vintage/BPM6-BPM7 alignment remains open.
+- Older BCB-registered XML vs SGS 2010 structural break remains a separate unresolved source conflict (201/381 monthly mismatches); do not conflate with the passing current IMF Data Portal quarterly vs BCB SGS check.
