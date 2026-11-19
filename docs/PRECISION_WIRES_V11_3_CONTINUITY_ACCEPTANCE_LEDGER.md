@@ -1616,3 +1616,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Missed-winner rows: RANKED_OUT 6,611; LOW_WINNER_PROBABILITY 2,552; CONTAMINATED 19. TOP_DRIVER_GAPS populated 5,685/9,182; RELATIVE_STRENGTH;PROGRESSION 4,344, PROGRESSION 718, RELATIVE_STRENGTH 623. 3,497 gap values missing.
 - Report: docs/RUN407_CUTOFF_CLUSTERED_BOOTSTRAP_AND_WINNER_DRIVER_ATTRIBUTION_20261120.md.
 - Next: reconcile all_by_date versus universe_pred row membership and forward labels, create cutoff-level denominator ledger, then rerun paired bootstrap and a shadow-only challenger. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2 unchanged. GCR excluded. UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Run #407 Source Denominator and H+5 Serialization Reconciliation
+- Re-read exact source `pipeline/walk_forward_backtest.py` at commit `d013577157bc1f24322cd100aaf60c40a20c4d17` and reconstructed cutoff row membership from the archived processed NSE dataset in artifact #407. No new collection, workflow dispatch, backtest rerun or production change.
+- Exact 100-cutoff row counts: `all_by_date` 257,696; HISTORY_DEPTH_AT_T >=20 eligibility rows 251,724; excluded short-history rows 5,972. Export membership check on (CUT_OFF,SYMBOL): zero missing, zero extra, zero duplicates. This fully explains the denominator membership difference.
+- Raw all_by_date outcome denominators: T5_H1 23,616 winners (193 null labels); T10_H3 10,418; T20_H5 2,096. Eligible export winners: 22,519; 9,735; 1,964.
+- Prediction CSV Top-30 hits: T5_H1 648 (JSON agrees); T10_H3 1,198 (JSON agrees); T20_H5 612 (CSV precision 20.40%) while JSON precision 20.30% implies 609 hits. JSON T20_H5 recall 29.05534% also does not reconcile with 2,096 all_by_date winners and either hit count. T20_H5 remains BLOCKED.
+- Reconstructed 20,000 paired cutoff-cluster bootstrap (seed 20261120), 100 cutoff clusters: T5_H1 precision 21.60% CI [19.3333,24.0667], recall 2.74390% CI [2.4950,3.0246], lift 2.35698x CI [2.14014,2.60041]; T10_H3 precision 39.9333% CI [36.8000,43.1667], recall 11.49933% CI [10.8224,12.2239], lift 9.87777x CI [9.33142,10.46156]; T20_H5 precision 20.40% CI [18.3000,22.6333], recall 29.19847% CI [26.5144,32.1632], lift 25.08110x CI [22.80528,27.56944] — T20 values provisional due to 3-hit inconsistency.
+- Report: `docs/RUN407_SOURCE_DENOMINATOR_AND_H5_SERIALIZATION_RECONCILIATION_20261120.md`; commit `4c028c3e26608fa447756d614400bd7c778166f3`.
+- Next: trace T20_H5 609-vs-612 mismatch from retained job logs/artifact provenance. If not resolvable, keep BLOCKED and request approval for a bounded audit-only export using existing processed data. No new NSE collection.
+- Protected invariants unchanged; GCR remains UNKNOWN/BLOCKED; V11.3 cost-aware replay NOT_AUTHORIZED/NOT_RUN; ₹0; UNKNOWN is never PASS.
