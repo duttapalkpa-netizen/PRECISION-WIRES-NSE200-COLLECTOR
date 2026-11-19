@@ -54,3 +54,17 @@ Poll only run `44538278638`; inspect its job steps/logs and artifact. If success
 
 ## Invariants
 ₹0, official/free sources only, no credentials, no synthetic values, no guessed timestamps/hashes, no unapproved aliases/crosswalks, UNKNOWN is not PASS. No production integration, macro weights, EMDE aggregate, selector/ranking/pressure-fade/CORE-672/Engines A-E changes.
+
+
+## Run completion and independent artifact verification (updated 2026-11-19)
+- Run `44538278638` completed SUCCESS; capture step and artifact upload step SUCCESS. Duration approximately 16 seconds (13:55:18Z to 13:55:34Z).
+- Artifact ID `14535963861`, name `bcb-sgs-portfolio-raw-44538278638`, 11,211 bytes; GitHub artifact digest and independently recomputed ZIP SHA-256 both `ee226a0525edd6974b8e0f3205005d3d5913f3014137065b074890b353ecdf60`.
+- ZIP contents: four raw JSONs plus manifest. Independently recomputed hashes:
+  - 22905: 14,989 bytes; SHA-256 `bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3`.
+  - 22906: 14,594 bytes; SHA-256 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`.
+  - 22925: 15,086 bytes; SHA-256 `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`.
+  - 22940: 14,858 bytes; SHA-256 `451cc29b67f2634ac5d62439b30f11297fdab236ec42948f1db16f681eafb033`.
+- Manifest SHA-256 `c000fe9dec4d77fed1ac85ca5d416df8cf43c3ab3ff084381aa10017cf61c062`.
+- All four endpoints HTTP 200; each has 381 rows from 1995-01-01 through 2026-09-01; 381/381 valid rows per series; 0 invalid rows; 0 duplicate dates; monotonic dates true; overall manifest status PASS. Each raw hash independently recomputed from ZIP bytes matches manifest.
+- Retrieval timestamps and response Date headers are in manifest; no Last-Modified header was returned. No publication timestamp inferred from retrieval time.
+- This PASS covers raw collection and structural QA only. It does not establish semantic equivalence, accounting sign reconciliation or IMF crosswalk; 22905 remains aggregate portfolio net. Brazil PA identity/chronology and GCR country-panel acceptance remain separate blockers.
