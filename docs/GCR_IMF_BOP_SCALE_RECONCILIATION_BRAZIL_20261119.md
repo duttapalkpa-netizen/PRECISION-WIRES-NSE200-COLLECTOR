@@ -79,3 +79,10 @@ This reconciles the raw IMF values with BCB's independently published monthly ne
 - India and remaining EMDE scale mapping: NOT_DONE / UNKNOWN pending national-source crosswalk.
 - 154-member EMDE aggregate: NOT_AUTHORIZED until country-level unit, period, BPM basis, vintage and missingness checks pass.
 - Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 and Engines A–E unchanged; ₹0 spend; no synthetic data; UNKNOWN is not PASS.
+
+
+## Cross-country SCALE metadata confirmation — India (2026-11-19)
+- The DSD SCALE enumeration is `IMF:CL_UNIT_MULT(1.0.2)`; code 6 = Millions, description 10^6. The prior Arabic display label is not the controlling definition.
+- India official RBI BPM6 Table 42 crosswalk independently supports `OBS_VALUE / 10^6` for 3 of 4 tested quarters and 10/12 comparisons overall; 2026-Q1 liabilities and combined net remain REVIEW.
+- This corroborates the operational representation in a second country, but does not extend numeric admission to the other 152 WEO G200 members.
+- India report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`.
