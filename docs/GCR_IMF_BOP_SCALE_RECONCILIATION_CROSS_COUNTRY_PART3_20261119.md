@@ -1,17 +1,17 @@
 # GCR — Cross-country IMF BOP SCALE / sign validation (Part 3)
 Date: 2026-11-19
-Decision: **30/30 vintage-aligned comparisons PASS across four countries; latest Chile vintage exposes a separate revision mismatch. Global 154-country admission remains blocked.**
+Decision: **118/118 vintage-aligned comparisons PASS across four countries; latest Chile vintage exposes a separate revision mismatch. Global 154-country admission remains blocked.**
 
 ## Progress Log
 ### Completed
 - WEO October 2026 G200 EMDE membership: 154/154 unique codes; exact IMF BOP COUNTRY code presence 154/154.
 - IMF Data Portal BOP P_F quarterly panel: 9,299 observations, 9,299 unique keys, zero duplicates; 24 exact series checks across 12 countries matched 1,106/1,106 observations.
 - Independent official national-source benchmarks:
-  - India RBI Table 197: 8/8 PASS, 2024-Q2 to 2025-Q1.
-  - Brazil BCB SGS 22906/22924: 10/10 PASS, 2015-Q1–Q4 and 2026-Q3.
+  - India RBI Table 197: 12/12 PASS, 2024-Q2 to 2025-Q1.
+  - Brazil BCB SGS 22906/22924: 94/94 PASS, 2015-Q1–Q4 and 2026-Q3.
   - Mexico Banxico CE174: 6/6 PASS, 2025-Q4 to 2026-Q2.
   - Chile Banco Central BDE older page vintage (updated 2026-09-07): 6/6 PASS, 2025-Q4 to 2026-Q2.
-- Combined vintage-aligned sample: **30/30 PASS**. For these tested Data Portal rows, raw `OBS_VALUE / 1,000,000` reconciles to official national US$ million values. Preserve raw observations unchanged; conversion is derived-output only.
+- Combined vintage-aligned sample: **118/118 PASS**. For these tested Data Portal rows, raw `OBS_VALUE / 1,000,000` reconciles to official national US$ million values. Preserve raw observations unchanged; conversion is derived-output only.
 - Current Chile BDE page (updated 2026-11-18) was independently captured. Its 2025-Q4 values still match, but 2026-Q1/Q2 values are revised and no longer match the IMF panel; Q3 2026 national observations exist while the IMF panel has no CHL Q3 row. This is a source-vintage alignment gate, not a failed scale conversion.
 
 ### Rejected / not authorized
@@ -24,11 +24,11 @@ Decision: **30/30 vintage-aligned comparisons PASS across four countries; latest
 ## 1. Benchmark results
 | Country | National official source | Matched vintage/window | Comparisons | Result |
 |---|---|---|---:|---|
-| India | RBI Table 197, BPM6, quarterly USD million | 2024-Q2–2025-Q1 | 8 | 8 PASS |
-| Brazil | BCB SGS 22906 assets / 22924 liabilities, monthly USD million | 2015-Q1–Q4 and 2026-Q3 | 10 | 10 PASS |
+| India | RBI Table 197, BPM6, quarterly USD million | 2024-Q2–2025-Q3 | 12 | 12 PASS |
+| Brazil | BCB SGS 22906 assets / 22924 liabilities, monthly USD million | 2015-Q1–2026-Q3 | 94 | 94 PASS |
 | Mexico | Banxico CE174, BPM6, quarterly USD million | 2025-Q4–2026-Q2 | 6 | 6 PASS |
 | Chile | Banco Central BDE portfolio assets/liabilities, monthly USD million | 2025-Q4–2026-Q2, page vintage 2026-09-07 | 6 | 6 PASS |
-| **Total** | **4 countries** | **Vintage-aligned comparisons** | **30** | **30 PASS** |
+| **Total** | **4 countries** | **Vintage-aligned comparisons** | **118** | **118 PASS** |
 
 ### Current Chile vintage exception
 The current BDE series pages show “Actualizado: 18.Nov.2026” and are explicitly in millions of US dollars. Raw capture run [44476957975](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44476957975), artifact 14507305215, ZIP SHA-256 `155fffc6fbc46df12f0905cd00b011651ced7df1368ceb0a65b736a090052691`.
@@ -42,12 +42,13 @@ The current BDE series pages show “Actualizado: 18.Nov.2026” and are explici
 - Older page-vintage evidence is from the official BDE page snapshot visible in the web research capture, updated 2026-09-07; original bytes were not saved, so treat it as lower-grade historical evidence, not a raw-hash archive.
 
 ## 2. Evidence files and runs
-- India source report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_PART1_20261119.md`; detailed CSV `docs/evidence/IMF_BOP_IND_SCALE_RECONCILIATION_2024Q2_2025Q1.csv`.
+- India full six-quarter report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; detailed CSV `docs/evidence/imf_bop_emde_20261119/india_scale_reconciliation/quarter_reconciliation.csv`.
 - Brazil + India report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`; Brazil CSV `docs/evidence/IMF_BOP_BRA_SCALE_RECONCILIATION_2015Q1_2026Q3.csv`.
-- Brazil workflow [44475693836](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44475693836), artifact 14506740234, ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`.
+- Brazil full 47-quarter workflow [44476176136](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44476176136), artifact 14505944936, ZIP SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`; 94/94 PASS, max residual 0.12192411 USD million.
+- India workflow [44476434148](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44476434148), artifact 14506542277, ZIP SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`; RBI raw HTML 146,017 bytes, SHA-256 `391c549c5b64c0b7f9204eb9634975f77d4ba2d7796542ed23932fb8d740813d`.
 - Mexico workflow [44476089607](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44476089607), artifact 14506696311, ZIP SHA-256 `26ba04369dfba423609c313f68995dd7eeb7c5c44727d1df29a8062a3998c58c`; Banxico raw HTML 2,232,477 bytes, SHA-256 `c23bc36238c48a4e9b27582ebe519369761f9dafcb2ec9ea6b25b5dd62db21bd`.
 - Chile current-vintage workflow [44476957975](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44476957975), artifact 14507305215, ZIP SHA-256 above.
-- Consolidated machine-readable comparisons: `docs/evidence/IMF_BOP_SCALE_CROSS_COUNTRY_VALIDATION_20261119.csv`.
+- Consolidated machine-readable comparisons: `docs/evidence/IMF_BOP_SCALE_CROSS_COUNTRY_VALIDATION_20261119.csv` (126 rows: 94 Brazil, 12 India, 6 Mexico, 6 Chile 2026-09 vintage, and 8 Chile 2026-11 vintage).
 
 ## 3. Interpretation and admission gate
 - Empirical transform for tested dataflow rows: `OBS_VALUE / 1,000,000` yields national US$ million values.
