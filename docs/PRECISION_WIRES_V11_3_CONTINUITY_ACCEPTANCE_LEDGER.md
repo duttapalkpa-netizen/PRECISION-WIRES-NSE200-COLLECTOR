@@ -1085,3 +1085,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Exact assets/liabilities series IDs, 07-Sep-2026 vintage bytes, 18-Nov raw capture and row-level IMF P_F bridge remain NOT_DONE/BLOCKED. Preserve Q1/Q2 as REVIEW_VINTAGE_MISMATCH; no numeric revision bridge inferred from publication calendar.
 - Report commit `3b61a10b1d788800661673afb8ef3d0a167b7918`; Master Evidence Checkpoint commit `c05730c0237077a88b22aaf3e7636aff6a1f2821`.
 - Brazil remains identity BLOCKED (PA BOP6/BR1 vs BCB BOP_BPM6) pending official provider-side PA Changelog and mapping evidence. No txId=2 retries. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-7: Brazil IMF registry and independent BCB portfolio feeds (2026-11-19)
+- Public IMF SDMX Central Registrations row confirms current `IMF:BOP6(1.0)` / `IMF:BR1` and registered BCB URL, last updated 2026-10-26T11:47:29Z. Corroborating registry evidence only; it does not prove BOP6/BOP_BPM6 equivalence, payload's internal declaration or historical actions.
+- New BCB/Depec ODbL dataset path: SGS 22905 broad portfolio net; 22906 portfolio financial-asset net acquisition; 22925 portfolio liability net incurrence inflows; 22940 portfolio debt-security inflows. Public 22905 JSON visible through Sep-2026, but no immutable raw archive/hash in this task.
+- Report commit `22260e4b98e0346198281b1987b4739128aa277b`; checkpoint commit `7c1dece681cae79df262aebd43526162303a9a49`.
+- Next: short, separate raw-ingestion/QA jobs for each SGS family, then exact instrument/sign mapping. Brazil PA chronology still BLOCKED; GCR panel/score NOT_READY. ₹0; no production integration; UNKNOWN is not PASS.
