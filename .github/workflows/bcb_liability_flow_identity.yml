@@ -1,0 +1,29 @@
+name: BCB Portfolio Liability Flow Identity (Research Only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bcb_liability_flow_identity.yml"
+      - "scripts/research/validate_bcb_liability_flow_identity.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture and reconcile official SGS liability flows
+        run: python scripts/research/validate_bcb_liability_flow_identity.py
+      - name: Upload raw source and monthly reconciliation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-liability-identity-${{ github.run_id }}
+          path: artifacts/bcb_liability_identity/
+          if-no-files-found: error
+          retention-days: 90
