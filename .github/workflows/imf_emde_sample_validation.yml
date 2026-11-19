@@ -1,0 +1,28 @@
+name: IMF BOP EMDE Exact-Key Sample Validation
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/imf_emde_sample_validation_trigger.txt"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 154-country source panel artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 44474218174 --repo "$GITHUB_REPOSITORY" --name "imf-bop-emde-portfolio-flows-44474218174" --dir /tmp/emde
+      - name: Exact-key sample validation
+        run: python scripts/research/validate_imf_emde_panel_sample.py
+      - name: Upload exact-query receipts and validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-emde-exact-sample-validation-${{ github.run_id }}
+          path: imf_emde_sample_validation/
+          if-no-files-found: error
+          retention-days: 90
