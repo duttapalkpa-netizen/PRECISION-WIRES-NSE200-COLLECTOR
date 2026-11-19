@@ -1,0 +1,139 @@
+{
+  "scope": "public route probe for exact IMF CS_MASTER_SYSTEM SCALE concept; no value conversion",
+  "responses": [
+    {
+      "name": "api_wildcard",
+      "url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/+?references=all",
+      "final_url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/+?references=all",
+      "retrieved_at_utc": "2026-11-19T06:46:52.358222+00:00",
+      "http_status": 200,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 06:46:52 GMT",
+        "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
+        "Transfer-Encoding": "chunked",
+        "Connection": "close",
+        "x-correlation-id": "fece910eca09c193de754a70db9e60ab",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "0",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "x-frame-options": "DENY",
+        "x-envoy-upstream-service-time": "152",
+        "server": "istio-envoy",
+        "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
+      },
+      "byte_count": 6192546,
+      "sha256": "f8f5273d9ee03259a6b0c2614b7da7eefab67460c7f55513a66be02fddf6eb58",
+      "file": "api_wildcard.xml",
+      "xml_parse": "PASS",
+      "root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
+      "scale_concepts": [
+        {
+          "attributes": {
+            "id": "SCALE",
+            "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=IMF:CS_MASTER_SYSTEM(1.0.2).SCALE"
+          },
+          "xml": "<ns0:Concept xmlns:ns0=\"http://www.sdmx.org/resources/sdmxml/schemas/v3_0/structure\" xmlns:ns1=\"http://www.sdmx.org/resources/sdmxml/schemas/v3_0/common\" id=\"SCALE\" urn=\"urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=IMF:CS_MASTER_SYSTEM(1.0.2).SCALE\"><ns1:Name xml:lang=\"ar\">عدد الخانات العشرية</ns1:Name><ns1:Name xml:lang=\"ru\">Масштаб</ns1:Name><ns1:Name xml:lang=\"pt\">Escala</ns1:Name><ns1:Name xml:lang=\"ja\">尺度</ns1:Name><ns1:Name xml:lang=\"en\">Scale</ns1:Name><ns1:Name xml:lang=\"fr\">Échelle</ns1:Name><ns1:Name xml:lang=\"es\">Escala</ns1:Name><ns1:Name xml:lang=\"zh\">规模</ns1:Name><ns0:CoreRepresentation><ns0:Enumeration>urn:sdmx:org.sdmx.infomodel.codelist.Codelist=IMF:CL_UNIT_MULT(1.0+.0)</ns0:Enumeration></ns0:CoreRepresentation></ns0:Concept>"
+        }
+      ]
+    },
+    {
+      "name": "api_1_0",
+      "url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0?references=all",
+      "final_url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0?references=all",
+      "retrieved_at_utc": "2026-11-19T06:46:53.631740+00:00",
+      "http_status": 204,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 06:46:53 GMT",
+        "Content-Length": "0",
+        "Connection": "close",
+        "x-correlation-id": "87ee367e9ae2908fae00e95f291e85b8",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "0",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "x-frame-options": "DENY",
+        "x-envoy-upstream-service-time": "53",
+        "server": "istio-envoy",
+        "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
+      },
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "file": "api_1_0.xml"
+    },
+    {
+      "name": "api_1_0_0",
+      "url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0.0?references=all",
+      "final_url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0.0?references=all",
+      "retrieved_at_utc": "2026-11-19T06:46:54.014562+00:00",
+      "http_status": 204,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 06:46:54 GMT",
+        "Content-Length": "0",
+        "Connection": "close",
+        "x-correlation-id": "d736bf4054427d5ab72b9e8a3e3cece0",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "0",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "x-frame-options": "DENY",
+        "x-envoy-upstream-service-time": "45",
+        "server": "istio-envoy",
+        "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
+      },
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "file": "api_1_0_0.xml"
+    },
+    {
+      "name": "central_1_0",
+      "url": "https://sdmxcentral.imf.org/sdmx/v2/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0?references=all",
+      "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0?references=all",
+      "retrieved_at_utc": "2026-11-19T06:46:54.386869+00:00",
+      "http_status": 404,
+      "headers": {
+        "vary": "Access-Control-Request-Headers",
+        "content-disposition": "inline; filename=\"structure.\"",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "x-xss-protection": "1; mode=block",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "content-type": "application/xml;charset=UTF-8",
+        "transfer-encoding": "chunked",
+        "date": "Thu, 19 Nov 2026 06:46:54 GMT",
+        "connection": "close"
+      },
+      "byte_count": 421,
+      "sha256": "aa0b5827e5185b172e34b7891c2ec205db7502459842237eca92bdd11bc1d87e",
+      "file": "central_1_0.xml"
+    },
+    {
+      "name": "central_1_0_0",
+      "url": "https://sdmxcentral.imf.org/sdmx/v2/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0.0?references=all",
+      "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0.0?references=all",
+      "retrieved_at_utc": "2026-11-19T06:46:56.196333+00:00",
+      "http_status": 404,
+      "headers": {
+        "vary": "Access-Control-Request-Headers",
+        "content-disposition": "inline; filename=\"structure.\"",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "x-xss-protection": "1; mode=block",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "content-type": "application/xml;charset=UTF-8",
+        "transfer-encoding": "chunked",
+        "date": "Thu, 19 Nov 2026 06:46:57 GMT",
+        "connection": "close"
+      },
+      "byte_count": 421,
+      "sha256": "aa0b5827e5185b172e34b7891c2ec205db7502459842237eca92bdd11bc1d87e",
+      "file": "central_1_0_0.xml"
+    }
+  ]
+}
