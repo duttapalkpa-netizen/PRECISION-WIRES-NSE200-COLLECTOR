@@ -23,3 +23,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 full-registration-lifecycle-capture-all-40-events
 
 2026-11-19 crosscheck-all-40-brazil-registration-events-against-global-index
+
+2026-11-19 retry-global-index-crosscheck-null-type-safe
