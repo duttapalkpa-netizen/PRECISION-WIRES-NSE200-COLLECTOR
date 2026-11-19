@@ -5,7 +5,7 @@ on:
       - 'scripts/research/imf_bop_public_route_probe_trigger.txt'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -29,6 +29,28 @@ jobs:
         run: python scripts/research/capture_imf_bop_portfolio_panel.py
       - name: Independently reconcile exact BOP panel against broad raw observations
         run: python scripts/research/validate_imf_bop_portfolio_panel.py
+
+      - name: Commit durable IMF BOP pilot evidence (raw DSD + exact CSV panel)
+        run: |
+          mkdir -p docs/evidence/imf_bop_20261119
+          cp imf_bop_public_route_probe/api_imf_bop_dataflow_v3.xml docs/evidence/imf_bop_20261119/
+          cp imf_bop_dsd_codelists/DSD_BOP.xml docs/evidence/imf_bop_20261119/IMF_STA_DSD_BOP_24_0_0_references_all.xml
+          cp imf_bop_portfolio_exact_panel/portfolio_flows_panel.csv docs/evidence/imf_bop_20261119/
+          cp imf_bop_portfolio_exact_panel/BRA_A_NFA_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
+          cp imf_bop_portfolio_exact_panel/BRA_L_NIL_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
+          cp imf_bop_portfolio_exact_panel/IND_A_NFA_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
+          cp imf_bop_portfolio_exact_panel/IND_L_NIL_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
+          cp imf_bop_portfolio_exact_panel/summary.json docs/evidence/imf_bop_20261119/
+          cp imf_bop_portfolio_panel_validation/validation.json docs/evidence/imf_bop_20261119/
+          cp imf_bop_observation_smoketest/summary.json docs/evidence/imf_bop_20261119/p_mv_rejected_smoketest.json
+          cp imf_bop_public_route_probe/manifest.json docs/evidence/imf_bop_20261119/public_route_manifest.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/evidence/imf_bop_20261119
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive IMF BOP Brazil India portfolio flow pilot evidence"
+            git push
+          fi
       - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
