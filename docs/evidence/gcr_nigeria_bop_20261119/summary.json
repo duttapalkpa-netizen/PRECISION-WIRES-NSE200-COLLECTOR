@@ -1,0 +1,41 @@
+{
+  "scope": "Nigeria national-source cross-check of IMF quarterly portfolio investment flows",
+  "run_id": 44485137974,
+  "artifact_id": 14510920161,
+  "artifact_zip_sha256": "bf80b403e072c8eae39f4ec32de77b55d776ef77b7ff4a88e157e3023da7febf",
+  "artifact_bytes": 2056239,
+  "cbn_source_url": "https://www.cbn.gov.ng/Out/2026/STD/Q2%202026%20BOP%20Highlights_%20revised.pdf",
+  "cbn_pdf": {
+    "retrieval_http_status": 200,
+    "bytes": 2206494,
+    "sha256": "b77c0066385cac4bb3bcbe150321c8da28da7d76c91b78423808a31deaea4cf9",
+    "retrieved_at_utc": "2026-11-19T08:08:49.772864+00:00",
+    "pages": 8,
+    "table_2_pdf_page": 7,
+    "printed_page_number": 6
+  },
+  "imf": {
+    "dataflow": "IMF.STA:BOP(21.0.0)",
+    "indicator": "P_F",
+    "frequency": "Q",
+    "unit": "USD",
+    "entries": [
+      "A_NFA_T",
+      "L_NIL_T"
+    ],
+    "public_anonymous_get": true
+  },
+  "counts": {
+    "comparisons": 6,
+    "pass": 6,
+    "review": 0,
+    "missing": 0
+  },
+  "imf_raw_csv_sha256": {
+    "assets": "4e7ea3a3f3e171e7b72895ff1b0ad32ee4e8cbba69cf48d2bc2f63f7d2419f24",
+    "liabilities": "c6e5bec075e950aa6731380b78c0293a15f38fc7c69a725574971ce115584c45"
+  },
+  "cbn_notes": "CBN BOP Highlights Q2 2026, Table 2, printed page 6. USD billion. Q2 2025 provisional, Q1 2026 revised, Q2 2026 current Q2 release described as provisional in report narrative.",
+  "method": "IMF OBS_VALUE / 1,000,000 compared with CBN USD billion * 1,000; CBN two-decimal USD-billion publication rounding tolerance ±5 USD million.",
+  "decision": "Six of six checks PASS. Country/vintage/period-specific evidence only; no all-country universalization or aggregate admission."
+}
