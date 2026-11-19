@@ -459,3 +459,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - FMR docs confirm the format options, but IMF deployment cannot serialize tx2 in either. Do not retry identical endpoints. Next route: official Registry UI Activity / Structure Submissions and PA detail Changelog/Compare; archive exact downloaded revisions only. If unavailable without authorized access, preserve UNKNOWN.
 - Decision: alternate format probe PASS; tx2/PA Changelog BLOCKED; Brazil Reconstruction BLOCKED; BOP6 vs BOP_BPM6 mismatch remains BLOCKED. No alias, admission, production changes, or paid spend.
 - Report: `docs/IMF_BRAZIL_PA_TX2_ALTERNATE_SERIALIZATION_PROBE_PART2_20261119.md`.
+
+
+## Brazil PA official RSS transaction archive probe Part 3 — 2026-11-19
+- Focused run #35 / 44493898103 SUCCESS; artifact 14513872121 (4,410 bytes), ZIP SHA-256 `e88d37e4054c304618ed1af4be14337a6e0b583d791b4cf2e93115410854639a`.
+- Official `https://sdmxcentral.imf.org/rss.xml` returned HTTP 200; 34,559 raw bytes; SHA-256 `ff0c03df5d6b9557d6f6c21a341a7d589baef38893291fcfc2ff715257619e73`; XML parse PASS. It contains 38 latest transactions, oldest 2026-11-18T09:11:47Z (tx #38637), newest 2026-11-19T08:43:07Z (tx #38674); 0 matches for Brazil, BR_BOP_BP6, BOP6/BOP_BPM6 or transaction #2. RSS is not a historic archive for 2023-09-22.
+- tx2 fusion-json and sdmx-json repeated in same workflow and both remain HTTP 500 with same 39-byte error body/hash `76c4819f18129eb81b5fab80dcf0641665f332b823864c2c09280efe21415825`; no further identical retries.
+- RSS script `fab0b0051d4f1673b2d6f6c5e36eff85d94444c5`; workflow integration `8afdcd8030f07313d6cfcb4a249cd88872d3822a`; trigger `48aabd06fd3697eea2853a5706a566a68fb94501`.
+- An initial missing paths-ignore entry caused accidental production collector run #381 / 44493879791. Corrected paths-ignore (commit `110c8e6d6abbe536165c760d919c4c3926030501`) now excludes both Brazil probe scripts and trigger. Cancellation helper run 44493979049 SUCCESS; target collector run 44493879791 final CANCELLED at 09:10:54Z. No production code changes.
+- Next: interactive official IMF UI/authorized historical export only; otherwise preserve UNKNOWN/BLOCKED and pivot to GCR coverage. No production selector, ranking, pressure fade, CORE-672 or engines changes; ₹0.
+- Report: `docs/IMF_BRAZIL_RSS_TRANSACTION_ARCHIVE_PROBE_PART3_20261119.md`.
