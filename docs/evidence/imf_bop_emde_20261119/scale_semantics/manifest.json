@@ -1,13 +1,13 @@
 {
   "url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0.2?references=all",
-  "retrieved_at_utc": "2026-11-19T06:52:15.517891+00:00",
+  "retrieved_at_utc": "2026-11-19T06:53:25.472770+00:00",
   "http_status": 200,
   "headers": {
-    "Date": "Thu, 19 Nov 2026 06:52:15 GMT",
+    "Date": "Thu, 19 Nov 2026 06:53:25 GMT",
     "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
     "Transfer-Encoding": "chunked",
     "Connection": "close",
-    "x-correlation-id": "5fa6b4026ca237a7799ac8a5d1b10120",
+    "x-correlation-id": "118ffaeb50fdd02514e36f8d7158dfce",
     "x-content-type-options": "nosniff",
     "x-xss-protection": "0",
     "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
@@ -15,40 +15,14 @@
     "expires": "0",
     "strict-transport-security": "max-age=31536000 ; includeSubDomains",
     "x-frame-options": "DENY",
-    "x-envoy-upstream-service-time": "140",
+    "x-envoy-upstream-service-time": "195",
     "server": "istio-envoy",
     "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
   },
   "byte_count": 6192546,
-  "sha256": "fe05da038d6913350c5a949a398d4c0913e66e612f60548fd5c7d68e5d30fdcb",
+  "sha256": "a6cddbda4fa3387fad56af496e68219c35a154435e6d5d331fd90c51b681dbfc",
   "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
   "target_concepts": {
-    "UNIT_MULT": {
-      "id": "UNIT_MULT",
-      "attributes": {
-        "id": "UNIT_MULT",
-        "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(7.0.0).UNIT_MULT"
-      },
-      "names": [
-        {
-          "lang": "en",
-          "text": "Unit multiplier"
-        }
-      ],
-      "descriptions": [
-        {
-          "lang": "en",
-          "text": "Exponent in base 10 specified so that multiplying the observation numeric values by 10^UNIT_MULT gives a value expressed in the unit of measure."
-        }
-      ],
-      "annotations": [],
-      "representations": [
-        {
-          "tag": "Enumeration",
-          "attributes": {}
-        }
-      ]
-    },
     "SCALE": {
       "id": "SCALE",
       "attributes": {
@@ -91,12 +65,8 @@
       ],
       "descriptions": [],
       "annotations": [],
-      "representations": [
-        {
-          "tag": "Enumeration",
-          "attributes": {}
-        }
-      ]
+      "enumeration_refs": [],
+      "text_formats": []
     },
     "PRECISION": {
       "id": "PRECISION",
@@ -140,12 +110,8 @@
       ],
       "descriptions": [],
       "annotations": [],
-      "representations": [
-        {
-          "tag": "Enumeration",
-          "attributes": {}
-        }
-      ]
+      "enumeration_refs": [],
+      "text_formats": []
     },
     "DECIMALS_DISPLAYED": {
       "id": "DECIMALS_DISPLAYED",
@@ -189,14 +155,11 @@
       ],
       "descriptions": [],
       "annotations": [],
-      "representations": [
-        {
-          "tag": "Enumeration",
-          "attributes": {}
-        }
-      ]
+      "enumeration_refs": [],
+      "text_formats": []
     }
   },
+  "referenced_scale_codelists": [],
   "scale_definition_found": false,
-  "decision": "CONCEPT_SCHEME_RESPONSE_HAS_NO_SCALE_DEFINITION"
+  "decision": "CONCEPT_HAS_NO_DEFINITION_OR_CODELIST_LABELS"
 }
