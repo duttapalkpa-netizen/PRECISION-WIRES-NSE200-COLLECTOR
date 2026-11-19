@@ -627,3 +627,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Status update: GCR IMF BOP metadata route PASS; public observations route PASS; BRA/IND pilot capture PASS; independent raw/broad/normalized reconciliation PASS. Full GCR factor closure remains NOT_DONE because this is not a defined EM universe or full country panel.
 - Outstanding blockers: resolve SCALE semantics; define/version EM country membership; assess BOP_AGG annual aggregate separately (official IMF says non-reporting economy estimates may be used); extend exact series coverage; reconcile vintages/revisions; preserve distinction from daily SEBI FPI/FII and IIP/CPIS positions.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E changes; no trading admission. ₹0 spend; no synthetic rows; UNKNOWN is not PASS.
+
+
+## 2026-11-19 — Next-priority GCR IMF BOP public-route investigation
+- Official BOP dataset page inspection confirms static controls API / VIEW DATA / DOWNLOAD and annual + quarterly frequency. Static extraction does not expose a direct View Data or Download URL, so actual data export remains NOT_RESOLVED. Do not mark observations PASS merely because the controls appear.
+- Identified official separate BOPSY World and Country Group Aggregates dataset `IMF.STA:BOP_AGG`, annual frequency, with November 2026 dashboard and Explanatory Notes releases.
+- BOPSY source composition caveat verified on IMF page: country-level records are actual IMF-reported or sourced from NSDP (IMF-counterparty exceptions can use Fund Accounts); World/area aggregates other than Euro Area combine reported data and estimates for nonreporting economies sourced in part from WEO/EWN; Euro Area is ECB reported. Therefore BOPSY group aggregates cannot be treated as a pure sum of reported EM country observations, and annual BOPSY cannot replace quarterly country-level financial-account flows.
+- BOPSY 2026 notes DOCX link was identified but not downloaded or validated; no numeric BOPSY data captured. BOPSY is only ELIGIBLE_FOR_SEPARATE_VALIDATION as an annual macro benchmark, not a completed data panel.
+- New report `docs/GCR_IMF_BOP_PUBLIC_RELEASE_DISCOVERY_20261119.md`, commit `f6d6aae08a6f0bdafcf4b0c92c30519e4f1fb874`.
+- Updated evidence checkpoint commit `614499b114f229c69cb9e6ce69f19a057ada7631`.
+- IMF BOP observations remain BLOCKED pending actual public export route or verified user-provided official export. Do not use guessed API URLs/keys, no credentials/cookies, no CPIS/PIP position substitution, no synthetic observations. Existing hard invariants unchanged.
