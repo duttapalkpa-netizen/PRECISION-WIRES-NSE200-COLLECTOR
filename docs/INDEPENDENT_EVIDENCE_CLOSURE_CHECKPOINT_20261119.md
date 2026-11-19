@@ -223,3 +223,10 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - 40-event machine-readable CSV: `docs/evidence/IMF_BRAZIL_REGISTRATION_HISTORY_40_EVENTS.csv`, commit `0b490a8373de2f8be2a443bfdd5d150d5f6ef424`.
 - Original Brazil SubmitRegistrationsRequest XML for tx667: `docs/evidence/IMF_BRAZIL_REGISTRATION_TX_00667.xml`, commit `b47e74956b899c1ef2402779d61d6dd6c0b1ede3`.
 - Full 40 raw transaction ZIP/XML payloads remain in artifact 14502380926 with 90-day retention; the report and compact 40-event index are committed durably to the repository.
+
+
+## Global Capital Rotation — IMF BOP observation API access boundary (2026-11-19)
+- Official IMF BOP dataset page (`IMF.STA:BOP`) exposes an API link; following it without authentication redirects to the IMF API Management sign-in page. IMF API docs state SDMX 2.1/3.0 are supported and Swagger requires a beta portal sign-in. Official references: https://data.imf.org/en/datasets/IMF.STA:BOP and https://data.imf.org/en/Resource-Pages/IMF-API.
+- IMF SDMX Central Web Services Guide (May 2025) documents public structure retrieval at `https://sdmxcentral.imf.org/sdmx/v2/` and public validation/transform services, but does not specify an anonymous public BOP observation query endpoint. Do not invent a query key or treat public DSD access as observation access.
+- IMF BOP observation extraction remains BLOCKED until a public Download/View Data route is verified or official data are exported by an authorized user. No credentials/cookies requested; CPIS/PIP positions not substituted for BOP flows.
+- Detailed source boundary and next steps: `docs/GCR_IMF_BOP_OBSERVATION_ACCESS_BOUNDARY_20261119.md`.
