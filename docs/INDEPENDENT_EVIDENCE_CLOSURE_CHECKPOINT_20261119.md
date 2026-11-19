@@ -714,3 +714,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Report: `docs/IMF_BRAZIL_PUBLIC_STRUCTURE_ARTIFACT_AUDIT_CONTINUATION39_PART5_20261119.md`, commit `93258ce505dca1dd45af758664cc4ab0e7688ac5`.
 - Next Brazil dependency: authorized owner/provider export of exact PA Revisions/Changelog/Compare/View, dated BR1 registration event rows, and official Brazil-specific mapping/correction if BOP6 collection PA intentionally accompanies BOP_BPM6 payload. No credentials/cookies and no authenticated write.
 - No production integration, macro weights, EMDE aggregate, selector/ranking/pressure-fade/CORE-672/Engines A-E changes. ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-6: Chile portfolio-series vintage access audit (2026-11-19)
+- Official BDE public current table inspected: https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_BDP/MN_BDP42/SDMX_BOP6/638180320365121793 . It exposes quarterly table columns 2003-Q1 to 2026-Q3 and detailed portfolio-liability categories including debt securities and equity securities, with sector breakdowns.
+- Official BDE API documentation: https://si3.bcentral.cl/estadisticas/Principal1/Web_Services/documentacion_en.html . REST SearchSeries/GetSeries use endpoint `https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx`; documentation requires a valid personal API Key Token for each request. No token was available; no authenticated or guessed call attempted.
+- This is current-vintage discovery only. It does not supply exact series IDs/dimensions for both assets/liabilities or a byte-level 07-Sep-2026 vintage. Do not infer old values from current table or charts.
+- Status: public table/category discovery PASS; API access contract PASS; exact series ID capture NOT_DONE; anonymous API extraction BLOCKED; old-vintage archive BLOCKED/NOT_FOUND in reviewed public sources; 18-Nov raw bytes NOT_DONE; row-level old/current/IMF bridge NOT_DONE; Chile Q1/Q2 remains REVIEW_VINTAGE_MISMATCH.
+- Official 2026 revision calendar confirms Q1 second revision and Q2 first revision scheduled 18-Nov-2026, but timing is not the exact portfolio-series numeric bridge.
+- Detailed report: `docs/GCR_CHILE_PORTFOLIO_VINTAGE_ACCESS_AUDIT_CONTINUATION39_PART6_20261119.md`, commit `3b61a10b1d788800661673afb8ef3d0a167b7918`.
+- Brazil remains unchanged: PA -> BOP6 / BR1; BCB payload BOP_BPM6; structure retrieval PASS but identity equivalence and PA Changelog BLOCKED. No txId=2 retries.
+- GCR panel/relative-attraction score NOT_READY; no production integration, macro weights, EMDE aggregate or protected invariant changes. ₹0; UNKNOWN is not PASS.
