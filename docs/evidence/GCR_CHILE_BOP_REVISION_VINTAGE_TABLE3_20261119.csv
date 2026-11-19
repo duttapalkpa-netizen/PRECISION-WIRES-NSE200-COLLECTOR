@@ -1,0 +1,6 @@
+measure,unit,source_table,q1_2026_previous,q1_2026_revised,q1_2026_difference,q2_2026_previous,q2_2026_revised,q2_2026_difference,q3_2026_first_or_current,scope_note
+Financial account,USD million,BCB Q3-2026 Table 3,304,1522,1218,-3422,-3067,354,-3503,Aggregate financial account; not portfolio-only
+Financial-account assets,USD million,BCB Q3-2026 Table 3,7473,7958,486,1114,2051,936,10998,Aggregate assets; not portfolio-only
+Financial-account liabilities,USD million,BCB Q3-2026 Table 3,7169,6437,-732,4536,5118,582,14502,Aggregate liabilities; not portfolio-only
+Financial-account liabilities - banks,USD million,BCB Q3-2026 Table 3,-2024,-2354,-331,-1798,-2040,-241,6,Institutional sector row; not portfolio-only
+Financial-account liabilities - nonfinancial companies and households,USD million,BCB Q3-2026 Table 3,4566,4388,-178,3832,4931,1099,5809,Institutional sector row; not portfolio-only
