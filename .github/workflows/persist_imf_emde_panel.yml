@@ -23,6 +23,8 @@ jobs:
           gh run download 44474620936 --repo "$GITHUB_REPOSITORY" --name "imf-bop-emde-portfolio-flows-44474620936" --dir /tmp/emde
           gh run download 44474629873 --repo "$GITHUB_REPOSITORY" --name "weo-october-2026-emde-membership-44474629873" --dir /tmp/weo
           gh run download 44474458684 --repo "$GITHUB_REPOSITORY" --name "imf-emde-exact-sample-validation-44474458684" --dir /tmp/exact
+          gh run download 44475089564 --repo "$GITHUB_REPOSITORY" --name "imf-emde-quarterly-coverage-qa-44475089564" --dir /tmp/coverage
+          gh run download 44475051442 --repo "$GITHUB_REPOSITORY" --name "imf-bop-scale-semantics-44475051442" --dir /tmp/scale
       - name: Persist raw CSVs, normalized panel, coverage and receipts
         run: |
           DEST=docs/evidence/imf_bop_emde_20261119
@@ -41,6 +43,25 @@ jobs:
           cp /tmp/weo/raw/weo_appendix.pdf "$DEST/weo_membership_validation/raw/"
           cp /tmp/weo/raw/weo_workbook.xlsx "$DEST/weo_membership_validation/raw/"
           cp /tmp/weo/raw/bop_country_codelist.xml "$DEST/weo_membership_validation/raw/"
+          mkdir -p "$DEST/coverage_qa" "$DEST/scale_semantics"
+          cp /tmp/coverage/*.csv "$DEST/coverage_qa/"
+          cp /tmp/coverage/summary.json "$DEST/coverage_qa/"
+          cp /tmp/coverage/report.md docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+          cp /tmp/scale/bop_dsd.xml "$DEST/scale_semantics/"
+          cp /tmp/scale/master_concept_scheme.xml "$DEST/scale_semantics/"
+          cp /tmp/scale/unit_multiplier_codelist.xml "$DEST/scale_semantics/"
+          cp /tmp/scale/summary.json "$DEST/scale_semantics/"
+          cat > docs/GCR_IMF_BOP_SCALE_SEMANTICS_20261119.md <<'EOF'
+# IMF BOP SCALE metadata resolution — 2026-11-19
+
+- DSD: `IMF.STA:DSD_BOP(24.0.0)`; optional attribute `SCALE` is present and its `ConceptIdentity` points to `IMF:CS_MASTER_SYSTEM(1.0.2).SCALE`.
+- Exact concept `SCALE` enumerates `IMF:CL_UNIT_MULT(1.0+.0)`; latest public codelist response `CL_UNIT_MULT(1.0.2)` has code `6` labelled **Millions**, description `10^6`.
+- SDMX glossary defines unit multiplier as the base-10 exponent used to calculate the actual value in the unit of measure; `6` means observations are in millions. This establishes metadata semantics, not proof that the IMF Data Portal CSV response requires a second multiplication.
+- All 9,299 panel observations carry `UNIT=USD` and `SCALE=6`; preserve both exactly. Example raw values are already large in absolute USD magnitude, so mechanically multiplying by 10^6 would produce implausible values for several countries. This is a source/API normalization question requiring direct IMF portal display and national-source reconciliation.
+- Decision: **SCALE code meaning PASS; numeric transformation BLOCKED.** No multiply/divide, rescaling, FX conversion, netting or aggregate is authorized. Raw `OBS_VALUE` remains unchanged.
+- Capture: run 44475051442; artifact 14505852262; ZIP SHA-256 `391981ce19d89d8ccc6377580e33345a9d75adffdc3f4197c4e4c743a66e3cf3`.
+- Raw DSD XML SHA-256 `5953ac8b3a52fae9cd7c5821621446d046969bcef0e88540ef17520c2d39b098`; master concept scheme SHA-256 `e753812c45b8159c77e191f091c63d5364375f57daca179da9799040de48e568`; CL_UNIT_MULT SHA-256 `40a911ecceb0b96ff0ee2a166af3c2512f19fbbfca50e71b2e47936cad3bac78`.
+EOF
           cp /tmp/emde/raw/EMDE_A_NFA_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
           cp /tmp/emde/raw/EMDE_L_NIL_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
           cp /tmp/exact/summary.json "$DEST/exact_sample_checks/"
@@ -60,7 +81,7 @@ jobs:
             "weo_membership_artifact_sha256": "acdf014f5f19ba5e0d23dca7a8d57a4b1813b002a3274495d557f0cd05c0fbb1",
             "imf_bop_country_codelist_sha256": "190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39",
             "authentication": "none; public anonymous GET",
-            "validation": "WEO Appendix vs same-vintage G200 workbook 154/154; all 154 ISO3 present in BOP codelist; 9,299 unique observations; 24 exact queries; 1,106/1,106 observation/attribute matches; independent raw-to-normalized row multiset 9,299/9,299"
+            "validation": "WEO Appendix vs same-vintage G200 workbook 154/154; all 154 ISO3 present in BOP codelist; 9,299 unique observations; 24 exact queries; 1,106/1,106 observation/attribute matches; raw-to-normalized row multiset 9,299/9,299; coverage QA 225/308 country-entry pairs, 40 no-data countries, 13 series with internal gaps; SCALE code 6=Millions, numeric conversion blocked"
           }
           EOF
       - name: Commit durable EMDE evidence archive
