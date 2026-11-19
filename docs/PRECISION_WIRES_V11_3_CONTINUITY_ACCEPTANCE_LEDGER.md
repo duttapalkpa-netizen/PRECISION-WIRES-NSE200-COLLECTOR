@@ -1587,3 +1587,20 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Existing #319/#302 artifacts still lack row-level prediction CSVs and dataset manifest. Exact TP/FP/FN/TN, false-positive/missed-winner identities and paired cutoff CIs remain NOT_RECOMPUTABLE.
 - Report: `docs/EXISTING_PROCESSED_DATASET_AND_AUDIT_WORKFLOW_SCOPE_20261120.md`.
 - Next: search only for an already-existing complete processed dataset/artifact from retained sources; otherwise stop and request explicit approval before any new collection. Production invariants unchanged; UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Successful Run #407 Row-Level Walk-Forward Artifact Recovered
+- Found an existing successful run outside the previously inspected prospective audit workflow: NSE Historical Backbone + Adaptive V11.3 + IPO-PLX, Run #407 / ID `44542948987`, main branch, head SHA `d013577157bc1f24322cd100aaf60c40a20c4d17`, job `collect-and-test` SUCCESS.
+- Artifact ID `14539426731`, name `precision-wires-adaptive-407`, 61,902,773 bytes, expiry 2027-02-17T14:22:02Z. GitHub digest matches independently recomputed ZIP SHA-256: `b958d9184eb2df4715364b5825d243593c1c9d9d1290a171ae3ab2833950dfd7`.
+- Recovered processed 200-session NSE dataset, 3,000-row Top-30 predictions, 251,724-row full-universe probability table, and 9,182-row missed-winner lab. No source dataset manifest in ZIP.
+- Key hashes: processed dataset `b59b6c5410d4182c718c9e1010acb727ab0c607b4e9030568264d204a9308470`; predictions `06dc89983aa748bae5e03eee8e3ad4be5bd2add008e5b00dc350e5e65399d843`; universe probabilities `b46de0967bd22ef548f6ee27550386160d8d3967c9aeb4680be5b807f7f612e1`; metrics JSON `9a79719ec8482953044cae38b6ab9329c20849fef64b69dfd85e81c3d3b99061`; missed-winner lab `6c97f7c452a49f14309a4a8958ed98ca8812311b19f14cbe4eae5b08d79c5867`.
+- Independent Top-30 vs eligible full-universe confusion matrices:
+  - +5 H+1: TP 648, FP 2,351, FN 21,871, TN 226,676; precision 21.61%, eligible-universe recall 2.88%.
+  - +10 H+3: TP 1,198, FP 1,802, FN 8,537, TN 240,187; precision 39.93%, eligible-universe recall 12.31%.
+  - +20 H+5: TP 612, FP 2,388, FN 1,454, TN 247,270; precision 20.40%, eligible-universe recall 29.62%.
+- Metrics JSON has a denominator-scope difference for recall/base-rate: source computes these over all raw rows at the selected cutoffs, while the universe probability CSV contains only rows with history depth >=20 and non-null feature availability. Additionally H+5 precision differs: JSON 20.30% (609 hits implied) vs 20.40% (612 hits in prediction CSV). This internal discrepancy remains BLOCKED pending exact serialization/source reconciliation.
+- Full-universe State sample counts: NON_STRONG 88,319; FALSE_STRENGTH 57,511; HIDDEN_WINNER_RECOVERY 49,166; ALREADY_EXPANDED 27,655; NOT_YET_MOVED 12,774; REPRICING_PRESSURE 6,728; STRONG 6,470; EXPANSION_READY 2,085; CONTINUATION_READY 992; DATA_CONTAMINATED 24. DATA_CONTAMINATED remains UNKNOWN under the minimum 50 matured-observation rule.
+- Missed-winner lab reasons: RANKED_OUT 6,611; LOW_WINNER_PROBABILITY 2,552; CONTAMINATED 19. This lab covers +10 H+3 and/or +20 H+5, not H+1.
+- Report: `docs/RUN407_ROW_LEVEL_WALK_FORWARD_RECOVERY_AUDIT_20261120.md`.
+- Artifact recovery PASS; row-level structural QA PARTIAL; metric consistency BLOCKED; executable/net-of-cost performance NOT_ESTABLISHED. No new workflow dispatched or data collected during this audit. Production invariants unchanged; GCR remains UNKNOWN/BLOCKED; UNKNOWN is never PASS.
+- Next: reconcile metric denominator and H+5 precision discrepancy from exact source snapshot, then calculate cutoff-clustered paired confidence intervals and false-positive/missed-winner driver summaries.
