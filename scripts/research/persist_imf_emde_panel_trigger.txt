@@ -3,3 +3,5 @@
 2026-11-19 persist-raw-weo-workbook-and-bop-country-codelist
 
 2026-11-19 persist-WEO-Appendix-G200-154-crosswalk-and-EMDE-panel-evidence
+
+2026-11-19 retry-persist-weo-appendix-after-yaml-fix
