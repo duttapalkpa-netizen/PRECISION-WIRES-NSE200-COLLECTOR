@@ -46,15 +46,15 @@ if all(manifest["series"].get(k,{}).get("http_status")==200 and manifest["series
     union=set(rows["net"])|set(rows["inflows"])|set(rows["outflows"])
     checks["common_months"]=len(common)
     checks["missing_by_series"]={k:len(union-set(rows[k])) for k in SERIES}
-    residuals=[(m,rows["net"][m]-(rows["inflows"][m]-rows["outflows"][m])) for m in common]
+    residuals=[(m,rows["net"][m]-(rows["outflows"][m]-rows["inflows"][m])) for m in common]
     checks["pass"]=sum(abs(x)<=checks["tolerance_usd_million"] for _,x in residuals)
     checks["fail"]=len(residuals)-checks["pass"]
     checks["max_abs_residual"]=max((abs(x) for _,x in residuals),default=None)
     checks["status"]="PASS" if common and checks["fail"]==0 and all(v==0 for v in checks["missing_by_series"].values()) else "PARTIAL_OR_FAIL"
     with (OUT/"identity_reconciliation.csv").open("w",newline="") as f:
-        w=csv.writer(f); w.writerow(["period","net_22906_usd_million","inflows_22907_usd_million","outflows_22908_usd_million","calculated_net","residual","status"])
+        w=csv.writer(f); w.writerow(["period","net_22906_usd_million","inflows_22907_usd_million","outflows_22908_usd_million","calculated_net_outflows_minus_inflows","residual","status"])
         for m,x in residuals:
-            calc=rows["inflows"][m]-rows["outflows"][m]
+            calc=rows["outflows"][m]-rows["inflows"][m]
             w.writerow([m,rows["net"][m],rows["inflows"][m],rows["outflows"][m],calc,x,"PASS" if abs(x)<=checks["tolerance_usd_million"] else "FAIL"])
 manifest["identity_check"]=checks
 manifest["retrieval_finished_utc"]=datetime.now(timezone.utc).isoformat()
