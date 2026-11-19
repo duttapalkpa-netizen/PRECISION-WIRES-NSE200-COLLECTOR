@@ -22,13 +22,13 @@
 - Numerical gross transaction asset/liability split for total financial account not found in the initial text extraction; detailed page-image review remains NOT_DONE.
 
 ### Burkina Faso (BFA)
-- The report gives total net financial-account capital inflows FCFA 777.8 billion and net FDI outflow FCFA 157.2 billion.
-- It explicitly reports a 2024 decrease in net liabilities on inward FDI of FCFA 122.6 billion (debt instruments -83.0; equity -43.4). This is a liability-side FDI component only; the matching outward-asset transaction amount and total gross financial-account legs were not established in the initial text extraction.
-- Do not infer the missing asset leg by subtracting from net FDI or net financial-account values without a complete source-defined bridge.
+- Correction after opening the separate official Ministry of Economy and Finance/BCEAO PDF: Table 15 explicitly provides 2024 non-monetary-sector net acquisition of assets 342.6, net incurrence of liabilities 1,120.4, and balance -777.8 FCFA bn.
+- Category rows: direct investment 34.6 / -122.6 / +157.2; portfolio -3.7 / 246.1 / -249.8; derivatives 0 / 0 / 0; other investment 311.7 / 996.9 / -685.1. The other-investment category row differs by 0.1 from asset-minus-liability; published category and total values preserved. Total asset-minus-liability = -777.8 exactly.
+- Crucial scope limitation: Annex 1 explicitly says BCEAO analytical optic excludes central bank and other deposit-taking institutions' portfolio, derivatives and other-investment operations; monetary-sector operations are separately recorded in net external assets/liabilities. Thus Table 15 is not whole-country IMF gross A_NFA_T/L_NIL_T. It is a scoped non-monetary-sector benchmark only.
 
 ### Senegal (SEN)
-- The report's financial-account narrative and summary provide net external financing / net category information; the initial searchable text did not expose a numerical aggregate split into net acquisition of financial assets and net incurrence of liabilities.
-- Mark gross-leg extraction UNKNOWN pending inspection of the full table/page images and any detailed annex. No negative conclusion is inferred from missing searchable text.
+- Page 27 (PDF page 44), Table 16, reports only the financial-account net balance and net category balances: total -2,139.9; direct investment -1,963.1; portfolio -395.9; derivatives 0.0; other investment +219.2 FCFA bn.
+- The displayed table has one 2024 column per category, not separate asset and liability columns. Gross asset/liability split is NOT_DISCLOSED in this summary table; detailed annex/underlying source remains to be checked.
 
 ## Cross-source conclusion
 - The 2024 Côte d'Ivoire report already provides both sides for the direct-investment component only (assets 138.1; liabilities 1,892.8 FCFA bn; net = -1,754.7), but not total financial-account gross legs.
@@ -40,3 +40,7 @@
 2. Retrieve and screen 2024 detailed reports for GNB, MLI and TGO; keep NER on 2023 vintage separately.
 3. For each country, construct a source-defined bridge across direct, portfolio, derivatives, other investment and reserve assets. No leg is inferred from net values.
 4. Only after both aggregate legs, period, scale, currency, BPM basis and vintage reconcile may a country-period enter the alternate panel. Quarterly interpolation and aggregate admission remain prohibited.
+
+## Correction log — page-image and full-source review
+- The first text-only screening understated BFA evidence. The separate official ministry-hosted PDF was opened and Table 15 read in its indexed table structure; BFA has gross legs for the BCEAO non-monetary-sector optic, but not whole-country IMF coverage.
+- SEN page image was inspected: it confirms Table 16 is net-only. BEN page 30 Table 14 is also net-only.
