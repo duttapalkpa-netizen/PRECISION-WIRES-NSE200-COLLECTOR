@@ -60,6 +60,9 @@ on:
       - ".github/workflows/persist_imf_emde_panel.yml"
       - "scripts/research/persist_imf_emde_panel_trigger.txt"
 
+      - ".github/workflows/india_scale_reconciliation.yml"
+      - "scripts/research/india_scale_reconciliation_trigger.txt"
+      - "scripts/research/reconcile_imf_bop_scale_india_rbi_table197.py"
       - ".github/workflows/bcb_scale_reconciliation.yml"
       - "scripts/research/bcb_scale_reconciliation_trigger.txt"
       - "scripts/research/reconcile_imf_bop_scale_brazil_bcb.py"
