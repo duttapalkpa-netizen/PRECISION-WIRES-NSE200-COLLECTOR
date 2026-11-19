@@ -35,6 +35,7 @@ jobs:
         run: python scripts/research/validate_imf_bop_portfolio_panel.py
 
       - name: Commit durable IMF BOP pilot evidence (raw DSD + exact CSV panel)
+        continue-on-error: true
         run: |
           mkdir -p docs/evidence/imf_bop_20261119
           cp imf_bop_public_route_probe/api_imf_bop_dataflow_v3.xml docs/evidence/imf_bop_20261119/
