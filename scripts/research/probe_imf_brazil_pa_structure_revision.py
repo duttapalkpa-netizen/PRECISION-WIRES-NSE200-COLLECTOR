@@ -22,6 +22,11 @@ q=lambda x:quote(x,safe="")
 targets=[
  ("tx2_full_fusion_json",BASE+"/ws/registry/tx/transactions?txId=2&format=fusion-json","json"),
  ("tx2_full_sdmx_json",BASE+"/ws/registry/tx/transactions?txId=2&format=sdmx-json","json"),
+ # Public, read-only structure GETs. These compare exact maintainables.
+ ("current_pa_brazil",BASE+"/sdmx/v2/structure/provisionagreement/IMF/BR_BOP_BP6/1.0/?references=all&format=sdmx-2.1","xml"),
+ ("current_dataflow_bop6",BASE+"/sdmx/v2/structure/dataflow/IMF/BOP6/1.0/?references=all&format=sdmx-2.1","xml"),
+ ("current_dataflow_bop_bpm6",BASE+"/sdmx/v2/structure/dataflow/IMF/BOP_BPM6/1.0/?references=all&format=sdmx-2.1","xml"),
+ ("current_dsd_ecofin",BASE+"/sdmx/v2/structure/datastructure/IMF/ECOFIN_DSD/1.0/?references=all&format=sdmx-2.1","xml"),
 ]
 records=[]
 for name,url,kind in targets:
