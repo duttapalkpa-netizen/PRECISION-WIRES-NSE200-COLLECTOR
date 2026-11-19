@@ -1,0 +1,29 @@
+name: IMF Brazil Public Registration History Probe (Research Only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/imf_brazil_public_tx_history.yml"
+      - "scripts/research/probe_imf_brazil_public_tx_history.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Query public IMF registry history (read-only)
+        run: python scripts/research/probe_imf_brazil_public_tx_history.py
+      - name: Upload raw registry responses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-brazil-public-tx-history-${{ github.run_id }}
+          path: artifacts/imf_brazil_public_tx_history/
+          if-no-files-found: error
+          retention-days: 90
