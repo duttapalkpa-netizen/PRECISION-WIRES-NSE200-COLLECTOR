@@ -61,5 +61,68 @@
     "metadata_mapping": "PASS: SCALE is enumerated by CL_UNIT_MULT; code 6 label is Millions (10^6).",
     "numeric_transformation": "BLOCKED: the IMF-specific concept has no explicit English description in the captured concept scheme; the standard UNIT_MULT interpretation would multiply OBS_VALUE by 10^6, but the data portal's raw USD magnitudes have not been reconciled against an independent official benchmark. Do not multiply or divide the observations yet.",
     "aggregation": "BLOCKED until scale semantics, missingness, vintage and sign conventions are resolved."
+  },
+  "extended_probe": {
+    "workflow_run_id": 44475456706,
+    "artifact_id": 14506176762,
+    "artifact_zip_sha256": "18c4ed7ba1fafc6ae8024c8678780b7c8fc5af142d39d6e3d212de149f48e913",
+    "dsd_response_sha256": "92df33157b247124ad24643dac5a7fcc557ec957aee52c110e8449c3a8b18d9f",
+    "concept_scheme_response_sha256": "5fba5f510af8ed35a7d48cbcb09800f1d13312c47140ddf45595c2688ae2f93b",
+    "codelist_response_sha256": "3de0f3bf4e2180ca481ebe56f87da6741956b05d051cf5d40dc1721230e5f506",
+    "attributes": {
+      "SCALE": {
+        "usage": "optional",
+        "attachment_level": "series",
+        "relationship_dimensions": [
+          "COUNTRY",
+          "BOP_ACCOUNTING_ENTRY",
+          "INDICATOR",
+          "FREQUENCY",
+          "UNIT"
+        ],
+        "concept_name": "Scale",
+        "english_description_present": false,
+        "enumeration": "IMF:CL_UNIT_MULT(1.0+.0)"
+      },
+      "PRECISION": {
+        "usage": "optional",
+        "attachment_level": "observation",
+        "concept_name": "Precision",
+        "english_description_present": false,
+        "enumeration": "IMF:CL_UNIT_MULT(1.0+.0)"
+      },
+      "DECIMALS_DISPLAYED": {
+        "usage": "optional",
+        "attachment_level": "series",
+        "relationship_dimensions": [
+          "COUNTRY",
+          "BOP_ACCOUNTING_ENTRY",
+          "INDICATOR",
+          "FREQUENCY",
+          "UNIT"
+        ],
+        "concept_name": "Decimals Displayed",
+        "english_description_present": false,
+        "enumeration": "IMF:CL_DECIMALS(1.0+.0)"
+      }
+    },
+    "observed_panel_attribute_counts": {
+      "SCALE": {
+        "6": 9299
+      },
+      "PRECISION": {
+        "6": 9119,
+        "missing": 180
+      },
+      "DECIMALS_DISPLAYED": {
+        "missing": 9299
+      }
+    },
+    "semantic_resolution": {
+      "standard_UNIT_MULT_code_6": "Millions; 10^6 multiplier for calculating actual value in unit of measure",
+      "standard_PREFERRED_SCALE_code_6": "Preferred display in millions when observations are in unit scale",
+      "imf_custom_SCALE_concept": "Not explicitly defined in captured IMF concept scheme; reuses CL_UNIT_MULT codelist",
+      "decision": "Do not treat IMF custom SCALE as either UNIT_MULT or PREFERRED_SCALE without IMF-specific definition or independent benchmark. No multiplication/division applied."
+    }
   }
 }
