@@ -983,3 +983,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Detailed report `docs/GCR_NSDL_CDSL_DAILY_FPI_FRESHNESS_RECONCILIATION_CONTINUATION69_20261119.md`, commit `feb159eee99fe312b8bf23586a014867c9ce96da`.
 - Brazil status unchanged/correct: 40-event Registration lifecycle PASS; PA tx2/Changelog BLOCKED after prior two documented JSON 500 responses; BOP6 vs BOP_BPM6 mismatch BLOCKED. No repeated endpoint probes.
 - Next: short direct-HTTP GitHub Actions capture of official NSDL Latest/Monthly/Archive/Fortnightly and CDSL archive/sector pages, preserving raw bytes, headers, retrieval UTC, hashes and observed ASP.NET form fields before parsing. Then reconcile matched-date depository-confirmed vs NSE provisional flows. No production admission or invariant change.
+
+
+## Continuation 70 — GCR official India FPI raw capture harness (2026-11-19)
+- Guarded NSE collector first: commit `e51b40cff82dc4ae24a7068b74afabee35e3a370` adds the three exact research paths (workflow, script, trigger) to `paths-ignore` before any trigger commit.
+- Added read-only standard-library Python GET-only capture script `scripts/research/capture_india_fpi_official_pages.py`, commit `41ecee60c32aec20a384ec11ba23023b0af7f666`.
+- Added bounded 6-minute workflow `.github/workflows/gcr_india_fpi_raw_capture.yml`, commit `092ed5dd2cf78a5265bb07aa11172317ce4bee90`.
+- Trigger marker commit `f2c359ce095638f1c081e4d09b3545400c071670`.
+- Six official pages targeted: NSDL Latest, Monthly, Archive, Fortnightly selector; CDSL daily archive and fortnightly sector page. Capture records status, final URL, headers, UTC retrieval time, byte count, raw body and SHA-256; manifest/summary uploaded as artifact. No POST, credentials, parsing or production ingestion.
+- Runtime run ID/conclusion/artifact not independently verified at ledger update time: PENDING / NOT_VERIFIED. Do not claim source capture PASS until artifact inspection.
+- Brazil PA tx2/Changelog and BOP6/BOP_BPM6 identity remain BLOCKED; no repeated endpoints. Registration lifecycle 40/40 remains PASS.
+- Report: `docs/GCR_OFFICIAL_INDIA_FPI_RAW_CAPTURE_HARNESS_CONTINUATION70_20261119.md`.
+- No production invariants changed; ₹0; UNKNOWN is not PASS.
