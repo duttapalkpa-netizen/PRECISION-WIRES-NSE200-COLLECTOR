@@ -398,3 +398,15 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Final full-run validation artifact: run 44476176136 / artifact 14505944936 / 8,974,699 bytes / SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`.
 - Detailed evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`; BCB source series URLs are in the summary.
 - Limitation: this direct scale/sign cross-check is for Brazil only. India and other EMDE country sources need independent source-to-source validation before full GCR aggregation.
+
+
+
+## SCALE unit multiplier resolution + India national-source crosswalk — 2026-11-19
+- Correction to the earlier Arabic-label-only interpretation: DSD_BOP `SCALE` CoreRepresentation enumerates `IMF:CL_UNIT_MULT(1.0.2)`; authoritative code 6 = **Millions**, description `10^6`. The Arabic label was misleading; the codelist enumeration is controlling.
+- Raw CL_UNIT_MULT XML SHA-256 `24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561`; latest codelist capture run 44477031402 / artifact 14506293939. The earlier concept-only manifest is explicitly marked superseded.
+- India crosswalk: official RBI Table 42, Standard Presentation of BoP in India as per BPM6 (US$ million), four calendar quarters, 12 checks. 10 PASS, 2 REVIEW. Both asset/liability legs and combined net match in 2025-Q1, 2025-Q2 and 2026-Q2 within ±US$0.5m. 2026-Q1 asset leg passes; liability and combined net REVIEW: IMF liability -13,633.508347m vs RBI -12,121m, residual -1,512.508347m. No silent adjustment.
+- RBI raw source pages: Table 42 Jan-Mar 2025/2026 (Id=24424), SHA-256 `a92ac0f8196efbd8f503984620d7c0291c6d704405e52d64eec4f96948ddf744`; Table 42 Apr-Jun 2025/2026 (Id=24566), SHA-256 `075c28122d588e5bce0ff45c8c8d5d8b453c53dc5b9a20f79d5cd3a6e54f5396`.
+- India workflow run 44477031402 SUCCESS; crosswalk artifact 14505649659 (SHA-256 `8db4f9533bfe5e9f4c8c2f2cb74a5c9b9f7d5d13c5dcd0d6e5a6c9e2d9f7d3a1`); code-list artifact 14506293939 (SHA-256 `ffac629793da363b934321e00f43aaec7eabcd609bc9a029cb46356712a01858`).
+- Operational numeric representation `OBS_VALUE/10^6` is cross-validated for Brazil 94/94 and India 10/12 (two REVIEW). Keep raw values unchanged; do not apply a global conversion to remaining 152 WEO G200 members without their own national-source crosswalks.
+- Detailed India report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; authoritative scale report: `docs/GCR_IMF_BOP_SCALE_SEMANTICS_20261119.md`.
+- Overall: metadata meaning PASS; Brazil numeric crosswalk PASS; India numeric crosswalk PARTIAL; full EMDE aggregate remains BLOCKED / NOT_AUTHORIZED due missing/asynchronous reporting, India 2026-Q1 discrepancy, remaining country scale crosswalks, FX policy and point-in-time vintages.
