@@ -24,6 +24,8 @@ on:
       - ".github/workflows/imf_brazil_public_api_probe.yml"
       - "scripts/research/probe_imf_brazil_public_api.py"
       - "scripts/research/imf_brazil_public_api_probe_trigger.txt"
+      - ".github/workflows/nse_cancel_accidental_probe_run.yml"
+      - "scripts/research/nse_cancel_accidental_probe_trigger.txt"
   schedule:
     - cron: "30 4 * * 1-5"
 
