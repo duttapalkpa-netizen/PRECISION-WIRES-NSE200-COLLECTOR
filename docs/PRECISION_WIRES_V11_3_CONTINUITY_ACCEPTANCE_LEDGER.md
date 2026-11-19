@@ -1360,3 +1360,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Next: acquire exact NIFTY 50 price-index and India VIX CSV exports through official UI or independently verified official request contract; preserve raw bytes, timestamps, byte counts, SHA-256, schema and trading-date QA. Do not use sample rows or equity bhavcopy as substitutes.
 - Stage: source-route/code-boundary review complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate/production NOT_AUTHORIZED.
 - Invariants unchanged: ₹0; official/free sources; no fabricated timestamps, guessed endpoints, synthetic values, forward-fill/interpolation; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 42 — Part-6: NSE historical index / India VIX sample integrity review (2026-11-19)
+- Rechecked official NSE All Reports page. It renders a NIFTY 50 sample block for 01–05 Jan 2019 with a row dated 01-Jan-2019 repeated twice. India VIX sample block heading also says 01–05 Jan 2019, but displayed row date is 03-Sep-2018 and is repeated twice.
+- This is a static/pre-rendered page sample, not evidence of a selected-range raw CSV export. Treat duplicate rows and VIX heading/date mismatch as UI/sample rendering anomalies pending live-query/export verification; do not use sample for returns/event studies or silently deduplicate.
+- This qualifies Part-5: dedicated pages show no selected-range data in server-rendered output, while All Reports separately renders example blocks. Official routes exist; raw selected-range acquisition remains NOT_DONE.
+- Report: docs/GCR_NSE_HISTORICAL_INDEX_VIX_SAMPLE_INTEGRITY_REVIEW_CONTINUATION42_PART6_20261119.md; commit 47cd0c3583b0ab97921d25e1b0242073114e11b2.
+- Primary source: https://www.nseindia.in/all-reports ; supporting official pages https://www.niftyindices.com/reports/historical-data and https://www.nseindia.in/reports-indices-historical-vix .
+- Acceptance strengthened: archive downloaded raw bytes; verify requested date range, unique dates, duplicate count, chronology, OHLC bounds, selected index type, retrieval timestamp, final URL, content type, byte count, SHA-256 and row count; cross-check with second official route where possible.
+- Status: NIFTY/VIX routes VERIFIED; sample block NOT PASS; live raw CSV NOT_DONE; hashes/row counts UNKNOWN; GCR event-study panel NOT_ACCEPTED. Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed endpoints/silent deduplication/forward-fill/interpolation; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
