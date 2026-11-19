@@ -18,7 +18,7 @@ def fetch(url,accept):
 page_meta,page=fetch(URL,"text/html");(OUT/"registrations.html").write_bytes(page)
 js_meta,jsbody=fetch(JS_URL,"application/javascript");(OUT/"registrations.js").write_bytes(jsbody);js=jsbody.decode("utf-8","replace")
 # Capture endpoint-like literals from the exact page-owned module; do not call an inferred route.
-routes=sorted(set(re.findall(r"[^\\"'\x60]{0,100}(?:registration|registrations|/ws/)[^\\"'\x60]{0,180}",js,re.I)))
+routes=sorted(set(re.findall(r'.{0,100}(?:registration|registrations|/ws/).{0,180}',js,re.I)))
 manifest={"page":page_meta,"page_sha256":page_meta["sha256"],"page_module":js_meta,"page_module_route_candidates":routes,"server_rendered_html_rows":len(re.findall(r"<tr\\b",page.decode("utf-8","replace"),re.I)),"note":"Static HTML omitted the JS-populated inventory. Route candidates are evidence only; do not call until inspected."}
 (OUT/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\\n")
 print(json.dumps(manifest,indent=2,ensure_ascii=False))
