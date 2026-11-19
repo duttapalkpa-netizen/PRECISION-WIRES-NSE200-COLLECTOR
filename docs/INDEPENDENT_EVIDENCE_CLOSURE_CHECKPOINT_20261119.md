@@ -166,3 +166,34 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Run 44465408909 completed SUCCESS; artifact 14501124987; ZIP SHA-256 `11d864620e92b0c50bd9c8ffb470926bb8fbf8c856bd4afd23c5764291902516`.
 - Independent ZIP inspection: 200/200 HTTP 200; 200/200 Fusion-JSON parse PASS; 200 Registration objects; 0 exact matches to target Brazil PA; no non-200 or parse failures.
 - Cumulative contiguous scan 13–612: 600/600 registration snapshots inspected; zero exact matches. Transaction IDs 613–1000 remain to be inspected; this is still a bounded negative result, not full chronology.
+
+
+## Exact Brazil registration found and full lifecycle captured — 2026-11-19
+### Exact registration identity
+- Sequential scan transaction IDs 613–812 located exact Brazil PA match at transaction ID 667.
+- Batch run 44465513792 completed SUCCESS; artifact 14502470283; ZIP SHA-256 `2f2fdf7168bc5e6bcc25b378bfa3b5e2e5e20bc42f0d3d4fbda64e3fdc3ad060`.
+- Batch result: 200/200 HTTP 200; 200/200 Fusion-JSON parse PASS; 199 Registration objects; one exact target match:
+  - Transaction ID 667
+  - Transaction timestamp from index: 2023-09-22T09:42:16.389Z
+  - Registry Action Replace; Type Registration
+  - Registration URN `urn:sdmx:org.sdmx.infomodel.registry.Registration=IMF:D429E36CD161E2F2A34ECAF137994E89(1.0)`
+  - Registration ID `D429E36CD161E2F2A34ECAF137994E89`
+  - PA `IMF:BR_BOP_BP6(1.0)`
+  - exact BCB data URL `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`
+  - Registration.lastUpdated `2023-09-22T09:42:05` (not the transaction timestamp).
+### Original registration payload
+- Exact item export `GET /ws/registry/tx/transaction?txId=667&urn=<Registration-URN>` returned HTTP 200 ZIP with one SDMX-ML 2.1 RegistryInterface document containing `SubmitRegistrationsRequest` and `RegistrationRequest action="Information"`. It contains the exact Registration ID, PA reference and BCB URL. This proves original registration payload retrieval for tx667.
+- Transaction 667 full transaction endpoint also returned HTTP 200 QueryRegistrationResponse snapshot; keep distinct from the original SubmitRegistrationsRequest ZIP export.
+- Registration history for the exact Registration URN returned 40 events, from ID 667 (2023-09-22T09:42:16.389Z) through ID 37877 (2026-10-26T11:47:33.098Z). The endpoint response history SHA-256 is `23fe31fafad2f08bfe63473d4f45792365f92c53f3a27b6158472f0c8e232072`, 2,131 bytes.
+### Full lifecycle capture
+- Run 44465947951 completed the focused exact registration probe and 40-event transaction item capture. Artifact 14502380926; ZIP SHA-256 `2a3266a0c2d3e1948955e9de789c2a3f9acb5ecd12ffca42cd54bbad0bb37f41`.
+- Independent inspection: history events 40/40; transaction item ZIP downloads HTTP 200 40/40; embedded XML parse PASS 40/40; Registration ID matches 40/40; PA reference matches 40/40; BCB data URL matches 40/40; failed items [].
+- All 40 embedded XMLs are SDMX-ML 2.1 RegistryInterface documents and contain SubmitRegistrationsRequest. The Registry history Action is `Replace` for 40/40, while the embedded SDMX RegistrationRequest action is `Information` for 40/40. These are separate fields from separate layers; no semantic equivalence is assumed. Registration.lastUpdated also remains distinct from the millisecond transaction timestamp.
+- History Type field is present as `Registration` for tx667; the field is absent in the other 39 returned history records. Preserve nulls; do not fill the missing Type values.
+- All 40 lifecycle events preserve the same Registration ID, PA and BCB URL. This closes the public API-observed lifecycle for this exact Registration URN through the latest returned event (2026-10-26), not the PA's own full structure revision/changelog or the BOP6/BOP_BPM6 mismatch.
+- Exact registration structure query `/sdmx/v2/structure/registration/IMF/<id>/1.0` returned HTTP 404 No Results Found; this route is not accepted. Exact transaction item export is the supported evidence path used here.
+### Remaining Brazil blockers after lifecycle closure
+1. PA structure transaction ID 2 payload/changelog remains unavailable from tested legacy transaction retrieval endpoints (HTTP 500 for full transaction, HTTP 400 for PA item ZIP); current PA history only returns ID 2.
+2. Official BOP6(1.0) vs BOP_BPM6(1.0) DSD/dataflow/schema compatibility still unresolved.
+3. Official SDMX 2.1 XSD bytes/hashes and actual BCB data payload conformance remain to be independently archived/validated.
+4. Need verify whether any older/parallel Brazil Registration URNs exist outside this exact Registration URN. The exact current registration's own 40-event lifecycle is now captured.
