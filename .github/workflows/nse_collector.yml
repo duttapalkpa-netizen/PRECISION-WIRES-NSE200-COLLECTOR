@@ -29,6 +29,10 @@ on:
       - "scripts/research/probe_imf_brazil_exact_registration.py"
       - "scripts/research/capture_imf_brazil_registration_lifecycle.py"
       - "scripts/research/validate_imf_brazil_history_against_global_index.py"
+      - ".github/workflows/imf_bop_dsd_v260_capture.yml"
+      - "scripts/research/capture_imf_bop_dsd_v260.py"
+      - "scripts/research/imf_bop_dsd_v260_capture_trigger.txt"
+
       - "scripts/research/probe_imf_bop_public_routes.py"\n      - "scripts/research/fetch_imf_bop_dsd_codelists.py"\n      - "scripts/research/smoke_test_imf_bop_observations.py"\n      - "scripts/research/probe_imf_bop_broad_observation_queries.py"\n      - "scripts/research/capture_imf_bop_portfolio_panel.py"
       - "scripts/research/validate_imf_bop_portfolio_panel.py"
       - "scripts/research/probe_imf_brazil_pa_structure_revision.py"
