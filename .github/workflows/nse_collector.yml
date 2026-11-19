@@ -20,7 +20,7 @@ on:
       - "scripts/research/imf_transaction_resolver_trigger.txt"
       - ".github/workflows/treasury_macro_history_capture.yml"
       - "scripts/research/capture_treasury_yield_history.py"
-      - "scripts/research/treasury_macro_capture_trigger.txt"
+      - "scripts/research/treasury_macro_capture_trigger.txt"\n      - "scripts/research/capture_imf_weo_oct2026_membership_source.py"\n      - "scripts/research/imf_weo_membership_capture_trigger.txt"
       - ".github/workflows/imf_brazil_public_api_probe.yml"
       - ".github/workflows/imf_bop_public_route_probe.yml"
       - "scripts/research/imf_bop_public_route_probe_trigger.txt"
