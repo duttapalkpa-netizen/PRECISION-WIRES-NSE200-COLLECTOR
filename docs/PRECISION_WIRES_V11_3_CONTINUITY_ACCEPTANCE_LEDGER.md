@@ -697,3 +697,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Detailed report updated with scale semantics and archive receipt: `docs/GCR_IMF_BOP_EMDE_PANEL_PART2_20261119.md`, commit `742e9f4e3c93ca596a93ce92dc965dc8cc0167f0`.
 - Master evidence checkpoint update: `docs/INDEPENDENT_EVIDENCE_CLOSURE_CHECKPOINT_20261119.md`, commit `2293e48d54591b0c85eb06a9009dd264b4e79015`.
 - Public BOP observation access is no longer blocked; raw 154-member panel PASS; coverage remains PARTIAL; scale conversion BLOCKED; BPM/revision-vintage controls NOT_DONE; EMDE aggregate NOT_AUTHORIZED.
+
+
+## 2026-11-19 — GCR India scale/sign empirical validation (4 quarterly periods)
+- RBI official Table 197 (BPM6 quarterly, US$ million, 31 July 2026) independently benchmarked against IMF Data Portal BOP quarterly `P_F` entries `A_NFA_T` and `L_NIL_T`.
+- 2024-Q2, 2024-Q3, 2024-Q4, 2025-Q1: eight comparisons all match within RBI integer-million rounding (max absolute difference 0.490 USD million).
+- For these tested India API payloads, `OBS_VALUE / 1,000,000` matches RBI US$ million values; do not multiply raw API values by 1e6 again. `A_NFA_T) is sign-reversed against RBI Portfolio Investment by India net; `L_NIL_T) matches Portfolio Investment in India net. This is empirically PASS for India only, not a global rule.
+- Detailed evidence: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_PART1_20261119.md`; machine CSV `docs/evidence/IMF_BOP_IND_SCALE_RECONCILIATION_2024Q2_2025Q1.csv`.
+- Global scale transform remains PARTIAL; Brazil and at least two additional national benchmarks still required. Existing BCB SGS reconciliation's 201/381 mismatches since 2010-01 means Brazil remains BLOCKED, not PASS. Do not aggregate the 154-country panel yet.
+- Latest evidence checkpoint: `docs/INDEPENDENT_EVIDENCE_CLOSURE_CHECKPOINT_20261119.md`, commit `6cfd076b2aa26532dac19398d02cfd045acc14d3`.
