@@ -768,3 +768,21 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`, commit `4a3bcc34a19d92e747f50609a7cabebe489af69a`.
 - Combined pilot-country scale/sign evidence: Brazil BCB 10/10 + India RBI 12/12 = 22/22 PASS. Scale normalization `USD_million=OBS_VALUE/1e6` validated for BRA and IND tested series/quarters; no sign flip applied to IMF raw values.
 - Remaining 152 EMDE countries remain UNKNOWN pending national source validation; no full 154-member conversion or aggregate. Coverage remains PARTIAL; BPM/revision/vintage controls NOT_DONE; daily swing use NOT_SUITABLE.
+
+
+## 2026-11-19 — Cross-country IMF BOP P_F scale/sign validation extended to four EMDE countries
+- WEO October-2026 G200 membership remains 154/154 exact-code mapped to IMF BOP COUNTRY codelist; 154 unique, no duplicates, no unmapped.
+- Full EMDE panel remains 9,299 observations, 9,299 unique keys, no duplicates; coverage is PARTIAL (114/154 countries any observations, 111 both entries, 40 neither, 83 empty country-entry cells, 13 series with interior gaps, 4 full 47-quarter series).
+- Four independent national-source comparisons now provide **118/118 PASS on vintage-aligned samples**:
+  - Brazil BCB SGS 22906/22924: 47 quarters × 2 entries = 94/94 PASS; 2015-Q1–2026-Q3; tolerance 0.15 USD million; max residual 0.12192411. Run 44476176136 / artifact 14505944936 / ZIP SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`.
+  - India RBI Table 197: 6 quarters × 2 entries = 12/12 PASS; 2024-Q2–2025-Q3; tolerance 0.5 USD million; max residual 0.4899709189. Run 44476434148 / artifact 14506542277 / ZIP SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`.
+  - Mexico Banxico CE174: 3 quarters × 2 entries = 6/6 PASS; 2025-Q4–2026-Q2; tolerance 0.5 USD million. Run 44476089607 / artifact 14506696311 / ZIP SHA-256 `26ba04369dfba423609c313f68995dd7eeb7c5c44727d1df29a8062a3998c58c`.
+  - Chile Banco Central BDE older official page vintage updated 2026-09-07: 3 quarters × 2 entries = 6/6 PASS; 2025-Q4–2026-Q2; monthly values in whole USD million, ±1.5 quarterly-sum tolerance. This older snapshot is web-rendered official evidence; raw bytes were not archived.
+- Empirical conversion for the tested vintages: compare `OBS_VALUE / 1,000,000` to national US$ million values; preserve raw API observations and SCALE=6 metadata; never multiply raw OBS_VALUE by 10^6 a second time.
+- **Critical vintage exception:** current Chile BDE pages updated 2026-11-18 were independently captured (run 44476957975 / artifact 14507305215 / ZIP SHA-256 `155fffc6fbc46df12f0905cd00b011651ced7df1368ceb0a65b736a090052691`). Current vintage: Q4 2025 2/2 PASS; Q1–Q2 2026 4/4 REVIEW (differences exceed rounding); Q3 2026 has national data but IMF CHL panel rows are missing (2 IMF_PANEL_MISSING). This indicates source-vintage/revision mismatch; cause remains unresolved. Do not blend 2026-09 and 2026-11 Chile vintages.
+- Cross-country report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`, latest update commit `cca355ac46d9958d3a993797e9b3978307872184`.
+- Consolidated 126-row machine-readable matrix: `docs/evidence/IMF_BOP_SCALE_CROSS_COUNTRY_VALIDATION_20261119.csv`, update commit `ee67a4c621ac47be02ecc419257771fcab13ada9` (94 BRA + 12 IND + 6 MEX + 6 CHL old vintage + 8 CHL current vintage).
+- Scale metadata and empirical evidence summary: `docs/evidence/imf_bop_emde_20261119/scale_semantics_probe_summary.json`, update commit `747d92a3ad5c794a1d73f1dbb1757f485158ac76`.
+- Decision: four-country vintage-aligned sample PASS; latest Chile source-vintage mismatch remains REVIEW. Do not call the transform universal for all 154 countries and do not create an EMDE aggregate yet.
+- Next priority: build a vintage-aware country-entry observation matrix; resolve Chile Q1/Q2 2026 revisions; validate one further current-vintage EMDE national source; only then consider an observed-country subtotal with explicit coverage. No imputation.
+- Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E. ₹0 spend; no paid APIs; no synthetic data; UNKNOWN is not PASS.
