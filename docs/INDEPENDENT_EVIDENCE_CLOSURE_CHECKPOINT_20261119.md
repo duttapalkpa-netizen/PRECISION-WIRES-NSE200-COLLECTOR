@@ -585,3 +585,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Report `docs/GCR_NSDL_CDSL_DAILY_FPI_FRESHNESS_RECONCILIATION_CONTINUATION69_20261119.md`, commit feb159eee99fe312b8bf23586a014867c9ce96da. Ledger commit 9809b93c7a7a6d6737f7ab21bf338ec4c0b7bc31.
 - Brazil remains: 40-event Registration lifecycle PASS; PA tx2 Changelog BLOCKED; BOP6/BOP_BPM6 identity mismatch BLOCKED. No repeated probes.
 - Next: bounded GitHub Actions direct HTTP raw capture of NSDL and CDSL official pages; preserve status/headers/UTC/raw bytes/SHA-256/form fields; parse only after raw capture. Reconcile same-date NSDL/CDSL confirmed flows with NSE provisional flows. No production admission.
+
+
+## Continuation 70 — official India FPI capture harness (2026-11-19)
+- NSE workflow isolation guard applied before research code: commit `e51b40cff82dc4ae24a7068b74afabee35e3a370`.
+- GET-only six-page official NSDL/CDSL capture script commit `41ecee60c32aec20a384ec11ba23023b0af7f666`; bounded 6-minute workflow commit `092ed5dd2cf78a5265bb07aa11172317ce4bee90`; trigger marker commit `f2c359ce095638f1c081e4d09b3545400c071670`.
+- Raw capture target pages: NSDL Latest/Monthly/Archive/Fortnightly selector; CDSL daily archive and fortnightly sector. Intended artifact includes raw bodies, response status/headers/final URL, retrieval UTC, byte counts, SHA-256, manifest and summary.
+- Workflow execution and artifact are NOT_VERIFIED at this checkpoint update. The freshness conflict remains UNKNOWN until artifact review and matched-date reconciliation.
+- Brazil registration lifecycle remains PASS; PA tx2/Changelog and BOP6/BOP_BPM6 identity remain BLOCKED. No endpoint repeats.
+- No production changes, no macro weights, no data admission, no trading admission. ₹0; UNKNOWN is not PASS.
