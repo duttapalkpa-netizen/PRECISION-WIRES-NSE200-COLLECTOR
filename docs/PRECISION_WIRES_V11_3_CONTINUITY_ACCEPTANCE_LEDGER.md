@@ -1506,3 +1506,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/GCR_CDSL_15NOV2026_SECTOR_FPI_ARITHMETIC_QA_CONTINUATION74_20261119.md`; commit `eb7647f15d1b3449a35a088c79f684ccbfec2b98`.
 - Sector TRI crosswalk, matched NSDL confirmation, and GCR-to-sector/stock predictive backtest remain NOT_DONE/BLOCKED. Next: official BSE sector TRI raw history + exact index IDs and defensible BSE classification mapping; otherwise sector transmission UNKNOWN.
 - No production/selector/ranking/pressure-fade/CORE-672/Engines A–E/IPO-PLX V2 changes. ₹0; Observation OPEN; UNKNOWN is not PASS.
+
+
+## 2026-11-19 — Daily Historical Rolling Backtest Performance Requirement Locked
+- User requirement: every day, provide a reliable, comparable historical rolling-backtest performance rate so progress can be measured. Locked as an acceptance contract, not claimed as implemented.
+- Contract: `docs/DAILY_HISTORICAL_ROLLING_BACKTEST_PERFORMANCE_ACCEPTANCE_CONTRACT_20261119.md`.
+- Separate scorecards mandated: (1) V11.4 exploratory behavioural selector target metrics; (2) V11.3 cost-aware executable replay only after G0 execution assumptions are approved; (3) GCR predictive performance only after timestamp/vintage-aligned factor-to-TRI panel and crosswalk gates pass.
+- Daily comparisons must use fixed protocol, matured outcomes only, exact denominators, chronological rolling cutoffs, confidence intervals, dataset/code/config hashes, independent metric reconciliation and same-protocol baseline. Methodology changes start a new versioned series.
+- H+3 State calibration minimum remains 50 fully matured observations; below threshold UNKNOWN. No synthetic data; UNKNOWN is never PASS.
+- Runtime policy: isolated jobs, preferably 20–60 seconds and never over 10 minutes for new audit jobs. Reuse archived datasets/artifacts; do not trigger the 120-minute prospective workflow solely for daily metrics.
+- Existing Nightly Rotation Backtest automation at 22:00 IST is the sole scheduled cadence; no duplicate automation created. Schedule does not imply implementation.
+- Current reliable daily performance rate remains NOT_AVAILABLE/UNKNOWN: previous audit verified 0 GCR rolling backtests; V11.4 metrics artifacts not retrieved/verified in this audit; V11.3 G0 assumptions remain unapproved. No performance percentage invented.
+- No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2. ₹0; official/free sources only.
