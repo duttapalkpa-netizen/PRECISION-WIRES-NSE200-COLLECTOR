@@ -1,0 +1,26 @@
+name: IMF BOP Legacy DSD and Dataflow Metadata Capture
+on:
+  push:
+    paths:
+      - "scripts/research/capture_imf_bop_legacy_metadata.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture exact IMF legacy DSD and Dataflow
+        run: python scripts/research/capture_imf_bop_legacy_metadata.py
+      - name: Upload raw metadata and manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-legacy-metadata-${{ github.run_id }}
+          path: imf_bop_legacy_metadata/
+          if-no-files-found: error
+          retention-days: 90
