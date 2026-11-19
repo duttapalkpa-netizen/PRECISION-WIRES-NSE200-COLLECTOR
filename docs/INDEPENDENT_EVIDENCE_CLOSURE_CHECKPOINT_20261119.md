@@ -651,3 +651,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Workflow run/artifact NOT YET VERIFIED. Do not mark public structure comparison PASS until run and raw artifact hashes are independently inspected.
 - GCR CDSL archive completeness remains BLOCKED; exact date-selection GET semantics investigation remains next. No archive POST, no guessed date coverage.
 - Full Continuation 76 report: docs/BRAZIL_PUBLIC_STRUCTURE_GET_COMPARISON_CONTINUATION76_20261119.md.
+
+
+## Continuation 39 — Part-2: CDSL rendered-page freshness audit (2026-11-19)
+- Direct read-only inspection of official CDSL archive page https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx shows heading “Daily Trends in FII / FPI Investments upto 30-Sep-2026”.
+- Page note states data is based on reports submitted to depositories by NSE, BSE, MSEI, NCDEX and MCX on 30-Sep-2026 and constitutes trading/position of the previous trading day. Notes distinguish provisional exchange-member T-day data from confirmed custodian/depository data for previous trading day(s), and state RBI reference rate conversion policy.
+- This is a rendered-page observation only; no raw response bytes, headers, retrieval UTC, byte count or SHA-256 were captured in this inspection. Do not promote to immutable raw-source PASS or infer full archive completeness.
+- This strengthens the need to separate page heading freshness from row-level reporting dates and selected archive exports. CDSL archive completeness remains BLOCKED; no POST, guessed parameters, or undocumented endpoint used.
+- Brazil: Continuation 76 public structure GET comparison remains PENDING / NOT_VERIFIED until Actions run and artifact are independently inspected. Existing 40/40 registration lifecycle PASS; PA tx2 Changelog and BOP6/BOP_BPM6 mismatch remain BLOCKED.
+- Detailed report: docs/GCR_BRAZIL_CONTINUATION39_PART2_CDSL_FRESHNESS_AUDIT_20261119.md; report commit cb7a8278a8806862ae785916526b6199ec8e07d4.
+- No production integration, macro weights, selector/score/pressure-fade/CORE-672/Engines A-E changes. ₹0; UNKNOWN is not PASS.
