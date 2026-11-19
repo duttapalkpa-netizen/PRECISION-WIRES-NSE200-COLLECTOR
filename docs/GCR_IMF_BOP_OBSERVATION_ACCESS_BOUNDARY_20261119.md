@@ -67,3 +67,10 @@
 - Brazil's two BOP P_F legs have now been independently reconciled against BCB SGS monthly series 22906 (assets) and 22924 (liabilities): five quarters × two legs = 10/10 PASS using `IMF OBS_VALUE / 10^6` in USD million. Maximum absolute residual 0.12192411 million, below the 0.15 million bound from three monthly values rounded to 0.1 million.
 - This resolves the Brazil scale/sign mapping for the tested series only. It does not generalize to India or other EMDE members; no EMDE-wide conversion/aggregate is authorized.
 - Evidence report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`; durable raw BCB receipts: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/`.
+
+
+## Scale/sign status refinement — Brazil + India (2026-11-19)
+- Brazil BCB SGS 22906/22924: 10/10 checks across 2015-Q1–Q4 and 2026-Q3 pass for `OBS_VALUE/1e6`.
+- India RBI Table197 BPM6 quarterly USD-million table: 12/12 checks across 2024-Q2–2025-Q3 pass; assets require sign reversal from RBI credit-minus-debit, liabilities map directly.
+- The scale/sign normalization is independently supported for both pilot countries, not yet for the other 152 WEO EMDE members. Do not apply it to the full panel or publish an EMDE aggregate until more national-source checks, vintages and BPM basis are closed.
+- Evidence reports: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md` and `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`.
