@@ -21,6 +21,8 @@ DPS="urn:sdmx:org.sdmx.infomodel.base.DataProviderScheme=IMF:DATA_PROVIDERS(1.0)
 q=lambda x:quote(x,safe="")
 targets=[
  ("tx2_pa_item",BASE+"/ws/registry/tx/transaction?txId=2&urn="+q(PA),"zip"),
+ ("tx2_full_fusion_json",BASE+"/ws/registry/tx/transactions?txId=2&format=fusion-json","json"),
+ ("tx2_full_sdmx_json",BASE+"/ws/registry/tx/transactions?txId=2&format=sdmx-json","json"),
  ("tx2_bop6_dataflow_item",BASE+"/ws/registry/tx/transaction?txId=2&urn="+q(DF),"zip"),
  ("tx2_ecofin_dsd_item",BASE+"/ws/registry/tx/transaction?txId=2&urn="+q(DSD),"zip"),
  ("tx2_provider_scheme_item",BASE+"/ws/registry/tx/transaction?txId=2&urn="+q(DPS),"zip"),
@@ -40,6 +42,16 @@ for name,url,kind in targets:
  ext="zip" if kind=="zip" else "xml"; fn=name+"."+ext;(OUT/fn).write_bytes(body)
  rec={"name":name,"url":url,"retrieved_at_utc":ts,"http_status":status,"headers":safe,
       "byte_count":len(body),"sha256":hashlib.sha256(body).hexdigest(),"file":fn}
+ if status==200 and kind=="json":
+  try:
+   doc=json.loads(body); rec["json_root_type"]=type(doc).__name__
+   rec["json_top_level_keys"]=list(doc.keys()) if isinstance(doc,dict) else []
+   for key in ("ProvisionAgreement","Dataflow","DataStructure","DataProviderScheme","DataProvider","Registration"):
+    val=doc.get(key,[]) if isinstance(doc,dict) else []
+    if isinstance(val,dict): val=[val]
+    if isinstance(val,list): rec[key+"_count"]=len(val); rec[key+"_ids"]=[x.get("urn") or x.get("id") for x in val if isinstance(x,dict)]
+   rec["json_parse_status"]="PASS"
+  except Exception as e: rec["json_parse_status"]="FAIL"; rec["json_parse_error"]=str(e)
  if status==200 and kind=="xml":
   try:
    root=ET.fromstring(body); rec["xml_root"]=root.tag
