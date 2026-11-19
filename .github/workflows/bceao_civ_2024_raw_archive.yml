@@ -1,0 +1,26 @@
+name: BCEAO Cote d'Ivoire 2024 BOP raw source archive
+on:
+  push:
+    paths:
+      - "scripts/research/archive_bceao_civ_2024.py"
+      - "scripts/research/bceao_civ_2024_archive_trigger.txt"
+permissions:
+  contents: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download and hash official PDF
+        run: python scripts/research/archive_bceao_civ_2024.py
+      - name: Upload raw source and manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: bceao-cote-divoire-bop-2024-raw
+          path: bceao_civ_2024_raw/
+          if-no-files-found: error
+          retention-days: 90
