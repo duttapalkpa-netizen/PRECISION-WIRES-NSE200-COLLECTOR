@@ -133,7 +133,7 @@ summary={"scope":"independent completeness/missingness and full raw-to-normalize
  "quarter_2026Q3_both_legs_countries":next(x["both_legs_reporting_countries"] for x in quarter_rows if x["period"]=="2026-Q3"),
  "no_forward_fill":True,"no_zero_substitution":True,"no_synthetic_rows":True,
  "no_rescaling":True,"no_currency_conversion":True,"no_aggregation":True,
- "scale_semantics":"UNRESOLVED; SCALE retained as source attribute",
+ "scale_semantics":"PARTIAL: IMF CS_MASTER_SYSTEM SCALE English name=Scale; Arabic name translates to number of decimal places; no English definition or enumeration/codelist; it is a series-level attribute distinct from UNIT_MULT; no numeric rescaling or rounding applied.",
  "vintage_semantics":"Current retrieval snapshot only; no point-in-time historical vintages captured"}
 (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 # Hard QA: source-to-panel must be exact. Coverage deficits are reported, not treated as failure.
@@ -166,7 +166,7 @@ report=f"""# GCR — WEO G200 EMDE BOP Quarterly Coverage QA (2026-11-19)
 ## Source attributes
 - DERIVATION_TYPE: {dict(deriv)}. All {len(panel):,} observations are code O (Reported official data).
 - UNIT: {dict(units)}; only USD was returned by the all-units wildcard query.
-- SCALE: {dict(scales)}; preserved exactly, semantics unresolved.
+- SCALE: {dict(scales)}; official IMF concept scheme `IMF:CS_MASTER_SYSTEM(1.0.2)` names it “Scale”; its Arabic label `عدد الخانات العشرية` translates to “number of decimal places”. The concept has no English description and no referenced codelist. In the BOP DSD it is a series-level attribute, distinct from the separate `UNIT` dimension and from legacy `UNIT_MULT`; do not multiply values by 10^6 or round them based on this field. Raw values and SCALE=6 are preserved.
 - PRECISION: {dict(precision)}; blanks preserved, not filled.
 - No forward-fill, zero substitution, synthetic observations, currency conversion, rescaling or aggregation.
 
@@ -175,7 +175,7 @@ report=f"""# GCR — WEO G200 EMDE BOP Quarterly Coverage QA (2026-11-19)
 - WEO G200 to BOP country code mapping: 154/154 PASS (separately validated).
 - Country/period coverage: PARTIAL; must remain visible at country × entry × quarter level.
 - Full EMDE aggregate: BLOCKED / NOT_AUTHORIZED. 43/154 members lack at least one leg, reporting is asynchronous, only two members have 2026-Q3 data, and 13 series have internal gaps.
-- SCALE/sign semantics, FX policy and point-in-time vintage history are not closed. Do not calculate net inflow or use this panel in a backtest/production signal until these are resolved.
+- SCALE label semantics are partially clarified (decimal-place scale, not proven unit multiplier), but no formal English definition/codelist or rounding rule exists; keep it as metadata and apply no transformation. Sign convention, FX policy and point-in-time vintage history remain open. Do not calculate net inflow or use this panel in a backtest/production signal until these are resolved.
 
 ## Files
 - `coverage_by_country_entry_detailed.csv`: all 308 member-entry combinations with every missing quarter.
