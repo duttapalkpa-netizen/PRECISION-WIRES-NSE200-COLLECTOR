@@ -43,6 +43,9 @@ on:
       - ".github/workflows/imf_emde_portfolio_flows_capture.yml"
       - "scripts/research/capture_imf_emde_portfolio_flows.py"
       - "scripts/research/imf_emde_portfolio_flows_trigger.txt"
+      - ".github/workflows/imf_emde_sample_validation.yml"
+      - "scripts/research/validate_imf_emde_panel_sample.py"
+      - "scripts/research/imf_emde_sample_validation_trigger.txt"
 
       - "scripts/research/probe_imf_bop_public_routes.py"
       - "scripts/research/fetch_imf_bop_dsd_codelists.py"
