@@ -1,0 +1,77 @@
+{
+  "scope": "independent raw-to-normalized and exact-query-to-broad-raw reconciliation",
+  "normalized_panel_sha256": "8ef39ecdefc4dd042d6e7a74e84aaf95aa9c66162de36164667d2bc6ad74e778",
+  "panel_rows": 186,
+  "unique_keys": 186,
+  "duplicate_key_count": 0,
+  "series_checks": [
+    {
+      "country": "BRA",
+      "entry": "A_NFA_T",
+      "exact_nonempty_count": 47,
+      "broad_matching_count": 47,
+      "exact_period_min": "2015-Q1",
+      "exact_period_max": "2026-Q3",
+      "exact_broad_value_matches": 47,
+      "raw_to_normalized_attribute_matches": 47,
+      "missing_from_broad": 0,
+      "value_mismatches": [],
+      "quarterly_periods_contiguous": true,
+      "exact_csv_sha256": "3feca530a6495a3877370ad21bbacece69de87f3ebb725af4cbc455e1f84183c"
+    },
+    {
+      "country": "BRA",
+      "entry": "L_NIL_T",
+      "exact_nonempty_count": 47,
+      "broad_matching_count": 47,
+      "exact_period_min": "2015-Q1",
+      "exact_period_max": "2026-Q3",
+      "exact_broad_value_matches": 47,
+      "raw_to_normalized_attribute_matches": 47,
+      "missing_from_broad": 0,
+      "value_mismatches": [],
+      "quarterly_periods_contiguous": true,
+      "exact_csv_sha256": "2d6b4a22740fe4df16ab4b84e71f69fd6d2833e12c32d94fa0db7bee2925a254"
+    },
+    {
+      "country": "IND",
+      "entry": "A_NFA_T",
+      "exact_nonempty_count": 46,
+      "broad_matching_count": 46,
+      "exact_period_min": "2015-Q1",
+      "exact_period_max": "2026-Q2",
+      "exact_broad_value_matches": 46,
+      "raw_to_normalized_attribute_matches": 46,
+      "missing_from_broad": 0,
+      "value_mismatches": [],
+      "quarterly_periods_contiguous": true,
+      "exact_csv_sha256": "c86388af35f1b83b0b9d2a451d35c3c78541ea03af1d9a9c826a12bb34f04a82"
+    },
+    {
+      "country": "IND",
+      "entry": "L_NIL_T",
+      "exact_nonempty_count": 46,
+      "broad_matching_count": 46,
+      "exact_period_min": "2015-Q1",
+      "exact_period_max": "2026-Q2",
+      "exact_broad_value_matches": 46,
+      "raw_to_normalized_attribute_matches": 46,
+      "missing_from_broad": 0,
+      "value_mismatches": [],
+      "quarterly_periods_contiguous": true,
+      "exact_csv_sha256": "25d41406425a78d575273a7b3fc63cfb3ecc05cda3789c25787b5a610b5c138d"
+    }
+  ],
+  "series_count": 4,
+  "exact_to_broad_value_matches": 186,
+  "missing_or_mismatched_values": 0,
+  "raw_to_normalized_attribute_mismatch_count": 0,
+  "raw_to_normalized_attribute_mismatches": [],
+  "all_series_quarters_contiguous": true,
+  "status": "PASS",
+  "limitations": [
+    "Pilot only: Brazil and India, not an emerging-market aggregate.",
+    "SCALE and all source attributes preserved; no rescaling or currency conversion.",
+    "No aggregation, position/flow substitution, or investment/trading signal inferred."
+  ]
+}

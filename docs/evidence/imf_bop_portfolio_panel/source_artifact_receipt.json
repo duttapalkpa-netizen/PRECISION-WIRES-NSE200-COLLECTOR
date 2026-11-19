@@ -1,0 +1,14 @@
+{
+  "source": "International Monetary Fund official SDMX 3.0 API",
+  "workflow_run_id": 44473784679,
+  "artifact_id": 14505706180,
+  "artifact_sha256": "cbb27d38d258a0ab539baa334100a94037e8446460926670ef66a50aa66d3287",
+  "retrieved_at_utc": "2026-11-19T06:40Z",
+  "authentication": "none; public anonymous requests",
+  "dataflow": "IMF.STA:BOP(21.0.0)",
+  "dsd": "IMF.STA:DSD_BOP(24.0.0)",
+  "panel_rows": 186,
+  "exact_to_broad_reconciliation": "186/186 values match",
+  "validation_status": "PASS",
+  "limitations": ["Brazil and India pilot only", "not an EM aggregate", "SCALE and source attributes preserved; no rescaling or currency conversion", "no forward fill or synthetic observations"]
+}

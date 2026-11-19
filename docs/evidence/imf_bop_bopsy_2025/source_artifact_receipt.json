@@ -1,0 +1,11 @@
+{
+  "source": "International Monetary Fund",
+  "document": "BOPSY Explanatory Notes November 2025",
+  "workflow_run_id": 44473591030,
+  "artifact_id": 14504799002,
+  "artifact_sha256": "481074341df5dd8ae932b52ddb670b9e8bb9da46a1128736af376d4afadbe126",
+  "source_pdf_sha256": "8bd7cf9dd16845b2c781b0c2349971c23952a68a7fbcf9d78f01d84c2da353d8",
+  "coverage_rows_extracted": 200,
+  "country_group_rows_extracted": 219,
+  "scope": "reporting currency, last-reported-year and country-group metadata only; no observations"
+}

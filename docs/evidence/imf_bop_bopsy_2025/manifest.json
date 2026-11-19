@@ -1,0 +1,18 @@
+{
+  "source": "International Monetary Fund",
+  "title": "BOPSY Explanatory Notes November 2025",
+  "source_url": "https://data.imf.org/-/media/Explanatory-Notes-November-2025-BOPSY.pdf",
+  "retrieved_at_utc": "2026-11-19T06:38:13.349889+00:00",
+  "http_status": 200,
+  "content_type": "application/pdf",
+  "byte_count": 389731,
+  "sha256": "8bd7cf9dd16845b2c781b0c2349971c23952a68a7fbcf9d78f01d84c2da353d8",
+  "pdf_pages": 31,
+  "country_reporting_coverage_rows_extracted": 200,
+  "country_group_membership_rows_extracted": 219,
+  "scope_note": "Reporting coverage and group metadata only, not BOP observations. BOPSY country-group aggregates can include estimates for nonreporting economies.",
+  "limitations": [
+    "Derived text/CSV is a convenience extraction and must be checked against source PDF pages before production use.",
+    "No quarterly observations or portfolio-flow observations are generated."
+  ]
+}
