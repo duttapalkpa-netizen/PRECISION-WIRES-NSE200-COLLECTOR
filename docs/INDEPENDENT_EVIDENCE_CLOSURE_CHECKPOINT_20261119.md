@@ -602,3 +602,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Seven-page raw capture run/artifact remains PENDING / NOT_VERIFIED. No parser or flow observations promoted.
 - Brazil PA Changelog and BOP6/BOP_BPM6 identity remain BLOCKED; actual exact-PA owner-side GUI export is required. Registration lifecycle 40/40 PASS.
 - No production or trading admission. ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 72 addendum — India FPI raw capture evidence (2026-11-19)
+- Seven-page official NSDL/CDSL GET-only capture is now runtime-verified: Actions run 44515445620 SUCCESS; job capture all steps SUCCESS; artifact 14524707532, 184,876 bytes.
+- GitHub artifact digest equals independently recomputed ZIP SHA-256: 29530f3d0913f3eed93afbeb0759ecb8131b4192c71e5928d79961df77c24c69. Manifest 7/7 HTTP 200, zero non-200.
+- Raw HTML schema/freshness review found important distinctions: NSDL Latest 19-Nov row includes provisional-vs-confirmed note; CDSL daily eServices cash row 18-Nov; CDSL archive cash rows start 02-Nov despite 18-Nov page/derivative date; NSDL Monthly heading 19-Nov but first visible row 02-Nov. CDSL sector landing is not the sector dataset.
+- Acceptance: capture/runtime/hash PASS; schema discovery PARTIAL; matched-date provider reconciliation NOT_DONE; sector raw observations NOT_DONE; production ingestion BLOCKED.
+- Detailed report: docs/GCR_INDIA_FPI_RAW_CAPTURE_SCHEMA_AUDIT_CONTINUATION72_20261119.md (commit b7f5896459c7710af3b12c369a072062129c86a2). Continuity ledger update commit 9f35ceaad69178406ec904447ca271dfea225145.
+- Brazil remains unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED. Do not repeat known failing transaction-2 JSON probes.
+- Next highest-value action: capture exact CDSL 15-Nov-2026 sector report raw bytes, then matched-date NSDL/CDSL cash reconciliation. No production changes; ₹0; UNKNOWN is never PASS.
