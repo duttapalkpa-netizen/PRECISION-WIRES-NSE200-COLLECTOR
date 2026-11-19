@@ -24,7 +24,7 @@
 
 ## QA
 - Eight countries have a source-reported financial-account net balance and four named component net balances.
-- Component-sum residuals: 6/8 exactly zero at one decimal; 2/8 differ by 0.1 FCFA billion (BFA, CIV, TGO). This is consistent with one-decimal component presentation/rounding, but do not overwrite reported totals.
+- Component-sum residuals: 5/8 exactly zero at one decimal; 3/8 differ by 0.1 FCFA billion (BFA -0.1, CIV -0.1, TGO +0.1). This is consistent with one-decimal component presentation/rounding, but do not overwrite reported totals.
 - All 8 are 2024 estimates, not final actual observations.
 - The dataset explicitly marks both IMF leg mappings NOT_SEPARATELY_DISCLOSED.
 - The annual total or its components must NOT be mapped directly to A_NFA_T or L_NIL_T. No sign conversion or inferred gross legs is authorized.
@@ -36,7 +36,7 @@ For each country, acquire the detailed national BOP table or underlying compilat
 ## Status
 - Official PDF text source verified: PASS.
 - Eight-country annual net extraction: PARTIAL PASS.
-- Arithmetic cross-check: 6 exact, 2 rounding residuals of 0.1 FCFA bn.
+- Arithmetic cross-check: 5 exact, 3 rounding residuals of 0.1 FCFA bn.
 - Raw PDF byte archive/hash: NOT_DONE.
 - IMF A_NFA_T and L_NIL_T leg mapping: BLOCKED.
 - Quarterly repair / EMDE aggregate admission: BLOCKED / NOT_AUTHORIZED.
