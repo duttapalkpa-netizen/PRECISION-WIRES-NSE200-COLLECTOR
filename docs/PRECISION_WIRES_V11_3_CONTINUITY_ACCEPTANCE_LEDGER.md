@@ -688,3 +688,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Critical decision: do NOT aggregate 154 EMDE countries yet. Only 111/154 have both assets and liabilities; 40 have neither; 3 are one-sided. Country period coverage is asynchronous. USD is the only returned unit for this query; SCALE=6 retained, not interpreted. Net inflow/aggregation remains BLOCKED until exact SCALE/sign semantics and coverage threshold are accepted.
 - Current GCR status: public IMF BOP observations PASS; 154-member membership mapping PASS; 9,299-row panel acquisition PASS; 12-country exact sample validation PASS; full group aggregate BLOCKED/NOT_AUTHORIZED; relative-attraction formula, sector transmission and rolling backtest NOT_DONE.
 - No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E changed; no paid APIs; no credentials; no synthetic data; UNKNOWN is not PASS.
+
+
+### 2026-11-19 — Scale concept and raw-source archive addendum
+- Dedicated SCALE concept probe run 44474593356 / artifact 14505692823 / ZIP SHA-256 `218bb0f75f725e44beb2250b06075ddd8796b0a0dff5bd442a5fd57ddeae519b`.
+- Exact `IMF:CS_MASTER_SYSTEM(1.0.2)` `SCALE` concept resolves to `IMF:CL_UNIT_MULT(1.0+.0)`; latest public codelist `CL_UNIT_MULT(1.0.2)`; code 6 label = Millions (10^6). This resolves the label, not the application to the raw numeric values. Preserve raw `OBS_VALUE` and `SCALE=6`; do not multiply/divide or rescale until IMF portal display and national-source reconciliation is complete.
+- Raw source files persisted to GitHub: WEO October-2026 workbook and IMF BOP country codelist XML; commit `79bfbeb3abd2a0e223ae77d2ed740727404dd112`.
+- Detailed report updated with scale semantics and archive receipt: `docs/GCR_IMF_BOP_EMDE_PANEL_PART2_20261119.md`, commit `742e9f4e3c93ca596a93ce92dc965dc8cc0167f0`.
+- Master evidence checkpoint update: `docs/INDEPENDENT_EVIDENCE_CLOSURE_CHECKPOINT_20261119.md`, commit `2293e48d54591b0c85eb06a9009dd264b4e79015`.
+- Public BOP observation access is no longer blocked; raw 154-member panel PASS; coverage remains PARTIAL; scale conversion BLOCKED; BPM/revision-vintage controls NOT_DONE; EMDE aggregate NOT_AUTHORIZED.
