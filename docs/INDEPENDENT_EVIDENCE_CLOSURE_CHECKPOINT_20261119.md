@@ -760,3 +760,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - 381/381 PASS; maximum absolute residual USD 0.1m; tolerance USD 0.15m; 98 nonzero residuals within rounding bound. No interpolation or synthetic rows.
 - Detailed report: `docs/BRAZIL_BCB_PORTFOLIO_LIABILITY_IDENTITY_AUDIT_CONTINUATION40_PART1_20261119.md`; commit `ec7f41f9c9383ef5669e653ae4e4ba04f779124f`.
 - This closes BCB gross-liability-flow internal arithmetic only. It does not resolve Brazil PA BOP6 vs BCB payload BOP_BPM6, PA chronology, GCR 154-country coverage/vintage/BPM gates or authorize aggregation/production.
+
+
+## Continuation 41 — Part-1: Brazil BCB asset gross-to-net identity PASS (2026-11-19)
+- Added research-only script `scripts/research/validate_bcb_asset_flow_identity.py` and workflow `.github/workflows/bcb_asset_flow_identity.yml`; isolated from NSE collector paths.
+- Official BCB SGS roles: 22906 net acquisition of financial assets; 22907 asset inflows; 22908 asset outflows. Both candidate sign conventions tested empirically.
+- Selected formula: `22906 = 22908 - 22907`. Result 381/381 monthly PASS, 1995-01–2026-09; opposite sign candidate 0/381; maximum residual USD 0.1m under 0.15m rounding bound.
+- Run `44539091458` SUCCESS; artifact `14535754997`; ZIP SHA-256 (independently recomputed, equals GitHub digest) `8849f91e5a28d3c7e90a3df1cdcdb46c1fc66bb22ce54af8ea20ebbeca05761b`.
+- Raw hashes: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Combined BCB internal arithmetic checks now 762/762: assets 381/381 plus liabilities Part-1 381/381. Do not count these as 762 independent IMF-vs-BCB comparisons or use gross legs as extra attraction signals (double counting).
+- Detailed report: `docs/BRAZIL_BCB_PORTFOLIO_ASSET_IDENTITY_AUDIT_CONTINUATION41_PART1_20261119.md`; commit `d5ac88260eb6e334cc99b00007f4fb77a6562ef0`.
+- Brazil PA BOP6 vs BCB payload BOP_BPM6 identity and PA chronology remain unresolved; GCR coverage/vintage/BPM gates remain blocked. No aggregate or production admission.
