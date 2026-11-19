@@ -20,7 +20,9 @@ for r in panel:
  k=tuple(r[x] for x in keycols)
  if k in seen:dups.append(k)
  seen.add(k)
-checks=[];all_ok=True\npanel_map={tuple(r[x] for x in keycols):r for r in panel}\nattribute_mismatches=[]
+checks=[];all_ok=True
+panel_map={tuple(r[x] for x in keycols):r for r in panel}
+attribute_mismatches=[]
 for country in ["BRA","IND"]:
  broad=read(BROAD/(country+"_quarterly_all.csv"))
  for entry in ["A_NFA_T","L_NIL_T"]:
@@ -28,7 +30,15 @@ for country in ["BRA","IND"]:
   exact_obs=[x for x in exact if (x.get("OBS_VALUE") or "").strip()]
   broad_map={(x["COUNTRY"],x["BOP_ACCOUNTING_ENTRY"],x["INDICATOR"],x["UNIT"],x["FREQUENCY"],x["TIME_PERIOD"]):x for x in broad
     if x["COUNTRY"]==country and x["BOP_ACCOUNTING_ENTRY"]==entry and x["INDICATOR"]=="P_F" and x["UNIT"]=="USD" and x["FREQUENCY"]=="Q" and "2015-Q1"<=x["TIME_PERIOD"]<="2026-Q3" and (x.get("OBS_VALUE") or "").strip()}
-  exact_map={(x["COUNTRY"],x["BOP_ACCOUNTING_ENTRY"],x["INDICATOR"],x["UNIT"],x["FREQUENCY"],x["TIME_PERIOD"]):x for x in exact_obs}\n  attr_matches=0\n  for k,x in exact_map.items():\n   y=panel_map.get(k)\n   if y is None: attribute_mismatches.append({"key":k,"field":"<row>","raw":"present","normalized":"missing"})\n   else:\n    bad=[col for col,val in x.items() if y.get(col)!=val]\n    if bad: attribute_mismatches.extend({"key":k,"field":col,"raw":x.get(col),"normalized":y.get(col)} for col in bad)\n    else: attr_matches+=1
+  exact_map={(x["COUNTRY"],x["BOP_ACCOUNTING_ENTRY"],x["INDICATOR"],x["UNIT"],x["FREQUENCY"],x["TIME_PERIOD"]):x for x in exact_obs}
+  attr_matches=0
+  for k,x in exact_map.items():
+   y=panel_map.get(k)
+   if y is None: attribute_mismatches.append({"key":k,"field":"<row>","raw":"present","normalized":"missing"})
+   else:
+    bad=[col for col,val in x.items() if y.get(col)!=val]
+    if bad: attribute_mismatches.extend({"key":k,"field":col,"raw":x.get(col),"normalized":y.get(col)} for col in bad)
+    else: attr_matches+=1
   missing=[k for k in exact_map if k not in broad_map]
   mismatch=[]
   for k,x in exact_map.items():
@@ -49,12 +59,14 @@ result={"scope":"independent raw-to-normalized and exact-query-to-broad-raw reco
  "normalized_panel_sha256":normalized_sha,"panel_rows":len(panel),"unique_keys":len(seen),"duplicate_key_count":len(dups),
  "series_checks":checks,"series_count":len(checks),
  "exact_to_broad_value_matches":sum(x["exact_broad_value_matches"] for x in checks),
- "missing_or_mismatched_values":sum(x["missing_from_broad"]+len(x["value_mismatches"]) for x in checks),\n "raw_to_normalized_attribute_mismatch_count":len(attribute_mismatches),"raw_to_normalized_attribute_mismatches":attribute_mismatches[:50],
+ "missing_or_mismatched_values":sum(x["missing_from_broad"]+len(x["value_mismatches"]) for x in checks),
+ "raw_to_normalized_attribute_mismatch_count":len(attribute_mismatches),"raw_to_normalized_attribute_mismatches":attribute_mismatches[:50],
  "all_series_quarters_contiguous":all(x["quarterly_periods_contiguous"] for x in checks),
  "status":"PASS" if all_ok and not dups else "FAIL",
  "limitations":["Pilot only: Brazil and India, not an emerging-market aggregate.",
  "SCALE and all source attributes preserved; no rescaling or currency conversion.",
  "No aggregation, position/flow substitution, or investment/trading signal inferred."]}
-(OUT/"validation.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+(OUT/"validation.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"
+",encoding="utf-8")
 print(json.dumps(result,indent=2,ensure_ascii=False))
 if result["status"]!="PASS" or attribute_mismatches:raise SystemExit("Independent BOP panel reconciliation failed")
