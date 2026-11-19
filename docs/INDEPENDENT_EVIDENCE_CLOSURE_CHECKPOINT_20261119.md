@@ -469,3 +469,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - An initial missing paths-ignore entry caused accidental production collector run #381 / 44493879791. Corrected paths-ignore (commit `110c8e6d6abbe536165c760d919c4c3926030501`) now excludes both Brazil probe scripts and trigger. Cancellation helper run 44493979049 SUCCESS; target collector run 44493879791 final CANCELLED at 09:10:54Z. No production code changes.
 - Next: interactive official IMF UI/authorized historical export only; otherwise preserve UNKNOWN/BLOCKED and pivot to GCR coverage. No production selector, ranking, pressure fade, CORE-672 or engines changes; ₹0.
 - Report: `docs/IMF_BRAZIL_RSS_TRANSACTION_ARCHIVE_PROBE_PART3_20261119.md`.
+
+
+## GCR alternate national BOP source map — 2026-11-19
+- Existing QA country-readiness confirms 40/154 G200 members have no IMF P_F observations on either A_NFA_T or L_NIL_T; three one-sided members DZA/ETH/ZWE; 13 series with internal gaps.
+- Found official alternate sources for 11 of 40 zero-data members: seven WAEMU members with 2024 BCEAO national BOP reports (BEN/BFA/CIV/GNB/MLI/SEN/TGO), Niger 2023 report (NER), UAE annual BOP metadata (ARE), Kenya annual + quarterly sources (KEN), and Oman official BOP XLSX/CSV listing (OMN).
+- BCEAO annual reports are BPM6 and CFA-franc denominated, but annual only. UAE DSBB says BOP currently disseminated annually and quarterly dissemination planned; don't treat as quarterly-ready. Kenya sources have different frequencies/units/vintages (KES million annual, USD million quarterly/cumulative). Oman file bytes/frequency still NOT_CAPTURED.
+- No raw national files archived and no exact IMF A_NFA_T/L_NIL_T reconciliations performed yet. Source discovery only; no series admission, no synthetic quarterly data, no aggregation.
+- Next work: retrieve original files for cohort A in short batches; extract financial-account assets/liabilities separately; reconcile frequency, BPM6 classification, sign, currency/scale, and vintage before assigning country-entry-period PASS/REVIEW/BLOCKED/UNKNOWN.
+- Report: `docs/GCR_ALTERNATE_NATIONAL_BOP_SOURCE_COVERAGE_MAP_20261119.md`.
