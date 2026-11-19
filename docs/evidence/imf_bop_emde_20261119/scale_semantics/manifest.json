@@ -161,5 +161,16 @@
   },
   "referenced_scale_codelists": [],
   "scale_definition_found": false,
-  "decision": "CONCEPT_HAS_NO_DEFINITION_OR_CODELIST_LABELS"
+  "decision": "CONCEPT_HAS_NO_DEFINITION_OR_CODELIST_LABELS",
+  "status": "SUPERSEDED_BY_AUTHORITATIVE_ENUMERATION_CAPTURE",
+  "superseded_by": "docs/evidence/imf_bop_20261119/scale_unit_multiplier_authoritative/manifest.json",
+  "authoritative_scale": {
+    "concept": "IMF:CS_MASTER_SYSTEM(1.0.2).SCALE",
+    "enumeration": "IMF:CL_UNIT_MULT(1.0.2)",
+    "code": "6",
+    "name": "Millions",
+    "description": "10^6",
+    "codelist_xml_sha256": "24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561"
+  },
+  "note": "The earlier extractor captured the Enumeration text as a text node and missed its URN; its 'no codelist' decision is superseded. Use the authoritative codelist capture."
 }
