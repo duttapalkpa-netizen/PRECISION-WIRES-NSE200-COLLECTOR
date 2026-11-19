@@ -1,22 +1,110 @@
 country,vintage,quarter,entry,imf_obs_value_raw_usd,imf_scale,imf_unit,imf_comparable_usd_million,sign_transform,national_source,national_value_usd_million,difference_imf_minus_national_usd_million,tolerance_usd_million,status,notes
-IND,RBI Table 197 current 2026-07,2024-Q2,A_NFA_T,-47510029.08106568,6,USD,47.510029081065674,reverse,RBI Portfolio Investment by India net,48,-0.48997091893432554,0.5,PASS,credit-minus-debit sign reversed for assets
-IND,RBI Table 197 current 2026-07,2024-Q2,L_NIL_T,897230199.1591398,6,USD,897.2301991591397,direct,RBI Portfolio Investment in India net,897,0.23019915913971545,0.5,PASS,
-IND,RBI Table 197 current 2026-07,2024-Q3,A_NFA_T,-34990038.54670947,6,USD,34.99003854670947,reverse,RBI Portfolio Investment by India net,35,-0.00996145329052922,0.5,PASS,credit-minus-debit sign reversed for assets
-IND,RBI Table 197 current 2026-07,2024-Q3,L_NIL_T,19815071031.98193,6,USD,19815.07103198193,direct,RBI Portfolio Investment in India net,19815,0.07103198192999116,0.5,PASS,
-IND,RBI Table 197 current 2026-07,2024-Q4,A_NFA_T,-62610017.41395333,6,USD,62.61001741395333,reverse,RBI Portfolio Investment by India net,63,-0.3899825860466706,0.5,PASS,credit-minus-debit sign reversed for assets
-IND,RBI Table 197 current 2026-07,2024-Q4,L_NIL_T,-11434646504.14862,6,USD,-11434.64650414862,direct,RBI Portfolio Investment in India net,-11435,0.3534958513791935,0.5,PASS,
-IND,RBI Table 197 current 2026-07,2025-Q1,A_NFA_T,-135999310.9346464,6,USD,135.9993109346464,reverse,RBI Portfolio Investment by India net,136,-0.0006890653536117952,0.5,PASS,credit-minus-debit sign reversed for assets
-IND,RBI Table 197 current 2026-07,2025-Q1,L_NIL_T,-5994630947.245322,6,USD,-5994.630947245322,direct,RBI Portfolio Investment in India net,-5995,0.36905275467779575,0.5,PASS,
-BRA,BCB SGS current capture,2015-Q1,A_NFA_T,-1273138947.33,6,USD,-1273.13894733,direct,BCB SGS 22906 monthly sum,-1273.1,-0.03894733,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q2,A_NFA_T,512497139.53,6,USD,512.49713953,direct,BCB SGS 22906 monthly sum,512.4,0.09713953,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q3,A_NFA_T,-1145178767.1,6,USD,-1145.1787671,direct,BCB SGS 22906 monthly sum,-1145.2,0.0212329,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q4,A_NFA_T,-1662884227.32,6,USD,-1662.88422732,direct,BCB SGS 22906 monthly sum,-1662.9,0.01577268,0.15,PASS,
-BRA,BCB SGS current capture,2026-Q3,A_NFA_T,7555691695.07,6,USD,7555.69169507,direct,BCB SGS 22906 monthly sum,7555.7,-0.00830493,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q1,L_NIL_T,17629558375.05,6,USD,17629.55837505,direct,BCB SGS 22924 monthly sum,17629.5,0.05837505,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q2,L_NIL_T,10036148645.97,6,USD,10036.14864597,direct,BCB SGS 22924 monthly sum,10036.2,-0.05135403,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q3,L_NIL_T,-9943234065.4,6,USD,-9943.2340654,direct,BCB SGS 22924 monthly sum,-9943.2,-0.0340654,0.15,PASS,
-BRA,BCB SGS current capture,2015-Q4,L_NIL_T,-3452478075.89,6,USD,-3452.47807589,direct,BCB SGS 22924 monthly sum,-3452.6,0.12192411,0.15,PASS,
-BRA,BCB SGS current capture,2026-Q3,L_NIL_T,-4860140998.73,6,USD,-4860.14099873,direct,BCB SGS 22924 monthly sum,-4860.1,-0.04099873,0.15,PASS,
+IND,RBI Table 197 current 2026-07,2024-Q2,A_NFA_T,-47510029.08106568,6,USD,-47.51002908106568,reverse,RBI Table 197 3.2.B Portfolio Investment by India,-48,0.48997091893432,0.5,PASS,RBI published net: 48
+IND,RBI Table 197 current 2026-07,2024-Q2,L_NIL_T,897230199.1591398,6,USD,897.2301991591398,direct,RBI Table 197 3.2.A Portfolio Investment in India,897,0.2301991591398,0.5,PASS,RBI published net: 897
+IND,RBI Table 197 current 2026-07,2024-Q3,A_NFA_T,-34990038.54670947,6,USD,-34.99003854670947,reverse,RBI Table 197 3.2.B Portfolio Investment by India,-35,0.00996145329053,0.5,PASS,RBI published net: 35
+IND,RBI Table 197 current 2026-07,2024-Q3,L_NIL_T,19815071031.98193,6,USD,19815.07103198193,direct,RBI Table 197 3.2.A Portfolio Investment in India,19815,0.07103198193,0.5,PASS,RBI published net: 19815
+IND,RBI Table 197 current 2026-07,2024-Q4,A_NFA_T,-62610017.41395333,6,USD,-62.61001741395333,reverse,RBI Table 197 3.2.B Portfolio Investment by India,-63,0.38998258604667,0.5,PASS,RBI published net: 63
+IND,RBI Table 197 current 2026-07,2024-Q4,L_NIL_T,-11434646504.14862,6,USD,-11434.64650414862,direct,RBI Table 197 3.2.A Portfolio Investment in India,-11435,0.35349585138,0.5,PASS,RBI published net: -11435
+IND,RBI Table 197 current 2026-07,2025-Q1,A_NFA_T,-135999310.9346464,6,USD,-135.9993109346464,reverse,RBI Table 197 3.2.B Portfolio Investment by India,-136,0.0006890653536,0.5,PASS,RBI published net: 136
+IND,RBI Table 197 current 2026-07,2025-Q1,L_NIL_T,-5994630947.245322,6,USD,-5994.630947245322,direct,RBI Table 197 3.2.A Portfolio Investment in India,-5995,0.369052754678,0.5,PASS,RBI published net: -5995
+IND,RBI Table 197 current 2026-07,2025-Q2,A_NFA_T,872453921.9430683,6,USD,872.4539219430683,reverse,RBI Table 197 3.2.B Portfolio Investment by India,872,0.4539219430683,0.5,PASS,RBI published net: -872
+IND,RBI Table 197 current 2026-07,2025-Q2,L_NIL_T,2480700911.919279,6,USD,2480.700911919279,direct,RBI Table 197 3.2.A Portfolio Investment in India,2481,-0.299088080721,0.5,PASS,RBI published net: 2481
+IND,RBI Table 197 current 2026-07,2025-Q3,A_NFA_T,278550001.1857915,6,USD,278.5500011857915,reverse,RBI Table 197 3.2.B Portfolio Investment by India,279,-0.4499988142085,0.5,PASS,RBI published net: -279
+IND,RBI Table 197 current 2026-07,2025-Q3,L_NIL_T,-5468379504.452175,6,USD,-5468.379504452175,direct,RBI Table 197 3.2.A Portfolio Investment in India,-5468,-0.379504452175,0.5,PASS,RBI published net: -5468
+BRA,BCB SGS current capture,2015-Q1,A_NFA_T,-1273138947.33,6,USD,-1273.13894733,direct,BCB SGS 22906 monthly sum,-1273.1,-0.03894733,0.15,PASS,"BCB monthly values: [""446.0"", ""-1161.2"", ""-557.9""]"
+BRA,BCB SGS current capture,2015-Q2,A_NFA_T,512497139.53,6,USD,512.49713953,direct,BCB SGS 22906 monthly sum,512.4,0.09713953,0.15,PASS,"BCB monthly values: [""502.2"", ""-109.9"", ""120.1""]"
+BRA,BCB SGS current capture,2015-Q3,A_NFA_T,-1145178767.1,6,USD,-1145.1787671,direct,BCB SGS 22906 monthly sum,-1145.2,0.0212329,0.15,PASS,"BCB monthly values: [""-846.7"", ""-270.8"", ""-27.7""]"
+BRA,BCB SGS current capture,2015-Q4,A_NFA_T,-1662884227.32,6,USD,-1662.88422732,direct,BCB SGS 22906 monthly sum,-1662.9,0.01577268,0.15,PASS,"BCB monthly values: [""359.5"", ""136.0"", ""-2158.4""]"
+BRA,BCB SGS current capture,2016-Q1,A_NFA_T,740307808.36,6,USD,740.30780836,direct,BCB SGS 22906 monthly sum,740.3,0.00780836,0.15,PASS,"BCB monthly values: [""-393.0"", ""84.8"", ""1048.5""]"
+BRA,BCB SGS current capture,2016-Q2,A_NFA_T,-1620267929.63,6,USD,-1620.26792963,direct,BCB SGS 22906 monthly sum,-1620.2,-0.06792963,0.15,PASS,"BCB monthly values: [""-358.0"", ""-1031.1"", ""-231.1""]"
+BRA,BCB SGS current capture,2016-Q3,A_NFA_T,766573715.57,6,USD,766.57371557,direct,BCB SGS 22906 monthly sum,766.5,0.07371557,0.15,PASS,"BCB monthly values: [""421.4"", ""304.4"", ""40.7""]"
+BRA,BCB SGS current capture,2016-Q4,A_NFA_T,-485194191.6,6,USD,-485.1941916,direct,BCB SGS 22906 monthly sum,-485.2,0.0058084,0.15,PASS,"BCB monthly values: [""475.3"", ""-834.3"", ""-126.2""]"
+BRA,BCB SGS current capture,2017-Q1,A_NFA_T,2345037566.82,6,USD,2345.03756682,direct,BCB SGS 22906 monthly sum,2345.0,0.03756682,0.15,PASS,"BCB monthly values: [""1109.4"", ""917.1"", ""318.5""]"
+BRA,BCB SGS current capture,2017-Q2,A_NFA_T,984279721.92,6,USD,984.27972192,direct,BCB SGS 22906 monthly sum,984.3,-0.02027808,0.15,PASS,"BCB monthly values: [""859.4"", ""109.4"", ""15.5""]"
+BRA,BCB SGS current capture,2017-Q3,A_NFA_T,7213334254.1,6,USD,7213.3342541,direct,BCB SGS 22906 monthly sum,7213.3,0.0342541,0.15,PASS,"BCB monthly values: [""1669.8"", ""1774.0"", ""3769.5""]"
+BRA,BCB SGS current capture,2017-Q4,A_NFA_T,1827946913.06,6,USD,1827.94691306,direct,BCB SGS 22906 monthly sum,1828.0,-0.05308694,0.15,PASS,"BCB monthly values: [""1594.3"", ""1080.2"", ""-846.5""]"
+BRA,BCB SGS current capture,2018-Q1,A_NFA_T,5721711267.59,6,USD,5721.71126759,direct,BCB SGS 22906 monthly sum,5721.7,0.01126759,0.15,PASS,"BCB monthly values: [""1831.3"", ""1074.0"", ""2816.4""]"
+BRA,BCB SGS current capture,2018-Q2,A_NFA_T,-3101257859.44,6,USD,-3101.25785944,direct,BCB SGS 22906 monthly sum,-3101.2,-0.05785944,0.15,PASS,"BCB monthly values: [""209.7"", ""-1488.3"", ""-1822.6""]"
+BRA,BCB SGS current capture,2018-Q3,A_NFA_T,-651658625.02,6,USD,-651.65862502,direct,BCB SGS 22906 monthly sum,-651.6,-0.05862502,0.15,PASS,"BCB monthly values: [""-241.5"", ""-539.3"", ""129.2""]"
+BRA,BCB SGS current capture,2018-Q4,A_NFA_T,-1510834364.85,6,USD,-1510.83436485,direct,BCB SGS 22906 monthly sum,-1510.9,0.06563515,0.15,PASS,"BCB monthly values: [""1245.0"", ""-87.3"", ""-2668.6""]"
+BRA,BCB SGS current capture,2019-Q1,A_NFA_T,4247194180.14,6,USD,4247.19418014,direct,BCB SGS 22906 monthly sum,4247.2,-0.00581986,0.15,PASS,"BCB monthly values: [""1637.3"", ""2806.1"", ""-196.2""]"
+BRA,BCB SGS current capture,2019-Q2,A_NFA_T,2401175890.72,6,USD,2401.17589072,direct,BCB SGS 22906 monthly sum,2401.1,0.07589072,0.15,PASS,"BCB monthly values: [""893.2"", ""654.2"", ""853.7""]"
+BRA,BCB SGS current capture,2019-Q3,A_NFA_T,3517799527.07,6,USD,3517.79952707,direct,BCB SGS 22906 monthly sum,3517.8,-0.00047293,0.15,PASS,"BCB monthly values: [""1377.6"", ""873.4"", ""1266.8""]"
+BRA,BCB SGS current capture,2019-Q4,A_NFA_T,-1170939178.69,6,USD,-1170.93917869,direct,BCB SGS 22906 monthly sum,-1170.9,-0.03917869,0.15,PASS,"BCB monthly values: [""1162.2"", ""-422.6"", ""-1910.5""]"
+BRA,BCB SGS current capture,2020-Q1,A_NFA_T,2449433151.85,6,USD,2449.43315185,direct,BCB SGS 22906 monthly sum,2449.5,-0.06684815,0.15,PASS,"BCB monthly values: [""578.9"", ""1628.1"", ""242.5""]"
+BRA,BCB SGS current capture,2020-Q2,A_NFA_T,2695784650.36,6,USD,2695.78465036,direct,BCB SGS 22906 monthly sum,2695.9,-0.11534964,0.15,PASS,"BCB monthly values: [""1296.3"", ""395.7"", ""1003.9""]"
+BRA,BCB SGS current capture,2020-Q3,A_NFA_T,4048773468.87,6,USD,4048.77346887,direct,BCB SGS 22906 monthly sum,4048.8,-0.02653113,0.15,PASS,"BCB monthly values: [""1823.3"", ""711.3"", ""1514.2""]"
+BRA,BCB SGS current capture,2020-Q4,A_NFA_T,1807795956.3,6,USD,1807.7959563,direct,BCB SGS 22906 monthly sum,1807.7,0.0959563,0.15,PASS,"BCB monthly values: [""217.2"", ""902.6"", ""687.9""]"
+BRA,BCB SGS current capture,2021-Q1,A_NFA_T,5527319945.23,6,USD,5527.31994523,direct,BCB SGS 22906 monthly sum,5527.3,0.01994523,0.15,PASS,"BCB monthly values: [""898.0"", ""1785.4"", ""2843.9""]"
+BRA,BCB SGS current capture,2021-Q2,A_NFA_T,8305310645.63,6,USD,8305.31064563,direct,BCB SGS 22906 monthly sum,8305.3,0.01064563,0.15,PASS,"BCB monthly values: [""2575.7"", ""3209.3"", ""2520.3""]"
+BRA,BCB SGS current capture,2021-Q3,A_NFA_T,5173986290.75,6,USD,5173.98629075,direct,BCB SGS 22906 monthly sum,5173.9,0.08629075,0.15,PASS,"BCB monthly values: [""3382.7"", ""1409.1"", ""382.1""]"
+BRA,BCB SGS current capture,2021-Q4,A_NFA_T,-3625063481.42,6,USD,-3625.06348142,direct,BCB SGS 22906 monthly sum,-3625.1,0.03651858,0.15,PASS,"BCB monthly values: [""-2731.9"", ""-306.9"", ""-586.3""]"
+BRA,BCB SGS current capture,2022-Q1,A_NFA_T,1337716384.89,6,USD,1337.71638489,direct,BCB SGS 22906 monthly sum,1337.7,0.01638489,0.15,PASS,"BCB monthly values: [""580.9"", ""1243.7"", ""-486.9""]"
+BRA,BCB SGS current capture,2022-Q2,A_NFA_T,-918522224.05,6,USD,-918.52222405,direct,BCB SGS 22906 monthly sum,-918.5,-0.02222405,0.15,PASS,"BCB monthly values: [""443.4"", ""298.0"", ""-1659.9""]"
+BRA,BCB SGS current capture,2022-Q3,A_NFA_T,-1506871153.62,6,USD,-1506.87115362,direct,BCB SGS 22906 monthly sum,-1506.8,-0.07115362,0.15,PASS,"BCB monthly values: [""-2870.0"", ""2117.1"", ""-753.9""]"
+BRA,BCB SGS current capture,2022-Q4,A_NFA_T,946137636.300001,6,USD,946.137636300001,direct,BCB SGS 22906 monthly sum,946.1,0.037636300001,0.15,PASS,"BCB monthly values: [""447.0"", ""566.6"", ""-67.5""]"
+BRA,BCB SGS current capture,2023-Q1,A_NFA_T,2037805816.8,6,USD,2037.8058168,direct,BCB SGS 22906 monthly sum,2037.7,0.1058168,0.15,PASS,"BCB monthly values: [""-122.1"", ""446.9"", ""1712.9""]"
+BRA,BCB SGS current capture,2023-Q2,A_NFA_T,3427270253.29,6,USD,3427.27025329,direct,BCB SGS 22906 monthly sum,3427.2,0.07025329,0.15,PASS,"BCB monthly values: [""297.9"", ""1788.3"", ""1341.0""]"
+BRA,BCB SGS current capture,2023-Q3,A_NFA_T,1259674829.85,6,USD,1259.67482985,direct,BCB SGS 22906 monthly sum,1259.7,-0.02517015,0.15,PASS,"BCB monthly values: [""-741.2"", ""883.8"", ""1117.1""]"
+BRA,BCB SGS current capture,2023-Q4,A_NFA_T,-2217416992.68,6,USD,-2217.41699268,direct,BCB SGS 22906 monthly sum,-2217.5,0.08300732,0.15,PASS,"BCB monthly values: [""-867.0"", ""628.5"", ""-1979.0""]"
+BRA,BCB SGS current capture,2024-Q1,A_NFA_T,7819281579.79,6,USD,7819.28157979,direct,BCB SGS 22906 monthly sum,7819.2,0.08157979,0.15,PASS,"BCB monthly values: [""2277.7"", ""3907.1"", ""1634.4""]"
+BRA,BCB SGS current capture,2024-Q2,A_NFA_T,3782233974.76,6,USD,3782.23397476,direct,BCB SGS 22906 monthly sum,3782.2,0.03397476,0.15,PASS,"BCB monthly values: [""1334.8"", ""3154.7"", ""-707.3""]"
+BRA,BCB SGS current capture,2024-Q3,A_NFA_T,-1805987510.44,6,USD,-1805.98751044,direct,BCB SGS 22906 monthly sum,-1806.0,0.01248956,0.15,PASS,"BCB monthly values: [""-2815.0"", ""1696.3"", ""-687.3""]"
+BRA,BCB SGS current capture,2024-Q4,A_NFA_T,-2621882147.75,6,USD,-2621.88214775,direct,BCB SGS 22906 monthly sum,-2621.9,0.01785225,0.15,PASS,"BCB monthly values: [""-1510.2"", ""-192.6"", ""-919.1""]"
+BRA,BCB SGS current capture,2025-Q1,A_NFA_T,10982249544.84,6,USD,10982.24954484,direct,BCB SGS 22906 monthly sum,10982.2,0.04954484,0.15,PASS,"BCB monthly values: [""6659.9"", ""2793.2"", ""1529.1""]"
+BRA,BCB SGS current capture,2025-Q2,A_NFA_T,13138537909.99,6,USD,13138.53790999,direct,BCB SGS 22906 monthly sum,13138.5,0.03790999,0.15,PASS,"BCB monthly values: [""2935.8"", ""8237.7"", ""1965.0""]"
+BRA,BCB SGS current capture,2025-Q3,A_NFA_T,6171455895.61,6,USD,6171.45589561,direct,BCB SGS 22906 monthly sum,6171.4,0.05589561,0.15,PASS,"BCB monthly values: [""2914.1"", ""2429.4"", ""827.9""]"
+BRA,BCB SGS current capture,2025-Q4,A_NFA_T,967318566.170001,6,USD,967.318566170001,direct,BCB SGS 22906 monthly sum,967.4,-0.081433829999,0.15,PASS,"BCB monthly values: [""-442.7"", ""1599.8"", ""-189.7""]"
+BRA,BCB SGS current capture,2026-Q1,A_NFA_T,13458723965.05,6,USD,13458.72396505,direct,BCB SGS 22906 monthly sum,13458.7,0.02396505,0.15,PASS,"BCB monthly values: [""6086.2"", ""4248.2"", ""3124.3""]"
+BRA,BCB SGS current capture,2026-Q2,A_NFA_T,1923021247.64,6,USD,1923.02124764,direct,BCB SGS 22906 monthly sum,1923.1,-0.07875236,0.15,PASS,"BCB monthly values: [""1646.4"", ""1241.3"", ""-964.6""]"
+BRA,BCB SGS current capture,2026-Q3,A_NFA_T,7555691695.07,6,USD,7555.69169507,direct,BCB SGS 22906 monthly sum,7555.7,-0.00830493,0.15,PASS,"BCB monthly values: [""3974.2"", ""312.2"", ""3269.3""]"
+BRA,BCB SGS current capture,2015-Q1,L_NIL_T,17629558375.05,6,USD,17629.55837505,direct,BCB SGS 22924 monthly sum,17629.5,0.05837505,0.15,PASS,"BCB monthly values: [""12054.8"", ""2656.7"", ""2918.0""]"
+BRA,BCB SGS current capture,2015-Q2,L_NIL_T,10036148645.97,6,USD,10036.14864597,direct,BCB SGS 22924 monthly sum,10036.2,-0.05135403,0.15,PASS,"BCB monthly values: [""6611.2"", ""3532.0"", ""-107.0""]"
+BRA,BCB SGS current capture,2015-Q3,L_NIL_T,-9943234065.4,6,USD,-9943.2340654,direct,BCB SGS 22924 monthly sum,-9943.2,-0.0340654,0.15,PASS,"BCB monthly values: [""-4355.5"", ""-1706.3"", ""-3881.4""]"
+BRA,BCB SGS current capture,2015-Q4,L_NIL_T,-3452478075.89,6,USD,-3452.47807589,direct,BCB SGS 22924 monthly sum,-3452.6,0.12192411,0.15,PASS,"BCB monthly values: [""-3184.3"", ""4162.4"", ""-4430.7""]"
+BRA,BCB SGS current capture,2016-Q1,L_NIL_T,-6904981191.95,6,USD,-6904.98119195,direct,BCB SGS 22924 monthly sum,-6904.9,-0.08119195,0.15,PASS,"BCB monthly values: [""-2320.6"", ""-5619.3"", ""1035.0""]"
+BRA,BCB SGS current capture,2016-Q2,L_NIL_T,-3101110168.69,6,USD,-3101.11016869,direct,BCB SGS 22924 monthly sum,-3101.1,-0.01016869,0.15,PASS,"BCB monthly values: [""631.8"", ""-6724.5"", ""2991.6""]"
+BRA,BCB SGS current capture,2016-Q3,L_NIL_T,-6893424807.87,6,USD,-6893.42480787,direct,BCB SGS 22924 monthly sum,-6893.5,0.07519213,0.15,PASS,"BCB monthly values: [""3286.1"", ""-5358.4"", ""-4821.2""]"
+BRA,BCB SGS current capture,2016-Q4,L_NIL_T,-3732451070.49,6,USD,-3732.45107049,direct,BCB SGS 22924 monthly sum,-3732.5,0.04892951,0.15,PASS,"BCB monthly values: [""-1672.8"", ""-810.8"", ""-1248.9""]"
+BRA,BCB SGS current capture,2017-Q1,L_NIL_T,-4948994626.52,6,USD,-4948.99462652,direct,BCB SGS 22924 monthly sum,-4949.0,0.00537348,0.15,PASS,"BCB monthly values: [""-965.3"", ""-1077.8"", ""-2905.9""]"
+BRA,BCB SGS current capture,2017-Q2,L_NIL_T,-767644313.429999,6,USD,-767.644313429999,direct,BCB SGS 22924 monthly sum,-767.6,-0.044313429999,0.15,PASS,"BCB monthly values: [""4348.2"", ""-1374.0"", ""-3741.8""]"
+BRA,BCB SGS current capture,2017-Q3,L_NIL_T,2927998448.45,6,USD,2927.99844845,direct,BCB SGS 22924 monthly sum,2928.0,-0.00155155,0.15,PASS,"BCB monthly values: [""3625.9"", ""396.3"", ""-1094.2""]"
+BRA,BCB SGS current capture,2017-Q4,L_NIL_T,-2564585519.41,6,USD,-2564.58551941,direct,BCB SGS 22924 monthly sum,-2564.5,-0.08551941,0.15,PASS,"BCB monthly values: [""2236.5"", ""-2149.4"", ""-2651.6""]"
+BRA,BCB SGS current capture,2018-Q1,L_NIL_T,4471122893.09,6,USD,4471.12289309,direct,BCB SGS 22924 monthly sum,4471.1,0.02289309,0.15,PASS,"BCB monthly values: [""11919.4"", ""322.1"", ""-7770.4""]"
+BRA,BCB SGS current capture,2018-Q2,L_NIL_T,-2117665104.03,6,USD,-2117.66510403,direct,BCB SGS 22924 monthly sum,-2117.6,-0.06510403,0.15,PASS,"BCB monthly values: [""5946.8"", ""-4152.8"", ""-3911.6""]"
+BRA,BCB SGS current capture,2018-Q3,L_NIL_T,603093430.530002,6,USD,603.093430530002,direct,BCB SGS 22924 monthly sum,603.1,-0.006569469998,0.15,PASS,"BCB monthly values: [""10932.5"", ""-6707.8"", ""-3621.6""]"
+BRA,BCB SGS current capture,2018-Q4,L_NIL_T,-9233373191.72,6,USD,-9233.37319172,direct,BCB SGS 22924 monthly sum,-9233.3,-0.07319172,0.15,PASS,"BCB monthly values: [""915.3"", ""-5776.6"", ""-4372.0""]"
+BRA,BCB SGS current capture,2019-Q1,L_NIL_T,10673062403.07,6,USD,10673.06240307,direct,BCB SGS 22924 monthly sum,10673.0,0.06240307,0.15,PASS,"BCB monthly values: [""5414.5"", ""4325.0"", ""933.5""]"
+BRA,BCB SGS current capture,2019-Q2,L_NIL_T,-5148720454.12,6,USD,-5148.72045412,direct,BCB SGS 22924 monthly sum,-5148.7,-0.02045412,0.15,PASS,"BCB monthly values: [""-1281.1"", ""-2437.5"", ""-1430.1""]"
+BRA,BCB SGS current capture,2019-Q3,L_NIL_T,-6727414902.14,6,USD,-6727.41490214,direct,BCB SGS 22924 monthly sum,-6727.4,-0.01490214,0.15,PASS,"BCB monthly values: [""3129.6"", ""-6515.6"", ""-3341.4""]"
+BRA,BCB SGS current capture,2019-Q4,L_NIL_T,-9018140414.03001,6,USD,-9018.14041403001,direct,BCB SGS 22924 monthly sum,-9018.1,-0.04041403001,0.15,PASS,"BCB monthly values: [""-4546.4"", ""-327.8"", ""-4143.9""]"
+BRA,BCB SGS current capture,2020-Q1,L_NIL_T,-21705544830.09,6,USD,-21705.54483009,direct,BCB SGS 22924 monthly sum,-21705.5,-0.04483009,0.15,PASS,"BCB monthly values: [""3353.5"", ""-2797.5"", ""-22261.5""]"
+BRA,BCB SGS current capture,2020-Q2,L_NIL_T,-4254471473.35,6,USD,-4254.47147335,direct,BCB SGS 22924 monthly sum,-4254.5,0.02852665,0.15,PASS,"BCB monthly values: [""-8294.7"", ""-1541.9"", ""5582.1""]"
+BRA,BCB SGS current capture,2020-Q3,L_NIL_T,2039199616.13,6,USD,2039.19961613,direct,BCB SGS 22924 monthly sum,2039.1,0.09961613,0.15,PASS,"BCB monthly values: [""-951.2"", ""2111.9"", ""878.4""]"
+BRA,BCB SGS current capture,2020-Q4,L_NIL_T,22040347918.81,6,USD,22040.34791881,direct,BCB SGS 22924 monthly sum,22040.3,0.04791881,0.15,PASS,"BCB monthly values: [""5336.0"", ""7052.0"", ""9652.3""]"
+BRA,BCB SGS current capture,2021-Q1,L_NIL_T,6458230601.9,6,USD,6458.2306019,direct,BCB SGS 22924 monthly sum,6458.2,0.0306019,0.15,PASS,"BCB monthly values: [""4972.7"", ""3935.0"", ""-2449.5""]"
+BRA,BCB SGS current capture,2021-Q2,L_NIL_T,12860273431.58,6,USD,12860.27343158,direct,BCB SGS 22924 monthly sum,12860.2,0.07343158,0.15,PASS,"BCB monthly values: [""1768.9"", ""5486.1"", ""5605.2""]"
+BRA,BCB SGS current capture,2021-Q3,L_NIL_T,3791858758.36,6,USD,3791.85875836,direct,BCB SGS 22924 monthly sum,3791.8,0.05875836,0.15,PASS,"BCB monthly values: [""3308.9"", ""57.1"", ""425.8""]"
+BRA,BCB SGS current capture,2021-Q4,L_NIL_T,258331349.549998,6,USD,258.331349549998,direct,BCB SGS 22924 monthly sum,258.3,0.031349549998,0.15,PASS,"BCB monthly values: [""1369.1"", ""830.2"", ""-1941.0""]"
+BRA,BCB SGS current capture,2022-Q1,L_NIL_T,771407288.830001,6,USD,771.407288830001,direct,BCB SGS 22924 monthly sum,771.4,0.007288830001,0.15,PASS,"BCB monthly values: [""4899.5"", ""2272.0"", ""-6400.1""]"
+BRA,BCB SGS current capture,2022-Q2,L_NIL_T,-7478562567.79,6,USD,-7478.56256779,direct,BCB SGS 22924 monthly sum,-7478.6,0.03743221,0.15,PASS,"BCB monthly values: [""-3681.2"", ""-3389.7"", ""-407.7""]"
+BRA,BCB SGS current capture,2022-Q3,L_NIL_T,-2804544889.96,6,USD,-2804.54488996,direct,BCB SGS 22924 monthly sum,-2804.5,-0.04488996,0.15,PASS,"BCB monthly values: [""-643.6"", ""1056.5"", ""-3217.4""]"
+BRA,BCB SGS current capture,2022-Q4,L_NIL_T,6451138345.5,6,USD,6451.1383455,direct,BCB SGS 22924 monthly sum,6451.1,0.0383455,0.15,PASS,"BCB monthly values: [""3167.0"", ""2879.1"", ""405.0""]"
+BRA,BCB SGS current capture,2023-Q1,L_NIL_T,912267604.770002,6,USD,912.267604770002,direct,BCB SGS 22924 monthly sum,912.2,0.067604770002,0.15,PASS,"BCB monthly values: [""2184.4"", ""1083.4"", ""-2355.6""]"
+BRA,BCB SGS current capture,2023-Q2,L_NIL_T,6981462936.93,6,USD,6981.46293693,direct,BCB SGS 22924 monthly sum,6981.5,-0.03706307,0.15,PASS,"BCB monthly values: [""3262.5"", ""-2435.7"", ""6154.7""]"
+BRA,BCB SGS current capture,2023-Q3,L_NIL_T,2610682301.49,6,USD,2610.68230149,direct,BCB SGS 22924 monthly sum,2610.7,-0.01769851,0.15,PASS,"BCB monthly values: [""1280.2"", ""-207.4"", ""1537.9""]"
+BRA,BCB SGS current capture,2023-Q4,L_NIL_T,3313651633.95,6,USD,3313.65163395,direct,BCB SGS 22924 monthly sum,3313.6,0.05163395,0.15,PASS,"BCB monthly values: [""3136.3"", ""4233.7"", ""-4056.4""]"
+BRA,BCB SGS current capture,2024-Q1,L_NIL_T,6145910399.43,6,USD,6145.91039943,direct,BCB SGS 22924 monthly sum,6145.9,0.01039943,0.15,PASS,"BCB monthly values: [""7080.6"", ""-1166.8"", ""232.1""]"
+BRA,BCB SGS current capture,2024-Q2,L_NIL_T,-3375785520.09,6,USD,-3375.78552009,direct,BCB SGS 22924 monthly sum,-3375.8,0.01447991,0.15,PASS,"BCB monthly values: [""-7580.0"", ""1308.2"", ""2896.0""]"
+BRA,BCB SGS current capture,2024-Q3,L_NIL_T,7782994745.11,6,USD,7782.99474511,direct,BCB SGS 22924 monthly sum,7783.0,-0.00525489,0.15,PASS,"BCB monthly values: [""1169.9"", ""3177.1"", ""3436.0""]"
+BRA,BCB SGS current capture,2024-Q4,L_NIL_T,-2327902171.82,6,USD,-2327.90217182,direct,BCB SGS 22924 monthly sum,-2328.0,0.09782818,0.15,PASS,"BCB monthly values: [""1795.5"", ""3455.5"", ""-7579.0""]"
+BRA,BCB SGS current capture,2025-Q1,L_NIL_T,-3092781390.56,6,USD,-3092.78139056,direct,BCB SGS 22924 monthly sum,-3092.8,0.01860944,0.15,PASS,"BCB monthly values: [""-4888.6"", ""2924.3"", ""-1128.5""]"
+BRA,BCB SGS current capture,2025-Q2,L_NIL_T,6341267186.73,6,USD,6341.26718673,direct,BCB SGS 22924 monthly sum,6341.3,-0.03281327,0.15,PASS,"BCB monthly values: [""777.2"", ""2698.1"", ""2866.0""]"
+BRA,BCB SGS current capture,2025-Q3,L_NIL_T,7763544552,6,USD,7763.544552,direct,BCB SGS 22924 monthly sum,7763.5,0.044552,0.15,PASS,"BCB monthly values: [""-1282.2"", ""2687.4"", ""6358.3""]"
+BRA,BCB SGS current capture,2025-Q4,L_NIL_T,6557261266.4,6,USD,6557.2612664,direct,BCB SGS 22924 monthly sum,6557.2,0.0612664,0.15,PASS,"BCB monthly values: [""2950.2"", ""-1262.3"", ""4869.3""]"
+BRA,BCB SGS current capture,2026-Q1,L_NIL_T,15812419979.89,6,USD,15812.41997989,direct,BCB SGS 22924 monthly sum,15812.4,0.01997989,0.15,PASS,"BCB monthly values: [""8988.8"", ""9858.8"", ""-3035.2""]"
+BRA,BCB SGS current capture,2026-Q2,L_NIL_T,-1146423745.58,6,USD,-1146.42374558,direct,BCB SGS 22924 monthly sum,-1146.4,-0.02374558,0.15,PASS,"BCB monthly values: [""5386.9"", ""-5478.0"", ""-1055.3""]"
+BRA,BCB SGS current capture,2026-Q3,L_NIL_T,-4860140998.73,6,USD,-4860.14099873,direct,BCB SGS 22924 monthly sum,-4860.1,-0.04099873,0.15,PASS,"BCB monthly values: [""2158.3"", ""-5319.9"", ""-1698.5""]"
 MEX,Banxico CE174 current page,2025-Q4,A_NFA_T,127425187,6,USD,127.425187,direct,Banxico CE174 A. Net acquisition of financial assets,127,0.425187,0.5,PASS,
 MEX,Banxico CE174 current page,2026-Q1,A_NFA_T,7337165193,6,USD,7337.165193,direct,Banxico CE174 A. Net acquisition of financial assets,7337,0.165193,0.5,PASS,
 MEX,Banxico CE174 current page,2026-Q2,A_NFA_T,8937255098,6,USD,8937.255098,direct,Banxico CE174 A. Net acquisition of financial assets,8937,0.255098,0.5,PASS,
