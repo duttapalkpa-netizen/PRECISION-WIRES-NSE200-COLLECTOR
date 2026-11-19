@@ -49,7 +49,7 @@ def main():
   if urlparse(u).netloc==urlparse(BASE).netloc and u not in same: same.append(u)
  # Bound to first 12 same-origin bundles; record all discovered script URLs.
  bundles=[]
- for i,u in enumerate(same[:12]):
+ for i,u in enumerate(same[:16]):
   r=fetch(u); b=r.pop("body"); name=f"bundle_{i:02d}.js"; (OUT/name).write_bytes(b)
   txt=b.decode("utf-8","replace")
   pats=sorted(set(re.findall(r"""[^"'\\s]{0,120}(?:download|export|view.?data|dataset|sdmx|odata)[^"'\\s]{0,180}""",txt,re.I)))
