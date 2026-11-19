@@ -448,3 +448,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Nigeria comparison CSV corrected and committed at `8213e4de80d2d1361fcd24d391421a1c0bafb467`; summary JSON commit `0443d83f28c7487d581793132bd9c48cf97a0314`; extracted CBN Table 2 text commit `6029bf7942aed9e1397c5229d0eaf7b29ad54861`.
 - Master continuity ledger latest commit `aeb6aba173e191663eb3841685a7201119b26fa0`.
 - Path-ignore syntax repair commit `9ef1922f63c3091519fe5208ee63e259fcc571c5`; unintended long collector runs 44484649213, 44484666061 and 44485482464 were all cancelled by helper run 44485600055 SUCCESS. No production source code was intentionally changed; research-only paths now excluded from the production collector workflow.
+
+
+## Brazil PA transaction 2 alternate serialization probe Part 2 — 2026-11-19
+- Focused run #34 / 44493473476 SUCCESS; prior registration/history steps intentionally skipped; PA tx2 probe step and artifact upload both SUCCESS.
+- Artifact 14513337963, 1,275 bytes, ZIP SHA-256 `824a09425db76982ba73a1b9f51cd768669d560a5b017b732f0cf224ce7720e6`; manifest SHA-256 `994aa5f6b7e5ce7bb5257097a51f7d94a2cfbaf6b55eee1cdfbc2202260ef987`.
+- Both documented formats were tested against tx2: `format=fusion-json` and `format=sdmx-json`. Both returned HTTP 500, 39-byte body `Unable to return transaction for id '2'`, SHA-256 `76c4819f18129eb81b5fab80dcf0641665f332b823864c2c09280efe21415825`. Header Content-Type was application/zip although body was plain text; do not treat as archive/JSON.
+- Focused script commit `46bd48fcaecc6d866061d21f9151508bf841afb7`; corrected workflow commit `e96942c1d809dd36a6c596621a967e8668af8444`; trigger commit `431006c2893cb6882b33edd9fc3465b8602febf4`.
+- Earlier workflow attempts #29–32 failed at workflow parsing/step-condition indentation; this was an orchestration defect, not a source-data failure. Corrected workflow was verified by successful focused run #34. Longer redundant runs #28 and #33 were not used as evidence.
+- FMR docs confirm the format options, but IMF deployment cannot serialize tx2 in either. Do not retry identical endpoints. Next route: official Registry UI Activity / Structure Submissions and PA detail Changelog/Compare; archive exact downloaded revisions only. If unavailable without authorized access, preserve UNKNOWN.
+- Decision: alternate format probe PASS; tx2/PA Changelog BLOCKED; Brazil Reconstruction BLOCKED; BOP6 vs BOP_BPM6 mismatch remains BLOCKED. No alias, admission, production changes, or paid spend.
+- Report: `docs/IMF_BRAZIL_PA_TX2_ALTERNATE_SERIALIZATION_PROBE_PART2_20261119.md`.
