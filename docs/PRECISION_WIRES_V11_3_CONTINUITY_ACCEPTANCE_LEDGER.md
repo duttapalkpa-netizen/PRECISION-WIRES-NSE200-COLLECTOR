@@ -1337,3 +1337,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Limits: no independent replication/raw event-window computation, no country-specific causal path, no predictive or 1–3 day edge, no weights/thresholds; prior Brazil/India/Chile/South Africa source gates unchanged.
 - Stage: this evidence increment complete; Observation overall still OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate NOT_AUTHORIZED.
 - Invariants unchanged: ₹0, official/free sources, no synthetic data/fabricated timestamps/guessed transforms; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 42 — Part-4: Official high-frequency source readiness matrix for India event studies (2026-11-19)
+- Completed source-discovery audit for zero-cost global-shock → India market/FX/flow event study.
+- Verified official/public access paths: NSE historical index and India VIX; NSE daily reports/full bhavcopy/security delivery; SEBI page linking NSDL and CDSL FPI daily/monthly/archive; RBI DBIE daily USD/INR from 2000-08-08 to 2026-06-30 (CSV/JSON); FRED DGS10 daily US 10Y yield (US Fed Board source); FRED VIXCLS daily CBOE close; PPAC Indian Basket crude historical report (FY/monthly view).
+- Key constraints: this was source discovery, not raw-data acquisition. No row counts, raw files, hashes, missingness or source vintage claimed. NSE interactive exports not run; NSDL/CDSL definitions/overlap not reconciled; NSE FII/DII report definitions pending; PPAC surfaced monthly/FY layout cannot be interpolated to daily. Different global/India close times require no-look-ahead alignment.
+- Report: docs/GCR_OBSERVATION_PHASE_OFFICIAL_HIGH_FREQUENCY_SOURCE_READINESS_CONTINUATION42_PART4_20261119.md; commit 77ed90fe11aa7d66f3214bde72476c97094ed43f.
+- Primary source URLs are itemized in the report. Web verification references: NSE historical reports; SEBI FPI curation; RBI DBIE USD/INR; FRED DGS10/VIXCLS; PPAC Indian Basket.
+- Next bounded actions: acquire and QA separate raw datasets in short jobs (NSE index/VIX; RBI DBIE USD/INR; NSDL/CDSL FPI; NSE DII/FII; FRED global factors; PPAC monthly context). Preserve original date, publication timestamp, timezone, unit, vintage, manifest and SHA-256. No forward-fill/interpolation across missing calendars.
+- Stage: source-readiness increment complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate/production admission NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed daily interpolation/unsupported country weights; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
