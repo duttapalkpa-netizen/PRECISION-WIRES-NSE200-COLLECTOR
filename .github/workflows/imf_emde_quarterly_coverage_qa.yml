@@ -1,7 +1,7 @@
 name: IMF EMDE Quarterly Coverage and Missingness QA
 on:
   push:
-    branches: [research/gcr-emde-quarterly-coverage-qa-20261119]
+    branches: [research/gcr-emde-coverage-qa-main-sync-20261119]
     paths:
       - "scripts/research/imf_emde_coverage_qa_trigger.txt"
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: research/gcr-emde-quarterly-coverage-qa-20261119
+          ref: research/gcr-emde-coverage-qa-main-sync-20261119
           fetch-depth: 0
       - name: Recompute 154-member country-entry-quarter coverage and raw reconciliation
         run: python scripts/research/audit_imf_emde_quarterly_coverage.py
@@ -32,7 +32,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/evidence/imf_bop_emde_20261119/coverage_qa docs/evidence/imf_bop_emde_20261119/scale_semantics docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
           git diff --cached --quiet || git commit -m "Archive WEO EMDE BOP quarterly coverage and missingness audit"
-          git push origin research/gcr-emde-quarterly-coverage-qa-20261119
+          git push origin research/gcr-emde-coverage-qa-main-sync-20261119
       - name: Upload SCALE concept metadata probe
         uses: actions/upload-artifact@v4
         with:
