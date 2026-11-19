@@ -1092,3 +1092,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - New BCB/Depec ODbL dataset path: SGS 22905 broad portfolio net; 22906 portfolio financial-asset net acquisition; 22925 portfolio liability net incurrence inflows; 22940 portfolio debt-security inflows. Public 22905 JSON visible through Sep-2026, but no immutable raw archive/hash in this task.
 - Report commit `22260e4b98e0346198281b1987b4739128aa277b`; checkpoint commit `7c1dece681cae79df262aebd43526162303a9a49`.
 - Next: short, separate raw-ingestion/QA jobs for each SGS family, then exact instrument/sign mapping. Brazil PA chronology still BLOCKED; GCR panel/score NOT_READY. ₹0; no production integration; UNKNOWN is not PASS.
+
+## Continuation 39 — Part-8: bounded Brazil SGS capture workflow (2026-11-19)
+- Research-only collector script added for BCB SGS 22905/22906/22925/22940 with raw response archival, provenance headers/UTC/bytes/SHA-256 and fail-closed schema/date/duplicate/ordering QA.
+- Separate five-minute GitHub Actions workflow added; NSE collector paths-ignore updated before workflow creation to prevent the full NSE job running. No production logic changed.
+- Commits: isolation `6e975b7f375fed914c626eda92b4fcd9e87f7b80`; script `d0a545fb54bea345bf2e4b94c6644310ce09a7bf`; workflow `4e0ef24ac94990e7b34d2c73099414310537071f`; report `68fca473ce92eb4df141fc427875344fb575ade3`.
+- Run `44538278638` queued at latest poll; artifact/raw capture/QA NOT_DONE until completed and independently checked. No false PASS.
+- Next: poll this run only; then hash-verify artifact, reconcile exact flow semantics and IMF mapping. Brazil PA identity/chronology BLOCKED; GCR panel/score NOT_READY. ₹0; protected invariants unchanged.
