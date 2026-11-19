@@ -46,3 +46,14 @@ Capture the exact dated CDSL fortnightly sector-wise FPI report rather than trea
 - Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56x12), Engines A-E unchanged.
 - Research spend ₹0; no paid APIs.
 - Next: verify run `44519322726` and artifact/hash; then parse raw dated report schema and independently reconcile matched dates/periods. Brazil next action remains obtain exact PA changelog through the official UI/export route or mark the external dependency explicitly.
+
+
+## Runtime verification addendum
+- Actions run `44519322726` completed SUCCESS at `2026-11-19T11:57:17Z`; capture job and artifact upload steps SUCCESS.
+- Artifact ID `14527092174`, name `gcr-india-fpi-raw-pages-3`, 196,057 bytes.
+- GitHub artifact digest and independently recomputed ZIP SHA-256 match: `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd`.
+- Manifest summary: 8 sources, 8 HTTP 200, zero non-200/error.
+- Exact dated sector report body: 327,522 bytes; SHA-256 `3f77f3896a95b8cff3a7728049127493814e1b503eb39dcb75b0e8fe145cf84e`; final URL exact; retrieval UTC `2026-11-19T11:57:11.677237+00:00`; Last-Modified header `Wed, 18 Nov 2026 15:21:02 GMT`.
+- Parsed HTML structure: main sector table 29 rows (3 header rows, 24 numbered sector/category rows, grand total); separate notes, company AUC table, conversion-rate table and classification note. Raw HTML retained; parsed table remains research-only pending independent QA and reconciliation.
+- The page notes RBI reference rate for INR/USD conversion. Conversion rates shown by period include 95.2492 for 31-Oct AUC and 94.1997 for 15-Nov AUC; do not apply one period's rate to another.
+- Acceptance updated: exact dated page raw capture PASS; raw schema inventory PASS; independent arithmetic/reconciliation and mapping to daily flow NOT_DONE.
