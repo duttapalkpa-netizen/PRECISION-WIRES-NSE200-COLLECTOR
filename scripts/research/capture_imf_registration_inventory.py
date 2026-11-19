@@ -8,7 +8,7 @@ from urllib.error import HTTPError,URLError
 OUT=Path("artifacts/imf_registration_inventory");OUT.mkdir(parents=True,exist_ok=True)
 PAGE="https://sdmxcentral.imf.org/data/registrations.html"
 JS="https://sdmxcentral.imf.org/assets/js/pages/data/registrations.js?v=11.24.0"
-DATA="https://sdmxcentral.imf.org/registration/id?format=fusion-json&includeMetrics=true"
+DATA="https://sdmxcentral.imf.org/ws/public/sdmxapi/rest/registration/id?format=fusion-json&includeMetrics=true"
 def fetch(url,accept,name):
  ts=datetime.now(timezone.utc).isoformat();req=Request(url,headers={"User-Agent":"PRECISION-WIRES-registration-inventory/1.0","Accept":accept})
  try:
