@@ -1,0 +1,38 @@
+name: IMF EMDE Quarterly Coverage and Missingness QA
+on:
+  push:
+    branches: [research/gcr-emde-quarterly-coverage-qa-20261119]
+    paths:
+      - "scripts/research/imf_emde_coverage_qa_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  coverage-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/gcr-emde-quarterly-coverage-qa-20261119
+          fetch-depth: 0
+      - name: Recompute 154-member country-entry-quarter coverage and raw reconciliation
+        run: python scripts/research/audit_imf_emde_quarterly_coverage.py
+      - name: Persist detailed coverage QA to repository
+        run: |
+          mkdir -p docs/evidence/imf_bop_emde_20261119/coverage_qa
+          cp imf_emde_coverage_qa/*.csv docs/evidence/imf_bop_emde_20261119/coverage_qa/
+          cp imf_emde_coverage_qa/summary.json docs/evidence/imf_bop_emde_20261119/coverage_qa/
+          cp imf_emde_coverage_qa/report.md docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/evidence/imf_bop_emde_20261119/coverage_qa docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+          git commit -m "Archive WEO EMDE BOP quarterly coverage and missingness audit"
+          git push origin research/gcr-emde-quarterly-coverage-qa-20261119
+      - name: Upload QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-emde-quarterly-coverage-qa-${{ github.run_id }}
+          path: imf_emde_coverage_qa/
+          if-no-files-found: error
+          retention-days: 90
