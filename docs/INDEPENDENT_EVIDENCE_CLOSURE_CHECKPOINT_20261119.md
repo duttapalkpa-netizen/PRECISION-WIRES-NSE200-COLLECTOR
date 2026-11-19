@@ -594,3 +594,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Workflow execution and artifact are NOT_VERIFIED at this checkpoint update. The freshness conflict remains UNKNOWN until artifact review and matched-date reconciliation.
 - Brazil registration lifecycle remains PASS; PA tx2/Changelog and BOP6/BOP_BPM6 identity remain BLOCKED. No endpoint repeats.
 - No production changes, no macro weights, no data admission, no trading admission. ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 71 — CDSL daily FPI endpoint refinement (2026-11-19)
+- Added official CDSL eServices daily page `https://www.cdslindia.com/eservices/publications/fiidaily` to the GET-only capture script (commit `4bf466a6542127bbd10bfce4e1ab052c8c3b98a7`) and updated trigger marker (commit `4bbb1bdc6be289079869a72c4ea79a460ac6b219`).
+- Official indexed page snapshot shows current daily FPI investment data through 17-Nov-2026; archive snapshot separately says through 18-Nov-2026; fortnightly sector dates through 15-Nov-2026. These are page-content observations, not raw-byte/hash verification; freshness conflict not yet closed.
+- Seven-page raw capture run/artifact remains PENDING / NOT_VERIFIED. No parser or flow observations promoted.
+- Brazil PA Changelog and BOP6/BOP_BPM6 identity remain BLOCKED; actual exact-PA owner-side GUI export is required. Registration lifecycle 40/40 PASS.
+- No production or trading admission. ₹0; UNKNOWN is not PASS.
