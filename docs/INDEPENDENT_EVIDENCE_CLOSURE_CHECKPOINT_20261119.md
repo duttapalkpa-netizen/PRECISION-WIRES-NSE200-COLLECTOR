@@ -369,3 +369,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Run 44475693836 / artifact 14506740234 / ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`; evidence commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
 - Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
 - Decision refinement: Brazil scale/sign mapping PASS for tested assets/liabilities and periods. India and other EMDE members remain UNKNOWN; no global conversion or EMDE aggregate. BOP6/BOP_BPM6 identity remains unresolved. Quarterly BOP remains unsuitable as a daily swing trigger.
+
+
+## Final 2026-11-19 checkpoint refinement — Brazil scale validated
+- Brazil scale/sign report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
+- 10/10 Brazil comparisons PASS (2015-Q1–Q4 and 2026-Q3 × assets/liabilities); max residual 0.12192411 USD million under 0.15 million monthly-rounding bound. Conversion validated for Brazil: IMF raw OBS_VALUE / 1e6 = USD million.
+- BCB raw JSON and quarter reconciliation durably archived under `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/`, commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
+- EMDE panel remains raw-only until India and additional country scale/concept crosswalks pass. No EMDE aggregate.
+- Latest continuity ledger entry commit: `ab27d5e8bda383991ac8c52d938bf1960b04078c`.
