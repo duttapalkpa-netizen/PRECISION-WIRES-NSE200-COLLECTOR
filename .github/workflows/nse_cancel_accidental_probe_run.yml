@@ -1,4 +1,4 @@
-name: Cancel Accidental NSE Research-Trigger Run
+name: Cancel Accidental NSE Research-Trigger Runs
 on:
   push:
     paths:
@@ -9,7 +9,10 @@ jobs:
   cancel:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel accidental production collector run
+      - name: Cancel accidental production collector runs
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api --method POST repos/${{ github.repository }}/actions/runs/44463995998/cancel
+        run: |
+          for run_id in 44463995998 44463990789 44463987099; do
+            gh api --method POST repos/${{ github.repository }}/actions/runs/${run_id}/cancel || true
+          done
