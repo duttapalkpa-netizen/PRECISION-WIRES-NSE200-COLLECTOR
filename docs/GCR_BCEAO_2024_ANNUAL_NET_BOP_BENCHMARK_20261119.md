@@ -8,7 +8,7 @@
 - The PDF contents index identifies Balance of Payments in Annexes A23–A27; country tables appear in the extracted text at PDF lines 8431 and 8520.
 - Table headings: 2022, 2023, 2024 (*); unit: billions of FCFA.
 - The source footnotes mark 2024 (*) as an estimate.
-- Publicly indexed PDF text was inspected. The original PDF bytes have NOT yet been archived to this repository; no raw-byte SHA-256 is claimed.
+- Publicly indexed PDF text was inspected. The original PDF bytes were retrieved directly in focused workflow run 44494766325 (HTTP 200, application/pdf, 7,076,916 bytes; PDF magic %PDF-1.5). Raw PDF SHA-256: `d1d69c4772e244174c754552b52f4206e8eaf98a6b839bdcd5af1990cf1a3d84`. The workflow artifact contains the exact PDF and manifest: artifact ID `14514282771`, name `bceao-annual-report-2024-raw`, size 6,167,993 bytes, artifact digest SHA-256 `7b5865d7c38f45b3d311c7e3cea0e9381ba35f4ed46d0025411ffdcb27e060df`, retention through 2027-02-17. The artifact is a 90-day GitHub Actions artifact; the manifest and hash are the durable repository receipt.
 
 ## 2024 country observations (FCFA billion; estimated)
 | Code | Country | Financial-account net balance | Direct investment net | Portfolio investment net | Derivatives net | Other investment net | Sum components | Residual (reported minus sum) |
@@ -37,7 +37,7 @@ For each country, acquire the detailed national BOP table or underlying compilat
 - Official PDF text source verified: PASS.
 - Eight-country annual net extraction: PARTIAL PASS.
 - Arithmetic cross-check: 5 exact, 3 rounding residuals of 0.1 FCFA bn.
-- Raw PDF byte archive/hash: NOT_DONE.
+- Raw PDF byte archive/hash: PASS (artifact archived; 90-day retention; SHA-256 recorded).
 - IMF A_NFA_T and L_NIL_T leg mapping: BLOCKED.
 - Quarterly repair / EMDE aggregate admission: BLOCKED / NOT_AUTHORIZED.
 - Spend ₹0; UNKNOWN is not PASS.
