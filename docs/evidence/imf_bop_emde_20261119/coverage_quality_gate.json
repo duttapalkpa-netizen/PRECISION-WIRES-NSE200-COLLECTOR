@@ -347,5 +347,24 @@
     "asset_liability_entries_kept_separate": true,
     "no_aggregate_created": true,
     "production_admission": false
+  },
+  "scale_sign_benchmarks": {
+    "vintage_aligned_countries": [
+      "BRA",
+      "IND",
+      "MEX",
+      "CHL"
+    ],
+    "vintage_aligned_comparisons": 118,
+    "pass": 118,
+    "review": 0,
+    "latest_chile_vintage": {
+      "source_update": "2026-11-18",
+      "comparisons": 8,
+      "pass": 2,
+      "review": 4,
+      "imf_panel_missing": 2
+    },
+    "decision": "Empirically validated for four country/vintage samples; not universalized to all 154 WEO EMDE members."
   }
 }
