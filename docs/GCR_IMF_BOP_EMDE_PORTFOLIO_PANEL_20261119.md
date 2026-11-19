@@ -74,3 +74,10 @@ Status: **PUBLIC DATA ACCESS PASS; 154-MEMBER RAW PANEL PASS; COVERAGE GAPS AND 
 The prior blanket “IMF BOP observations inaccessible” blocker is superseded: public anonymous SDMX 3.0 observations are confirmed for the tested dataflow and keys, and a 154-member raw panel has been archived. However, this does **not** mean the Global Capital Rotation overlay is complete. Coverage is incomplete, scale semantics remain blocked, revisions/BPM basis still require review, and no EMDE aggregate or production factor is authorized.
 
 No changes to Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 or Engines A–E. ₹0 spend; no synthetic observations; UNKNOWN is not PASS.
+
+
+## 7. Scale validation update — Brazil only (2026-11-19)
+- Official BCB SGS 22906 assets and SGS 22924 liabilities monthly series independently validate `IMF OBS_VALUE / 10^6` for Brazil in 2015-Q1–Q4 and 2026-Q3: 10/10 quarter checks PASS; maximum absolute residual 0.12192411 USD million versus a 0.15 million rounding bound.
+- Brazil scale/sign mapping is now PASS for those tested series/quarters. This is not yet generalized to India or the remaining 152 EMDE members.
+- India national-source period/concept crosswalk and all-country scale validation remain UNKNOWN. No EMDE-wide conversion or aggregate is authorized.
+- Detailed comparison and raw source receipts: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`.
