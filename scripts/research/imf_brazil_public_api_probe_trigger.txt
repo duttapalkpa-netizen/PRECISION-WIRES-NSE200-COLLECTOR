@@ -3,3 +3,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 linked-urn-history-and-transaction-content-probe
 
 2026-11-19 probe-early-registration-transaction-payloads-3-to-12
+
+2026-11-19 probe-transaction-collection-affected-urns
