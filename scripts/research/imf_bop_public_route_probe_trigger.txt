@@ -37,3 +37,5 @@
 2026-11-19 retry-rebase-safe-evidence-commit
 
 2026-11-19 exact-CL_UNIT_MULT-1.0.2-codes-and-durable-metadata-capture
+
+2026-11-19 compare-Brazil-BCB-registered-BOP-BPM6-XML-against-IMF-BOP6-observations
