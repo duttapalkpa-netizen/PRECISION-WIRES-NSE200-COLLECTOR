@@ -55,3 +55,10 @@ For every country source:
 - Quarterly coverage recovery: NOT_DONE.
 - Full 154-member aggregate: BLOCKED / NOT_AUTHORIZED.
 - No synthetic data, no production/backtest admission, no universal scale/sign inference. UNKNOWN is not PASS; research spend ₹0.
+
+
+## 2026-11-19 — Source-map refinement from 2024 national reports
+- CIV full 2024 report reveals separate FDI asset/liability amounts only: 138.1 / 1,892.8 FCFA bn; net check -1,754.7. Portfolio, derivatives and other investment remain net-only in the report. FDI component only, not total IMF gross legs.
+- BEN/BFA/SEN raw 2024 reports now archived; exact SHA-256s and source screen recorded in `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`. BEN gross transaction split not found in initial text extraction; portfolio positions are stocks, not flows. BFA reports inward FDI liability-side decrease but no full matching asset/liability pair; SEN remains UNKNOWN pending page-image review.
+- The discovery of a 2021 CIV report with aggregate gross columns is a historical-vintage lead only; do not mix with 2024 revisions without a vintage bridge.
+- No IMF A_NFA_T/L_NIL_T aggregate mapping yet; no quarterly fill, no FX conversion, no aggregate/backtest admission.
