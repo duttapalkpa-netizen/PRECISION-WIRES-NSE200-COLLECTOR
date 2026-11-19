@@ -1484,3 +1484,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - New correction report: `docs/GCR_RBI_TABLE42_PRIOR_WORK_REUSE_AND_DUPLICATE_TASK_CORRECTION_CONTINUATION44_PART5_20261119.md`; commit `b0fffe98597de60c1ccdeb5cb1ad2d0ef55261df`.
 - Next action: do not rerun Table197/Table42 scripts unchanged. Investigate exact 2026-Q1 vintage/definition discrepancy using archived source pages and IMF observations; seek same-quarter earlier/later official RBI vintage only if available and archiveable. If unresolved, retain REVIEW and move to next independent country/coverage blocker.
 - GCR remains INCOMPLETE/BLOCKED; no EMDE aggregate/production admission. ₹0; no synthetic rows/interpolation/guessed transforms; all protected production invariants unchanged; UNKNOWN is never PASS.
+
+
+## 2026-11-19 — GCR 10-check backtest readiness audit
+- Report: `docs/GCR_ROTATION_BACKTEST_READINESS_AUDIT_10_CHECKS_20261119.md`.
+- Actual GCR rolling performance backtests executed: 0/10; readiness/contract checks reviewed: 10/10 (0 full execution PASS, 9 PARTIAL, 1 BLOCKED). Do not represent this as a backtest result or evidence of predictive value.
+- Reused prior RBI Table 197 12/12 PASS, RBI Table 42 10 PASS / 2 REVIEW, FRED/H.10 audits and existing cost-aware replay contract; no duplicate reruns.
+- GCR relative-attraction formula, synchronized sector transmission and rolling backtest remain NOT_DONE; IMF panel aggregate remains blocked by coverage/scale/vintage constraints.
+- V11.3 cost-aware replay code and contract inspected; execution assumptions G0 remain BLOCKED, no verified output ledger/hash produced in this audit.
+- No workflow dispatched, no run/artifact IDs claimed, no production or protected invariant changes.
+- Next action: small, leakage-safe timestamp/vintage-aligned pilot joining archived GCR factors to official India sector TRI/outcomes, then proceed only if source coverage and maturity gates pass.
+- Nightly Rotation Backtest automation created for 22:00 Asia/Kolkata, daily; first scheduled run 2026-11-20 22:00.
