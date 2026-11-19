@@ -5,7 +5,7 @@
 - The concept's CoreRepresentation enumerates `IMF:CL_UNIT_MULT(1.0.2)`.
 - Official codelist code `6` is **Millions**; English description: “In scientific notation, expressed as ten raised to the power of six (10^6)”.
 - This is a unit multiplier, not decimal-place precision. The Arabic display label for SCALE is inconsistent with the enumerated codelist; the codelist definition is authoritative.
-- Raw CL_UNIT_MULT XML SHA-256: `40a911ecceb0b96ff0ee2a166af3c2512f19fbbfca50e71b2e47936cad3bac78`; 31 codes; latest version 1.0.2.
+- Raw CL_UNIT_MULT XML SHA-256: `24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561`; 54,278 bytes; 31 codes; latest version 1.0.2. Targeted CS_MASTER_SYSTEM response SHA-256: `50e82604b231e9e02ba8472d46e227276acec393360e60071c980f8d5caf2768` (6,402 bytes).
 - Concept scheme SHA-256: `e753812c45b8159c77e191f091c63d5364375f57daca179da9799040de48e568`; DSD SHA-256: `5953ac8b3a52fae9cd7c5821621446d046969bcef0e88540ef17520c2d39b098`.
 
 ## 2. Numeric API representation — empirically cross-checked
@@ -32,7 +32,7 @@ The official IMF API's returned `OBS_VALUE` values are in base-USD numerical mag
 
 ## 4. Reproducible metadata capture
 - Original metadata run 44475051442 / artifact 14505852262 / ZIP SHA-256 `391981ce19d89d8ccc6377580e33345a9d75adffdc3f4197c4e4c743a66e3cf3`.
-- Corrected codelist capture run 44477031402 / artifact 14506293939 / ZIP SHA-256 `ffac629793da363b934321e00f43aaec7eabcd609bc9a029cb46356712a01858`.
+- Corrected concept/codelist capture run 44477031402 / artifact 14506293939 / ZIP SHA-256 `ffac629793da363b934321e00f43aaec7eabcd609bc9a029cb46356712a01858`; manifest status `PASS_CODE6_MILLIONS_10_POWER_6`.
 - Durable evidence: `docs/evidence/imf_bop_20261119/scale_concept_route_summary.json`, `CL_UNIT_MULT.xml`, and `scale_unit_multiplier_authoritative/`.
 
 No production changes; no paid sources; no synthetic data; ₹0 spend. UNKNOWN is not PASS.
