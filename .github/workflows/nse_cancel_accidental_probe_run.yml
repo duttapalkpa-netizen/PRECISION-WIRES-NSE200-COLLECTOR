@@ -13,6 +13,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for run_id in 44463995998 44463990789 44463987099 44464895192; do
+          for run_id in 44463995998 44463990789 44463987099 44464895192 44475693880 44475687387; do
             gh api --method POST repos/${{ github.repository }}/actions/runs/${run_id}/cancel || true
           done
