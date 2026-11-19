@@ -25,3 +25,5 @@
 2026-11-19 retry-CS_MASTER_SYSTEM-scale-concept-after-syntax-fix
 
 2026-11-19 retry-public-IMF-BOP-metadata-observations-panel
+
+2026-11-19 test-alternate-public-routes-for-CS_MASTER_SYSTEM-SCALE
