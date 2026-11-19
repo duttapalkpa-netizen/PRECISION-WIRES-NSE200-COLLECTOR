@@ -216,3 +216,10 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
   - ECOFIN_DSD structure response: HTTP 200, 42,892,145 bytes, SHA-256 `46996db04da7bc764927ec330fe943fcb42e2fdefb92008206e31e9304562f08`.
 - Both Dataflow structures reference the same DSD `IMF:ECOFIN_DSD(1.0)`, but their exact Dataflow URNs and names remain distinct: BOP6 = “Balance of Payments (BPM6) for Collection”; BOP_BPM6 = “Balance of Payments -- BPM6”. This confirms the prior accepted interpretation: shared DSD is not Dataflow alias equivalence. The BOP6 structure response also includes the Brazil PA `IMF:BR_BOP_BP6(1.0)` in its referenced structures.
 - This re-confirms structure identities only; it does not authorize rewriting the BCB header, substituting Dataflow IDs, or resolving the constraint mismatch. Existing contract reconciliation run 44290101769 / artifact 14420378420 remains the accepted 237-series evidence (234/237 allowed by BOP6 constraint vs 27/237 by BOP_BPM6 constraint).
+
+
+## Durable GitHub evidence archive added — 2026-11-19
+- Human-readable lifecycle report: `docs/IMF_BRAZIL_REGISTRATION_HISTORY_PART7_20261119.md`, commit `cb2576201e5e5eab3c2faa0743607c64d150fa6a`.
+- 40-event machine-readable CSV: `docs/evidence/IMF_BRAZIL_REGISTRATION_HISTORY_40_EVENTS.csv`, commit `0b490a8373de2f8be2a443bfdd5d150d5f6ef424`.
+- Original Brazil SubmitRegistrationsRequest XML for tx667: `docs/evidence/IMF_BRAZIL_REGISTRATION_TX_00667.xml`, commit `b47e74956b899c1ef2402779d61d6dd6c0b1ede3`.
+- Full 40 raw transaction ZIP/XML payloads remain in artifact 14502380926 with 90-day retention; the report and compact 40-event index are committed durably to the repository.
