@@ -838,3 +838,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Conclusion: RSS is current/recent activity only, not a 2023 historical transaction archive. tx2 alternate format endpoints remain 500. No duplicate retries. PA chronology and Brazil reconstruction BLOCKED.
 - Workflow accidental NSE run #381 / 44493879791 was triggered by missing ignore entry, then successfully CANCELLED by helper run 44493979049. Added paths-ignore entries for both Brazil probe scripts and trigger; guard commit `110c8e6d6abbe536165c760d919c4c3926030501`. No production source changes.
 - Next action: actual interactive official IMF UI or authorized historic export. If unavailable, pivot to GCR coverage closure; keep UNKNOWN. Report: `docs/IMF_BRAZIL_RSS_TRANSACTION_ARCHIVE_PROBE_PART3_20261119.md`.
+
+
+## Continuation 39 Part 2 — GCR zero-data national source discovery
+- Parsed the exact 154-country readiness CSV: 40 NO_DATA (both IMF P_F entries absent), 3 ONE_SIDED (DZA assets, ETH assets, ZWE liabilities), and 2 both-leg latest-period mismatches (BRN/KIR); 13 country-entry series have internal gaps per prior QA summary.
+- Found official source route for 11/40 zero-data members: seven 2024 BCEAO country reports (BEN/BFA/CIV/GNB/MLI/SEN/TGO), Niger 2023 report, UAE annual source, Kenya annual/quarterly BOP sources, Oman BOP XLSX/CSV listing. UAE currently disseminates annual only; Kenya data vintages/units vary; Oman file not yet captured.
+- This is source discovery only, not data repair. Annual reports do not provide quarterly series; no interpolations, forward fills, proxy totals, currency conversions, or IMF P_F admissions.
+- Durable report: `docs/GCR_ALTERNATE_NATIONAL_BOP_SOURCE_COVERAGE_MAP_20261119.md`.
