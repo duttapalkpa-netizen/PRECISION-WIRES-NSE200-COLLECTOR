@@ -11,3 +11,5 @@
 2026-11-19 exact-key-BOP-observation-smoketest-BRA-IND-portfolio-flows
 
 2026-11-19 broad-BOP-key-diagnostic-after-empty-exact-series
+
+2026-11-19 capture-targeted-BRA-IND-portfolio-P_F-quarterly-flows
