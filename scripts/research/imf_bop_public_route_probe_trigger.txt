@@ -23,3 +23,5 @@
 2026-11-19 fetch-CS_MASTER_SYSTEM-SCALE-concept-semantics
 
 2026-11-19 retry-CS_MASTER_SYSTEM-scale-concept-after-syntax-fix
+
+2026-11-19 retry-public-IMF-BOP-metadata-observations-panel
