@@ -1,5 +1,10 @@
 name: IMF Brazil Registration Artifact Integrity Audit (Offline)
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/imf_brazil_registration_artifact_audit.yml"
+      - "scripts/research/audit_imf_brazil_registration_history_artifact.py"
   workflow_dispatch:
 permissions:
   actions: read
