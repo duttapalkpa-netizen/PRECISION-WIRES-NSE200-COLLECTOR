@@ -51,3 +51,11 @@ The DSD maps `SCALE` to `IMF:CL_UNIT_MULT(1.0.2)`; code `6` is “Millions” (1
 - Brazil scale/sign mapping is now PASS for these two series and five tested quarters. Raw IMF observations remain unchanged; the converted panel is not yet promoted.
 - India and the rest of the EMDE universe remain unvalidated. India Table 196 uses fiscal quarters and is not a direct calendar-quarter match; no conversion is generalized.
 - Full evidence: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`; raw BCB receipts and 10-row reconciliation in `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/`.
+
+
+## 9. India scale/sign validation completed — two-country pilot status
+- RBI Table197 official BPM6 quarterly USD-million table was cross-checked for 2024-Q2–2025-Q3: 12/12 asset/liability comparisons PASS within the 0.5 million rounding bound.
+- RBI assets mapping requires sign reversal from its credit-minus-debit “Portfolio Investment by India” net to IMF A_NFA_T; liabilities map directly from “Portfolio Investment in India” to IMF L_NIL_T.
+- Brazil 10/10 BCB checks plus India 12/12 RBI checks now support `OBS_VALUE / 1e6` for the two pilot countries.
+- Do not generalize to the remaining 152 WEO EMDE members until country-level checks and vintage/BPM controls are complete. Full 154-member converted panel and aggregate remain NOT_AUTHORIZED.
+- India report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; evidence: `docs/evidence/imf_bop_emde_20261119/india_scale_reconciliation/`.
