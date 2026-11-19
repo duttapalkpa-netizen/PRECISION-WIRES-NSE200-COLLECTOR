@@ -21,7 +21,7 @@ SOURCES={
  "A_NFA_T":{"sgs":22906,"url":BASE.format(22906),"imf_csv":"imf_bop_portfolio_exact_panel/BRA_A_NFA_T_P_F_USD_Q.csv"},
  "L_NIL_T":{"sgs":22924,"url":BASE.format(22924),"imf_csv":"imf_bop_portfolio_exact_panel/BRA_L_NIL_T_P_F_USD_Q.csv"}
 }
-QUARTERS=["2015-Q1","2015-Q2","2015-Q3","2015-Q4","2026-Q3"]
+QUARTERS=[f"{y}-Q{q}" for y in range(2015,2026) for q in range(1,5)] + [f"2026-Q{q}" for q in range(1,4)]
 TOL=Decimal("0.15")
 
 def fetch(url):
@@ -96,8 +96,8 @@ def main():
   "blocked_count":sum(x.get("status")=="BLOCKED_MISSING_SOURCE" for x in outrows),
   "tolerance_rule":"0.15 USD million = 3 monthly source values each rounded to 0.1 USD million (maximum aggregate rounding bound)",
   "conversion_test":"IMF OBS_VALUE / 1,000,000 compared with sum of three BCB monthly values",
-  "all_pass":len(outrows)==10 and all(x.get("status")=="PASS" for x in outrows),
-  "warning":"This validates only Brazil and selected quarters; do not generalize to all EMDE countries or India without additional country-source checks."}
+  "all_pass":len(outrows)==94 and all(x.get("status")=="PASS" for x in outrows),\n  "max_abs_residual_usd_million":str(max((abs(Decimal(x["residual_imf_minus_bcb_usd_million"])) for x in outrows if x.get("residual_imf_minus_bcb_usd_million") is not None),default=Decimal("0"))),
+  "warning":"This validates Brazil across 47 quarters and two flow entries; do not generalize to all EMDE countries or India without additional country-source checks."}
  (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
  print(json.dumps(summary,indent=2,ensure_ascii=False))
  if not summary["all_pass"]: raise SystemExit("Brazil scale/sign reconciliation did not fully PASS")
