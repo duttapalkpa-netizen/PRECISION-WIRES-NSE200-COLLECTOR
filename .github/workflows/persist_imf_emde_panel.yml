@@ -31,6 +31,8 @@ jobs:
           cp /tmp/emde/emde_portfolio_flows.csv "$DEST/"
           cp /tmp/emde/summary.json "$DEST/"
           cp /tmp/emde/provenance.json "$DEST/"
+          cp /tmp/emde/raw/WEOOct2026all.xlsx "$DEST/raw/"
+          cp /tmp/emde/raw/CL_BOP_COUNTRY.xml "$DEST/raw/"
           cp /tmp/emde/raw/EMDE_A_NFA_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
           cp /tmp/emde/raw/EMDE_L_NIL_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
           cp /tmp/exact/summary.json "$DEST/exact_sample_checks/"
@@ -55,4 +57,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/evidence/imf_bop_emde_20261119
           git commit -m "Archive WEO EMDE IMF BOP portfolio flow panel and exact checks"
+          git pull --rebase origin main
           git push origin main
