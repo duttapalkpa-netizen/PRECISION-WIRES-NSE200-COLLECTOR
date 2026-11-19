@@ -1030,3 +1030,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 
 - Continuation 73 runtime addendum: run `44519322726` SUCCESS; artifact `14527092174`, 196,057 bytes; GitHub digest = recomputed ZIP SHA-256 `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd`; manifest 8/8 HTTP 200. Exact 15-Nov sector HTML 327,522 bytes, SHA-256 `3f77f3896a95b8cff3a7728049127493814e1b503eb39dcb75b0e8fe145cf84e`; main sector table 24 numbered rows plus grand total. Detailed report updated at commit `ce9633ccba058f8898ad9c4308d571929524fee6`.
 - Exact sector page raw capture/schema inventory PASS; independent arithmetic, sector mapping and matched-date daily flow reconciliation NOT_DONE. Production remains BLOCKED.
+
+
+## Continuation 74 — India FPI matched-date reconciliation audit (2026-11-19)
+- Independently inspected raw HTML inside artifacts 14524707532 and 14527092174; both ZIP hashes match GitHub artifact digests.
+- NSDL Latest displays reporting date 19-Nov-2026: gross purchases ₹22,356.99cr, gross sales ₹14,591.05cr, net ₹7,765.94cr, USD 831.87m.
+- CDSL eServices cash table displays 18-Nov-2026: gross purchases ₹29,344.36cr, gross sales ₹16,797.46cr, net ₹12,546.90cr, USD 1,340.906m, conversion 93.5703.
+- Dates differ; matched-date provider reconciliation NOT_COMPUTABLE. Within-source arithmetic matches on each page; this is not cross-provider validation. NSDL explanatory note distinguishes provisional exchange T-day from confirmed custodian/depository previous-day data, but captured table itself is not status-split; status mapping PARTIAL.
+- Critical archive instability: artifact 14524707532 CDSL archive body 297,824 bytes / SHA-256 fc95dc0dade735c9f413ef20a3239e138a6064f2694633aa9635864fd8c7ba2b contains 13 cash dates 02–18 Nov; artifact 14527092174 same URL HTTP 200 body 73,784 bytes / SHA-256 aa2a03c6621772e52b0b9ac52f11b525d82f1ce80539554302eda861145304df contains only 02-Mar-2026. Do not treat HTTP 200 as archive completeness; no merge/imputation.
+- CDSL dated sector report remains fortnightly and AUC (stock) separate from net investment (flow); not a daily bridge.
+- Detailed report `docs/GCR_INDIA_FPI_MATCHED_DATE_RECONCILIATION_CONTINUATION74_20261119.md`, commit `388c588166d8f9a9fa462b803c8342ed6188f342`.
+- India status: raw capture/hash PASS; within-source arithmetic PASS; matched-date provider comparison NOT_DONE; archive completeness BLOCKED; production ingestion BLOCKED.
+- Brazil unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; no endpoint repeats. No production invariant changes; ₹0; UNKNOWN is never PASS.
