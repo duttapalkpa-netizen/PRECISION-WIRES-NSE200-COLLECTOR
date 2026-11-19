@@ -1,0 +1,155 @@
+country_code,country_name,asset_observations,liability_observations,both_legs_present,asset_latest_period,liability_latest_period,latest_periods_aligned,country_state
+ABW,"Aruba, Kingdom of the Netherlands",44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+AFG,"Afghanistan, Islamic Republic of",25,25,True,2021-Q1,2021-Q1,True,BOTH_LEGS_PRESENT
+AGO,Angola,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+ALB,Albania,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+ARE,United Arab Emirates,0,0,False,,,False,NO_DATA
+ARG,Argentina,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+ARM,"Armenia, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+ATG,Antigua and Barbuda,0,0,False,,,False,NO_DATA
+AZE,"Azerbaijan, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BDI,Burundi,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BEN,Benin,0,0,False,,,False,NO_DATA
+BFA,Burkina Faso,0,0,False,,,False,NO_DATA
+BGD,Bangladesh,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BHR,"Bahrain, Kingdom of",4,4,True,2024-Q4,2024-Q4,True,BOTH_LEGS_PRESENT
+BHS,"Bahamas, The",40,24,True,2024-Q4,2024-Q4,True,BOTH_LEGS_PRESENT
+BIH,Bosnia and Herzegovina,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BLR,"Belarus, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BLZ,Belize,46,36,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BOL,Bolivia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+BRA,Brazil,47,47,True,2026-Q3,2026-Q3,True,BOTH_LEGS_PRESENT
+BRB,Barbados,0,0,False,,,False,NO_DATA
+BRN,Brunei Darussalam,46,44,True,2026-Q2,2025-Q4,False,BOTH_LEGS_PRESENT
+BTN,Bhutan,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+BWA,Botswana,24,24,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+CAF,Central African Republic,0,0,False,,,False,NO_DATA
+CHL,Chile,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+CHN,"China, People's Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+CIV,Côte d'Ivoire,0,0,False,,,False,NO_DATA
+CMR,Cameroon,38,38,True,2025-Q2,2025-Q2,True,BOTH_LEGS_PRESENT
+COD,"Congo, Democratic Republic of the",29,29,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+COG,"Congo, Republic of",0,0,False,,,False,NO_DATA
+COL,Colombia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+COM,"Comoros, Union of the",0,0,False,,,False,NO_DATA
+CPV,Cabo Verde,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+CRI,Costa Rica,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+DJI,Djibouti,25,25,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+DMA,Dominica,0,0,False,,,False,NO_DATA
+DOM,Dominican Republic,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+DZA,Algeria,22,0,False,2026-Q2,,False,ONE_SIDED
+ECU,Ecuador,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+EGY,"Egypt, Arab Republic of",45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+ERI,"Eritrea, The State of",0,0,False,,,False,NO_DATA
+ETH,"Ethiopia, The Federal Democratic Republic of",4,0,False,2024-Q4,,False,ONE_SIDED
+FJI,"Fiji, Republic of",45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+FSM,"Micronesia, Federated States of",0,0,False,,,False,NO_DATA
+GAB,Gabon,0,0,False,,,False,NO_DATA
+GEO,Georgia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+GHA,Ghana,21,44,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+GIN,Guinea,34,45,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+GMB,"Gambia, The",5,5,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+GNB,Guinea-Bissau,0,0,False,,,False,NO_DATA
+GNQ,"Equatorial Guinea, Republic of",0,0,False,,,False,NO_DATA
+GRD,Grenada,0,0,False,,,False,NO_DATA
+GTM,Guatemala,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+GUY,Guyana,34,34,True,2024-Q2,2024-Q2,True,BOTH_LEGS_PRESENT
+HND,Honduras,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+HTI,Haiti,0,0,False,,,False,NO_DATA
+HUN,Hungary,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+IDN,Indonesia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+IND,India,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+IRN,"Iran, Islamic Republic of",0,0,False,,,False,NO_DATA
+IRQ,Iraq,44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+JAM,Jamaica,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+JOR,Jordan,44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+KAZ,"Kazakhstan, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+KEN,Kenya,0,0,False,,,False,NO_DATA
+KGZ,Kyrgyz Republic,44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+KHM,Cambodia,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+KIR,Kiribati,44,12,True,2025-Q4,2024-Q4,False,BOTH_LEGS_PRESENT
+KNA,St. Kitts and Nevis,0,0,False,,,False,NO_DATA
+KOS,"Kosovo, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+KWT,Kuwait,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+LAO,Lao People's Democratic Republic,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+LBN,Lebanon,44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+LBR,Liberia,24,36,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+LBY,Libya,0,0,False,,,False,NO_DATA
+LCA,St. Lucia,0,0,False,,,False,NO_DATA
+LKA,Sri Lanka,41,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+LSO,"Lesotho, Kingdom of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MAR,Morocco,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MDA,"Moldova, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MDG,"Madagascar, Republic of",44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+MDV,Maldives,0,0,False,,,False,NO_DATA
+MEX,Mexico,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MHL,"Marshall Islands, Republic of the",0,0,False,,,False,NO_DATA
+MKD,"North Macedonia, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MLI,Mali,0,0,False,,,False,NO_DATA
+MMR,Myanmar,23,23,True,2020-Q3,2020-Q3,True,BOTH_LEGS_PRESENT
+MNE,Montenegro,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MNG,Mongolia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+MOZ,"Mozambique, Republic of",45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+MRT,"Mauritania, Islamic Republic of",4,4,True,2015-Q4,2015-Q4,True,BOTH_LEGS_PRESENT
+MUS,Mauritius,41,41,True,2025-Q1,2025-Q1,True,BOTH_LEGS_PRESENT
+MWI,Malawi,0,0,False,,,False,NO_DATA
+MYS,Malaysia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+NAM,Namibia,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+NER,Niger,0,0,False,,,False,NO_DATA
+NGA,Nigeria,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+NIC,Nicaragua,41,41,True,2025-Q1,2025-Q1,True,BOTH_LEGS_PRESENT
+NPL,Nepal,38,38,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+NRU,"Nauru, Republic of",0,0,False,,,False,NO_DATA
+OMN,Oman,0,0,False,,,False,NO_DATA
+PAK,Pakistan,47,47,True,2026-Q3,2026-Q3,True,BOTH_LEGS_PRESENT
+PAN,Panama,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+PER,Peru,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+PHL,Philippines,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+PLW,"Palau, Republic of",0,0,False,,,False,NO_DATA
+PNG,Papua New Guinea,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+POL,"Poland, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+PRY,Paraguay,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+QAT,Qatar,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+ROU,Romania,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+RUS,Russian Federation,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+RWA,Rwanda,38,38,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+SAU,Saudi Arabia,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+SDN,Sudan,40,28,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+SEN,Senegal,0,0,False,,,False,NO_DATA
+SLB,Solomon Islands,46,38,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+SLE,Sierra Leone,0,0,False,,,False,NO_DATA
+SLV,El Salvador,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+SOM,Somalia,0,0,False,,,False,NO_DATA
+SRB,"Serbia, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+SSD,"South Sudan, Republic of",0,0,False,,,False,NO_DATA
+STP,"São Tomé and Príncipe, Democratic Republic of",45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+SUR,Suriname,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+SWZ,"Eswatini, Kingdom of",44,8,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+SYC,Seychelles,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+SYR,Syrian Arab Republic,0,0,False,,,False,NO_DATA
+TCD,Chad,0,0,False,,,False,NO_DATA
+TGO,Togo,0,0,False,,,False,NO_DATA
+THA,Thailand,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+TJK,"Tajikistan, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+TKM,Turkmenistan,0,0,False,,,False,NO_DATA
+TLS,"Timor-Leste, Democratic Republic of",46,38,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+TON,Tonga,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+TTO,Trinidad and Tobago,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+TUN,Tunisia,32,32,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+TUR,"Türkiye, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+TUV,Tuvalu,0,0,False,,,False,NO_DATA
+TZA,"Tanzania, United Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+UGA,Uganda,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+UKR,Ukraine,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+URY,Uruguay,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+UZB,"Uzbekistan, Republic of",46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+VCT,St. Vincent and the Grenadines,0,0,False,,,False,NO_DATA
+VEN,"Venezuela, República Bolivariana de",44,44,True,2025-Q4,2025-Q4,True,BOTH_LEGS_PRESENT
+VNM,Vietnam,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+VUT,Vanuatu,34,34,True,2023-Q2,2023-Q2,True,BOTH_LEGS_PRESENT
+WBG,West Bank and Gaza,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+WSM,Samoa,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+YEM,"Yemen, Republic of",8,8,True,2016-Q4,2016-Q4,True,BOTH_LEGS_PRESENT
+ZAF,South Africa,46,46,True,2026-Q2,2026-Q2,True,BOTH_LEGS_PRESENT
+ZMB,Zambia,45,45,True,2026-Q1,2026-Q1,True,BOTH_LEGS_PRESENT
+ZWE,Zimbabwe,0,36,False,,2025-Q4,False,ONE_SIDED
