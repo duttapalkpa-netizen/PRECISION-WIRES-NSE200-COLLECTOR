@@ -15,7 +15,9 @@
   - `outputs/backtest/walk_forward_predictions.csv`: `06dc89983aa748bae5e03eee8e3ad4be5bd2add008e5b00dc350e5e65399d843`
   - `outputs/backtest/walk_forward_universe_probabilities.csv`: `b46de0967bd22ef548f6ee27550386160d8d3967c9aeb4680be5b807f7f612e1`
   - `outputs/backtest/walk_forward_metrics.json`: `9a79719ec8482953044cae38b6ab9329c20849fef64b69dfd85e81c3d3b99061`
-  - `outputs/backtest/missed_winner_lab.csv`: `3784320` bytes (hash to be recorded in a subsequent manifest pass)
+  - `outputs/backtest/missed_winner_lab.csv`: 3,784,320 bytes; SHA-256 `6c97f7c452a49f14309a4a8958ed98ca8812311b19f14cbe4eae5b08d79c5867`
+  - `data/qa/qa_report.json`: SHA-256 `81d21799277b651d63e736ff5a1e6267e15ba04dbd7849cf1f737228a3d57c36`
+  - `data/processed/symbol_session_coverage.csv`: SHA-256 `7ddeab2d31eb52c52de55662d1361bf8e68850ab86a11e2a375584c2642f7ecc`
 - ZIP contains no source dataset manifest. The computed hashes above are a recovery audit record, not a substitute for the original collector manifest/provenance.
 
 ## Recovered dataset shape and structural QA
