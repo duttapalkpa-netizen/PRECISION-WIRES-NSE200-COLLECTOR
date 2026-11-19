@@ -1,0 +1,27 @@
+name: IMF BOP DSD v2.6.0 Public Metadata Capture
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/imf_bop_dsd_v260_capture_trigger.txt"
+permissions:
+  contents: read
+  actions: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture public BOP DSD v2.6.0 metadata
+        run: python scripts/research/capture_imf_bop_dsd_v260.py
+      - name: Upload raw XML and provenance manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-dsd-v260-public-metadata-${{ github.run_id }}
+          path: imf_bop_dsd_v260/
+          if-no-files-found: error
+          retention-days: 90
