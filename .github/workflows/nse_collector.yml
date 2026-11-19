@@ -102,6 +102,9 @@ on:
       - "scripts/research/imf_brazil_public_api_probe_trigger.txt"
       - "scripts/research/probe_imf_brazil_pa_structure_revision.py"
       - "scripts/research/probe_imf_brazil_rss_transaction_archive.py"
+      - "scripts/research/imf_bop_gnb_series_probe.py"
+      - ".github/workflows/imf_bop_gnb_series_probe.yml"
+      - "scripts/research/imf_bop_gnb_series_probe_trigger.txt"
       - ".github/workflows/nse_cancel_accidental_probe_run.yml"
       - "scripts/research/nse_cancel_accidental_probe_trigger.txt"
   schedule:
