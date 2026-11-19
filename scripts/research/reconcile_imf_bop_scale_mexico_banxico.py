@@ -32,14 +32,14 @@ def main():
  for i,tr in enumerate(soup.find_all("tr")):
   cells=[clean(x.get_text(" ",strip=True)) for x in tr.find_all(["th","td"],recursive=False)]
   txt=clean(" ".join(cells))
-  if txt:rows.append({"index":i,"cells":cells,"text":txt})
+  if txt and len(cells)>=6:rows.append({"index":i,"cells":cells,"text":txt})
  parent=next((i for i,x in enumerate(rows) if "II. Portfolio investment (A - B)" in x["text"]),None)
  if parent is None:raise SystemExit("Portfolio investment parent row not found")
  extracted={};debug=[]
  for key,label in LABELS.items():
   hit=next((x for x in rows[parent+1:] if label in x["text"]),None)
   if hit is None:raise SystemExit(f"Portfolio child row not found: {label}")
-  tsx=tokens(hit["text"]);debug.append({"key":key,"row_index":hit["index"],"cells":hit["cells"],"text":hit["text"],"numeric_tokens":tsx})
+  tsx=tokens(hit["cells"][-1]);debug.append({"key":key,"row_index":hit["index"],"cells":hit["cells"],"value_cell":hit["cells"][-1],"numeric_tokens":tsx})
   if len(tsx)<3:raise SystemExit(f"Not enough values in row: {hit['text']}")
   extracted[key]=[num(x) for x in tsx[-3:]]
  imf={}
