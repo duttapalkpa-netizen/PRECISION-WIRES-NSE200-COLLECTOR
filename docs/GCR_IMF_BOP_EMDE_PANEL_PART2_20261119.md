@@ -124,4 +124,10 @@ Archive commit: `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`.
 - Raw BCB JSON hashes: SGS22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; SGS22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`.
 - Workflow run 44475693836 / artifact 14506740234 / ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`; durable evidence commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
 - Full method and 10-row table: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
-- This closes scale/sign mapping for Brazil only. India and the remaining 152 WEO EMDE members remain UNKNOWN pending national-source period, concept and vintage crosswalk. Do not apply Brazil's conversion globally or release an EMDE aggregate.
+- This closes scale/sign mapping for Brazil only. India crosswalk is now PARTIAL: 10/12 comparisons PASS, with 2 REVIEW for 2026-Q1 liabilities/combined net; the remaining 152 WEO EMDE members remain UNKNOWN pending national-source period, concept and vintage crosswalk. Do not apply Brazil's conversion globally or release an EMDE aggregate.
+
+
+## India scale/sign crosswalk (2026-11-19)
+- RBI BPM6 Table 42 compared four calendar quarters; 10/12 checks PASS within ±US$0.5m; 2026-Q1 liability and combined net REVIEW by about US$1.512bn.
+- SCALE code 6 is CL_UNIT_MULT “Millions” (10^6); raw API values are kept unchanged. `OBS_VALUE/1e6` is supported for Brazil and 3/4 India quarters only.
+- India evidence: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; run 44477031402, artifact 14507520812.
