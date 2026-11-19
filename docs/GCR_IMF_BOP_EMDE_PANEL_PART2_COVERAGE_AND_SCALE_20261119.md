@@ -65,3 +65,17 @@ A dedicated no-credential metadata probe retrieved:
 
 ## Decision
 Membership: PASS. Panel acquisition: PASS. Byte-identical repeatability: PASS. Exact sample validation: PASS. Coverage completeness: PARTIAL/BLOCKED. SCALE numeric transformation: BLOCKED. Cross-country aggregation: BLOCKED. No production admission, no selector/ranking/pressure-fade/CORE-672/Engines A–E changes.
+
+
+## 6. Extended attribute audit — SCALE / PRECISION / DECIMALS_DISPLAYED
+A second exact metadata probe extended the DSD and concept scheme audit:
+- Run [44475456706](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44475456706), artifact 14506176762, ZIP SHA-256 `18c4ed7ba1fafc6ae8024c8678780b7c8fc5af142d39d6e3d212de149f48e913`.
+- The DSD exposes three separate optional attributes:
+  - `SCALE`: series-level; relationship dimensions COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, FREQUENCY, UNIT; concept name “Scale”; enumerated to `CL_UNIT_MULT`.
+  - `PRECISION`: observation-level; concept name “Precision”; also enumerated to `CL_UNIT_MULT`.
+  - `DECIMALS_DISPLAYED`: series-level; concept name “Decimals Displayed”; enumerated to `CL_DECIMALS`.
+- The IMF concept scheme provides no English Description for any of these three custom concepts.
+- In the 9,299-row panel, `SCALE=6` on 9,299/9,299; `PRECISION=6` on 9,119 and missing on 180; `DECIMALS_DISPLAYED` is missing on all 9,299.
+- SDMX Glossary distinguishes **Preferred scale** (6 means display in millions while data are in unit scale) from **Unit multiplier** (6 means observations are in millions for calculating actual unit values). These are not interchangeable concepts. See https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_2_0_October_2018-2.htm#_Toc441822032 and https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_1_0_February_2016.htm.
+- IMF's DSD uses a custom concept ID `SCALE`, not `UNIT_MULT`, but reuses the `CL_UNIT_MULT` code list. That code-list link alone does not prove whether the IMF attribute means unit multiplier or preferred display scale. The separate `PRECISION` and `DECIMALS_DISPLAYED` fields further confirm that a simple conversion rule cannot be inferred from the code alone.
+- Decision remains: metadata mapping PASS; semantic equivalence BLOCKED; no numeric transformation. Preserve raw `OBS_VALUE`, `SCALE`, `PRECISION` and `DECIMALS_DISPLAYED` exactly.
