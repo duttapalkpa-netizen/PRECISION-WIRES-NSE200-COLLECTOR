@@ -10,7 +10,7 @@ OUT=Path("imf_bop_dsd_codelists"); OUT.mkdir(exist_ok=True)
 TARGETS=[
  ("DSD_BOP","datastructure","IMF.STA","DSD_BOP","24.0.0"),
  ("CS_BOP","conceptscheme","IMF.STA","CS_BOP","17.0.0"),
- ("CS_MASTER_SYSTEM","conceptscheme","IMF","CS_MASTER_SYSTEM","1.0.0"),
+ ("CS_MASTER_SYSTEM","conceptscheme","IMF","CS_MASTER_SYSTEM","+"),\n ("CL_UNIT_MULT","codelist","IMF","CL_UNIT_MULT","+"),
  ("CL_BOP_COUNTRY","codelist","IMF.STA","CL_BOP_COUNTRY","1.0.0"),
  ("CL_BOP_ACCOUNTING_ENTRY","codelist","IMF.STA","CL_BOP_ACCOUNTING_ENTRY","3.3.0"),
  ("CL_BOP_INDICATOR","codelist","IMF.STA","CL_BOP_INDICATOR","10.0.0"),
