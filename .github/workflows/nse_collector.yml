@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - "docs/**"
+      - "docs/**"\n      - "scripts/research/capture_imf_bopsy_2025_notes.py"\n      - "scripts/research/imf_bopsy_capture_trigger.txt"\n      - ".github/workflows/imf_bopsy_metadata_capture.yml"
       - "scripts/research/nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_source_acquisition.py"
