@@ -1326,3 +1326,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Primary sources: RBI https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4517 and RBI Bulletin https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21067 .
 - Limits: author calculations not independently replicated; no event-level NIFTY/Sensex/sector causal impact; no new weights or production logic. Wider Observation remains open; Planning/Organizing NOT STARTED. GCR NOT COMPLETE; aggregate NOT_AUTHORIZED.
 - Invariants preserved: ₹0; no synthetic data/fabricated timestamps/guessed transforms; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 42 — Part-3: India equity-market FPI/DII transmission evidence (2026-11-19)
+- Added RBI-published evidence linking unexpected FPI flows with Nifty 50/Midcap/Smallcap returns. RBI Jan-2023 Bulletin Annex 1 uses weekly normalized FPI flows, a five-variable VAR over Jan-2008–Dec-2022 and bivariate VARs before/after Mar-2015. Reported response: 2.2%–3.0% over next 2–3 months before Mar-2015, declining to 1.25%–1.50% thereafter. These are source-study normalized-shock estimates, not daily returns or one-percentage-point flow effects; not independently replicated.
+- Same RBI source reports FPI ownership 23.3% (Mar-2015) to 19.0% (Sep-2022), while DII ownership rose 10.4% to 14.8%.
+- RBI Financial Stability Report (2025-12-31) reports 2025 calendar-year-to-Dec-10 DII inflows ₹7.4 lakh crore vs FPI outflows ₹1.6 lakh crore; lower recent US-India co-movement/declining beta and market resilience despite outflows; tariff event response heterogeneous across sectors and trade-exposed bank issuers.
+- Report: docs/GCR_OBSERVATION_PHASE_INDIA_EQUITY_MARKET_FPI_DII_TRANSMISSION_CONTINUATION42_PART3_20261119.md; commit dc61da1409ca91f3dbf343a275d047ff321db251.
+- Sources: RBI Jan-2023 Bulletin https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21533 ; RBI Financial Stability Report https://www.rbi.org.in/Scripts/PublicationReportDetails.aspx?ID=1313 .
+- Limits: no independent replication/raw event-window computation, no country-specific causal path, no predictive or 1–3 day edge, no weights/thresholds; prior Brazil/India/Chile/South Africa source gates unchanged.
+- Stage: this evidence increment complete; Observation overall still OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate NOT_AUTHORIZED.
+- Invariants unchanged: ₹0, official/free sources, no synthetic data/fabricated timestamps/guessed transforms; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; UNKNOWN is never PASS.
