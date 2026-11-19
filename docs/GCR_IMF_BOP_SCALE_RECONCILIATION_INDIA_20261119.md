@@ -77,3 +77,14 @@ This confirms the Brazil-derived scale/sign convention also for India over six q
 
 ## Supersession note — additional countries validated
 This India 12/12 result remains valid. Additional country benchmarks are now documented in `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`: Brazil 94/94, Mexico 6/6, and Chile 6/6 against the 2026-09 source vintage. The current Chile 2026-11 vintage differs for four Q1/Q2 comparisons; keep the revision/vintage gate open.
+
+
+ 
+## Current-vintage supplement — RBI Table 42, 2026-Q1/Q2 (2026-11-19)
+A later RBI Table 42 BPM6 source check adds 2026-Q1 and 2026-Q2 to the earlier six-quarter Table197 baseline:
+- 2025-Q1/Q2 were rechecked as source-overlap controls; 2026-Q1/Q2 are the new quarters.
+- Four-quarter supplement: 12 comparisons (assets, liabilities, combined net), 10 PASS and 2 REVIEW.
+- 2026-Q2: all three comparisons PASS within ±US$0.5m.
+- 2026-Q1: asset comparison PASS; liability and combined net REVIEW. IMF liability -13,633.508347m versus RBI -12,121m, residual -1,512.508347m. No silent adjustment.
+- Full supplement report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`; raw RBI pages and CSV are in `docs/evidence/imf_bop_20261119/india_scale_reconciliation_current_vintage/`.
+- The six-quarter 2024-Q2–2025-Q3 baseline remains 12/12 PASS. Combined current status: India mapping is validated historically but the 2026-Q1 liability vintage remains REVIEW.
