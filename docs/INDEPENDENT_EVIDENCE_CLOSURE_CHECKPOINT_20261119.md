@@ -526,3 +526,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Full report `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`, commit `b0eca5eff4129b84ee7603a49ed7a36837144aeb`.
 - Script `d0329a779aa002f516ce973bffb3011b889b491a`; workflow `1939e57aad83c5cddd9cd6ba088fdfcb801c4bd2`; production collector pre-guard `afa8fbcf080ad2f6e5daa6af192013f2a9f2f3d7`; trigger `b972bc997bc8a757384c03b2eb2eb836b4ab4d99`. Guard applied before script/workflow/trigger commits; no NSE collector run triggered by this batch.
 - Next: page-image/OCR review BFA and SEN; then acquire GNB/MLI/TGO 2024 reports. Aggregate IMF A_NFA_T/L_NIL_T mapping remains BLOCKED / NOT_MAPPED.
+
+
+## Continuation 42 — BFA gross leg split + BEN/SEN source-page verification (2026-11-19)
+- New exact evidence: official Burkina Faso Ministry of Economy and Finance/BCEAO 2024 report Table 15 (printed p.36) publishes non-monetary-sector net acquisition of assets 342.6 and net incurrence of liabilities 1,120.4 FCFA bn; total balance -777.8, exact 342.6−1,120.4. Category pairs: direct 34.6/−122.6 (+157.2); portfolio −3.7/246.1 (−249.8); derivatives 0/0; other investment 311.7/996.9 (published −685.1; 0.1 rounding residual). Component sums: assets 342.6; liabilities 1,120.4.
+- Important scope: Annex 1 states BCEAO analytical optic excludes central bank and other deposit-taking institutions' portfolio, derivatives and other-investment operations; monetary-sector flows are in external net assets/liabilities. Therefore this is NOT whole-country IMF A_NFA_T/L_NIL_T. Full aggregate mapping BLOCKED.
+- BFA CSV `docs/evidence/gcr_bceao_2024/bfa_2024_gross_legs_scoped.csv`; report `docs/GCR_BCEAO_BFA_2024_GROSS_LEGS_SCOPED_PARTIAL_20261119.md`.
+- BEN Table 14 (printed p.30) has only net category balances. SEN Table 16 (printed p.27; PDF p.44) confirmed by page-image inspection to have only net category balances. SEN total -2,139.9; direct -1,963.1; portfolio -395.9; derivatives 0.0; other investment +219.2 FCFA bn.
+- Corrected prior report `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`, commit `0d9ce750ff9acbc50a4b680a98dbc516e7433bed`. Official web source for BFA Table 15 and scope: https://www.finances.gov.bf/fileadmin/user_upload/storage/fichiers/Rapport_BdP_2024_au_10-12-2025_TS_AG_13h00__2_.pdf.
+- Next: source the excluded monetary-sector gross flows for BFA; search the other UEMOA reports for similar detailed tables, while preserving BCEAO vs IMF scope distinctions. No quarterly interpolation or production/backtest admission.
