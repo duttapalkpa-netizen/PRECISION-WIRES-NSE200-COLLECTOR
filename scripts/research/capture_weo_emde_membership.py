@@ -107,7 +107,8 @@ def main():
     method="UNIQUE_WEO_BASE_NAME" if len(hits)==1 else ("AMBIGUOUS" if candidates else "UNMAPPED")
   crosswalk.append({"weo_vintage":"October 2026","appendix_emde_label":label,
    "workbook_country_name":hits[0]["country_name"] if len(hits)==1 else "",
-   "iso3":hits[0]["country_code"] if len(hits)==1 else "",\n   "bop_country_code":hits[0]["country_code"] if len(hits)==1 else "",
+   "iso3":hits[0]["country_code"] if len(hits)==1 else "",
+   "bop_country_code":hits[0]["country_code"] if len(hits)==1 else "",
    "mapping_method":method if len(hits)==1 else method,
    "mapping_status":"PASS" if len(hits)==1 else method})
  # Parse BOP codelist and require all WEO workbook ISO3 codes to exist.
