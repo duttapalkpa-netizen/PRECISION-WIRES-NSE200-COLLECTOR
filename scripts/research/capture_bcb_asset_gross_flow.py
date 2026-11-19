@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Capture official BCB SGS portfolio-asset net/inflow/outflow series and test identity."""
-import csv, hashlib, json, time
+import csv, hashlib, json, time\nfrom decimal import Decimal
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -31,7 +31,7 @@ for name,code in SERIES.items():
         vals={}
         for item in data:
             d=datetime.strptime(item["data"],"%d/%m/%Y").strftime("%Y-%m")
-            v=float(item["valor"].replace(".","").replace(",","."))
+            v=Decimal(str(item["valor"]).replace(",","."))
             if d in vals: raise ValueError(f"duplicate month {d}")
             vals[d]=v
         rows[name]=vals
@@ -49,7 +49,7 @@ if all(manifest["series"].get(k,{}).get("http_status")==200 and manifest["series
     residuals=[(m,rows["net"][m]-(rows["outflows"][m]-rows["inflows"][m])) for m in common]
     checks["pass"]=sum(abs(x)<=checks["tolerance_usd_million"] for _,x in residuals)
     checks["fail"]=len(residuals)-checks["pass"]
-    checks["max_abs_residual"]=max((abs(x) for _,x in residuals),default=None)
+    checks["max_abs_residual"]=str(max((abs(x) for _,x in residuals),default=Decimal("0")))
     checks["status"]="PASS" if common and checks["fail"]==0 and all(v==0 for v in checks["missing_by_series"].values()) else "PARTIAL_OR_FAIL"
     with (OUT/"identity_reconciliation.csv").open("w",newline="") as f:
         w=csv.writer(f); w.writerow(["period","net_22906_usd_million","inflows_22907_usd_million","outflows_22908_usd_million","calculated_net_outflows_minus_inflows","residual","status"])
