@@ -1578,3 +1578,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/EXISTING_ARTIFACT_RECOVERY_EXHAUSTION_ROW_LEVEL_EVIDENCE_20261120.md`.
 - Next: wait for/reuse any existing complete successful artifact; if absent, ask explicit approval before a bounded audit-only export job reusing existing processed dataset. No new NSE data collection under current instruction.
 - No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2. GCR UNKNOWN/BLOCKED; V11.3 cost-aware replay NOT_AUTHORIZED/NOT_RUN. ₹0; UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Existing Processed Dataset and Workflow Scope Audit
+- Inspected main HEAD `82c24bdef151b93f1c5f8d53ffc473a1c7bcde51` and audit branch HEAD `46411147f490abbf05f920073b7139b258e42b1e`. Main `data/processed` contains only `.gitkeep`; audit branch tree has no processed NSE dataset, row-level prediction export or dataset manifest.
+- Inspected `.github/workflows/prospective_watchlist_tracking.yml` on the audit branch. Despite its 10-minute timeout, it is not export-only: it downloads 200 NSE sessions, rebuilds the dataset, runs strict QA, quarterly/XBRL collection, walk-forward backtest, Macro-Geo collection/repair and multiple retrospective studies.
+- Therefore dispatching it would violate the current no-new-NSE-collection constraint and cannot be represented as a safe audit-only export. No workflow was dispatched; no data was downloaded.
+- Existing #319/#302 artifacts still lack row-level prediction CSVs and dataset manifest. Exact TP/FP/FN/TN, false-positive/missed-winner identities and paired cutoff CIs remain NOT_RECOMPUTABLE.
+- Report: `docs/EXISTING_PROCESSED_DATASET_AND_AUDIT_WORKFLOW_SCOPE_20261120.md`.
+- Next: search only for an already-existing complete processed dataset/artifact from retained sources; otherwise stop and request explicit approval before any new collection. Production invariants unchanged; UNKNOWN is never PASS.
