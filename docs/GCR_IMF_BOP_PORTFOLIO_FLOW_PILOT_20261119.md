@@ -43,3 +43,11 @@ The DSD maps `SCALE` to `IMF:CL_UNIT_MULT(1.0.2)`; code `6` is “Millions” (1
 - EM aggregate: NOT DONE; pilot is Brazil and India only.
 - Next: validate scale against portal/national source, then extend across versioned October-2026 WEO EMDE membership with coverage/vintage controls.
 - Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged. No paid APIs, synthetic data or fabricated timestamps. UNKNOWN is not PASS.
+
+
+## 8. Scale gate update — Brazil independently validated (2026-11-19)
+- Official BCB SGS 22906 (assets) and 22924 (liabilities) monthly net-flow series were captured and compared with IMF Brazil P_F quarterly observations.
+- 2015-Q1 through Q4 plus 2026-Q3, both entries: 10/10 PASS. `OBS_VALUE / 1,000,000` matches the three-month BCB sum within the 0.15 USD million rounding bound; maximum residual 0.12192411 million.
+- Brazil scale/sign mapping is now PASS for these two series and five tested quarters. Raw IMF observations remain unchanged; the converted panel is not yet promoted.
+- India and the rest of the EMDE universe remain unvalidated. India Table 196 uses fiscal quarters and is not a direct calendar-quarter match; no conversion is generalized.
+- Full evidence: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`; raw BCB receipts and 10-row reconciliation in `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/`.
