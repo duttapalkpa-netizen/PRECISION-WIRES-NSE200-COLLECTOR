@@ -1313,3 +1313,16 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Important design observation: do not add every country equally. Build an exposure-weighted transmission graph (global funding/risk centres, investor domiciles, trade/commodity suppliers, demand partners, systemic peers) → India channels → sectors/markets. Country inclusion and causal weights require later measured evidence.
 - Not established: country-specific causal impacts, optimal weights, predictive thresholds, 154-country necessity/sufficiency, or full validation of Brazil/India/Chile/South Africa. No production selector/score/weights/engine changed; GCR not complete; aggregate not authorized.
 - Next after observation evidence inventory: produce a separate Planning-stage protocol with hypotheses, variables, sample/frequency, event windows, identification strategy, controls, vintages, acceptance criteria; only then Organizing-stage source registry/pipeline and test harness. ₹0/free official sources; UNKNOWN is never PASS.
+
+
+## Continuation 42 — Part-2: India-specific historical sudden-stop episode register (2026-11-19)
+- Added RBI-published India episode register for Q1:1992–Q1:2022, preserving separate flow definitions:
+  - Gross capital inflows: Q4 2008–Q2 2009 (3 quarters); Q1 2016–Q2 2016 (2).
+  - Gross FPI inflows: Q3 2008–Q1 2009 (3); Q1 2016 (1); Q1 2022 (1).
+  - Net capital flows: Q4 2008–Q2 2009 (3); Q1 2016–Q2 2016 (2).
+- RBI paper attributes the 2015–16 country-level stress grouping to August 2015 China stock-market turmoil and the first US Federal Funds rate hike in December 2015. 2013 taper tantrum and 2021 taper talks were not sudden stops under that paper's classification; this does not mean they had no market/flow impact.
+- India model findings: weak global growth, higher global rates, higher global risk and INR depreciation associated with lower gross inflows; extended specification also identifies global liquidity and CAD. Separate RBI 2022 tail-risk study reports 3.2% GDP adverse-scenario and 7.7% GDP combined-shock portfolio outflow estimates; these are conditional scenario estimates, not forecasts.
+- Report: docs/GCR_OBSERVATION_PHASE_INDIA_SUDDEN_STOP_EPISODE_REGISTER_CONTINUATION42_PART2_20261119.md; commit ae94f928bd1cdc7ec29ff6d98b160767a33e2d70.
+- Primary sources: RBI https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4517 and RBI Bulletin https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=21067 .
+- Limits: author calculations not independently replicated; no event-level NIFTY/Sensex/sector causal impact; no new weights or production logic. Wider Observation remains open; Planning/Organizing NOT STARTED. GCR NOT COMPLETE; aggregate NOT_AUTHORIZED.
+- Invariants preserved: ₹0; no synthetic data/fabricated timestamps/guessed transforms; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
