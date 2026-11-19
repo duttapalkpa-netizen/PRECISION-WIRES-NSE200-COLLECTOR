@@ -34,6 +34,9 @@ on:
       - ".github/workflows/imf_bop_dsd_v260_capture.yml"
       - "scripts/research/capture_imf_bop_dsd_v260.py"
       - "scripts/research/imf_bop_dsd_v260_capture_trigger.txt"
+      - ".github/workflows/weo_oct2026_membership_capture.yml"
+      - "scripts/research/capture_weo_oct2026_emde_membership.py"
+      - "scripts/research/weo_oct2026_membership_trigger.txt"
 
       - "scripts/research/probe_imf_bop_public_routes.py"
       - "scripts/research/fetch_imf_bop_dsd_codelists.py"
