@@ -1017,3 +1017,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Next: GET-only capture of exact CDSL 15-Nov-2026 sector report; then matched-date NSDL/CDSL cash-flow reconciliation with status, asset class, route, units, conversion and reporting-date controls. No production admission.
 - Protected invariants unchanged; ₹0; UNKNOWN is never PASS.
 - Detailed report commit: `b7f5896459c7710af3b12c369a072062129c86a2`.
+
+
+## Continuation 73 — exact CDSL 15-Nov-2026 sector report capture (2026-11-19)
+- Official CDSL landing page revealed the exact dated report URL: `https://www.cdslindia.com/publications/FII/FortnightlySecWisePages/Nov%2015%202026.html`. The report separates AUC as of 31-Oct, net investment 16–31 Oct, net investment 1–15 Nov, and AUC as of 15-Nov; asset classes and INR crore/USD million are separately labelled. It is a fortnightly sector dataset, not daily cash-flow observations.
+- Added exact dated URL to GET-only capture script; script commit `0c4a2115b38c4b70eda0fb404858f57dea35d159`; trigger marker commit `abb848a203bd21d0be03fd8eaa2362edc8028953`.
+- Actions run `44519322726` was observed IN_PROGRESS at checkpoint time; artifact pending. Do not claim capture PASS until job/artifact/hash verified.
+- Detailed report `docs/GCR_CDSL_15NOV2026_SECTOR_REPORT_CAPTURE_CONTINUATION73_20261119.md`, commit `94626aca617e5977ea0f61401118f63858f31eee`.
+- India matched-date NSDL/CDSL flow reconciliation NOT_DONE; sector raw capture PENDING. Production ingestion BLOCKED.
+- Brazil unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; owner-side exact PA GUI/export remains required. No repeat tx2 endpoint probes.
+- Protected invariants unchanged; ₹0; UNKNOWN is never PASS.
