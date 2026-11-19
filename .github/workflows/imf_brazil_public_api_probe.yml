@@ -18,11 +18,11 @@ jobs:
           python-version: '3.12'
       - name: Scan bounded Brazil registration transaction ID batch (613-812)
         run: python scripts/research/probe_imf_brazil_registration_batch.py --start-id 613 --end-id 812 --workers 12
-      - name: Upload raw responses and manifest
+      - name: Capture exact Brazil registration lifecycle for tx 667\n        run: python scripts/research/probe_imf_brazil_exact_registration.py\n      - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-brazil-public-api-probe-${{ github.run_id }}
           path: |
-            imf_brazil_registration_batch/
+            imf_brazil_registration_batch/\n            imf_brazil_exact_registration/
           if-no-files-found: error
           retention-days: 90
