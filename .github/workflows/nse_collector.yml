@@ -23,7 +23,7 @@ on:
       - "scripts/research/treasury_macro_capture_trigger.txt"
       - ".github/workflows/imf_brazil_public_api_probe.yml"
       - "scripts/research/probe_imf_brazil_public_api.py"
-      - "scripts/research/probe_imf_brazil_registration_batch.py"
+      - "scripts/research/probe_imf_brazil_registration_batch.py"\n      - "scripts/research/probe_imf_brazil_exact_registration.py"
       - "scripts/research/imf_brazil_public_api_probe_trigger.txt"
       - ".github/workflows/nse_cancel_accidental_probe_run.yml"
       - "scripts/research/nse_cancel_accidental_probe_trigger.txt"
