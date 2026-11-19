@@ -727,3 +727,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Brazil CSV `docs/evidence/IMF_BOP_BRA_SCALE_RECONCILIATION_2015Q1_2026Q3.csv`; report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`.
 - Global all-154 rule is not automatically authorized; this proves two country benchmarks for this exact dataflow/series. Full panel remains BLOCKED for aggregation: 40 members have no data, 3 one-sided, 13 series have interior gaps, only 2 countries have both legs at 2026-Q3; vintage/BPM6-BPM7 alignment remains open.
 - Older BCB-registered XML vs SGS 2010 structural break remains a separate unresolved source conflict (201/381 monthly mismatches); do not conflate with the passing current IMF Data Portal quarterly vs BCB SGS check.
+
+
+### 2026-11-19 — Brazil BOP scale/sign normalization PASS
+- BCB official SGS 22906 = portfolio investment net acquisition of financial assets, monthly, million USD; SGS 22924 = portfolio investment net incurrence of liabilities, monthly, million USD.
+- Captured both complete raw JSON series anonymously (HTTP 200). SHA-256: SGS22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; SGS22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`.
+- Compared 2015-Q1, Q2, Q3, Q4 and 2026-Q3 for both Brazil entries. `IMF OBS_VALUE / 1e6` vs sum of three monthly BCB values: 10/10 PASS; max absolute residual 0.12192411 USD million; valid tolerance 0.15 USD million due to 3 monthly values rounded to 0.1.
+- Run 44475693836 / artifact 14506740234 / ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`; durable evidence commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
+- Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
+- Brazil scale/sign normalization PASS for tested series and quarters only. India and remaining EMDE members remain UNKNOWN; do not generalize or release EMDE aggregate. India Table 196's fiscal-quarter period is not directly aligned to IMF calendar-quarter labels, so it is not accepted as a direct validation.
+- Overall GCR status: public BOP access PASS; 154-member raw panel PASS; membership mapping PASS; 1,106 exact sample query-shape checks PASS; coverage PARTIAL; Brazil scale PASS; India/remaining EMDE scale UNKNOWN; BPM/revision controls NOT_DONE; EMDE aggregate NOT_AUTHORIZED; daily trading use NOT_SUITABLE.
