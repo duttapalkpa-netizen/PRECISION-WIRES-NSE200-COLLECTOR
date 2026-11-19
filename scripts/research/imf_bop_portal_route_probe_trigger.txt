@@ -1,1 +1,3 @@
 2026-11-19 inspect-public-download-view-data-route
+
+2026-11-19 include-dataset-page-component-bundle
