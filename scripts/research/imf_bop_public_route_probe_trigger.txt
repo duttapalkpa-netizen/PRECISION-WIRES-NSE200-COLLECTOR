@@ -5,3 +5,5 @@
 2026-11-19 retry-after-syntax-fix-DSD-BOP-24.0.0
 
 2026-11-19 fetch-exact-BOP-DSD-concept-scheme-and-codelists
+
+2026-11-19 retry-after-workflow-yaml-fix-dsd-codelists
