@@ -18,10 +18,10 @@ jobs:
           python-version: '3.12'
       - name: Capture exact Brazil registration lifecycle for tx 667
         run: python scripts/research/probe_imf_brazil_exact_registration.py
-      - name: Upload raw responses and manifest
+      - name: Capture complete Brazil Registration URN lifecycle (all history events)\n        run: python scripts/research/capture_imf_brazil_registration_lifecycle.py\n      - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-brazil-public-api-probe-${{ github.run_id }}
-          path: imf_brazil_exact_registration/
+          path: |\n            imf_brazil_exact_registration/\n            imf_brazil_registration_lifecycle/
           if-no-files-found: error
           retention-days: 90
