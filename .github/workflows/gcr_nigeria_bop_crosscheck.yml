@@ -1,0 +1,27 @@
+name: GCR Nigeria BOP National Source Cross-check
+on:
+  push:
+    paths:
+      - "scripts/research/nigeria_bop_crosscheck_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run independent CBN vs IMF comparison
+        run: python scripts/research/crosscheck_nigeria_bop_scale.py
+      - name: Upload raw source and comparisons
+        uses: actions/upload-artifact@v4
+        with:
+          name: nigeria-bop-national-crosscheck-${{ github.run_id }}
+          path: nigeria_bop_crosscheck/
+          if-no-files-found: error
+          retention-days: 90
