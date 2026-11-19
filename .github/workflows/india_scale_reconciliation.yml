@@ -1,0 +1,48 @@
+name: India IMF BOP Scale Reconciliation Evidence
+on:
+  push:
+    paths:
+      - "scripts/research/india_scale_reconciliation_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Reconcile India IMF series against RBI BPM6 Table 197
+        run: python scripts/research/reconcile_imf_bop_scale_india_rbi_table197.py
+      - name: Upload raw RBI source and comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: india-imf-rbi-scale-reconciliation-${{ github.run_id }}
+          path: india_rbi_table197_reconciliation/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Persist RBI raw page and 12 comparisons to GitHub
+        run: |
+          DEST=docs/evidence/imf_bop_emde_20261119/india_scale_reconciliation
+          mkdir -p "$DEST/raw"
+          cp india_rbi_table197_reconciliation/raw/RBI_Table197_20260731.html "$DEST/raw/"
+          cp india_rbi_table197_reconciliation/quarter_reconciliation.csv "$DEST/"
+          cp india_rbi_table197_reconciliation/quarter_reconciliation.json "$DEST/"
+          cp india_rbi_table197_reconciliation/summary.json "$DEST/"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST"
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive India IMF BOP scale reconciliation against RBI Table 197"
+            for attempt in 1 2 3 4 5; do
+              git pull --rebase origin main
+              if git push origin main; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi
