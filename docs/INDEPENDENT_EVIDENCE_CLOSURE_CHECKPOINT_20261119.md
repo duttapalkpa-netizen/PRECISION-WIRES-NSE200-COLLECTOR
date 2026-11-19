@@ -623,3 +623,8 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Matched-date NSDL/CDSL flow reconciliation NOT_DONE; India production BLOCKED.
 - Brazil remains unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; owner-side exact PA GUI/export remains required.
 - No production invariants changed; ₹0; UNKNOWN is never PASS.
+
+- Continuation 73 raw capture is now verified: Actions run 44519322726 SUCCESS; artifact 14527092174 (196,057 bytes); ZIP SHA-256 / GitHub digest 83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd; 8/8 HTTP 200.
+- Exact CDSL 15-Nov-2026 sector page raw body 327,522 bytes, SHA-256 3f77f3896a95b8cff3a7728049127493814e1b503eb39dcb75b0e8fe145cf84e. HTML table inventory: 24 numbered rows + grand total, with distinct AUC and fortnightly net-investment periods. Raw capture/schema PASS; arithmetic and daily-flow reconciliation NOT_DONE.
+- Detailed report latest commit ce9633ccba058f8898ad9c4308d571929524fee6; ledger latest commit 4bf529480a7ee30030fca681c7fdf63751cf3f4d.
+- Brazil PA transaction-2 Changelog and BOP6/BOP_BPM6 identity remain BLOCKED; no new Brazil evidence.
