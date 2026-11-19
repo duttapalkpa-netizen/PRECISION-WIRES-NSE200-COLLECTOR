@@ -661,3 +661,17 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Brazil: Continuation 76 public structure GET comparison remains PENDING / NOT_VERIFIED until Actions run and artifact are independently inspected. Existing 40/40 registration lifecycle PASS; PA tx2 Changelog and BOP6/BOP_BPM6 mismatch remain BLOCKED.
 - Detailed report: docs/GCR_BRAZIL_CONTINUATION39_PART2_CDSL_FRESHNESS_AUDIT_20261119.md; report commit cb7a8278a8806862ae785916526b6199ec8e07d4.
 - No production integration, macro weights, selector/score/pressure-fade/CORE-672/Engines A-E changes. ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-3: Global capital rotation cross-source audit (2026-11-19)
+- New official-source comparison shows flow divergence by instrument and region; it does not support one undifferentiated global “risk-on/risk-off” net number.
+- BIS end-June 2026: cross-border bank credit +9.3% y/y to Latin America and Caribbean; emerging Asia -2.9% y/y. Global cross-border bank credit stock $40.7tn, +11% y/y. Source: https://www.bis.org/publications/202610-commentary-ibs-gli
+- US Treasury TIC September 2026, published Nov 18: net inflow $261.0bn; private +$267.0bn, official -$6.0bn; foreign purchases of long-term US securities $186.7bn. Treasury cautions about custodial ownership attribution. Source: https://home.treasury.gov/news/press-releases/sb0693/
+- RBI Governor statement Oct 23: FPI net outflows $10.3bn Apr–Oct 5; net FDI inflows $13.8bn Apr–Aug. Periods differ; not same-window comparison. Source: https://www.rbi.org.in/scripts/BS_ViewBulletin.aspx?Id=24510
+- BCB External Sector Statistics Oct 26: Sep 2026 current account deficit $5.1bn; 12m CAD $60.0bn / 2.33% GDP; domestic portfolio liabilities Sep net outflow $2.1bn but 12m +$5.1bn; 12m direct investment liabilities +$88.3bn; reserves $362.8bn. Source: https://www.bcb.gov.br/content/statistics/externalsectorstatistics_prev/202610_External_sector_statistics_text.pdf
+- Research methodology support: open-access Journal of International Financial Markets, Institutions and Money (2024) finds capital-flow cycles can be more volatile and tend to lead financial/business cycles. Use only as lead/lag test rationale, not 2026 data: https://www.sciencedirect.com/science/article/pii/S1042443124000465
+- IMF GFSR Apr 2026 notes EM cross-border portfolio flows are largely intermediated by nonbanks and investor-type sensitivities vary. Source: https://www.imf.org/en/publications/gfsr/issues/2026/04/14/global-financial-stability-report-april-2026
+- New design rule: keep bank credit, portfolio, FDI, official/reserve, FX and rates as separate flow/risk layers; preserve observation period, publication timestamp, retrieval timestamp, source vintage, instrument, counterparty, currency, unit, sign, frequency and provisional/confirmed status. Never merge unlike windows/frequencies into a single net capital-flow number.
+- GCR global source discovery PARTIAL; global divergence OBSERVED; synchronized country panel BLOCKED; relative-attraction score NOT_READY. Brazil macro external-sector evidence PARTIAL; BOP6/BOP_BPM6 identity and PA changelog remain BLOCKED.
+- Full report: docs/GCR_GLOBAL_ROTATION_CROSS_SOURCE_SIGNAL_AUDIT_20261119.md; report commit 97c578398bba360639193ec2ffbcabbb84884a21.
+- No production changes or macro weights. ₹0; no synthetic data/interpolation; UNKNOWN is not PASS.
