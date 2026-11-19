@@ -1,0 +1,39 @@
+country,vintage,quarter,entry,imf_obs_value_raw_usd,imf_scale,imf_unit,imf_comparable_usd_million,sign_transform,national_source,national_value_usd_million,difference_imf_minus_national_usd_million,tolerance_usd_million,status,notes
+IND,RBI Table 197 current 2026-07,2024-Q2,A_NFA_T,-47510029.08106568,6,USD,47.510029081065674,reverse,RBI Portfolio Investment by India net,48,-0.48997091893432554,0.5,PASS,credit-minus-debit sign reversed for assets
+IND,RBI Table 197 current 2026-07,2024-Q2,L_NIL_T,897230199.1591398,6,USD,897.2301991591397,direct,RBI Portfolio Investment in India net,897,0.23019915913971545,0.5,PASS,
+IND,RBI Table 197 current 2026-07,2024-Q3,A_NFA_T,-34990038.54670947,6,USD,34.99003854670947,reverse,RBI Portfolio Investment by India net,35,-0.00996145329052922,0.5,PASS,credit-minus-debit sign reversed for assets
+IND,RBI Table 197 current 2026-07,2024-Q3,L_NIL_T,19815071031.98193,6,USD,19815.07103198193,direct,RBI Portfolio Investment in India net,19815,0.07103198192999116,0.5,PASS,
+IND,RBI Table 197 current 2026-07,2024-Q4,A_NFA_T,-62610017.41395333,6,USD,62.61001741395333,reverse,RBI Portfolio Investment by India net,63,-0.3899825860466706,0.5,PASS,credit-minus-debit sign reversed for assets
+IND,RBI Table 197 current 2026-07,2024-Q4,L_NIL_T,-11434646504.14862,6,USD,-11434.64650414862,direct,RBI Portfolio Investment in India net,-11435,0.3534958513791935,0.5,PASS,
+IND,RBI Table 197 current 2026-07,2025-Q1,A_NFA_T,-135999310.9346464,6,USD,135.9993109346464,reverse,RBI Portfolio Investment by India net,136,-0.0006890653536117952,0.5,PASS,credit-minus-debit sign reversed for assets
+IND,RBI Table 197 current 2026-07,2025-Q1,L_NIL_T,-5994630947.245322,6,USD,-5994.630947245322,direct,RBI Portfolio Investment in India net,-5995,0.36905275467779575,0.5,PASS,
+BRA,BCB SGS current capture,2015-Q1,A_NFA_T,-1273138947.33,6,USD,-1273.13894733,direct,BCB SGS 22906 monthly sum,-1273.1,-0.03894733,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q2,A_NFA_T,512497139.53,6,USD,512.49713953,direct,BCB SGS 22906 monthly sum,512.4,0.09713953,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q3,A_NFA_T,-1145178767.1,6,USD,-1145.1787671,direct,BCB SGS 22906 monthly sum,-1145.2,0.0212329,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q4,A_NFA_T,-1662884227.32,6,USD,-1662.88422732,direct,BCB SGS 22906 monthly sum,-1662.9,0.01577268,0.15,PASS,
+BRA,BCB SGS current capture,2026-Q3,A_NFA_T,7555691695.07,6,USD,7555.69169507,direct,BCB SGS 22906 monthly sum,7555.7,-0.00830493,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q1,L_NIL_T,17629558375.05,6,USD,17629.55837505,direct,BCB SGS 22924 monthly sum,17629.5,0.05837505,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q2,L_NIL_T,10036148645.97,6,USD,10036.14864597,direct,BCB SGS 22924 monthly sum,10036.2,-0.05135403,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q3,L_NIL_T,-9943234065.4,6,USD,-9943.2340654,direct,BCB SGS 22924 monthly sum,-9943.2,-0.0340654,0.15,PASS,
+BRA,BCB SGS current capture,2015-Q4,L_NIL_T,-3452478075.89,6,USD,-3452.47807589,direct,BCB SGS 22924 monthly sum,-3452.6,0.12192411,0.15,PASS,
+BRA,BCB SGS current capture,2026-Q3,L_NIL_T,-4860140998.73,6,USD,-4860.14099873,direct,BCB SGS 22924 monthly sum,-4860.1,-0.04099873,0.15,PASS,
+MEX,Banxico CE174 current page,2025-Q4,A_NFA_T,127425187,6,USD,127.425187,direct,Banxico CE174 A. Net acquisition of financial assets,127,0.425187,0.5,PASS,
+MEX,Banxico CE174 current page,2026-Q1,A_NFA_T,7337165193,6,USD,7337.165193,direct,Banxico CE174 A. Net acquisition of financial assets,7337,0.165193,0.5,PASS,
+MEX,Banxico CE174 current page,2026-Q2,A_NFA_T,8937255098,6,USD,8937.255098,direct,Banxico CE174 A. Net acquisition of financial assets,8937,0.255098,0.5,PASS,
+MEX,Banxico CE174 current page,2025-Q4,L_NIL_T,-12271186540,6,USD,-12271.18654,direct,Banxico CE174 B. Net incurrence of liabilities,-12271,-0.18654,0.5,PASS,
+MEX,Banxico CE174 current page,2026-Q1,L_NIL_T,13964588879,6,USD,13964.588879,direct,Banxico CE174 B. Net incurrence of liabilities,13965,-0.411121,0.5,PASS,
+MEX,Banxico CE174 current page,2026-Q2,L_NIL_T,10561285114,6,USD,10561.285114,direct,Banxico CE174 B. Net incurrence of liabilities,10561,0.285114,0.5,PASS,
+CHL,BDE snapshot updated 2026-09-07,2025-Q4,A_NFA_T,6183163784.3,6,USD,6183.1637843,direct,BDE monthly assets sum,6183,0.1637843,1.5,PASS,web-rendered official snapshot; original raw bytes not archived
+CHL,BDE snapshot updated 2026-09-07,2026-Q1,A_NFA_T,6632579067.3,6,USD,6632.5790673,direct,BDE monthly assets sum,6633,-0.4209327,1.5,PASS,web-rendered official snapshot; original raw bytes not archived
+CHL,BDE snapshot updated 2026-09-07,2026-Q2,A_NFA_T,5098898918.11,6,USD,5098.89891811,direct,BDE monthly assets sum,5099,-0.10108189,1.5,PASS,web-rendered official snapshot; original raw bytes not archived
+CHL,BDE snapshot updated 2026-09-07,2025-Q4,L_NIL_T,3923504840.04,6,USD,3923.50484004,direct,BDE monthly liabilities sum,3924,-0.49515996,1.5,PASS,web-rendered official snapshot; original raw bytes not archived
+CHL,BDE snapshot updated 2026-09-07,2026-Q1,L_NIL_T,5495179289.2,6,USD,5495.1792892,direct,BDE monthly liabilities sum,5495,0.1792892,1.5,PASS,web-rendered official snapshot; original raw bytes not archived
+CHL,BDE snapshot updated 2026-09-07,2026-Q2,L_NIL_T,5397501758.8,6,USD,5397.5017588,direct,BDE monthly liabilities sum,5398,-0.4982412,1.5,PASS,web-rendered official snapshot; original raw bytes not archived
+CHL,BDE current 2026-11-18,2025-Q4,A_NFA_T,6183163784.3,6,USD,6183.1637843,direct,BDE current raw monthly assets sum,6183,0.1637843,1.5,PASS,raw HTML archived
+CHL,BDE current 2026-11-18,2026-Q1,A_NFA_T,6632579067.3,6,USD,6632.5790673,direct,BDE current raw monthly assets sum,6365,267.5790673,1.5,REVIEW,source vintage mismatch
+CHL,BDE current 2026-11-18,2026-Q2,A_NFA_T,5098898918.11,6,USD,5098.89891811,direct,BDE current raw monthly assets sum,5475,-376.10108189,1.5,REVIEW,source vintage mismatch
+CHL,BDE current 2026-11-18,2026-Q3,A_NFA_T,,6,USD,,direct,BDE current raw monthly assets sum,-1296,,1.5,IMF_PANEL_MISSING,no IMF panel row for CHL Q3
+CHL,BDE current 2026-11-18,2025-Q4,L_NIL_T,3923504840.04,6,USD,3923.50484004,direct,BDE current raw monthly liabilities sum,3924,-0.49515996,1.5,PASS,raw HTML archived
+CHL,BDE current 2026-11-18,2026-Q1,L_NIL_T,5495179289.2,6,USD,5495.1792892,direct,BDE current raw monthly liabilities sum,5598,-102.8207108,1.5,REVIEW,source vintage mismatch
+CHL,BDE current 2026-11-18,2026-Q2,L_NIL_T,5397501758.8,6,USD,5397.5017588,direct,BDE current raw monthly liabilities sum,5320,77.5017588,1.5,REVIEW,source vintage mismatch
+CHL,BDE current 2026-11-18,2026-Q3,L_NIL_T,,6,USD,,direct,BDE current raw monthly liabilities sum,8953,,1.5,IMF_PANEL_MISSING,no IMF panel row for CHL Q3
