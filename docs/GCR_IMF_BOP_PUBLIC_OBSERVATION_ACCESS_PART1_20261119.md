@@ -60,15 +60,15 @@ The machine-readable validation summary is `docs/evidence/IMF_BOP_PORTFOLIO_PILO
 
 ## Interpretation limits — not yet a production factor
 
-- `SCALE=6` and `PRECISION=6` are preserved as returned. No scale or currency transformation is applied until the scale semantics are independently resolved.
+- `SCALE=6` maps to `CL_UNIT_MULT(1.0.2)` code 6 = Millions. BCB official SGS metadata confirms series 22906 and 22924 are monthly USD-million series. A full Brazil source-to-source check covers 47 quarters for each flow entry: sum the three BCB monthly values (USD millions) and compare to IMF API `OBS_VALUE / 1,000,000`; all 94/94 comparisons PASS within the 0.15 USD-million maximum rounding bound. Maximum absolute residual = 0.12192411 USD million. This proves the IMF API `OBS_VALUE` is already in USD for the tested series; preserve `SCALE=6` as source metadata and do not multiply the API values by 10^6 again. India still requires independent country-source scale/sign corroboration.
 - This is quarterly BOP portfolio transaction data, not daily FPI/FII flow data. It cannot replace SEBI FPI/FPI-DII daily flow sources.
 - Brazil and India are a pilot pair, not an approved Emerging Markets universe. No EM aggregation, weighting, ranking, or country-membership assumptions are introduced.
 - BOP_AGG is a separate annual group-aggregate dataset. IMF notes that non-reporting-economy estimates may be incorporated in its group totals; it must be assessed as a separate product, not silently substituted for country observations.
 - No production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, or Engines A–E changes. No trading admission is authorized.
 
-## Next exact tasks
+## SCALE and sign reconciliation — Brazil PASS\n\n- Official BCB series 22906: portfolio investment net acquisition of financial assets, monthly, million USD.\n- Official BCB series 22924: portfolio investment net incurrence of liabilities, monthly, million USD.\n- 47 quarters × 2 entries = 94 comparisons, 94 PASS, 0 REVIEW, 0 BLOCKED. Tolerance: 0.15 USD million because each monthly BCB observation is rounded to one decimal place.\n- Machine evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`, and raw BCB source JSON files.\n- BCB metadata: https://opendata.bcb.gov.br/dataset/22906-portfolio-investment---net-acquisition-of-financial-assets---monthly---net and https://opendata.bcb.gov.br/dataset/22924-portfolio-investment---net-incurrence-of-liabilities---monthly---net.\n\n## Next exact tasks
 
-1. Resolve IMF `SCALE` semantics and verify unit/scale treatment from official metadata.
+1. Independently validate the same scale/sign behavior for India and additional EMDE country sources.
 2. Define and version the EM country membership set, with effective dates and exclusions.
 3. Probe BOP_AGG annual group aggregates as a separately labelled comparison series; preserve its estimates methodology.
 4. Expand exact-key quarterly extraction only after the country universe and factor definitions are approved.
