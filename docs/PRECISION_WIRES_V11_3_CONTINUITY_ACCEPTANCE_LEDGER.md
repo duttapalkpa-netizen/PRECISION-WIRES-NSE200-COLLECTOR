@@ -1294,3 +1294,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - ZAF status remains PARTIAL / NOT PASS; official series description/version/unit/sign, Q2 observation and vintage not yet inspected; GCR aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_SOUTH_AFRICA_SARB_PORTFOLIO_SERIES_CODE_CANDIDATES_CONTINUATION41_PART4_20261119.md; commit a9dbcaa86bb3098f2b12851b04af6cf49769e413; re-fetched blob 615e341e1657ec052b45de0e3093d3b916816485.
 - Next: verify candidate codes in official SARB query and export the exact Q2-2026 series/version metadata and values; no credentials, no guessed transforms. Secondary-source discovery never counts as PASS. Invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 41 — Part-5: SARB official query workflow and alternate BOP archive path (2026-11-19)
+- Fresh official SARB Online Statistical Query check confirms numeric KBP code input (prefix auto-added), wildcard, available-version selection, date/frequency selection, and CSV/XLSX/PDF/DOC exports. The page's controls cannot be executed by the web retrieval interface; live open timed out. No code result or export is claimed.
+- Identified a second official SARB zipped-data archive index (published 2026-09-29) listing KBP5-BOPD-Sep-20.zip. Listing is confirmed; internal contents/vintage/Q2-2026 coverage not inspected. Do not infer that abbreviated filename means Sep-2026.
+- Official Quarterly Bulletin index confirms September 2026 issue published 2026-09-29.
+- KBP5756–5759 remain secondary-source candidates only; official series descriptions/versions/units/signs/values not yet obtained. ZAF remains PARTIAL / NOT PASS; GCR aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_SARB_OFFICIAL_QUERY_AND_ZIPPED_ARCHIVE_ALTERNATE_PATH_CONTINUATION41_PART5_20261119.md; commit c1b4a5e1f536b64588ed661c5da37fe14b63afcd; re-fetched blob c7e67c36d14363d45d21720f984cbd0520c57552.
+- Next: use ordinary public browser UI to inspect/export codes 5756–5759 and version metadata; inspect the exact official zipped BOP attachment only to establish contents/vintage; SHA-256 exports and compare like-for-like. No credentials or guessed transformations. Invariants unchanged; UNKNOWN is never PASS.
