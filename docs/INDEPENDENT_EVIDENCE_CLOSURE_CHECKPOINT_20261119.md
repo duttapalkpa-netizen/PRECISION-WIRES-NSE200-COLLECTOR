@@ -197,3 +197,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 2. Official BOP6(1.0) vs BOP_BPM6(1.0) DSD/dataflow/schema compatibility still unresolved.
 3. Official SDMX 2.1 XSD bytes/hashes and actual BCB data payload conformance remain to be independently archived/validated.
 4. Need verify whether any older/parallel Brazil Registration URNs exist outside this exact Registration URN. The exact current registration's own 40-event lifecycle is now captured.
+
+
+## Full lifecycle cross-check against global transaction index — 2026-11-19
+- Run 44466324080 completed SUCCESS; artifact 14501663276; ZIP SHA-256 `3b968f502447b870b1220bafda7ffdf1071f6cfdda9410631c5ec4d3b71f8b33`.
+- Public global `searchTransactions?max=50000&orderDesc=false` returned 38,668 records, tx IDs 1–38,668, raw JSON 2,719,795 bytes, SHA-256 `74725cb58eb6d612e67e7af41df870edaa58f81e95b5ba1c4c3713ccb72ae709`.
+- Cross-match of the 40 exact Registration-URN history rows against this global index: 40/40 transaction IDs found; 40/40 millisecond timestamps exactly equal; 40/40 Registry Action values exactly equal; no missing IDs and no date/action mismatches.
+- Global index Type field is populated as `Registration` for tx667 only among these 40; absent/null for 39. This is preserved as missing/UNKNOWN, not filled from expectation. The embedded original payloads independently parse as SubmitRegistrationsRequest for all 40.
+- This provides independent confirmation that the 40 event timestamps/actions are consistent with the global transaction index as captured at retrieval time.
