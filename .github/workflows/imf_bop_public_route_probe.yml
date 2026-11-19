@@ -17,10 +17,10 @@ jobs:
           python-version: '3.12'
       - name: Probe official IMF BOP landing pages and public SDMX metadata routes
         run: python scripts/research/probe_imf_bop_public_routes.py
-      - name: Upload raw responses and manifest
+      - name: Fetch exact BOP DSD concept scheme and codelists\n        run: python scripts/research/fetch_imf_bop_dsd_codelists.py\n      - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-bop-public-route-probe-${{ github.run_id }}
-          path: imf_bop_public_route_probe/
+          path: |\n            imf_bop_public_route_probe/\n            imf_bop_dsd_codelists/
           if-no-files-found: error
           retention-days: 90
