@@ -1,0 +1,29 @@
+name: Official SDMx BOP DSD 2.6.0 Capture (Research Only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sdmx_bop_260_capture.yml"
+      - "scripts/research/capture_sdmx_bop_260_official_dsd.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture official BOP DSD v2.6.0 as SDMX-ML 2.1 and 3.0
+        run: python scripts/research/capture_sdmx_bop_260_official_dsd.py
+      - name: Upload raw official structures and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdmx-bop-260-${{ github.run_id }}
+          path: artifacts/sdmx_bop_260/
+          if-no-files-found: error
+          retention-days: 90
