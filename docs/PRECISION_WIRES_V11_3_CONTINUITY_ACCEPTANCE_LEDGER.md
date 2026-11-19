@@ -795,3 +795,16 @@ Report workstream percentages separately from evidence status. Percentage means 
 - 2026-Q1 IMF liability /1e6 = -13,633.508347m vs RBI 3.2.A net -12,121m; residual -1,512.508347m. Do not silently reconcile.
 - Detailed supplement report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`; raw RBI pages and comparison CSV committed under `docs/evidence/imf_bop_20261119/india_scale_reconciliation_current_vintage/`.
 - Current India status: historical baseline PASS, current 2026-Q1 REVIEW. Overall 4-country vintage-aligned benchmark 118/118 remains valid; current Chile and India revisions remain separate REVIEWs. No aggregate or production admission.
+
+
+## 2026-11-19 — GCR fifth-country Nigeria national-source check
+- New report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_NIGERIA_20261119.md`; consolidated cross-country Part 4: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART4_20261119.md`.
+- Official CBN Q2 2026 BOP Highlights PDF, Table 2 (Financial Accounts), printed page 6, was retrieved HTTP 200; 2,206,494 bytes; SHA-256 `b77c0066385cac4bb3bcbe150321c8da28da7d76c91b78423808a31deaea4cf9`.
+- IMF public SDMX 3.0 exact-key queries for Nigeria `NGA.A_NFA_T.P_F.*.Q` and `NGA.L_NIL_T.P_F.*.Q` returned HTTP 200; raw CSVs archived. Periods selected: 2025-Q2, 2026-Q1, 2026-Q2.
+- CBN Table 2 USD bn: assets -0.66, +0.26, +0.70; liabilities +5.28, +6.03, +7.09. Derived IMF USD million = raw OBS_VALUE/1e6; CBN USD million = USD bn×1000. Tolerance ±US$5m based on 0.01bn display precision. Six comparisons: 6/6 PASS, 0 REVIEW, 0 missing.
+- Workflow run 44485137974 SUCCESS; artifact 14510920161; ZIP SHA-256 `bf80b403e072c8eae39f4ec32de77b55d776ef77b7ff4a88e157e3023da7febf`.
+- Durable evidence under `docs/evidence/gcr_nigeria_bop_20261119/`: raw IMF assets/liabilities CSVs, exact comparison CSV, summary/provenance JSON and CBN Table 2 extracted page text. Raw CBN PDF can be re-downloaded from its official URL; raw byte hash is preserved in summary and report.
+- Cross-country vintage-aligned sample increases from 118/118 to 124/124 across five countries: Brazil 94, India 12, Mexico 6, Chile older 2026-09 vintage 6, Nigeria 6. This is not universal validation across all 154 EMDE members.
+- CBN vintage flags retained: Q2 2025 provisional, Q1 2026 revised, Q2 2026 described as provisional in the release narrative. No vintage mixing.
+- India Q1-2026 liability REVIEW and Chile current-vintage revision mismatch remain open. Full 154-member aggregate remains BLOCKED/NOT_AUTHORIZED; no production/backtest admission.
+- A malformed path-ignore edit briefly caused the production NSE workflow to trigger on research commits. The literal `\\n` entries were corrected in `.github/workflows/nse_collector.yml` at commit `9ef1922f63c3091519fe5208ee63e259fcc571c5`. Two collector runs from the earlier malformed state (44484649213 and 44484666061) were still reported in_progress at last check; they were not cancelled by available connector actions. Subsequent research-only commits are now included in paths-ignore. No production code was intentionally changed.
