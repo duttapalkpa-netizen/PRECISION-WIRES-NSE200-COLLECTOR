@@ -29,7 +29,7 @@ on:
       - "scripts/research/probe_imf_brazil_exact_registration.py"
       - "scripts/research/capture_imf_brazil_registration_lifecycle.py"
       - "scripts/research/validate_imf_brazil_history_against_global_index.py"
-      - "scripts/research/probe_imf_bop_public_routes.py"\n      - "scripts/research/fetch_imf_bop_dsd_codelists.py"
+      - "scripts/research/probe_imf_bop_public_routes.py"\n      - "scripts/research/fetch_imf_bop_dsd_codelists.py"\n      - "scripts/research/smoke_test_imf_bop_observations.py"
       - "scripts/research/probe_imf_brazil_pa_structure_revision.py"
       - "scripts/research/imf_brazil_public_api_probe_trigger.txt"
       - ".github/workflows/nse_cancel_accidental_probe_run.yml"
