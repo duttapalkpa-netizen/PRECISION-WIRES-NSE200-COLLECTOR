@@ -19,12 +19,12 @@ jobs:
         run: python scripts/research/probe_imf_bop_public_routes.py
       - name: Fetch exact BOP DSD concept scheme and codelists
         run: python scripts/research/fetch_imf_bop_dsd_codelists.py
-      - name: Upload raw responses and manifest
+      - name: Query exact-key Brazil and India portfolio investment BOP observations\n        run: python scripts/research/smoke_test_imf_bop_observations.py\n      - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-bop-public-route-probe-${{ github.run_id }}
           path: |
             imf_bop_public_route_probe/
-            imf_bop_dsd_codelists/
+            imf_bop_dsd_codelists/\n            imf_bop_observation_smoketest/
           if-no-files-found: error
           retention-days: 90
