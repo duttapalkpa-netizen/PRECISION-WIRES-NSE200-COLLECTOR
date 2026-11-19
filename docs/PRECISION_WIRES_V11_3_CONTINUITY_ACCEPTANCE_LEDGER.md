@@ -688,3 +688,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Critical decision: do NOT aggregate 154 EMDE countries yet. Only 111/154 have both assets and liabilities; 40 have neither; 3 are one-sided. Country period coverage is asynchronous. USD is the only returned unit for this query; SCALE=6 retained, not interpreted. Net inflow/aggregation remains BLOCKED until exact SCALE/sign semantics and coverage threshold are accepted.
 - Current GCR status: public IMF BOP observations PASS; 154-member membership mapping PASS; 9,299-row panel acquisition PASS; 12-country exact sample validation PASS; full group aggregate BLOCKED/NOT_AUTHORIZED; relative-attraction formula, sector transmission and rolling backtest NOT_DONE.
 - No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E changed; no paid APIs; no credentials; no synthetic data; UNKNOWN is not PASS.
+
+
+## 2026-11-19 — GCR Part-3: WEO G200 quarterly coverage/missingness and IMF SCALE concept audit
+- Added report `docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md` and machine coverage files under `docs/evidence/imf_bop_emde_20261119/coverage_qa/`.
+- Independent full raw-to-normalized validation: 9,299/9,299 observation keys and all 278,970 source-field cells exact; zero duplicates, missing keys or attribute mismatches.
+- 308 expected country-entry pairs: 225 with data (73.05%), 83 no-data pairs. 111/154 WEO G200 members have both asset/liability legs; 3 are one-sided (DZA/ETH assets only, ZWE liabilities only); 40 have neither. Therefore 43/154 members lack at least one leg.
+- 47-quarter coverage: only 4 series complete 47/47; 221 partial; 13 series have internal gaps (71 missing quarters). 2026-Q3 exists only for BRA and PAK. All 9,299 observations are DERIVATION_TYPE=O and UNIT=USD. No forward-fill, zero substitution, rescaling, FX conversion or aggregation.
+- SCALE concept scheme `IMF:CS_MASTER_SYSTEM(1.0.2)` captured HTTP 200, raw SHA-256 `9ef243509d7b3edc93b5ef2326ba49c89ced79044ae38674c806d1310367420d`. English Name=Scale; Arabic Name `عدد الخانات العشرية` translates “number of decimal places”; no formal English description or referenced codelist. It is a series-level attribute in BOP DSD, distinct from UNIT and not established as UNIT_MULT. No numeric transformation applied. Semantics only PARTIAL.
+- Run 44475665715 SUCCESS; coverage artifact 14506017682; SCALE artifact 14506356045. 
+- Current decision: EMDE data panel and raw integrity PASS; aggregate remains BLOCKED / NOT_AUTHORIZED due incomplete/asynchronous country reporting, missing legs, internal gaps, unresolved net-flow sign, FX and historical vintages. No production selector/ranking/pressure fade/CORE-672/Engine A–E change; UNKNOWN is not PASS.
