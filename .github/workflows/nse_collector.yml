@@ -24,7 +24,7 @@ on:
       - "scripts/research/capture_imf_weo_oct2026_membership_source.py"
       - "scripts/research/imf_weo_membership_capture_trigger.txt"
       - ".github/workflows/imf_brazil_public_api_probe.yml"
-      - ".github/workflows/imf_bop_public_route_probe.yml"
+      - ".github/workflows/imf_bop_public_route_probe.yml"\n      - ".github/workflows/imf_bop_scale_semantics.yml"\n      - "scripts/research/resolve_imf_bop_scale_semantics.py"\n      - "scripts/research/imf_bop_scale_semantics_trigger.txt"
       - "scripts/research/imf_bop_public_route_probe_trigger.txt"
       - "scripts/research/probe_imf_brazil_public_api.py"
       - "scripts/research/probe_imf_brazil_registration_batch.py"
