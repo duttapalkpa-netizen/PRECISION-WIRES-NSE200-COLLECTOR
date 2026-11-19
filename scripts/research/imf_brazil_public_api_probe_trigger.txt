@@ -11,3 +11,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 retry-batch-0013-0112-after-yaml-fix
 
 2026-11-19 batch-0113-0212-fusion-json-registration-scan
+
+2026-11-19 batch-0213-0412-fusion-json-registration-scan
