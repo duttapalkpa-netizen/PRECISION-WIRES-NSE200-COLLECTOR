@@ -289,3 +289,14 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Interpretation: this is a WEO October 2026 vintage membership edition; exact code mapping does NOT mean quarterly BOP observations exist for all 154 members. No aggregate is authorized.
 - Next: query exact IMF BOP keys for 154 × 2 accounting entries (`A_NFA_T`, `L_NIL_T`) using `P_F`, USD, Q; produce a country/entry/quarter coverage matrix with raw provenance, preserve empty series and missing quarters; resolve SCALE/sign semantics before summing.
 - No production selector/ranking/pressure-fade/CORE-672/Engines A–E changes; no synthetic data; UNKNOWN is not PASS.
+
+
+## GCR IMF BOP — WEO 2026 EMDE full-member panel capture and independent exact sample validation (2026-11-19)
+- Official WEO October 2026 workbook raw download HTTP 200; SHA-256 `2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c`. Exact group `G200` membership = 154 unique ISO3 codes.
+- IMF BOP country codelist XML HTTP 200; 154/154 membership codes mapped, no unmapped codes; raw SHA-256 `190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39`.
+- Public IMF BOP dataflow `IMF.STA:BOP(21.0.0)` / DSD `IMF.STA:DSD_BOP(24.0.0)`; `P_F`; quarterly 2015-Q1..2026-Q3; entries `A_NFA_T` and `L_NIL_T`; both 154-country multi-value GETs HTTP 200.
+- Panel run 44474218174 / artifact 14505862034 / ZIP SHA-256 `1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f`. 4,681 asset obs + 4,618 liability obs = 9,299; unique keys 9,299; duplicates 0; 114 countries with any observations.
+- Coverage: 225/308 country-entry pairs (73.05%); 111 countries both legs; 40 countries neither; DZA/ETH assets-only; ZWE liabilities-only. Country coverage is asynchronous, most latest periods 2026-Q2, only two series reach 2026-Q3. No fill/zero substitution/synthetic data/currency conversion/rescaling.
+- Independent exact-key sample validation run 44474458684 / artifact 14505009889 / ZIP SHA-256 `588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7`: 24/24 exact queries HTTP 200; 24/24 series PASS; 1,106/1,106 values and all source attributes exact-match the multi-country panel; no missing/mismatches.
+- Durable GitHub evidence: `docs/evidence/imf_bop_emde_20261119/`, persistence run 44474596292 SUCCESS, commit `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`. Detailed report `docs/GCR_IMF_BOP_EMDE_PANEL_PART2_20261119.md`, commit `487f7ca6758a105dfe1280e5af8ed5b7b3a0369d`.
+- Decision: 154-member panel capture PASS; exact sample cross-check PASS; full EMDE aggregate/net-flow remains BLOCKED/NOT_AUTHORIZED because 43 member country-entry pairs lack at least one required leg and reporting periods are asynchronous. SCALE=6 remains raw/uninterpreted; no net inflow calculation. GCR formula, sector transmission and rolling backtest NOT_DONE.
