@@ -16,7 +16,7 @@
     "combined": "IMF L_NIL_T - A_NFA_T = RBI 3.2 Portfolio Investment net"
   },
   "diagnostic_conversion": "IMF OBS_VALUE / 1,000,000 compared with RBI Table 42 US$ million; committed IMF raw values unchanged",
-  "scale_interpretation": "Operational 10^6 conversion is supported for the matched India quarters; do not generalize beyond cross-checked country-periods. IMF SCALE concept multilingual label remains semantically ambiguous.",
+  "scale_interpretation": "SCALE=6 is IMF CL_UNIT_MULT code 6, Millions (10^6). The IMF API numeric payload crosswalk OBS_VALUE/1e6 matches RBI USD-million values in 10/12 comparisons; 2026-Q1 liability and combined net remain REVIEW. Raw values unchanged; do not generalize to unvalidated EMDE countries.",
   "review_rows": [
     {
       "period": "2026-Q1",
@@ -53,5 +53,11 @@
   ],
   "no_forward_fill": true,
   "no_synthetic_data": true,
-  "no_global_aggregate": true
+  "no_global_aggregate": true,
+  "scale_code_6": {
+    "codelist": "IMF:CL_UNIT_MULT(1.0.2)",
+    "label": "Millions",
+    "description": "10^6",
+    "sha256": "24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561"
+  }
 }
