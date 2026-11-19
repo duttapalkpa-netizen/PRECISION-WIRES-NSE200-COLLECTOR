@@ -1067,3 +1067,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - RSS raw feed 31 entries / 0 Brazil matches for this capture window; not a full chronology. PA transaction ID 2 still HTTP 500 in both documented serializations; no equivalent retries.
 - Decision: public structure evidence PASS; Brazil identity BLOCKED / UNRESOLVED; PA Changelog and full event chronology remain external owner/provider evidence dependencies. Exact next requirement is official owner-side PA revision export, dated BR1 event rows and a Brazil-specific mapping/correction if one exists.
 - Report commit `93258ce505dca1dd45af758664cc4ab0e7688ac5`; master checkpoint commit `073d60722ed1d9cb3949cbc8ed186463d6057ebd`. Preserve ₹0, no credentials, no aliases, no production changes, UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-5: Brazil public structure artifact audit (2026-11-19)
+- Run 44533595369 / run #36 SUCCESS; job probe SUCCESS. Structure GET, RSS capture and artifact upload succeeded; prior lifecycle steps skipped. Artifact 14534769007; 7,648,050 bytes; ZIP SHA-256 = GitHub digest `4a235de4fdd1624bac3526c01f0940d05b4ef23fb435db619b4542dcd467666e`.
+- Four official IMF public structure responses: 4/4 HTTP 200 and SDMX 2.1 XML parse PASS. Individual raw hashes/bytes and manifest recorded in `docs/IMF_BRAZIL_PUBLIC_STRUCTURE_ARTIFACT_AUDIT_CONTINUATION39_PART5_20261119.md`.
+- Brazil PA `IMF:BR_BOP_BP6(1.0)` -> Dataflow `IMF:BOP6(1.0)`, Provider `IMF:BR1`. BOP6 label “Balance of Payments (BPM6) for Collection”; BOP_BPM6 label “Balance of Payments -- BPM6”. Both use `IMF:ECOFIN_DSD(1.0)`, but are distinct Dataflows with separate allowed constraints. Shared DSD is not equivalence or alias.
+- BOP6 response includes Chile PA `IMF:CL_BOP(1.0)` -> CL2 and IMF `IMF:IMF_BOP6(1.0)`; BOP6 is not Brazil-only. BCB payload header remains BOP_BPM6 vs Brazil PA Dataflow BOP6; mismatch remains BLOCKED.
+- RSS 31 entries / 0 Brazil matches in this captured window only. PA transaction ID 2 still HTTP 500 in both documented serializations; no equivalent retries.
+- Report commit `93258ce505dca1dd45af758664cc4ab0e7688ac5`; independent checkpoint update commit `8c67305d079b4f4b918ebb10aa05230395395d14`.
+- Next Brazil evidence dependency: authorized owner/provider export of PA revision/changelog and dated BR1 registration events, plus official Brazil-specific mapping/correction if one exists. No credentials, cookies or authenticated write. ₹0; no aliases; no production changes; UNKNOWN is not PASS.
