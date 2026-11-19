@@ -107,13 +107,17 @@ def main():
     method="UNIQUE_WEO_BASE_NAME" if len(hits)==1 else ("AMBIGUOUS" if candidates else "UNMAPPED")
   crosswalk.append({"weo_vintage":"October 2026","appendix_emde_label":label,
    "workbook_country_name":hits[0]["country_name"] if len(hits)==1 else "",
-   "iso3":hits[0]["country_code"] if len(hits)==1 else "",
+   "iso3":hits[0]["country_code"] if len(hits)==1 else "",\n   "bop_country_code":hits[0]["country_code"] if len(hits)==1 else "",
    "mapping_method":method if len(hits)==1 else method,
    "mapping_status":"PASS" if len(hits)==1 else method})
  # Parse BOP codelist and require all WEO workbook ISO3 codes to exist.
- root=ET.fromstring(paths["bop_country_codelist"].read_bytes());bop_codes=set()
- for el in root.iter():
-  if local(el.tag)=="Code" and el.attrib.get("id"):bop_codes.add(el.attrib["id"])
+ root=ET.fromstring(paths["bop_country_codelist"].read_bytes());bop_codes=set();bop_scheme_count=0
+ for cl in root.iter():
+  if local(cl.tag)=="Codelist" and cl.attrib.get("id")=="CL_BOP_COUNTRY" and cl.attrib.get("version")=="1.0.0":
+   bop_scheme_count+=1
+   for el in cl:
+    if local(el.tag)=="Code" and el.attrib.get("id"):bop_codes.add(el.attrib["id"])
+ if bop_scheme_count!=1:raise SystemExit(f"Expected exactly one CL_BOP_COUNTRY(1.0.0) scheme, got {bop_scheme_count}")
  missing=sorted({x["country_code"] for x in workbook_members}-bop_codes)
  with (OUT/"weo_emde_appendix_to_bop_iso3_crosswalk.csv").open("w",newline="",encoding="utf-8") as f:
   w=csv.DictWriter(f,fieldnames=list(crosswalk[0]));w.writeheader();w.writerows(crosswalk)
@@ -125,7 +129,7 @@ def main():
   "workbook_g200_unique_iso3_count":len({x["country_code"] for x in workbook_members}),
   "appendix_to_workbook_mapping_pass":sum(x["mapping_status"]=="PASS" for x in crosswalk),
   "appendix_unmapped_or_ambiguous":[x for x in crosswalk if x["mapping_status"]!="PASS"],
-  "bop_country_codelist_id":"CL_BOP_COUNTRY","bop_country_codelist_version":"1.0.0","bop_country_codelist_code_count":len(bop_codes),"workbook_iso3_missing_from_bop_codelist":missing,
+  "bop_country_codelist_id":"CL_BOP_COUNTRY","bop_country_codelist_version":"1.0.0","bop_country_codelist_id":"CL_BOP_COUNTRY","bop_country_codelist_version":"1.0.0","bop_country_codelist_code_count":len(bop_codes),"workbook_iso3_missing_from_bop_codelist":missing,
   "membership_validation_pass":len(labels)==154 and len(workbook_members)==154 and
    len({norm(x) for x in labels})==154 and sum(x["mapping_status"]=="PASS" for x in crosswalk)==154 and not missing,
   "guardrails":["No fuzzy matching or guessed ISO3 codes.","Every ISO3 comes from official WEO October 2026 Country Group Composition sheet.",
