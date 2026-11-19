@@ -34,7 +34,7 @@
 - WEO G200 to BOP country code mapping: 154/154 PASS.
 - Country/period coverage: PARTIAL; visible at country × entry × quarter level.
 - Full EMDE aggregate: BLOCKED / NOT_AUTHORIZED. 43/154 members lack at least one leg; only two countries have both legs at 2026-Q3; 13 series have internal gaps.
-- SCALE is partially clarified as a decimal-place attribute, but no formal English definition/codelist or rounding rule exists; sign convention, FX policy and point-in-time vintage history remain open. Do not calculate net inflow or use this panel in backtests/production until resolved.
+- SCALE code meaning is now verified: DSD_BOP SCALE enumerates IMF CL_UNIT_MULT(1.0.2); code 6 = Millions, description 10^6. The IMF API raw OBS_VALUE behaves as base-USD values in national-source crosswalks, so OBS_VALUE/1e6 matches USD-million tables in Brazil (94/94) and India (10/12; 2 REVIEW in 2026-Q1 liabilities/combined net). Preserve raw values; do not generalize numeric conversion to all EMDE countries until country-period crosswalks pass. Sign convention, FX policy and point-in-time vintage history remain open.
 
 ## Evidence
 - Coverage QA run 44475665715 SUCCESS; artifact 14506017682; ZIP SHA-256 `e900f76a31589f83c19d49eefc3720919a91b83e118d244921adf1ff0f948f4a`.\n- SCALE concept run 44475665715 SUCCESS; artifact 14506356045; ZIP SHA-256 `7465214f27dddbece13f5812b49269b566b4139461da986292a65b29828cbdd2`; concept scheme raw XML SHA-256 `9ef243509d7b3edc93b5ef2326ba49c89ced79044ae38674c806d1310367420d`.
