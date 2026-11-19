@@ -817,3 +817,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/IMF_BRAZIL_PA_TX2_ALTERNATE_SERIALIZATION_PROBE_PART1_20261119.md`.
 - Status: IMPLEMENTED / TRIGGER COMMITTED; workflow run and artifact inspection NOT_YET_VERIFIED. Brazil Reconstruction remains BLOCKED; do not infer PA changelog or resolve BOP6/BOP_BPM6 mismatch. No production code, selector, score, diagnostics or engines changed; ₹0; UNKNOWN is not PASS.
 - Next: inspect the workflow run/artifact from trigger commit; accept only actual 200 + parsed PA/structure evidence, otherwise preserve exact errors and keep the blocker.
+
+
+## 2026-11-19 — Continuation 38 Part 1: Brazil PA transaction 2 format probe closed with negative result
+- Focused run #34 / 44493473476 SUCCESS; artifact 14513337963; ZIP SHA-256 `824a09425db76982ba73a1b9f51cd768669d560a5b017b732f0cf224ce7720e6`.
+- `txId=2&format=fusion-json` and `txId=2&format=sdmx-json` both returned HTTP 500 with identical 39-byte body `Unable to return transaction for id '2'`; raw SHA-256 `76c4819f18129eb81b5fab80dcf0641665f332b823864c2c09280efe21415825`. Both retrievals and raw bytes archived; Content-Type application/zip did not match body.
+- Alternate format probe PASS; PA tx2/Changelog BLOCKED; Brazil Reconstruction BLOCKED. No inference that PA absent; BOP6/BOP_BPM6 mismatch remains unresolved; no alias/admission.
+- FMR documented UI route for next attempt: Activity / Structure Submissions and Provision Agreement detail Changelog/Compare. If no authorized public access, preserve UNKNOWN and pivot to remaining GCR coverage blockers. No production changes; ₹0.
+- Report: `docs/IMF_BRAZIL_PA_TX2_ALTERNATE_SERIALIZATION_PROBE_PART2_20261119.md`.
