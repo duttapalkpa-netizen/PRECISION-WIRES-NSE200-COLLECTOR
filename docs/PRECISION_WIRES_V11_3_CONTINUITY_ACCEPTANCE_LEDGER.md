@@ -748,3 +748,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Coverage QA run 44475665715 SUCCESS; coverage artifact 14506017682; SCALE artifact 14506356045.
 - Detailed report: `docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md`; matrices under `docs/evidence/imf_bop_emde_20261119/coverage_qa/`; scale metadata manifest under `docs/evidence/imf_bop_emde_20261119/scale_semantics/`.
 - Decision: data integrity PASS; country coverage PARTIAL; EMDE aggregate BLOCKED / NOT_AUTHORIZED. Sign convention, FX and point-in-time vintage remain unresolved.
+
+
+## 2026-11-19 — IMF BOP scale/sign semantics validated against official BCB source (Brazil)
+- IMF BOP DSD `SCALE` attribute references IMF master system concept scheme `CS_MASTER_SYSTEM(1.0.2)` and codelist `CL_UNIT_MULT(1.0+.0)`; code `6` label = `Millions`.
+- This metadata alone does not mean multiply the API response again. Official BCB SGS 22906 (monthly portfolio net acquisition of assets, USD million) and 22924 (monthly portfolio net incurrence of liabilities, USD million) provide the source comparator.
+- Full cross-source check for 47 quarters 2015-Q1–2026-Q3, both series: sum BCB monthly values in USD million and compare to IMF BOP API `OBS_VALUE / 1,000,000`. 94/94 PASS, 0 REVIEW, 0 BLOCKED; tolerance 0.15 USD million; maximum absolute residual 0.12192411 USD million.
+- Operational decision for the tested Brazil series: IMF API `OBS_VALUE` is already USD; preserve `SCALE=6` as source metadata and DO NOT multiply API values by 10^6 again. No panel values were transformed.
+- Evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`, raw SGS 22906/22924 JSONs. Full run 44476176136 / artifact 14505944936 / SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`.
+- Scope limitation: this is Brazil only. India and other EMDE countries still need independent source-to-source scale/sign validation before GCR aggregation.
+- Updated research note: `docs/GCR_IMF_BOP_PUBLIC_OBSERVATION_ACCESS_PART1_20261119.md`; prior access boundary updated with the 94-check result.
