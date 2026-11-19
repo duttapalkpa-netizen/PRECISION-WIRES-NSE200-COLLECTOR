@@ -7,15 +7,15 @@ Decision: **118/118 vintage-aligned comparisons PASS across four countries; late
 - WEO October 2026 G200 EMDE membership: 154/154 unique codes; exact IMF BOP COUNTRY code presence 154/154.
 - IMF Data Portal BOP P_F quarterly panel: 9,299 observations, 9,299 unique keys, zero duplicates; 24 exact series checks across 12 countries matched 1,106/1,106 observations.
 - Independent official national-source benchmarks:
-  - India RBI Table 197: 12/12 PASS, 2024-Q2 to 2025-Q1.
-  - Brazil BCB SGS 22906/22924: 94/94 PASS, 2015-Q1–Q4 and 2026-Q3.
+  - India RBI Table 197: 12/12 PASS, 2024-Q2 to 2025-Q3.
+  - Brazil BCB SGS 22906/22924: 94/94 PASS, 2015-Q1–2026-Q3.
   - Mexico Banxico CE174: 6/6 PASS, 2025-Q4 to 2026-Q2.
   - Chile Banco Central BDE older page vintage (updated 2026-09-07): 6/6 PASS, 2025-Q4 to 2026-Q2.
 - Combined vintage-aligned sample: **118/118 PASS**. For these tested Data Portal rows, raw `OBS_VALUE / 1,000,000` reconciles to official national US$ million values. Preserve raw observations unchanged; conversion is derived-output only.
 - Current Chile BDE page (updated 2026-11-18) was independently captured. Its 2025-Q4 values still match, but 2026-Q1/Q2 values are revised and no longer match the IMF panel; Q3 2026 national observations exist while the IMF panel has no CHL Q3 row. This is a source-vintage alignment gate, not a failed scale conversion.
 
 ### Rejected / not authorized
-- Do not apply `×10^6) to the raw IMF Data Portal payload; national benchmarks support `OBS_VALUE / 10^6) for the tested series.
+- Do not multiply raw IMF Data Portal `OBS_VALUE` by 10^6 again; the tested national comparisons support the derived USD-million comparison `OBS_VALUE / 10^6`.
 - Do not declare a universal all-154-country transform solely from four country benchmarks.
 - Do not blend Chile's 2026-09-07 and 2026-11-18 vintages. The older snapshot is a web-rendered official page capture; raw bytes were not archived, so it is supporting evidence but not byte-level reproducible.
 - Do not fill 40 countries with no data, 83 empty country-entry cells or 13 interior-gap series.
