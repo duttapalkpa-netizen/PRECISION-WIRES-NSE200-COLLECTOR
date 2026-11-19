@@ -1,3 +1,5 @@
 2026-11-19 persist-verified-EMDE-BOP-panel-and-exact-checks
 
 2026-11-19 persist-raw-weo-workbook-and-bop-country-codelist
+
+2026-11-19 persist-WEO-Appendix-G200-154-crosswalk-and-EMDE-panel-evidence
