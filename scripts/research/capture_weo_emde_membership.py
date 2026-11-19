@@ -60,7 +60,7 @@ def main():
  paths={r["name"]:Path(r["file"]) for r in manifest}
  # Workbook: preserve workbook sheet names and locate country/group worksheets.
  wb=load_workbook(paths["weo_workbook"],read_only=True,data_only=True)
- workbook_info={"sheet_names":wb.sheetnames,"sheets":[]}
+ workbook_info={"sheet_names":wb.sheetnames,"sheets":[],"country_group_composition_preview":[]}
  for ws in wb.worksheets:
   workbook_info["sheets"].append({"title":ws.title,"max_row":ws.max_row,"max_column":ws.max_column})
  (OUT/"workbook_structure.json").write_text(json.dumps(workbook_info,indent=2)+"\n")
@@ -75,7 +75,7 @@ def main():
  if not stops: raise SystemExit("Could not locate next WEO regional group heading")
  block=tail[:min(stops)]
  lines=[re.sub(r"\s+"," ",x).strip(" \t\r\n-") for x in block.splitlines()]
- lines=[x for x in lines if x and x not in {"WORLD ECONOMIC OUTLOOK","DATABASE APPENDIX"}]
+ lines=[x for x in lines if x and x not in {"WORLD ECONOMIC OUTLOOK","DATABASE APPENDIX"} and not x.startswith("International Monetary Fund |")]
  # repair PDF line wraps only when the next line starts with a continuation
  names=[]; pending=""
  for line in lines:
@@ -118,7 +118,7 @@ def main():
   "manifest":manifest,"pdf_page_count":len(pdf.pages),"workbook":workbook_info,
   "emde_member_count":len(unique),"unique_member_count":len(set(norm(x) for x in unique)),
   "expected_154_check":len(unique)==154,
-  "bop_codelist_code_count":len(codes),
+  "bop_codelist_code_count":len(codes),\n  "bop_codelist_first_30":codes[:30],
   "mapping_status_counts":{s:sum(x["mapping_status"]==s for x in rows) for s in ["EXACT_LABEL","EXPLICIT_ALIAS","UNMAPPED","AMBIGUOUS"]},
   "unmapped":[x["weo_country_name"] for x in rows if x["mapping_status"]=="UNMAPPED"],
   "ambiguous":[x for x in rows if x["mapping_status"]=="AMBIGUOUS"],
@@ -128,5 +128,5 @@ def main():
    "A 154-member count is a validation assertion, not a forced target; a different observed count must be reported, not silently edited."]}
  (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
  print(json.dumps(summary,indent=2,ensure_ascii=False))
- if summary["emde_member_count"]!=154: raise SystemExit("WEO EMDE count differs from expected 154; inspect extracted list before acceptance")
+ if summary["emde_member_count"]!=154: raise SystemExit("WEO EMDE count differs from expected 154; inspect extracted list before acceptance")\n if not codes: raise SystemExit("BOP country codelist contained no parsed codes")
 if __name__=="__main__": main()
