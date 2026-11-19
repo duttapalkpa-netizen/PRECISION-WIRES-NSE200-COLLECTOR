@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
     paths-ignore:
+      - "scripts/research/bceao_civ_2024_archive_trigger.txt"
+      - "scripts/research/archive_bceao_civ_2024.py"
+      - ".github/workflows/bceao_civ_2024_raw_archive.yml"
       - ".github/workflows/bceao_2024_raw_archive.yml"
       - "scripts/research/bceao_2024_raw_archive_trigger.txt"
       - "scripts/research/archive_bceao_2024_annual_report.py"
