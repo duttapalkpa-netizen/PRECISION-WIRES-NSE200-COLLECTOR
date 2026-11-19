@@ -54,3 +54,7 @@ The RBI table's `Portfolio Investment by India` credit-minus-debit net is compar
 
 ## Invariants
 No changes to Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672, or Engines A–E. ₹0 spend; no paid API; no synthetic observations; UNKNOWN is not PASS.
+
+
+## Supersession note — Brazil benchmark now completed
+This India-only report was created before the Brazil national-source test. The global scale/sign decision is now extended in `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`: Brazil BCB SGS 10/10 plus India RBI 8/8 = 18/18 two-country benchmark PASS. Brazil is no longer pending for this specific Data Portal series/scale test. The older BCB-registered XML versus SGS historical mismatch remains a separate unresolved source-vintage issue; 154-country aggregate admission remains blocked.
