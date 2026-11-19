@@ -3,3 +3,5 @@
 2026-11-19 add-official-SCALE-conceptscheme-probe
 
 2026-11-19 follow-SCALE-enumeration-to-authoritative-code-list
+
+2026-11-19 fix-scale-artifact-name
