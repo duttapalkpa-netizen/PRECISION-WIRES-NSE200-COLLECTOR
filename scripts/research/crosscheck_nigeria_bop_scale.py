@@ -45,7 +45,8 @@ if len(pdf.pages)<6: raise SystemExit("CBN PDF has fewer than 6 pages")
 page=pdf.pages[5].extract_text() or ""
 (OUT/"cbn_table2_page6_extracted.txt").write_text(page,encoding="utf-8")
 # Verify table label and every transcribed numeric token is present in the original page text.
-normalized_page=re.sub(r"\\s+"," ",page).replace("−","-").replace("–","-")\nif not normalized_page.strip(): raise SystemExit("CBN Table 2 page text extraction is empty")
+normalized_page=re.sub(r"\s+"," ",page).replace("−","-").replace("–","-")
+if not normalized_page.strip(): raise SystemExit("CBN Table 2 page text extraction is empty")
 tokens=["(0.66)","0.26","0.70","5.28","6.03","7.09"]
 missing=[t for t in tokens if t not in normalized_page]
 if missing: raise SystemExit("CBN transcribed table values not verified in extracted PDF page: "+str(missing))
