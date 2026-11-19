@@ -1143,3 +1143,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 
 ### Audit execution boundary / failed CI attempts (Continuation 43)
 - Offline verifier passed locally against the original downloaded ZIP with the exact expected SHA-256. The optional GitHub Actions wrapper was not accepted as a PASS: run `44540443480` failed because `gh run download` extracted the artifact directory instead of creating the ZIP path expected by the script; run `44540559439` completed with zero jobs. The unverified wrapper workflow was deleted in commit `960d509e2b17532dddb7fea91ba2cc6d141e72b9`. Keep the Python verifier and report; do not cite an Actions PASS for this audit.
+
+
+## Continuation 44 — Part-1: Official SDMx-BOP 2.6.0 capture and legacy compatibility boundary (2026-11-19)
+- Captured official IMF-maintained `IMF:BOP(2.6.0)` from SDMx Global Registry in SDMX-ML 2.1 and 3.0. Both HTTP 200 and XML parse PASS.
+- Run `44541286036` SUCCESS; artifact `14537633127`; ZIP SHA-256 (independently recomputed, matches GitHub digest) `b3475f7271324bf4577b5e99337c710e5defffe4f0244f1c8401e7b42b35e682`.
+- Raw 2.1: 30,286 bytes, SHA-256 `2b467382bc5a8dfaab3df9bccb18ac8326f52fb4111c197a54f94783a742c644`; raw 3.0: 25,602 bytes, SHA-256 `f54c4ca1beea49674481e75c009c9ebec24373091cdb1906faeb03973f626940`.
+- Offline comparison to reused archived `IMF:ECOFIN_DSD(1.0)`: legacy 6 dimensions / 5 attributes; BOP 2.6.0 18 dimensions / 15 attributes; both use OBS_VALUE. New model has 17 non-time dimensions incl. sector, accounting entry, functional category, instrument, maturity, currency and valuation. This is material model change; no name-only crosswalk.
+- Official maintenance policy says new versions do not automatically invalidate prior versions. BOP 2.6.0 is not evidence of BOP6/BOP_BPM6 alias or Brazil migration. PA/BR1 adoption not proven; Brazil mismatch remains BLOCKED.
+- Report: `docs/SDMX_BOP_260_LEGACY_ECOFIN_COMPATIBILITY_AUDIT_CONTINUATION44_PART1_20261119.md`, commit `8c15f7423643ac1ffdcbe6202d0da3a1f4d5d60b`.
+- GCR country coverage/vintage/BPM gates remain blocked; no aggregate/production. ₹0; no production changes; UNKNOWN is not PASS.
