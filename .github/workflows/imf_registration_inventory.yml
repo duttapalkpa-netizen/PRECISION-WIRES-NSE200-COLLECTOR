@@ -1,0 +1,29 @@
+name: IMF Registration Inventory Snapshot (Research Only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/imf_registration_inventory.yml"
+      - "scripts/research/capture_imf_registration_inventory.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture public IMF registration inventory
+        run: python scripts/research/capture_imf_registration_inventory.py
+      - name: Upload raw inventory and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-registration-inventory-${{ github.run_id }}
+          path: artifacts/imf_registration_inventory/
+          if-no-files-found: error
+          retention-days: 90
