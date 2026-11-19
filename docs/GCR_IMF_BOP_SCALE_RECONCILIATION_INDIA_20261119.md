@@ -27,3 +27,11 @@ Compare four calendar quarters of IMF BOP India portfolio-flow series with RBI T
 - Do not apply the Brazil/India 10^6 conversion to other EMDE countries without independent official-source crosswalks.
 - Do not aggregate, backtest or admit this panel to GCR production until missing-country coverage, scale crosswalks, point-in-time vintages and net-flow policy are closed.
 - No synthetic data, no forward-fill, no paid API, no production selector/ranking/pressure-fade/CORE-672/Engines A–E changes.
+
+
+## Authoritative SCALE code meaning — correction
+- IMF BOP DSD `SCALE` references `IMF:CS_MASTER_SYSTEM(1.0.2).SCALE`.
+- Its CoreRepresentation enumerates `IMF:CL_UNIT_MULT(1.0.2)`; code `6` is “Millions”, English description explicitly states `10^6`.
+- The Arabic concept display label is inconsistent with this enumeration; the unit-multiplier codelist is authoritative.
+- Operational API comparison `OBS_VALUE / 1,000,000` remains 10/12 PASS and 2 REVIEW as reported above. No raw IMF values are changed and no global conversion is authorized.
+- Corrected codelist manifest and raw XML: `docs/evidence/imf_bop_20261119/scale_unit_multiplier_authoritative/`; code-list XML SHA-256 `24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561`.
