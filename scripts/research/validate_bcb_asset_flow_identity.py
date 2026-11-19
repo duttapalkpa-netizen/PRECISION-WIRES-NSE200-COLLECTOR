@@ -37,7 +37,7 @@ def parse(body):
   out[d]=v
  if len(out)!=len(rows):raise ValueError("row_count_mismatch")
  return out,rows
-manifest={"source":"Banco Central do Brasil SGS public API","candidate_identities":["22906 = 22908 - 22907","22906 = 22907 - 22908"],"retrieval_started_utc":datetime.now(timezone.utc).isoformat(),"series":{}}
+manifest={"source":"Banco Central do Brasil SGS public API","metadata_basis":"BCB Open Data Portal dataset descriptions identify 22906 as monthly net acquisition of financial assets, 22907 as monthly inflows, and 22908 as monthly outflows; all are USD millions and monthly. Both candidate sign conventions are tested empirically; no sign is assumed from the labels.","candidate_identities":["22906 = 22908 - 22907","22906 = 22907 - 22908"],"retrieval_started_utc":datetime.now(timezone.utc).isoformat(),"series":{}}
 data={}
 for code,meta in SERIES.items():
  rec=fetch(code);body=rec.pop("body")
