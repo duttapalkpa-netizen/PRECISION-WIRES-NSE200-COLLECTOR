@@ -1,0 +1,28 @@
+name: IMF Brazil Registration Artifact Integrity Audit (Offline)
+on:
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download immutable prior evidence (no source re-fetch)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 44465947951 -n imf-brazil-public-api-probe-44465947951 -D prior_artifact
+      - name: Verify exact Brazil registration lifecycle
+        run: python scripts/research/audit_imf_brazil_registration_history_artifact.py prior_artifact/imf-brazil-public-api-probe-44465947951.zip --out artifacts/brazil_registration_history_audit
+      - name: Upload independent audit output
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-brazil-registration-audit-${{ github.run_id }}
+          path: artifacts/brazil_registration_history_audit/
+          if-no-files-found: error
+          retention-days: 90
