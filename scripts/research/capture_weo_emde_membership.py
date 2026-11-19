@@ -125,7 +125,7 @@ def main():
   "workbook_g200_unique_iso3_count":len({x["country_code"] for x in workbook_members}),
   "appendix_to_workbook_mapping_pass":sum(x["mapping_status"]=="PASS" for x in crosswalk),
   "appendix_unmapped_or_ambiguous":[x for x in crosswalk if x["mapping_status"]!="PASS"],
-  "bop_country_codelist_code_count":len(bop_codes),"workbook_iso3_missing_from_bop_codelist":missing,
+  "bop_country_codelist_id":"CL_BOP_COUNTRY","bop_country_codelist_version":"1.0.0","bop_country_codelist_code_count":len(bop_codes),"workbook_iso3_missing_from_bop_codelist":missing,
   "membership_validation_pass":len(labels)==154 and len(workbook_members)==154 and
    len({norm(x) for x in labels})==154 and sum(x["mapping_status"]=="PASS" for x in crosswalk)==154 and not missing,
   "guardrails":["No fuzzy matching or guessed ISO3 codes.","Every ISO3 comes from official WEO October 2026 Country Group Composition sheet.",
