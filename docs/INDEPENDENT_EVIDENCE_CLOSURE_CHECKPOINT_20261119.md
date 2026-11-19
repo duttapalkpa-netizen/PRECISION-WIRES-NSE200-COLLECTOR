@@ -535,3 +535,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - BEN Table 14 (printed p.30) has only net category balances. SEN Table 16 (printed p.27; PDF p.44) confirmed by page-image inspection to have only net category balances. SEN total -2,139.9; direct -1,963.1; portfolio -395.9; derivatives 0.0; other investment +219.2 FCFA bn.
 - Corrected prior report `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`, commit `0d9ce750ff9acbc50a4b680a98dbc516e7433bed`. Official web source for BFA Table 15 and scope: https://www.finances.gov.bf/fileadmin/user_upload/storage/fichiers/Rapport_BdP_2024_au_10-12-2025_TS_AG_13h00__2_.pdf.
 - Next: source the excluded monetary-sector gross flows for BFA; search the other UEMOA reports for similar detailed tables, while preserving BCEAO vs IMF scope distinctions. No quarterly interpolation or production/backtest admission.
+
+
+## Continuation 64 — IMF BOP DSD v2.6.0 capture verification
+- Workflow run `44507773721` SUCCESS; artifact `14520401775`; ZIP SHA-256 `d3948cfae4ed6df052736035e95572914200dbde0a945f3d43f86df950395a94`. Both SDMX-ML 2.1 and 3.0 raw XML returned HTTP 200 and independently parsed PASS. Raw hashes: 2.1 `543c103c18b5597143969ef4fb42ba91be263b03262c257d47824fb45eb8e989`; 3.0 `4508050ea5fce0b0d5ac8184e1d3575bc000e22377e9fd6cb5c126eddd6eedaf`.
+- `IMF:BOP(2.6.0)` DSD contains 17 dimensions plus TIME_PERIOD, 23 codelists, one concept scheme and three returned ESTAT-maintained dataflows. Metadata capture only; no observations. Returned manifest reports zero constraints.
+- No equivalence assumed with the GCR panel's `IMF.STA:DSD_BOP(24.0.0)` / `IMF.STA:BOP(21.0.0)`. Schema crosswalk remains NOT_DONE/BLOCKED; GNB current-version availability NOT_TESTED. Official SDMx-BOP maintenance policy says newer versions do not automatically invalidate earlier DSD versions.
+- Detailed report: `docs/GCR_IMF_BOP_DSD_V260_CAPTURE_VERIFICATION_CONTINUATION64_20261119.md`, commit `e93c8e68571b93fdc9f6855203cdc6e8a3d32b4c`. Continuity ledger updated commit `679114913f39b4433dca20120df2f54db71a3aee`.
+- Next: capture exact legacy IMF.STA DSD v24.0.0 and BOP dataflow v21.0.0 metadata/constraints; build explicit field/code crosswalk; only then run bounded GNB current-version probes. No GCR coverage repair or production admission claimed.
