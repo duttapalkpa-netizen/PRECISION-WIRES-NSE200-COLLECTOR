@@ -27,3 +27,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 retry-global-index-crosscheck-null-type-safe
 
 2026-11-19 probe-PA-tx2-and-BOP6-vs-BOP_BPM6-structure
+
+2026-11-19 retry-PA-tx2-fusion-json-and-sdmx-json-alternates
