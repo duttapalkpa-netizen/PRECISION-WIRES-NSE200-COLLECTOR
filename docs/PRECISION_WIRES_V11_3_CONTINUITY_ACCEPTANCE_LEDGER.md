@@ -671,3 +671,20 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Interpretation: this is a WEO October 2026 vintage membership edition; exact code mapping does NOT mean quarterly BOP observations exist for all 154 members. No aggregate is authorized.
 - Next: query exact IMF BOP keys for 154 × 2 accounting entries (`A_NFA_T`, `L_NIL_T`) using `P_F`, USD, Q; produce a country/entry/quarter coverage matrix with raw provenance, preserve empty series and missing quarters; resolve SCALE/sign semantics before summing.
 - No production selector/ranking/pressure-fade/CORE-672/Engines A–E changes; no synthetic data; UNKNOWN is not PASS.
+
+
+## 2026-11-19 — GCR Part-2: 154-member WEO EMDE portfolio flow panel captured and sample-validated
+- Official IMF WEO October 2026 entire workbook downloaded anonymously (HTTP 200), SHA-256 `2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c`, 5,480,592 bytes.
+- Extracted exact group `G200` / Emerging Market and Developing Economies from `Country Group Composition`: 154 unique country ISO3 codes.
+- Official IMF BOP `CL_BOP_COUNTRY(1.0.0)` XML captured HTTP 200, 5,737,234 bytes, SHA-256 `190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39`; 154/154 WEO EMDE codes matched, missing codes 0.
+- Dataflow `IMF.STA:BOP(21.0.0)`, DSD `IMF.STA:DSD_BOP(24.0.0)`, indicator `P_F`, asset entry `A_NFA_T`, liability entry `L_NIL_T`, quarterly, 2015-Q1..2026-Q3, all unit keys. Both multi-country public SDMX 3.0 GET requests returned HTTP 200 CSV.
+- Run 44474218174, artifact 14505862034; ZIP 5,997,777 bytes; SHA-256 `1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f`.
+- Raw assets CSV: 484,139 bytes, SHA-256 `677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e`, 4,681 nonempty obs, 45 empty rows, 113 countries.
+- Raw liabilities CSV: 451,290 bytes, SHA-256 `713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba`, 4,618 nonempty obs, 43 empty rows, 112 countries.
+- Combined normalized panel: 9,299 observations, 9,299 unique keys, 0 duplicates, 114 countries with any data. 225/308 country-entry pairs have observations (73.05%). Both legs exist for 111 countries; 40 have neither; DZA and ETH are assets-only; ZWE is liabilities-only. 43 members lack at least one leg. Per-country coverage periods vary; most series end 2026-Q2, only two end 2026-Q3. No fill, no zero substitution, no synthetic observations, no conversion/rescaling.
+- Exact sample validation run 44474458684, artifact 14505009889, ZIP SHA-256 `588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7`: 12 countries (ARG/BGD/BRA/CHN/IDN/IND/MEX/NGA/POL/SAU/TUR/ZAF) × 2 entries = 24 exact-key GETs; HTTP 200 24/24; exact series PASS 24/24; 1,106/1,106 exact observation values and all source attributes match broad multi-country raw panel; no missing or mismatches.
+- Durable archive persisted to `docs/evidence/imf_bop_emde_20261119/`; persistence run 44474596292 SUCCESS; archive commit `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`.
+- Detailed report: `docs/GCR_IMF_BOP_EMDE_PANEL_PART2_20261119.md`, commit `487f7ca6758a105dfe1280e5af8ed5b7b3a0369d`.
+- Critical decision: do NOT aggregate 154 EMDE countries yet. Only 111/154 have both assets and liabilities; 40 have neither; 3 are one-sided. Country period coverage is asynchronous. USD is the only returned unit for this query; SCALE=6 retained, not interpreted. Net inflow/aggregation remains BLOCKED until exact SCALE/sign semantics and coverage threshold are accepted.
+- Current GCR status: public IMF BOP observations PASS; 154-member membership mapping PASS; 9,299-row panel acquisition PASS; 12-country exact sample validation PASS; full group aggregate BLOCKED/NOT_AUTHORIZED; relative-attraction formula, sector transmission and rolling backtest NOT_DONE.
+- No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E changed; no paid APIs; no credentials; no synthetic data; UNKNOWN is not PASS.
