@@ -82,3 +82,12 @@ Archive commit: `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`.
 - EMDE group aggregate / net-flow series: BLOCKED / NOT_AUTHORIZED.
 - GCR relative-attraction formula, sector transmission, and rolling backtest: NOT_DONE.
 - No Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E changes. ₹0; no paid APIs, credentials, synthetic rows or fabricated timestamps.
+
+
+## 8. Source semantics and durable raw-source addendum (2026-11-19)
+- Dedicated public SCALE concept route probe: run 44474593356, artifact 14505692823, ZIP SHA-256 `218bb0f75f725e44beb2250b06075ddd8796b0a0dff5bd442a5fd57ddeae519b`.
+- Exact concept scheme resolved: `IMF:CS_MASTER_SYSTEM(1.0.2)`; the `SCALE` concept's CoreRepresentation points to `IMF:CL_UNIT_MULT(1.0+.0)`. The public latest codelist resolved to `CL_UNIT_MULT(1.0.2)); code `6` is labelled **Millions** (10^6). This identifies the code label but does not itself authorize applying a conversion to this panel.
+- All 9,299 observations carry `SCALE=6`. Preserve `OBS_VALUE` and `SCALE` as separate raw fields. No multiply/divide by 10^6, rescaling or conversion is performed until reconciled against the IMF portal's displayed values and official national-source values for Brazil and India.
+- Durable raw source addendum commit `79bfbeb3abd2a0e223ae77d2ed740727404dd112` adds the original WEO October-2026 workbook (`raw/WEOOct2026all.xlsx`) and IMF BOP country codelist XML (`raw/CL_BOP_COUNTRY.xml`) alongside the already archived normalized panel, raw observation CSVs and exact sample receipts.
+- The earlier evidence archive commit `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0` remains the base archive commit.
+- Full acceptance remains: acquisition PASS; membership mapping PASS; exact-key query-shape reconciliation PASS; coverage PARTIAL; scale conversion BLOCKED; BPM/revision-vintage controls NOT_DONE; EMDE aggregate BLOCKED / NOT_AUTHORIZED.
