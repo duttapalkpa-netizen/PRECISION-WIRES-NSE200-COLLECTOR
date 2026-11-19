@@ -29,3 +29,5 @@
 2026-11-19 test-alternate-public-routes-for-CS_MASTER_SYSTEM-SCALE
 
 2026-11-19 fetch-latest-CS_MASTER_SYSTEM-and-CL_UNIT_MULT-code6-definition
+
+2026-11-19 durable-evidence-archive-after-pilot
