@@ -58,6 +58,5 @@ for name,typ,agency,obj,ver in TARGETS:
     row["maintainables"]=[{"tag":local(e.tag),"attributes":e.attrib} for e in root.iter() if local(e.tag) in ("Codelist","ConceptScheme","DataStructure") and e.attrib.get("id")]
   except Exception as e:row["xml_parse"]="FAIL";row["parse_error"]=str(e)
  results.append(row)
-(OUT/"manifest.json").write_text(json.dumps({"scope":"BOP DSD exact dimension order and concept/codelist validation; no data observations queried","responses":results},indent=2,ensure_ascii=False)+"
-",encoding="utf-8")
+(OUT/"manifest.json").write_text(json.dumps({"scope":"BOP DSD exact dimension order and concept/codelist validation; no data observations queried","responses":results},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 print(json.dumps(results,indent=2,ensure_ascii=False))
