@@ -786,3 +786,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Decision: four-country vintage-aligned sample PASS; latest Chile source-vintage mismatch remains REVIEW. Do not call the transform universal for all 154 countries and do not create an EMDE aggregate yet.
 - Next priority: build a vintage-aware country-entry observation matrix; resolve Chile Q1/Q2 2026 revisions; validate one further current-vintage EMDE national source; only then consider an observed-country subtotal with explicit coverage. No imputation.
 - Invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E. ₹0 spend; no paid APIs; no synthetic data; UNKNOWN is not PASS.
+
+
+ 
+## 2026-11-19 — India current-vintage scale/sign supplement
+- Preserve the India historical RBI Table197 BPM6 baseline: 2024-Q2–2025-Q3, 12/12 PASS.
+- New RBI Table42 BPM6 supplement: 2025-Q1/Q2 overlap checks plus 2026-Q1/Q2. 10/12 checks PASS; 2026-Q1 liability and combined net REVIEW; 2026-Q2 all pass.
+- 2026-Q1 IMF liability /1e6 = -13,633.508347m vs RBI 3.2.A net -12,121m; residual -1,512.508347m. Do not silently reconcile.
+- Detailed supplement report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`; raw RBI pages and comparison CSV committed under `docs/evidence/imf_bop_20261119/india_scale_reconciliation_current_vintage/`.
+- Current India status: historical baseline PASS, current 2026-Q1 REVIEW. Overall 4-country vintage-aligned benchmark 118/118 remains valid; current Chile and India revisions remain separate REVIEWs. No aggregate or production admission.
