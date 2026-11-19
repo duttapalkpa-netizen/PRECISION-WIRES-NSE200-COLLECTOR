@@ -52,6 +52,7 @@ on:
       - ".github/workflows/persist_imf_emde_panel.yml"
       - "scripts/research/persist_imf_emde_panel_trigger.txt"
 
+      - "scripts/research/reconcile_imf_bop_scale_brazil_bcb.py"
       - "scripts/research/probe_imf_bop_public_routes.py"
       - "scripts/research/fetch_imf_bop_dsd_codelists.py"
       - "scripts/research/smoke_test_imf_bop_observations.py"
