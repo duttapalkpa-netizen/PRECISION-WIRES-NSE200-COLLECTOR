@@ -73,3 +73,7 @@ This confirms the Brazil-derived scale/sign convention also for India over six q
 - India scale/sign validation: PASS (12/12).
 - Remaining 152 WEO EMDE members: UNKNOWN pending official national-source checks.
 - No EMDE-wide conversion/aggregate is yet authorized. No synthetic rows, forward-fill or production signal. CORE-672, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and Engines A–E remain unchanged.
+
+
+## Supersession note — additional countries validated
+This India 12/12 result remains valid. Additional country benchmarks are now documented in `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`: Brazil 94/94, Mexico 6/6, and Chile 6/6 against the 2026-09 source vintage. The current Chile 2026-11 vintage differs for four Q1/Q2 comparisons; keep the revision/vintage gate open.
