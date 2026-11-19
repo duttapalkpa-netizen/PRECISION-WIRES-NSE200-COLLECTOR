@@ -37,7 +37,8 @@
 - SCALE code meaning is now verified: DSD_BOP SCALE enumerates IMF CL_UNIT_MULT(1.0.2); code 6 = Millions, description 10^6. The IMF API raw OBS_VALUE behaves as base-USD values in national-source crosswalks, so OBS_VALUE/1e6 matches USD-million tables in Brazil (94/94) and India (10/12; 2 REVIEW in 2026-Q1 liabilities/combined net). Preserve raw values; do not generalize numeric conversion to all EMDE countries until country-period crosswalks pass. Sign convention, FX policy and point-in-time vintage history remain open.
 
 ## Evidence
-- Coverage QA run 44475665715 SUCCESS; artifact 14506017682; ZIP SHA-256 `e900f76a31589f83c19d49eefc3720919a91b83e118d244921adf1ff0f948f4a`.\n- SCALE concept run 44475665715 SUCCESS; artifact 14506356045; ZIP SHA-256 `7465214f27dddbece13f5812b49269b566b4139461da986292a65b29828cbdd2`; concept scheme raw XML SHA-256 `9ef243509d7b3edc93b5ef2326ba49c89ced79044ae38674c806d1310367420d`.
-- Full detailed QA files: `docs/evidence/imf_bop_emde_20261119/coverage_qa/` (country readiness, all 308 country-entry combinations, quarterly coverage, summary).
-- Panel persistence run 44475086587 SUCCESS; final main commit `13bdd96d`.
+- Coverage QA run 44475665715 SUCCESS; artifact 14506017682; ZIP SHA-256 `e900f76a31589f83c19d49eefc3720919a91b83e118d244921adf1ff0f948f4a`.
+- Authoritative SCALE code-list capture run 44477031402 SUCCESS; artifact 14506293939; ZIP SHA-256 `ffac629793da363b934321e00f43aaec7eabcd609bc9a029cb46356712a01858`. Targeted CS_MASTER_SYSTEM response SHA-256 `50e82604b231e9e02ba8472d46e227276acec393360e60071c980f8d5caf2768`; CL_UNIT_MULT raw XML SHA-256 `24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561`.
+- India RBI BPM6 crosswalk run 44477031402 SUCCESS; artifact 14505649659; ZIP SHA-256 `8db4f9536a57df1e8635855af5bb90225de0f800e6e9164bd20d99d1f355b4e2`; 10/12 comparisons PASS, 2 REVIEW.
+- Full detailed QA files: `docs/evidence/imf_bop_emde_20261119/coverage_qa/`; scale codelist evidence: `docs/evidence/imf_bop_20261119/scale_unit_multiplier_authoritative/`; India crosswalk: `docs/evidence/imf_bop_20261119/india_scale_reconciliation/`.
 - Invariants unchanged: ₹0; free official sources only; no synthetic data; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged. UNKNOWN is not PASS.
