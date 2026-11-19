@@ -65,3 +65,13 @@ The current BDE series pages show “Actualizado: 18.Nov.2026” and are explici
 
 ## Invariants
 ₹0 spend, official free sources only. No synthetic observations, no fabricated timestamps. Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672 and Engines A–E unchanged. UNKNOWN is not PASS.
+
+
+ 
+## India current-vintage extension — 2026-11-19
+The previously reported India historical baseline (2024-Q2–2025-Q3) remains 12/12 PASS. A later RBI Table42 BPM6 capture adds 2026-Q1/Q2:
+- 2026-Q2: asset, liability and combined net all PASS within ±US$0.5m.
+- 2026-Q1: asset PASS; liability and combined net REVIEW (liability residual -US$1,512.508347m).
+- The four-quarter Table42 supplement (including 2025-Q1/Q2 overlap controls) has 10/12 PASS, 2 REVIEW. This supplement is not counted in the 118/118 vintage-aligned historical benchmark above.
+- Report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`; evidence folder `docs/evidence/imf_bop_20261119/india_scale_reconciliation_current_vintage/`.
+- Decision: retain the 2026-Q1 discrepancy as a vintage/definition REVIEW; do not silently overwrite the IMF or RBI value. No change to the 154-member aggregate gate.

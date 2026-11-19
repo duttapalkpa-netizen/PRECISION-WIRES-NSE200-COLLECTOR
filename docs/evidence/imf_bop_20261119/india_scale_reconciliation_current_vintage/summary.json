@@ -1,0 +1,63 @@
+{
+  "periods": [
+    "2025-Q1",
+    "2026-Q1",
+    "2025-Q2",
+    "2026-Q2"
+  ],
+  "comparison_count": 12,
+  "pass_count": 10,
+  "review_count": 2,
+  "tolerance_usd_million": "0.5",
+  "status": "PARTIAL",
+  "mapping": {
+    "assets": "IMF A_NFA_T = - RBI 3.2.B Portfolio Investment by India net",
+    "liabilities": "IMF L_NIL_T = RBI 3.2.A Portfolio Investment in India net",
+    "combined": "IMF L_NIL_T - A_NFA_T = RBI 3.2 Portfolio Investment net"
+  },
+  "diagnostic_conversion": "IMF OBS_VALUE / 1,000,000 compared with RBI Table 42 US$ million; committed IMF raw values unchanged",
+  "scale_interpretation": "SCALE=6 is IMF CL_UNIT_MULT code 6, Millions (10^6). The IMF API numeric payload crosswalk OBS_VALUE/1e6 matches RBI USD-million values in 10/12 comparisons; 2026-Q1 liability and combined net remain REVIEW. Raw values unchanged; do not generalize to unvalidated EMDE countries.",
+  "review_rows": [
+    {
+      "period": "2026-Q1",
+      "comparison": "liability_net_incurrence",
+      "imf_series": "L_NIL_T",
+      "imf_raw_value": "-13633508347.33219",
+      "imf_value_usd_million_after_diagnostic_division": "-13633.50834733219",
+      "rbi_value_usd_million": "-12121",
+      "residual_imf_minus_rbi_usd_million": "-1512.50834733219",
+      "tolerance_usd_million": "0.5",
+      "status": "REVIEW",
+      "mapping_rule": "IMF net incurrence of liabilities = RBI 'Portfolio Investment in India' net",
+      "imf_derivation_type": "O",
+      "imf_scale": "6",
+      "rbi_source_url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424",
+      "rbi_source_publication_date": "2026-08-25"
+    },
+    {
+      "period": "2026-Q1",
+      "comparison": "combined_net_portfolio_flow",
+      "imf_series": "L_NIL_T minus A_NFA_T",
+      "imf_raw_value": "-13633508347.33219",
+      "imf_value_usd_million_after_diagnostic_division": "-13559.45799446435705",
+      "rbi_value_usd_million": "-12047",
+      "residual_imf_minus_rbi_usd_million": "-1512.45799446435705",
+      "tolerance_usd_million": "0.5",
+      "status": "REVIEW",
+      "mapping_rule": "IMF liabilities minus assets = RBI total portfolio investment net",
+      "imf_derivation_type": "O",
+      "imf_scale": "6",
+      "rbi_source_url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424",
+      "rbi_source_publication_date": "2026-08-25"
+    }
+  ],
+  "no_forward_fill": true,
+  "no_synthetic_data": true,
+  "no_global_aggregate": true,
+  "scale_code_6": {
+    "codelist": "IMF:CL_UNIT_MULT(1.0.2)",
+    "label": "Millions",
+    "description": "10^6",
+    "sha256": "24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561"
+  }
+}

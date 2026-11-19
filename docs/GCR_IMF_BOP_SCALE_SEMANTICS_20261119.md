@@ -18,3 +18,11 @@
 - CL_UNIT_MULT SHA-256 `40a911ecceb0b96ff0ee2a166af3c2512f19fbbfca50e71b2e47936cad3bac78`.
 
 No production changes; no paid sources; no synthetic data; UNKNOWN is not PASS.
+
+
+ 
+## Current-vintage India supplement — 2026-11-19
+- The authoritative `CL_UNIT_MULT(1.0.2)` code 6 = Millions (10^6) remains the controlling metadata definition.
+- Historical national-source benchmarks remain Brazil 94/94, India 12/12 (2024-Q2–2025-Q3), Mexico 6/6 and Chile 2026-09 vintage 6/6 = 118/118 vintage-aligned PASS.
+- New RBI Table42 check adds India 2026-Q1/Q2: Q2 all three comparisons PASS; Q1 asset PASS, liability and combined net REVIEW by about US$1.512bn. See `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`.
+- Operational `OBS_VALUE/10^6` remains validated for tested periods, but the current India Q1 and Chile Q1/Q2 revisions demonstrate that vintage alignment is mandatory. Preserve raw values and vintage; do not aggregate until review rows are resolved.

@@ -1,0 +1,129 @@
+{
+  "scope": "India IMF BOP quarterly portfolio-flow scale/sign crosswalk to RBI Table 42 (BPM6)",
+  "retrieved_at_utc": "2026-11-19T07:06:20.838373+00:00",
+  "sources": [
+    {
+      "retrieved_at_utc": "2026-11-19T07:06:20.838419+00:00",
+      "http_status": 200,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 07:06:23 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Content-Length": "172984",
+        "Connection": "close",
+        "Vary": "Accept-Encoding",
+        "Cache-Control": "private",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Permissions-Policy": "accelerometer=(self), camera=(), geolocation=(), microphone=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Permitted-Cross-Domain-Policies": "none",
+        "Cross-Origin-Resource-Policy": "same-site",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "strict-transport-security": "max-age=16070400; includeSubDomains",
+        "x-azure-ref": "20261119T070620Z-15fcf5759fb489rmhC1BY10p0n00000014mg0000000045y4",
+        "x-fd-int-roxy-purgeid": "0",
+        "X-Cache": "PRIVATE_NOSTORE",
+        "Accept-Ranges": "bytes"
+      },
+      "byte_count": 172984,
+      "sha256": "ae66dbc5c6093a44e89061c32652f5c9ed0bc7a44e4e09ba458255a06d3bab1b",
+      "url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424",
+      "publication_date": "2026-08-25",
+      "raw_file": "raw/rbi_table42_2025-Q1_2026-Q1.html"
+    },
+    {
+      "retrieved_at_utc": "2026-11-19T07:06:25.216476+00:00",
+      "http_status": 200,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 07:06:26 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Content-Length": "172873",
+        "Connection": "close",
+        "Vary": "Accept-Encoding",
+        "Cache-Control": "private",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Permissions-Policy": "accelerometer=(self), camera=(), geolocation=(), microphone=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Permitted-Cross-Domain-Policies": "none",
+        "Cross-Origin-Resource-Policy": "same-site",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "strict-transport-security": "max-age=16070400; includeSubDomains",
+        "x-azure-ref": "20261119T070625Z-15fcf5759fbq8ggwhC1BY1ypw800000044dg000000002ghp",
+        "x-fd-int-roxy-purgeid": "0",
+        "X-Cache": "PRIVATE_NOSTORE",
+        "Accept-Ranges": "bytes"
+      },
+      "byte_count": 172873,
+      "sha256": "47c1ffbfddf8667fd49afca50be6cbe403cbd0dff763b3758e13be286c443103",
+      "url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566",
+      "publication_date": "2026-10-23",
+      "raw_file": "raw/rbi_table42_2025-Q2_2026-Q2.html"
+    }
+  ],
+  "summary": {
+    "periods": [
+      "2025-Q1",
+      "2026-Q1",
+      "2025-Q2",
+      "2026-Q2"
+    ],
+    "comparison_count": 12,
+    "pass_count": 10,
+    "review_count": 2,
+    "tolerance_usd_million": "0.5",
+    "status": "PARTIAL",
+    "mapping": {
+      "assets": "IMF A_NFA_T = - RBI 3.2.B Portfolio Investment by India net",
+      "liabilities": "IMF L_NIL_T = RBI 3.2.A Portfolio Investment in India net",
+      "combined": "IMF L_NIL_T - A_NFA_T = RBI 3.2 Portfolio Investment net"
+    },
+    "diagnostic_conversion": "IMF OBS_VALUE / 1,000,000 compared with RBI Table 42 US$ million; committed IMF raw values unchanged",
+    "scale_interpretation": "SCALE=6 = IMF CL_UNIT_MULT code 6 Millions (10^6); numeric OBS_VALUE/1e6 crosswalk 10/12 PASS, 2 REVIEW in 2026-Q1; raw values preserved.",
+    "review_rows": [
+      {
+        "period": "2026-Q1",
+        "comparison": "liability_net_incurrence",
+        "imf_series": "L_NIL_T",
+        "imf_raw_value": "-13633508347.33219",
+        "imf_value_usd_million_after_diagnostic_division": "-13633.50834733219",
+        "rbi_value_usd_million": "-12121",
+        "residual_imf_minus_rbi_usd_million": "-1512.50834733219",
+        "tolerance_usd_million": "0.5",
+        "status": "REVIEW",
+        "mapping_rule": "IMF net incurrence of liabilities = RBI 'Portfolio Investment in India' net",
+        "imf_derivation_type": "O",
+        "imf_scale": "6",
+        "rbi_source_url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424",
+        "rbi_source_publication_date": "2026-08-25"
+      },
+      {
+        "period": "2026-Q1",
+        "comparison": "combined_net_portfolio_flow",
+        "imf_series": "L_NIL_T minus A_NFA_T",
+        "imf_raw_value": "-13633508347.33219",
+        "imf_value_usd_million_after_diagnostic_division": "-13559.45799446435705",
+        "rbi_value_usd_million": "-12047",
+        "residual_imf_minus_rbi_usd_million": "-1512.45799446435705",
+        "tolerance_usd_million": "0.5",
+        "status": "REVIEW",
+        "mapping_rule": "IMF liabilities minus assets = RBI total portfolio investment net",
+        "imf_derivation_type": "O",
+        "imf_scale": "6",
+        "rbi_source_url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424",
+        "rbi_source_publication_date": "2026-08-25"
+      }
+    ],
+    "no_forward_fill": true,
+    "no_synthetic_data": true,
+    "no_global_aggregate": true,
+    "scale_code_6": {
+      "codelist": "IMF:CL_UNIT_MULT(1.0.2)",
+      "label": "Millions",
+      "description": "10^6",
+      "sha256": "24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561"
+    }
+  }
+}
