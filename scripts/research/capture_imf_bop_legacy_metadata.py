@@ -32,3 +32,5 @@ manifest={"scope":"IMF Data Portal legacy BOP metadata only; no observations; ex
 (OUT/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
 print(json.dumps(manifest,indent=2))
 if not all(x["http_status"]==200 and x["xml_parse"]=="PASS" for x in rows): raise SystemExit("one or more legacy metadata requests not verified")
+
+# Trigger bounded metadata capture after workflow registration.
