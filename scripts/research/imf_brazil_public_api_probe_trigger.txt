@@ -39,3 +39,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 [PA-TX2-ONLY] two-endpoint bounded format comparison
 
 2026-11-19 [PA-TX2-ONLY] official IMF RSS transaction archive capture
+
+2026-11-19 [PA-TX2-ONLY] compare public IMF PA/BOP6/BOP_BPM6/DSD structures via documented GET
