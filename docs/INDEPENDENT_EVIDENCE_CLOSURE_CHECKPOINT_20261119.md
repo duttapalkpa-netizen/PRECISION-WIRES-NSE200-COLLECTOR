@@ -154,3 +154,9 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Run 44465172878 completed SUCCESS; artifact 14500864958; ZIP SHA-256 `d414cd94594b5e20ae7b0233a6e9420c832f993da18cd3f81cf11b304f536fc1`.
 - Independent ZIP inspection: 100/100 HTTP 200; 100/100 Fusion-JSON parse PASS; 100 Registration objects; 0 target PA matches; no failed requests or parse errors. All 100 PA references are distinct; none equals `IMF:BR_BOP_BP6(1.0)`.
 - This is a contiguous ID block and only a bounded negative result. It does not establish that Brazil is absent from transaction IDs above 212.
+
+
+## Brazil registration transaction batch 213–412 — 2026-11-19
+- Run 44465302480 completed SUCCESS; artifact 14502051707; ZIP SHA-256 `1d4e6caa2667d5e1d777e4f76be18b7e692581497bb7e8d1732ab4c00383a4a8`.
+- Independent ZIP inspection: 200/200 HTTP 200; 200/200 Fusion-JSON parse PASS; 200 Registration objects; zero exact matches to target Brazil PA; no non-200 or parse failures.
+- Cumulative contiguous transaction-ID scan 13–412: 400/400 Registration snapshots inspected; 0 exact target PA matches. Still not exhaustive for the September transaction index because IDs 413 onward remain uninspected.
