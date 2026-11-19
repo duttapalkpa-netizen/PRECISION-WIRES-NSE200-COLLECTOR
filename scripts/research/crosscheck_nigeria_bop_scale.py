@@ -42,7 +42,7 @@ except ImportError:
  from pypdf import PdfReader
 pdf=PdfReader(io.BytesIO(pr["body"]))
 if len(pdf.pages)<6: raise SystemExit("CBN PDF has fewer than 6 pages")
-page=pdf.pages[5].extract_text() or ""
+page=pdf.pages[6].extract_text() or ""
 (OUT/"cbn_table2_page6_extracted.txt").write_text(page,encoding="utf-8")
 # Verify table label and every transcribed numeric token is present in the original page text.
 normalized_page=re.sub(r"\s+"," ",page).replace("−","-").replace("–","-")
@@ -84,7 +84,7 @@ for entry in ("A_NFA_T","L_NIL_T"):
 with (OUT/"comparison.csv").open("w",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
 summary={"scope":"Nigeria national-source cross-check of IMF quarterly P_F assets/liabilities",
- "cbn_source_url":PDF_URL,"cbn_pdf":{"retrieved_at_utc":pr["retrieved_at_utc"],"http_status":pr["http_status"],"byte_count":pr["byte_count"],"sha256":pr["sha256"],"page_count":len(pdf.pages),"table_page_index_zero_based":5,"table_page_number":6},
+ "cbn_source_url":PDF_URL,"cbn_pdf":{"retrieved_at_utc":pr["retrieved_at_utc"],"http_status":pr["http_status"],"byte_count":pr["byte_count"],"sha256":pr["sha256"],"page_count":len(pdf.pages),"table_page_index_zero_based":6,"table_page_number":6},
  "cbn_publication":"Central Bank of Nigeria, BOP Highlights Q2 2026, Table 2, page 6; values USD billions; Q2 2025 provisional and Q1 2026 revised per footnotes",
  "imf_dataflow":"IMF.STA:BOP(21.0.0)","indicator":"P_F","periods":PERIODS,"unit":"USD","entries":["A_NFA_T","L_NIL_T"],
  "imf_requests":responses,"comparison_count":len(rows),"pass_count":sum(x["status"]=="PASS" for x in rows),"review_count":sum(x["status"]=="REVIEW" for x in rows),"missing_count":sum(x["status"]=="MISSING_IMF" for x in rows),
