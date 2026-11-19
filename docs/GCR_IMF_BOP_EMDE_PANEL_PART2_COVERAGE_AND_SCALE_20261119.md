@@ -79,3 +79,12 @@ A second exact metadata probe extended the DSD and concept scheme audit:
 - SDMX Glossary distinguishes **Preferred scale** (6 means display in millions while data are in unit scale) from **Unit multiplier** (6 means observations are in millions for calculating actual unit values). These are not interchangeable concepts. See https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_2_0_October_2018-2.htm and https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_1_0_February_2016.htm.
 - IMF's DSD uses a custom concept ID `SCALE`, not `UNIT_MULT`, but reuses the `CL_UNIT_MULT` code list. That code-list link alone does not prove whether the IMF attribute means unit multiplier or preferred display scale. The separate `PRECISION` and `DECIMALS_DISPLAYED` fields further confirm that a simple conversion rule cannot be inferred from the code alone.
 - Decision remains: metadata mapping PASS; semantic equivalence BLOCKED; no numeric transformation. Preserve raw `OBS_VALUE`, `SCALE`, `PRECISION` and `DECIMALS_DISPLAYED` exactly.
+
+
+## Addendum — SCALE/sign national-source benchmark completed (2026-11-19)
+The earlier “SCALE numeric transformation BLOCKED” decision is superseded for the tested Data Portal portfolio-flow series by the two-country benchmark:
+- Brazil BCB SGS 22906/22924: 10/10 selected quarterly comparisons PASS, max residual 0.121925 USD million, tolerance 0.15.
+- India RBI Table 197: 8/8 quarterly comparisons PASS, max residual 0.490 USD million, tolerance 0.5.
+- Combined 18/18 PASS. Raw Data Portal OBS_VALUE divided by 1e6 matches official national US$ million values. Do not multiply by 1e6 a second time; preserve raw values and SCALE=6.
+- Scope remains two countries, not all 154. Full aggregation is still BLOCKED by 40 no-data countries, 3 one-sided countries, 13 series with interior gaps, only 2 countries with both legs in 2026-Q3, and unresolved revision/vintage alignment.
+- Full two-country evidence: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`.
