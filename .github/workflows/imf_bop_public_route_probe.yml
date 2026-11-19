@@ -1,0 +1,26 @@
+name: IMF BOP Public Route Probe
+on:
+  push:
+    paths:
+      - 'scripts/research/imf_bop_public_route_probe_trigger.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Probe official IMF BOP landing pages and public SDMX metadata routes
+        run: python scripts/research/probe_imf_bop_public_routes.py
+      - name: Upload raw responses and manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-public-route-probe-${{ github.run_id }}
+          path: imf_bop_public_route_probe/
+          if-no-files-found: error
+          retention-days: 90
