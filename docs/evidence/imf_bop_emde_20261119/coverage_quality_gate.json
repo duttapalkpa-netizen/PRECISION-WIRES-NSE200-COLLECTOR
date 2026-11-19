@@ -1,0 +1,351 @@
+{
+  "scope": "Independent coverage and time-series continuity audit of committed IMF BOP WEO G200 EMDE panel; no aggregation or scale conversion",
+  "source_panel_run_id": 44474620936,
+  "source_panel_artifact_id": 14505452613,
+  "source_panel_artifact_sha256": "b23854fa433b46b29bb2d8094ec9bc14d2cd6c58fdc1771fa9428ca6ae3aed17",
+  "reproducibility_run_id": 44474218174,
+  "reproducibility_artifact_id": 14505862034,
+  "reproducibility_artifact_sha256": "1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f",
+  "independent_repeat_byte_identity": {
+    "membership_csv_sha256": "381a735ef1d52702ac55085bfad6a529fbb1d4ebb6eca37180cc860ab9a381fd",
+    "coverage_csv_sha256": "afb6c5d7b85cfc3a84dc4405155b42ca6732c910e2e64982ac704b565ffc8ae1",
+    "normalized_panel_csv_sha256": "e8a44abbc8455fef44cc1e4677018ae4b9634d1c04f65bf6fc6dad133cfce62a",
+    "raw_assets_csv_sha256": "677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e",
+    "raw_liabilities_csv_sha256": "713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba",
+    "all_five_data_files_byte_identical_across_two_independent_runs": true
+  },
+  "membership": {
+    "weo_october_2026_G200": 154,
+    "unique_country_codes": 154,
+    "exact_bop_codelist_code_matches": 154,
+    "unmapped": 0,
+    "ambiguous": 0,
+    "duplicates": 0
+  },
+  "panel": {
+    "indicator": "P_F",
+    "entries": [
+      "A_NFA_T",
+      "L_NIL_T"
+    ],
+    "unit_codes": [
+      "USD"
+    ],
+    "frequency": "Q",
+    "period_requested": [
+      "2015-Q1",
+      "2026-Q3"
+    ],
+    "asset_observations": 4681,
+    "liability_observations": 4618,
+    "total_nonempty_observations": 9299,
+    "unique_keys": 9299,
+    "duplicate_keys": 0,
+    "raw_empty_rows_assets": 45,
+    "raw_empty_rows_liabilities": 43,
+    "countries_with_any_observations": 114,
+    "country_entry_combinations_with_observations": 225,
+    "country_entry_combinations_total": 308,
+    "empty_country_entry_combinations": 83
+  },
+  "country_coverage": {
+    "both_entries": 111,
+    "assets_only": [
+      "DZA",
+      "ETH"
+    ],
+    "liabilities_only": [
+      "ZWE"
+    ],
+    "neither": [
+      "ARE",
+      "ATG",
+      "BEN",
+      "BFA",
+      "BRB",
+      "CAF",
+      "CIV",
+      "COG",
+      "COM",
+      "DMA",
+      "ERI",
+      "FSM",
+      "GAB",
+      "GNB",
+      "GNQ",
+      "GRD",
+      "HTI",
+      "IRN",
+      "KEN",
+      "KNA",
+      "LBY",
+      "LCA",
+      "MDV",
+      "MHL",
+      "MLI",
+      "MWI",
+      "NER",
+      "NRU",
+      "OMN",
+      "PLW",
+      "SEN",
+      "SLE",
+      "SOM",
+      "SSD",
+      "SYR",
+      "TCD",
+      "TGO",
+      "TKM",
+      "TUV",
+      "VCT"
+    ],
+    "country_coverage_pct": 74.03,
+    "both_entries_pct_of_membership": 72.08,
+    "country_entry_coverage_pct": 73.05
+  },
+  "series_continuity": {
+    "observed_country_entry_series": 225,
+    "series_with_interior_gaps": 13,
+    "series_contiguous_but_partial": 208,
+    "series_complete_all_47_quarters": 4,
+    "complete_series": [
+      [
+        "BRA",
+        "A_NFA_T"
+      ],
+      [
+        "BRA",
+        "L_NIL_T"
+      ],
+      [
+        "PAK",
+        "A_NFA_T"
+      ],
+      [
+        "PAK",
+        "L_NIL_T"
+      ]
+    ],
+    "interior_gap_series": [
+      {
+        "country": "BHS",
+        "entry": "L_NIL_T",
+        "observations": 24,
+        "start": "2016-Q1",
+        "end": "2024-Q4",
+        "missing": [
+          "2017-Q1",
+          "2017-Q2",
+          "2017-Q3",
+          "2017-Q4",
+          "2018-Q1",
+          "2018-Q2",
+          "2018-Q3",
+          "2018-Q4",
+          "2019-Q1",
+          "2019-Q2",
+          "2019-Q3",
+          "2019-Q4"
+        ]
+      },
+      {
+        "country": "COD",
+        "entry": "A_NFA_T",
+        "observations": 29,
+        "start": "2018-Q1",
+        "end": "2026-Q1",
+        "missing": [
+          "2022-Q1",
+          "2022-Q2",
+          "2022-Q3",
+          "2022-Q4"
+        ]
+      },
+      {
+        "country": "COD",
+        "entry": "L_NIL_T",
+        "observations": 29,
+        "start": "2018-Q1",
+        "end": "2026-Q1",
+        "missing": [
+          "2022-Q1",
+          "2022-Q2",
+          "2022-Q3",
+          "2022-Q4"
+        ]
+      },
+      {
+        "country": "DJI",
+        "entry": "A_NFA_T",
+        "observations": 25,
+        "start": "2019-Q1",
+        "end": "2026-Q1",
+        "missing": [
+          "2021-Q1",
+          "2021-Q2",
+          "2021-Q3",
+          "2021-Q4"
+        ]
+      },
+      {
+        "country": "DJI",
+        "entry": "L_NIL_T",
+        "observations": 25,
+        "start": "2019-Q1",
+        "end": "2026-Q1",
+        "missing": [
+          "2021-Q1",
+          "2021-Q2",
+          "2021-Q3",
+          "2021-Q4"
+        ]
+      },
+      {
+        "country": "GHA",
+        "entry": "L_NIL_T",
+        "observations": 44,
+        "start": "2015-Q1",
+        "end": "2026-Q1",
+        "missing": [
+          "2015-Q3"
+        ]
+      },
+      {
+        "country": "GIN",
+        "entry": "A_NFA_T",
+        "observations": 34,
+        "start": "2015-Q1",
+        "end": "2026-Q2",
+        "missing": [
+          "2015-Q3",
+          "2017-Q3",
+          "2018-Q2",
+          "2018-Q4",
+          "2019-Q1",
+          "2019-Q2",
+          "2019-Q3",
+          "2019-Q4",
+          "2020-Q1",
+          "2020-Q2",
+          "2020-Q3",
+          "2020-Q4"
+        ]
+      },
+      {
+        "country": "GIN",
+        "entry": "L_NIL_T",
+        "observations": 45,
+        "start": "2015-Q1",
+        "end": "2026-Q2",
+        "missing": [
+          "2015-Q3"
+        ]
+      },
+      {
+        "country": "KIR",
+        "entry": "L_NIL_T",
+        "observations": 12,
+        "start": "2020-Q1",
+        "end": "2024-Q4",
+        "missing": [
+          "2022-Q1",
+          "2022-Q2",
+          "2022-Q3",
+          "2022-Q4",
+          "2023-Q1",
+          "2023-Q2",
+          "2023-Q3",
+          "2023-Q4"
+        ]
+      },
+      {
+        "country": "LBR",
+        "entry": "L_NIL_T",
+        "observations": 36,
+        "start": "2015-Q1",
+        "end": "2025-Q4",
+        "missing": [
+          "2018-Q1",
+          "2018-Q2",
+          "2018-Q3",
+          "2018-Q4",
+          "2019-Q1",
+          "2019-Q2",
+          "2019-Q3",
+          "2019-Q4"
+        ]
+      },
+      {
+        "country": "LKA",
+        "entry": "A_NFA_T",
+        "observations": 41,
+        "start": "2015-Q1",
+        "end": "2026-Q2",
+        "missing": [
+          "2020-Q1",
+          "2020-Q2",
+          "2021-Q2",
+          "2021-Q3",
+          "2021-Q4"
+        ]
+      },
+      {
+        "country": "SDN",
+        "entry": "A_NFA_T",
+        "observations": 40,
+        "start": "2015-Q1",
+        "end": "2025-Q4",
+        "missing": [
+          "2023-Q1",
+          "2023-Q2",
+          "2023-Q3",
+          "2023-Q4"
+        ]
+      },
+      {
+        "country": "SDN",
+        "entry": "L_NIL_T",
+        "observations": 28,
+        "start": "2018-Q1",
+        "end": "2025-Q4",
+        "missing": [
+          "2023-Q1",
+          "2023-Q2",
+          "2023-Q3",
+          "2023-Q4"
+        ]
+      }
+    ]
+  },
+  "independent_exact_key_validation": {
+    "countries": [
+      "ARG",
+      "BGD",
+      "BRA",
+      "CHN",
+      "IDN",
+      "IND",
+      "MEX",
+      "NGA",
+      "POL",
+      "SAU",
+      "TUR",
+      "ZAF"
+    ],
+    "requests": 24,
+    "http_200": 24,
+    "series_pass": 24,
+    "exact_observations": 1106,
+    "exact_to_broad_matches": 1106,
+    "failed_series": []
+  },
+  "guardrails": {
+    "no_forward_fill": true,
+    "no_synthetic_rows": true,
+    "no_currency_conversion": true,
+    "no_rescaling": true,
+    "asset_liability_entries_kept_separate": true,
+    "no_aggregate_created": true,
+    "production_admission": false
+  }
+}
