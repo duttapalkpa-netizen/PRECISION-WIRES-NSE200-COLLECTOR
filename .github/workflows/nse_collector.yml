@@ -72,6 +72,8 @@ on:
       - "scripts/research/validate_bcb_liability_flow_identity.py"
       - ".github/workflows/bcb_asset_flow_identity.yml"
       - "scripts/research/validate_bcb_asset_flow_identity.py"
+      - ".github/workflows/imf_brazil_public_tx_history.yml"
+      - "scripts/research/probe_imf_brazil_public_tx_history.py"
       - ".github/workflows/gcr_india_fpi_raw_capture.yml"
       - "scripts/research/capture_india_fpi_official_pages.py"
       - "scripts/research/gcr_india_fpi_raw_capture_trigger.txt"
