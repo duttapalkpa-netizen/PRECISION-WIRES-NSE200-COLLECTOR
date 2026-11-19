@@ -16,10 +16,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      if: !contains(github.event.head_commit.message, '[PA-TX2-ONLY]')
       - name: Capture exact Brazil registration lifecycle for tx 667
         run: python scripts/research/probe_imf_brazil_exact_registration.py
+      if: !contains(github.event.head_commit.message, '[PA-TX2-ONLY]')
       - name: Capture complete Brazil Registration URN lifecycle (all history events)
         run: python scripts/research/capture_imf_brazil_registration_lifecycle.py
+      if: !contains(github.event.head_commit.message, '[PA-TX2-ONLY]')
       - name: Cross-check Brazil registration history against global transaction index
         run: python scripts/research/validate_imf_brazil_history_against_global_index.py
       - name: Probe Brazil PA transaction 2 and current BOP6/BOP_BPM6 structures
