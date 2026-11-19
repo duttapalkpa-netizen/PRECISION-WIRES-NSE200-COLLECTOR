@@ -148,3 +148,9 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Independent ZIP inspection: 100/100 transaction responses HTTP 200; 100/100 Fusion-JSON parse PASS; 100 Registration objects extracted; 0 exact matches to target PA `IMF:BR_BOP_BP6(1.0)`; zero non-200 or parse failures.
 - Each record includes transaction ID, registration URN/ID, PA reference, data URL and Registration.lastUpdated; raw JSON bytes, URL, UTC retrieval time, status, safe headers, byte count and SHA-256 are preserved. The summary expressly limits scope to transaction IDs 13–112.
 - The 100 records are not a random sample; they are the next contiguous ID block after IDs 3–12. Zero matches does not imply Brazil is absent from later IDs. Continue sequential batches until the complete target date-window transaction index has been covered, or until a direct exact match is found.
+
+
+## Brazil registration transaction batch 113–212 — 2026-11-19
+- Run 44465172878 completed SUCCESS; artifact 14500864958; ZIP SHA-256 `d414cd94594b5e20ae7b0233a6e9420c832f993da18cd3f81cf11b304f536fc1`.
+- Independent ZIP inspection: 100/100 HTTP 200; 100/100 Fusion-JSON parse PASS; 100 Registration objects; 0 target PA matches; no failed requests or parse errors. All 100 PA references are distinct; none equals `IMF:BR_BOP_BP6(1.0)`.
+- This is a contiguous ID block and only a bounded negative result. It does not establish that Brazil is absent from transaction IDs above 212.
