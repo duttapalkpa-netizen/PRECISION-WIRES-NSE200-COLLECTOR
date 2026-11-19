@@ -1,79 +1,37 @@
-# IMF BOP Scale / Sign Reconciliation — India
-Date: 2026-11-19
-Status: **PASS — 12/12 comparisons across six calendar quarters**
+# India BOP Portfolio-Flow Scale/Sign Crosswalk — 2026-11-19
 
-## Progress Log
-### Completed
-- Captured RBI Table 197 official BPM6 quarterly Balance of Payments page (USD million).
-- Mapped RBI “Portfolio Investment in India” to IMF `L_NIL_T` (liabilities), and RBI “Portfolio Investment by India” to IMF `A_NFA_T` (assets) with the required sign reversal.
-- Reconciled six calendar quarters, 2024-Q2 through 2025-Q3: 12/12 comparisons PASS within the RBI page's integer-million rounding bound.
-- Raw RBI HTML and machine-readable comparison files are archived in GitHub.
+## Scope
+Compare four calendar quarters of IMF BOP India portfolio-flow series with RBI Table 42, “Standard Presentation of BoP in India as per BPM6 (US$ Million)”. This is a country-period crosswalk, not a full-history pass.
 
-### Rejected
-- The old 2019 RBI Table 196 comparison is not used: it was an older table and the quarter label was not aligned in the initial comparison.
-- No generalization to the other 152 EMDE members without additional country-level cross-checks.
-- No production signal or aggregate release.
+## Source mapping
+- RBI 3.2.A Portfolio Investment in India net ↔ IMF `L_NIL_T` (net incurrence of liabilities).
+- RBI 3.2.B Portfolio Investment by India net ↔ negative IMF `A_NFA_T` (net acquisition of assets).
+- RBI 3.2 Portfolio Investment net ↔ IMF `L_NIL_T - A_NFA_T`.
+- RBI table values are US$ million; IMF raw `OBS_VALUE` is divided by 1,000,000 only for this comparison. Stored IMF values remain unchanged.
+- Rounding tolerance: ±US$0.5 million because RBI publishes integer US$ million values.
 
-### Next actions
-1. Validate at least one additional EMDE country against its official national BPM6 source.
-2. Add country-specific vintage/revision controls; RBI states Table 197 data are subject to revision.
-3. After enough country checks, apply the Brazil/India-validated scale convention to a pilot multi-country subset, then reconcile coverage and aggregate.
+## Results
+- Comparisons: 12; PASS: 10; REVIEW: 2.
+- 2025-Q1, 2025-Q2 and 2026-Q2: both asset and liability legs match RBI within ±US$0.5m; combined portfolio net also matches.
+- 2026-Q1: asset leg matches, but liability leg and combined net do not. IMF liability = -13633.50834733219 US$ million; RBI 3.2.A net = -12121 US$ million. Residual = -1512.50834733219 US$ million. Do not silently reconcile or override.
+- Therefore India scale/sign mapping is PARTIAL, not full-history PASS. The 2026-Q1 liability discrepancy remains REVIEW pending vintage/definition reconciliation.
 
-## 1. Official RBI source
-- Table 197: “Standard Presentation of India’s Balance of Payments as per BPM6 — Quarterly — US Dollar”
-- Publication date: 31 July 2026.
-- Unit: US$ million; quarterly; standard BPM6 classification; credit, debit and net values shown separately.
-- Source page: https://www.rbi.org.in/Scripts/PublicationsView.aspx?id=24022
-- RBI handbook (April 2026) defines Table 42 as quarterly, US$ million, BPM6, with financial account by functional classification; the DBIE provides longer historical series. The current Table197 page is the selected published data source for this comparison.
+## Provenance
+- RBI Table 42 Jan-Mar 2025 / Jan-Mar 2026: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424 (published 2026-08-25).
+- RBI Table 42 Apr-Jun 2025 / Apr-Jun 2026: https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566 (published 2026-10-23).
+- Raw HTML bytes, retrieval timestamps, headers and SHA-256 are in `docs/evidence/imf_bop_20261119/india_scale_reconciliation/`.
+- Full comparison rows: `docs/evidence/imf_bop_20261119/india_scale_reconciliation/india_bop_scale_sign_crosswalk.csv`.
 
-## 2. Mapping and method
-- RBI `3.2.A Portfolio Investment in India` (credit − debit net) maps to IMF `L_NIL_T` (net incurrence of liabilities), with no sign reversal.
-- RBI `3.2.B Portfolio Investment by India` (credit − debit net) maps to IMF `A_NFA_T` (net acquisition of financial assets) after sign reversal: `IMF asset = − RBI net`.
-- IMF raw `OBS_VALUE / 1,000,000` is compared with the RBI value in USD million.
-- RBI Table197 displays integer USD millions; maximum rounding error per displayed net value is 0.5 million USD.
-- Calendar alignment is explicit: April–June = Q2; July–September = Q3; October–December = Q4; January–March = Q1.
-
-## 3. Results
-<text>All values are USD million. RBI asset net is sign-reversed for comparison with IMF A_NFA_T.</text>
-
-| IMF quarter | RBI period | Entry | RBI comparable | IMF raw ÷ 1e6 | Residual | Result |
-|---|---|---|---:|---:|---:|---|
-| 2024-Q2 | Apr–Jun 2024 | Assets | -48 | -47.510029 | 0.489971 | PASS |
-| 2024-Q2 | Apr–Jun 2024 | Liabilities | 897 | 897.230199 | 0.230199 | PASS |
-| 2024-Q3 | Jul–Sep 2024 | Assets | -35 | -34.990039 | 0.009961 | PASS |
-| 2024-Q3 | Jul–Sep 2024 | Liabilities | 19,815 | 19,815.071032 | 0.071032 | PASS |
-| 2024-Q4 | Oct–Dec 2024 | Assets | -63 | -62.610017 | 0.389983 | PASS |
-| 2024-Q4 | Oct–Dec 2024 | Liabilities | -11,435 | -11,434.646504 | 0.353496 | PASS |
-| 2025-Q1 | Jan–Mar 2025 | Assets | -136 | -135.999311 | 0.000689 | PASS |
-| 2025-Q1 | Jan–Mar 2025 | Liabilities | -5,995 | -5,994.630947 | 0.369053 | PASS |
-| 2025-Q2 | Apr–Jun 2025 | Assets | 872 | 872.453922 | 0.453922 | PASS |
-| 2025-Q2 | Apr–Jun 2025 | Liabilities | 2,481 | 2,480.700912 | -0.299088 | PASS |
-| 2025-Q3 | Jul–Sep 2025 | Assets | 279 | 278.550001 | -0.449999 | PASS |
-| 2025-Q3 | Jul–Sep 2025 | Liabilities | -5,468 | -5,468.379504 | -0.379504 | PASS |
-
-- 12/12 PASS; 0 REVIEW; 0 missing.
-- Maximum absolute residual: 0.4899709189 million USD, within the 0.5 million integer-rounding bound.
-- The sign mapping also matches across both legs.
-
-## 4. Decision
-For the India BOP P_F series tested, the empirically validated normalization is:
-`USD_million = OBS_VALUE / 10^6`.
-The asset sign must be compared as the negative of RBI's “Portfolio Investment by India” credit-minus-debit net; liabilities compare directly to RBI's “Portfolio Investment in India” net.
-This confirms the Brazil-derived scale/sign convention also for India over six quarters. It does not authorize applying it to all 154 EMDE members or to unvalidated vintages.
-
-## 5. Reproducibility
-- Workflow run: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44476434148
-- Artifact ID: `14506542277`; ZIP 28,097 bytes; SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`.
-- Raw RBI HTML: 146,017 bytes; SHA-256 `391c549c5b64c0b7f9204eb9634975f77d4ba2d7796542ed23932fb8d740813d`.
-- Durable evidence commit: `451b9e203fd6edb1541c42432b47a393e030372c`.
-- Evidence folder: `docs/evidence/imf_bop_emde_20261119/india_scale_reconciliation/`.
-
-## 6. Decision boundary
-- Brazil scale/sign validation: PASS (10/10).
-- India scale/sign validation: PASS (12/12).
-- Remaining 152 WEO EMDE members: UNKNOWN pending official national-source checks.
-- No EMDE-wide conversion/aggregate is yet authorized. No synthetic rows, forward-fill or production signal. CORE-672, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and Engines A–E remain unchanged.
+## Decision
+- Empirical unit scaling and sign mapping are supported for 3/4 tested quarters, with 1 material review.
+- Do not apply the Brazil/India 10^6 conversion to other EMDE countries without independent official-source crosswalks.
+- Do not aggregate, backtest or admit this panel to GCR production until missing-country coverage, scale crosswalks, point-in-time vintages and net-flow policy are closed.
+- No synthetic data, no forward-fill, no paid API, no production selector/ranking/pressure-fade/CORE-672/Engines A–E changes.
 
 
-## Supersession note — additional countries validated
-This India 12/12 result remains valid. Additional country benchmarks are now documented in `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`: Brazil 94/94, Mexico 6/6, and Chile 6/6 against the 2026-09 source vintage. The current Chile 2026-11 vintage differs for four Q1/Q2 comparisons; keep the revision/vintage gate open.
+## Authoritative SCALE code meaning — correction
+- IMF BOP DSD `SCALE` references `IMF:CS_MASTER_SYSTEM(1.0.2).SCALE`.
+- Its CoreRepresentation enumerates `IMF:CL_UNIT_MULT(1.0.2)`; code `6` is “Millions”, English description explicitly states `10^6`.
+- The Arabic concept display label is inconsistent with this enumeration; the unit-multiplier codelist is authoritative.
+- Operational API comparison `OBS_VALUE / 1,000,000` remains 10/12 PASS and 2 REVIEW as reported above. No raw IMF values are changed and no global conversion is authorized.
+- Corrected codelist manifest and raw XML: `docs/evidence/imf_bop_20261119/scale_unit_multiplier_authoritative/`; code-list XML SHA-256 `24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561`.
