@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Capture official BCB SGS portfolio-asset net/inflow/outflow series and test identity."""
-import csv, hashlib, json, time\nfrom decimal import Decimal
+import csv, hashlib, json, time
+from decimal import Decimal
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
