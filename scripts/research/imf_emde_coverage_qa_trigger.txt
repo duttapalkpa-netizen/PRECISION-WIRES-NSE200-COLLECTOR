@@ -5,3 +5,5 @@
 2026-11-19 follow-SCALE-enumeration-to-authoritative-code-list
 
 2026-11-19 fix-scale-artifact-name
+
+2026-11-19 annotate-scale-as-decimal-place-attribute-no-rescaling
