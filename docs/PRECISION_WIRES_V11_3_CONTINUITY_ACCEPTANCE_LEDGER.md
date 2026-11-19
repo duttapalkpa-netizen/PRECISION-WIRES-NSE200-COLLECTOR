@@ -860,3 +860,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Artifact ID `14514282771`, ZIP SHA-256 `7b5865d7c38f45b3d311c7e3cea0e9381ba35f4ed46d0025411ffdcb27e060df`, 90-day retention. Artifact downloaded and raw PDF hash rechecked.
 - Accidental NSE runs `44494746703` and `44494753220` cancelled before NSE data acquisition; helper run `44494822191` SUCCESS. Collector paths-ignore now includes archive script, trigger and workflow. No production code change.
 - Net benchmark remains PARTIAL; separate IMF asset/liability legs not disclosed by this report, so mapping remains BLOCKED.
+
+
+## Continuation 41 — BCEAO CIV 2024 gross FDI split
+- Found an official 2021 CIV report with aggregate gross asset/liability columns, proving that detailed national reports can contain the required structure; historical vintage is not interchangeable with 2024.
+- Archived CIV 2024 national BOP PDF: 3,596,808 bytes, SHA-256 `99aee45e2f75464e85b9b319c9acd93bfd706779119e8c6bfac8db0f5a1a2f28`; run `44495255971` SUCCESS; artifact `14515150693`, ZIP digest `6ad9941564fbed0c144e6d65e7065acbef5c6511df19fb7cd5c59ce5f9659baa`.
+- Printed pp.24–25: direct-investment asset acquisition 138.1, liability incurrence 1,892.8; net 138.1−1,892.8=−1,754.7 exactly matches Table 13. Asset/liability subcomponent sums also exact. Portfolio, derivatives and other investment are net-only in the report; total financial account −4,043.1.
+- Therefore FDI gross-leg extraction PARTIAL PASS only; aggregate IMF A_NFA_T/L_NIL_T remains BLOCKED / NOT_MAPPED. Do not promote the FDI-only amounts to total legs.
+- CSV `docs/evidence/gcr_bceao_2024/civ_2024_fdi_gross_legs.csv`; report `docs/GCR_BCEAO_CIV_2024_FDI_GROSS_LEGS_PARTIAL_20261119.md`.
+- Two accidental collector runs `44495237321`, `44495240272` cancelled before market-data step; helper `44495300530` SUCCESS. No production code change.
