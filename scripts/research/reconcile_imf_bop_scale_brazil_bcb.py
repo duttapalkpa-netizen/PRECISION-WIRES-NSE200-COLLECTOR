@@ -96,7 +96,8 @@ def main():
   "blocked_count":sum(x.get("status")=="BLOCKED_MISSING_SOURCE" for x in outrows),
   "tolerance_rule":"0.15 USD million = 3 monthly source values each rounded to 0.1 USD million (maximum aggregate rounding bound)",
   "conversion_test":"IMF OBS_VALUE / 1,000,000 compared with sum of three BCB monthly values",
-  "all_pass":len(outrows)==94 and all(x.get("status")=="PASS" for x in outrows),\n  "max_abs_residual_usd_million":str(max((abs(Decimal(x["residual_imf_minus_bcb_usd_million"])) for x in outrows if x.get("residual_imf_minus_bcb_usd_million") is not None),default=Decimal("0"))),
+  "all_pass":len(outrows)==94 and all(x.get("status")=="PASS" for x in outrows),
+  "max_abs_residual_usd_million":str(max((abs(Decimal(x["residual_imf_minus_bcb_usd_million"])) for x in outrows if x.get("residual_imf_minus_bcb_usd_million") is not None),default=Decimal("0"))),
   "warning":"This validates Brazil across 47 quarters and two flow entries; do not generalize to all EMDE countries or India without additional country-source checks."}
  (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
  print(json.dumps(summary,indent=2,ensure_ascii=False))
