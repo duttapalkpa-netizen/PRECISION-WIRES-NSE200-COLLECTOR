@@ -1,0 +1,232 @@
+[
+  {
+    "entry": "A_NFA_T",
+    "bcb_sgs_code": 22906,
+    "quarter": "2015-Q1",
+    "bcb_months": [
+      "2015-01",
+      "2015-02",
+      "2015-03"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "446.0",
+      "-1161.2",
+      "-557.9"
+    ],
+    "bcb_quarter_sum_usd_million": "-1273.1",
+    "imf_obs_value_raw_usd": "-1273138947.33",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "-1273.13894733",
+    "residual_imf_minus_bcb_usd_million": "-0.03894733",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "A_NFA_T",
+    "bcb_sgs_code": 22906,
+    "quarter": "2015-Q2",
+    "bcb_months": [
+      "2015-04",
+      "2015-05",
+      "2015-06"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "502.2",
+      "-109.9",
+      "120.1"
+    ],
+    "bcb_quarter_sum_usd_million": "512.4",
+    "imf_obs_value_raw_usd": "512497139.53",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "512.49713953",
+    "residual_imf_minus_bcb_usd_million": "0.09713953",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "A_NFA_T",
+    "bcb_sgs_code": 22906,
+    "quarter": "2015-Q3",
+    "bcb_months": [
+      "2015-07",
+      "2015-08",
+      "2015-09"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "-846.7",
+      "-270.8",
+      "-27.7"
+    ],
+    "bcb_quarter_sum_usd_million": "-1145.2",
+    "imf_obs_value_raw_usd": "-1145178767.1",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "-1145.1787671",
+    "residual_imf_minus_bcb_usd_million": "0.0212329",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "A_NFA_T",
+    "bcb_sgs_code": 22906,
+    "quarter": "2015-Q4",
+    "bcb_months": [
+      "2015-10",
+      "2015-11",
+      "2015-12"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "359.5",
+      "136.0",
+      "-2158.4"
+    ],
+    "bcb_quarter_sum_usd_million": "-1662.9",
+    "imf_obs_value_raw_usd": "-1662884227.32",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "-1662.88422732",
+    "residual_imf_minus_bcb_usd_million": "0.01577268",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "A_NFA_T",
+    "bcb_sgs_code": 22906,
+    "quarter": "2026-Q3",
+    "bcb_months": [
+      "2026-07",
+      "2026-08",
+      "2026-09"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "3974.2",
+      "312.2",
+      "3269.3"
+    ],
+    "bcb_quarter_sum_usd_million": "7555.7",
+    "imf_obs_value_raw_usd": "7555691695.07",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "7555.69169507",
+    "residual_imf_minus_bcb_usd_million": "-0.00830493",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "L_NIL_T",
+    "bcb_sgs_code": 22924,
+    "quarter": "2015-Q1",
+    "bcb_months": [
+      "2015-01",
+      "2015-02",
+      "2015-03"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "12054.8",
+      "2656.7",
+      "2918.0"
+    ],
+    "bcb_quarter_sum_usd_million": "17629.5",
+    "imf_obs_value_raw_usd": "17629558375.05",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "17629.55837505",
+    "residual_imf_minus_bcb_usd_million": "0.05837505",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "L_NIL_T",
+    "bcb_sgs_code": 22924,
+    "quarter": "2015-Q2",
+    "bcb_months": [
+      "2015-04",
+      "2015-05",
+      "2015-06"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "6611.2",
+      "3532.0",
+      "-107.0"
+    ],
+    "bcb_quarter_sum_usd_million": "10036.2",
+    "imf_obs_value_raw_usd": "10036148645.97",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "10036.14864597",
+    "residual_imf_minus_bcb_usd_million": "-0.05135403",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "L_NIL_T",
+    "bcb_sgs_code": 22924,
+    "quarter": "2015-Q3",
+    "bcb_months": [
+      "2015-07",
+      "2015-08",
+      "2015-09"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "-4355.5",
+      "-1706.3",
+      "-3881.4"
+    ],
+    "bcb_quarter_sum_usd_million": "-9943.2",
+    "imf_obs_value_raw_usd": "-9943234065.4",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "-9943.2340654",
+    "residual_imf_minus_bcb_usd_million": "-0.0340654",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "L_NIL_T",
+    "bcb_sgs_code": 22924,
+    "quarter": "2015-Q4",
+    "bcb_months": [
+      "2015-10",
+      "2015-11",
+      "2015-12"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "-3184.3",
+      "4162.4",
+      "-4430.7"
+    ],
+    "bcb_quarter_sum_usd_million": "-3452.6",
+    "imf_obs_value_raw_usd": "-3452478075.89",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "-3452.47807589",
+    "residual_imf_minus_bcb_usd_million": "0.12192411",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  },
+  {
+    "entry": "L_NIL_T",
+    "bcb_sgs_code": 22924,
+    "quarter": "2026-Q3",
+    "bcb_months": [
+      "2026-07",
+      "2026-08",
+      "2026-09"
+    ],
+    "bcb_monthly_values_usd_million": [
+      "2158.3",
+      "-5319.9",
+      "-1698.5"
+    ],
+    "bcb_quarter_sum_usd_million": "-4860.1",
+    "imf_obs_value_raw_usd": "-4860140998.73",
+    "imf_scale": "6",
+    "imf_obs_value_div_1e6_usd_million": "-4860.14099873",
+    "residual_imf_minus_bcb_usd_million": "-0.04099873",
+    "tolerance_usd_million": "0.15",
+    "bcb_month_values_one_decimal": true,
+    "status": "PASS"
+  }
+]

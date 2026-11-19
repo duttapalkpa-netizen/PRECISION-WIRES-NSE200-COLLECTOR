@@ -1,0 +1,72 @@
+{
+  "scope": "Brazil BOP scale/sign reconciliation against official BCB monthly portfolio investment net flows",
+  "sources": [
+    {
+      "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=json",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22906/dados?formato=json",
+      "retrieved_at_utc": "2026-11-19T06:55:28.937807+00:00",
+      "http_status": 200,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 06:55:29 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "14594",
+        "Connection": "close",
+        "correlation-id": "a4e5c7a5-fe40-4e65-a787-4c5735d87792",
+        "x-content-type-options": "nosniff",
+        "cache-control": "private",
+        "access-control-allow-origin": "*",
+        "etag": "W/\"3902-KT17bzA09Fbg+FQEw6E6TinBQ8o\"",
+        "x-azure-ref": "20261119T065528Z-184f8794c85rqps2hC1BL1rpf00000004p0000000000658u",
+        "X-Cache": "CONFIG_NOCACHE",
+        "Accept-Ranges": "bytes"
+      },
+      "file": "raw/BCB_SGS_22906.json",
+      "byte_count": 14594,
+      "sha256": "110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30",
+      "sgs_code": 22906
+    },
+    {
+      "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=json",
+      "final_url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.22924/dados?formato=json",
+      "retrieved_at_utc": "2026-11-19T06:55:29.178066+00:00",
+      "http_status": 200,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 06:55:29 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "14890",
+        "Connection": "close",
+        "correlation-id": "d904dfed-d613-4dba-b755-1d6832bf79fa",
+        "x-content-type-options": "nosniff",
+        "cache-control": "private",
+        "access-control-allow-origin": "*",
+        "etag": "W/\"3a2a-Mr7b+TMIxZzyaakvchg0eae122I\"",
+        "x-azure-ref": "20261119T065529Z-184f8794c85z6f47hC1BL1pphc0000000dwg000000006zpq",
+        "X-Cache": "CONFIG_NOCACHE",
+        "Accept-Ranges": "bytes"
+      },
+      "file": "raw/BCB_SGS_22924.json",
+      "byte_count": 14890,
+      "sha256": "2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb",
+      "sgs_code": 22924
+    }
+  ],
+  "series": {
+    "A_NFA_T": "BCB SGS 22906, net acquisition of financial assets, monthly, million US dollars",
+    "L_NIL_T": "BCB SGS 22924, net incurrence of liabilities, monthly, million US dollars"
+  },
+  "quarters": [
+    "2015-Q1",
+    "2015-Q2",
+    "2015-Q3",
+    "2015-Q4",
+    "2026-Q3"
+  ],
+  "expected_comparisons": 10,
+  "pass_count": 10,
+  "review_count": 0,
+  "blocked_count": 0,
+  "tolerance_rule": "0.15 USD million = 3 monthly source values each rounded to 0.1 USD million (maximum aggregate rounding bound)",
+  "conversion_test": "IMF OBS_VALUE / 1,000,000 compared with sum of three BCB monthly values",
+  "all_pass": true,
+  "warning": "This validates only Brazil and selected quarters; do not generalize to all EMDE countries or India without additional country-source checks."
+}
