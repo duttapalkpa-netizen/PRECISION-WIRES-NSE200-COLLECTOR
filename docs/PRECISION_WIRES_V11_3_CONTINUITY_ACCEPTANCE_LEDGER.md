@@ -1191,3 +1191,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Together with liability-side 22924=22925-22926 PASS 381/381 (Continuation 40 Part-1), both Brazil BCB portfolio gross-flow accounting identities are independently closed. IMF PA BOP6 vs BCB payload BOP_BPM6 remains unresolved; Brazil Reconstruction not 100%.
 - Report `docs/BRAZIL_BCB_PORTFOLIO_ASSET_GROSS_FLOW_IDENTITY_CONTINUATION45_PART1_20261119.md`, commit `e1c2fd590cb1ec343af93bb2a7e812e80b17919d`.
 - GCR country coverage/vintage/BPM gates remain blocked; no EMDE aggregate/relative-attraction score. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## 9. Brazil asset-side gross-flow identity — Continuation 45 (2026-11-19)
+- PASS: BCB SGS 22906/22907/22908 have 381/381 common monthly observations (1995-01–2026-09); unique identity `22906 = 22908 - 22907`; 381/381 within 0.15 USD million, max residual 0.1. Reverse sign convention 0/381.
+- Raw SHA-256: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Validator commit `90b1a68aa5c5a36f88293e4c857530268101a86c`; run `44542505681` SUCCESS; artifact `14538393352`; ZIP SHA-256 `51ab88b418ebbaa88595a45eb2a94cf8507c454c3c637075b935c8de07dcf762`.
+- Failure lesson: exploratory run `44542407481` used wrong assumed sign. Preserve it as a rejected test; do not repeat. Corrected validator evaluates both candidate signs.
+- Brazil registry mismatch/PA history remains BLOCKED; GCR synchronized coverage and model acceptance remain BLOCKED. No production selector/ranking/pressure/CORE-672/Engines A-E changes; ₹0; UNKNOWN is not PASS.
