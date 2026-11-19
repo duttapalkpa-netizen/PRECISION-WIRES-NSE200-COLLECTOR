@@ -701,3 +701,16 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Detailed report: `docs/IMF_BRAZIL_PUBLIC_STRUCTURE_ARTIFACT_AUDIT_CONTINUATION39_PART5_20261119.md`, commit `93258ce505dca1dd45af758664cc4ab0e7688ac5`.
 - Next Brazil dependency: authorized owner/provider export of exact PA Revisions/Changelog/Compare/View, dated IMF:BR1 registration event rows, and official Brazil-specific mapping/correction if BOP6 collection PA intentionally accompanies BOP_BPM6 payload. No credentials/cookies; no authenticated write.
 - GCR/Chile findings and all protected invariants unchanged. ₹0; UNKNOWN is not PASS; no production integration or macro weights.
+
+
+## Continuation 39 — Part-5: Brazil public structure artifact independently audited (2026-11-19)
+- Workflow run 44533595369 / run #36 SUCCESS; job `probe` SUCCESS. Trigger commit 786ac4a64ea8ab412c41907c0e1afe1e46d8dcb5. Previously completed lifecycle steps were intentionally skipped; structure comparison, RSS capture and artifact upload succeeded.
+- Artifact 14534769007, 7,648,050 bytes; GitHub digest and independently recomputed ZIP SHA-256 both `4a235de4fdd1624bac3526c01f0940d05b4ef23fb435db619b4542dcd467666e`.
+- Four public IMF structure responses: all HTTP 200 and SDMX 2.1 XML parse PASS. Raw byte counts/SHA-256: PA 42,896,179 / `b4343e43bbf82047a011bfa813f6bafc5149f8ff03132fa736ba2b037a56ded2`; BOP6 43,071,271 / `4b5c1028534487f0b96da66ae57bf1f26a53cdf5b87f78127dbcdf0b012d1a98`; BOP_BPM6 42,908,746 / `7cc596edeffc0819b068829a605c2f5514726fcc859bf84498ecaeef38c73be4`; ECOFIN_DSD 42,905,001 / `d0b6a3301683a7dd4b4207982944ebdc904bc9092fa980dffda8f626ac94bc30`. Manifest SHA-256 `10f0dd5bb1c007d8dd0cc35cd79d87bb00c800c6748fa9c30cf617c1337351d9`.
+- Exact PA `IMF:BR_BOP_BP6(1.0)` -> Dataflow `IMF:BOP6(1.0)`, Provider `IMF:BR1`. BOP6 label is “Balance of Payments (BPM6) for Collection”; BOP_BPM6 label is “Balance of Payments -- BPM6”. Both reference `IMF:ECOFIN_DSD(1.0)`, but are distinct Dataflow IDs with separate allowed constraints. Shared DSD is not an alias or equivalence proof.
+- BOP6 response also includes Chile PA `IMF:CL_BOP(1.0)` -> CL2 and IMF PA `IMF:IMF_BOP6(1.0)`; BOP6 is not Brazil-only. This still does not resolve BCB payload header `IMF:BOP_BPM6(1.0)` vs Brazil PA Dataflow `IMF:BOP6(1.0)`.
+- RSS raw feed: HTTP 200, 28,299 bytes, SHA-256 `001b7fe9bb5fba306d5d478f35f5b7fd598ffa270954e1025d1136e43a1a2b6d`; XML parse PASS, 31 entries, 0 Brazil matches. This closes only the captured feed window.
+- Transaction ID 2 fusion-json and sdmx-json again HTTP 500, same 39-byte body SHA-256 `76c4819f18129eb81b5fab80dcf0641665f332b823864c2c09280efe21415825`; do not repeat.
+- Report: `docs/IMF_BRAZIL_PUBLIC_STRUCTURE_ARTIFACT_AUDIT_CONTINUATION39_PART5_20261119.md`, commit `93258ce505dca1dd45af758664cc4ab0e7688ac5`.
+- Next Brazil dependency: authorized owner/provider export of exact PA Revisions/Changelog/Compare/View, dated BR1 registration event rows, and official Brazil-specific mapping/correction if BOP6 collection PA intentionally accompanies BOP_BPM6 payload. No credentials/cookies and no authenticated write.
+- No production integration, macro weights, EMDE aggregate, selector/ranking/pressure-fade/CORE-672/Engines A-E changes. ₹0; UNKNOWN is not PASS.
