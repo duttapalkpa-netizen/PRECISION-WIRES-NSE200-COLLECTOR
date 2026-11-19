@@ -13,3 +13,5 @@
 2026-11-19 broad-BOP-key-diagnostic-after-empty-exact-series
 
 2026-11-19 capture-targeted-BRA-IND-portfolio-P_F-quarterly-flows
+
+2026-11-19 validate-186-row-BOP-portfolio-panel-against-broad-raw-capture
