@@ -1,0 +1,58 @@
+name: Persist IMF BOP EMDE Portfolio Panel Evidence
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research/persist_imf_emde_panel_trigger.txt"
+permissions:
+  contents: write
+  actions: read
+jobs:
+  persist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Download verified 154-member panel and exact-key checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 44474218174 --repo "$GITHUB_REPOSITORY" --name "imf-bop-emde-portfolio-flows-44474218174" --dir /tmp/emde
+          gh run download 44474458684 --repo "$GITHUB_REPOSITORY" --name "imf-emde-exact-sample-validation-44474458684" --dir /tmp/exact
+      - name: Persist raw CSVs, normalized panel, coverage and receipts
+        run: |
+          DEST=docs/evidence/imf_bop_emde_20261119
+          mkdir -p "$DEST/raw" "$DEST/exact_sample_checks"
+          cp /tmp/emde/emde_membership.csv "$DEST/"
+          cp /tmp/emde/coverage_by_country_entry.csv "$DEST/"
+          cp /tmp/emde/emde_portfolio_flows.csv "$DEST/"
+          cp /tmp/emde/summary.json "$DEST/"
+          cp /tmp/emde/provenance.json "$DEST/"
+          cp /tmp/emde/raw/EMDE_A_NFA_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
+          cp /tmp/emde/raw/EMDE_L_NIL_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
+          cp /tmp/exact/summary.json "$DEST/exact_sample_checks/"
+          cp /tmp/exact/raw/*.csv "$DEST/exact_sample_checks/"
+          cat > "$DEST/source_artifact_receipt.json" <<'EOF'
+          {
+            "panel_workflow_run_id": 44474218174,
+            "panel_artifact_id": 14505862034,
+            "panel_artifact_sha256": "1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f",
+            "sample_validation_workflow_run_id": 44474458684,
+            "sample_validation_artifact_id": 14505009889,
+            "sample_validation_artifact_sha256": "588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7",
+            "weo_october_2026_workbook_sha256": "2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c",
+            "imf_bop_country_codelist_sha256": "190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39",
+            "authentication": "none; public anonymous GET",
+            "validation": "154/154 WEO member codes map to BOP codelist; 9,299 unique observations; 24 exact queries; 1,106/1,106 observation/attribute matches"
+          }
+          EOF
+      - name: Commit durable EMDE evidence archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/evidence/imf_bop_emde_20261119
+          git commit -m "Archive WEO EMDE IMF BOP portfolio flow panel and exact checks"
+          git push origin main
