@@ -9,3 +9,5 @@
 2026-11-19 retry-after-workflow-yaml-fix-dsd-codelists
 
 2026-11-19 exact-key-BOP-observation-smoketest-BRA-IND-portfolio-flows
+
+2026-11-19 broad-BOP-key-diagnostic-after-empty-exact-series
