@@ -1495,3 +1495,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - No workflow dispatched, no run/artifact IDs claimed, no production or protected invariant changes.
 - Next action: small, leakage-safe timestamp/vintage-aligned pilot joining archived GCR factors to official India sector TRI/outcomes, then proceed only if source coverage and maturity gates pass.
 - Nightly Rotation Backtest automation created for 22:00 Asia/Kolkata, daily; first scheduled run 2026-11-20 22:00.
+
+
+## 2026-11-19 — Continuation 74: CDSL 15-Nov-2026 sector FPI independent arithmetic QA
+- Reused existing raw capture from workflow run 44519322726 / artifact 14527092174; no repeat capture. ZIP SHA-256 independently recomputed and matched GitHub digest: `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd`.
+- Exact dated sector HTML: 327,522 bytes; SHA-256 `3f77f3896a95b8cff3a7728049127493814e1b503eb39dcb75b0e8fe145cf84e`.
+- Main table has 24 numbered sector/category rows, 8 period/currency blocks, 11 components + published total per block. Independent component-sum checks: 192/192 PASS.
+- Grand total vs sum of 24 sector totals residuals (published minus sum): 31-Oct AUC INR 0; 31-Oct AUC USD +1; 16–31 Oct net INR -1; same USD +2; 01–15 Nov net INR -2; same USD -2; 15-Nov AUC INR -1; same USD -3. Preserve published values; reconciliation REVIEW, no adjustment.
+- Important separation: AUC is position stock; net investment is fortnightly flow; neither is daily flow or sector return. Period-specific USD conversion conventions retained; no recalculation or daily interpolation.
+- Report: `docs/GCR_CDSL_15NOV2026_SECTOR_FPI_ARITHMETIC_QA_CONTINUATION74_20261119.md`; commit `eb7647f15d1b3449a35a088c79f684ccbfec2b98`.
+- Sector TRI crosswalk, matched NSDL confirmation, and GCR-to-sector/stock predictive backtest remain NOT_DONE/BLOCKED. Next: official BSE sector TRI raw history + exact index IDs and defensible BSE classification mapping; otherwise sector transmission UNKNOWN.
+- No production/selector/ranking/pressure-fade/CORE-672/Engines A–E/IPO-PLX V2 changes. ₹0; Observation OPEN; UNKNOWN is not PASS.
