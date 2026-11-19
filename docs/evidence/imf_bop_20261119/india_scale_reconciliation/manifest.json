@@ -1,14 +1,14 @@
 {
   "scope": "India IMF BOP quarterly portfolio-flow scale/sign crosswalk to RBI Table 42 (BPM6)",
-  "retrieved_at_utc": "2026-11-19T07:03:38.465946+00:00",
+  "retrieved_at_utc": "2026-11-19T07:06:20.838373+00:00",
   "sources": [
     {
-      "retrieved_at_utc": "2026-11-19T07:03:38.465987+00:00",
+      "retrieved_at_utc": "2026-11-19T07:06:20.838419+00:00",
       "http_status": 200,
       "headers": {
-        "Date": "Thu, 19 Nov 2026 07:03:39 GMT",
+        "Date": "Thu, 19 Nov 2026 07:06:23 GMT",
         "Content-Type": "text/html; charset=utf-8",
-        "Content-Length": "174537",
+        "Content-Length": "172984",
         "Connection": "close",
         "Vary": "Accept-Encoding",
         "Cache-Control": "private",
@@ -21,23 +21,24 @@
         "Cross-Origin-Resource-Policy": "same-site",
         "Cross-Origin-Opener-Policy": "same-origin",
         "strict-transport-security": "max-age=16070400; includeSubDomains",
-        "x-azure-ref": "20261119T070338Z-17875568855znb9chC1DM1pg640000004bw0000000001gyc",
-        "X-Cache": "CONFIG_NOCACHE",
+        "x-azure-ref": "20261119T070620Z-15fcf5759fb489rmhC1BY10p0n00000014mg0000000045y4",
+        "x-fd-int-roxy-purgeid": "0",
+        "X-Cache": "PRIVATE_NOSTORE",
         "Accept-Ranges": "bytes"
       },
-      "byte_count": 174537,
-      "sha256": "a92ac0f8196efbd8f503984620d7c0291c6d704405e52d64eec4f96948ddf744",
+      "byte_count": 172984,
+      "sha256": "ae66dbc5c6093a44e89061c32652f5c9ed0bc7a44e4e09ba458255a06d3bab1b",
       "url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24424",
       "publication_date": "2026-08-25",
       "raw_file": "raw/rbi_table42_2025-Q1_2026-Q1.html"
     },
     {
-      "retrieved_at_utc": "2026-11-19T07:03:39.907524+00:00",
+      "retrieved_at_utc": "2026-11-19T07:06:25.216476+00:00",
       "http_status": 200,
       "headers": {
-        "Date": "Thu, 19 Nov 2026 07:03:41 GMT",
+        "Date": "Thu, 19 Nov 2026 07:06:26 GMT",
         "Content-Type": "text/html; charset=utf-8",
-        "Content-Length": "174432",
+        "Content-Length": "172873",
         "Connection": "close",
         "Vary": "Accept-Encoding",
         "Cache-Control": "private",
@@ -50,12 +51,13 @@
         "Cross-Origin-Resource-Policy": "same-site",
         "Cross-Origin-Opener-Policy": "same-origin",
         "strict-transport-security": "max-age=16070400; includeSubDomains",
-        "x-azure-ref": "20261119T070339Z-178755688557zfqchC1DM1schw0000004bmg000000003xve",
-        "X-Cache": "CONFIG_NOCACHE",
+        "x-azure-ref": "20261119T070625Z-15fcf5759fbq8ggwhC1BY1ypw800000044dg000000002ghp",
+        "x-fd-int-roxy-purgeid": "0",
+        "X-Cache": "PRIVATE_NOSTORE",
         "Accept-Ranges": "bytes"
       },
-      "byte_count": 174432,
-      "sha256": "075c28122d588e5bce0ff45c8c8d5d8b453c53dc5b9a20f79d5cd3a6e54f5396",
+      "byte_count": 172873,
+      "sha256": "47c1ffbfddf8667fd49afca50be6cbe403cbd0dff763b3758e13be286c443103",
       "url": "https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566",
       "publication_date": "2026-10-23",
       "raw_file": "raw/rbi_table42_2025-Q2_2026-Q2.html"
