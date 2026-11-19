@@ -883,3 +883,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - BFA official Table 15: 2024 non-monetary sector assets 342.6; liabilities 1,120.4; balance -777.8 FCFA bn. Category pairs recorded in `docs/evidence/gcr_bceao_2024/bfa_2024_gross_legs_scoped.csv`. Exact total check. Other investment has 0.1 rounding residual.
 - BCEAO optic excludes monetary-sector portfolio, derivatives and other investment; not full IMF national financial account. Thus partial scoped gross-leg PASS only, aggregate remains BLOCKED.
 - BEN Table 14 net-only. SEN Table 16 page-image confirmed net-only. Corrected source screen report `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`.
+
+
+## Continuation 60 — GNB IMF BOP series-key / periodicity audit (2026-11-19)
+- Existing GCR capture uses legacy dataflow IMF.STA:BOP(21.0.0), DSD IMF.STA:DSD_BOP(24.0.0); dimension order COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, UNIT, FREQUENCY. Existing pilot verifies A_NFA_T = Assets, Net acquisition of financial assets; L_NIL_T = Liabilities, Net incurrence of liabilities; P_F = Portfolio investment, Total financial assets/liabilities; USD; Q.
+- Existing 154-member panel QA classifies GNB as no observations for either P_F leg. This is a finding for the captured panel/dataflow/vintage only, not proof that all current IMF dataflow versions lack a GNB series.
+- IMF BOP dataset page identifies annual and quarterly frequency and announces BOP/IIP Metadata Dashboard release 2026-11-18. IMF e-GDDS GNB metadata says BOP aggregates appear annually in a national brochure. IMF Country Report 25/167 says final annual BOP data are produced 10–12 months after year-end and notes GNB's NSDP launch in June 2024. Older IMF Country Report 22/196 documented weak BOP data and expected ITRS to improve periodicity from annual to quarterly.
+- IMF SDMX Central currently lists BOP DSD v2.6.0; current legacy panel mapping uses DSD 24.0.0. No automatic crosswalk assumed.
+- Exact current GNB API requests for GNB.A_NFA_T.P_F.USD.Q and GNB.L_NIL_T.P_F.USD.Q were not successfully executed in this audit; current dashboard GNB country detail was not retrievable. Therefore exact current series availability remains NOT_VERIFIED, not ABSENT.
+- Report: docs/GCR_GNB_IMF_BOP_SERIES_KEY_AUDIT_20261119.md, commit 2cd187c3dd1e92738eb6625bcafdde16838504ed.
+- Next: bounded read-only API capture of both exact GNB keys in legacy and current structures, preserve HTTP/raw response/attributes/hashes; then assess period, status, unit, scale and vintage. No quarterly interpolation, no gross inference, no production/backtest admission. Production invariants unchanged; ₹0; UNKNOWN is not PASS.
