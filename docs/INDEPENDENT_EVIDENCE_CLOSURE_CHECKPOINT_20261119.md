@@ -742,3 +742,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - GitHub Actions run `44538278638` (run #1), URL https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44538278638; status was QUEUED at latest inspection, no conclusion or artifact yet. Therefore raw archival and QA remain NOT_DONE, not PASS.
 - Direct container download failed; web reader could display 22906 JSON but not the other raw endpoints. No local raw archive or fabricated hashes.
 - Brazil IMF PA identity/chronology remains BLOCKED; GCR panel/score NOT_READY. Next: poll only run 44538278638, inspect artifact and independently verify raw hashes if produced. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-8 run result: BCB SGS raw capture PASS (2026-11-19)
+- Workflow run `44538278638` completed SUCCESS; run #1; capture and upload steps SUCCESS. Artifact `14535963861`, `bcb-sgs-portfolio-raw-44538278638`, 11,211 bytes. GitHub artifact digest = independently recomputed ZIP SHA-256: `ee226a0525edd6974b8e0f3205005d3d5913f3014137065b074890b353ecdf60`.
+- ZIP raw files and independently recomputed SHA-256: 22905 14,989 bytes `bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3`; 22906 14,594 bytes `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22925 15,086 bytes `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`; 22940 14,858 bytes `451cc29b67f2634ac5d62439b30f11297fdab236ec42948f1db16f681eafb033`. Manifest SHA-256 `c000fe9dec4d77fed1ac85ca5d416df8cf43c3ab3ff084381aa10017cf61c062`.
+- All 4 endpoints HTTP 200; each 381 rows, 1995-01-01 to 2026-09-01; 381 valid; zero invalid; zero duplicate dates; monotonic dates true; overall manifest PASS. Independently recomputed raw hashes match manifest.
+- Retrieval timestamps and response Date/ETag/Content-Length are recorded; Last-Modified absent. This proves raw capture + structural QA only, not semantic/accounting crosswalk.
+- Detailed report updated; commit `3d59e6653f69d201ea5bb5bb2e025b49abe47ad0`. Workflow code commits remain as above. Brazil PA identity/chronology BLOCKED; GCR synchronized panel/score NOT_READY pending cross-country vintage-aligned coverage and semantics. No production changes.
