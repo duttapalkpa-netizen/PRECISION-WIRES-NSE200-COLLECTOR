@@ -47,6 +47,7 @@ for country in COUNTRIES:
     obs=[x for x in rows if (x.get("OBS_VALUE") or "").strip() not in ("","NA","NaN","null")]
     row["nonempty_obs_value_count"]=len(obs)
     row["empty_obs_value_count"]=len(rows)-len(obs)
+    row["series_outcome"]="OBSERVATIONS_PRESENT" if obs else "EMPTY_NO_OBSERVATIONS"
     row["time_period_min"]=min((x.get("TIME_PERIOD","") for x in obs),default=None)
     row["time_period_max"]=max((x.get("TIME_PERIOD","") for x in obs),default=None)
     row["sample_rows"]=rows[:3]
@@ -61,7 +62,7 @@ summary={"scope":"official IMF BOP exact-key two-country access smoke test; no E
  "period_window":[START,END],"requests":records,
  "http_200_count":sum(x["http_status"]==200 for x in records),
  "csv_parse_pass_count":sum(x.get("csv_parse")=="PASS" for x in records),
- "nonempty_observation_total":sum(x.get("nonempty_obs_value_count",0) for x in records)}
+ "nonempty_observation_total":sum(x.get("nonempty_obs_value_count",0) for x in records),\n "empty_series_count":sum(x.get("series_outcome")=="EMPTY_NO_OBSERVATIONS" for x in records),\n "empty_series_keys":[x["key"] for x in records if x.get("series_outcome")=="EMPTY_NO_OBSERVATIONS"],\n "decision":"P_MV is empty for these BOP flow keys; do not promote. P_F flow indicator is tested separately in the broad/exact panel workflows."}
 (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 print(json.dumps(summary,indent=2,ensure_ascii=False))
 if summary["http_200_count"]!=len(records) or summary["csv_parse_pass_count"]!=len(records):
