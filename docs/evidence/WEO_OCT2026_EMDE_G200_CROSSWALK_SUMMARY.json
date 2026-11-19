@@ -1,0 +1,28 @@
+{
+  "status": "PASS_MEMBERSHIP_AND_EXACT_CODE_CROSSWALK",
+  "edition": "WEO October 2026",
+  "group_code": "G200",
+  "group_name": "Emerging Market and Developing Economies",
+  "membership_count": 154,
+  "unique_weo_country_codes": 154,
+  "bop_codelist": "IMF.STA:CL_BOP_COUNTRY(1.0.0)",
+  "bop_codelist_codes": 345,
+  "exact_code_matches": 154,
+  "unmapped": 0,
+  "duplicate_weo_codes": 0,
+  "display_name_nonmatch": ["NRU: WEO='Nauru, Republic of'; BOP codelist includes 'Naoero, Republic of' and 'Nauru'"],
+  "workbook_sha256": "2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c",
+  "bop_codelist_sha256": "54647ef3ac6439ecd059fd80a7954c35e447415d53bf41fbee02728e7cfb6bcb",
+  "weo_appendix_sha256": "cd4e2829d7e621d43134728bfc128547f776e909e08ef1d38b837e2d39e5ae2a",
+  "workflow_run_id": 44474502699,
+  "artifact_id": 14505617102,
+  "artifact_sha256": "3246d18f7ef6a1d74c2a08ddc37a94542fc0d42c14acf14470e0a8d7bb2783bb",
+  "artifact_retention_until": "2027-02-17",
+  "guardrails": {
+    "exact_code_only": true,
+    "fuzzy_name_matching": false,
+    "synthetic_members": false,
+    "observation_coverage_inferred": false,
+    "aggregation_authorized": false
+  }
+}
