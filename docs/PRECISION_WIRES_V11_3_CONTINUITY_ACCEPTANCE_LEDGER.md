@@ -1153,3 +1153,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Official maintenance policy says new versions do not automatically invalidate prior versions. BOP 2.6.0 is not evidence of BOP6/BOP_BPM6 alias or Brazil migration. PA/BR1 adoption not proven; Brazil mismatch remains BLOCKED.
 - Report: `docs/SDMX_BOP_260_LEGACY_ECOFIN_COMPATIBILITY_AUDIT_CONTINUATION44_PART1_20261119.md`, commit `8c15f7423643ac1ffdcbe6202d0da3a1f4d5d60b`.
 - GCR country coverage/vintage/BPM gates remain blocked; no aggregate/production. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## Continuation 45 — Brazil BCB asset gross-flow identity (2026-11-19)
+- Official BCB series 22906 (asset net), 22907 (asset inflows), 22908 (asset outflows) identified from official dataset metadata; each API response HTTP 200, parse PASS, 381 unique monthly observations, 1995-01 through 2026-09.
+- Research run `44542385747`, commit `e12cc14ff8d7d05ac8a3d30728cf87704f5ce5bd`, job `135623875310`, artifact `14537524166`, artifact SHA-256 `7ae136fc9088568f576edf67906fed7c6a3de98ffa8f17ae83e09ef01933d2f3`.
+- Raw SHA-256: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Tested orientation 22906 = 22907 − 22908: 0/381 PASS, 381 FAIL, max absolute residual 170,488.0 USD million at tolerance 0.15. This is a genuine FAIL for the tested orientation, not evidence for the opposite orientation. Must evaluate both signs on archived raw data and confirm official BCB sign semantics before acceptance.
+- Report: `docs/BRAZIL_BCB_ASSET_GROSS_FLOW_IDENTITY_CONTINUATION45_20261119.md`; commit `fbcab345578b24db84358c90c5cbf3efca1de619`.
+- Asset-side gross-flow decomposition remains BLOCKED. Liability-side 381/381 PASS and prior 94/94 quarterly cross-source benchmark remain separate evidence and do not substitute for this identity. Brazil PA/dataflow mismatch remains BLOCKED; GCR panel/score remains NOT_READY. No production changes; ₹0; UNKNOWN is not PASS.
