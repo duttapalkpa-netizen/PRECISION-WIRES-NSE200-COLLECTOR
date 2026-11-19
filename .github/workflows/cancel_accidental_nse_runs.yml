@@ -1,0 +1,18 @@
+name: Cancel accidental research-triggered NSE runs
+on:
+  push:
+    paths:
+      - "scripts/research/cancel_accidental_nse_runs_trigger.txt"
+permissions:
+  actions: write
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Cancel two unintended long collector runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run cancel 44484649213 --repo "$GITHUB_REPOSITORY" || true
+          gh run cancel 44484666061 --repo "$GITHUB_REPOSITORY" || true
