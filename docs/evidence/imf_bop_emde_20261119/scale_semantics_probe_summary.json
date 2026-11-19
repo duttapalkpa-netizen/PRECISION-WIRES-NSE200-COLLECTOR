@@ -1,0 +1,65 @@
+{
+  "scope": "Exact IMF Data Portal DSD_BOP SCALE metadata resolution; raw values not transformed",
+  "workflow_run_id": 44475051442,
+  "artifact_id": 14505852262,
+  "artifact_zip_sha256": "391981ce19d89d8ccc6377580e33345a9d75adffdc3f4197c4e4c743a66e3cf3",
+  "responses": [
+    {
+      "name": "DSD_BOP(24.0.0)",
+      "http_status": 200,
+      "bytes": 23825,
+      "sha256": "5953ac8b3a52fae9cd7c5821621446d046969bcef0e88540ef17520c2d39b098"
+    },
+    {
+      "name": "CS_MASTER_SYSTEM(1.0.2)",
+      "http_status": 200,
+      "bytes": 6402,
+      "sha256": "e753812c45b8159c77e191f091c63d5364375f57daca179da9799040de48e568"
+    },
+    {
+      "name": "CL_UNIT_MULT(1.0.2)",
+      "http_status": 200,
+      "bytes": 54278,
+      "sha256": "40a911ecceb0b96ff0ee2a166af3c2512f19fbbfca50e71b2e47936cad3bac78"
+    }
+  ],
+  "dsd_scale_attribute": {
+    "id": "SCALE",
+    "urn": "urn:sdmx:org.sdmx.infomodel.datastructure.DataAttribute=IMF.STA:DSD_BOP(24.0.0).SCALE",
+    "usage": "optional",
+    "concept_urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=IMF:CS_MASTER_SYSTEM(1.0+.0).SCALE",
+    "attachment_relationship_dimensions": [
+      "COUNTRY",
+      "BOP_ACCOUNTING_ENTRY",
+      "INDICATOR",
+      "FREQUENCY",
+      "UNIT"
+    ]
+  },
+  "concept": {
+    "id": "SCALE",
+    "english_name": "Scale",
+    "description_present": false,
+    "enumerated_codelist_urn": "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=IMF:CL_UNIT_MULT(1.0+.0)"
+  },
+  "codelist": {
+    "agency": "IMF",
+    "id": "CL_UNIT_MULT",
+    "version": "1.0.2",
+    "code_count": 31,
+    "code_6_name": "Millions",
+    "code_6_english_description": "In scientific notation, expressed as ten raised to the power of six (10^6)"
+  },
+  "observed_panel": {
+    "row_count": 9299,
+    "unit_code": "USD",
+    "scale_code": "6",
+    "all_rows_same_scale_code": true,
+    "transform_applied": false
+  },
+  "decision": {
+    "metadata_mapping": "PASS: SCALE is enumerated by CL_UNIT_MULT; code 6 label is Millions (10^6).",
+    "numeric_transformation": "BLOCKED: the IMF-specific concept has no explicit English description in the captured concept scheme; the standard UNIT_MULT interpretation would multiply OBS_VALUE by 10^6, but the data portal's raw USD magnitudes have not been reconciled against an independent official benchmark. Do not multiply or divide the observations yet.",
+    "aggregation": "BLOCKED until scale semantics, missingness, vintage and sign conventions are resolved."
+  }
+}
