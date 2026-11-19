@@ -125,3 +125,12 @@ Archive commit: `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`.
 - Workflow run 44475693836 / artifact 14506740234 / ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`; durable evidence commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
 - Full method and 10-row table: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
 - This closes scale/sign mapping for Brazil only. India and the remaining 152 WEO EMDE members remain UNKNOWN pending national-source period, concept and vintage crosswalk. Do not apply Brazil's conversion globally or release an EMDE aggregate.
+
+
+## 10. India scale/sign cross-check completed (2026-11-19)
+- Official RBI Table 197, “Standard Presentation of India’s Balance of Payments as per BPM6 — Quarterly — US Dollar” (31 July 2026), was captured anonymously (HTTP 200; 146,017 bytes; SHA-256 `391c549c5b64c0b7f9204eb9634975f77d4ba2d7796542ed23932fb8d740813d`).
+- RBI `3.2.A Portfolio Investment in India` (credit − debit net) maps directly to IMF `L_NIL_T`; RBI `3.2.B Portfolio Investment by India` maps to IMF `A_NFA_T` with sign reversal.
+- Six aligned calendar quarters (2024-Q2 through 2025-Q3) × two entries = 12/12 PASS using `IMF OBS_VALUE / 1e6`; tolerance 0.5 USD million because RBI Table197 publishes integer USD millions. Maximum absolute residual 0.4899709189 USD million.
+- Workflow run 44476434148 / artifact 14506542277 / ZIP SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`; durable evidence commit `451b9e203fd6edb1541c42432b47a393e030372c`.
+- Detailed report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`, commit `4a3bcc34a19d92e747f50609a7cabebe489af69a`.
+- Brazil and India pilot-country scale/sign mapping now PASS (Brazil 10/10; India 12/12). This does not authorize global application to the other 152 WEO EMDE members; country-specific vintage, coverage and scale controls remain required. EMDE aggregate remains NOT_AUTHORIZED.
