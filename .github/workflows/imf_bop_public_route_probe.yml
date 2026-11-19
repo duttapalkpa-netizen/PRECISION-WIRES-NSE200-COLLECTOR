@@ -35,6 +35,9 @@ jobs:
           mkdir -p docs/evidence/imf_bop_20261119
           cp imf_bop_public_route_probe/api_imf_bop_dataflow_v3.xml docs/evidence/imf_bop_20261119/
           cp imf_bop_dsd_codelists/DSD_BOP.xml docs/evidence/imf_bop_20261119/IMF_STA_DSD_BOP_24_0_0_references_all.xml
+          cp imf_bop_dsd_codelists/CS_MASTER_SYSTEM.xml docs/evidence/imf_bop_20261119/
+          cp imf_bop_dsd_codelists/CL_UNIT_MULT.xml docs/evidence/imf_bop_20261119/
+          cp imf_scale_concept_route_probe/summary.json docs/evidence/imf_bop_20261119/scale_concept_route_summary.json
           cp imf_bop_portfolio_exact_panel/portfolio_flows_panel.csv docs/evidence/imf_bop_20261119/
           cp imf_bop_portfolio_exact_panel/BRA_A_NFA_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
           cp imf_bop_portfolio_exact_panel/BRA_L_NIL_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
@@ -49,6 +52,7 @@ jobs:
           git add docs/evidence/imf_bop_20261119
           if ! git diff --cached --quiet; then
             git commit -m "Archive IMF BOP Brazil India portfolio flow pilot evidence"
+            git pull --rebase origin main
             git push
           fi
       - name: Upload raw responses and manifest
