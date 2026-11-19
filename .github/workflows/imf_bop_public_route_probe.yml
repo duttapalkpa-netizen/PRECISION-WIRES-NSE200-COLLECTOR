@@ -23,7 +23,7 @@ jobs:
         run: python scripts/research/smoke_test_imf_bop_observations.py
       - name: Run bounded broad-key BOP observation diagnostics
         run: python scripts/research/probe_imf_bop_broad_observation_queries.py
-      - name: Upload raw responses and manifest
+      - name: Capture exact Brazil and India portfolio-investment flow panel\n        run: python scripts/research/capture_imf_bop_portfolio_panel.py\n      - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-bop-public-route-probe-${{ github.run_id }}
@@ -31,6 +31,6 @@ jobs:
             imf_bop_public_route_probe/
             imf_bop_dsd_codelists/
             imf_bop_observation_smoketest/
-            imf_bop_broad_probe/
+            imf_bop_broad_probe/\n            imf_bop_portfolio_exact_panel/
           if-no-files-found: error
           retention-days: 90
