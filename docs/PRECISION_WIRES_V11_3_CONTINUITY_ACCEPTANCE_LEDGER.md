@@ -1348,3 +1348,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Next bounded actions: acquire and QA separate raw datasets in short jobs (NSE index/VIX; RBI DBIE USD/INR; NSDL/CDSL FPI; NSE DII/FII; FRED global factors; PPAC monthly context). Preserve original date, publication timestamp, timezone, unit, vintage, manifest and SHA-256. No forward-fill/interpolation across missing calendars.
 - Stage: source-readiness increment complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate/production admission NOT_AUTHORIZED.
 - Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed daily interpolation/unsupported country weights; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 42 — Part-5: NSE NIFTY 50 and India VIX raw acquisition gate (2026-11-19)
+- Verified official NSE Indices Historical Data page offers index selection/date range/CSV; NSE Indices FAQ documents NIFTY 50 historical data from 1990-07-03 and distinguishes NIFTY price index vs NIFTY-TR. Official NSE India India VIX page exposes date presets/custom range and CSV download control; current server-rendered view showed no selected data / “No Records”.
+- Official NSE historical reports separately list index history, India VIX history and daily/monthly indices archives. Security-level UDiFF bhavcopy is not index history.
+- Inspected repository collector/nse_download.py: it handles security-level CM UDiFF/legacy bhavdata, not NIFTY index or India VIX. Existing broad .github/workflows/nse_collector.yml is 60-minute full pipeline and was not triggered for this small task.
+- No raw NIFTY/VIX CSV acquired; no row counts, byte counts, timestamps, hashes, missingness or dataset PASS claimed. No unverified undocumented endpoint or third-party API pattern copied into production.
+- Report: docs/GCR_NSE_NIFTY50_INDIA_VIX_RAW_ACQUISITION_GATE_CONTINUATION42_PART5_20261119.md; commit e9073fee299f96301e0c88a3a09665a0dac929ad.
+- Sources: https://www.niftyindices.com/reports/historical-data ; https://www.niftyindices.com/static/products-services/indices-faqs ; https://www.nseindia.in/reports-indices-historical-vix ; https://www.nseindia.in/static/resources/historical-reports-capital-market-daily-monthly-archives .
+- Next: acquire exact NIFTY 50 price-index and India VIX CSV exports through official UI or independently verified official request contract; preserve raw bytes, timestamps, byte counts, SHA-256, schema and trading-date QA. Do not use sample rows or equity bhavcopy as substitutes.
+- Stage: source-route/code-boundary review complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate/production NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official/free sources; no fabricated timestamps, guessed endpoints, synthetic values, forward-fill/interpolation; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
