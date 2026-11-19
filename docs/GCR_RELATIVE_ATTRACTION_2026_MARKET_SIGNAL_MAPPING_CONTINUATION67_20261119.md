@@ -77,3 +77,12 @@ Institutional flow discovery:
 - Predictive edge, factor weights, rolling OOS event study: NOT_DONE.
 - Production integration / trade admission: NOT_AUTHORIZED.
 - No change to protected production invariants.
+
+
+## Official India flow route discovery (same continuation; no data archive yet)
+- SEBI FPI curation directory explicitly links NSDL and CDSL daily latest, current-month, archive, calendar/financial-year and fortnightly sector-wise FPI series: https://www.sebi.gov.in/curation/fpi.html.
+- CDSL historical archive page exposes daily FPI equity/debt/hybrid gross purchases, gross sales, net INR/USD values and conversion rate, plus daily FPI derivative trades: https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx. Web-rendered archive view in this review currently showed investment data through 31-Oct-2026 and derivative table through 18-Nov-2026; the page's search-index excerpt surfaced investment rows through 18-Nov-2026. Exact page snapshot/raw export still needs to be captured by a byte-capable runner before ingestion.
+- CDSL sector-wise FPI page lists fortnightly sector dates through 15-Nov-2026: https://www.cdslindia.com/Publications/ForeignPortInvestor.html. This provides a plausible official sector-allocation route, but files/column schema and historical coverage must be captured and validated.
+- NSE FII/FPI & DII page exposes CSV downloads for NSE-only and combined NSE+BSE+MSEI cash-market activity: https://www.nseindia.com/reports/fii-dii. NSE notes these are provisional and subject to custodial confirmation; final FPI series should be reconciled with NSDL/CDSL.
+- CDSL daily FPI page notes its confirmed trade series is compiled from custodian/depository reports and describes its RBI reference-rate conversion convention; retain Equity/Debt/Debt-VRR/Debt-FAR/Hybrid and Stock Exchange vs Primary Market & Others as separate dimensions. Do not collapse gross legs, provisional vs confirmed, or investment routes.
+- Source discovery status: PASS for official route identification; raw byte archive, full date coverage, schema, hashes, NSE-vs-depository reconciliation and sector panel remain NOT_DONE/BLOCKED. No FII/DII flow series promoted to production.
