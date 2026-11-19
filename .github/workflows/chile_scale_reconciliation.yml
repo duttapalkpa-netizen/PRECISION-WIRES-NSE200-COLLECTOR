@@ -1,0 +1,29 @@
+name: Chile IMF BOP Scale Reconciliation Evidence
+on:
+  push:
+    paths:
+      - "scripts/research/chile_scale_reconciliation_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install HTML parser
+        run: python -m pip install --disable-pip-version-check beautifulsoup4
+      - name: Capture Chile official series and compare with IMF panel
+        run: python scripts/research/reconcile_imf_bop_scale_chile_bcentral.py
+      - name: Upload raw BDE pages and reconciliation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chile-imf-bcentral-scale-${{ github.run_id }}
+          path: chile_bcentral_scale_reconciliation/
+          if-no-files-found: error
+          retention-days: 90
