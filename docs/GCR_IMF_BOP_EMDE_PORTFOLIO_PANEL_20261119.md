@@ -81,3 +81,11 @@ No changes to Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, CORE-672
 - Brazil scale/sign mapping is now PASS for those tested series/quarters. This is not yet generalized to India or the remaining 152 EMDE members.
 - India national-source period/concept crosswalk and all-country scale validation remain UNKNOWN. No EMDE-wide conversion or aggregate is authorized.
 - Detailed comparison and raw source receipts: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`.
+
+
+## 8. India scale/sign validation update — two pilot countries now pass
+- RBI Table197 (BPM6 quarterly BoP, USD million) provides a like-for-like national-source cross-check for India.
+- Six calendar quarters (2024-Q2–2025-Q3) × assets/liabilities = 12/12 PASS. RBI assets row is sign-reversed against IMF `A_NFA_T`; RBI liabilities row maps directly to IMF `L_NIL_T`. `OBS_VALUE/1e6` matches within the 0.5 USD million integer-publication rounding bound.
+- Combined with Brazil's 10/10 BCB monthly checks, Brazil and India both validate the scale/sign normalization for their tested periods.
+- This remains a two-country pilot validation. The remaining 152 WEO EMDE members are not yet cross-checked; no 154-member converted panel or aggregate is authorized.
+- India evidence report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; raw RBI page and 12 comparisons: `docs/evidence/imf_bop_emde_20261119/india_scale_reconciliation/`.
