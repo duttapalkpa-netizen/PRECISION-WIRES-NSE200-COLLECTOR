@@ -1123,3 +1123,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Combined BCB internal identities: assets 381/381 and liabilities 381/381 = 762/762; not independent IMF comparisons and gross legs must not be double-counted in GCR.
 - Report `docs/BRAZIL_BCB_PORTFOLIO_ASSET_IDENTITY_AUDIT_CONTINUATION41_PART1_20261119.md`, commit `d5ac88260eb6e334cc99b00007f4fb77a6562ef0`.
 - IMF Brazil PA/Dataflow identity and revision chronology remain BLOCKED/NOT_DONE; GCR full EMDE aggregate not authorized. ₹0, no production changes.
+
+
+## Continuation 42 — Part-1: Brazil IMF public transaction-history boundary (2026-11-19)
+- Public `/ws/registry/tx/history?urn=...` returned one shared structure event for PA `IMF:BR_BOP_BP6(1.0)`, Dataflow `IMF:BOP6(1.0)`, and Dataflow `IMF:BOP_BPM6(1.0)`: tx ID 2, Replace, Structure Submission, 2023-09-22T08:26:09.491Z. HTTP 200 for all; identical raw 80-byte body SHA-256 `335149e69147d8b99c9c6b5d0303cdb3b72401510b5bfed64cb3f519ced0b411`.
+- Run `44539721149` SUCCESS; artifact `14537831415`; ZIP SHA-256 `042b32108ccbf42dc906af2b616ce7d5a91abdf5065448c8b96abcec9a5ccf0e`; manifest SHA `3003c20193b5c5518e09555e125c9f91a467cc430f713008d617bfeb91c4af2b`.
+- Transaction-detail lookup HTTP 500 (parameter error); prior txId=2 detail attempts already failed, so no repeat. This history does not prove BR1 data-registration chronology or PA/payload Dataflow equivalence. Brazil Reconstruction remains BLOCKED.
+- Report `docs/IMF_BRAZIL_PUBLIC_REGISTRY_HISTORY_PROBE_CONTINUATION42_PART1_20261119.md`, commit `676f5d771a6f9abc5d7ddbd8fd6b53fde367456a`. ₹0; no production changes; UNKNOWN is not PASS.
