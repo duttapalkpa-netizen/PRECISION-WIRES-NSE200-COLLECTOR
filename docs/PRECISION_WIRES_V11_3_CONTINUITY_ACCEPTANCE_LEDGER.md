@@ -1284,3 +1284,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Exact A_NFA_T/L_NIL_T national mapping, units, signs, Q2 observations and vintage remain NOT_YET_VALIDATED. ZAF status PARTIAL / NOT PASS; aggregate remains NOT_AUTHORIZED.
 - Report: docs/GCR_SOUTH_AFRICA_SARB_Q2_2026_SOURCE_GATE_CONTINUATION41_PART3_20261119.md; commit 82e8c63b46f7c7468b97a744c312dab690f10969; re-fetched blob cc04872301871d5b11954df83997c7fcab05f685.
 - Next: inspect the official SARB BOP XLSX archive for exact portfolio asset/liability quarterly series, units, signs and vintage; only then compare like-for-like with IMF. ₹0, no inferred conversions/sign flips, no aggregate; invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 41 — Part-4: SARB portfolio series-code candidates and official archive retrieval boundary (2026-11-19)
+- Reused Part-3 ZAF source gate and cohort. Official SARB XLSX index confirms Bulletin No.321 September 2026, K1 quarterly, and exact archive 04Kbp5-Balance-of-Payments-September-2026-updated.zip.
+- Official attachment URL resolved but ZIP retrieval timed out/failed; no bytes, hash or workbook contents claimed.
+- Secondary BER Data Guide surfaced candidate codes KBP5756/5757 (portfolio liabilities: equity/debt securities) and KBP5758/5759 (portfolio assets: equity/debt securities); KBP5644 and KBP5660 are total liability/asset portfolio controls. These are discovery leads only, NOT officially verified; not admitted to national mapping.
+- Official SARB Online Statistical Query page documents public KBP-code search, version selection, frequency/date range and export: https://www.resbank.co.za/en/home/what-we-do/statistics/releases/online-statistical-query .
+- ZAF status remains PARTIAL / NOT PASS; official series description/version/unit/sign, Q2 observation and vintage not yet inspected; GCR aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_SOUTH_AFRICA_SARB_PORTFOLIO_SERIES_CODE_CANDIDATES_CONTINUATION41_PART4_20261119.md; commit a9dbcaa86bb3098f2b12851b04af6cf49769e413; re-fetched blob 615e341e1657ec052b45de0e3093d3b916816485.
+- Next: verify candidate codes in official SARB query and export the exact Q2-2026 series/version metadata and values; no credentials, no guessed transforms. Secondary-source discovery never counts as PASS. Invariants unchanged; UNKNOWN is never PASS.
