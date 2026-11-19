@@ -35,7 +35,7 @@ for name,url,kind in targets:
  ts=datetime.now(timezone.utc).isoformat()
  req=Request(url,headers={"User-Agent":"PRECISION-WIRES-independent-audit/1.6","Accept":"application/zip, application/xml, text/xml, */*"})
  try:
-  with urlopen(req,timeout=45) as r: status=r.status; headers=dict(r.headers.items()); body=r.read()
+  with urlopen(req,timeout=15) as r: status=r.status; headers=dict(r.headers.items()); body=r.read()
  except HTTPError as e: status=e.code; headers=dict(e.headers.items()) if e.headers else {}; body=e.read()
  except (URLError,TimeoutError) as e: status=0; headers={}; body=str(e).encode()
  safe={k:v for k,v in headers.items() if k.lower() not in {"set-cookie","authorization","www-authenticate"}}
