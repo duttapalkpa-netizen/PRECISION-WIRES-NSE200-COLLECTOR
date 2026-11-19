@@ -19,3 +19,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 batch-0613-0812-fusion-json-registration-scan
 
 2026-11-19 exact-brazil-registration-667-lifecycle-probe
+
+2026-11-19 full-registration-lifecycle-capture-all-40-events
