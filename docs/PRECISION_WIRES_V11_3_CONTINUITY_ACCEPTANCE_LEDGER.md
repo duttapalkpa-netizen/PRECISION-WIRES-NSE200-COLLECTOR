@@ -1604,3 +1604,15 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/RUN407_ROW_LEVEL_WALK_FORWARD_RECOVERY_AUDIT_20261120.md`.
 - Artifact recovery PASS; row-level structural QA PARTIAL; metric consistency BLOCKED; executable/net-of-cost performance NOT_ESTABLISHED. No new workflow dispatched or data collected during this audit. Production invariants unchanged; GCR remains UNKNOWN/BLOCKED; UNKNOWN is never PASS.
 - Next: reconcile metric denominator and H+5 precision discrepancy from exact source snapshot, then calculate cutoff-clustered paired confidence intervals and false-positive/missed-winner driver summaries.
+
+
+## 2026-11-20 — Run #407 Cutoff-Clustered Bootstrap and Winner Driver Attribution
+- Recovered successful Run #407 artifact ID 14539426731; run ID 44542948987; source commit d013577157bc1f24322cd100aaf60c40a20c4d17. Independent ZIP SHA-256 matches GitHub digest: b958d9184eb2df4715364b5825d243593c1c9d9d1290a171ae3ab2833950dfd7.
+- Audited 3,000 Top-30 rows / 100 cutoffs, 251,724 exported universe rows, and 9,182 missed-winner rows. Performed 20,000 paired cutoff-cluster bootstrap resamples (seed 20261120).
+- Top-30 precision and 95% cutoff-clustered CIs: +5 H+1 21.61% [19.34,24.07]; +10 H+3 39.93% [36.80,43.20]; +20 H+5 20.40% [18.30,22.70].
+- Exported-universe TP/FP/FN/TN: +5 H+1 648/2351/21871/226676; +10 H+3 1198/1802/8537/240187; +20 H+5 612/2388/1454/247270. Recall CIs and lift CIs calculated against exported 251,724-row universe only and remain provisional.
+- Found a material denominator mismatch: source metrics JSON uses internal all_by_date frame, while walk_forward_universe_probabilities.csv exports universe_pred. JSON recall differs from exported-universe recomputation (2.7439 vs 2.8776%; 11.4993 vs 12.3061%; 29.0553 vs 29.6225%). Source code explicitly uses all_by_date for universe/base rate. Full-market recall and confusion matrix are therefore not yet reconciled.
+- Top-30 subgroup paired bootstrap: HIDDEN_WINNER_RECOVERY materially exceeds CONTINUATION_READY in this artifact for H+3 and H+5. PRESSURE_FADE has strongest observed H+3/H+5 transition-signature hit rates among selected Top-30 rows. EXHAUSTION_BUILD has higher H+3 than most signatures but lower H+5 than PRESSURE_FADE. Descriptive only; no causal inference or production change.
+- Missed-winner rows: RANKED_OUT 6,611; LOW_WINNER_PROBABILITY 2,552; CONTAMINATED 19. TOP_DRIVER_GAPS populated 5,685/9,182; RELATIVE_STRENGTH;PROGRESSION 4,344, PROGRESSION 718, RELATIVE_STRENGTH 623. 3,497 gap values missing.
+- Report: docs/RUN407_CUTOFF_CLUSTERED_BOOTSTRAP_AND_WINNER_DRIVER_ATTRIBUTION_20261120.md.
+- Next: reconcile all_by_date versus universe_pred row membership and forward labels, create cutoff-level denominator ledger, then rerun paired bootstrap and a shadow-only challenger. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2 unchanged. GCR excluded. UNKNOWN is never PASS.
