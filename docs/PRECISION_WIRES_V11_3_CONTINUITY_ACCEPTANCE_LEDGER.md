@@ -853,3 +853,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - No source separates assets vs liabilities. IMF A_NFA_T/L_NIL_T mapping remains BLOCKED / NOT_SEPARATELY_DISCLOSED. Annual estimate not admitted to quarterly panel.
 - Original PDF bytes/hash not yet archived; values are transcribed from official PDF extracted text pending byte archival and page-image verification.
 - CSV `docs/evidence/gcr_bceao_2024/bceao_2024_uemoa_financial_account_net.csv`; report `docs/GCR_BCEAO_2024_ANNUAL_NET_BOP_BENCHMARK_20261119.md`.
+
+
+## Continuation 40 — BCEAO raw PDF archive verified
+- Official BCEAO Annual Report 2024 PDF downloaded by focused run `44494766325` SUCCESS; HTTP 200; 7,076,916 bytes; retrieved UTC 2026-11-19T09:15:44.644765Z; SHA-256 `d1d69c4772e244174c754552b52f4206e8eaf98a6b839bdcd5af1990cf1a3d84`; PDF magic %PDF-1.5.
+- Artifact ID `14514282771`, ZIP SHA-256 `7b5865d7c38f45b3d311c7e3cea0e9381ba35f4ed46d0025411ffdcb27e060df`, 90-day retention. Artifact downloaded and raw PDF hash rechecked.
+- Accidental NSE runs `44494746703` and `44494753220` cancelled before NSE data acquisition; helper run `44494822191` SUCCESS. Collector paths-ignore now includes archive script, trigger and workflow. No production code change.
+- Net benchmark remains PARTIAL; separate IMF asset/liability legs not disclosed by this report, so mapping remains BLOCKED.
