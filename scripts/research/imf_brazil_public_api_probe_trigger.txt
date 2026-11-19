@@ -1,1 +1,3 @@
 read-only public IMF endpoint probe; no registration mutation
+
+2026-11-19 linked-urn-history-and-transaction-content-probe
