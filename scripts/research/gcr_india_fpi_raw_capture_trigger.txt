@@ -1,2 +1,3 @@
 Continuation 70: capture official NSDL/CDSL page bytes, headers, UTC timestamps and SHA-256; GET only.
 Continuation 71: include CDSL eServices current daily FPI endpoint in capture.
+Continuation 73: capture exact CDSL 15-Nov-2026 fortnightly sector report page; GET only, no form submission.
