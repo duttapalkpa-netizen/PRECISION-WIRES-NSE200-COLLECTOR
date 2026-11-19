@@ -439,3 +439,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Durable report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_NIGERIA_20261119.md`; consolidated Part 4: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART4_20261119.md`; raw IMF CSVs, comparison CSV, summary JSON and extracted CBN page text: `docs/evidence/gcr_nigeria_bop_20261119/`.
 - CBN vintage notes: Q2 2025 provisional; Q1 2026 revised; Q2 2026 release narrative describes provisional statistics. Preserve these flags.
 - Decision unchanged: no 154-member aggregate, no universal conversion, no production/backtest admission; India Q1-2026 liability REVIEW and Chile current-vintage revisions remain open. Coverage gaps preserved; UNKNOWN is not PASS.
+
+
+## Nigeria evidence archive commit receipts and workflow guard repair
+- Nigeria comparison report commit: `1c63abed6b184118563fad276fe3875a1d300c43`.
+- Consolidated Part 4 commit: `4db15a0728c07361a00736760ddd0a0664898c6e`.
+- Raw IMF assets CSV commit: `9d794f2089e86bb4103152eadc7e390bbd66eb95`; raw IMF liabilities CSV commit: `95c94e728f3de4956c509e39a9021bb9a0ba70f8`.
+- Nigeria comparison CSV corrected and committed at `8213e4de80d2d1361fcd24d391421a1c0bafb467`; summary JSON commit `0443d83f28c7487d581793132bd9c48cf97a0314`; extracted CBN Table 2 text commit `6029bf7942aed9e1397c5229d0eaf7b29ad54861`.
+- Master continuity ledger latest commit `aeb6aba173e191663eb3841685a7201119b26fa0`.
+- Path-ignore syntax repair commit `9ef1922f63c3091519fe5208ee63e259fcc571c5`; unintended long collector runs 44484649213, 44484666061 and 44485482464 were all cancelled by helper run 44485600055 SUCCESS. No production source code was intentionally changed; research-only paths now excluded from the production collector workflow.
