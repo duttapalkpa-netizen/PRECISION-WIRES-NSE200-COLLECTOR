@@ -1,0 +1,110 @@
+{
+  "report_date": "2026-11-19",
+  "scope": "Official IMF BOP quarterly portfolio-investment pilot panel for Brazil and India; not an emerging-market aggregate",
+  "source": {
+    "dataset": "IMF.STA:BOP",
+    "dataflow": "IMF.STA:BOP(21.0.0)",
+    "dataflow_endpoint": "https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?references=all",
+    "observation_endpoint": "https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0",
+    "dsd": "IMF.STA:DSD_BOP(24.0.0)",
+    "dsd_sha256": "1541c0e65af5801acb86767a183a124537aa4b6a04d2a4e528c23d73d4b2019b",
+    "dimensions_in_order": ["COUNTRY", "BOP_ACCOUNTING_ENTRY", "INDICATOR", "UNIT", "FREQUENCY"],
+    "codelists": {
+      "COUNTRY": "IMF.STA:CL_BOP_COUNTRY(1.0.0)",
+      "BOP_ACCOUNTING_ENTRY": "IMF.STA:CL_BOP_ACCOUNTING_ENTRY(3.3.0)",
+      "INDICATOR": "IMF.STA:CL_BOP_INDICATOR(10.0.0)",
+      "UNIT": "IMF:CL_UNIT(2.13.0)",
+      "FREQUENCY": "IMF:CL_FREQ(1.2.0)"
+    }
+  },
+  "series_definition": {
+    "indicator": "P_F",
+    "indicator_label": "Portfolio investment, Total financial assets/liabilities",
+    "unit": "USD",
+    "frequency": "Q",
+    "accounting_entries": {
+      "A_NFA_T": "Assets, Net acquisition of financial assets",
+      "L_NIL_T": "Liabilities, Net incurrence of liabilities"
+    },
+    "note": "Assets and liabilities remain separate series. No netting or sign reinterpretation was performed."
+  },
+  "period_window_requested": ["2015-Q1", "2026-Q3"],
+  "series": [
+    {
+      "country": "BRA",
+      "entry": "A_NFA_T",
+      "key": "BRA.A_NFA_T.P_F.USD.Q",
+      "observations": 47,
+      "first_period": "2015-Q1",
+      "last_period": "2026-Q3",
+      "raw_csv_sha256": "3feca530a6495a3877370ad21bbacece69de87f3ebb725af4cbc455e1f84183c",
+      "raw_csv_gzip_sha256": "74867524fbf7bf140f45f52e8a47a62dd303d6fcc3617a18e71efb5e8fb5c3f0"
+    },
+    {
+      "country": "BRA",
+      "entry": "L_NIL_T",
+      "key": "BRA.L_NIL_T.P_F.USD.Q",
+      "observations": 47,
+      "first_period": "2015-Q1",
+      "last_period": "2026-Q3",
+      "raw_csv_sha256": "2d6b4a22740fe4df16ab4b84e71f69fd6d2833e12c32d94fa0db7bee2925a254",
+      "raw_csv_gzip_sha256": "987dcaa2cfca4545678c03735258a28980ead0694dbe0c1ed656ec184e628e10"
+    },
+    {
+      "country": "IND",
+      "entry": "A_NFA_T",
+      "key": "IND.A_NFA_T.P_F.USD.Q",
+      "observations": 46,
+      "first_period": "2015-Q1",
+      "last_period": "2026-Q2",
+      "raw_csv_sha256": "c86388af35f1b83b0b9d2a451d35c3c78541ea03af1d9a9c826a12bb34f04a82",
+      "raw_csv_gzip_sha256": "fbe912b3dd0b142d9918ca1f16d41b2c7df4bf140170330703e47f2e59118804"
+    },
+    {
+      "country": "IND",
+      "entry": "L_NIL_T",
+      "key": "IND.L_NIL_T.P_F.USD.Q",
+      "observations": 46,
+      "first_period": "2015-Q1",
+      "last_period": "2026-Q2",
+      "raw_csv_sha256": "25d41406425a78d575273a7b3fc63cfb3ecc05cda3789c25787b5a610b5c138d",
+      "raw_csv_gzip_sha256": "93f71b9add6e6e267f87ece9759e418d98e232c5c4557df92ba6736ddfa72435"
+    }
+  ],
+  "validation": {
+    "github_actions_run_id": 44472944620,
+    "github_artifact_id": 14504732476,
+    "github_artifact_size_bytes": 7784894,
+    "github_artifact_sha256": "2e00a175837e1ad5e98346b114c4ec5a9d55ddf38833938711e9a3106a331d6c",
+    "http_200_count": 4,
+    "csv_parse_pass_count": 4,
+    "panel_rows": 186,
+    "unique_keys": 186,
+    "duplicate_key_count": 0,
+    "exact_to_broad_raw_value_matches": 186,
+    "raw_to_normalized_attribute_matches": 186,
+    "missing_or_mismatched_values": 0,
+    "raw_to_normalized_attribute_mismatch_count": 0,
+    "all_series_quarters_contiguous": true,
+    "validation_status": "PASS",
+    "normalized_panel_sha256": "8ef39ecdefc4dd042d6e7a74e84aaf95aa9c66162de36164667d2bc6ad74e778",
+    "normalized_panel_gzip_sha256": "7de9dd096eb7eae1dde5fbd38bc8d8dd09f07737e108fcfbe6d333c1642ff869"
+  },
+  "preservation_rules": {
+    "all_32_source_columns_preserved": true,
+    "scale_values_preserved": ["6"],
+    "precision_values_preserved": ["6"],
+    "no_scale_conversion": true,
+    "no_currency_conversion": true,
+    "no_forward_fill": true,
+    "no_synthetic_observations": true,
+    "india_2026_Q3_missing_not_filled": true
+  },
+  "limitations": [
+    "This is a Brazil-India pilot only, not a defined EM universe or EM aggregate.",
+    "SCALE=6 is preserved but its exact interpretation has not yet been approved for value transformation; do not rescale or sum until resolved.",
+    "The dataset is quarterly BOP transaction data, not daily FPI/FII cash-flow data.",
+    "BOP_AGG is a separate annual group aggregate dataset and its estimates for non-reporting economies must be assessed before any use.",
+    "No trading admission, production score, or investment signal is authorized."
+  ]
+}
