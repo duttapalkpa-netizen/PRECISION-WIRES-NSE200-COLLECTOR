@@ -35,3 +35,5 @@ read-only public IMF endpoint probe; no registration mutation
 2026-11-19 [PA-TX2-ONLY] retry after workflow YAML indentation fix
 
 2026-11-19 [PA-TX2-ONLY] focused retry after corrected workflow conditions
+
+2026-11-19 [PA-TX2-ONLY] two-endpoint bounded format comparison
