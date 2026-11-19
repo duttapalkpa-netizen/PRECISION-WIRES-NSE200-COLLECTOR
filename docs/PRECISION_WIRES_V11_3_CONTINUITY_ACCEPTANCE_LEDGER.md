@@ -1392,3 +1392,16 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Limits: no Annex A2 row extraction, no exact quarter boundaries, no daily market/FX/sector response, no raw event-study panel, no independent replication.
 - Stage: source evidence-limit audit complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; production admission NOT_AUTHORIZED.
 - Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed quarters/guessed flow classifications; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 43 — Part-3: RBI Annex A2 India quarter-level sudden-stop extraction (2026-11-19)
+- Breakthrough: reopened RBI official HTML and inspected Annex Table A2 directly (table heading/source lines 211–213; India row 227–230). Exact India episode windows by flow measure are now transcribed.
+- Gross capital inflows: Q4 2008–Q2 2009 (3 quarters); Q1 2016–Q2 2016 (2 quarters).
+- Gross FPI inflows: Q3 2006 (1); Q3 2008–Q1 2009 (3); Q1 2016 (1); Q1 2022 (1).
+- Net capital flows: Q3 2004 (1); Q3 2006 (1); Q4 2008–Q2 2009 (3); Q1 2016–Q2 2016 (2).
+- Correction/supersession: Part-2's UNKNOWN/PENDING for exact India 2015–16 quarter boundaries and flow-type detail is superseded by direct Annex A2 extraction. Do not confuse the broad body-text H2:2015/H1:2016 context with the India row's exact Q1–Q2 2016 entries. Preserve separate gross capital, gross FPI and net-flow labels.
+- Report: docs/GCR_RBI_ANNEX_A2_INDIA_QUARTER_LEVEL_SUDDEN_STOP_EXTRACTION_CONTINUATION43_PART3_20261119.md; commit 8eb00a7a0f912085d2dcdb835ed376cef6169310.
+- Primary source: https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4517 ; Annex Table A2 India row lines 227–230 in current official HTML rendering.
+- Limits: published table extraction verified, but independent replication from raw quarterly BOPS not done; no daily market/FX/sector response; high-frequency raw event-study panel not acquired.
+- Stage: Annex A2 extraction increment complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; production admission NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed classifications; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
