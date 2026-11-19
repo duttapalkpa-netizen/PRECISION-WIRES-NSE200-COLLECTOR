@@ -1,0 +1,2456 @@
+{
+  "url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/+?references=none",
+  "retrieved_at_utc": "2026-11-19T07:06:26.897099+00:00",
+  "http_status": 200,
+  "headers": {
+    "Date": "Thu, 19 Nov 2026 07:06:27 GMT",
+    "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
+    "Transfer-Encoding": "chunked",
+    "Connection": "close",
+    "x-correlation-id": "3657e31bc440c5511ebcbbda43f4ff02",
+    "x-content-type-options": "nosniff",
+    "x-xss-protection": "0",
+    "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+    "pragma": "no-cache",
+    "expires": "0",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "x-frame-options": "DENY",
+    "x-envoy-upstream-service-time": "51",
+    "server": "istio-envoy",
+    "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
+  },
+  "byte_count": 6402,
+  "sha256": "50e82604b231e9e02ba8472d46e227276acec393360e60071c980f8d5caf2768",
+  "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
+  "target_concepts": {
+    "SCALE": {
+      "id": "SCALE",
+      "names": [
+        {
+          "lang": "ar",
+          "text": "عدد الخانات العشرية"
+        },
+        {
+          "lang": "ru",
+          "text": "Масштаб"
+        },
+        {
+          "lang": "pt",
+          "text": "Escala"
+        },
+        {
+          "lang": "ja",
+          "text": "尺度"
+        },
+        {
+          "lang": "en",
+          "text": "Scale"
+        },
+        {
+          "lang": "fr",
+          "text": "Échelle"
+        },
+        {
+          "lang": "es",
+          "text": "Escala"
+        },
+        {
+          "lang": "zh",
+          "text": "规模"
+        }
+      ],
+      "descriptions": [],
+      "enumeration_urns": [
+        "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=IMF:CL_UNIT_MULT(1.0+.0)"
+      ]
+    },
+    "PRECISION": {
+      "id": "PRECISION",
+      "names": [
+        {
+          "lang": "ar",
+          "text": "عدد الخانات الصحيحة والعشرية"
+        },
+        {
+          "lang": "ru",
+          "text": "Точность"
+        },
+        {
+          "lang": "pt",
+          "text": "Precisão"
+        },
+        {
+          "lang": "ja",
+          "text": "精度"
+        },
+        {
+          "lang": "en",
+          "text": "Precision"
+        },
+        {
+          "lang": "fr",
+          "text": "Précision"
+        },
+        {
+          "lang": "es",
+          "text": "Precisión"
+        },
+        {
+          "lang": "zh",
+          "text": "精度"
+        }
+      ],
+      "descriptions": [],
+      "enumeration_urns": [
+        "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=IMF:CL_UNIT_MULT(1.0+.0)"
+      ]
+    },
+    "DECIMALS_DISPLAYED": {
+      "id": "DECIMALS_DISPLAYED",
+      "names": [
+        {
+          "lang": "ar",
+          "text": "الأعداد العشرية الموضحة"
+        },
+        {
+          "lang": "ru",
+          "text": "Количество отображаемых десятичных знаков"
+        },
+        {
+          "lang": "pt",
+          "text": "Decimais visíveis"
+        },
+        {
+          "lang": "ja",
+          "text": "小数点表示"
+        },
+        {
+          "lang": "en",
+          "text": "Decimals Displayed"
+        },
+        {
+          "lang": "fr",
+          "text": "Décimales affichées"
+        },
+        {
+          "lang": "es",
+          "text": "Decimales visibles"
+        },
+        {
+          "lang": "zh",
+          "text": "显示的小数位数"
+        }
+      ],
+      "descriptions": [],
+      "enumeration_urns": [
+        "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=IMF:CL_DECIMALS(1.0+.0)"
+      ]
+    }
+  },
+  "referenced_codelists": [
+    {
+      "url": "https://api.imf.org/external/sdmx/3.0/structure/codelist/IMF/CL_UNIT_MULT/+?references=none",
+      "retrieved_at_utc": "2026-11-19T07:06:27.545416+00:00",
+      "http_status": 200,
+      "headers": {
+        "Date": "Thu, 19 Nov 2026 07:06:27 GMT",
+        "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
+        "Transfer-Encoding": "chunked",
+        "Connection": "close",
+        "x-correlation-id": "4c321def84f24738fad07794710cc7b9",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "0",
+        "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+        "x-frame-options": "DENY",
+        "x-envoy-upstream-service-time": "56",
+        "server": "istio-envoy",
+        "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
+      },
+      "byte_count": 54278,
+      "sha256": "24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561",
+      "requested_codelist_urn": "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=IMF:CL_UNIT_MULT(1.0+.0)",
+      "codes": [
+        {
+          "id": "0",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الوحدات"
+            },
+            {
+              "lang": "ru",
+              "text": "Единицы"
+            },
+            {
+              "lang": "pt",
+              "text": "Unidades"
+            },
+            {
+              "lang": "ja",
+              "text": "一"
+            },
+            {
+              "lang": "en",
+              "text": "Units"
+            },
+            {
+              "lang": "fr",
+              "text": "Unités"
+            },
+            {
+              "lang": "es",
+              "text": "Unidades"
+            },
+            {
+              "lang": "zh",
+              "text": "个"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس صفر (10^صفر)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в нулевой степени (10^0)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de zero (10^0)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の0乗 (10^0)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of zero (10^0)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance zéro (10^0)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de cero (10^0)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的零次方（10^0）"
+            }
+          ]
+        },
+        {
+          "id": "1",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "العشرات"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятки"
+            },
+            {
+              "lang": "pt",
+              "text": "Dezenas"
+            },
+            {
+              "lang": "ja",
+              "text": "十"
+            },
+            {
+              "lang": "en",
+              "text": "Tens"
+            },
+            {
+              "lang": "fr",
+              "text": "Dizaines"
+            },
+            {
+              "lang": "es",
+              "text": "Decenas"
+            },
+            {
+              "lang": "zh",
+              "text": "十"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 1 (10^1)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в первой степени (10^1)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de um (10^1)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の1乗 (10^1)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of one (10^1)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance un (10^1)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de uno (10^1)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的1次方（10^1）"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "المئات"
+            },
+            {
+              "lang": "ru",
+              "text": "Сотни"
+            },
+            {
+              "lang": "pt",
+              "text": "Centenas"
+            },
+            {
+              "lang": "ja",
+              "text": "百"
+            },
+            {
+              "lang": "en",
+              "text": "Hundreds"
+            },
+            {
+              "lang": "fr",
+              "text": "Centaines"
+            },
+            {
+              "lang": "es",
+              "text": "Centenas"
+            },
+            {
+              "lang": "zh",
+              "text": "百"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 2 (10^2)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять во второй степени (10^2)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de dois (10^2)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の2乗 (10^2)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of two (10^2)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance deux (10^2)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de dos (10^2)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的2次方（10^2）"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الآلاف"
+            },
+            {
+              "lang": "ru",
+              "text": "Тысячи"
+            },
+            {
+              "lang": "pt",
+              "text": "Milhares"
+            },
+            {
+              "lang": "ja",
+              "text": "千"
+            },
+            {
+              "lang": "en",
+              "text": "Thousands"
+            },
+            {
+              "lang": "fr",
+              "text": "Milliers"
+            },
+            {
+              "lang": "es",
+              "text": "Miles"
+            },
+            {
+              "lang": "zh",
+              "text": "千"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 3 (10^3)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в третьей степени (10^3)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de três (10^3)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の3乗 (10^3)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of three (10^3)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance trois (10^3)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de tres (10^3)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的3次方（10^3）"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "عشرات الآلاف "
+            },
+            {
+              "lang": "ru",
+              "text": "Десятки тысяч"
+            },
+            {
+              "lang": "pt",
+              "text": "Dezenas de milhares"
+            },
+            {
+              "lang": "ja",
+              "text": "万"
+            },
+            {
+              "lang": "en",
+              "text": "Tens of thousands"
+            },
+            {
+              "lang": "fr",
+              "text": "Dizaines de milliers"
+            },
+            {
+              "lang": "es",
+              "text": "Decenas de miles"
+            },
+            {
+              "lang": "zh",
+              "text": "万"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 4 (10^4)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в четвертой степени (10^4)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de quatro (10^4)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の4乗 (10^4)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of four (10^4)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance quatre (10^4)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de cuatro (10^4)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的4次方（10^4）"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "مئات الآلاف"
+            },
+            {
+              "lang": "ru",
+              "text": "Сотни тысяч"
+            },
+            {
+              "lang": "pt",
+              "text": "Centenas de milhares"
+            },
+            {
+              "lang": "ja",
+              "text": "十万"
+            },
+            {
+              "lang": "en",
+              "text": "Hundreds of thousands"
+            },
+            {
+              "lang": "fr",
+              "text": "Centaines de milliers"
+            },
+            {
+              "lang": "es",
+              "text": "Centenas de miles"
+            },
+            {
+              "lang": "zh",
+              "text": "十万"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 5 (10^5)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в пятой степени (10^5)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de cinco (10^5)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の5乗 (10^5)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of five(10^5)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance cinq (10^5)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de cinco (10^5)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的5次方（10^5）"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الملايين"
+            },
+            {
+              "lang": "ru",
+              "text": "Миллионы"
+            },
+            {
+              "lang": "pt",
+              "text": "Milhões"
+            },
+            {
+              "lang": "ja",
+              "text": "百万"
+            },
+            {
+              "lang": "en",
+              "text": "Millions"
+            },
+            {
+              "lang": "fr",
+              "text": "Millions"
+            },
+            {
+              "lang": "es",
+              "text": "Millones"
+            },
+            {
+              "lang": "zh",
+              "text": "百万"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 6 (10^6)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в шестой степени (10^6)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de seis (10^6)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の6乗 (10^6)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of six (10^6)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance six (10^6)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de seis (10^6)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的6次方（10^6）"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "عشرات الملايين"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятки миллионов"
+            },
+            {
+              "lang": "pt",
+              "text": "Dezenas de milhões"
+            },
+            {
+              "lang": "ja",
+              "text": "千万"
+            },
+            {
+              "lang": "en",
+              "text": "Tens of millions"
+            },
+            {
+              "lang": "fr",
+              "text": "Dizaines de millions"
+            },
+            {
+              "lang": "es",
+              "text": "Decenas de millones"
+            },
+            {
+              "lang": "zh",
+              "text": "千万"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 7 (10^7)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в седьмой степени (10^7)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de sete (10^7)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の7乗 (10^7)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of seven (10^7)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance sept (10^7)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de siete (10^7)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的7次方（10^7）"
+            }
+          ]
+        },
+        {
+          "id": "8",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "مئات الملايين"
+            },
+            {
+              "lang": "ru",
+              "text": "Сотни миллионов"
+            },
+            {
+              "lang": "pt",
+              "text": "Centenas de milhões"
+            },
+            {
+              "lang": "ja",
+              "text": "億"
+            },
+            {
+              "lang": "en",
+              "text": "Hundreds of millions"
+            },
+            {
+              "lang": "fr",
+              "text": "Centaines de millions"
+            },
+            {
+              "lang": "es",
+              "text": "Cientos de millones"
+            },
+            {
+              "lang": "zh",
+              "text": "亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 8 (10^8)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в восьмой степени (10^8)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de oito (10^8)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の8乗 (10^8)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of eight (10^8)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance huit (10^8)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de ocho (10^8)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的8次方（10^8）"
+            }
+          ]
+        },
+        {
+          "id": "9",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "المليارات"
+            },
+            {
+              "lang": "ru",
+              "text": "Миллиарды"
+            },
+            {
+              "lang": "pt",
+              "text": "Milhares de milhões"
+            },
+            {
+              "lang": "ja",
+              "text": "十億"
+            },
+            {
+              "lang": "en",
+              "text": "Billions"
+            },
+            {
+              "lang": "fr",
+              "text": "Milliards"
+            },
+            {
+              "lang": "es",
+              "text": "Miles de millones"
+            },
+            {
+              "lang": "zh",
+              "text": "十亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 9 (10^9)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в девятой степени (10^9)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de nove (10^9)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の9乗 (10^9)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of nine (10^9)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance neuf (10^9)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de nueve (10^9)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的9次方（10^9）"
+            }
+          ]
+        },
+        {
+          "id": "-1",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "العُشر"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятые доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Décimas"
+            },
+            {
+              "lang": "ja",
+              "text": "十分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Tenths"
+            },
+            {
+              "lang": "fr",
+              "text": "Dixièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Décimas"
+            },
+            {
+              "lang": "zh",
+              "text": "十分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 1 (10^-1)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус первой степени (10^-1)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos um (10^-1)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-1乗 (10^-1)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus one (10^-1)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins un (10^-1)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos uno (10^-1)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-1次方（10^-1）"
+            }
+          ]
+        },
+        {
+          "id": "-2",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المائة"
+            },
+            {
+              "lang": "ru",
+              "text": "Сотые доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Centésimas"
+            },
+            {
+              "lang": "ja",
+              "text": "百分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Hundredths"
+            },
+            {
+              "lang": "fr",
+              "text": "Centièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Centésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "百分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 2 (10^-2)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус второй степени (10^-2)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos dois (10^-2)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-2乗 (10^-2)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus two (10^-2)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins deux (10^-2)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos dos (10^-2)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-2次方（10^-2）"
+            }
+          ]
+        },
+        {
+          "id": "-3",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من الألف"
+            },
+            {
+              "lang": "ru",
+              "text": "Тысячные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Milésimas"
+            },
+            {
+              "lang": "ja",
+              "text": "千分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Thousandths"
+            },
+            {
+              "lang": "fr",
+              "text": "Millièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Milésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "千分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 3 (10^-3)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус третьей степени (10^-3)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos três (10^-3)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-3乗 (10^-3)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus three (10^-3)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins trois (10^-3)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos tres (10^-3)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-3次方（10^-3）"
+            }
+          ]
+        },
+        {
+          "id": "-4",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من العشرة آلاف"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятитысячные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Décimas de milésima"
+            },
+            {
+              "lang": "ja",
+              "text": "万分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Ten-thousandths"
+            },
+            {
+              "lang": "fr",
+              "text": "Dix-millièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Diezmilésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "万分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 4 (10^-4)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус четвертой степени (10^-4)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos quatro (10^-4)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-4乗 (10^-4)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus four (10^-4)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins quatre (10^-4)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos cuatro (10^-4)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-4次方（10^-4）"
+            }
+          ]
+        },
+        {
+          "id": "-5",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المائة ألف"
+            },
+            {
+              "lang": "ru",
+              "text": "Стотысячные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Centésimas de milésima"
+            },
+            {
+              "lang": "ja",
+              "text": "十万分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Hundred-thousandths"
+            },
+            {
+              "lang": "fr",
+              "text": "Cent-millièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Cienmilésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "十万分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 5 (10^-5)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус пятой степени (10^-5)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos cinco (10^-5)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-5乗 (10^-5)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus five (10^-5)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins cinq (10^-5)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos cinco (10^-5)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-5次方（10^-5）"
+            }
+          ]
+        },
+        {
+          "id": "-6",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المليون"
+            },
+            {
+              "lang": "ru",
+              "text": "Миллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Milionésimas"
+            },
+            {
+              "lang": "ja",
+              "text": "百万分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Millionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Millionièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Millonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "百万分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 6 (10^-6)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус шестой степени (10^-6)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos seis (10^-6)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-6乗 (10^-6)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus six (10^-6)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins six (10^-6)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos seis (10^-6)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-6次方（10^-6）"
+            }
+          ]
+        },
+        {
+          "id": "-7",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من العشرة ملايين"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятимиллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Décimas de milionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "千万分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Ten-millionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Dix millionièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Diezmillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "千万分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 7 (10^-7)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус седьмой степени (10^-7)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos sete (10^-7)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-7乗 (10^-7)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus seven (10^-7)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins sept (10^-7)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos siete (10^-7)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-7次方（10^-7）"
+            }
+          ]
+        },
+        {
+          "id": "-8",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المائة مليون"
+            },
+            {
+              "lang": "ru",
+              "text": "Стомиллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Centésimas de milionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "億分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Hundred-millionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Cent-millionièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Cienmillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 8 (10^-8)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус восьмой степени (10^-8)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos oito (10^-8)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-8乗 (10^-8)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus eight (10^-8)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins huit (10^-8)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos ocho (10^-8)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-8次方（10^-8）"
+            }
+          ]
+        },
+        {
+          "id": "-9",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المليار"
+            },
+            {
+              "lang": "ru",
+              "text": "Миллиардные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Milésimas de milionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "十億分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Billionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Milliardièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Milmillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "十亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 9 (10^-9)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус девятой степени (10^-9)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos nove (10^-9)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-9乗 (10^-9)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus nine (10^-9)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins neuf (10^-9)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos nueve (10^-9)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-9次方（10^-9）"
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "عشرات المليارات"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятки миллиардов"
+            },
+            {
+              "lang": "pt",
+              "text": "Dezenas de milhares de milhões"
+            },
+            {
+              "lang": "ja",
+              "text": "百億"
+            },
+            {
+              "lang": "en",
+              "text": "Tens of billions"
+            },
+            {
+              "lang": "fr",
+              "text": "Dizaines de milliards"
+            },
+            {
+              "lang": "es",
+              "text": "Decenas de miles de millones"
+            },
+            {
+              "lang": "zh",
+              "text": "百亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 10 (10^10)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в десятой степени (10^10)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de dez (10^10)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の10乗 (10^10)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of ten (10^10)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance dix (10^10)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de diez (10^10)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的10次方（10^10）"
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "مئات المليارات"
+            },
+            {
+              "lang": "ru",
+              "text": "Сотни миллиардов"
+            },
+            {
+              "lang": "pt",
+              "text": "Centenas de milhares de milhões"
+            },
+            {
+              "lang": "ja",
+              "text": "千億"
+            },
+            {
+              "lang": "en",
+              "text": "Hundreds of billions"
+            },
+            {
+              "lang": "fr",
+              "text": "Centaines de milliards"
+            },
+            {
+              "lang": "es",
+              "text": "Centenas de miles de millones"
+            },
+            {
+              "lang": "zh",
+              "text": "千亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 11 (10^11)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в одиннадцатой степени (10^11)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de onze (10^11)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の11乗 (10^11)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of eleven (10^11)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance onze (10^11)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de once (10^11)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的11次方（10^11）"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "التريليونات"
+            },
+            {
+              "lang": "ru",
+              "text": "Триллионы"
+            },
+            {
+              "lang": "pt",
+              "text": "Biliões"
+            },
+            {
+              "lang": "ja",
+              "text": "兆"
+            },
+            {
+              "lang": "en",
+              "text": "Trillions"
+            },
+            {
+              "lang": "fr",
+              "text": "Milliers de milliards"
+            },
+            {
+              "lang": "es",
+              "text": "Billones"
+            },
+            {
+              "lang": "zh",
+              "text": "万亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 12 (10^12)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в двенадцатой степени (10^12)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de doze (10^12)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の12乗 (10^12)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of twelve (10^12)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance douze (10^12)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de doce (10^12)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的12次方（10^12）"
+            }
+          ]
+        },
+        {
+          "id": "13",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "عشرات التريليونات"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятки триллионов"
+            },
+            {
+              "lang": "pt",
+              "text": "Dezenas de biliões"
+            },
+            {
+              "lang": "ja",
+              "text": "十兆"
+            },
+            {
+              "lang": "en",
+              "text": "Tens of trillions"
+            },
+            {
+              "lang": "fr",
+              "text": "Dizaines de milliers de milliards"
+            },
+            {
+              "lang": "es",
+              "text": "Decenas de billones"
+            },
+            {
+              "lang": "zh",
+              "text": "十万亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 13 (10^13)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в тринадцатой степени (10^13)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de treze (10^13)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の13乗 (10^13)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of thirteen (10^13)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance treize (10^13)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de trece (10^13)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的13次方（10^13）"
+            }
+          ]
+        },
+        {
+          "id": "14",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "مئات التريليونات"
+            },
+            {
+              "lang": "ru",
+              "text": "Сотни триллионов"
+            },
+            {
+              "lang": "pt",
+              "text": "Centenas de biliões"
+            },
+            {
+              "lang": "ja",
+              "text": "百兆"
+            },
+            {
+              "lang": "en",
+              "text": "Hundreds of trillions"
+            },
+            {
+              "lang": "fr",
+              "text": "Centaines de milliards de dollars"
+            },
+            {
+              "lang": "es",
+              "text": "Centenas de billones"
+            },
+            {
+              "lang": "zh",
+              "text": "百万亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 14 (10^14)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в четырнадцатой степени (10^14)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de catorze (10^14)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の14乗 (10^14)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of fourteen (10^14)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance quatorze (10^14)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de catorce (10^14)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的14次方（10^14）"
+            }
+          ]
+        },
+        {
+          "id": "15",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الكوادريليونات "
+            },
+            {
+              "lang": "ru",
+              "text": "Квадриллионы"
+            },
+            {
+              "lang": "pt",
+              "text": "Milhares de biliões"
+            },
+            {
+              "lang": "ja",
+              "text": "千兆"
+            },
+            {
+              "lang": "en",
+              "text": "Quadrillions"
+            },
+            {
+              "lang": "fr",
+              "text": "Quadrillions"
+            },
+            {
+              "lang": "es",
+              "text": "Miles de billones"
+            },
+            {
+              "lang": "zh",
+              "text": "千万亿"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 15 (10^15)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в пятнадцатой степени (10^15)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de quinze (10^15)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の15乗 (10^15)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of fifteen (10^15)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance quinze (10^15)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de quince (10^15)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的15次方（10^15）"
+            }
+          ]
+        },
+        {
+          "id": "-10",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من العشرة مليارات"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятимиллиардные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Décimas de milésima de milionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "百億分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Ten-billionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Dix-milliardièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Diezmilmillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "百亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 10 (10^-10)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус десятой степени (10^-10)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos dez (10^-10)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-10乗 (10^-10)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus ten (10^-10)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins dix (10^-10)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos diez (10^-10)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-10次方（10^-10）"
+            }
+          ]
+        },
+        {
+          "id": "-11",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المائة مليار"
+            },
+            {
+              "lang": "ru",
+              "text": "Стомиллиардные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Centésimas de milésima de milionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "千億分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Hundred-billionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Cent-milliardièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Cienmilmillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "千亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 11 (10^-11)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус одиннадцатой степени (10^-11)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos onze (10^-11)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-11乗 (10^-11)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus eleven (10^-11)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins onze (10^-11)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos once (10^-11)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-11次方（10^-11）"
+            }
+          ]
+        },
+        {
+          "id": "-12",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من التريليون"
+            },
+            {
+              "lang": "ru",
+              "text": "Триллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Bilionésimas"
+            },
+            {
+              "lang": "ja",
+              "text": "兆分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Trillionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Trillionièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Billonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "万亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 12 (10^-12)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус двенадцатой степени (10^-12)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos doze (10^-12)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-12乗 (10^-12)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus twelve (10^-12)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins douze (10^-12)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos doce (10^-12)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-12次方（10^-12）"
+            }
+          ]
+        },
+        {
+          "id": "-13",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من العشرة تريليونات"
+            },
+            {
+              "lang": "ru",
+              "text": "Десятитриллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Décimas de bilionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "十兆分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Ten-trillionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Dix-trillionièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Diezbillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "十万亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 13 (10^-13)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус тринадцатой степени (10^-13)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos treze (10^-13)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-13乗 (10^-13)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus thirteen (10^-13)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins treize (10^-13)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos trece (10^-13)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-13次方（10^-13）"
+            }
+          ]
+        },
+        {
+          "id": "-14",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من المائة تريليون"
+            },
+            {
+              "lang": "ru",
+              "text": "Стотриллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Centésimas de bilionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "百兆分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Hundred-trillionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Cent-trillionième"
+            },
+            {
+              "lang": "es",
+              "text": "Cienbillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "百万亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 14 (10^-14)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус четырнадцатой степени (10^-14)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos catorze (10^-14)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-14乗 (10^-14)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus fourteen (10^-14)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins quatorze (10^-14)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos catorce (10^-14)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-14次方（10^-14）"
+            }
+          ]
+        },
+        {
+          "id": "-15",
+          "names": [
+            {
+              "lang": "ar",
+              "text": "الجزء من الكوادريليون"
+            },
+            {
+              "lang": "ru",
+              "text": "Квадриллионные доли"
+            },
+            {
+              "lang": "pt",
+              "text": "Milésimas de bilionésima"
+            },
+            {
+              "lang": "ja",
+              "text": "千兆分の一"
+            },
+            {
+              "lang": "en",
+              "text": "Quadrillionths"
+            },
+            {
+              "lang": "fr",
+              "text": "Quadrillionièmes"
+            },
+            {
+              "lang": "es",
+              "text": "Milbillonésimas"
+            },
+            {
+              "lang": "zh",
+              "text": "千万亿分之一"
+            }
+          ],
+          "descriptions": [
+            {
+              "lang": "ar",
+              "text": "يُعبر عنه بالترميز العلمي بوصفه 10 أس سالب 15 (10^-15)"
+            },
+            {
+              "lang": "ru",
+              "text": "В математических терминах представляется как десять в минус пятнадцатой степени (10^-15)"
+            },
+            {
+              "lang": "pt",
+              "text": "Representado em notação científica como dez elevado à potência de menos quinze (10^-15)"
+            },
+            {
+              "lang": "ja",
+              "text": "科学的表記では、10の-15乗 (10^-15)と表記"
+            },
+            {
+              "lang": "en",
+              "text": "In scientific notation, expressed as ten raised to the power of minus fifteen (10^-15)"
+            },
+            {
+              "lang": "fr",
+              "text": "En notation scientifique, exprimé comme dix élevé à la puissance moins quinze (10^-15)"
+            },
+            {
+              "lang": "es",
+              "text": "En notación científica, expresado como diez a la potencia de menos once (10^-15)"
+            },
+            {
+              "lang": "zh",
+              "text": "在科学记数法中，表示为10的-15次方（10^-15）"
+            }
+          ]
+        }
+      ],
+      "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
+      "codelist_version": "1.0.2"
+    }
+  ],
+  "scale_code_6": [
+    {
+      "id": "6",
+      "names": [
+        {
+          "lang": "ar",
+          "text": "الملايين"
+        },
+        {
+          "lang": "ru",
+          "text": "Миллионы"
+        },
+        {
+          "lang": "pt",
+          "text": "Milhões"
+        },
+        {
+          "lang": "ja",
+          "text": "百万"
+        },
+        {
+          "lang": "en",
+          "text": "Millions"
+        },
+        {
+          "lang": "fr",
+          "text": "Millions"
+        },
+        {
+          "lang": "es",
+          "text": "Millones"
+        },
+        {
+          "lang": "zh",
+          "text": "百万"
+        }
+      ],
+      "descriptions": [
+        {
+          "lang": "ar",
+          "text": "يُعبر عنها بالترميز العلمي بوصفها 10 أس 6 (10^6)"
+        },
+        {
+          "lang": "ru",
+          "text": "В математических терминах представляется как десять в шестой степени (10^6)"
+        },
+        {
+          "lang": "pt",
+          "text": "Representado em notação científica como dez elevado à potência de seis (10^6)"
+        },
+        {
+          "lang": "ja",
+          "text": "科学的表記では、10の6乗 (10^6)と表記"
+        },
+        {
+          "lang": "en",
+          "text": "In scientific notation, expressed as ten raised to the power of six (10^6)"
+        },
+        {
+          "lang": "fr",
+          "text": "En notation scientifique, exprimé comme dix élevé à la puissance six (10^6)"
+        },
+        {
+          "lang": "es",
+          "text": "En notación científica, expresado como diez a la potencia de seis (10^6)"
+        },
+        {
+          "lang": "zh",
+          "text": "在科学记数法中，表示为10的6次方（10^6）"
+        }
+      ]
+    }
+  ],
+  "scale_semantics_status": "PASS_CODE6_MILLIONS_10_POWER_6"
+}
