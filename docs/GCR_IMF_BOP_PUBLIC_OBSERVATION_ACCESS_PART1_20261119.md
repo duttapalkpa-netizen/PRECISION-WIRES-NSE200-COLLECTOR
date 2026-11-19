@@ -68,8 +68,14 @@ The machine-readable validation summary is `docs/evidence/IMF_BOP_PORTFOLIO_PILO
 
 ## SCALE and sign reconciliation — Brazil PASS\n\n- Official BCB series 22906: portfolio investment net acquisition of financial assets, monthly, million USD.\n- Official BCB series 22924: portfolio investment net incurrence of liabilities, monthly, million USD.\n- 47 quarters × 2 entries = 94 comparisons, 94 PASS, 0 REVIEW, 0 BLOCKED. Tolerance: 0.15 USD million because each monthly BCB observation is rounded to one decimal place.\n- Machine evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`, and raw BCB source JSON files.\n- BCB metadata: https://opendata.bcb.gov.br/dataset/22906-portfolio-investment---net-acquisition-of-financial-assets---monthly---net and https://opendata.bcb.gov.br/dataset/22924-portfolio-investment---net-incurrence-of-liabilities---monthly---net.\n\n## Next exact tasks
 
-1. Independently validate the same scale/sign behavior for India and additional EMDE country sources.
+1. India national-source crosswalk is complete as PARTIAL (10/12; 2 REVIEW); next validate additional EMDE country sources.
 2. Define and version the EM country membership set, with effective dates and exclusions.
 3. Probe BOP_AGG annual group aggregates as a separately labelled comparison series; preserve its estimates methodology.
 4. Expand exact-key quarterly extraction only after the country universe and factor definitions are approved.
 5. Keep BOP transaction flows distinct from IIP/CPIS positions and daily FPI flows.
+
+
+## India scale/sign crosswalk — PARTIAL
+- Official RBI Table 42 (BPM6) for Jan-Mar 2025/2026 and Apr-Jun 2025/2026: 10/12 comparisons PASS; 2026-Q1 liabilities and combined net REVIEW.
+- IMF SCALE=6 maps to CL_UNIT_MULT code 6 “Millions” (10^6). Operational `OBS_VALUE/1e6` matches Brazil 94/94 and India 10/12 checks; no global conversion authorized.
+- India report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`.
