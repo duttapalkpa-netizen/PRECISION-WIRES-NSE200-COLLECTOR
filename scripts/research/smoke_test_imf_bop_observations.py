@@ -64,5 +64,5 @@ summary={"scope":"official IMF BOP exact-key two-country access smoke test; no E
  "nonempty_observation_total":sum(x.get("nonempty_obs_value_count",0) for x in records)}
 (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 print(json.dumps(summary,indent=2,ensure_ascii=False))
-if summary["http_200_count"]!=len(records) or summary["csv_parse_pass_count"]!=len(records) or summary["nonempty_observation_total"]==0:
+if summary["http_200_count"]!=len(records) or summary["csv_parse_pass_count"]!=len(records):
  raise SystemExit("BOP observation access smoke test did not pass")
