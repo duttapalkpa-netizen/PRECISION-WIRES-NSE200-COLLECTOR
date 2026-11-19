@@ -734,3 +734,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Public JSON data is visible, but raw download headers/bytes/retrieval UTC/SHA-256 were not archived in this task. Thus discovery/sample visibility PASS only; immutable raw ingestion NOT_DONE.
 - Report: `docs/BRAZIL_IMF_REGISTRY_AND_BCB_OPEN_DATA_FLOW_AUDIT_CONTINUATION39_PART7_20261119.md`, commit `22260e4b98e0346198281b1987b4739128aa277b`.
 - Brazil identity/PA chronology remains BLOCKED; GCR synchronized panel and score remain NOT_READY. Next: short collector jobs to archive 22905/22906/22925/22940 with headers, UTC, bytes, SHA-256, schema QA, then map exact instrument/sign to IMF only after verification. ₹0; no production changes; UNKNOWN is not PASS.
+
+## Continuation 39 — Part-8: bounded BCB SGS raw capture pipeline (2026-11-19)
+- Added isolated research collector `scripts/research/capture_bcb_sgs_portfolio_raw.py` for SGS 22905/22906/22925/22940. It preserves raw JSON bytes and records retrieval UTC, HTTP status, final URL, selected headers, byte count, SHA-256, row count, first/last observation, date/schema/finite-value/duplicate/ordering QA; fails closed on any series failure.
+- Added isolated 5-minute workflow `.github/workflows/bcb_sgs_portfolio_raw_capture.yml`; updated NSE collector `paths-ignore` first to prevent this research-only push from triggering the long NSE production research workflow. No production pipeline logic changed.
+- Commits: NSE workflow isolation `6e975b7f375fed914c626eda92b4fcd9e87f7b80`; collector `d0a545fb54bea345bf2e4b94c6644310ce09a7bf`; bounded workflow `4e0ef24ac94990e7b34d2c73099414310537071f`; report `68fca473ce92eb4df141fc427875344fb575ade3`.
+- GitHub Actions run `44538278638` (run #1), URL https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44538278638; status was QUEUED at latest inspection, no conclusion or artifact yet. Therefore raw archival and QA remain NOT_DONE, not PASS.
+- Direct container download failed; web reader could display 22906 JSON but not the other raw endpoints. No local raw archive or fabricated hashes.
+- Brazil IMF PA identity/chronology remains BLOCKED; GCR panel/score NOT_READY. Next: poll only run 44538278638, inspect artifact and independently verify raw hashes if produced. ₹0; no production changes; UNKNOWN is not PASS.
