@@ -19,3 +19,5 @@
 2026-11-19 re-run-full-attribute-preservation-and-raw-panel-validator
 
 2026-11-19 retry-strict-attribute-preservation-validator-after-fix
+
+2026-11-19 fetch-CS_MASTER_SYSTEM-SCALE-concept-semantics
