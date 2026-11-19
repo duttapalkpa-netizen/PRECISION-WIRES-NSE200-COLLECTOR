@@ -77,9 +77,9 @@ def main():
   "weo_group_code":"G200","weo_group_name":"Emerging Market and Developing Economies",
   "weo_membership_count":len(members),"unique_weo_country_codes":len({x["country_code"] for x in members}),
   "duplicate_weo_codes":sorted(c for c in {x["country_code"] for x in members} if sum(y["country_code"]==c for y in members)>1),
-  "bop_codelist_code_count":len(codes),"mapping_status_counts":counts,
+  "bop_codelist_id":"CL_BOP_COUNTRY","bop_codelist_version":"1.0.0","bop_codelist_code_count":len(codes),"mapping_status_counts":counts,
   "unmapped":[x["weo_country_code"]+":"+x["weo_country_name"] for x in rows if x["mapping_status"]=="UNMAPPED"],
-  "name_label_nonmatches":[x["weo_country_code"]+":"+x["weo_country_name"]+" => "+x["bop_country_names"] for x in rows if x["mapping_status"]=="EXACT_CODE" and not x["name_label_normalized_match"]],
+  "name_label_nonmatches":[x["weo_country_code"]+":"+x["weo_country_name"]+" => "+x["bop_country_names"] for x in rows if x["mapping_status"]=="EXACT_CODE" and not x["name_label_normalized_match"]],\n  "expected_name_variant_review":"Nauru was renamed to Naoero in October 2026 WEO; code NRU remains stable. This is a documented name-only difference, not a code mismatch.",
   "workbook":wb_info,"manifest":manifest,
   "membership_authority":"WEO October 2026 workbook Country Group Composition sheet, G200; not PDF text extraction.",
   "crosswalk_rule":"Exact country code ID only; no fuzzy name matching or guessed aliases."}
