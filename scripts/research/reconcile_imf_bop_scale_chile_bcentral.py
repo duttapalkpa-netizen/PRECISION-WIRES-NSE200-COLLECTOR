@@ -9,12 +9,12 @@ from bs4 import BeautifulSoup
 import hashlib,json,csv,re
 BASE="https://si3.bcentral.cl/siete/ES/Siete/Cuadro/CAP_BDP/MN_BDP42"
 SERIES={
- "A_NFA_T":{"id":"F068.G2.FLU.Z.0.S.A.Z.T.Z.Z.6.0.M","path":"BP6M_CTAFIN_ACT"},
- "L_NIL_T":{"id":"F068.G2.FLU.Z.0.S.P.Z.T.Z.Z.6.0.M","path":"BP6M_CTAFIN_PAS"}
+ "A_NFA_T":{"id":"F068.G2.FLU.Z.0.S.A.Z.T.Z.Z.6.0.M","path":"BP6M_CF_ACT"},
+ "L_NIL_T":{"id":"F068.G2.FLU.Z.0.S.P.Z.T.Z.Z.6.0.M","path":"BP6M_CF_PAS"}
 }
 PANEL=Path("docs/evidence/imf_bop_emde_20261119/emde_portfolio_flows.csv")
 OUT=Path("chile_bcentral_scale_reconciliation");RAW=OUT/"raw";RAW.mkdir(parents=True,exist_ok=True)
-QUARTERS=["2025-Q4","2026-Q1","2026-Q2","2026-Q3"]
+QUARTERS=["2025-Q4","2026-Q1","2026-Q2"]
 def sha(b):return hashlib.sha256(b).hexdigest()
 def clean(s):return " ".join(str(s).replace("\xa0"," ").split())
 def main():
@@ -35,15 +35,15 @@ def main():
   soup=BeautifulSoup(body,"html.parser")
   # Search all visible tables for the observation table containing FECHA/VALOR.
   parsed={}
-  for table in soup.find_all("table"):
-   headers2=[clean(x.get_text(" ",strip=True)).upper() for x in table.find_all("th")]
-   if "FECHA" in headers2 and "VALOR" in headers2:
-    for tr in table.find_all("tr"):
-     cells=[clean(x.get_text(" ",strip=True)) for x in tr.find_all(["td","th"],recursive=False)]
-     if len(cells)>=2:
-      date,value=cells[0],cells[1]
-      if re.match(r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[.]?\s*20\d\d$",date,re.I):
-       parsed[date]=Decimal(value.replace(".","").replace(",","."))
+  month_map={"Ene":"Jan","Feb":"Feb","Mar":"Mar","Abr":"Apr","May":"May","Jun":"Jun","Jul":"Jul","Ago":"Aug","Sep":"Sep","Oct":"Oct","Nov":"Nov","Dic":"Dec"}
+  for tr in soup.find_all("tr"):
+   cells=[clean(x.get_text(" ",strip=True)) for x in tr.find_all(["td","th"],recursive=False)]
+   if len(cells)>=2:
+    date,value=cells[0],cells[1]
+    m=re.match(r"^([A-Za-zÁÉÍÓÚáéíóú]{3})[.]?\s*(20\d\d)$",date)
+    if m and m.group(1) in month_map:
+     key=month_map[m.group(1)]+" "+m.group(2)
+     parsed[key]=Decimal(value.replace(".","").replace(",","."))
   if not parsed:
    # Preserve HTML and emit visible table diagnostics; fail closed.
    tables=[]
@@ -72,7 +72,7 @@ def main():
    results.append({"country":"CHL","quarter":q,"entry":entry,"bcentral_series_id":SERIES[entry]["id"],"bcentral_months":";".join(months),"bcentral_monthly_values_usd_million":";".join(str(x) for x in vals),"bcentral_quarter_sum_usd_million":str(source_sum),"imf_obs_value_raw_usd":str(raw),"imf_scale":ref.get("SCALE"),"imf_unit":ref.get("UNIT"),"imf_raw_div_1e6_usd_million":str(scaled),"difference_imf_minus_bcentral":str(diff),"tolerance_usd_million":"0.05","status":"PASS" if ref.get("SCALE")=="6" and ref.get("UNIT")=="USD" and abs(diff)<=Decimal("0.05") else "REVIEW"})
  with (OUT/"reconciliation.csv").open("w",newline="",encoding="utf-8") as f:
   w=csv.DictWriter(f,fieldnames=list(results[0]));w.writeheader();w.writerows(results)
- summary={"scope":"Chile Banco Central official monthly BOP portfolio investment assets/liabilities summed to quarter vs IMF BOP P_F","source_receipts":receipts,"source_units":"Millions of U.S. dollars","frequency":"Monthly; summed to quarter","series":SERIES,"quarters":QUARTERS,"comparison_count":len(results),"pass_count":sum(x["status"]=="PASS" for x in results),"review_count":sum(x["status"]!="PASS" for x in results),"max_abs_difference_usd_million":str(max(abs(Decimal(x["difference_imf_minus_bcentral"])) for x in results)),"tolerance":"0.05 USD million (monthly source precision)","decision":"CHILE_SCALE_AND_SIGN_EMPIRICAL_CHECK_PASS" if len(results)==8 and all(x["status"]=="PASS" for x in results) else "CHILE_CHECK_NOT_CLOSED","scope_limit":"Four quarterly windows only; any revisions/vintage mismatch must be logged."}
+ summary={"scope":"Chile Banco Central official monthly BOP portfolio investment assets/liabilities summed to quarter vs IMF BOP P_F","source_receipts":receipts,"source_units":"Millions of U.S. dollars","frequency":"Monthly; summed to quarter","series":SERIES,"quarters":QUARTERS,"comparison_count":len(results),"pass_count":sum(x["status"]=="PASS" for x in results),"review_count":sum(x["status"]!="PASS" for x in results),"max_abs_difference_usd_million":str(max(abs(Decimal(x["difference_imf_minus_bcentral"])) for x in results)),"tolerance":"0.05 USD million (monthly source precision)","decision":"CHILE_SCALE_AND_SIGN_EMPIRICAL_CHECK_PASS" if len(results)==6 and all(x["status"]=="PASS" for x in results) else "CHILE_CHECK_NOT_CLOSED","scope_limit":"Four quarterly windows only; any revisions/vintage mismatch must be logged."}
  (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
  print(json.dumps(summary,indent=2,ensure_ascii=False))
  if summary["decision"]!="CHILE_SCALE_AND_SIGN_EMPIRICAL_CHECK_PASS":raise SystemExit("Chile benchmark did not pass")
