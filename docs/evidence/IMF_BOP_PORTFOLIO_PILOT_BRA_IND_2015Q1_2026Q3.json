@@ -8,7 +8,13 @@
     "observation_endpoint": "https://api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0",
     "dsd": "IMF.STA:DSD_BOP(24.0.0)",
     "dsd_sha256": "1541c0e65af5801acb86767a183a124537aa4b6a04d2a4e528c23d73d4b2019b",
-    "dimensions_in_order": ["COUNTRY", "BOP_ACCOUNTING_ENTRY", "INDICATOR", "UNIT", "FREQUENCY"],
+    "dimensions_in_order": [
+      "COUNTRY",
+      "BOP_ACCOUNTING_ENTRY",
+      "INDICATOR",
+      "UNIT",
+      "FREQUENCY"
+    ],
     "codelists": {
       "COUNTRY": "IMF.STA:CL_BOP_COUNTRY(1.0.0)",
       "BOP_ACCOUNTING_ENTRY": "IMF.STA:CL_BOP_ACCOUNTING_ENTRY(3.3.0)",
@@ -28,7 +34,10 @@
     },
     "note": "Assets and liabilities remain separate series. No netting or sign reinterpretation was performed."
   },
-  "period_window_requested": ["2015-Q1", "2026-Q3"],
+  "period_window_requested": [
+    "2015-Q1",
+    "2026-Q3"
+  ],
   "series": [
     {
       "country": "BRA",
@@ -92,19 +101,56 @@
   },
   "preservation_rules": {
     "all_32_source_columns_preserved": true,
-    "scale_values_preserved": ["6"],
-    "precision_values_preserved": ["6"],
+    "scale_values_preserved": [
+      "6"
+    ],
+    "precision_values_preserved": [
+      "6"
+    ],
     "no_scale_conversion": true,
     "no_currency_conversion": true,
     "no_forward_fill": true,
     "no_synthetic_observations": true,
-    "india_2026_Q3_missing_not_filled": true
+    "india_2026_Q3_missing_not_filled": true,
+    "scale_application": "API output already USD in tested Brazil series; no second multiplier"
   },
   "limitations": [
     "This is a Brazil-India pilot only, not a defined EM universe or EM aggregate.",
-    "SCALE=6 is preserved but its exact interpretation has not yet been approved for value transformation; do not rescale or sum until resolved.",
     "The dataset is quarterly BOP transaction data, not daily FPI/FII cash-flow data.",
     "BOP_AGG is a separate annual group aggregate dataset and its estimates for non-reporting economies must be assessed before any use.",
-    "No trading admission, production score, or investment signal is authorized."
-  ]
+    "No trading admission, production score, or investment signal is authorized.",
+    "Brazil SCALE operational handling is independently validated across 94 quarter-series comparisons; India requires its own source comparison."
+  ],
+  "scale_validation": {
+    "unit_multiplier_codelist": "IMF:CL_UNIT_MULT(1.0.2)",
+    "code_6_label": "Millions",
+    "bcb_source_series": {
+      "A_NFA_T": {
+        "source": "BCB SGS 22906",
+        "frequency": "Monthly",
+        "unit": "USD million",
+        "raw_sha256": "110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30"
+      },
+      "L_NIL_T": {
+        "source": "BCB SGS 22924",
+        "frequency": "Monthly",
+        "unit": "USD million",
+        "raw_sha256": "2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb"
+      }
+    },
+    "comparison_method": "Sum three BCB monthly observations in USD million; compare with IMF API OBS_VALUE divided by 1,000,000.",
+    "periods": "2015-Q1 to 2026-Q3 inclusive",
+    "quarter_count_per_entry": 47,
+    "comparisons": 94,
+    "pass": 94,
+    "review": 0,
+    "blocked": 0,
+    "tolerance_usd_million": 0.15,
+    "maximum_absolute_residual_usd_million": "0.12192411",
+    "artifact_run_id": 44476176136,
+    "artifact_id": 14505944936,
+    "artifact_sha256": "1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317",
+    "operational_decision": "IMF API OBS_VALUE is already USD for the tested Brazil portfolio flow series. Preserve SCALE=6 as source metadata; do not multiply OBS_VALUE by 10^6 again.",
+    "country_limit": "Brazil validated; India still requires an independent source-to-source scale/sign check."
+  }
 }
