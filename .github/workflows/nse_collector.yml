@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
     paths-ignore:
+      - "scripts/research/probe_imf_legacy_registry_ids.py"
+      - "scripts/research/imf_legacy_registry_probe_trigger.txt"
+      - ".github/workflows/imf_legacy_registry_probe.yml"
       - "scripts/research/capture_imf_bop_legacy_metadata.py"
       - ".github/workflows/imf_bop_legacy_metadata_capture.yml"
       - "scripts/research/bceao_three_country_2024_trigger.txt"
