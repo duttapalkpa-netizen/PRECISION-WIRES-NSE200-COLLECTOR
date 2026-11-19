@@ -1114,3 +1114,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Raw hashes: 22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`; 22925 `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`; 22926 `519fcd8c068716f80f300202a1ae970fbcf312cfcd902f147143ccc5b4031e8e`.
 - Report `docs/BRAZIL_BCB_PORTFOLIO_LIABILITY_IDENTITY_AUDIT_CONTINUATION40_PART1_20261119.md`, commit `ec7f41f9c9383ef5669e653ae4e4ba04f779124f`.
 - Result is a BCB source-integrity PASS, not IMF PA identity resolution or GCR aggregate approval. ₹0; no production changes; UNKNOWN is not PASS.
+
+
+## Continuation 41 — Part-1: Brazil BCB asset gross-to-net integrity (2026-11-19)
+- BCB SGS 22906 (net asset acquisition), 22907 (asset inflows), 22908 (asset outflows). Empirical result: `22906 = 22908 - 22907`, 381/381 monthly PASS (1995-01–2026-09); reverse sign 0/381. Max residual USD 0.1m; tolerance USD 0.15m.
+- Run `44539091458` SUCCESS; artifact `14535754997`; ZIP SHA-256 `8849f91e5a28d3c7e90a3df1cdcdb46c1fc66bb22ce54af8ea20ebbeca05761b`.
+- Raw hashes: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Combined BCB internal identities: assets 381/381 and liabilities 381/381 = 762/762; not independent IMF comparisons and gross legs must not be double-counted in GCR.
+- Report `docs/BRAZIL_BCB_PORTFOLIO_ASSET_IDENTITY_AUDIT_CONTINUATION41_PART1_20261119.md`, commit `d5ac88260eb6e334cc99b00007f4fb77a6562ef0`.
+- IMF Brazil PA/Dataflow identity and revision chronology remain BLOCKED/NOT_DONE; GCR full EMDE aggregate not authorized. ₹0, no production changes.
