@@ -8,7 +8,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError,URLError
-import hashlib,json,zipfile,xml.etree.ElementTree as ET
+import hashlib,json,zipfile,csv,xml.etree.ElementTree as ET
 from openpyxl import load_workbook
 
 URL="https://data.imf.org/-/media/iData/External-Storage/Documents/0FA3DC49A04D446E9D69DBEB29979E1C/en/WEOOct2026all.xlsx"
@@ -54,10 +54,10 @@ for ws in wb.worksheets:
  sheets[ws.title]=entry
 wb.close()
 result={"status":"PASS_WORKBOOK_ACQUIRED" if status==200 else "FAIL","metadata":meta,
- "sheet_names":list(sheets),"sheets":sheets,"emde_text_hits":emde_hits,
+ "sheet_names":list(sheets),"sheets":sheets,"emde_text_hits":emde_hits,"membership_summary":membership_meta,
  "guardrails":{"source_only_official_IMF":True,"membership_not_inferred":True,"no_synthetic_members":True}}
 (ROOT/"workbook_inventory.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 print(json.dumps({"status":result["status"],"metadata":meta,
  "sheet_names":list(sheets),
- "sheets":{k:{"max_row":v["max_row"],"max_column":v["max_column"],"top_rows":v["top_rows"]} for k,v in sheets.items()},
+ "sheets":{k:{"max_row":v["max_row"],"max_column":v["max_column"],"top_rows":v["top_rows"]} for k,v in sheets.items()},"membership_summary":membership_meta,
  "emde_text_hits":emde_hits},indent=2,ensure_ascii=False))
