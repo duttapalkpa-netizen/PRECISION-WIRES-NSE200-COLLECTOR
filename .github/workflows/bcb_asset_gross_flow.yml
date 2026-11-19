@@ -1,0 +1,30 @@
+name: Brazil BCB Portfolio Asset Gross Flow Identity (Research Only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bcb_asset_gross_flow.yml"
+      - "scripts/research/capture_bcb_asset_gross_flow.py"
+      - "scripts/research/bcb_asset_gross_flow_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture official SGS 22906/22907/22908 and reconcile
+        run: python scripts/research/capture_bcb_asset_gross_flow.py
+      - name: Upload raw responses and reconciliation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bcb-asset-gross-flow-${{ github.run_id }}
+          path: artifacts/bcb_asset_gross_flow/
+          if-no-files-found: error
+          retention-days: 90
