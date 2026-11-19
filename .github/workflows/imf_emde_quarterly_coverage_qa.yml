@@ -36,7 +36,7 @@ jobs:
       - name: Upload SCALE concept metadata probe
         uses: actions/upload-artifact@v4
         with:
-          name: imf-bop-scale-concept-\${{ github.run_id }}
+          name: imf-bop-scale-concept-metadata
           path: imf_bop_scale_semantics/
           if-no-files-found: error
           retention-days: 90
