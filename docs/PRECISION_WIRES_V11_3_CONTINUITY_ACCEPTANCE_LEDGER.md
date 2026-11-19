@@ -825,3 +825,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Alternate format probe PASS; PA tx2/Changelog BLOCKED; Brazil Reconstruction BLOCKED. No inference that PA absent; BOP6/BOP_BPM6 mismatch remains unresolved; no alias/admission.
 - FMR documented UI route for next attempt: Activity / Structure Submissions and Provision Agreement detail Changelog/Compare. If no authorized public access, preserve UNKNOWN and pivot to remaining GCR coverage blockers. No production changes; ₹0.
 - Report: `docs/IMF_BRAZIL_PA_TX2_ALTERNATE_SERIALIZATION_PROBE_PART2_20261119.md`.
+
+
+## Continuation 38 Part 1 — exact IMF UI follow-up route added
+- Based on live official IMF SDMX Central pages, next read-only UI route is documented precisely: `/activity/activity-log.html` (transaction period around 2023-09-22 and Download Transaction), `/activity/structure-log.html` (Structure Submissions, Download Revision, Compare), and `/data/provisionAgreements.html` (filter IMF / BR_BOP_BP6; Changelog, Revisions, Compare/Export).
+- Official UI pages expose these controls, but the dynamic Brazil PA row/revision files have not yet been captured. No claim of historical PA recovery; chronology remains UNKNOWN/BLOCKED pending actual files.
+- Supporting official UI sources: IMF SDMX Central activity log, structure log and Provision Agreements pages. No write action or authentication attempt performed.
