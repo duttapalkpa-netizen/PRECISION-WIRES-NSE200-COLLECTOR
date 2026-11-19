@@ -1265,3 +1265,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: docs/INDIA_Q1_2026_RBI_IMF_LIABILITY_RECONCILIATION_CONTINUATION41_PART1_20261119.md; report commit cde4d62df4786f17833d775131ca42ce86bd6116.
 - Official sources: https://rbi.org.in/Scripts/PublicationsView.aspx?id=24094 ; https://dsbb.imf.org/sdds/dqaf-base/country/IND/category/BOP00 ; https://dsbb.imf.org/sdds/dqaf-base/country/IND/category/IIP00 .
 - Next: retrieve exact RBI Q1-2026 Table 42 old/new vintage rows and matching IMF observation dimensions; if no public official vintage bridge exists, retain REVIEW. ₹0/free official sources only; no synthetic data or production changes; UNKNOWN is never PASS.
+
+
+## Continuation 41 — Part-2: Brazil public IMF registration vs BCB payload identity cross-check (2026-11-19)
+- New read-only official public listing check: IMF SDMX Central Registrations indexes Dataflow IMF:BOP6(1.0), Provider IMF:BR1, exact BCB URL, last updated 2026-10-26T11:47:29Z. Source: https://sdmxcentral.imf.org/data/registrations.html (public search-indexed registration listing).
+- Reused Part-4 raw XML verification: same BCB URL's payload declares IMF:BOP_BPM6(1.0), structureRef IMF_BOP_BPM6_1_0; raw SHA-256 3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c. Reused PA evidence: IMF:BR_BOP_BP6(1.0) -> IMF:BOP6(1.0), Provider IMF:BR1.
+- This triangulates a confirmed current identity mismatch: PA and public registration agree on BOP6; payload served at registered URL declares BOP_BPM6. This does not prove aliases or a valid Brazil-specific crosswalk. Shared DSD/DATA_DOMAIN do not establish equivalence.
+- Brazil PA/payload consistency: FAIL / MISMATCH CONFIRMED; Brazil-specific crosswalk: NOT_PROVEN; historical PA change chronology: UNKNOWN/BLOCKED; Brazil Reconstruction remains BLOCKED pending authorized IMF/BCB correction or documented exception plus PA history evidence.
+- Report: docs/BRAZIL_IMF_PUBLIC_REGISTRATION_VS_BCB_PAYLOAD_CONTINUATION41_PART2_20261119.md; report commit deab79c66a73a2ad060c4c9775e8c02676821a05; report blob SHA a0ebe2c859ced0639a7960f8f81dd23c84a9c89a.
+- Next: owner-side PA history/Changelog and official correction/exception identifying intended Dataflow; after correction, repeat raw-byte/XML validation and require PA, registration and payload identities to agree. No credentials or authenticated writes.
+- ₹0, official/free only; no inferred alias, synthetic data, or production changes; UNKNOWN is never PASS.
