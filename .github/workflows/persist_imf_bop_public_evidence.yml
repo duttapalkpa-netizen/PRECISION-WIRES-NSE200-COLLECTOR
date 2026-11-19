@@ -1,0 +1,75 @@
+name: Persist IMF BOP Public Observation Evidence
+on:
+  push:
+    branches: [research/imf-bopsy-public-metadata-20261119]
+    paths:
+      - "scripts/research/imf_bop_evidence_persist_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  persist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/imf-bopsy-public-metadata-20261119
+          fetch-depth: 0
+      - name: Download exact verified source artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 44473591030 --repo "$GITHUB_REPOSITORY" --name "imf-bopsy-2025-official-notes-44473591030" --dir /tmp/bopsy
+          gh run download 44473784679 --repo "$GITHUB_REPOSITORY" --name "imf-bop-public-route-probe-44473784679" --dir /tmp/bop
+      - name: Persist source PDF, coverage metadata and exact BOP panel
+        run: |
+          mkdir -p docs/evidence/imf_bop_bopsy_2025 docs/evidence/imf_bop_portfolio_panel
+          cp /tmp/bopsy/BOPSY_Explanatory_Notes_November_2025.pdf docs/evidence/imf_bop_bopsy_2025/
+          cp /tmp/bopsy/country_reporting_coverage.csv docs/evidence/imf_bop_bopsy_2025/
+          cp /tmp/bopsy/country_group_membership_raw.csv docs/evidence/imf_bop_bopsy_2025/
+          cp /tmp/bopsy/manifest.json docs/evidence/imf_bop_bopsy_2025/
+          cp /tmp/bop/imf_bop_portfolio_exact_panel/portfolio_flows_panel.csv docs/evidence/imf_bop_portfolio_panel/
+          cp /tmp/bop/imf_bop_portfolio_exact_panel/summary.json docs/evidence/imf_bop_portfolio_panel/
+          cp /tmp/bop/imf_bop_portfolio_panel_validation/validation.json docs/evidence/imf_bop_portfolio_panel/
+          cp /tmp/bop/imf_bop_portfolio_exact_panel/BRA_A_NFA_T_P_F_USD_Q.csv docs/evidence/imf_bop_portfolio_panel/
+          cp /tmp/bop/imf_bop_portfolio_exact_panel/BRA_L_NIL_T_P_F_USD_Q.csv docs/evidence/imf_bop_portfolio_panel/
+          cp /tmp/bop/imf_bop_portfolio_exact_panel/IND_A_NFA_T_P_F_USD_Q.csv docs/evidence/imf_bop_portfolio_panel/
+          cp /tmp/bop/imf_bop_portfolio_exact_panel/IND_L_NIL_T_P_F_USD_Q.csv docs/evidence/imf_bop_portfolio_panel/
+          cat > docs/evidence/imf_bop_portfolio_panel/source_artifact_receipt.json <<'EOF'
+          {
+            "source": "International Monetary Fund official SDMX 3.0 API",
+            "workflow_run_id": 44473784679,
+            "artifact_id": 14505706180,
+            "artifact_sha256": "cbb27d38d258a0ab539baa334100a94037e8446460926670ef66a50aa66d3287",
+            "retrieved_at_utc": "2026-11-19T06:40Z",
+            "authentication": "none; public anonymous requests",
+            "dataflow": "IMF.STA:BOP(21.0.0)",
+            "dsd": "IMF.STA:DSD_BOP(24.0.0)",
+            "panel_rows": 186,
+            "exact_to_broad_reconciliation": "186/186 values match",
+            "validation_status": "PASS",
+            "limitations": ["Brazil and India pilot only", "not an EM aggregate", "SCALE and source attributes preserved; no rescaling or currency conversion", "no forward fill or synthetic observations"]
+          }
+          EOF
+          cat > docs/evidence/imf_bop_bopsy_2025/source_artifact_receipt.json <<'EOF'
+          {
+            "source": "International Monetary Fund",
+            "document": "BOPSY Explanatory Notes November 2025",
+            "workflow_run_id": 44473591030,
+            "artifact_id": 14504799002,
+            "artifact_sha256": "481074341df5dd8ae932b52ddb670b9e8bb9da46a1128736af376d4afadbe126",
+            "source_pdf_sha256": "8bd7cf9dd16845b2c781b0c2349971c23952a68a7fbcf9d78f01d84c2da353d8",
+            "coverage_rows_extracted": 200,
+            "country_group_rows_extracted": 219,
+            "scope": "reporting currency, last-reported-year and country-group metadata only; no observations"
+          }
+          EOF
+      - name: Commit durable evidence archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/evidence/imf_bop_bopsy_2025 docs/evidence/imf_bop_portfolio_panel
+          git commit -m "Archive official IMF BOP metadata and verified BRA IND quarterly flow panel"
+          git push origin research/imf-bopsy-public-metadata-20261119
