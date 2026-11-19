@@ -1180,3 +1180,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Initial run 44542407481 revealed decimal parser and sign errors; corrected in commit 3724511ffb35592b0c5dc24d856a09d5f9703ca7. Initial malformed calculations are rejected and not accepted as evidence.
 - Full report: docs/BRAZIL_BCB_PORTFOLIO_ASSET_GROSS_FLOW_IDENTITY_AUDIT_CONTINUATION45_20261119.md.
 - Next action: acquire official BCB methodology/precision statement and resolve only the 106 residual months. No production integration or invariant changes.
+
+
+## Continuation 45 — Part-1: Brazil BCB asset gross-flow identity PASS (2026-11-19)
+- BCB official SGS 22906 (asset net acquisition), 22907 (asset inflows), 22908 (asset outflows): HTTP 200; 381 valid unique monthly observations each; 381 common months; 1995-01–2026-09; no missing months.
+- Verified identity `22906 = 22908 - 22907` (net acquisition = outflows minus inflows): 381/381 PASS, 0 fail, maximum absolute residual USD 0.1m, tolerance USD 0.15m.
+- Parser defect found in first attempt: decimal point was removed from values (e.g. 190.5 -> 1905), causing false failures. Rejected that run. Fixed with Decimal parsing preserving decimal point; subsequent run is accepted. One escaped-newline import syntax defect was also fixed before accepted run.
+- Run `44542948903` SUCCESS; artifact `14537454647`; ZIP SHA-256 independently recomputed and matches GitHub digest `5b7296d257d60ab0be49b1658e9f942b3f5827c92bb4f0ab92a052e174514969`.
+- Raw hashes: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Together with liability-side 22924=22925-22926 PASS 381/381 (Continuation 40 Part-1), both Brazil BCB portfolio gross-flow accounting identities are independently closed. IMF PA BOP6 vs BCB payload BOP_BPM6 remains unresolved; Brazil Reconstruction not 100%.
+- Report `docs/BRAZIL_BCB_PORTFOLIO_ASSET_GROSS_FLOW_IDENTITY_CONTINUATION45_PART1_20261119.md`, commit `e1c2fd590cb1ec343af93bb2a7e812e80b17919d`.
+- GCR country coverage/vintage/BPM gates remain blocked; no EMDE aggregate/relative-attraction score. ₹0; no production changes; UNKNOWN is not PASS.
