@@ -388,3 +388,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Coverage QA run 44475665715 SUCCESS; coverage artifact 14506017682; SCALE artifact 14506356045.
 - Detailed report: `docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md`; matrices under `docs/evidence/imf_bop_emde_20261119/coverage_qa/`; scale metadata manifest under `docs/evidence/imf_bop_emde_20261119/scale_semantics/`.
 - Decision: data integrity PASS; country coverage PARTIAL; EMDE aggregate BLOCKED / NOT_AUTHORIZED. Sign convention, FX and point-in-time vintage remain unresolved.
+
+
+## SCALE operational handling resolved for Brazil — 2026-11-19 (supersedes earlier unresolved note)
+- Latest IMF master-system concept scheme: `IMF:CS_MASTER_SYSTEM(1.0.2)`; BOP DSD `SCALE` references `CL_UNIT_MULT(1.0+.0)). Exact codelist code 6 label is `Millions`. Raw master-system and unit-multiplier codelist XMLs are archived under `docs/evidence/imf_bop_20261119/`.
+- Official BCB SGS source series 22906 = net acquisition of financial assets, monthly, USD million; series 22924 = net incurrence of liabilities, monthly, USD million. Raw source JSON SHA-256s: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`.
+- Full Brazil source reconciliation covers 47 quarters (2015-Q1–2026-Q3) × 2 entries = 94 checks. Method: sum the three BCB monthly observations in USD million; compare with IMF API `OBS_VALUE / 1,000,000`. Result: 94 PASS, 0 REVIEW, 0 BLOCKED; tolerance 0.15 USD million (monthly source values rounded to one decimal); maximum absolute residual 0.12192411 USD million.
+- Conclusion for tested Brazil BOP portfolio series: IMF API `OBS_VALUE` is already expressed in USD even though `SCALE=6` (Millions) metadata is retained. Do not apply a second `×10^6` multiplier. The pilot panel values remain unchanged.
+- Final full-run validation artifact: run 44476176136 / artifact 14505944936 / 8,974,699 bytes / SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`.
+- Detailed evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`; BCB source series URLs are in the summary.
+- Limitation: this direct scale/sign cross-check is for Brazil only. India and other EMDE country sources need independent source-to-source validation before full GCR aggregation.
