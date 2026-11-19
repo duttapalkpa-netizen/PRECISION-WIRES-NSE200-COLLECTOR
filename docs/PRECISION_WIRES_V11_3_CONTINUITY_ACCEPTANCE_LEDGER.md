@@ -1099,3 +1099,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Commits: isolation `6e975b7f375fed914c626eda92b4fcd9e87f7b80`; script `d0a545fb54bea345bf2e4b94c6644310ce09a7bf`; workflow `4e0ef24ac94990e7b34d2c73099414310537071f`; report `68fca473ce92eb4df141fc427875344fb575ade3`.
 - Run `44538278638` queued at latest poll; artifact/raw capture/QA NOT_DONE until completed and independently checked. No false PASS.
 - Next: poll this run only; then hash-verify artifact, reconcile exact flow semantics and IMF mapping. Brazil PA identity/chronology BLOCKED; GCR panel/score NOT_READY. ₹0; protected invariants unchanged.
+
+
+## Continuation 39 — Part-8 verified outcome: BCB SGS raw archive PASS (2026-11-19)
+- Run `44538278638` SUCCESS; artifact ID `14535963861`; ZIP 11,211 bytes; SHA-256 `ee226a0525edd6974b8e0f3205005d3d5913f3014137065b074890b353ecdf60`.
+- Four raw series independently verified: 22905 hash `bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3`; 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22925 `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`; 22940 `451cc29b67f2634ac5d62439b30f11297fdab236ec42948f1db16f681eafb033`. Manifest hash `c000fe9dec4d77fed1ac85ca5d416df8cf43c3ab3ff084381aa10017cf61c062`.
+- Each series 381/381 valid rows (1995-01 to 2026-09), no duplicate dates, chronological ordering PASS. Raw hashes recomputed independently from ZIP and match manifest. This is raw capture/structural QA PASS, not IMF mapping or overall GCR PASS.
+- Report commit `3d59e6653f69d201ea5bb5bb2e025b49abe47ad0`. Brazil PA identity/chronology remains BLOCKED; GCR country panel/score NOT_READY. ₹0; no production changes.
