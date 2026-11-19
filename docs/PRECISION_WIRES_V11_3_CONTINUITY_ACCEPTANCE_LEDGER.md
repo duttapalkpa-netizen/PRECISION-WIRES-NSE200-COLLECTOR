@@ -1042,3 +1042,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Detailed report `docs/GCR_INDIA_FPI_MATCHED_DATE_RECONCILIATION_CONTINUATION74_20261119.md`, commit `388c588166d8f9a9fa462b803c8342ed6188f342`.
 - India status: raw capture/hash PASS; within-source arithmetic PASS; matched-date provider comparison NOT_DONE; archive completeness BLOCKED; production ingestion BLOCKED.
 - Brazil unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; no endpoint repeats. No production invariant changes; ₹0; UNKNOWN is never PASS.
+
+
+## Continuation 75 — Brazil Dataflow identity/access boundary + GCR archive replay (2026-11-19)
+- Official IMF Registrations page lists Brazil provider IMF:BR1 under IMF:BOP6(1.0) and the BCB SDMX URL; other providers are registered under IMF:BOP_BPM6(1.0). IMF Reporting Constraints lists BOP_BP6_CONSTRAINT targeting BOP_BPM6[1.0]. These are distinct registration/dataflow references, not proof of equivalence.
+- IMF SDMX Central Web Services Guide (May 2025) documents public GET structure queries and states registration/re-registration is private, requiring admin/agency/data-provider access and authenticated POST. Its example separates Dataflow IMF:BOP_BPM6(1.0) from DATA_DOMAIN BOP6; do not confuse domain code with Dataflow ID. This is a useful hypothesis, not a Brazil-specific crosswalk.
+- Brazil identity remains BLOCKED: PA IMF:BR_BOP_BP6(1.0) -> IMF:BOP6(1.0), provider IMF:BR1, while BCB payload declares IMF:BOP_BPM6(1.0). No official alias/map or Brazil PA changelog closure evidence obtained. Exact PA revision export and provider-side authoritative mapping/correction evidence remain required.
+- Detailed report `docs/BRAZIL_IMF_DATAFLOW_IDENTITY_ACCESS_BOUNDARY_CONTINUATION75_20261119.md`, commit `030bc37c0495244af3888accc069e1b7b26f1a33`.
+- GCR controlled CDSL archive replay trigger commit `85e89033c37c6f5f00071446c195b00694c16af9`; Actions run `44521501249` was IN_PROGRESS at checkpoint time; no artifact/hash/conclusion claimed yet.
+- No production changes; ₹0; UNKNOWN is never PASS; all invariants preserved.
