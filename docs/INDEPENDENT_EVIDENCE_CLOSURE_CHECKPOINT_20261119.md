@@ -415,3 +415,5 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Chile latest raw BDE pages updated 2026-11-18: run 44476957975 / artifact 14507305215; Q4 2025 2/2 PASS, Q1-Q2 2026 4 REVIEW, Q3 2026 2 IMF panel rows missing. Older official web-rendered page snapshot updated 2026-09-07 matched 6/6; old snapshot raw bytes were not archived. Treat as explicit vintage mismatch, not a clean current-vintage pass.
 - Operational rule is empirically supported for four countries and tested vintages: preserve raw API values; derived USD-million comparison uses `OBS_VALUE / 1e6`; preserve SCALE=6; do not multiply by 1e6 again. This is not yet universalized to all 154 EMDEs.
 - Panel remains coverage PARTIAL; 40 countries no observations, 83 empty country-entry combinations, 13 series with interior gaps. EMDE aggregate remains BLOCKED until vintage/coverage gates are implemented.
+
+- Latest cross-country report correction commit: `ca294d2d8ce416f306dba580d90286bca903f168`; report now reflects Brazil 94/94 and India 12/12 full validations and corrected period windows.
