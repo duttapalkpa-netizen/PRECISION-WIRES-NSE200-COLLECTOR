@@ -11,8 +11,8 @@ import hashlib, json, xml.etree.ElementTree as ET
 OUT=Path("imf_legacy_registry_probe"); OUT.mkdir(exist_ok=True)
 BASE="https://sdmxcentral.imf.org/sdmx/v2/structure"
 targets=[
- ("legacy_dsd_v24", f"{BASE}/datastructure/IMF/DSD_BOP/24.0.0/?format=sdmx-3.0&detail=full&references=all"),
- ("legacy_flow_v21", f"{BASE}/dataflow/IMF/BOP/21.0.0/?format=sdmx-3.0&detail=full&references=all"),
+ ("legacy_dsd_v24", f"{BASE}/datastructure/IMF.STA/DSD_BOP/24.0.0/?format=sdmx-3.0&detail=full&references=all"),
+ ("legacy_flow_v21", f"{BASE}/dataflow/IMF.STA/BOP/21.0.0/?format=sdmx-3.0&detail=full&references=all"),
 ]
 rows=[]
 for name,url in targets:
