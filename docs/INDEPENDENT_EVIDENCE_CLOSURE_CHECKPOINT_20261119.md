@@ -329,3 +329,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - EMDE aggregation: NOT_DONE.
 - Daily swing signal use: NOT_SUITABLE (quarterly/annual source).
 - Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged. No synthetic data, no paid APIs, UNKNOWN is not PASS.
+
+
+## IMF BOP SCALE payload reconciliation — India, four quarters (2026-11-19)
+- Official RBI Table 197, Standard Presentation of India's BOP as per BPM6, Quarterly, US$ million, published 2026-07-31: https://rbi.org.in/SCRIPTs/PublicationsView.aspx?id=24022. Relevant rows are Portfolio Investment in India and Portfolio Investment by India.
+- IMF Data Portal panel run 44474620936 / artifact 14505452613 / ZIP SHA-256 `b23854fa433b46b29bb2d8094ec9bc14d2cd6c58fdc1771fa9428ca6ae3aed17`; normalized panel SHA-256 `e8a44abbc8455fef44cc1e4677018ae4b9634d1c04f65bf6fc6dad133cfce62a`.
+- India 2024-Q2..2025-Q1, 4 quarters × 2 entries = 8 comparisons. Raw IMF API `OBS_VALUE / 1,000,000` (not ×1,000,000) matches RBI's published US$ million values within integer rounding. `A_NFA_T) is sign-reversed against RBI's Portfolio Investment by India net; `L_NIL_T) matches RBI's Portfolio Investment in India net. Max absolute difference 0.490 USD million; all 8/8 within ±0.5.
+- IMF CL_UNIT_MULT(1.0.2) code 6 = Millions; exact route evidence artifact 14505992737 / ZIP SHA-256 `f70981e1511a709526851eee59548ca237f8ac4c9a02c8d0eb1e8c9410b1017e`. The India test shows the Data Portal observation API payload is empirically already in base USD for these series/periods; do not apply the multiplier a second time. This is a payload serialization observation, not a universal rule yet.
+- Durable evidence: `docs/evidence/IMF_BOP_IND_SCALE_RECONCILIATION_2024Q2_2025Q1.csv`, commit `39ec6fbb36c409ba3dd108f3433fb5961adcf4d5`; report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_PART1_20261119.md`, commit `d48fae88a376fa9e2097b3c8bfd458cae2f14610`.
+- Decision: India-specific scale/sign empirical check PASS; global transform remains PARTIAL pending Brazil and at least two more country benchmarks. Existing Brazil SGS reconciliation has 201/381 monthly mismatches from 2010-01; do not reuse it as a PASS benchmark. No EMDE aggregation or production admission.
