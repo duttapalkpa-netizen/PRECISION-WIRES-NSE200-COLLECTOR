@@ -1,0 +1,31 @@
+name: WEO October 2026 EMDE Membership Capture
+on:
+  push:
+    paths:
+      - "scripts/research/capture_weo_emde_membership.py"
+      - "scripts/research/weo_emde_capture_trigger.txt"
+      - ".github/workflows/weo_emde_membership_capture.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal parsers
+        run: pip install --disable-pip-version-check openpyxl pypdf
+      - name: Capture official WEO vintage and BOP country codelist
+        run: python scripts/research/capture_weo_emde_membership.py
+      - name: Upload raw sources, manifest and crosswalk
+        uses: actions/upload-artifact@v4
+        with:
+          name: weo-october-2026-emde-membership-${{ github.run_id }}
+          path: weo_emde_oct2026/
+          if-no-files-found: error
+          retention-days: 90
