@@ -41,7 +41,10 @@ The previously established exact PA, provider, Registration URN and 40-event Reg
 No aliasing, rewriting, or Brazil admission is authorized.
 
 ## Next evidence route — no duplicate endpoint retries
-Use the official Registry UI's Activity / Structure Submissions and Data Registrations / Provision Agreement detail views. FMR's documented UI exposes transaction downloads, details/log CSV, historical structure revisions and PA Changelog/Compare views. Capture only the exact Brazil PA row and actual downloadable revision files with source URL, UTC retrieval time, and SHA-256. If the IMF UI does not expose the PA history without authorized access, record that limitation and leave the historical PA chronology UNKNOWN. Do not use the FMR v12 `asOf` time-travel feature against IMF SDMX Central v11.24.0.
+Use these exact official IMF SDMX Central UI pages (read-only navigation; do not submit or modify anything):
+1. SDMX Transactions: `https://sdmxcentral.imf.org/activity/activity-log.html` — set the period around 2023-09-22, locate transaction ID 2 if listed, use Download Transaction, and preserve the transaction details/log CSV where available.
+2. Structure Submissions: `https://sdmxcentral.imf.org/activity/structure-log.html` — filter/select the Provision Agreement structure and inspect modification dates/actions; use Download Revision and Compare.
+3. Provision Agreements: `https://sdmxcentral.imf.org/data/provisionAgreements.html` — filter Agency `IMF`, ID `BR_BOP_BP6`, select the exact row, then inspect Changelog, Revisions, and Compare/Export. Capture only actual returned rows and downloadable revision files with source URL, UTC retrieval time, and SHA-256. The public HTML exposes these controls, but the dynamic row/revision data has not yet been independently captured; if it requires authorized access, preserve that limitation and keep historical PA chronology UNKNOWN. Do not use the FMR v12 `asOf` time-travel feature against IMF SDMX Central v11.24.0.
 
 ## Acceptance decision
 - Alternate serialization probe: PASS (2/2 requests executed and raw responses archived).
