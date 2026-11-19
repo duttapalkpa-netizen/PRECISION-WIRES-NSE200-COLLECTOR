@@ -1518,3 +1518,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Existing Nightly Rotation Backtest automation at 22:00 IST is the sole scheduled cadence; no duplicate automation created. Schedule does not imply implementation.
 - Current reliable daily performance rate remains NOT_AVAILABLE/UNKNOWN: previous audit verified 0 GCR rolling backtests; V11.4 metrics artifacts not retrieved/verified in this audit; V11.3 G0 assumptions remain unapproved. No performance percentage invented.
 - No changes to Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2. ₹0; official/free sources only.
+
+
+## Unified Daily Top-5 Stock Watchlist and Alert (2026-11-19)
+- User requirement: combine the three independent research sections at candidate level into one daily India equity watchlist of up to five names seeking researched 2%–20% upside scenarios; never attribute one engine's result to another.
+- V11.4 contributes only matured historical behavioural evidence (target-specific precision/hit rate/recall/false positives); V11.3 contributes cost-aware replay metrics only after G0 assumptions are user-approved and independently reconciled; GCR contributes only when synchronized macro/sector/stock timestamps/vintages and matured outcomes pass. Unknown engine = UNKNOWN and no artificial score boost.
+- Each candidate must include verified symbol/exchange/ISIN, price and timestamp, target scenario bands, horizon, catalyst, technical/volume/sector context, liquidity, invalidation/risk, circuit/surveillance/news risks, source links and engine-wise evidence. The 2%–20% bands are scenarios, not promises or buy instructions.
+- Select up to five qualified candidates. Never pad the list: if fewer than five pass evidence gates, report the smaller count or no reliable alert. No fabricated prices, timestamps, catalysts or performance metrics.
+- New daily automation: “Daily Unified Top-5 Alert”, 08:45 Asia/Kolkata, starting 2026-11-20; created successfully. It inspects prior GitHub ledger/reports/artifacts first, reuses archived data, writes dated reports and updates the ledger with commit/run/artifact/hash verification. It does not imply that five valid candidates will exist each day.
+- Existing “Nightly Rotation Backtest” at 22:00 Asia/Kolkata remains the nightly research/backtest task; no duplicate nightly task created.
+- Protected invariants unchanged: Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56x12), Engines A-E, IPO-PLX V2. ₹0; official/free sources only; UNKNOWN is never PASS.
