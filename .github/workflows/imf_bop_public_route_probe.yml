@@ -47,6 +47,9 @@ jobs:
           cp imf_bop_portfolio_exact_panel/IND_L_NIL_T_P_F_USD_Q.csv docs/evidence/imf_bop_20261119/
           cp imf_bop_portfolio_exact_panel/summary.json docs/evidence/imf_bop_20261119/
           cp imf_bop_portfolio_panel_validation/validation.json docs/evidence/imf_bop_20261119/
+          cp bcb_bop_scale_crosscheck/bcb_bop_bpm6.xml docs/evidence/imf_bop_20261119/
+          cp bcb_bop_scale_crosscheck/summary.json docs/evidence/imf_bop_20261119/bcb_scale_crosscheck_summary.json
+          cp bcb_bop_scale_crosscheck/comparison.csv docs/evidence/imf_bop_20261119/bcb_imf_bop_value_comparison.csv
           cp imf_bop_observation_smoketest/summary.json docs/evidence/imf_bop_20261119/p_mv_rejected_smoketest.json
           cp imf_bop_public_route_probe/manifest.json docs/evidence/imf_bop_20261119/public_route_manifest.json
           git config user.name "github-actions[bot]"
