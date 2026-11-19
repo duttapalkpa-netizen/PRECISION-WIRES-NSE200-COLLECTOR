@@ -66,7 +66,6 @@ result={"scope":"independent raw-to-normalized and exact-query-to-broad-raw reco
  "limitations":["Pilot only: Brazil and India, not an emerging-market aggregate.",
  "SCALE and all source attributes preserved; no rescaling or currency conversion.",
  "No aggregation, position/flow substitution, or investment/trading signal inferred."]}
-(OUT/"validation.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"
-",encoding="utf-8")
+(OUT/"validation.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 print(json.dumps(result,indent=2,ensure_ascii=False))
 if result["status"]!="PASS" or attribute_mismatches:raise SystemExit("Independent BOP panel reconciliation failed")
