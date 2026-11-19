@@ -19,7 +19,7 @@ URLS=[
  ("official_bop_aggregate_dataset","https://data.imf.org/en/datasets/IMF.STA:BOP_AGG","text/html"),
  ("official_imf_api_docs","https://data.imf.org/en/Resource-Pages/IMF-API","text/html"),
  ("sdmxcentral_bop_dataflow_v2","https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0?references=all","application/vnd.sdmx.structure+xml"),
- ("api_imf_bop_dataflow_v3","https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?references=all","application/vnd.sdmx.structure+xml"),
+ ("api_imf_bop_dataflow_v3","https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?references=all","application/vnd.sdmx.structure+xml"),\n ("api_imf_bop_dsd_v3","https://api.imf.org/external/sdmx/3.0/structure/datastructure/IMF.STA/DSD_BOP/24.0.0?references=all","application/vnd.sdmx.structure+xml"),
  ("sdmxcentral_bop_agg_dataflow_v2","https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP_AGG/1.0?references=all","application/vnd.sdmx.structure+xml"),
  ("api_imf_bop_agg_dataflow_v3","https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP_AGG/+/","application/vnd.sdmx.structure+xml"),
 ]
