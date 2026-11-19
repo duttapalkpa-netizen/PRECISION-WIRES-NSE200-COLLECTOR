@@ -725,3 +725,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Detailed report: `docs/GCR_CHILE_PORTFOLIO_VINTAGE_ACCESS_AUDIT_CONTINUATION39_PART6_20261119.md`, commit `3b61a10b1d788800661673afb8ef3d0a167b7918`.
 - Brazil remains unchanged: PA -> BOP6 / BR1; BCB payload BOP_BPM6; structure retrieval PASS but identity equivalence and PA Changelog BLOCKED. No txId=2 retries.
 - GCR panel/relative-attraction score NOT_READY; no production integration, macro weights, EMDE aggregate or protected invariant changes. ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-7: Brazil IMF registry + BCB open-data flow audit (2026-11-19)
+- New public IMF SDMX Central Registrations row: `IMF:BOP6(1.0)`, provider `IMF:BR1`, registered URL `https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml`, Last Updated `2026-10-26T11:47:29.000Z`. This corroborates registry association PA->BOP6/BR1; does not prove internal payload declaration, alias/equivalence or historical chronology.
+- Public IMF activity/data-log page showed no usable BR1 historical event rows in the public rendering. Web Services Guide describes registration POST as private/admin/provider access; no private operation attempted.
+- New independent official BCB/Depec ODbL feed path: SGS 22905 broad monthly portfolio net (million USD; visible JSON through 2026-09, 2026-09 value 4,967.8); SGS 22906 net acquisition of portfolio financial assets; SGS 22925 net incurrence of portfolio liabilities inflows; SGS 22940 portfolio debt securities inflows. Keep definitions/sign/instruments separate; do not treat 22905 as asset or liability alone.
+- Public JSON data is visible, but raw download headers/bytes/retrieval UTC/SHA-256 were not archived in this task. Thus discovery/sample visibility PASS only; immutable raw ingestion NOT_DONE.
+- Report: `docs/BRAZIL_IMF_REGISTRY_AND_BCB_OPEN_DATA_FLOW_AUDIT_CONTINUATION39_PART7_20261119.md`, commit `22260e4b98e0346198281b1987b4739128aa277b`.
+- Brazil identity/PA chronology remains BLOCKED; GCR synchronized panel and score remain NOT_READY. Next: short collector jobs to archive 22905/22906/22925/22940 with headers, UTC, bytes, SHA-256, schema QA, then map exact instrument/sign to IMF only after verification. ₹0; no production changes; UNKNOWN is not PASS.
