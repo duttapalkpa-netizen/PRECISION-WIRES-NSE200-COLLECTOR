@@ -17,6 +17,7 @@ SOURCES = {
     "cdsl_daily_latest_eservices": "https://www.cdslindia.com/eservices/publications/fiidaily",
     "cdsl_daily_archive": "https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx",
     "cdsl_fortnightly_sector": "https://www.cdslindia.com/Publications/ForeignPortInvestor.html",
+    "cdsl_fortnightly_sector_2026_11_15": "https://www.cdslindia.com/publications/FII/FortnightlySecWisePages/Nov%2015%202026.html",
 }
 manifest = {
     "capture_started_utc": datetime.now(timezone.utc).isoformat(),
