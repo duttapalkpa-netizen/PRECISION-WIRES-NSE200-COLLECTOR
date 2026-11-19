@@ -1,0 +1,1 @@
+Continuation 70: capture official NSDL/CDSL page bytes, headers, UTC timestamps and SHA-256; GET only.
