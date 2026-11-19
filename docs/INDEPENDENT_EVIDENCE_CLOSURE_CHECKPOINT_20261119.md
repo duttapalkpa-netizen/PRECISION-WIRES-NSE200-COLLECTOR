@@ -628,3 +628,9 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Exact CDSL 15-Nov-2026 sector page raw body 327,522 bytes, SHA-256 3f77f3896a95b8cff3a7728049127493814e1b503eb39dcb75b0e8fe145cf84e. HTML table inventory: 24 numbered rows + grand total, with distinct AUC and fortnightly net-investment periods. Raw capture/schema PASS; arithmetic and daily-flow reconciliation NOT_DONE.
 - Detailed report latest commit ce9633ccba058f8898ad9c4308d571929524fee6; ledger latest commit 4bf529480a7ee30030fca681c7fdf63751cf3f4d.
 - Brazil PA transaction-2 Changelog and BOP6/BOP_BPM6 identity remain BLOCKED; no new Brazil evidence.
+
+- Continuation 74 India FPI reconciliation: NSDL Latest 19-Nov-2026 total net ₹7,765.94cr (gross buy ₹22,356.99cr; gross sell ₹14,591.05cr); CDSL eServices 18-Nov-2026 net ₹12,546.90cr (gross buy ₹29,344.36cr; gross sell ₹16,797.46cr). Dates differ, so provider comparison is NOT_COMPUTABLE; within-source arithmetic only PASS.
+- CDSL archive instability: artifact 14524707532 same URL HTTP 200 body 297,824 bytes/hash fc95dc0dade735c9f413ef20a3239e138a6064f2694633aa9635864fd8c7ba2b has 13 dates 02–18 Nov; artifact 14527092174 same URL HTTP 200 body 73,784 bytes/hash aa2a03c6621772e52b0b9ac52f11b525d82f1ce80539554302eda861145304df has only 02-Mar-2026. Historical completeness BLOCKED; do not merge/fill.
+- NSDL confirmed/provisional status mapping PARTIAL; CDSL fortnightly AUC/flow remains separate from daily cash. Production India FPI ingestion BLOCKED.
+- Detailed report commit 388c588166d8f9a9fa462b803c8342ed6188f342; continuity ledger commit bb769d7b198efe40542f95866dcafd508cf7fc5d.
+- Brazil remains unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; owner-side exact PA export required. No new Brazil evidence.
