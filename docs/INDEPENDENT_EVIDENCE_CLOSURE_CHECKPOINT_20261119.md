@@ -512,3 +512,17 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Script commit `20b3637ecc7169558df15456e5cd204d45f7dbb0`; workflow `247b88e5c06bd6f91eaa2eca8f0c0c8a86991a2c`; collector guard `f82444e347be43490c643dd7894066020f572ce6`; trigger `ac0b8977db9fc48a735793d14e64c206d15ff673`.
 - Two accidental collector runs `44495237321` and `44495240272` cancelled before market data acquisition; cancellation helper run `44495300530` SUCCESS. Production collector step 5 was cancelled and later steps skipped. No production source code changed.
 - Historical source lead: BCEAO Côte d'Ivoire 2021 report Table 1 also contains separate aggregate acquisition-of-assets and incurrence-of-liabilities columns, but it is a different vintage and must not be mixed with the 2024 vintage without reconciliation.
+
+
+## BCEAO Côte d'Ivoire 2024 gross FDI split — 2026-11-19
+- Archived official 63-page national BOP PDF; raw 3,596,808 bytes; SHA-256 `99aee45e2f75464e85b9b319c9acd93bfd706779119e8c6bfac8db0f5a1a2f28`; run `44495255971` SUCCESS; artifact `14515150693`, digest `6ad9941564fbed0c144e6d65e7065acbef5c6511df19fb7cd5c59ce5f9659baa`.
+- Printed pp.24–25: FDI asset acquisitions 138.1, FDI liability incurrence 1,892.8 FCFA bn; difference -1,754.7 exact to Table 13 direct-investment net. Asset and liability subcomponents also reconcile exactly.
+- Portfolio (-1,055.5), derivatives (+0.1), other investment (-1,233.0) and total financial account (-4,043.1) are net balances. This is FDI-only gross-leg extraction, not aggregate A_NFA_T/L_NIL_T; mapping remains BLOCKED.
+- CSV `docs/evidence/gcr_bceao_2024/civ_2024_fdi_gross_legs.csv`; report `docs/GCR_BCEAO_CIV_2024_FDI_GROSS_LEGS_PARTIAL_20261119.md`.
+
+## BCEAO BEN/BFA/SEN 2024 raw archive and screen — 2026-11-19
+- Focused run `44495561543` SUCCESS; artifact `14514373729`, ZIP 17,363,969 bytes, SHA-256 `6a670ead73df28b6766aef0c0e5004f795867903dc9bdb3ad59b248c0921518d`, expires 2027-02-17. Three original PDFs HTTP 200 and independently hashed: BEN 5,606,445 bytes / `15af93618aafee0446eef191ab9e208dcc1c807e3507eadf306c1ce6dbc92193`; BFA 6,707,349 bytes / `6a4b7149d5abb13d4aac7600cc13a7c0b157cb1d6aa06f8fed41e2b12e33a8ba`; SEN 6,055,592 bytes / `ee8e7794d2ad85f337d6c1536edcda973f3f7f322cb3b131e332fdb38a133395`.
+- Initial source screen: BEN has net financial-account components and separate portfolio stocks (not transaction flows); BFA has total net financial-account balance and an inward-FDI liability-side change of -122.6bn, but no full gross asset/liability pair established; SEN gross-leg extraction UNKNOWN pending page-image review. No inference or leg completion from net balances.
+- Full report `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`, commit `b0eca5eff4129b84ee7603a49ed7a36837144aeb`.
+- Script `d0329a779aa002f516ce973bffb3011b889b491a`; workflow `1939e57aad83c5cddd9cd6ba088fdfcb801c4bd2`; production collector pre-guard `afa8fbcf080ad2f6e5daa6af192013f2a9f2f3d7`; trigger `b972bc997bc8a757384c03b2eb2eb836b4ab4d99`. Guard applied before script/workflow/trigger commits; no NSE collector run triggered by this batch.
+- Next: page-image/OCR review BFA and SEN; then acquire GNB/MLI/TGO 2024 reports. Aggregate IMF A_NFA_T/L_NIL_T mapping remains BLOCKED / NOT_MAPPED.
