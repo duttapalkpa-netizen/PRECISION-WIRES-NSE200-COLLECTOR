@@ -1,0 +1,155 @@
+weo_vintage,appendix_emde_label,workbook_country_name,iso3,mapping_method,mapping_status
+October 2026,Afghanistan,"Afghanistan, Islamic Republic of",AFG,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Albania,Albania,ALB,EXACT_FULL_LABEL,PASS
+October 2026,Algeria,Algeria,DZA,EXACT_FULL_LABEL,PASS
+October 2026,Angola,Angola,AGO,EXACT_FULL_LABEL,PASS
+October 2026,Antigua and Barbuda,Antigua and Barbuda,ATG,EXACT_FULL_LABEL,PASS
+October 2026,Argentina,Argentina,ARG,EXACT_FULL_LABEL,PASS
+October 2026,Armenia,"Armenia, Republic of",ARM,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Aruba,"Aruba, Kingdom of the Netherlands",ABW,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Azerbaijan,"Azerbaijan, Republic of",AZE,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,The Bahamas,"Bahamas, The",BHS,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Bahrain,"Bahrain, Kingdom of",BHR,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Bangladesh,Bangladesh,BGD,EXACT_FULL_LABEL,PASS
+October 2026,Barbados,Barbados,BRB,EXACT_FULL_LABEL,PASS
+October 2026,Belarus,"Belarus, Republic of",BLR,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Belize,Belize,BLZ,EXACT_FULL_LABEL,PASS
+October 2026,Benin,Benin,BEN,EXACT_FULL_LABEL,PASS
+October 2026,Bhutan,Bhutan,BTN,EXACT_FULL_LABEL,PASS
+October 2026,Bolivia,Bolivia,BOL,EXACT_FULL_LABEL,PASS
+October 2026,Bosnia and Herzegovina,Bosnia and Herzegovina,BIH,EXACT_FULL_LABEL,PASS
+October 2026,Botswana,Botswana,BWA,EXACT_FULL_LABEL,PASS
+October 2026,Brazil,Brazil,BRA,EXACT_FULL_LABEL,PASS
+October 2026,Brunei Darussalam,Brunei Darussalam,BRN,EXACT_FULL_LABEL,PASS
+October 2026,Burkina Faso,Burkina Faso,BFA,EXACT_FULL_LABEL,PASS
+October 2026,Burundi,Burundi,BDI,EXACT_FULL_LABEL,PASS
+October 2026,Cabo Verde,Cabo Verde,CPV,EXACT_FULL_LABEL,PASS
+October 2026,Cambodia,Cambodia,KHM,EXACT_FULL_LABEL,PASS
+October 2026,Cameroon,Cameroon,CMR,EXACT_FULL_LABEL,PASS
+October 2026,Central African Republic,Central African Republic,CAF,EXACT_FULL_LABEL,PASS
+October 2026,Chad,Chad,TCD,EXACT_FULL_LABEL,PASS
+October 2026,Chile,Chile,CHL,EXACT_FULL_LABEL,PASS
+October 2026,China,"China, People's Republic of",CHN,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Colombia,Colombia,COL,EXACT_FULL_LABEL,PASS
+October 2026,Comoros,"Comoros, Union of the",COM,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Democratic Republic of the Congo,"Congo, Democratic Republic of the",COD,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Republic of Congo,"Congo, Republic of",COG,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Costa Rica,Costa Rica,CRI,EXACT_FULL_LABEL,PASS
+October 2026,Côte d'Ivoire,Côte d'Ivoire,CIV,EXACT_FULL_LABEL,PASS
+October 2026,Djibouti,Djibouti,DJI,EXACT_FULL_LABEL,PASS
+October 2026,Dominica,Dominica,DMA,EXACT_FULL_LABEL,PASS
+October 2026,Dominican Republic,Dominican Republic,DOM,EXACT_FULL_LABEL,PASS
+October 2026,Ecuador,Ecuador,ECU,EXACT_FULL_LABEL,PASS
+October 2026,Egypt,"Egypt, Arab Republic of",EGY,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,El Salvador,El Salvador,SLV,EXACT_FULL_LABEL,PASS
+October 2026,Equatorial Guinea,"Equatorial Guinea, Republic of",GNQ,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Eritrea,"Eritrea, The State of",ERI,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Eswatini,"Eswatini, Kingdom of",SWZ,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Ethiopia,"Ethiopia, The Federal Democratic Republic of",ETH,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Fiji,"Fiji, Republic of",FJI,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Gabon,Gabon,GAB,EXACT_FULL_LABEL,PASS
+October 2026,The Gambia,"Gambia, The",GMB,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Georgia,Georgia,GEO,EXACT_FULL_LABEL,PASS
+October 2026,Ghana,Ghana,GHA,EXACT_FULL_LABEL,PASS
+October 2026,Grenada,Grenada,GRD,EXACT_FULL_LABEL,PASS
+October 2026,Guatemala,Guatemala,GTM,EXACT_FULL_LABEL,PASS
+October 2026,Guinea,Guinea,GIN,EXACT_FULL_LABEL,PASS
+October 2026,Guinea-Bissau,Guinea-Bissau,GNB,EXACT_FULL_LABEL,PASS
+October 2026,Guyana,Guyana,GUY,EXACT_FULL_LABEL,PASS
+October 2026,Haiti,Haiti,HTI,EXACT_FULL_LABEL,PASS
+October 2026,Honduras,Honduras,HND,EXACT_FULL_LABEL,PASS
+October 2026,Hungary,Hungary,HUN,EXACT_FULL_LABEL,PASS
+October 2026,India,India,IND,EXACT_FULL_LABEL,PASS
+October 2026,Indonesia,Indonesia,IDN,EXACT_FULL_LABEL,PASS
+October 2026,Iran,"Iran, Islamic Republic of",IRN,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Iraq,Iraq,IRQ,EXACT_FULL_LABEL,PASS
+October 2026,Jamaica,Jamaica,JAM,EXACT_FULL_LABEL,PASS
+October 2026,Jordan,Jordan,JOR,EXACT_FULL_LABEL,PASS
+October 2026,Kazakhstan,"Kazakhstan, Republic of",KAZ,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Kenya,Kenya,KEN,EXACT_FULL_LABEL,PASS
+October 2026,Kiribati,Kiribati,KIR,EXACT_FULL_LABEL,PASS
+October 2026,Kosovo,"Kosovo, Republic of",KOS,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Kuwait,Kuwait,KWT,EXACT_FULL_LABEL,PASS
+October 2026,Kyrgyz Republic,Kyrgyz Republic,KGZ,EXACT_FULL_LABEL,PASS
+October 2026,Lao P.D.R.,Lao People's Democratic Republic,LAO,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Lebanon,Lebanon,LBN,EXACT_FULL_LABEL,PASS
+October 2026,Lesotho,"Lesotho, Kingdom of",LSO,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Liberia,Liberia,LBR,EXACT_FULL_LABEL,PASS
+October 2026,Libya,Libya,LBY,EXACT_FULL_LABEL,PASS
+October 2026,Madagascar,"Madagascar, Republic of",MDG,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Malawi,Malawi,MWI,EXACT_FULL_LABEL,PASS
+October 2026,Malaysia,Malaysia,MYS,EXACT_FULL_LABEL,PASS
+October 2026,Maldives,Maldives,MDV,EXACT_FULL_LABEL,PASS
+October 2026,Mali,Mali,MLI,EXACT_FULL_LABEL,PASS
+October 2026,Marshall Islands,"Marshall Islands, Republic of the",MHL,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Mauritania,"Mauritania, Islamic Republic of",MRT,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Mauritius,Mauritius,MUS,EXACT_FULL_LABEL,PASS
+October 2026,Mexico,Mexico,MEX,EXACT_FULL_LABEL,PASS
+October 2026,Micronesia,"Micronesia, Federated States of",FSM,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Moldova,"Moldova, Republic of",MDA,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Mongolia,Mongolia,MNG,EXACT_FULL_LABEL,PASS
+October 2026,Montenegro,Montenegro,MNE,EXACT_FULL_LABEL,PASS
+October 2026,Morocco,Morocco,MAR,EXACT_FULL_LABEL,PASS
+October 2026,Mozambique,"Mozambique, Republic of",MOZ,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Myanmar,Myanmar,MMR,EXACT_FULL_LABEL,PASS
+October 2026,Namibia,Namibia,NAM,EXACT_FULL_LABEL,PASS
+October 2026,Naoero,"Nauru, Republic of",NRU,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Nepal,Nepal,NPL,EXACT_FULL_LABEL,PASS
+October 2026,Nicaragua,Nicaragua,NIC,EXACT_FULL_LABEL,PASS
+October 2026,Niger,Niger,NER,EXACT_FULL_LABEL,PASS
+October 2026,Nigeria,Nigeria,NGA,EXACT_FULL_LABEL,PASS
+October 2026,North Macedonia,"North Macedonia, Republic of",MKD,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Oman,Oman,OMN,EXACT_FULL_LABEL,PASS
+October 2026,Pakistan,Pakistan,PAK,EXACT_FULL_LABEL,PASS
+October 2026,Palau,"Palau, Republic of",PLW,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Panama,Panama,PAN,EXACT_FULL_LABEL,PASS
+October 2026,Papua New Guinea,Papua New Guinea,PNG,EXACT_FULL_LABEL,PASS
+October 2026,Paraguay,Paraguay,PRY,EXACT_FULL_LABEL,PASS
+October 2026,Peru,Peru,PER,EXACT_FULL_LABEL,PASS
+October 2026,Philippines,Philippines,PHL,EXACT_FULL_LABEL,PASS
+October 2026,Poland,"Poland, Republic of",POL,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Qatar,Qatar,QAT,EXACT_FULL_LABEL,PASS
+October 2026,Romania,Romania,ROU,EXACT_FULL_LABEL,PASS
+October 2026,Russia,Russian Federation,RUS,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Rwanda,Rwanda,RWA,EXACT_FULL_LABEL,PASS
+October 2026,Samoa,Samoa,WSM,EXACT_FULL_LABEL,PASS
+October 2026,São Tomé and Príncipe,"São Tomé and Príncipe, Democratic Republic of",STP,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Saudi Arabia,Saudi Arabia,SAU,EXACT_FULL_LABEL,PASS
+October 2026,Senegal,Senegal,SEN,EXACT_FULL_LABEL,PASS
+October 2026,Serbia,"Serbia, Republic of",SRB,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Seychelles,Seychelles,SYC,EXACT_FULL_LABEL,PASS
+October 2026,Sierra Leone,Sierra Leone,SLE,EXACT_FULL_LABEL,PASS
+October 2026,Solomon Islands,Solomon Islands,SLB,EXACT_FULL_LABEL,PASS
+October 2026,Somalia,Somalia,SOM,EXACT_FULL_LABEL,PASS
+October 2026,South Africa,South Africa,ZAF,EXACT_FULL_LABEL,PASS
+October 2026,South Sudan,"South Sudan, Republic of",SSD,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Sri Lanka,Sri Lanka,LKA,EXACT_FULL_LABEL,PASS
+October 2026,St. Kitts and Nevis,St. Kitts and Nevis,KNA,EXACT_FULL_LABEL,PASS
+October 2026,St. Lucia,St. Lucia,LCA,EXACT_FULL_LABEL,PASS
+October 2026,St. Vincent and the Grenadines,St. Vincent and the Grenadines,VCT,EXACT_FULL_LABEL,PASS
+October 2026,Sudan,Sudan,SDN,EXACT_FULL_LABEL,PASS
+October 2026,Suriname,Suriname,SUR,EXACT_FULL_LABEL,PASS
+October 2026,Syria,Syrian Arab Republic,SYR,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Tajikistan,"Tajikistan, Republic of",TJK,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Tanzania,"Tanzania, United Republic of",TZA,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Thailand,Thailand,THA,EXACT_FULL_LABEL,PASS
+October 2026,Timor-Leste,"Timor-Leste, Democratic Republic of",TLS,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Togo,Togo,TGO,EXACT_FULL_LABEL,PASS
+October 2026,Tonga,Tonga,TON,EXACT_FULL_LABEL,PASS
+October 2026,Trinidad and Tobago,Trinidad and Tobago,TTO,EXACT_FULL_LABEL,PASS
+October 2026,Tunisia,Tunisia,TUN,EXACT_FULL_LABEL,PASS
+October 2026,Türkiye,"Türkiye, Republic of",TUR,EXPLICIT_LABEL_ALIAS,PASS
+October 2026,Turkmenistan,Turkmenistan,TKM,EXACT_FULL_LABEL,PASS
+October 2026,Tuvalu,Tuvalu,TUV,EXACT_FULL_LABEL,PASS
+October 2026,Uganda,Uganda,UGA,EXACT_FULL_LABEL,PASS
+October 2026,Ukraine,Ukraine,UKR,EXACT_FULL_LABEL,PASS
+October 2026,United Arab Emirates,United Arab Emirates,ARE,EXACT_FULL_LABEL,PASS
+October 2026,Uruguay,Uruguay,URY,EXACT_FULL_LABEL,PASS
+October 2026,Uzbekistan,"Uzbekistan, Republic of",UZB,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Vanuatu,Vanuatu,VUT,EXACT_FULL_LABEL,PASS
+October 2026,Venezuela,"Venezuela, República Bolivariana de",VEN,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Vietnam,Vietnam,VNM,EXACT_FULL_LABEL,PASS
+October 2026,West Bank and Gaza,West Bank and Gaza,WBG,EXACT_FULL_LABEL,PASS
+October 2026,Yemen,"Yemen, Republic of",YEM,UNIQUE_WEO_BASE_NAME,PASS
+October 2026,Zambia,Zambia,ZMB,EXACT_FULL_LABEL,PASS
+October 2026,Zimbabwe,Zimbabwe,ZWE,EXACT_FULL_LABEL,PASS

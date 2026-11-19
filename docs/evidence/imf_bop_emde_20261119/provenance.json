@@ -2,7 +2,7 @@
   "weo_workbook": {
     "url": "https://data.imf.org/-/media/iData/External-Storage/Documents/0FA3DC49A04D446E9D69DBEB29979E1C/en/WEOOct2026all.xlsx",
     "final_url": "https://data.imf.org/-/media/iData/External-Storage/Documents/0FA3DC49A04D446E9D69DBEB29979E1C/en/WEOOct2026all.xlsx",
-    "retrieved_at_utc": "2026-11-19T06:43:19.949542+00:00",
+    "retrieved_at_utc": "2026-11-19T06:46:33.270418+00:00",
     "http_status": 200,
     "headers": {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -13,17 +13,17 @@
       "Referrer-Policy": "same-origin",
       "X-XSS-Protection": "1",
       "Pragma": "no-cache",
-      "x-correlation-id": "a4f99b84-5167-462f-a89a-250b82733496",
+      "x-correlation-id": "77e0caa1-d723-464a-9cd2-daf99844d286",
       "content-disposition": "attachment; filename=\"WEOOct2026all.xlsx\"",
       "Vary": "Accept-Encoding",
       "Cache-Control": "no-cache, no-store",
-      "Expires": "Thu, 19 Nov 2026 06:43:20 GMT",
-      "Date": "Thu, 19 Nov 2026 06:43:20 GMT",
+      "Expires": "Thu, 19 Nov 2026 06:46:33 GMT",
+      "Date": "Thu, 19 Nov 2026 06:46:33 GMT",
       "Transfer-Encoding": "chunked",
       "Connection": "Transfer-Encoding",
       "Alt-Svc": "h3=\":443\"; ma=93600",
       "Strict-Transport-Security": "max-age=31536000",
-      "Akamai-GRN": "0.72cfdb17.1795070600.23a46754"
+      "Akamai-GRN": "0.cf00de17.1795070793.466e34f0"
     },
     "byte_count": 5480592,
     "sha256": "2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c"
@@ -31,14 +31,14 @@
   "bop_country_codelist": {
     "url": "https://api.imf.org/external/sdmx/3.0/structure/codelist/IMF.STA/CL_BOP_COUNTRY/1.0.0?references=all",
     "final_url": "https://api.imf.org/external/sdmx/3.0/structure/codelist/IMF.STA/CL_BOP_COUNTRY/1.0.0?references=all",
-    "retrieved_at_utc": "2026-11-19T06:43:21.949036+00:00",
+    "retrieved_at_utc": "2026-11-19T06:46:34.070629+00:00",
     "http_status": 200,
     "headers": {
-      "Date": "Thu, 19 Nov 2026 06:43:22 GMT",
+      "Date": "Thu, 19 Nov 2026 06:46:34 GMT",
       "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
       "Transfer-Encoding": "chunked",
       "Connection": "close",
-      "x-correlation-id": "b219a9fe22e24ddd0c13afc7895ff28c",
+      "x-correlation-id": "44ed0d855755a18a32b4949bdebbdd4d",
       "x-content-type-options": "nosniff",
       "x-xss-protection": "0",
       "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
@@ -46,11 +46,11 @@
       "expires": "0",
       "strict-transport-security": "max-age=31536000 ; includeSubDomains",
       "x-frame-options": "DENY",
-      "x-envoy-upstream-service-time": "80",
+      "x-envoy-upstream-service-time": "99",
       "server": "istio-envoy",
       "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
     },
     "byte_count": 5737234,
-    "sha256": "190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39"
+    "sha256": "c092284ad0c9c1f04c9db4d5bd4fd5d1f3ed5cff31dcec407a050deb264a88f9"
   }
 }
