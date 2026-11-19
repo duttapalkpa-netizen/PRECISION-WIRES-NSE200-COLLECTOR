@@ -1382,3 +1382,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Limits: exact India quarter-level sub-windows from Annex Table A2 still pending; no raw daily/weekly FPI, NIFTY, VIX or FX event panel acquired; no independent event-study replication or trading edge established.
 - Stage: event register increment complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; aggregate/production admission NOT_AUTHORIZED.
 - Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed event dates/unsupported causality; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 43 — Part-2: RBI Annex A2 India sudden-stop evidence-limit audit (2026-11-19)
+- Reopened the official RBI paper directly and verified the body-text findings: India GFC capital-inflow sudden stop; India country-level sudden stops in broad H2:2015–H1:2016 window; India gross-FPI sudden stop in Q1:2022; neither 2013 taper tantrum nor 2021 taper-talk episode qualified as a sudden stop under the paper's criteria.
+- The Annex Table A2 link did not resolve into independently readable table rows in this inspection. Exact India quarter(s) and 2015–16 flow measure (gross capital inflow vs net flow) remain UNKNOWN/PENDING; do not infer them from the broad body-text window.
+- Report: docs/GCR_RBI_ANNEX_A2_INDIA_SUDDEN_STOP_WINDOW_EVIDENCE_LIMIT_CONTINUATION43_PART2_20261119.md; commit 0d9cefe8344e6b2b57e740803b26558ccb6b4dc4.
+- Primary source: https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4517 (Section III/IV body text and Annex Table A2 link).
+- Limits: no Annex A2 row extraction, no exact quarter boundaries, no daily market/FX/sector response, no raw event-study panel, no independent replication.
+- Stage: source evidence-limit audit complete; Observation overall OPEN; Planning/Organizing NOT STARTED; GCR NOT COMPLETE; production admission NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official/free sources; no synthetic data/fabricated timestamps/guessed quarters/guessed flow classifications; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
