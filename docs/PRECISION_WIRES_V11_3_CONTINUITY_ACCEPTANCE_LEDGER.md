@@ -972,3 +972,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Detailed report `docs/GCR_BRAZIL_SOURCE_FRESHNESS_AND_BLOCKER_AUDIT_CONTINUATION68_20261119.md`, commit `b420dbc5b140a4873959f3c1372e9f0fd3a09d90`.
 - Decision: SEBI route directory PASS; CDSL sector report availability PASS; daily investment freshness PARTIAL/BLOCKED; raw archive/parser/reconciliation NOT_DONE. Brazil 40-event Registration lifecycle PASS; PA tx2/Changelog BLOCKED; BOP6/BOP_BPM6 identity BLOCKED. No production changes or admissions.
 - Next: capture NSDL archive and CDSL Nov15 sector report as immutable raw files in bounded byte-capable runner; reconcile NSE provisional vs NSDL/CDSL confirmed flows. Brazil only pursue official UI/export for PA tx2 changelog/revisions; if owner-authenticated, record external dependency rather than repeating failing endpoints.
+
+
+## Continuation 69 — NSDL/CDSL FPI freshness reconciliation (2026-11-19)
+- Highest-value action: re-check official daily FPI access/freshness rather than repeat already completed Brazil lifecycle work.
+- SEBI official directory explicitly lists NSDL Latest, Current Month, Archive and Fortnightly sector selector URLs. Route discovery PASS.
+- Direct fetches of NSDL Latest.aspx, Archive.aspx and FPI_Fortnightly_Selection.aspx returned HTTP 502 in this retrieval environment. This is an access/retrieval limitation, not evidence of missing observations or service outage.
+- CDSL archive discrepancy: search-indexed official page snapshot says daily FPI investment through 18-Nov-2026; direct page open renders heading through 31-Oct-2026 and October rows. Conflicting snapshots; freshness now CONFLICT/UNKNOWN pending byte-level raw capture. Do not use derivative date 18-Nov to assert investment cash table freshness.
+- Third-party public scraper README suggests NSDL pages use ASP.NET postback; FPI archive month-scoped requests and DII per-trading-day requests. This is implementation discovery only, not source evidence; do not vendor or trust its data without direct official capture.
+- Detailed report `docs/GCR_NSDL_CDSL_DAILY_FPI_FRESHNESS_RECONCILIATION_CONTINUATION69_20261119.md`, commit `feb159eee99fe312b8bf23586a014867c9ce96da`.
+- Brazil status unchanged/correct: 40-event Registration lifecycle PASS; PA tx2/Changelog BLOCKED after prior two documented JSON 500 responses; BOP6 vs BOP_BPM6 mismatch BLOCKED. No repeated endpoint probes.
+- Next: short direct-HTTP GitHub Actions capture of official NSDL Latest/Monthly/Archive/Fortnightly and CDSL archive/sector pages, preserving raw bytes, headers, retrieval UTC, hashes and observed ASP.NET form fields before parsing. Then reconcile matched-date depository-confirmed vs NSE provisional flows. No production admission or invariant change.
