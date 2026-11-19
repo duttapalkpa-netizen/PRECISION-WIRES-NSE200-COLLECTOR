@@ -81,7 +81,7 @@ def main():
     if x.get("INDICATOR")!="P_F" or x.get("BOP_ACCOUNTING_ENTRY")!=entry or x.get("FREQUENCY")!="Q":
      raise ValueError("response contains an unexpected dimension value")
     if x.get("COUNTRY") not in {m["country_code"] for m in emde}:raise ValueError("response contains non-WEO-EMDE country")
-    obs.append(x);all_rows.append({**x,"SOURCE_FILE":fn,"SOURCE_SHA256":rr["sha"]})
+    obs.append(x);all_rows.append({**x,"SOURCE_FILE":fn,"SOURCE_SHA256":rr["sha256"]})
    row["parse_status"]="PASS";row["raw_csv_rows"]=len(parsed);row["nonempty_observations"]=len(obs)
    row["empty_rows"]=len(parsed)-len(obs);row["country_count"]=len({x["COUNTRY"] for x in obs})
    row["unit_codes"]=sorted({x["UNIT"] for x in obs})
