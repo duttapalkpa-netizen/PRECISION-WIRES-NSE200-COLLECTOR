@@ -869,3 +869,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Therefore FDI gross-leg extraction PARTIAL PASS only; aggregate IMF A_NFA_T/L_NIL_T remains BLOCKED / NOT_MAPPED. Do not promote the FDI-only amounts to total legs.
 - CSV `docs/evidence/gcr_bceao_2024/civ_2024_fdi_gross_legs.csv`; report `docs/GCR_BCEAO_CIV_2024_FDI_GROSS_LEGS_PARTIAL_20261119.md`.
 - Two accidental collector runs `44495237321`, `44495240272` cancelled before market-data step; helper `44495300530` SUCCESS. No production code change.
+
+
+## Continuation 41 — BCEAO CIV 2024 / BEN-BFA-SEN source work
+- CIV 2024 official PDF raw archive verified (3,596,808 bytes, SHA-256 `99aee45e2f75464e85b9b319c9acd93bfd706779119e8c6bfac8db0f5a1a2f28`; run `44495255971`; artifact `14515150693`). Printed pp.24–25 explicitly report FDI asset acquisition 138.1 and liability incurrence 1,892.8 FCFA bn; 138.1−1,892.8=−1,754.7 exactly matches net FDI. Other investment categories are net-only, so aggregate IMF legs remain blocked.
+- BEN/BFA/SEN 2024 official reports acquired and hashed in focused run `44495561543` SUCCESS; artifact `14514373729`, SHA-256 `6a670ead73df28b6766aef0c0e5004f795867903dc9bdb3ad59b248c0921518d`. BEN raw hash `15af93618aafee0446eef191ab9e208dcc1c807e3507eadf306c1ce6dbc92193`; BFA `6a4b7149d5abb13d4aac7600cc13a7c0b157cb1d6aa06f8fed41e2b12e33a8ba`; SEN `ee8e7794d2ad85f337d6c1536edcda973f3f7f322cb3b131e332fdb38a133395`.
+- Initial screen: BEN transaction table net only; portfolio stocks separately disclosed but not flows. BFA reports total net +777.8bn and inward FDI liability-side decrease -122.6bn; no full gross pair established. SEN gross leg values UNKNOWN pending page-image review. No inferred legs.
+- Source-screen report: `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`, commit `b0eca5eff4129b84ee7603a49ed7a36837144aeb`.
+- Next priority: page-image/OCR review BFA/SEN, then GNB/MLI/TGO 2024 reports. Do not admit to aggregate until both full legs reconcile.
