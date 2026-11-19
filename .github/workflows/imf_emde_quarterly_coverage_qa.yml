@@ -18,18 +18,18 @@ jobs:
           fetch-depth: 0
       - name: Recompute 154-member country-entry-quarter coverage and raw reconciliation
         run: python scripts/research/audit_imf_emde_quarterly_coverage.py
-      - name: Persist detailed coverage QA to repository
+      - name: Resolve exact IMF BOP SCALE concept definition\n        run: python scripts/research/probe_imf_bop_scale_semantics.py\n      - name: Persist detailed coverage QA to repository
         run: |
           mkdir -p docs/evidence/imf_bop_emde_20261119/coverage_qa
           cp imf_emde_coverage_qa/*.csv docs/evidence/imf_bop_emde_20261119/coverage_qa/
           cp imf_emde_coverage_qa/summary.json docs/evidence/imf_bop_emde_20261119/coverage_qa/
-          cp imf_emde_coverage_qa/report.md docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+          cp imf_emde_coverage_qa/report.md docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md\n          mkdir -p docs/evidence/imf_bop_emde_20261119/scale_semantics\n          cp imf_bop_scale_semantics/* docs/evidence/imf_bop_emde_20261119/scale_semantics/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/evidence/imf_bop_emde_20261119/coverage_qa docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
+          git add docs/evidence/imf_bop_emde_20261119/coverage_qa docs/evidence/imf_bop_emde_20261119/scale_semantics docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md
           git commit -m "Archive WEO EMDE BOP quarterly coverage and missingness audit"
           git push origin research/gcr-emde-quarterly-coverage-qa-20261119
-      - name: Upload QA artifact
+      - name: Upload SCALE concept metadata probe\n        uses: actions/upload-artifact@v4\n        with:\n          name: imf-bop-scale-concept-\\${{ github.run_id }}\n          path: imf_bop_scale_semantics/\n          if-no-files-found: error\n          retention-days: 90\n      - name: Upload QA artifact
         uses: actions/upload-artifact@v4
         with:
           name: imf-emde-quarterly-coverage-qa-${{ github.run_id }}
