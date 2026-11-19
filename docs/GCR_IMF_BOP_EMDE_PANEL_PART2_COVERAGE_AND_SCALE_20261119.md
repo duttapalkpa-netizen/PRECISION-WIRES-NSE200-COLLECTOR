@@ -52,7 +52,7 @@ A dedicated no-credential metadata probe retrieved:
 - DSD attribute `SCALE` is optional and series-attached through the dimensions COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, FREQUENCY and UNIT.
 - Concept scheme labels the concept “Scale” and enumerates it to `IMF:CL_UNIT_MULT`; no explicit English description is supplied.
 - Codelist code 6 is “Millions”, described as 10^6.
-- The general SDMX glossary defines UNIT_MULT=6 as observations in millions and says it is an exponent used to calculate the actual value in the unit of measure. Sources: https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_2_0-2.htm and https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_1_0_February_2016.htm.
+- The general SDMX glossary defines UNIT_MULT=6 as observations in millions and says it is an exponent used to calculate the actual value in the unit of measure. Sources: https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_2_0_October_2018-2.htm and https://sdmx.org/wp-content/uploads/SDMX_Glossary_Version_1_0_February_2016.htm.
 - However, the IMF-specific `SCALE` concept does not expose a definition clarifying whether this is a unit multiplier applied to OBS_VALUE or a preferred display scale. The raw observations are already labelled UNIT=USD and carry large numeric values. Applying 10^6 without an independent official benchmark could misstate the data by six orders of magnitude.
 - Decision: metadata mapping PASS; numerical transformation BLOCKED. Keep raw OBS_VALUE untouched and retain SCALE=6.
 
