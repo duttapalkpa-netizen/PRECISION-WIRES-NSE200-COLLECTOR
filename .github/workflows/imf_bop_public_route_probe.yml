@@ -29,7 +29,7 @@ jobs:
         run: python scripts/research/capture_imf_bop_portfolio_panel.py
       - name: Compare BCB registered XML with IMF Brazil BOP panel
         run: python scripts/research/compare_bcb_xml_to_imf_bop_panel.py
-      - name: Independently reconcile exact BOP panel against broad raw observations
+      - name: Reconcile Brazil IMF scale and signs against official BCB monthly portfolio flows\n        run: python scripts/research/reconcile_imf_bop_scale_brazil_bcb.py\n      - name: Independently reconcile exact BOP panel against broad raw observations
         run: python scripts/research/validate_imf_bop_portfolio_panel.py
 
       - name: Commit durable IMF BOP pilot evidence (raw DSD + exact CSV panel)
@@ -51,7 +51,7 @@ jobs:
           cp bcb_bop_scale_crosscheck/summary.json docs/evidence/imf_bop_20261119/bcb_scale_crosscheck_summary.json
           cp bcb_bop_scale_crosscheck/comparison.csv docs/evidence/imf_bop_20261119/bcb_imf_bop_value_comparison.csv
           cp imf_bop_observation_smoketest/summary.json docs/evidence/imf_bop_20261119/p_mv_rejected_smoketest.json
-          cp imf_bop_public_route_probe/manifest.json docs/evidence/imf_bop_20261119/public_route_manifest.json
+          cp imf_bop_public_route_probe/manifest.json docs/evidence/imf_bop_20261119/public_route_manifest.json\n          mkdir -p docs/evidence/imf_bop_20261119/bcb_scale_reconciliation\n          cp bcb_scale_reconciliation/raw/*.json docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/\n          cp bcb_scale_reconciliation/quarter_reconciliation.csv docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/\n          cp bcb_scale_reconciliation/quarter_reconciliation.json docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/\n          cp bcb_scale_reconciliation/summary.json docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/evidence/imf_bop_20261119
