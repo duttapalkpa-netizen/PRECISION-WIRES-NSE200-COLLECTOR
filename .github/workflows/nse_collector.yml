@@ -76,6 +76,8 @@ on:
       - "scripts/research/probe_imf_brazil_public_tx_history.py"
       - ".github/workflows/sdmx_bop_260_capture.yml"
       - "scripts/research/capture_sdmx_bop_260_official_dsd.py"
+      - ".github/workflows/imf_registration_inventory.yml"
+      - "scripts/research/capture_imf_registration_inventory.py"
       - ".github/workflows/imf_brazil_registration_artifact_audit.yml"
       - "scripts/research/audit_imf_brazil_registration_history_artifact.py"
       - ".github/workflows/gcr_india_fpi_raw_capture.yml"
