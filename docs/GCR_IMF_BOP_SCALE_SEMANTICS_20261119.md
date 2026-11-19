@@ -21,7 +21,7 @@ The official IMF API's returned `OBS_VALUE` values are in base-USD numerical mag
 - Four calendar quarters tested; 12 comparisons (assets, liabilities, combined net): 10 PASS, 2 REVIEW.
 - 2025-Q1, 2025-Q2 and 2026-Q2: all three comparisons PASS within ±0.5 USD million.
 - 2026-Q1 asset comparison PASS; liability and combined net REVIEW. IMF liability = -13,633.508347 USD million versus RBI 3.2.A net = -12,121 USD million; residual = -1,512.508347 USD million. No silent reconciliation.
-- Report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; run 44477031402, artifact 14507520812. RBI raw HTML hashes and the exact 12-row comparison CSV are archived under `docs/evidence/imf_bop_20261119/india_scale_reconciliation/`.
+- Report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`; run 44477031402, artifact 14505649659. RBI raw HTML hashes and the exact 12-row comparison CSV are archived under `docs/evidence/imf_bop_20261119/india_scale_reconciliation/`.
 
 ## 3. Operational rule and limitations
 - The empirical diagnostic is `USD_million = OBS_VALUE / 10^6` for the cross-checked country-periods.
