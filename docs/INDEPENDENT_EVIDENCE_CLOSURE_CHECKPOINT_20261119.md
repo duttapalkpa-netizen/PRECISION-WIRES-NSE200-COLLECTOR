@@ -398,3 +398,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Final full-run validation artifact: run 44476176136 / artifact 14505944936 / 8,974,699 bytes / SHA-256 `1c9c1975717764aea11230f9fb659270a43c98b198e0154605589a1a8a19f317`.
 - Detailed evidence: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json`, `quarter_reconciliation.csv`, `quarter_reconciliation.json`; BCB source series URLs are in the summary.
 - Limitation: this direct scale/sign cross-check is for Brazil only. India and other EMDE country sources need independent source-to-source validation before full GCR aggregation.
+
+
+## India BOP scale/sign validation — 2026-11-19
+- RBI Table197 official BPM6 quarterly USD-million data (published 2026-07-31) captured anonymously, HTTP 200, 146,017 bytes, SHA-256 `391c549c5b64c0b7f9204eb9634975f77d4ba2d7796542ed23932fb8d740813d`.
+- Six aligned calendar quarters (2024-Q2 through 2025-Q3) × two entries = 12/12 PASS. RBI 3.2.B Portfolio Investment by India maps to IMF A_NFA_T with sign reversal; RBI 3.2.A Portfolio Investment in India maps directly to IMF L_NIL_T. IMF `OBS_VALUE/1e6` compared within 0.5 USD million integer-publication rounding bound; max residual 0.4899709189 million.
+- Run 44476434148 / artifact 14506542277 / ZIP SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`; durable evidence commit `451b9e203fd6edb1541c42432b47a393e030372c`.
+- Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`, commit `4a3bcc34a19d92e747f50609a7cabebe489af69a`.
+- Two-country pilot scale/sign validation now: Brazil 10/10 (BCB) + India 12/12 (RBI) = 22/22 PASS. The remaining 152 WEO EMDE members are UNKNOWN; no full-panel conversion or EMDE aggregate. BPM/revision-vintage controls remain open.
