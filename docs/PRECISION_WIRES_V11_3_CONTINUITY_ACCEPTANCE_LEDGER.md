@@ -877,3 +877,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Initial screen: BEN transaction table net only; portfolio stocks separately disclosed but not flows. BFA reports total net +777.8bn and inward FDI liability-side decrease -122.6bn; no full gross pair established. SEN gross leg values UNKNOWN pending page-image review. No inferred legs.
 - Source-screen report: `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`, commit `b0eca5eff4129b84ee7603a49ed7a36837144aeb`.
 - Next priority: page-image/OCR review BFA/SEN, then GNB/MLI/TGO 2024 reports. Do not admit to aggregate until both full legs reconcile.
+
+
+## Continuation 42 — BFA scoped gross legs / BEN-SEN net-only checks
+- BFA official Table 15: 2024 non-monetary sector assets 342.6; liabilities 1,120.4; balance -777.8 FCFA bn. Category pairs recorded in `docs/evidence/gcr_bceao_2024/bfa_2024_gross_legs_scoped.csv`. Exact total check. Other investment has 0.1 rounding residual.
+- BCEAO optic excludes monetary-sector portfolio, derivatives and other investment; not full IMF national financial account. Thus partial scoped gross-leg PASS only, aggregate remains BLOCKED.
+- BEN Table 14 net-only. SEN Table 16 page-image confirmed net-only. Corrected source screen report `docs/GCR_BCEAO_BEN_BFA_SEN_2024_SOURCE_SCREEN_20261119.md`.
