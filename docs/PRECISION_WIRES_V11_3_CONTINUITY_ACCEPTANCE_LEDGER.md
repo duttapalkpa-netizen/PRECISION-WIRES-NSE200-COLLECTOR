@@ -1004,3 +1004,16 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Workflow run/artifact not independently verifiable with available GitHub Actions read tools; raw capture remains PENDING / NOT_VERIFIED. No bytes or hashes claimed.
 - Brazil exact PA Changelog remains an owner-side UI/export dependency; do not repeat HTTP 500 transaction endpoint. BOP6/BOP_BPM6 mismatch remains BLOCKED. Registration lifecycle 40/40 PASS.
 - Report: `docs/GCR_DAILY_FPI_ENDPOINT_REFINEMENT_CONTINUATION71_20261119.md`. No production invariants changed; ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 72 — India FPI raw capture execution and schema audit (2026-11-19)
+- Verified workflow run #2 / ID `44515445620`, workflow `GCR Official India FPI Raw Page Capture`, push event on `4bbb1bdc6be289079869a72c4ea79a460ac6b219`: completed SUCCESS. Job `capture` and all steps SUCCESS.
+- Artifact ID `14524707532`, `gcr-india-fpi-raw-pages-2`, 184,876 bytes. GitHub digest and independently recomputed ZIP SHA-256 both `29530f3d0913f3eed93afbeb0759ecb8131b4192c71e5928d79961df77c24c69`.
+- Manifest: seven official pages, 7/7 HTTP 200, 0 non-200/error; GET-only; UTC retrieval timestamps, response headers, byte counts and per-file SHA-256 retained. Full source hashes and findings in `docs/GCR_INDIA_FPI_RAW_CAPTURE_SCHEMA_AUDIT_CONTINUATION72_20261119.md`.
+- Schema findings: NSDL Latest contains 19-Nov-2026 daily cash and separate derivative tables, but explicitly distinguishes provisional exchange-member T-day data from confirmed custodian/depository previous-day(s) data; status mapping must be explicit. NSDL Monthly heading 19-Nov but first visible row 02-Nov. NSDL Archive initial GET has no rows and requires ASP.NET date selection/postback (not attempted). NSDL fortnightly selector exposes 15-Nov-2026 onward dates but is not the sector data itself.
+- CDSL eServices cash table first row 18-Nov-2026: equity/stock-exchange gross purchases ₹21,092.53cr, gross sales ₹15,177.67cr, net ₹5,914.86cr, USD 632.1301m, conversion 93.5703. Raw schema includes category, route, gross/net INR, USD and conversion. CDSL archive cash table starts 02-Nov although page title says upto 18-Nov; its derivative table is 18-Nov. Do not attribute derivative freshness to cash data. CDSL fortnightly landing page embeds DDP pendency tables and links separate 15-Nov sector report; landing is not sector observation dataset.
+- Raw capture execution, artifact integrity and 7/7 HTTP 200 are PASS. Schema discovery PARTIAL PASS. Cross-provider matched-date reconciliation NOT_DONE; confirmed/provisional mapping PARTIAL; sector observation capture NOT_DONE; India production ingestion BLOCKED.
+- Brazil unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED. No repeat probes.
+- Next: GET-only capture of exact CDSL 15-Nov-2026 sector report; then matched-date NSDL/CDSL cash-flow reconciliation with status, asset class, route, units, conversion and reporting-date controls. No production admission.
+- Protected invariants unchanged; ₹0; UNKNOWN is never PASS.
+- Detailed report commit: `b7f5896459c7710af3b12c369a072062129c86a2`.
