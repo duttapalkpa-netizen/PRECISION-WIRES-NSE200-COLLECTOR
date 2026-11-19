@@ -17,3 +17,5 @@
 2026-11-19 validate-186-row-BOP-portfolio-panel-against-broad-raw-capture
 
 2026-11-19 re-run-full-attribute-preservation-and-raw-panel-validator
+
+2026-11-19 retry-strict-attribute-preservation-validator-after-fix
