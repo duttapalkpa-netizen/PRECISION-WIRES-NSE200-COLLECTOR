@@ -20,7 +20,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download 44474218174 --repo "$GITHUB_REPOSITORY" --name "imf-bop-emde-portfolio-flows-44474218174" --dir /tmp/emde
+          gh run download 44474620936 --repo "$GITHUB_REPOSITORY" --name "imf-bop-emde-portfolio-flows-44474620936" --dir /tmp/emde\n          gh run download 44474629873 --repo "$GITHUB_REPOSITORY" --name "weo-october-2026-emde-membership-44474629873" --dir /tmp/weo
           gh run download 44474458684 --repo "$GITHUB_REPOSITORY" --name "imf-emde-exact-sample-validation-44474458684" --dir /tmp/exact
       - name: Persist raw CSVs, normalized panel, coverage and receipts
         run: |
@@ -32,23 +32,23 @@ jobs:
           cp /tmp/emde/summary.json "$DEST/"
           cp /tmp/emde/provenance.json "$DEST/"
           cp /tmp/emde/raw/WEOOct2026all.xlsx "$DEST/raw/"
-          cp /tmp/emde/raw/CL_BOP_COUNTRY.xml "$DEST/raw/"
+          cp /tmp/emde/raw/CL_BOP_COUNTRY.xml "$DEST/raw/"\n          mkdir -p "$DEST/weo_membership_validation/raw"\n          cp /tmp/weo/summary.json "$DEST/weo_membership_validation/"\n          cp /tmp/weo/weo_emde_appendix_to_bop_iso3_crosswalk.csv "$DEST/weo_membership_validation/"\n          cp /tmp/weo/weo_oct2026_emde_membership.csv "$DEST/weo_membership_validation/"\n          cp /tmp/weo/raw/weo_appendix.pdf "$DEST/weo_membership_validation/raw/"\n          cp /tmp/weo/raw/weo_workbook.xlsx "$DEST/weo_membership_validation/raw/"\n          cp /tmp/weo/raw/bop_country_codelist.xml "$DEST/weo_membership_validation/raw/"
           cp /tmp/emde/raw/EMDE_A_NFA_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
           cp /tmp/emde/raw/EMDE_L_NIL_T_P_F_ALL_UNITS_Q.csv "$DEST/raw/"
           cp /tmp/exact/summary.json "$DEST/exact_sample_checks/"
           cp /tmp/exact/raw/*.csv "$DEST/exact_sample_checks/"
           cat > "$DEST/source_artifact_receipt.json" <<'EOF'
           {
-            "panel_workflow_run_id": 44474218174,
-            "panel_artifact_id": 14505862034,
-            "panel_artifact_sha256": "1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f",
+            "panel_workflow_run_id": 44474620936,
+            "panel_artifact_id": 14505452613,
+            "panel_artifact_sha256": "b23854fa433b46b29bb2d8094ec9bc14d2cd6c58fdc1771fa9428ca6ae3aed17",
             "sample_validation_workflow_run_id": 44474458684,
             "sample_validation_artifact_id": 14505009889,
             "sample_validation_artifact_sha256": "588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7",
-            "weo_october_2026_workbook_sha256": "2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c",
+            "weo_october_2026_workbook_sha256": "2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c",\n            "weo_october_2026_appendix_sha256": "cd4e2829d7e621d43134728bfc128547f776e909e08ef1d38b837e2d39e5ae2a",\n            "weo_membership_workflow_run_id": 44474629873,\n            "weo_membership_artifact_id": 14506160317,\n            "weo_membership_artifact_sha256": "acdf014f5f19ba5e0d23dca7a8d57a4b1813b002a3274495d557f0cd05c0fbb1",
             "imf_bop_country_codelist_sha256": "190c0ab3196a85bba890e2fd0cf40eebda654de2eb8e7d1f16c9644572d59f39",
             "authentication": "none; public anonymous GET",
-            "validation": "154/154 WEO member codes map to BOP codelist; 9,299 unique observations; 24 exact queries; 1,106/1,106 observation/attribute matches"
+            "validation": "WEO Appendix vs same-vintage G200 workbook 154/154; all 154 ISO3 present in BOP codelist; 9,299 unique observations; 24 exact queries; 1,106/1,106 observation/attribute matches; independent raw-to-normalized row multiset 9,299/9,299"
           }
           EOF
       - name: Commit durable EMDE evidence archive
