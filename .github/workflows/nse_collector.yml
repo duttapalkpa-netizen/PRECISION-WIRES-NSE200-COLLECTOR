@@ -40,7 +40,7 @@ on:
       - ".github/workflows/imf_bop_dsd_v260_capture.yml"
       - "scripts/research/capture_imf_bop_dsd_v260.py"
       - "scripts/research/imf_bop_dsd_v260_capture_trigger.txt"
-      - ".github/workflows/weo_oct2026_membership_capture.yml"
+      - ".github/workflows/weo_oct2026_membership_capture.yml"\n      - ".github/workflows/imf_weo_oct2026_membership_capture.yml"\n      - "scripts/research/capture_imf_weo_oct2026_membership_source.py"\n      - "scripts/research/imf_weo_membership_capture_trigger.txt"
       - "scripts/research/capture_weo_oct2026_emde_membership.py"
       - "scripts/research/weo_oct2026_membership_trigger.txt"
       - ".github/workflows/imf_emde_portfolio_flows_capture.yml"
