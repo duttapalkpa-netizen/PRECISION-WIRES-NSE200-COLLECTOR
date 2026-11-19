@@ -1256,3 +1256,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Panel availability cohort is a data-readiness PASS only. It does not validate national sign/scale, vintage alignment, BPM basis, or authorize a 63-country subtotal. No data values were aggregated, filled, imputed, rescaled or altered.
 - Next: validate official national-source sign/scale/vintage for the 63 members, prioritize large unvalidated EMDEs; keep Chile exact portfolio vintage bridge REVIEW, India Q1-2026 liability REVIEW, and Brazil PA/Dataflow mismatch BLOCKED. No aggregate until all gates pass.
 - ₹0/free official sources only. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E unchanged; UNKNOWN is never PASS.
+
+## Continuation 41 — Part-1: India RBI/IMF Q1-2026 bounded metadata reconciliation (2026-11-19)
+- Reused existing 63-country 2026-Q2 candidate cohort; India is present with both A_NFA_T and L_NIL_T panel entries. This is panel presence only, not aggregate authorization.
+- Reviewed RBI Comprehensive Guide publication page (2026-10-08; April 2026 edition): Table 42 is quarterly BPM6 BoP in US$ million, sourced from RBI/DEPR, with data subject to revision; Table 44 is quarterly end-period IIP stock data and is not interchangeable with BoP flows. IMF SDDS India BOP metadata independently states BPM6 classification and financial-account assets/liabilities.
+- Metadata validates the source family and revision possibility, but does not establish a specific Q1-2026 revision or explain the previously recorded residual: RBI -12,121 USD million vs IMF -13,633.508347 USD million (difference 1,512.508347 USD million). No adjustment/sign flip/stock-flow substitution authorized.
+- India Q1-2026 liability remains REVIEW / UNRESOLVED; India national-source vintage/sign/scale validation NOT_YET_PASS; 63-country aggregate remains NOT_AUTHORIZED. Brazil PA/Dataflow mismatch remains BLOCKED.
+- Report: docs/INDIA_Q1_2026_RBI_IMF_LIABILITY_RECONCILIATION_CONTINUATION41_PART1_20261119.md; report commit cde4d62df4786f17833d775131ca42ce86bd6116.
+- Official sources: https://rbi.org.in/Scripts/PublicationsView.aspx?id=24094 ; https://dsbb.imf.org/sdds/dqaf-base/country/IND/category/BOP00 ; https://dsbb.imf.org/sdds/dqaf-base/country/IND/category/IIP00 .
+- Next: retrieve exact RBI Q1-2026 Table 42 old/new vintage rows and matching IMF observation dimensions; if no public official vintage bridge exists, retain REVIEW. ₹0/free official sources only; no synthetic data or production changes; UNKNOWN is never PASS.
