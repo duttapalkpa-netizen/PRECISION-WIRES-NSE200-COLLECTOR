@@ -1106,3 +1106,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Four raw series independently verified: 22905 hash `bc2077cd9439b9a846984641934f678eaf25e3c79ce3d996362159ef74a587f3`; 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22925 `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`; 22940 `451cc29b67f2634ac5d62439b30f11297fdab236ec42948f1db16f681eafb033`. Manifest hash `c000fe9dec4d77fed1ac85ca5d416df8cf43c3ab3ff084381aa10017cf61c062`.
 - Each series 381/381 valid rows (1995-01 to 2026-09), no duplicate dates, chronological ordering PASS. Raw hashes recomputed independently from ZIP and match manifest. This is raw capture/structural QA PASS, not IMF mapping or overall GCR PASS.
 - Report commit `3d59e6653f69d201ea5bb5bb2e025b49abe47ad0`. Brazil PA identity/chronology remains BLOCKED; GCR country panel/score NOT_READY. ₹0; no production changes.
+
+
+## Continuation 40 — Part-1: Brazil BCB liability gross-to-net integrity (2026-11-19)
+- Official SGS 22924 (net liabilities), 22925 (liability inflows), 22926 (liability outflows) monthly identity `22924 = 22925 - 22926` independently checked for 381/381 months, 1995-01–2026-09.
+- Run `44538706864` SUCCESS; artifact `14537491095`; ZIP SHA-256 `69c0b92a5f5bc7221fde47a75a879e3f7c1bf8e0c4727c5299356204dd70aaa1`. Max residual 0.1 USD million, tolerance 0.15; no missing months.
+- Raw hashes: 22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`; 22925 `807652fcfc3e17a710ba6dffcb78208bc41c10ec6c2f18986b61e832c6ebd2e0`; 22926 `519fcd8c068716f80f300202a1ae970fbcf312cfcd902f147143ccc5b4031e8e`.
+- Report `docs/BRAZIL_BCB_PORTFOLIO_LIABILITY_IDENTITY_AUDIT_CONTINUATION40_PART1_20261119.md`, commit `ec7f41f9c9383ef5669e653ae4e4ba04f779124f`.
+- Result is a BCB source-integrity PASS, not IMF PA identity resolution or GCR aggregate approval. ₹0; no production changes; UNKNOWN is not PASS.
