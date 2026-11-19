@@ -45,3 +45,5 @@
 2026-11-19 strict-47-quarter-BCB-to-IMF-USD-scale-reconciliation
 
 2026-11-19 expand-BCB-scale-sign-reconciliation-to-all-47-quarters-94-checks
+
+2026-11-19 retry-full-94-quarter-scale-sign-validation-after-syntax-fix
