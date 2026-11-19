@@ -68,6 +68,8 @@ on:
       - "scripts/research/persist_imf_emde_panel_trigger.txt"
       - ".github/workflows/bcb_sgs_portfolio_raw_capture.yml"
       - "scripts/research/capture_bcb_sgs_portfolio_raw.py"
+      - ".github/workflows/bcb_liability_flow_identity.yml"
+      - "scripts/research/validate_bcb_liability_flow_identity.py"
       - ".github/workflows/gcr_india_fpi_raw_capture.yml"
       - "scripts/research/capture_india_fpi_official_pages.py"
       - "scripts/research/gcr_india_fpi_raw_capture_trigger.txt"
