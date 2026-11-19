@@ -643,3 +643,11 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Same CDSL archive URL has now returned three materially different HTTP-200 bodies: artifact 14524707532 has 13 dates 02–18-Nov-2026; artifact 14527092174 has 02-Mar-2026 only; artifact 14527843295 body 70,430 bytes/hash 3cd92be518721d84e697d42e3f2f8dc8cd6a03df6efea75a3576bf384132c2ec has 01-Jul-2021 only. Initial GET is not a stable complete archive export; date-selection semantics need official verification. Archive completeness BLOCKED.
 - Brazil identity/access boundary: IMF registrations list Brazil under IMF:BOP6(1.0), other providers under IMF:BOP_BPM6(1.0); IMF constraints list BOP_BPM6[1.0]. IMF Web Services Guide distinguishes public structure GET from private authenticated registration POST and uses BOP6 as DATA_DOMAIN in an example whose Dataflow is BOP_BPM6. No Brazil-specific crosswalk or PA changelog export; identity remains BLOCKED.
 - GCR replay report commit 2bbad10a038820572adb05e40d68dc3a39dafc6e; Brazil identity report latest commit e91ec3d3f5a5cd519be289509359aa354bd50f39; ledger commit ff298f43713d02aeeb43df90945bd32e796e2710.
+
+## Continuation 76 — 2026-11-19 bounded Brazil public-structure comparison
+- IMF Web Services Guide reviewed: public structure GET is documented under /sdmx/v2/; registration/re-registration remains private authenticated POST. The guide's BOP example distinguishes Dataflow IMF:BOP_BPM6(1.0) from DATA_DOMAIN BOP6. This namespace distinction is not a Brazil-specific crosswalk and does not resolve the BCB mismatch.
+- Read-only structure GET comparison added for exact Brazil PA IMF:BR_BOP_BP6(1.0), Dataflow IMF:BOP6(1.0), Dataflow IMF:BOP_BPM6(1.0), and DataStructure IMF:ECOFIN_DSD(1.0), all with references=all.
+- Script commit c1365fbbccbd773d7ad61dd1fdfc42138c4af98e; trigger commit 786ac4a64ea8ab412c41907c0e1afe1e46d8dcb5; report commit 2a6e26408b4bd29b2024a7e6fbf24893e8d6c981.
+- Workflow run/artifact NOT YET VERIFIED. Do not mark public structure comparison PASS until run and raw artifact hashes are independently inspected.
+- GCR CDSL archive completeness remains BLOCKED; exact date-selection GET semantics investigation remains next. No archive POST, no guessed date coverage.
+- Full Continuation 76 report: docs/BRAZIL_PUBLIC_STRUCTURE_GET_COMPARISON_CONTINUATION76_20261119.md.
