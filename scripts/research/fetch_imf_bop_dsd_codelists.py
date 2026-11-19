@@ -37,8 +37,12 @@ for name,typ,agency,obj,ver in TARGETS:
   try:
    root=ET.fromstring(body);row["xml_parse"]="PASS";row["root"]=root.tag
    if typ=="codelist":
+    target=next((e for e in root.iter() if local(e.tag)=="Codelist" and e.attrib.get("id")==obj),None)
+    if target is None: raise ValueError("requested codelist ID absent from references=all response")
+    row["codelist_version"]=target.attrib.get("version")
+    row["codelist_agency"]=target.attrib.get("agencyID")
     codes=[]
-    for e in root.iter():
+    for e in target.iter():
      if local(e.tag)=="Code" and e.attrib.get("id"):
       names=[(x.text or "").strip() for x in e if local(x.tag)=="Name" and (x.attrib.get("{http://www.w3.org/XML/1998/namespace}lang","en")=="en")]
       codes.append({"id":e.attrib["id"],"name":names[0] if names else None})
