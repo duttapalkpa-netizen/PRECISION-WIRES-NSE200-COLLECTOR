@@ -300,3 +300,32 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Independent exact-key sample validation run 44474458684 / artifact 14505009889 / ZIP SHA-256 `588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7`: 24/24 exact queries HTTP 200; 24/24 series PASS; 1,106/1,106 values and all source attributes exact-match the multi-country panel; no missing/mismatches.
 - Durable GitHub evidence: `docs/evidence/imf_bop_emde_20261119/`, persistence run 44474596292 SUCCESS, commit `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`. Detailed report `docs/GCR_IMF_BOP_EMDE_PANEL_PART2_20261119.md`, commit `487f7ca6758a105dfe1280e5af8ed5b7b3a0369d`.
 - Decision: 154-member panel capture PASS; exact sample cross-check PASS; full EMDE aggregate/net-flow remains BLOCKED/NOT_AUTHORIZED because 43 member country-entry pairs lack at least one required leg and reporting periods are asynchronous. SCALE=6 remains raw/uninterpreted; no net inflow calculation. GCR formula, sector transmission and rolling backtest NOT_DONE.
+
+
+## IMF BOP public observations and 154-member WEO EMDE panel — 2026-11-19
+### Public observation access
+- The earlier blanket IMF BOP observation access BLOCKED conclusion is superseded for the tested dataflow/keys: anonymous public SDMX 3.0 GET to `api.imf.org/external/sdmx/3.0/data/dataflow/IMF.STA/BOP/21.0.0/{key}` returned HTTP 200 CSV without key/login/cookies.
+- Dataflow `IMF.STA:BOP(21.0.0)`; DSD `IMF.STA:DSD_BOP(24.0.0)`; dimensions COUNTRY, BOP_ACCOUNTING_ENTRY, INDICATOR, UNIT, FREQUENCY.
+### EMDE panel
+- Official WEO October-2026 G200 EMDE membership: 154 unique codes. All 154/154 map to IMF BOP country codelist; no unmatched codes.
+- Broad panel capture run 44474218174 / artifact 14505862034; ZIP 5,997,777 bytes; SHA-256 `1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f`.
+- Exact sample validation run 44474458684 / artifact 14505009889; ZIP 26,684 bytes; SHA-256 `588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7`.
+- 9,299 unique observation rows; 0 duplicate keys; 4,681 asset observations across 113 country codes; 4,618 liability observations across 112 country codes; 114/154 countries have any observations; 40/154 have neither entry; 225/308 country-entry combinations have data and 83/308 are empty. 111 countries have both entries; ZWE liabilities-only; DZA and ETH assets-only.
+- Exact validation: 12 EMDE countries × 2 entries = 24/24 HTTP 200 and PASS; 1,106/1,106 exact-to-broad matches; no observation/attribute mismatch. This is same-source query-shape reconciliation, not external economic validation.
+- Unit dimension returned USD only; all 9,299 observations carry `SCALE=6`; 9,119 have PRECISION=6, 180 blank; STATUS blank for all; blanks preserved. No rescaling or conversion.
+- `SCALE` concept resolves via `CS_MASTER_SYSTEM(1.0.2)` to `CL_UNIT_MULT`; code 6 = Millions (10^6). Raw values and scale need national-source/portal reconciliation because mechanically applying the multiplier yields implausible magnitudes for some smaller economies. Therefore economic unit conversion remains BLOCKED; no aggregation.
+### Durable GitHub archive
+- Panel evidence commit `a6eb5865`; WEO workbook + BOP country codelist raw-source addition commit `79bfbeb3`.
+- Report: `docs/GCR_IMF_BOP_EMDE_PORTFOLIO_PANEL_20261119.md`, commit `a55c51b3995307d3a3b644e4f4c067be28cfc299`.
+- Access boundary status update: `docs/GCR_IMF_BOP_OBSERVATION_ACCESS_BOUNDARY_20261119.md`, commit `a6522218a64d7c13c21a167c9eafc3f705b1ee94`.
+- Evidence folder: `docs/evidence/imf_bop_emde_20261119/`; includes WEO workbook, BOP country codelist XML, membership, coverage matrix, raw two-entry CSVs, normalized panel, 24 exact sample CSVs, validation summary and source receipts.
+### Acceptance decision
+- Public access and raw data capture: PASS.
+- WEO membership to BOP codelist: PASS.
+- Internal exact-query reconciliation: PASS.
+- Coverage completeness: PARTIAL (40 member countries absent; 83 empty country-entry pairs).
+- Scale/unit interpretation: BLOCKED.
+- BPM basis/revision-vintage controls: NOT_DONE.
+- EMDE aggregation: NOT_DONE.
+- Daily swing signal use: NOT_SUITABLE (quarterly/annual source).
+- Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged. No synthetic data, no paid APIs, UNKNOWN is not PASS.
