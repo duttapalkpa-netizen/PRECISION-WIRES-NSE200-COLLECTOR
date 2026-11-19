@@ -1275,3 +1275,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: docs/BRAZIL_IMF_PUBLIC_REGISTRATION_VS_BCB_PAYLOAD_CONTINUATION41_PART2_20261119.md; report commit deab79c66a73a2ad060c4c9775e8c02676821a05; report blob SHA a0ebe2c859ced0639a7960f8f81dd23c84a9c89a.
 - Next: owner-side PA history/Changelog and official correction/exception identifying intended Dataflow; after correction, repeat raw-byte/XML validation and require PA, registration and payload identities to agree. No credentials or authenticated writes.
 - ₹0, official/free only; no inferred alias, synthetic data, or production changes; UNKNOWN is never PASS.
+
+
+## Continuation 41 — Part-3: South Africa SARB Q2-2026 official source gate (2026-11-19)
+- Reused existing 63-country 2026-Q2 cohort; ZAF has both A_NFA_T and L_NIL_T panel entries. No roster rebuild.
+- Located SARB Quarterly Bulletin September 2026 (published 2026-09-29) and official XLSX archive index. Bulletin says Q2-2026 net financial-account capital flow +R1.9bn vs Q1 -R23.1bn; net portfolio investment and financial derivatives were outflows, while direct investment, other investment and reserve assets were inflows. This is directional net-flow context only, not validation of the two gross panel legs.
+- Official archive identified: 04Kbp5-Balance-of-Payments-September-2026-updated.zip; quarterly frequency code K1. SARB June 2026 IIP publication is a separate position/stock source and must not be substituted for BOP flows.
+- Exact A_NFA_T/L_NIL_T national mapping, units, signs, Q2 observations and vintage remain NOT_YET_VALIDATED. ZAF status PARTIAL / NOT PASS; aggregate remains NOT_AUTHORIZED.
+- Report: docs/GCR_SOUTH_AFRICA_SARB_Q2_2026_SOURCE_GATE_CONTINUATION41_PART3_20261119.md; commit 82e8c63b46f7c7468b97a744c312dab690f10969; re-fetched blob cc04872301871d5b11954df83997c7fcab05f685.
+- Next: inspect the official SARB BOP XLSX archive for exact portfolio asset/liability quarterly series, units, signs and vintage; only then compare like-for-like with IMF. ₹0, no inferred conversions/sign flips, no aggregate; invariants unchanged; UNKNOWN is never PASS.
