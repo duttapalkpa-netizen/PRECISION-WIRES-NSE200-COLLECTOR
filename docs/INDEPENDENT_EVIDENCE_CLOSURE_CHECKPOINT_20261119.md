@@ -360,3 +360,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Consolidated report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_INDIA_PART2_20261119.md`, commit `26cfe8203b993b89e257e77256ddaaa01ac2f6fe`.
 - The combined pilot workflow run 44475474198 passed source fetch, BCB comparison, exact-panel integrity and raw-to-normalized QA; it failed only at final Git push because a concurrent commit moved the main ref. Independently recomputed the ten Brazil comparisons from archived BCB raw JSON and IMF panel; all ten passed.
 - Scope boundary: this establishes a two-country benchmark for this BOP Data Portal series only. The legacy BCB-registered BOP_BPM6 XML vs SGS monthly series still has its separate 2010 structural break and 201/381 mismatches; do not conflate or silently substitute that legacy file. Full 154-country EMDE aggregation remains BLOCKED by coverage/missingness and revision/vintage gates.
+
+
+## Brazil BOP scale/sign normalization independently verified — 2026-11-19
+- Official BCB SGS 22906 (net acquisition of financial assets, monthly, USD million) and SGS 22924 (net incurrence of liabilities, monthly, USD million) were retrieved anonymously; both HTTP 200.
+- Five quarters tested (2015-Q1–Q4 and 2026-Q3) × two entries = 10/10 PASS. IMF raw `OBS_VALUE / 1,000,000` compared with the sum of the three monthly BCB values. All BCB monthly values are one decimal; maximum cumulative rounding bound = 0.15 USD million; maximum absolute residual = 0.12192411 USD million.
+- Raw BCB hashes: SGS22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; SGS22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`.
+- Run 44475693836 / artifact 14506740234 / ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`; evidence commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
+- Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
+- Decision refinement: Brazil scale/sign mapping PASS for tested assets/liabilities and periods. India and other EMDE members remain UNKNOWN; no global conversion or EMDE aggregate. BOP6/BOP_BPM6 identity remains unresolved. Quarterly BOP remains unsuitable as a daily swing trigger.
