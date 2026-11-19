@@ -91,3 +91,26 @@ Archive commit: `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`.
 - Durable raw source addendum commit `79bfbeb3abd2a0e223ae77d2ed740727404dd112` adds the original WEO October-2026 workbook (`raw/WEOOct2026all.xlsx`) and IMF BOP country codelist XML (`raw/CL_BOP_COUNTRY.xml`) alongside the already archived normalized panel, raw observation CSVs and exact sample receipts.
 - The earlier evidence archive commit `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0` remains the base archive commit.
 - Full acceptance remains: acquisition PASS; membership mapping PASS; exact-key query-shape reconciliation PASS; coverage PARTIAL; scale conversion BLOCKED; BPM/revision-vintage controls NOT_DONE; EMDE aggregate BLOCKED / NOT_AUTHORIZED.
+
+## 9. Independent WEO Appendix cross-check and final membership archive (2026-11-19)
+- WEO October 2026 Database Appendix was downloaded from the official IMF dataset page and parsed independently from the workbook.
+- Appendix top-level Emerging and Developing Economies list: 154 labels, 154 unique.
+- Same-vintage workbook Country Group Composition G200: 154 members, 154 unique ISO3.
+- Appendix-to-workbook identity crosswalk: 154/154 PASS; unmapped/ambiguous 0. All 154 workbook ISO3 codes also exist in IMF BOP CL_BOP_COUNTRY (1,727 codelist codes).
+- WEO membership validation run 44474629873 / artifact 14506160317 / ZIP SHA-256 acdf014f5f19ba5e0d23dca7a8d57a4b1813b002a3274495d557f0cd05c0fbb1.
+- Raw WEO workbook SHA-256 2aa4f70a05931197b41ed7e0202dc56eee8d816858ac14521e4f8f5dbc38696c; Appendix PDF SHA-256 cd4e2829d7e621d43134728bfc128547f776e909e08ef1d38b837e2d39e5ae2a.
+- Durable files: docs/evidence/imf_bop_emde_20261119/weo_membership_validation/ includes raw Appendix PDF, workbook, BOP codelist, exact 154-row membership, crosswalk and validation summary. Persistence run 44475086587 SUCCESS; final main commit 13bdd96d.
+
+## 10. Full panel missingness audit (2026-11-19)
+- Independent full-panel QA run 44475089564 / artifact 14505623598 / ZIP SHA-256 5f24a529aa0d3c918d598faedeb057c39e328ff043f1f1a86fec587fc1fa8cd8.
+- Raw-to-normalized comparison: 9,299/9,299 exact rows; 30 source attribute columns; 278,970 source-field cell comparisons; 0 mismatches.
+- 225/308 country-entry pairs have observations (73.05%); 83 empty pairs; 111 countries have both legs; 3 are one-sided (DZA/ETH assets only; ZWE liabilities only); 40/154 have neither.
+- 4 complete 47-quarter series; 221 partial series; 13 series have internal gaps totaling 71 missing quarters. Only Brazil and Pakistan have both legs through 2026-Q3. No forward-fill, zero substitution, synthetic rows, rescaling, FX conversion or aggregation.
+- Coverage report: docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md; detailed QA files: docs/evidence/imf_bop_emde_20261119/coverage_qa/.
+- Full EMDE aggregate remains BLOCKED / NOT_AUTHORIZED.
+
+## 11. SCALE concept metadata resolution (2026-11-19)
+- Dedicated DSD/concept/codelist capture run 44475051442 / artifact 14505852262 / ZIP SHA-256 391981ce19d89d8ccc6377580e33345a9d75adffdc3f4197c4e4c743a66e3cf3.
+- SCALE concept in CS_MASTER_SYSTEM(1.0.2) enumerates CL_UNIT_MULT; code 6 = Millions (10^6). This resolves the code meaning, not whether the data API has already normalized OBS_VALUE.
+- Numeric conversion remains BLOCKED: do not multiply/divide by 10^6 until direct IMF portal display and official national-source values reconcile. Preserve OBS_VALUE, UNIT=USD, SCALE=6 exactly.
+- Detailed report: docs/GCR_IMF_BOP_SCALE_SEMANTICS_20261119.md. No netting or aggregate is authorized.
