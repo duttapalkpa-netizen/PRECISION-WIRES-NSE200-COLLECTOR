@@ -1,0 +1,13 @@
+quarter,rbi_quarter_label,entry,rbi_row,rbi_credit_minus_debit_net_usd_million,rbi_comparable_to_imf_usd_million,imf_obs_value_raw,imf_scale,imf_obs_value_div_1e6_usd_million,residual_imf_minus_rbi_usd_million,tolerance_usd_million,status
+2024-Q2,April-June 2024,A_NFA_T,3.2.B Portfolio Investment by India,48,-48,-47510029.08106568,6,-47.51002908106568,0.48997091893432,0.5,PASS
+2024-Q2,April-June 2024,L_NIL_T,3.2.A Portfolio Investment in India,897,897,897230199.1591398,6,897.2301991591398,0.2301991591398,0.5,PASS
+2024-Q3,July-September 2024,A_NFA_T,3.2.B Portfolio Investment by India,35,-35,-34990038.54670947,6,-34.99003854670947,0.00996145329053,0.5,PASS
+2024-Q3,July-September 2024,L_NIL_T,3.2.A Portfolio Investment in India,19815,19815,19815071031.98193,6,19815.07103198193,0.07103198193,0.5,PASS
+2024-Q4,October-December 2024,A_NFA_T,3.2.B Portfolio Investment by India,63,-63,-62610017.41395333,6,-62.61001741395333,0.38998258604667,0.5,PASS
+2024-Q4,October-December 2024,L_NIL_T,3.2.A Portfolio Investment in India,-11435,-11435,-11434646504.14862,6,-11434.64650414862,0.35349585138,0.5,PASS
+2025-Q1,January-March 2025,A_NFA_T,3.2.B Portfolio Investment by India,136,-136,-135999310.9346464,6,-135.9993109346464,0.0006890653536,0.5,PASS
+2025-Q1,January-March 2025,L_NIL_T,3.2.A Portfolio Investment in India,-5995,-5995,-5994630947.245322,6,-5994.630947245322,0.369052754678,0.5,PASS
+2025-Q2,April-June 2025,A_NFA_T,3.2.B Portfolio Investment by India,-872,872,872453921.9430683,6,872.4539219430683,0.4539219430683,0.5,PASS
+2025-Q2,April-June 2025,L_NIL_T,3.2.A Portfolio Investment in India,2481,2481,2480700911.919279,6,2480.700911919279,-0.299088080721,0.5,PASS
+2025-Q3,July-September 2025,A_NFA_T,3.2.B Portfolio Investment by India,-279,279,278550001.1857915,6,278.5500011857915,-0.4499988142085,0.5,PASS
+2025-Q3,July-September 2025,L_NIL_T,3.2.A Portfolio Investment in India,-5468,-5468,-5468379504.452175,6,-5468.379504452175,-0.379504452175,0.5,PASS

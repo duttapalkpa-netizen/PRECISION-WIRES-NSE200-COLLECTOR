@@ -1,0 +1,47 @@
+{
+  "scope": "India IMF BOP P_F assets/liabilities scale and sign cross-check against RBI Table 197",
+  "source": {
+    "url": "https://www.rbi.org.in/Scripts/PublicationsView.aspx?id=24022",
+    "final_url": "https://www.rbi.org.in/Scripts/PublicationsView.aspx?id=24022",
+    "retrieved_at_utc": "2026-11-19T07:01:33.252622+00:00",
+    "http_status": 200,
+    "headers": {
+      "Date": "Thu, 19 Nov 2026 07:01:35 GMT",
+      "Content-Type": "text/html; charset=utf-8",
+      "Content-Length": "146017",
+      "Connection": "close",
+      "Vary": "Accept-Encoding",
+      "Cache-Control": "private",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Permissions-Policy": "accelerometer=(self), camera=(), geolocation=(), microphone=()",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "X-Permitted-Cross-Domain-Policies": "none",
+      "Cross-Origin-Resource-Policy": "same-site",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "strict-transport-security": "max-age=16070400; includeSubDomains",
+      "x-azure-ref": "20261119T070133Z-16b94c8dd6756nbrhC1BL1xxd80000004dqg000000001yhq",
+      "x-fd-int-roxy-purgeid": "0",
+      "X-Cache": "PRIVATE_NOSTORE",
+      "Accept-Ranges": "bytes"
+    },
+    "file": "raw/RBI_Table197_20260731.html",
+    "byte_count": 146017,
+    "sha256": "391c549c5b64c0b7f9204eb9634975f77d4ba2d7796542ed23932fb8d740813d"
+  },
+  "imf_panel_file": "docs/evidence/imf_bop_emde_20261119/emde_portfolio_flows.csv",
+  "rbi_table197_publication_date": "2026-07-31",
+  "quarter_count": 6,
+  "comparison_count": 12,
+  "pass_count": 12,
+  "review_count": 0,
+  "blocked_count": 0,
+  "rbi_rounding_tolerance_usd_million": "0.5 (integer USD million publication)",
+  "mapping": {
+    "A_NFA_T": "negative of RBI 3.2.B Portfolio Investment by India (credit-debit net)",
+    "L_NIL_T": "RBI 3.2.A Portfolio Investment in India (credit-debit net)"
+  },
+  "all_pass": true,
+  "limitations": "Six published quarters only; source page values are integer USD millions. This validates India scale/sign for these six quarters, not all 154 EMDE members or every vintage."
+}
