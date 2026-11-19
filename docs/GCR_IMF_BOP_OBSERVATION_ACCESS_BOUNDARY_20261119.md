@@ -40,13 +40,13 @@
 - India 2026-Q3 was not returned and remains missing; no forward-fill or synthetic observations.
 
 ## Remaining limitations
-1. `SCALE=6` and `PRECISION=6` are retained exactly; no scale conversion or currency conversion is applied until SCALE semantics are independently resolved.
+1. `SCALE=6` maps to `CL_UNIT_MULT` code 6 = Millions. Brazil source-to-source validation across 47 quarters for each portfolio flow entry proves IMF API `OBS_VALUE` is already USD: BCB monthly USD-million values sum by quarter, and `IMF OBS_VALUE / 1,000,000` matches the BCB quarterly sum in all 94/94 checks (tolerance 0.15 USD million; maximum residual 0.12192411). Do not multiply IMF API values by 10^6 again. India still needs independent country-source validation.
 2. The pilot is quarterly BOP transactions, not daily SEBI FPI/FII flows.
 3. Brazil and India are only a pilot pair, not an approved emerging-market membership universe.
 4. BOP_AGG is a separate annual group aggregate dataset. IMF says group totals include estimates for non-reporting economies; assess it separately and do not substitute it silently for country-reported observations.
 5. Do not net assets and liabilities, infer sign conventions, or promote this pilot to a production factor until methodology, vintages, country coverage and transformations are validated.
 
-## Durable evidence
+## SCALE operational validation — Brazil 94/94 PASS\n- Official BCB SGS 22906: net acquisition of financial assets, monthly, million USD.\n- Official BCB SGS 22924: net incurrence of liabilities, monthly, million USD.\n- 47 quarters × 2 series = 94/94 PASS, 0 review, 0 blocked.\n- Reported in `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/summary.json` and `quarter_reconciliation.csv`; raw source JSONs are retained in the same folder.\n- BCB series metadata: https://opendata.bcb.gov.br/dataset/22906-portfolio-investment---net-acquisition-of-financial-assets---monthly---net and https://opendata.bcb.gov.br/dataset/22924-portfolio-investment---net-incurrence-of-liabilities---monthly---net.\n\n## Durable evidence
 - Report: `docs/GCR_IMF_BOP_PUBLIC_OBSERVATION_ACCESS_PART1_20261119.md`
 - Machine summary: `docs/evidence/IMF_BOP_PORTFOLIO_PILOT_BRA_IND_2015Q1_2026Q3.json`
 - Compressed normalized panel and four raw series: `docs/evidence/IMF_BOP_PORTFOLIO_*.csv.gz`
