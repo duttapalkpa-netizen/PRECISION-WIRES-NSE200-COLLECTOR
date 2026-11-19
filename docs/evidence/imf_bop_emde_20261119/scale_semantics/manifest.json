@@ -1,0 +1,165 @@
+{
+  "url": "https://api.imf.org/external/sdmx/3.0/structure/conceptscheme/IMF/CS_MASTER_SYSTEM/1.0.2?references=all",
+  "retrieved_at_utc": "2026-11-19T06:55:17.164799+00:00",
+  "http_status": 200,
+  "headers": {
+    "Date": "Thu, 19 Nov 2026 06:55:17 GMT",
+    "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
+    "Transfer-Encoding": "chunked",
+    "Connection": "close",
+    "x-correlation-id": "5817ddddb76c657eb851d92b75cb91b7",
+    "x-content-type-options": "nosniff",
+    "x-xss-protection": "0",
+    "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+    "pragma": "no-cache",
+    "expires": "0",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "x-frame-options": "DENY",
+    "x-envoy-upstream-service-time": "128",
+    "server": "istio-envoy",
+    "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
+  },
+  "byte_count": 6192546,
+  "sha256": "9ef243509d7b3edc93b5ef2326ba49c89ced79044ae38674c806d1310367420d",
+  "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
+  "target_concepts": {
+    "SCALE": {
+      "id": "SCALE",
+      "attributes": {
+        "id": "SCALE",
+        "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=IMF:CS_MASTER_SYSTEM(1.0.2).SCALE"
+      },
+      "names": [
+        {
+          "lang": "ar",
+          "text": "عدد الخانات العشرية"
+        },
+        {
+          "lang": "ru",
+          "text": "Масштаб"
+        },
+        {
+          "lang": "pt",
+          "text": "Escala"
+        },
+        {
+          "lang": "ja",
+          "text": "尺度"
+        },
+        {
+          "lang": "en",
+          "text": "Scale"
+        },
+        {
+          "lang": "fr",
+          "text": "Échelle"
+        },
+        {
+          "lang": "es",
+          "text": "Escala"
+        },
+        {
+          "lang": "zh",
+          "text": "规模"
+        }
+      ],
+      "descriptions": [],
+      "annotations": [],
+      "enumeration_refs": [],
+      "text_formats": []
+    },
+    "PRECISION": {
+      "id": "PRECISION",
+      "attributes": {
+        "id": "PRECISION",
+        "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=IMF:CS_MASTER_SYSTEM(1.0.2).PRECISION"
+      },
+      "names": [
+        {
+          "lang": "ar",
+          "text": "عدد الخانات الصحيحة والعشرية"
+        },
+        {
+          "lang": "ru",
+          "text": "Точность"
+        },
+        {
+          "lang": "pt",
+          "text": "Precisão"
+        },
+        {
+          "lang": "ja",
+          "text": "精度"
+        },
+        {
+          "lang": "en",
+          "text": "Precision"
+        },
+        {
+          "lang": "fr",
+          "text": "Précision"
+        },
+        {
+          "lang": "es",
+          "text": "Precisión"
+        },
+        {
+          "lang": "zh",
+          "text": "精度"
+        }
+      ],
+      "descriptions": [],
+      "annotations": [],
+      "enumeration_refs": [],
+      "text_formats": []
+    },
+    "DECIMALS_DISPLAYED": {
+      "id": "DECIMALS_DISPLAYED",
+      "attributes": {
+        "id": "DECIMALS_DISPLAYED",
+        "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=IMF:CS_MASTER_SYSTEM(1.0.2).DECIMALS_DISPLAYED"
+      },
+      "names": [
+        {
+          "lang": "ar",
+          "text": "الأعداد العشرية الموضحة"
+        },
+        {
+          "lang": "ru",
+          "text": "Количество отображаемых десятичных знаков"
+        },
+        {
+          "lang": "pt",
+          "text": "Decimais visíveis"
+        },
+        {
+          "lang": "ja",
+          "text": "小数点表示"
+        },
+        {
+          "lang": "en",
+          "text": "Decimals Displayed"
+        },
+        {
+          "lang": "fr",
+          "text": "Décimales affichées"
+        },
+        {
+          "lang": "es",
+          "text": "Decimales visibles"
+        },
+        {
+          "lang": "zh",
+          "text": "显示的小数位数"
+        }
+      ],
+      "descriptions": [],
+      "annotations": [],
+      "enumeration_refs": [],
+      "text_formats": []
+    }
+  },
+  "referenced_scale_codelists": [],
+  "scale_definition_found": false,
+  "decision": "CONCEPT_HAS_NO_DEFINITION_OR_CODELIST_LABELS"
+}

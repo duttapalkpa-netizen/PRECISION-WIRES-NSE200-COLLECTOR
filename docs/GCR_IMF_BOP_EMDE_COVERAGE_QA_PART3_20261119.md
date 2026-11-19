@@ -34,10 +34,10 @@
 - WEO G200 to BOP country code mapping: 154/154 PASS.
 - Country/period coverage: PARTIAL; visible at country × entry × quarter level.
 - Full EMDE aggregate: BLOCKED / NOT_AUTHORIZED. 43/154 members lack at least one leg; only two countries have both legs at 2026-Q3; 13 series have internal gaps.
-- SCALE/sign semantics, FX policy and point-in-time vintage history remain open. Do not calculate net inflow or use this panel in backtests/production until resolved.
+- SCALE is partially clarified as a decimal-place attribute, but no formal English definition/codelist or rounding rule exists; sign convention, FX policy and point-in-time vintage history remain open. Do not calculate net inflow or use this panel in backtests/production until resolved.
 
 ## Evidence
-- Coverage QA run 44475089564; artifact 14505623598; ZIP SHA-256 `5f24a529aa0d3c918d598faedeb057c39e328ff043f1f1a86fec587fc1fa8cd8`.
+- Coverage QA run 44475665715 SUCCESS; artifact 14506017682; ZIP SHA-256 `e900f76a31589f83c19d49eefc3720919a91b83e118d244921adf1ff0f948f4a`.\n- SCALE concept run 44475665715 SUCCESS; artifact 14506356045; ZIP SHA-256 `7465214f27dddbece13f5812b49269b566b4139461da986292a65b29828cbdd2`; concept scheme raw XML SHA-256 `9ef243509d7b3edc93b5ef2326ba49c89ced79044ae38674c806d1310367420d`.
 - Full detailed QA files: `docs/evidence/imf_bop_emde_20261119/coverage_qa/` (country readiness, all 308 country-entry combinations, quarterly coverage, summary).
 - Panel persistence run 44475086587 SUCCESS; final main commit `13bdd96d`.
 - Invariants unchanged: ₹0; free official sources only; no synthetic data; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged. UNKNOWN is not PASS.

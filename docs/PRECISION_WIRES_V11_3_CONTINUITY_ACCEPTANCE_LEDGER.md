@@ -737,3 +737,14 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
 - Brazil scale/sign normalization PASS for tested series and quarters only. India and remaining EMDE members remain UNKNOWN; do not generalize or release EMDE aggregate. India Table 196's fiscal-quarter period is not directly aligned to IMF calendar-quarter labels, so it is not accepted as a direct validation.
 - Overall GCR status: public BOP access PASS; 154-member raw panel PASS; membership mapping PASS; 1,106 exact sample query-shape checks PASS; coverage PARTIAL; Brazil scale PASS; India/remaining EMDE scale UNKNOWN; BPM/revision controls NOT_DONE; EMDE aggregate NOT_AUTHORIZED; daily trading use NOT_SUITABLE.
+
+
+
+## WEO G200 EMDE BOP coverage QA and SCALE concept audit — 2026-11-19
+- Independent raw-to-normalized audit: 9,299/9,299 exact observation keys; 30 source fields × 9,299 = 278,970 exact field comparisons; zero duplicates, missing keys or attribute mismatches.
+- Coverage: 225/308 country-entry pairs with data; 111/154 members both legs; 3 one-sided (DZA/ETH assets only; ZWE liabilities only); 40 no data; 43/154 lack at least one leg. Only 4 series complete 47/47 quarters; 13 series have internal gaps (71 quarters); 2026-Q3 only BRA and PAK.
+- All 9,299 observations have DERIVATION_TYPE=O and UNIT=USD; SCALE=6; PRECISION=6 for 9,119 and blank for 180. No forward-fill, zero substitution, rescaling, FX conversion or aggregation.
+- Official concept scheme `IMF:CS_MASTER_SYSTEM(1.0.2)` HTTP 200, 6,192,546 bytes; SHA-256 `9ef243509d7b3edc93b5ef2326ba49c89ced79044ae38674c806d1310367420d`. SCALE English Name=Scale; Arabic label `عدد الخانات العشرية` translates to “number of decimal places”; no English definition or referenced codelist. BOP DSD makes SCALE series-level and distinct from UNIT; do not treat as UNIT_MULT or apply 10^6 multiplier. Preserve raw values.
+- Coverage QA run 44475665715 SUCCESS; coverage artifact 14506017682; SCALE artifact 14506356045.
+- Detailed report: `docs/GCR_IMF_BOP_EMDE_COVERAGE_QA_PART3_20261119.md`; matrices under `docs/evidence/imf_bop_emde_20261119/coverage_qa/`; scale metadata manifest under `docs/evidence/imf_bop_emde_20261119/scale_semantics/`.
+- Decision: data integrity PASS; country coverage PARTIAL; EMDE aggregate BLOCKED / NOT_AUTHORIZED. Sign convention, FX and point-in-time vintage remain unresolved.
