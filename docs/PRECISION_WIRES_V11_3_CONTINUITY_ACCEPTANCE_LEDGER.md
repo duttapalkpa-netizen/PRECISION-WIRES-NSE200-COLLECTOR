@@ -1541,3 +1541,18 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Report: `docs/EXISTING_NSE_WALK_FORWARD_LEDGER_MATURITY_AND_GCR_JOIN_AUDIT_20261119.md`.
 - Next: recover existing Actions artifact (walk_forward_metrics.json, walk_forward_universe_probabilities.csv, historical audit JSONs, reproducibility report) and verify dataset manifest/hash. If unavailable/expired, stop; do not download new NSE data under user's instruction. Recompute full denominators and paired CIs from recovered artifact; then test one small GCR overlap window only after source-vintage/TRI/crosswalk gates.
 - V11.3 cost-aware replay remains NOT_AUTHORIZED / NOT_RUN pending G0; no production invariants changed; ₹0; UNKNOWN is never PASS.
+
+
+## 2026-11-19 — Existing Walk-Forward Actions Artifact Recovered and Metrics Audited
+- Recovered existing GitHub Actions artifact only; no NSE download, workflow dispatch, or backtest rerun.
+- Workflow run #319 / ID 40112393704, branch `audit/prospective-selector-tracking`, head SHA `7d7faaa3e50e216f4fc6cacfe75b88d3c58b4381`; run conclusion CANCELLED. Artifact ID 12566997895, name `prospective-watchlist-audit`, expires 2027-01-22T16:37:12Z.
+- Artifact SHA-256 independently recomputed and matches GitHub digest: `00a990117ac19971396eb5c039cb73c103e40f7ac3d1c93f31ca4839c6e56b7e`. Metrics JSON SHA-256: `c9e0c929914bc1f2f2550ccd38cb7b2410d0247f500f774b471887d638859c79`; QA JSON SHA-256: `e914f2fce4693acef7f4e89feceaafe6da7732f25df7dd0fa51fb4d2b55d25ee`.
+- Artifact reports 100/100 sessions, 3,000 candidate rows, Top-30 ranking. Precision: T5_H1 33.31%, T10_H3 22.72%, T15_H5 15.21%, T20_H5 7.82%. Recall: 4.55%, 3.96%, 3.50%, 3.91% respectively. Base rates: 8.63%, 6.54%, 4.84%, 2.23%; lift: 3.86x, 3.48x, 3.14x, 3.51x respectively.
+- Full-universe calibration summaries: T5_H1 n=246,661 / Brier 0.075997 / ECE 0.017666; T10_H3 n=246,269 / Brier 0.059030 / ECE 0.002677; T20_H5 n=245,850 / Brier 0.020919 / ECE 0.000874.
+- QA report records PASS for 200 sessions, 2,963 symbols, 100% delivery quantity/percentage coverage and no issues. This does not independently verify the missing source manifest/hashes.
+- Important model diagnostic: aggregate winner/nonwinner mean probability is 0.086364 vs 0.086580 (winner slightly lower); winner-specific interaction and latent-winner evidence are nearly flat. Thus Top-30 lift exists in the artifact, but probability separation is weak and must be diagnosed before any tuning/promotion.
+- ZIP does not contain `walk_forward_universe_probabilities.csv`, dataset manifest or complete cutoff-level reproducibility bundle. Run conclusion CANCELLED. Therefore independent TP/FP/FN/TN, paired cutoff CIs, full leakage/reproducibility audit and selector promotion remain NOT_VERIFIED / NOT_AUTHORIZED.
+- 100% hit rate is not an acceptable optimization target because it can be achieved by collapsing coverage or overfitting. Next research objective: improve precision under explicit recall/coverage, sample-size, drawdown and transaction-cost guardrails using chronological held-out shadow/challenger tests only; no production changes.
+- Report: `docs/RECOVERED_WALK_FORWARD_ARTIFACT_METRICS_AUDIT_20261119.md`.
+- GCR remains UNKNOWN/BLOCKED pending timestamp/vintage-aligned macro panel, official sector TRI, exact index IDs and verified symbol-sector crosswalk. V11.3 cost-aware replay remains NOT_AUTHORIZED / NOT_RUN pending G0 approval.
+- Protected invariants unchanged; ₹0; no new NSE collection; UNKNOWN is never PASS.
