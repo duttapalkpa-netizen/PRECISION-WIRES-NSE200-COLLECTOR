@@ -1077,3 +1077,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - RSS 31 entries / 0 Brazil matches in this captured window only. PA transaction ID 2 still HTTP 500 in both documented serializations; no equivalent retries.
 - Report commit `93258ce505dca1dd45af758664cc4ab0e7688ac5`; independent checkpoint update commit `8c67305d079b4f4b918ebb10aa05230395395d14`.
 - Next Brazil evidence dependency: authorized owner/provider export of PA revision/changelog and dated BR1 registration events, plus official Brazil-specific mapping/correction if one exists. No credentials, cookies or authenticated write. ₹0; no aliases; no production changes; UNKNOWN is not PASS.
+
+
+## Continuation 39 — Part-6: Chile BDE portfolio vintage access audit (2026-11-19)
+- Official BDE public SDMX_BOP6 table exposes quarterly observations through 2026-Q3 and detailed portfolio-liability categories (debt securities, equity securities and sector splits). Current-vintage category discovery PASS; not an old-vintage archive.
+- Official BDE API docs state REST SearchSeries/GetSeries require a valid personal API Key Token. Endpoint and metadata/observation fields documented; no token was available and no authenticated call attempted.
+- Exact assets/liabilities series IDs, 07-Sep-2026 vintage bytes, 18-Nov raw capture and row-level IMF P_F bridge remain NOT_DONE/BLOCKED. Preserve Q1/Q2 as REVIEW_VINTAGE_MISMATCH; no numeric revision bridge inferred from publication calendar.
+- Report commit `3b61a10b1d788800661673afb8ef3d0a167b7918`; Master Evidence Checkpoint commit `c05730c0237077a88b22aaf3e7636aff6a1f2821`.
+- Brazil remains identity BLOCKED (PA BOP6/BR1 vs BCB BOP_BPM6) pending official provider-side PA Changelog and mapping evidence. No txId=2 retries. ₹0; no production changes; UNKNOWN is not PASS.
