@@ -821,3 +821,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Prior failed gross-flow attempt run 44542407481 (artifact 14537174964; ZIP SHA `102a1d135fceb52493e4fe93f7194dfa99e2a977371487c5a2abf51d9cd7dbf4`) used an unverified sign convention and is rejected as a formula attempt, not a source-data defect.
 - Detailed report: `docs/BRAZIL_BCB_ASSET_SIDE_GROSS_FLOW_IDENTITY_AUDIT_CONTINUATION45_20261119.md`; commit `dd8dd1f4342f089eecd7bf0982354cc1590e3386`.
 - Brazil remains BLOCKED on IMF PA/Dataflow mismatch and official PA history/changelog evidence. GCR remains BLOCKED on synchronized panel/vintage/coverage and relative-attraction validation. No production changes.
+
+## Brazil asset-side gross-flow audit — Continuation 45 (2026-11-19)
+- Official BCB series index hierarchy confirms portfolio-investment assets: SGS 22906 net (líquido), 22907 revenue/receipts (receita), 22908 expenditure/payments (despesa). Correct identity tested: 22906 = 22908 - 22907. Official index: https://dadosabertos.bcb.gov.br/pages/temas
+- Run 44542572111 completed with capture+artifact upload; strict reconciliation correctly returned failure / REVIEW rather than PASS. Artifact ID 14538838057; ZIP SHA-256 57ab33277c5e1a2ea2a9a2778bc2d1d8f6fc6bfd69c70c061c2df42a318ecb20.
+- Three official series each HTTP 200, parse PASS, 381 monthly observations, 1995-01..2026-09, no duplicate or missing months. Raw hashes: 22906 110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30; 22907 920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a; 22908 7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e.
+- 275/381 exact identity matches; 106/381 have residual magnitude USD 1 million; maximum residual USD 1 million. Do not widen 0.15 tolerance or label these as rounding without official BCB precision/method evidence. Status PARTIAL / REVIEW.
+- Initial run 44542407481 revealed decimal parser and sign errors; corrected in commit 3724511ffb35592b0c5dc24d856a09d5f9703ca7. Initial malformed calculations are rejected and not accepted as evidence.
+- Full report: docs/BRAZIL_BCB_PORTFOLIO_ASSET_GROSS_FLOW_IDENTITY_AUDIT_CONTINUATION45_20261119.md.
+- Next action: acquire official BCB methodology/precision statement and resolve only the 106 residual months. No production integration or invariant changes.
