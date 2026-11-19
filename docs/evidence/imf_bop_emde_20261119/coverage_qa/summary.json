@@ -116,6 +116,16 @@
   "no_rescaling": true,
   "no_currency_conversion": true,
   "no_aggregation": true,
-  "scale_semantics": "PARTIAL: IMF CS_MASTER_SYSTEM SCALE English name=Scale; Arabic name translates to number of decimal places; no English definition or enumeration/codelist; it is a series-level attribute distinct from UNIT_MULT; no numeric rescaling or rounding applied.",
-  "vintage_semantics": "Current retrieval snapshot only; no point-in-time historical vintages captured"
+  "scale_semantics": "PASS_CODE_MEANING: DSD_BOP SCALE enumerates IMF CL_UNIT_MULT(1.0.2); code 6 = Millions, description 10^6. Numeric API representation crosswalk: Brazil 94/94 PASS; India 10/12 PASS, 2 REVIEW (2026-Q1 liabilities/combined net). Preserve raw OBS_VALUE; no global conversion applied.",
+  "vintage_semantics": "Current retrieval snapshot only; no point-in-time historical vintages captured",
+  "scale_code_6": {
+    "codelist": "IMF:CL_UNIT_MULT(1.0.2)",
+    "label": "Millions",
+    "description": "10^6",
+    "codelist_sha256": "24e3ea87063cdfe091cdb0b2daa71731835fd0049661a4fffbd8f760fb45e561"
+  },
+  "country_numeric_crosswalk": {
+    "Brazil": "94/94 PASS",
+    "India": "10/12 PASS; 2 REVIEW in 2026-Q1"
+  }
 }
