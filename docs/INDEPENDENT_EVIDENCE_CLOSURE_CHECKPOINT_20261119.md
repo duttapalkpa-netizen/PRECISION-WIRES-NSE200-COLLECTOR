@@ -406,3 +406,12 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Run 44476434148 / artifact 14506542277 / ZIP SHA-256 `eb719a38a285603ec2eff92ea7a88aadd5cbb7481393fe5b8f44188bffcacf62`; durable evidence commit `451b9e203fd6edb1541c42432b47a393e030372c`.
 - Report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.md`, commit `4a3bcc34a19d92e747f50609a7cabebe489af69a`.
 - Two-country pilot scale/sign validation now: Brazil 10/10 (BCB) + India 12/12 (RBI) = 22/22 PASS. The remaining 152 WEO EMDE members are UNKNOWN; no full-panel conversion or EMDE aggregate. BPM/revision-vintage controls remain open.
+
+
+## Cross-country BOP scale/sign validation — 2026-11-19 (supersedes two-country pilot status)
+- Four-country vintage-aligned national benchmark set: Brazil 94/94, India 12/12, Mexico 6/6, Chile 2026-09 vintage 6/6 = **118/118 PASS** for `OBS_VALUE / 1e6) comparisons.
+- Full reports: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_CROSS_COUNTRY_PART3_20261119.md`; full 126-row matrix `docs/evidence/IMF_BOP_SCALE_CROSS_COUNTRY_VALIDATION_20261119.csv`.
+- Brazil 94/94 run 44476176136 / artifact 14505944936; India 12/12 run 44476434148 / artifact 14506542277; Mexico 6/6 run 44476089607 / artifact 14506696311.
+- Chile latest raw BDE pages updated 2026-11-18: run 44476957975 / artifact 14507305215; Q4 2025 2/2 PASS, Q1-Q2 2026 4 REVIEW, Q3 2026 2 IMF panel rows missing. Older official web-rendered page snapshot updated 2026-09-07 matched 6/6; old snapshot raw bytes were not archived. Treat as explicit vintage mismatch, not a clean current-vintage pass.
+- Operational rule is empirically supported for four countries and tested vintages: preserve raw API values; derived USD-million comparison uses `OBS_VALUE / 1e6`; preserve SCALE=6; do not multiply by 1e6 again. This is not yet universalized to all 154 EMDEs.
+- Panel remains coverage PARTIAL; 40 countries no observations, 83 empty country-entry combinations, 13 series with interior gaps. EMDE aggregate remains BLOCKED until vintage/coverage gates are implemented.
