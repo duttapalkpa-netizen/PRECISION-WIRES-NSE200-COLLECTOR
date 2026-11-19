@@ -1,0 +1,27 @@
+name: IMF BOP Portal Public Download Route Probe
+on:
+  push:
+    paths:
+      - "scripts/research/imf_bop_portal_route_probe_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect-public-route:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Inspect public dataset page and bounded JS bundles
+        run: python scripts/research/probe_imf_bop_portal_download_route.py
+      - name: Upload raw page, bundles, manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-public-route-probe-${{ github.run_id }}
+          path: imf_bop_portal_route_probe/
+          if-no-files-found: error
+          retention-days: 90
