@@ -59,6 +59,7 @@ on:
       - "scripts/research/capture_imf_bop_portfolio_panel.py"
       - "scripts/research/validate_imf_bop_portfolio_panel.py"
       - "scripts/research/probe_imf_scale_concept_routes.py"
+      - "scripts/research/compare_bcb_xml_to_imf_bop_panel.py"
       - "scripts/research/imf_bop_scale_semantics_trigger.txt"
       - ".github/workflows/imf_bop_scale_semantics.yml"
       - "scripts/research/resolve_imf_bop_scale_semantics.py"
