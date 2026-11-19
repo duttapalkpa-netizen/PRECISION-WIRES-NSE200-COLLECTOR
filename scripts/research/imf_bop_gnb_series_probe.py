@@ -13,6 +13,8 @@ SPECS = [
     ("GNB.L_NIL_T.P_F.USD.Q", "2024-Q1", "2024-Q4"),
     ("GNB.A_NFA_T.P_F.USD.A", "2024", "2024"),
     ("GNB.L_NIL_T.P_F.USD.A", "2024", "2024"),
+    ("GNB.A_NFA_T..USD.Q", "2024-Q1", "2024-Q4"),
+    ("GNB.L_NIL_T..USD.Q", "2024-Q1", "2024-Q4"),
 ]
 def sha(b): return hashlib.sha256(b).hexdigest()
 results=[]
