@@ -1,0 +1,62 @@
+{
+  "scope": "BCB registered source XML versus IMF BOP6 public API Brazil portfolio flow values; no scale transformation",
+  "manifest": {
+    "url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "final_url": "https://www.bcb.gov.br/content/statistics/sddsdocuments/4%20External%20Sector/Ext%201%20IMF%20SDMX%20BOP%20BPM6.xml",
+    "retrieved_at_utc": "2026-11-19T06:52:04.118611+00:00",
+    "http_status": 200,
+    "headers": {
+      "Date": "Thu, 19 Nov 2026 06:52:05 GMT",
+      "Content-Type": "text/xml",
+      "Content-Length": "4840062",
+      "Connection": "close",
+      "Cache-Control": "private,max-age=0",
+      "Expires": "Wed, 04 Nov 2026 06:52:04 GMT",
+      "Last-Modified": "Mon, 26 Oct 2026 11:44:11 GMT",
+      "ETag": "\"{17DF776C-4B09-4CB5-BADC-3578A00C00E9},153\"",
+      "ResourceTag": "rt:17DF776C-4B09-4CB5-BADC-3578A00C00E9@00000000153",
+      "Content-Disposition": "attachment; filename*=utf-8''Ext%201%20IMF%20SDMX%20BOP%20BPM6%2exml; filename=\"Ext 1 IMF SDMX BOP BPM6.xml\"",
+      "X-Download-Options": "noopen",
+      "Public-Extension": "http://schemas.microsoft.com/repl-2",
+      "request-id": "074c50a2-6ed3-e089-0e09-d86a0f88f065",
+      "X-FRAME-OPTIONS": "SAMEORIGIN",
+      "Content-Security-Policy": "frame-ancestors 'self' teams.microsoft.com *.teams.microsoft.com *.skype.com *.teams.microsoft.us local.teams.office.com *.powerapps.com *.yammer.com *.officeapps.live.com *.office.com *.stream.azure-test.net *.microsoftstream.com *.dynamics.com *.microsoft.com onedrive.live.com *.onedrive.live.com;",
+      "X-Content-Type-Options": "nosniff",
+      "X-MS-InvokeApp": "1; RequireReadOnly",
+      "frame-ancestors": "'self' https://*.bcb.gov.br",
+      "Strict-Transport-Security": "max-age=16070400; includeSubDomains",
+      "x-azure-ref": "20261119T065204Z-17875568855kg95thC1DM1dev40000004mdg000000005fuv",
+      "X-Cache": "PRIVATE_NOSTORE",
+      "x-fd-int-roxy-purgeid": "0",
+      "Accept-Ranges": "bytes"
+    },
+    "byte_count": 4840062,
+    "sha256": "3e736c45d67fe64ac8c0cb3396718addab21a1ef43d09666ae8dd8ccaba3f52c",
+    "raw_file": "bcb_bop_bpm6.xml"
+  },
+  "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message}StructureSpecificData",
+  "header": {
+    "ID": "IREF149528",
+    "Test": "false",
+    "Prepared": "2026-10-26T11:42:36Z",
+    "DataSetAction": "Information",
+    "DataSetID": "a39e5b75-1fc9-4528-abda-fd8d203f99c1",
+    "Source": "IMF SDMX Central"
+  },
+  "dataflow_identity_warning": "BCB header previously identified BOP_BPM6(1.0); IMF public API panel uses BOP(21.0.0)/DSD_BOP(24.0.0). Similar values do not establish dataflow identity.",
+  "target_series_count": 0,
+  "target_observation_count": 0,
+  "series": [],
+  "imf_brazil_panel_rows": 94,
+  "comparison_rows": 0,
+  "exact_value_matches": 0,
+  "value_mismatches": [],
+  "scale_values_in_imf_panel": [
+    "6"
+  ],
+  "unit_values_in_imf_panel": [
+    "USD"
+  ],
+  "scale_conversion_applied": false,
+  "decision": "NO_EXACT_SERIES_MATCH_FOUND"
+}
