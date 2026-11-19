@@ -995,3 +995,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Brazil PA tx2/Changelog and BOP6/BOP_BPM6 identity remain BLOCKED; no repeated endpoints. Registration lifecycle 40/40 remains PASS.
 - Report: `docs/GCR_OFFICIAL_INDIA_FPI_RAW_CAPTURE_HARNESS_CONTINUATION70_20261119.md`.
 - No production invariants changed; ₹0; UNKNOWN is not PASS.
+
+
+## Continuation 71 — CDSL current-daily FPI endpoint refinement (2026-11-19)
+- Official-source discovery found CDSL eServices current daily endpoint `https://www.cdslindia.com/eservices/publications/fiidaily`; indexed official page snapshot displayed investment data on 17-Nov-2026, with gross buys/sells, net INR/USD, conversion rate and category/route splits. It distinguishes provisional exchange data from confirmed custodian/depository reports.
+- CDSL archive indexed snapshot separately displays investment data through 18-Nov-2026; this does not resolve prior direct-render conflict. CDSL fortnightly sector page lists periods through 15-Nov-2026; preserve fortnightly frequency.
+- Added eServices endpoint to the read-only raw capture script; commit `4bf466a6542127bbd10bfce4e1ab052c8c3b98a7`. Updated trigger marker `4bbb1bdc6be289079869a72c4ea79a460ac6b219`. Seven official pages now targeted.
+- Workflow run/artifact not independently verifiable with available GitHub Actions read tools; raw capture remains PENDING / NOT_VERIFIED. No bytes or hashes claimed.
+- Brazil exact PA Changelog remains an owner-side UI/export dependency; do not repeat HTTP 500 transaction endpoint. BOP6/BOP_BPM6 mismatch remains BLOCKED. Registration lifecycle 40/40 PASS.
+- Report: `docs/GCR_DAILY_FPI_ENDPOINT_REFINEMENT_CONTINUATION71_20261119.md`. No production invariants changed; ₹0; UNKNOWN is not PASS.
