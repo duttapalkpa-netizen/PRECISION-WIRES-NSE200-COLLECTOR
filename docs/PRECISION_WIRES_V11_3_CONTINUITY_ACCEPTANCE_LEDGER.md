@@ -845,3 +845,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Found official source route for 11/40 zero-data members: seven 2024 BCEAO country reports (BEN/BFA/CIV/GNB/MLI/SEN/TGO), Niger 2023 report, UAE annual source, Kenya annual/quarterly BOP sources, Oman BOP XLSX/CSV listing. UAE currently disseminates annual only; Kenya data vintages/units vary; Oman file not yet captured.
 - This is source discovery only, not data repair. Annual reports do not provide quarterly series; no interpolations, forward fills, proxy totals, currency conversions, or IMF P_F admissions.
 - Durable report: `docs/GCR_ALTERNATE_NATIONAL_BOP_SOURCE_COVERAGE_MAP_20261119.md`.
+
+
+## Continuation 40 — BCEAO 2024 UEMOA Annual BOP benchmark extraction
+- Official BCEAO Annual Report 2024 PDF Annexes A23–A27 source text yields 2024(*) national BOP tables for all eight UEMOA members. Extracted reported financial-account net balance plus net direct investment, net portfolio investment, net derivatives and net other investment for BEN/BFA/CIV/GNB/MLI/NER/SEN/TGO (FCFA billion; 2024 estimate).
+- Component sum QA: 5/8 exact, 3/8 have ±0.1 FCFA bn residual (BFA -0.1, CIV -0.1, TGO +0.1); preserve published totals. Correction to report/checkpoint summary: exact 5/8, not 6/8.
+- No source separates assets vs liabilities. IMF A_NFA_T/L_NIL_T mapping remains BLOCKED / NOT_SEPARATELY_DISCLOSED. Annual estimate not admitted to quarterly panel.
+- Original PDF bytes/hash not yet archived; values are transcribed from official PDF extracted text pending byte archival and page-image verification.
+- CSV `docs/evidence/gcr_bceao_2024/bceao_2024_uemoa_financial_account_net.csv`; report `docs/GCR_BCEAO_2024_ANNUAL_NET_BOP_BENCHMARK_20261119.md`.
