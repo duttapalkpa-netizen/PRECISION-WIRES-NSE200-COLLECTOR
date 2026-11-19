@@ -911,3 +911,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - No gross legs inferred from BCEAO net annual figures; no conversion, interpolation, stock-to-flow, forward-fill or production admission.
 - Full report: `docs/GCR_GNB_IMF_BOP_EXACT_KEY_PROBE_RESULTS_20261119.md`, commit `ec71d94c13e7fdf65ad28365b60cd5259db02b00`.
 - Next bounded action: retrieve official current BOP DSD v2.6.0 and related dataflow/constraints/codelists from SDMx Global Registry; establish exact code crosswalk before any current-version GNB query. Gross-leg status remains BLOCKED.
+
+
+## Continuation 63 — BOP DSD v2.6.0 official registry capture initiated (2026-11-19)
+- Official SDMx Global Registry lists IMF:BOP DSD latest version 2.6.0. Official SDMx-BOP maintenance policy states new DSD versions do not automatically invalidate previous versions; older versions may continue if changes do not affect the exchange template. Therefore legacy 24.0.0 mapping is not presumed invalid.
+- Registry model confirms DSD, codelists, dataflows, provision agreements and reporting constraints are distinct artefacts; country coverage must not be inferred from DSD alone.
+- Reused existing repository capture script `scripts/research/capture_imf_bop_dsd_v260.py` and workflow `.github/workflows/imf_bop_dsd_v260_capture.yml`; it requests official registry DSD v2.6.0 in SDMX-ML 2.1 and 3.0 with references=all, records raw XML/status/headers/UTC/byte count/SHA-256 and parses artefact references. No observation data is queried.
+- Trigger commit `79817af059973e09038969fd401cde3afdd7f00e`; workflow run `44507773721` observed in progress at last check; structure capture step not yet completed and no artifact/hash yet. Do not call this a PASS until the run and artifact are inspected.
+- Official sources: https://sdmx.org/sdmx-data-structure-definitions-for-balance-of-payments-sdmx-bop/ ; https://registry.sdmx.org/data/datastructure.html ; https://sdmxcentral.imf.org/overview.html .
+- Next: inspect run 44507773721 and verify artifact; extract exact dimensions, codelist IDs, dataflow IDs, constraints, then crosswalk legacy codes to v2.6.0. Only after explicit crosswalk, test GNB provision/coverage. No production admission. Invariants unchanged; ₹0; UNKNOWN is not PASS.
