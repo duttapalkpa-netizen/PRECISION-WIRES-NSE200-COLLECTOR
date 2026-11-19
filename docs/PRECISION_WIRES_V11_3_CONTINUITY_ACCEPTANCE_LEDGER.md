@@ -831,3 +831,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Based on live official IMF SDMX Central pages, next read-only UI route is documented precisely: `/activity/activity-log.html` (transaction period around 2023-09-22 and Download Transaction), `/activity/structure-log.html` (Structure Submissions, Download Revision, Compare), and `/data/provisionAgreements.html` (filter IMF / BR_BOP_BP6; Changelog, Revisions, Compare/Export).
 - Official UI pages expose these controls, but the dynamic Brazil PA row/revision files have not yet been captured. No claim of historical PA recovery; chronology remains UNKNOWN/BLOCKED pending actual files.
 - Supporting official UI sources: IMF SDMX Central activity log, structure log and Provision Agreements pages. No write action or authentication attempt performed.
+
+
+## Continuation 39 — Brazil PA RSS historical archive test
+- Official IMF SDMX Central RSS GET 200; XML parse PASS; 38 latest items from 2026-11-18 09:11:47Z through 2026-11-19 08:43:07Z. Zero Brazil/PA/BOP6/tx2 matches. Raw SHA-256 `ff0c03df5d6b9557d6f6c21a341a7d589baef38893291fcfc2ff715257619e73`; run #35 / 44493898103 SUCCESS; artifact 14513872121; ZIP SHA `e88d37e4054c304618ed1af4be14337a6e0b583d791b4cf2e93115410854639a`.
+- Conclusion: RSS is current/recent activity only, not a 2023 historical transaction archive. tx2 alternate format endpoints remain 500. No duplicate retries. PA chronology and Brazil reconstruction BLOCKED.
+- Workflow accidental NSE run #381 / 44493879791 was triggered by missing ignore entry, then successfully CANCELLED by helper run 44493979049. Added paths-ignore entries for both Brazil probe scripts and trigger; guard commit `110c8e6d6abbe536165c760d919c4c3926030501`. No production source changes.
+- Next action: actual interactive official IMF UI or authorized historic export. If unavailable, pivot to GCR coverage closure; keep UNKNOWN. Report: `docs/IMF_BRAZIL_RSS_TRANSACTION_ARCHIVE_PROBE_PART3_20261119.md`.
