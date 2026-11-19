@@ -19,6 +19,7 @@ jobs:
       - name: Run independent CBN vs IMF comparison
         run: python scripts/research/crosscheck_nigeria_bop_scale.py
       - name: Upload raw source and comparisons
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nigeria-bop-national-crosscheck-${{ github.run_id }}
