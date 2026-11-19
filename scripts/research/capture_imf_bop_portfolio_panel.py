@@ -46,11 +46,7 @@ for country in COUNTRIES:
       period=x.get("TIME_PERIOD","")
       if not (START<=period<=END):raise ValueError(f"out-of-window period {period}")
       obs.append(x)
-      panel.append({"COUNTRY":country,"BOP_ACCOUNTING_ENTRY":entry,"INDICATOR":INDICATOR,
-       "UNIT":UNIT,"FREQUENCY":FREQ,"TIME_PERIOD":period,"OBS_VALUE":x["OBS_VALUE"],
-       "SCALE":x.get("SCALE"),"PRECISION":x.get("PRECISION"),"STATUS":x.get("STATUS"),
-       "OVERLAP":x.get("OVERLAP"),"DERIVATION_TYPE":x.get("DERIVATION_TYPE"),
-       "source_file":fn,"source_sha256":sha(body)})
+      panel.append({**x,"source_file":fn,"source_sha256":sha(body)})
     row["csv_parse"]="PASS";row["row_count"]=len(rows);row["nonempty_obs_value_count"]=len(obs)
     row["empty_obs_value_count"]=len(rows)-len(obs)
     row["period_min"]=min((x["TIME_PERIOD"] for x in obs),default=None)
