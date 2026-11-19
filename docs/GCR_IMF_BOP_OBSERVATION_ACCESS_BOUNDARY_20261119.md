@@ -60,3 +60,10 @@
 - Durable report: `docs/GCR_IMF_BOP_EMDE_PORTFOLIO_PANEL_20261119.md`; evidence folder: `docs/evidence/imf_bop_emde_20261119/`.
 - The prior sign-in redirect only applies to the Swagger/API explorer link; it does not prevent the tested public SDMX 3.0 observation GET route.
 - Remaining blockers are not access: coverage gaps (40/154 members with no observations for the selected entries; 83/308 country-entry pairs empty), `SCALE=6` unit interpretation mismatch requiring national-source reconciliation, revision/vintage and BPM basis controls, and no EMDE aggregate yet. Preserve all missingness; no scale conversion or aggregation until cleared.
+
+
+## Scale/sign status refinement — Brazil (2026-11-19)
+- The `SCALE=6` code label is “Millions” in the DSD-referenced unit-multiplier codelist.
+- Brazil's two BOP P_F legs have now been independently reconciled against BCB SGS monthly series 22906 (assets) and 22924 (liabilities): five quarters × two legs = 10/10 PASS using `IMF OBS_VALUE / 10^6` in USD million. Maximum absolute residual 0.12192411 million, below the 0.15 million bound from three monthly values rounded to 0.1 million.
+- This resolves the Brazil scale/sign mapping for the tested series only. It does not generalize to India or other EMDE members; no EMDE-wide conversion/aggregate is authorized.
+- Evidence report: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`; durable raw BCB receipts: `docs/evidence/imf_bop_20261119/bcb_scale_reconciliation/`.
