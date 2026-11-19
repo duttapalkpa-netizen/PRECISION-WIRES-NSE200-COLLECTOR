@@ -417,3 +417,13 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - Panel remains coverage PARTIAL; 40 countries no observations, 83 empty country-entry combinations, 13 series with interior gaps. EMDE aggregate remains BLOCKED until vintage/coverage gates are implemented.
 
 - Latest cross-country report correction commit: `ca294d2d8ce416f306dba580d90286bca903f168`; report now reflects Brazil 94/94 and India 12/12 full validations and corrected period windows.
+
+
+ 
+## India current-vintage 2026-Q1/Q2 supplement — 2026-11-19
+- Earlier India RBI Table197 BPM6 baseline 2024-Q2–2025-Q3 remains 12/12 PASS.
+- New RBI Table42 BPM6 current-vintage sample covers 2025-Q1/Q2 overlap and 2026-Q1/Q2: 10/12 comparisons PASS; 2 REVIEW.
+- 2026-Q2 asset/liability/combined net PASS; 2026-Q1 asset PASS, liability and combined net REVIEW. IMF L_NIL_T /1e6 = -13,633.508347 USD million vs RBI 3.2.A net = -12,121 USD million; residual -1,512.508347 USD million.
+- Raw RBI HTML, manifest, summary and comparison CSV are committed under `docs/evidence/imf_bop_20261119/india_scale_reconciliation_current_vintage/`; report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md`.
+- Workflow run 44477031402 / artifact 14505649659 / ZIP SHA-256 `8db4f9536a57df1e8635855af5bb90225de0f800e6e9164bd20d99d1f355b4e2`.
+- India current-vintage status PARTIAL; 2026-Q1 REVIEW remains open. This supplements but does not invalidate the historical 12/12 baseline.
