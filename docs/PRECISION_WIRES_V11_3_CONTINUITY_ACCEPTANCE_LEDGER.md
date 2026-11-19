@@ -1430,3 +1430,17 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Next: bounded read-only live retrieval of current BOP Dataflow + DSD + referenced codelists, archive metadata bytes/hashes, then test whether India quarterly observations are downloadable unauthenticated. Stop on unresolved API failure; never guess keys.
 - Stage: Observation OPEN; Planning/Organizing NOT_STARTED; GCR NOT COMPLETE; aggregate/production admission NOT_AUTHORIZED.
 - Invariants unchanged: ₹0; official/free sources; no synthetic data, fabricated timestamps, guessed dataflow/item codes, sign conversion or interpolation; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 44 — Part-2: IMF BOPS dataflow and constraint registry audit (2026-11-19)
+- Current public IMF SDMX Central Dataflows overview is reachable and reports 216 entries. Its visible first page includes ESTAT:BPM6_BOP_Q (2.6.0) and ESTAT:BPM6_BOP_M (2.6.0); these are ESTAT flows, not IMF global BOP, and must not be substituted.
+- Official IMF Reporting Constraints registry lists `IMF:BOP6_CONSTRAINT` targeting `BOP6[1.0]` and `IMF:BOP_BP6_CONSTRAINT` targeting `BOP_BPM6[1.0]`. These identify two exact registry-listed IMF BPM6-era dataflow candidates, but do not prove either is the current IMF STA BOP product behind data.imf.org.
+- The same registry lists `BOP5_CONSTRAINT` → `BOP5_COLLECTION[1.0]`; BPM5 candidate is not used for the BPM6 replication absent explicit source justification.
+- Public registrations list includes Brazil/Chile and several other national BOP-family providers. No India registration appeared in reviewed output, but listing output is not proven exhaustive; do not claim India is absent.
+- No successful live SDMX structure payload, DSD reference, India REF_AREA, dimension order, item codes, units, sign convention, observation attributes or data response acquired. No raw metadata/data bytes, retrieval timestamp or SHA-256.
+- Report: `docs/GCR_IMF_BOPS_DATAFLOW_AND_CONSTRAINT_REGISTRY_AUDIT_CONTINUATION44_PART2_20261119.md`; commit `a95f8de2f4f84ab4fa0d9382800f38060654a108`.
+- Official sources: IMF SDMX Central Dataflows https://sdmxcentral.imf.org/data/overview.html ; Reporting Constraints https://sdmxcentral.imf.org/data/constraints.html ; Registrations https://sdmxcentral.imf.org/data/registrations.html ; DSD listing https://sdmxcentral.imf.org/data/datastructure.html .
+- Acceptance: public Dataflows page PASS; IMF:BOP6 and IMF:BOP_BPM6 registry identities PASS (identity only); global STA BOP dataflow mapping UNKNOWN; exact DSD relationship NOT_DONE; exhaustive India registration check NOT_DONE; India series/codelists NOT_DONE; raw quarterly observations NOT_ACQUIRED; independent RBI replication NOT_DONE.
+- Next: retrieve exact structure payloads for IMF:BOP6(1.0), IMF:BOP_BPM6(1.0), and IMF:BOP(2.6.0), resolve DSD/constraint/codelist references and verify product relationship before any observation query.
+- Stage: Observation OPEN; Planning/Organizing NOT_STARTED; GCR NOT COMPLETE; aggregate/production admission NOT_AUTHORIZED.
+- Invariants unchanged: ₹0; official/free sources; no guessed mappings, series keys, units, signs or transformations; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E unchanged; UNKNOWN is never PASS.
