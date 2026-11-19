@@ -5,6 +5,8 @@ on:
   push:
     branches: [main]
     paths-ignore:
+      - "scripts/research/capture_imf_bop_legacy_metadata.py"
+      - ".github/workflows/imf_bop_legacy_metadata_capture.yml"
       - "scripts/research/bceao_three_country_2024_trigger.txt"
       - "scripts/research/archive_bceao_three_country_2024.py"
       - ".github/workflows/bceao_three_country_2024_archive.yml"
