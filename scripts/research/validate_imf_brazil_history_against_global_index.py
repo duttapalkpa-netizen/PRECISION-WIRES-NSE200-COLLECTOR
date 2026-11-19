@@ -59,7 +59,8 @@ summary={"registration_urn":REG,"history_http_status":h["http_status"],"history_
  "global_index_max_tx_id":max(int(x["Id"]) for x in index) if index else None,
  "history_event_count":len(history),"matched_event_count":len(rows)-len(missing),"missing_tx_ids":missing,
  "date_matches":sum(x["date_match"] for x in rows),"action_matches":sum(x["action_match"] for x in rows),
- "index_type_registration_count":sum(x["index_type"]=="Registration" for x in rows),\n "index_type_missing_count":sum(x["index_type"] is None for x in rows),
+ "index_type_registration_count":sum(x["index_type"]=="Registration" for x in rows),
+ "index_type_missing_count":sum(x["index_type"] is None for x in rows),
  "mismatches":[x for x in rows if not x["date_match"] or not x["action_match"]]}
 (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 print(json.dumps(summary,indent=2,ensure_ascii=False))
