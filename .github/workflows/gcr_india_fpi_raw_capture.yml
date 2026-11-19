@@ -1,0 +1,29 @@
+name: GCR Official India FPI Raw Page Capture
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/research/gcr_india_fpi_raw_capture_trigger.txt"
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture official pages (GET only)
+        run: python scripts/research/capture_india_fpi_official_pages.py
+      - name: Upload immutable raw capture
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gcr-india-fpi-raw-pages-${{ github.run_number }}
+          path: outputs/gcr_india_fpi_raw_capture/
+          if-no-files-found: error
