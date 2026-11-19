@@ -114,3 +114,14 @@ Archive commit: `a6eb5865c0a77d6bdaf1c6a3c6925e6e1e69bdf0`.
 - SCALE concept in CS_MASTER_SYSTEM(1.0.2) enumerates CL_UNIT_MULT; code 6 = Millions (10^6). This resolves the code meaning, not whether the data API has already normalized OBS_VALUE.
 - Numeric conversion remains BLOCKED: do not multiply/divide by 10^6 until direct IMF portal display and official national-source values reconcile. Preserve OBS_VALUE, UNIT=USD, SCALE=6 exactly.
 - Detailed report: docs/GCR_IMF_BOP_SCALE_SEMANTICS_20261119.md. No netting or aggregate is authorized.
+
+
+## 9. Brazil scale/sign cross-check completed (2026-11-19)
+- Official BCB monthly SGS series 22906 (portfolio investment net acquisition of financial assets) and 22924 (net incurrence of liabilities), both in million US dollars, were captured as raw JSON and compared with the IMF Brazil quarterly P_F series.
+- Formula empirically validated for Brazil: `IMF OBS_VALUE / 1,000,000` compared with the sum of the three monthly BCB values.
+- Quarters tested: 2015-Q1, Q2, Q3, Q4 and 2026-Q3 for both assets and liabilities: 10/10 PASS.
+- BCB monthly observations are one decimal; three-month rounding bound = 0.15 USD million. Maximum absolute residual = 0.12192411 USD million; no sign mismatch.
+- Raw BCB JSON hashes: SGS22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; SGS22924 `2064005a5dd42b83ba66aeb21de983ca4286af9662f57c23971b4b7dfe295dbb`.
+- Workflow run 44475693836 / artifact 14506740234 / ZIP SHA-256 `08e7702d9c5e393779d6ff635f6d532ddcfcb79be1eb2be18fd840a13f37b79b`; durable evidence commit `45d2ce937be6c2f89d1ba4ae7fe0d1ad14842266`.
+- Full method and 10-row table: `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_BRAZIL_20261119.md`, commit `c7cfefadbcad4703df81ec43b461ab941d85b698`.
+- This closes scale/sign mapping for Brazil only. India and the remaining 152 WEO EMDE members remain UNKNOWN pending national-source period, concept and vintage crosswalk. Do not apply Brazil's conversion globally or release an EMDE aggregate.
