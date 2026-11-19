@@ -1,9 +1,7 @@
 name: Persist IMF BOP EMDE Portfolio Panel Evidence
 on:
+  # One-time archive is already persisted; keep manual replay only.
   workflow_dispatch:
-  push:
-    paths:
-      - "scripts/research/persist_imf_emde_panel_trigger.txt"
 permissions:
   contents: write
   actions: read
