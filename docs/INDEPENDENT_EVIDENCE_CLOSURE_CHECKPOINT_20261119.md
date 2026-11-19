@@ -488,3 +488,6 @@ No production code, selector, ranking score, pressure fade, CORE-672, Engines A-
 - CSV: `docs/evidence/gcr_bceao_2024/bceao_2024_uemoa_financial_account_net.csv`; report: `docs/GCR_BCEAO_2024_ANNUAL_NET_BOP_BENCHMARK_20261119.md`.
 - CSV commit `67483e3af1782abde81c5d1800ae49694623e9ac`; report commit `5d4c01bd634c697086a40347a9209192f68ed1ba`.
 - Decision: annual net benchmark PARTIAL PASS (8 rows); IMF leg reconciliation BLOCKED; quarterly repair and aggregate BLOCKED / NOT_AUTHORIZED. Production and CORE-672 invariants unchanged; ₹0.
+
+
+- Arithmetic QA correction (2026-11-19): the report and ledger initially misstated the count. Correct result is **5/8 exact component sums and 3/8 residuals of 0.1 FCFA billion** (BFA −0.1, CIV −0.1, TGO +0.1). Published total values remain unchanged. Corrected report commit: `9fa25ec6a9c3d642df8dcc96405e5dfa69985a97`.
