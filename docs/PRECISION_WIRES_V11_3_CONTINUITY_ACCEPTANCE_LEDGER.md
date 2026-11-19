@@ -1027,3 +1027,6 @@ Report workstream percentages separately from evidence status. Percentage means 
 - India matched-date NSDL/CDSL flow reconciliation NOT_DONE; sector raw capture PENDING. Production ingestion BLOCKED.
 - Brazil unchanged: Registration lifecycle 40/40 PASS; PA tx2 Changelog and BOP6/BOP_BPM6 identity BLOCKED; owner-side exact PA GUI/export remains required. No repeat tx2 endpoint probes.
 - Protected invariants unchanged; ₹0; UNKNOWN is never PASS.
+
+- Continuation 73 runtime addendum: run `44519322726` SUCCESS; artifact `14527092174`, 196,057 bytes; GitHub digest = recomputed ZIP SHA-256 `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd`; manifest 8/8 HTTP 200. Exact 15-Nov sector HTML 327,522 bytes, SHA-256 `3f77f3896a95b8cff3a7728049127493814e1b503eb39dcb75b0e8fe145cf84e`; main sector table 24 numbered rows plus grand total. Detailed report updated at commit `ce9633ccba058f8898ad9c4308d571929524fee6`.
+- Exact sector page raw capture/schema inventory PASS; independent arithmetic, sector mapping and matched-date daily flow reconciliation NOT_DONE. Production remains BLOCKED.
