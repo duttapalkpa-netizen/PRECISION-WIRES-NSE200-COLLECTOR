@@ -1,0 +1,31 @@
+name: IMF BOP Anonymous Browser Download Probe
+on:
+  push:
+    branches: [research/imf-bopsy-public-metadata-20261119]
+    paths:
+      - "scripts/research/imf_bop_browser_probe_trigger.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-public-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Playwright
+        run: |
+          pip install playwright==1.55.0
+          playwright install --with-deps chromium
+      - name: Inspect anonymous IMF BOP View Data and Download controls
+        run: python scripts/research/probe_imf_bop_download_browser.py
+      - name: Upload browser route evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: imf-bop-anonymous-browser-probe-${{ github.run_id }}
+          path: imf_bop_browser_route_probe/
+          if-no-files-found: error
+          retention-days: 90
