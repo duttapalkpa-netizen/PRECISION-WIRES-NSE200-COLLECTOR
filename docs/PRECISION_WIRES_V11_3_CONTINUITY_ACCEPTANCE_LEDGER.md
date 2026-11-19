@@ -1162,3 +1162,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Tested orientation 22906 = 22907 − 22908: 0/381 PASS, 381 FAIL, max absolute residual 170,488.0 USD million at tolerance 0.15. This is a genuine FAIL for the tested orientation, not evidence for the opposite orientation. Must evaluate both signs on archived raw data and confirm official BCB sign semantics before acceptance.
 - Report: `docs/BRAZIL_BCB_ASSET_GROSS_FLOW_IDENTITY_CONTINUATION45_20261119.md`; commit `fbcab345578b24db84358c90c5cbf3efca1de619`.
 - Asset-side gross-flow decomposition remains BLOCKED. Liability-side 381/381 PASS and prior 94/94 quarterly cross-source benchmark remain separate evidence and do not substitute for this identity. Brazil PA/dataflow mismatch remains BLOCKED; GCR panel/score remains NOT_READY. No production changes; ₹0; UNKNOWN is not PASS.
+
+
+### Continuation 45 — Brazil asset-side gross-flow identity (2026-11-19)
+- PASS: official BCB SGS 22906/22907/22908 identity `22906 = 22908 - 22907`, 381/381 months from 1995-01 to 2026-09; max residual 0.1 USD million; tolerance 0.15; opposite sign convention rejected 0/381.
+- Run #2 / ID 44542505681 SUCCESS; job 135624309676; artifact 14538393352; ZIP SHA-256 `51ab88b418ebbaa88595a45eb2a94cf8507c454c3c637075b935c8de07dcf762`.
+- Raw series SHA-256: 22906 `110477090f5ff3e9f4e4d2ce235082d837020603b13795dbc2bde20769a3db30`; 22907 `920aea58c2a7f90106cfeef25b29b077e66d0f65efa73237ba82be34b8885c7a`; 22908 `7ef8ee458ceae80914183c49334409f175891e0d30d280ad1d513e684c6dc73e`.
+- Failed prior sign-convention attempt run 44542407481/artifact 14537174964 is retained as rejected formula evidence; do not repeat.
+- Report: `docs/BRAZIL_BCB_ASSET_SIDE_GROSS_FLOW_IDENTITY_AUDIT_CONTINUATION45_20261119.md`; commit `dd8dd1f4342f089eecd7bf0982354cc1590e3386`.
+- Brazil PA/Dataflow discrepancy remains BLOCKED; GCR panel/vintage/relative-attraction gates remain BLOCKED. No production changes.
