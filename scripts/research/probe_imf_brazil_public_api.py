@@ -29,6 +29,9 @@ urls = [
  ("transaction_2_pa_item", BASE+"/ws/registry/tx/transaction?txId=2&urn="+q(PA), "zip"),
  ("transaction_search_2023_sep", BASE+"/ws/registry/tx/searchTransactions?dateFrom=1693526400000&dateTo=1696118399999&max=1000&orderDesc=false", "json"),
  *[(f"transaction_{txid}_full", BASE+f"/ws/registry/tx/transactions?txId={txid}", "xml") for txid in range(3,13)],
+ ("transaction_collection_since_2023_09", BASE+"/ws/registry/transactions?updatedAfter=1693526400000", "json"),
+ ("transaction_collection_tx3", BASE+"/ws/registry/transactions/3", "json"),
+ ("transaction_3_fusion", BASE+"/ws/registry/tx/transactions?txId=3&format=fusion-json", "json"),
  ("current_rss", BASE+"/rss.xml", "xml"),
 ]
 records=[]
