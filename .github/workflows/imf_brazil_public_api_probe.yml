@@ -16,16 +16,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Probe public IMF history and structure endpoints
-        run: python scripts/research/probe_imf_brazil_public_api.py
-      - name: Scan bounded Brazil registration transaction ID batch (13-112)
-        run: python scripts/research/probe_imf_brazil_registration_batch.py --start-id 13 --end-id 112 --workers 12
+      - name: Scan bounded Brazil registration transaction ID batch (113-212)
+        run: python scripts/research/probe_imf_brazil_registration_batch.py --start-id 113 --end-id 212 --workers 12
       - name: Upload raw responses and manifest
         uses: actions/upload-artifact@v4
         with:
           name: imf-brazil-public-api-probe-${{ github.run_id }}
           path: |
-            imf_brazil_public_api_probe/
             imf_brazil_registration_batch/
           if-no-files-found: error
           retention-days: 90
