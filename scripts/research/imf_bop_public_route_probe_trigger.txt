@@ -43,3 +43,5 @@
 2026-11-19 validate-Brazil-SCALE-6-against-BCB-monthly-asset-liability-flows
 
 2026-11-19 strict-47-quarter-BCB-to-IMF-USD-scale-reconciliation
+
+2026-11-19 expand-BCB-scale-sign-reconciliation-to-all-47-quarters-94-checks
