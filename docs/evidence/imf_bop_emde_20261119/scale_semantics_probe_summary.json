@@ -124,5 +124,72 @@
       "imf_custom_SCALE_concept": "Not explicitly defined in captured IMF concept scheme; reuses CL_UNIT_MULT codelist",
       "decision": "Do not treat IMF custom SCALE as either UNIT_MULT or PREFERRED_SCALE without IMF-specific definition or independent benchmark. No multiplication/division applied."
     }
+  },
+  "empirical_cross_country_validation": {
+    "countries": [
+      "IND",
+      "BRA",
+      "MEX",
+      "CHL"
+    ],
+    "vintage_aligned_comparisons": 30,
+    "vintage_aligned_passes": 30,
+    "vintage_aligned_reviews": 0,
+    "india": {
+      "comparisons": 8,
+      "pass": 8,
+      "source": "RBI Table 197",
+      "quarters": "2024-Q2 to 2025-Q1",
+      "max_abs_difference_usd_million": 0.49
+    },
+    "brazil": {
+      "comparisons": 10,
+      "pass": 10,
+      "source": "BCB SGS 22906/22924",
+      "quarters": [
+        "2015-Q1",
+        "2015-Q2",
+        "2015-Q3",
+        "2015-Q4",
+        "2026-Q3"
+      ],
+      "max_abs_difference_usd_million": 0.12192411
+    },
+    "mexico": {
+      "comparisons": 6,
+      "pass": 6,
+      "source": "Banco de Mexico CE174",
+      "quarters": [
+        "2025-Q4",
+        "2026-Q1",
+        "2026-Q2"
+      ],
+      "max_abs_difference_usd_million": 0.425187
+    },
+    "chile_prior_vintage": {
+      "comparisons": 6,
+      "pass": 6,
+      "source": "Banco Central de Chile BDE page snapshot updated 2026-09-07",
+      "quarters": [
+        "2025-Q4",
+        "2026-Q1",
+        "2026-Q2"
+      ],
+      "tolerance_usd_million": 1.5,
+      "raw_source_bytes_archived": false
+    },
+    "chile_current_vintage": {
+      "comparisons": 8,
+      "pass": 2,
+      "review": 4,
+      "imf_panel_missing": 2,
+      "source": "Banco Central de Chile BDE raw page updated 2026-11-18",
+      "run_id": 44476957975,
+      "artifact_id": 14507305215,
+      "artifact_zip_sha256": "155fffc6fbc46df12f0905cd00b011651ced7df1368ceb0a65b736a090052691",
+      "assets_html_sha256": "0083083710e9419cb16fc8a07351f1913fa7466a429f8b045ef77a988c00b3d0",
+      "liabilities_html_sha256": "7857d8420f17886f32b05a0b50d2c1755df206223ee18e50c26645586268d116"
+    },
+    "decision": "OBS_VALUE_DIVIDED_BY_1E6_EMPIRICALLY_VALIDATED_FOR_FOUR_COUNTRY_VINTAGE_ALIGNED_SAMPLE; NOT UNIVERSALIZED TO ALL 154 COUNTRIES. CHILE LATEST VINTAGE REVISIONS REQUIRE VINTAGE ALIGNMENT GATE."
   }
 }
