@@ -5,7 +5,7 @@
       "name": "official_bop_dataset",
       "requested_url": "https://data.imf.org/en/datasets/IMF.STA:BOP",
       "final_url": "https://data.imf.org/en/datasets/IMF.STA:BOP",
-      "retrieved_at_utc": "2026-11-19T06:51:32.617008+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:33.295730+00:00",
       "http_status": 200,
       "headers": {
         "Content-Type": "text/html; charset=utf-8",
@@ -17,12 +17,12 @@
         "X-XSS-Protection": "1",
         "Cache-Control": "private, no-cache, no-store, max-age=0, must-revalidate",
         "Vary": "Accept-Encoding",
-        "Date": "Thu, 19 Nov 2026 06:51:33 GMT",
+        "Date": "Thu, 19 Nov 2026 06:59:34 GMT",
         "Transfer-Encoding": "chunked",
         "Connection": "Transfer-Encoding",
         "Alt-Svc": "h3=\":443\"; ma=93600",
         "Strict-Transport-Security": "max-age=31536000",
-        "Akamai-GRN": "0.9551c317.1795071092.873b9049"
+        "Akamai-GRN": "0.9551c317.1795071573.874fdce8"
       },
       "byte_count": 293023,
       "sha256": "ff3ffeace75ad366b5dfb65a527fc77a5a9d40b5dfd26089553f0630090701c0",
@@ -126,7 +126,7 @@
       "name": "official_bop_aggregate_dataset",
       "requested_url": "https://data.imf.org/en/datasets/IMF.STA:BOP_AGG",
       "final_url": "https://data.imf.org/en/datasets/IMF.STA:BOP_AGG",
-      "retrieved_at_utc": "2026-11-19T06:51:33.702460+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:34.118984+00:00",
       "http_status": 200,
       "headers": {
         "Content-Type": "text/html; charset=utf-8",
@@ -138,15 +138,15 @@
         "X-XSS-Protection": "1",
         "Cache-Control": "private, no-cache, no-store, max-age=0, must-revalidate",
         "Vary": "Accept-Encoding",
-        "Date": "Thu, 19 Nov 2026 06:51:34 GMT",
+        "Date": "Thu, 19 Nov 2026 06:59:35 GMT",
         "Transfer-Encoding": "chunked",
         "Connection": "Transfer-Encoding",
         "Alt-Svc": "h3=\":443\"; ma=93600",
         "Strict-Transport-Security": "max-age=31536000",
-        "Akamai-GRN": "0.9c51c317.1795071093.ac316dd5"
+        "Akamai-GRN": "0.9c51c317.1795071574.ac4429b4"
       },
-      "byte_count": 286622,
-      "sha256": "ba82fad207abfa6046090ce142193fa29787d6f6f47be6556e72145cb00bf2cf",
+      "byte_count": 286583,
+      "sha256": "b7b0af19f9eaa237c95c3a7d8327f86aed32eab963ecf560fe8d43490014cc8c",
       "file": "official_bop_aggregate_dataset.html",
       "html_title": "IMF Balance of Payments and International Investment Position Statistics (BOP / IIP), World and Country Group Aggregates (historically called BOPSY)",
       "hrefs": [
@@ -245,7 +245,7 @@
       "name": "official_imf_api_docs",
       "requested_url": "https://data.imf.org/en/Resource-Pages/IMF-API",
       "final_url": "https://data.imf.org/en/Resource-Pages/IMF-API",
-      "retrieved_at_utc": "2026-11-19T06:51:34.697259+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:35.079461+00:00",
       "http_status": 200,
       "headers": {
         "Content-Type": "text/html; charset=utf-8",
@@ -257,15 +257,15 @@
         "X-XSS-Protection": "1",
         "Cache-Control": "private, no-cache, no-store, max-age=0, must-revalidate",
         "Vary": "Accept-Encoding",
-        "Date": "Thu, 19 Nov 2026 06:51:35 GMT",
+        "Date": "Thu, 19 Nov 2026 06:59:35 GMT",
         "Transfer-Encoding": "chunked",
         "Connection": "Transfer-Encoding",
         "Alt-Svc": "h3=\":443\"; ma=93600",
         "Strict-Transport-Security": "max-age=31536000",
-        "Akamai-GRN": "0.9c51c317.1795071094.ac3178d0"
+        "Akamai-GRN": "0.9c51c317.1795071575.ac443391"
       },
-      "byte_count": 203027,
-      "sha256": "73da9cdf600c46be1ff02bfecd388aff7c22d28e003e1ac3b5b4bb6ba264838d",
+      "byte_count": 203057,
+      "sha256": "021b9ccccf6d77254be27e7db219d56db2f1cd862631afd1612890780c208779",
       "file": "official_imf_api_docs.html",
       "html_title": "API Page",
       "hrefs": [
@@ -361,7 +361,7 @@
       "name": "sdmxcentral_bop_dataflow_v2",
       "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0?references=all",
       "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP/21.0.0?references=all",
-      "retrieved_at_utc": "2026-11-19T06:51:35.518474+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:35.969605+00:00",
       "http_status": 404,
       "headers": {
         "vary": "Access-Control-Request-Headers",
@@ -372,7 +372,7 @@
         "x-content-type-options": "nosniff",
         "content-type": "application/xml;charset=UTF-8",
         "transfer-encoding": "chunked",
-        "date": "Thu, 19 Nov 2026 06:51:36 GMT",
+        "date": "Thu, 19 Nov 2026 06:59:37 GMT",
         "connection": "close"
       },
       "byte_count": 421,
@@ -383,14 +383,14 @@
       "name": "api_imf_bop_dataflow_v3",
       "requested_url": "https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?references=all",
       "final_url": "https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP/21.0.0?references=all",
-      "retrieved_at_utc": "2026-11-19T06:51:37.610862+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:38.395846+00:00",
       "http_status": 200,
       "headers": {
-        "Date": "Thu, 19 Nov 2026 06:51:37 GMT",
+        "Date": "Thu, 19 Nov 2026 06:59:39 GMT",
         "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
         "Transfer-Encoding": "chunked",
         "Connection": "close",
-        "x-correlation-id": "29d8c494b9556fd4e5a7e3a7f318f45f",
+        "x-correlation-id": "5177e386ebaae88cb6bd153e79b8d85b",
         "x-content-type-options": "nosniff",
         "x-xss-protection": "0",
         "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
@@ -398,12 +398,12 @@
         "expires": "0",
         "strict-transport-security": "max-age=31536000 ; includeSubDomains",
         "x-frame-options": "DENY",
-        "x-envoy-upstream-service-time": "128",
+        "x-envoy-upstream-service-time": "434",
         "server": "istio-envoy",
         "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
       },
       "byte_count": 3788132,
-      "sha256": "9990f50f157d128e4ede8df5feb89224ecfb2ba7aae0cf8ac62349d087cde396",
+      "sha256": "3218c9c1d3a164959c43ed391c6b871a2a9b430a2df36cb11ba2a1822d2dfb7c",
       "file": "api_imf_bop_dataflow_v3.xml",
       "xml_parse": "PASS",
       "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
@@ -432,14 +432,14 @@
       "name": "api_imf_bop_dsd_v3",
       "requested_url": "https://api.imf.org/external/sdmx/3.0/structure/datastructure/IMF.STA/DSD_BOP/24.0.0?references=all",
       "final_url": "https://api.imf.org/external/sdmx/3.0/structure/datastructure/IMF.STA/DSD_BOP/24.0.0?references=all",
-      "retrieved_at_utc": "2026-11-19T06:51:38.267499+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:39.403207+00:00",
       "http_status": 200,
       "headers": {
-        "Date": "Thu, 19 Nov 2026 06:51:38 GMT",
+        "Date": "Thu, 19 Nov 2026 06:59:39 GMT",
         "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
         "Transfer-Encoding": "chunked",
         "Connection": "close",
-        "x-correlation-id": "f082046782a161575137898fc35af2fb",
+        "x-correlation-id": "8d909457c187b4f824ab1c502e0627e7",
         "x-content-type-options": "nosniff",
         "x-xss-protection": "0",
         "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
@@ -447,16 +447,27 @@
         "expires": "0",
         "strict-transport-security": "max-age=31536000 ; includeSubDomains",
         "x-frame-options": "DENY",
-        "x-envoy-upstream-service-time": "62",
+        "x-envoy-upstream-service-time": "116",
         "server": "istio-envoy",
         "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
       },
       "byte_count": 3787209,
-      "sha256": "c30ec48d3795451906c29cffd408b9c8d4d4955ed2e3914e6a27f3e737050ef2",
+      "sha256": "60d5f4c6efa05647e2650ad946b8ddc2d49402ef75e8829d7fb41d9ee963ccba",
       "file": "api_imf_bop_dsd_v3.xml",
       "xml_parse": "PASS",
       "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
       "dataflows": [
+        {
+          "attributes": {
+            "urn": "urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=IMF.STA:SPE(13.0.0)",
+            "agencyID": "IMF.STA",
+            "id": "SPE",
+            "version": "13.0.0",
+            "isExternalReference": "false"
+          },
+          "name": "Special Purpose Entities (SPEs)",
+          "structure_refs": []
+        },
         {
           "attributes": {
             "urn": "urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=IMF.STA:IIP(13.0.0)",
@@ -478,17 +489,6 @@
           },
           "name": "Balance of Payments (BOP)",
           "structure_refs": []
-        },
-        {
-          "attributes": {
-            "urn": "urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=IMF.STA:SPE(13.0.0)",
-            "agencyID": "IMF.STA",
-            "id": "SPE",
-            "version": "13.0.0",
-            "isExternalReference": "false"
-          },
-          "name": "Special Purpose Entities (SPEs)",
-          "structure_refs": []
         }
       ],
       "dimension_names": [
@@ -503,7 +503,7 @@
       "name": "sdmxcentral_bop_agg_dataflow_v2",
       "requested_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP_AGG/1.0?references=all",
       "final_url": "https://sdmxcentral.imf.org/sdmx/v2/structure/dataflow/IMF.STA/BOP_AGG/1.0?references=all",
-      "retrieved_at_utc": "2026-11-19T06:51:38.830047+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:40.066212+00:00",
       "http_status": 404,
       "headers": {
         "vary": "Access-Control-Request-Headers",
@@ -514,7 +514,7 @@
         "x-content-type-options": "nosniff",
         "content-type": "application/xml;charset=UTF-8",
         "transfer-encoding": "chunked",
-        "date": "Thu, 19 Nov 2026 06:51:40 GMT",
+        "date": "Thu, 19 Nov 2026 06:59:40 GMT",
         "connection": "close"
       },
       "byte_count": 421,
@@ -525,14 +525,14 @@
       "name": "api_imf_bop_agg_dataflow_v3",
       "requested_url": "https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP_AGG/+/",
       "final_url": "https://api.imf.org/external/sdmx/3.0/structure/dataflow/IMF.STA/BOP_AGG/+/",
-      "retrieved_at_utc": "2026-11-19T06:51:40.608907+00:00",
+      "retrieved_at_utc": "2026-11-19T06:59:41.329689+00:00",
       "http_status": 200,
       "headers": {
-        "Date": "Thu, 19 Nov 2026 06:51:40 GMT",
+        "Date": "Thu, 19 Nov 2026 06:59:41 GMT",
         "Content-Type": "application/vnd.sdmx.structure+xml;version=3.0.0",
         "Transfer-Encoding": "chunked",
         "Connection": "close",
-        "x-correlation-id": "b04473644b42e30708cd2cf4e20be4f3",
+        "x-correlation-id": "f731f6b10fcb295dc31a7cfae23ed167",
         "x-content-type-options": "nosniff",
         "x-xss-protection": "0",
         "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
@@ -540,12 +540,12 @@
         "expires": "0",
         "strict-transport-security": "max-age=31536000 ; includeSubDomains",
         "x-frame-options": "DENY",
-        "x-envoy-upstream-service-time": "42",
+        "x-envoy-upstream-service-time": "35",
         "server": "istio-envoy",
         "Request-Context": "appId=cid-v1:e4518baf-f7f4-42d7-900e-7dd820548dc8"
       },
       "byte_count": 4819,
-      "sha256": "9879db8d906781f7934c00ca24c056fca2facbf90adb22f26702b3eb687e95d6",
+      "sha256": "b436c590c20132b773c11213b4ed03f83cf6993129b395eafee4d6d952ae7a7e",
       "file": "api_imf_bop_agg_dataflow_v3.xml",
       "xml_parse": "PASS",
       "xml_root": "{http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message}Structure",
