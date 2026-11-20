@@ -661,3 +661,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Independent document-level review against the general rolling-backtest acceptance contract: 12/12 checklist items PASS (source provenance, session spine/identity, maturity, leakage, real-row hand-check, denominator, JSON/CSV parity, independent recomputation, H+3 >=50 per-State, runtime, v1/v2 isolation, approval boundary).
 - Document review only; no implementation/test/data/metrics verification. H+5 613-vs-616 mismatch remains unresolved.
 - Implementation NOT_AUTHORIZED pending explicit user approval; V11.4 remains BLOCKED / NOT_ADMISSIBLE; production NOT_AUTHORIZED.
+
+
+## BA. Morocco MAR — official FX and BPM6 sign methodology (Continuation 91)
+- Added docs/GCR_MOROCCO_MAD_USD_FX_AND_BPM6_SIGN_METHODOLOGY_AUDIT_CONTINUATION91_20261120.md (commit a8ecc9189d2f589cfce5d6fa57eebf248c80dac1).
+- IMF SDDS Morocco metadata and Office des Changes 2019 methodology confirm BPM6 financial-account columns are net acquisition of assets / net incurrence of liabilities and transactions are recorded net, primarily at settlement. IMF BPM6 confirms increases in assets/liabilities positive, decreases negative; financial-account balance assets minus liabilities.
+- BAM 2024 official USD/MAD reference methodology: volume-weighted interbank trade average 08:30–15:30 when thresholds met; otherwise 5-minute median bid/ask midpoint averages; daily publication at 16:15; possible same-day republication. Crucially BAM states reference rates are mainly for revaluation and not intended as FX transaction reference.
+- BAM API portal lists Cours de change V1, but no historical Q2 raw series/revision metadata or Office des Changes flow conversion convention established. No unsupported quarterly conversion made.
+- MAR national and corrected IMF asset/liability directions agree under BPM6 increase-positive semantics. Magnitude comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: find explicit Office des Changes transaction FX conversion rule; if unavailable, advance to next cohort member without inferred conversion.
