@@ -18,7 +18,7 @@
 
 #### A — V11.4 Historical Behavioural Selector
 
-<badge>PARTIAL — retrospective/exploratory</badge>
+**Status: PARTIAL — retrospective/exploratory.**
 
 Run artifact `walk_forward_metrics.json`-এর reported Top-30 results:
 
@@ -39,17 +39,17 @@ Run artifact `walk_forward_metrics.json`-এর reported Top-30 results:
 | +10% H+3 | 31/150 = 20.67% | 31/150 = 20.67% | 0.00 pp [−6.02, +6.00] |
 | +20% H+5 | 19/150 = 12.67% | 16/150 = 10.67% | −2.00 pp [−6.00, +1.33] |
 
-These are paired cutoff-date bootstrap intervals from the strict 30-matured-cutoff audit. They do not establish prospective superiority; promotion_authorized=false. No selector change is authorised. Top-30 generic winner-probability mean separation was also negligible/reversed (winner 0.08703 vs non-winner 0.08727). Target-specific eligible-universe calibration gaps were +0.01034 (H+1), +0.00343 (H+3), and +0.00024 (H+5); these are calibration diagnostics, not hit probabilities for today's names.
+These are paired cutoff-date bootstrap intervals from the strict 30-matured-cutoff audit. They do not establish prospective superiority; promotion_authorized=false. No selector change is authorised. Top-30 generic winner-probability mean separation was also negligible/reversed (winner 0.08703 vs non-winner 0.08727). Target-specific eligible-universe calibration: H+1 n=251,546 (Brier 0.08017; ECE 0.01473; winner/non-winner mean gap +0.01034), H+3 n=251,183 (Brier 0.06173; ECE 0.00376; gap +0.00343), H+5 n=250,776 (Brier 0.02076; ECE 0.00031; gap +0.00024). এগুলো calibration diagnostics, আজকের নামগুলোর hit probability নয়।
 
 #### B — V11.3 Cost-aware Trade Replay
 
-<badge color="warning">UNKNOWN — NOT AUTHORIZED / NOT RUN</badge>
+**Status: UNKNOWN — NOT AUTHORIZED / NOT RUN.**
 
 User-approved entry, exit, stop, circuit/slippage, brokerage, taxes and position-sizing assumptions are not present in this run; no independently reconciled cost-aware replay is attached. No net return, win rate, drawdown or B-score assigned. This engine contributes **no ranking boost**.
 
 #### C — Global Capital Rotation & Relative-Attraction
 
-<badge color="warning">UNKNOWN — BLOCKED</badge>
+**Status: UNKNOWN — BLOCKED.**
 
 No complete timestamp/vintage-aligned macro → sector → stock → matured-outcome join was evidenced in this artifact. Official market snapshot is context only, not a GCR signal. No GCR boost applied.
 
@@ -72,7 +72,7 @@ Selector ranks below are experimental ranks outside the frozen Top-30, not produ
 #### Candidate evidence notes
 
 - **HINDOILEXP:** NSE quote snapshot reported 1W +16.84% vs NIFTY 50 +0.16%, 1M +32.66% vs NIFTY 50 +10.71%, traded volume 7.73 lakh, traded value ₹17.30 crore, impact cost 0.08 and deliverable/traded quantity 36.08%. 52-week high ₹238.89 was recorded on 2026-11-18. Momentum exists, but the explicit ST ASM-1 and elevated P/E flags, plus the intraday-only price timestamp, fail the alert gate.
-- **NRL:** NSE snapshot as of 2026-11-13 16:00 showed BE series, 5% price band, 100% applicable margin, impact cost 2.31, volume 45.75K and value ₹78.35 lakh. Order-book fields were blank in that snapshot. This is an execution-friction warning, not a current 20-Nov quote.
+- **NRL:** NSE snapshot as of 2026-11-13 16:00 showed BE series, 5% price band, 100% applicable margin, impact cost 2.31, volume 45.75K and value ₹78.35 lakh. NSE also flagged close-to-close price movement >75% in the previous 6 months and >100% in the previous 365 days; order-book fields were blank in that snapshot. This is an execution-friction warning, not a current 20-Nov quote.
 - **KDDL:** NSE snapshot as of 2026-11-17 12:05 showed ₹4,368, +11.61%, volume 2.58 lakh, value ₹111.42 crore, impact cost 0.16, 20% price band and 52-week high ₹4,440. NSE filings show results/investor-presentation disclosures around 13-Nov; no new catalyst with a verified 20-Nov timestamp was established. A fresh official 19-Nov closing quote was not verified.
 - **YATRA:** NSE-filed 2026-11-12 press release reports Q2 revenue ₹2,136 million (−39.1% YoY), adjusted EBITDA ₹150 million (−41.2%), EBITDA ₹132 million (−47.0%) and net loss ₹7 million. Offsetting positives: Q2 gross bookings +6% YoY, H1 gross bookings +11%, corporate gross bookings +18%, and air gross bookings +15%. Mixed fundamentals; no current official price/volume confirmation.
 - **ELITECON:** ISIN INE669R01026 is verified in an NSE circular; current quote, price band and surveillance status were not independently verified for this cutoff.
