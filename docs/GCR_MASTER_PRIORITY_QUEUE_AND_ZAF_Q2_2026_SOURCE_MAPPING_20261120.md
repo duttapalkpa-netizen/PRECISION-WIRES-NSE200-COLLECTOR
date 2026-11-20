@@ -646,3 +646,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Correct MAR IMF asset/liability directions are positive and directionally agree with Office des Changes +4,848/+36,933 million MAD. Previous asset sign-conflict claim withdrawn. No numeric MAD/USD comparison absent official conversion convention/vintage.
 - Detail report corrected in place with Continuation 88 correction note. MAR remains PARTIAL / NOT PASS; FX comparison NOT_DONE; same-vintage NOT_ESTABLISHED; aggregate NOT_AUTHORIZED.
 - Lesson: exact country + period + accounting-entry assertions before copying archived rows into a country report.
+
+
+## AY. V11.4 — Forward-Label V2 research-only acceptance specification (Continuation 89)
+- Added docs/V11_4_FORWARD_LABEL_V2_RESEARCH_ONLY_ACCEPTANCE_SPEC_CONTINUATION89_20261120.md (commit 099bc6ec6edc51af0897a985b4226b703781628f).
+- Defines exact T+1..T+h exchange-session joins, full-window maturity, explicit incomplete/quarantine states, point-in-time identity and feature/vintage leakage gates, corporate-action/duplicate handling, denominator conservation, canonical row-ledger serialization, exact JSON/CSV count parity and independent metric recomputation.
+- Makes prior H+5 JSON/CSV 613-vs-616 count mismatch a mandatory gate; preserves H+3 >=50 fully matured observations per State; DATA_CONTAMINATED remains UNKNOWN/quarantined.
+- Test-only fixtures cannot enter market metric denominators. Jobs <10 minutes. No new data collection or workflow dispatch.
+- Specification only; implementation and production admission remain NOT_AUTHORIZED pending explicit user approval and all acceptance gates. Existing V11.4 remains BLOCKED / NOT_ADMISSIBLE; V11.3 and GCR remain closed under their own gates.
