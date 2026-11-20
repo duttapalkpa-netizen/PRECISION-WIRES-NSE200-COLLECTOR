@@ -687,3 +687,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No MAD/USD conversion, no BAM proxy, no arithmetic mean or quarter-end rate. MAR remains PARTIAL / NOT PASS; FX convention NOT_ESTABLISHED; numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; aggregate/production NOT_AUTHORIZED.
 - Report create response commit c86b71dd38d21ce9312be470cf1c41f251ceb7b2, but subsequent path fetch 404 and retry 422 requiring sha; report artifact not independently verified. Findings and limitations are preserved here.
 - Decision: close this public metadata route as NOT_ESTABLISHED and advance fixed cohort. Revisit only on a new current versioned official portfolio fiche/FX methodology.
+
+
+## BD. Nepal NPL — NRB BPM6 byte-route closure (Continuation 94)
+- Added docs/GCR_NEPAL_NPL_Q2_2026_NRB_BPM6_BYTE_ROUTE_CLOSURE_CONTINUATION94_20261120.md (commit 3d578a8d292a8373f40403094752e297c031b2b5).
+- NRB External Sector BPM6 workbook locator remains official, but web XLSX retrieval and separate byte-download route both blocked. No workbook bytes/hash/sheets/values. NSDP XML is stale 2024-Q1; Monthly Banking & Financial Statistics is wrong source family and remains rejected.
+- NPL remains PARTIAL / NOT PASS; Q2 legs not extracted; period basis/sign/unit/vintage NOT_ESTABLISHED; aggregate/production NOT_AUTHORIZED.
+- Exact URL route closed; do not repeat without a new supported mechanism. Advance fixed cohort to next eligible member after preflight. No IMF query or cohort rebuild.
