@@ -549,3 +549,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Static cash/derivatives headings both end 02-Mar-2026. Cash report contains one daily date plus March, 2026 YTD and cumulative aggregates; not a multi-date daily series. CDSL Latest in same ZIP reports 18-Nov-2026, a 261-calendar-day cutoff gap. Keep derivatives separate.
 - Decision: static stale snapshot, no date-control contract in captured HTML; historical daily coverage UNKNOWN/NOT_ESTABLISHED. No hidden endpoint, guessed parameters, challenge bypass or repeat request. Detail report `docs/GCR_CDSL_DAILY_ARCHIVE_STATIC_SNAPSHOT_FRESHNESS_AUDIT_CONTINUATION78_20261120.md` (blob SHA `69597e2fbe40d859bfbccb4af165b6c10959c4a8`).
 - Next: if supported interactive browser exists, inspect visible official UI only; otherwise advance to another unfinished official source. CDSL archive daily series excluded; matched-date NSDL/CDSL NOT_DONE; production NOT_AUTHORIZED.
+
+
+## AO. Japan (JPN) Q2-2026 BOJ/MOF portfolio-flow source contract audit (2026-11-20)
+- Selected as an independent India-transmission Tier-0 source-family task, not as a member or replacement of the fixed 63-country IMF EMDE cohort.
+- Official BOJ BPM6 page confirms monthly portfolio asset/liability flows, separate asset/liability semantics, quarterly Regional BOP, and portfolio partner-economy coverage described for 45 economies. MOF schedule lists Q2-2026 Regional BOP release on 10-Nov-2026.
+- BOJ public API/CSV/JSON capability and date-frequency conventions verified from official manuals. Exact portfolio series IDs, Q2 partner-country values, India row availability, raw bytes/hash and same-vintage status were not retrieved.
+- Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md (commit 869e0fe8b91bb48b1f14fed170706e4b834bd76c).
+- Status: source-family/contract PASS; exact bilateral extraction NOT_DONE; Japan→India transmission PARTIAL / NOT PASS; production NOT_AUTHORIZED.
+- Next: inspect the official 10-Nov-2026 Q2 Regional BOP attachment or BOJ portfolio-by-counterparty series; capture/hash bytes, verify India partner coverage and separate asset/liability legs, and preserve vintage. No guessed API series code or aggregate substitution.
