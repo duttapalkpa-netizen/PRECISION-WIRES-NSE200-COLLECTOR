@@ -2277,3 +2277,17 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail: docs/GCR_MOLDOVA_MDA_Q2_2026_BNM_DETAILED_BOP_SOURCE_GATE_CONTINUATION86_20261120.md.
 - Next: use supported interactive browser to generate/export official detailed BOP for 2026-Q2, inspect metadata and separate portfolio asset/liability series, hash raw bytes before parsing; otherwise user may attach official BNM Q2 workbook/export. No inference from net EUR -24.9m.
 - ₹0; fixed cohort and all production invariants unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 87 — Morocco MAR Q2-2026 Office des Changes ↔ IMF dual-leg source reconciliation (2026-11-20)
+- Re-fetched Master Continuity Ledger, GCR queue and MDA Continuation 86 before selection. MDA remains PARTIAL because interactive BNM export cannot be operated in current read-only browser; no repeated unsupported XLSX retrieval.
+- Reused fixed 63-country Q2-2026 both-leg cohort (CSV blob 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8); MAR is a member. Repository search found no prior dedicated MAR Q2 dual-leg report. No cohort rebuild or IMF re-query.
+- Official Office des Changes Q2-2026 preliminary BOP PDF (30-Sep-2026 release schedule), unit million MAD: portfolio assets +4,848; liabilities +36,933; balance -32,085. Component identities: assets 1,101+3,747=4,848; liabilities -855+37,788=36,933; 4,848−36,933=−32,085. All three identities exact at published precision.
+- Official Ministry DSBB summary independently displays assets +4,848 and liabilities -36,933; liability sign differs from the Office des Changes PDF's explicitly labelled “net incurrence of liabilities” column. Treat as alternate signed presentation, not another observation.
+- Reused existing IMF artifact run 44474218174 / artifact 14505862034; ZIP SHA-256 1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f. Panel SHA e8a44abbc8455fef44cc1e4677018ae4b9634d1c04f65bf6fc6dad133cfce62a. Raw asset CSV SHA 677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e; liability CSV SHA 713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba.
+- Exact IMF Q2 rows (USD, SCALE=6, ACTION=R, DERIVATION_TYPE=O): A_NFA_T OBS_VALUE -28,987,027.88 (IFS_FLAG true); L_NIL_T +9,083.44 (IFS_FLAG blank). Raw fields unchanged.
+- Asset sign conflict between national labelled positive net asset acquisition and IMF negative A_NFA_T; no sign flip authorized. Liability signs agree under the explicitly labelled Office des Changes column, but currency comparison not computed because no official Q2 MAD/USD averaging convention was established. National Q2 preliminary vs IMF ACTION=R; same-vintage NOT_ESTABLISHED. National raw PDF bytes/hash not captured.
+- Status: national dual-leg extraction and arithmetic PASS; IMF exact-row recovery PASS; sign reconciliation REVIEW/NOT_RESOLVED; FX numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
+- Detail: docs/GCR_MOROCCO_MAR_Q2_2026_OFFICE_DES_CHANGES_IMF_DUAL_LEG_SOURCE_RECONCILIATION_CONTINUATION87_20261120.md.
+- Next: obtain official Q2 MAD/USD conversion convention and BPM6 sign/mapping methodology; then separate-leg comparison and observation-specific revision-vintage check. No new IMF query/cohort rebuild, unsupported conversion or netting.
+- ₹0; fixed cohort and production invariants unchanged. UNKNOWN is never PASS.
