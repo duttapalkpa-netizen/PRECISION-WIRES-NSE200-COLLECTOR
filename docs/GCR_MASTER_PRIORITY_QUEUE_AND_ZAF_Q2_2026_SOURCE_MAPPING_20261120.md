@@ -626,3 +626,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Q2 XLSX locator found, but raw bytes/hash and exact series not captured. MDA remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_MOLDOVA_MDA_Q2_2026_BNM_DETAILED_BOP_SOURCE_GATE_CONTINUATION86_20261120.md.
 - Next: supported interactive browser export or user-supplied official BNM Q2 workbook; capture/hash untouched bytes, extract separate asset/liability series and definitions. Do not infer legs from net -24.9m.
+
+
+## AW. Morocco MAR — Office des Changes Q2-2026 dual-leg extraction and IMF exact-row diagnostic (Continuation 87)
+- MAR selected from existing fixed 63-country Q2-2026 both-leg cohort after preflight; no prior MAR dedicated report found. MDA Continuation 86 was not repeated; its interactive-export blocker remains recorded.
+- Official Office des Changes Q2-2026 preliminary BOP PDF, million MAD, explicitly reports net acquisition of assets +4,848, net incurrence of liabilities +36,933 and balance -32,085. Component arithmetic and balance identity all exact at published precision.
+- Ministry DSBB summary separately shows assets +4,848 and liabilities -36,933; the latter is an alternate signed presentation, not a second observation.
+- Existing IMF panel artifact reused (run 44474218174 / artifact 14505862034; ZIP SHA 1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f). Exact MDA raw rows: A_NFA_T -28,987,027.88 USD; L_NIL_T +9,083.44 USD, both ACTION=R, SCALE=6, PRECISION=6, DERIVATION_TYPE=O.
+- National asset sign conflicts with IMF asset sign; no sign transformation authorized. MAD/USD Q2 conversion convention and observation-vintage bridge not established; no numeric FX comparison. National PDF raw bytes/hash not captured.
+- MAR national dual-leg extraction/arithmetic PASS; IMF exact-row recovery PASS; sign REVIEW / NOT_RESOLVED; FX comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_MOROCCO_MAR_Q2_2026_OFFICE_DES_CHANGES_IMF_DUAL_LEG_SOURCE_RECONCILIATION_CONTINUATION87_20261120.md.
+- Next: official MAD/USD Q2 convention and Office des Changes BPM6 sign methodology, then numeric separate-leg comparison and vintage bridge. No re-query or cohort rebuild.
