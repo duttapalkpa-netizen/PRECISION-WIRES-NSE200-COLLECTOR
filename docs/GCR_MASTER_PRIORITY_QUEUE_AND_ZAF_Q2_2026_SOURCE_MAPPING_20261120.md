@@ -342,3 +342,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Paths-ignore guard added for PHL and cancellation paths in commit fbaa2617f8e996b996f299652194974141cd0921. Accidental NSE runs 44704973029 and 44704985742 confirmed cancelled; no outputs admitted.
 - Detailed report updated: docs/GCR_PHILIPPINES_PHL_Q2_2026_BSP_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120.md (update commit d3808035b3c7ad8372b21ded3f1eeb9f9700deea).
 - Next: bounded official vintage search only; if no specific BSP portfolio revision archive or IMF observation-level vintage attribute is public, retain NOT_ESTABLISHED and advance to next eligible cohort member after preflight. No repeat parser work, IMF requery or cohort rebuild.
+
+
+## AJ. PHL official revision-policy gate closed as NOT_ESTABLISHED (2026-11-20)
+- BSP official Revision Policies page states BOP/IIP data released during the reference quarter are preliminary and may be revised in any quarter of the reference year; prior-year revisions can occur with Q2 September and Q4 March reports.
+- BSP 2024 BPM6 revision technical note documents historical portfolio-specific revisions to both asset and liability legs, including CPIS and BSP transaction-report updates. This demonstrates revision risk but does not establish a revision to PHL Q2-2026 values.
+- BSP's FDI in-kind revision notice remains excluded; it concerns FDI, not portfolio investment.
+- IMF BOP public dataset/API landing page and 18-Nov-2026 BOP/IIP metadata dashboard do not expose PHL Q2 observation-specific source submission/revision timestamp. Metadata dashboard date is not the observation vintage.
+- No public PHL Q2-2026 portfolio revision chain or IMF observation-level vintage field located. Same-vintage NOT_ESTABLISHED; numeric 2/2 PASS and raw+parsed capture PASS; full national acceptance PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report update commit 395e5aca2ebf55994dbf36a8c6114b31b97f309a.
+- Close bounded PHL vintage search; do not repeat generic IMF landing-page or BSP policy searches absent a new release. Next action: preflight the existing 63-country queue and choose the next eligible country without rebuilding the cohort.
