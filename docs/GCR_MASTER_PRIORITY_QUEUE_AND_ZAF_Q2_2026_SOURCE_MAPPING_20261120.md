@@ -737,3 +737,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Archived IMF panel fetch for large file returned empty content (blob SHA 2a8db2878cac6323bbad74ffa4035dc70e5e6b98); no exact SLB IMF rows captured and no new IMF query. CBSI PDF byte download failed; no SHA. FX/vintage bridge not established.
 - Report: docs/GCR_SOLOMON_ISLANDS_SLB_Q2_2026_CBSI_PORTFOLIO_SOURCE_SIGN_CONFLICT_CONTINUATION99_20261120.md (commit 0552b4e1f7aa429c1e0c213235b7d5f25fa007e7; verified blob SHA 7a696af5f0562941f59363d10bb6b58199319049).
 - SLB PARTIAL / NOT PASS; comparison NOT_DONE; aggregate NOT_AUTHORIZED. Next: official CBSI sign-methodology note, exact archived IMF row retrieval without re-query, transaction FX/vintage bridge, raw PDF archival. Do not admit until conflict resolved.
+
+
+## BJ. El Salvador SLV — BCR Q2-2026 portfolio source-family gate (Continuation 100)
+- SLV is next after SLB in immutable 63-country Q2 cohort; both IMF legs present. Preflight checked current Master Ledger, GCR queue, SLB report, exact-sample receipt and cohort; no dedicated SLV report found. No cohort rebuild/IMF re-query.
+- BCR June-2026 financial statement has USD-thousand “Inversiones en el Exterior (Neto)” balance-sheet stocks (Mar 3,834,678.3; Jun 4,233,089.5). Rejected as BOP transactions; stock difference is not a transaction.
+- IMF staff 2025 EFF/Article IV annual BPM6 BOP table includes separate portfolio assets/liabilities but is annual and partly staff-estimated; context only, not Q2 national data.
+- Existing exact sample excludes SLV; large panel fetch empty; exact IMF rows NOT_CAPTURED. Q2 national asset/liability NOT_CAPTURED; SLV PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_EL_SALVADOR_SLV_Q2_2026_BCR_PORTFOLIO_SOURCE_FAMILY_GATE_CONTINUATION100_20261120.md (commit 94cec1b68b19e8fef099bc4ccbf2083cfaa7a286; verified blob SHA 658b83d795529e9eecd99879039e6e8bcdb6a8c3).
+- Next: BCR official Q2 BOP dual-leg table; raw bytes/vintage/SHA-256; retrieve archived IMF exact rows without re-query. No stock-as-flow or annual proration.
