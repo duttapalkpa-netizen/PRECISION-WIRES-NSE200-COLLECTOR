@@ -790,3 +790,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Updated gate: standards-level IMF/NBS semantic bridge PASS; national coverage/timing/valuation equivalence NOT_ESTABLISHED; exact IMF rows CAPTURED; May later-vintage legs NOT_CAPTURED; USD/EUR transaction-weighted bridge NOT_ESTABLISHED; dual-leg comparison NOT_DONE; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: byte-preserving official XLS/CSV retrieval; May revision check; transaction-weighted FX or official USD presentation; then separate leg comparison.
 - ₹0; no IMF query, cohort rebuild, generic FX, net inference or production changes. UNKNOWN is never PASS.
+
+
+## BO. Serbia SRB — NBS alternate public data-route audit / next vintage gate (Continuation 105)
+- Preflight re-fetched Master Ledger (blob SHA 554fa175e22b21db928da579a05ffc63d267fda0), GCR queue (blob SHA ca9822d94a496ec27b5665d2c223c548b800a7fa), Continuation 104 (blob SHA fd1253e3c6f9b2681a825a756c4a88252f83ee80). PASS work skipped.
+- NBS BOP page exposes September 2026 monthly and detailed BPM6 XLS workbooks; both XLS routes still fail web retrieval with HTTP/tool-side 400 unsupported content type. No workbook bytes/sheets/values/hash captured.
+- NBS Statistical Bulletin “Data series in XLS format” link resolves to generic Statistics landing page; no separately exposed CSV/HTML monthly BOP flow series or official USD separate-leg series found in inspected public page/search results. This is a scoped NOT_FOUND, not proof that no archive endpoint exists.
+- Official release calendar lists 3-Dec-2026 for October 2026 Statistical Bulletin; future vintage only, not current evidence.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_ALTERNATE_DATA_ROUTE_AND_NEXT_VINTAGE_GATE_CONTINUATION105_20261120.md (create commit d82302447ca36e0700af3de96d5c0f8561d0340d).
+- May 2026 later-vintage separate legs NOT_CAPTURED; USD bridge NOT_ESTABLISHED; national scope/timing/valuation equivalence NOT_ESTABLISHED; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: inspect NBS archive form's underlying endpoint via approved byte-preserving route; re-check October 2026 bulletin after scheduled 3-Dec-2026 release; no currency assumption or generic FX.
+- ₹0; no IMF re-query, cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
