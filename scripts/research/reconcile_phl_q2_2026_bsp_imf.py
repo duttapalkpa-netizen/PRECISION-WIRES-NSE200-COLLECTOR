@@ -76,12 +76,16 @@ def main():
         raise SystemExit("BSP Q2 release page could not be verified")
     # Extract Q2 2026 values from the dated release's three consecutive portfolio rows.
     rp=Parser(); rp.feed(release_page)
-    release_vals={}
-    for row in rp.rows:
-        if row and row[0].strip() in ("Portfolio Investment","Net Acquisition of Financial Assets","Net Incurrence of Liabilities"):
-            label=row[0].strip()
-            if len(row)>2: release_vals[label]=row[2]
-    if len(release_vals)!=3: raise SystemExit("BSP release portfolio row extraction incomplete: "+repr(release_vals))
+    # The press release has several functional-account sections with the
+    # same component labels. Anchor on the Portfolio Investment heading and
+    # take only its two immediately following component rows.
+    pidx=next((i for i,row in enumerate(rp.rows) if row and row[0].strip()=="Portfolio Investment" and len(row)>2),None)
+    if pidx is None or pidx+2>=len(rp.rows): raise SystemExit("BSP release portfolio section heading not found")
+    section=rp.rows[pidx:pidx+3]
+    expected=("Portfolio Investment","Net Acquisition of Financial Assets","Net Incurrence of Liabilities")
+    if tuple(row[0].strip() if row else "" for row in section)!=expected or any(len(row)<=2 for row in section):
+        raise SystemExit("BSP release portfolio subsection shape mismatch: "+repr(section))
+    release_vals={row[0].strip():row[2] for row in section}
     release_map={"net":"Portfolio Investment","asset":"Net Acquisition of Financial Assets","liability":"Net Incurrence of Liabilities"}
     for key,label in release_map.items():
         if number(release_vals[label]) != vals[key]:
