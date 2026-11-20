@@ -654,3 +654,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Makes prior H+5 JSON/CSV 613-vs-616 count mismatch a mandatory gate; preserves H+3 >=50 fully matured observations per State; DATA_CONTAMINATED remains UNKNOWN/quarantined.
 - Test-only fixtures cannot enter market metric denominators. Jobs <10 minutes. No new data collection or workflow dispatch.
 - Specification only; implementation and production admission remain NOT_AUTHORIZED pending explicit user approval and all acceptance gates. Existing V11.4 remains BLOCKED / NOT_ADMISSIBLE; V11.3 and GCR remain closed under their own gates.
+
+
+## AZ. V11.4 — Forward-Label V2 specification independent review (Continuation 90)
+- Added docs/V11_4_FORWARD_LABEL_V2_SPECIFICATION_INDEPENDENT_REVIEW_CONTINUATION90_20261120.md (commit 6e8681739faf02ae06716a7b52c9521ff41c6c61).
+- Independent document-level review against the general rolling-backtest acceptance contract: 12/12 checklist items PASS (source provenance, session spine/identity, maturity, leakage, real-row hand-check, denominator, JSON/CSV parity, independent recomputation, H+3 >=50 per-State, runtime, v1/v2 isolation, approval boundary).
+- Document review only; no implementation/test/data/metrics verification. H+5 613-vs-616 mismatch remains unresolved.
+- Implementation NOT_AUTHORIZED pending explicit user approval; V11.4 remains BLOCKED / NOT_ADMISSIBLE; production NOT_AUTHORIZED.
