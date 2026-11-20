@@ -728,3 +728,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - RWA remains PARTIAL / NOT PASS; Q2 A_NFA_T/L_NIL_T NOT_CAPTURED; comparison NOT_DONE; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_RWANDA_RWA_Q2_2026_OFFICIAL_SOURCE_FAMILY_REJECTION_CONTINUATION98_20261120.md (commit 1f8997f5c491f62c494fb77494ce1a43537fedcf; verified blob SHA 001cc1fc2d6f698566206a7e746871d9eba1ee90).
 - Close identical JS-only route; advance only after fixed-cohort preflight if no new supported BNR direct dataset/API. No IMF re-query or cohort rebuild.
+
+
+## BI. Solomon Islands SLB — CBSI Q2-2026 portfolio source/sign-conflict audit (Continuation 99)
+- SLB is next after RWA in fixed 63-country Q2 cohort; both IMF legs present. Preflight checked current Master Ledger, GCR queue, RWA Continuation 98, cohort and existing SAU report; no duplicate SLB report. No cohort rebuild/IMF re-query.
+- CBSI official BOP page states BPM6 and quarterly/annual BOP; latest 2026-Q2. June 2026 Quarterly Review Table 1.17 (SBDm) reports Q2 portfolio financial assets +38 and liabilities dash/nil.
+- Chapter IV narrative instead describes portfolio investment as deficit SBD 38m. Unresolved internal sign/presentation conflict; do not flip sign or infer IMF leg mapping. Table 1.14 portfolio IIP assets 373 SBDm is a stock and not a flow.
+- Archived IMF panel fetch for large file returned empty content (blob SHA 2a8db2878cac6323bbad74ffa4035dc70e5e6b98); no exact SLB IMF rows captured and no new IMF query. CBSI PDF byte download failed; no SHA. FX/vintage bridge not established.
+- Report: docs/GCR_SOLOMON_ISLANDS_SLB_Q2_2026_CBSI_PORTFOLIO_SOURCE_SIGN_CONFLICT_CONTINUATION99_20261120.md (commit 0552b4e1f7aa429c1e0c213235b7d5f25fa007e7; verified blob SHA 7a696af5f0562941f59363d10bb6b58199319049).
+- SLB PARTIAL / NOT PASS; comparison NOT_DONE; aggregate NOT_AUTHORIZED. Next: official CBSI sign-methodology note, exact archived IMF row retrieval without re-query, transaction FX/vintage bridge, raw PDF archival. Do not admit until conflict resolved.
