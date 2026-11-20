@@ -37,6 +37,7 @@
 | Top-30 predictions SHA-256 | `8ed2d51044373c300ecc5f64e3103b246217794af849f494d80629c967195256` |
 | Eligible-universe export SHA-256 | `ec1361ce5275370ce1eb6fce97ba2cf86d4f7e39fc52b5b29fb435f537b43aec` |
 | Source metrics JSON SHA-256 | `7f6fa6895c736798368411ab9963ea4ef2680ad663ef57f770925958d00a8482` |
+| QA report SHA-256 | `48547e28ff82e978c8b63712c9fc5e4692268c3c99fba015bd1bfa3d7bd1af19` |
 | Independent audit | ID `V11.4-OBS-LABEL-RECON-20261120-RUN416`; audit script SHA-256 `3a69c353a03d77f871f7bd52b120dd43633bf11228fcc0cdcd4bfc83e03f4a2b`; config SHA-256 `1d17284e1c4a16e59e51a0d117a8b1e9888cfba39bd5378ce1c61dfca1c6d8a8` |
 | Corrected-label audit JSON | SHA-256 `f0dd74fb7936038b4503ed4e8579a6af17b9f45de9fbb59226360f660e4726a2` |
 | Per-cutoff denominator ledger | SHA-256 `5cbaf23a92bb8a96b1c0d63424fbeeddeb2b02d1ff40a99351d71c820ef99617` |
