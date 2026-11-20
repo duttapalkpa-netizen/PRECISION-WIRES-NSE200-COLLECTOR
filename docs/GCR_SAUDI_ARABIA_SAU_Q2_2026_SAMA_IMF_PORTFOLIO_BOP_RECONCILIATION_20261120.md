@@ -28,7 +28,7 @@ https://www.sama.gov.sa/en-US/Statistics/MonthlyStatistics/Monthly_Statistical_B
   - 3.2 Portfolio investment = +3,283 USDm.
   - 3.2.1 Net acquisition of financial assets = +9,664 USDm.
   - 3.2.2 Net incurrence of liabilities = +6,381 USDm.
-  - Identity: 6,381 − 9,664 = −3,283 if expressed as liabilities less assets; table portfolio investment balance is +3,283 under SAMA's financial-account presentation. This balance identity is not used to infer either leg; the two component lines are independently compared.
+  - Identity: 9,664 − 6,381 = +3,283, matching the reported portfolio investment balance. This balance identity is not used to infer either leg; the two component lines are independently compared.
 - SAMA's table explicitly names the two IMF-like concepts “Net acquisition of financial assets” and “Net incurrence of liabilities”; no FX conversion is required because both sources are USD.
 - The September 2026 Monthly Statistical Bulletin page is dated September 2026; SAMA's Monthly Statistics page identifies the September 2026 bulletin as published 29 October 2026.
 
