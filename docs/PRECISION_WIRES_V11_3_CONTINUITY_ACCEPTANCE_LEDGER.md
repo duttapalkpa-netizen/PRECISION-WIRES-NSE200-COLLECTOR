@@ -2607,3 +2607,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_BALANCE_OF_PAYMENTS_ARCHIVE_STALENESS_AUDIT_CONTINUATION115_20261121.md; create commit c226bf514c84b281dc36688938fdf6b65229ad78.
 - TLS NOT_VALIDATED / NOT PASS. Next: inspect official Economic Statistics/BOP data and H1 review appendices for current dual legs; if unavailable, mark NOT_AVAILABLE and advance.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 116 — Timor-Leste BCTL live BOP dashboard / Excel export route (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA 5b90932ad15477ba22f74d44b705095f9f29cce6), GCR Queue (blob SHA 86f1ca7b64a70d77ed94f342349faac7fef1d8d9), and TLS C115 report (blob SHA 9f243d8b564204e21002b9fe77dec301029f9c0f).
+- Newly discovered official BCTL BOP page https://www.bancocentral.tl/stats/balance_pay/ embeds Power BI “BoP_V1” and exposes “+ Export Excel”. Exact export endpoint https://www.bancocentral.tl/stats/bopdoc/download/c81e728d9d4c2f636f067f89cc14862c/.
+- XLSX MIME recognized; web tool cannot parse XLSX MIME and direct container download failed. No workbook bytes, sheet names, periods or SHA-256. Power BI extraction yields no data rows.
+- H1 2026 portfolio component -USD 524.9m remains aggregate only; Q2 separate legs NOT_CAPTURED. Stale Aug-2026 archive PDF is through 2016 and rejected.
+- Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_LIVE_BOP_DASHBOARD_AND_EXCEL_EXPORT_ROUTE_AUDIT_CONTINUATION116_20261121.md; create commit 283427dd67f29be0d6622b492ae698b6ffe6be9d.
+- TLS NOT_VALIDATED / NOT PASS. Next: actual browser export of XLSX/Power BI data; capture bytes/hash, inspect period and dual legs; compare archived IMF rows only after alignment. If blocked/no legs, advance.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
