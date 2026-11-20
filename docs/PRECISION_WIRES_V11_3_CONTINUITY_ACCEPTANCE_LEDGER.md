@@ -1885,3 +1885,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Bangladesh Bank methodology explains credit/debit treatment: credit records decrease in foreign financial asset holdings or increase in foreign financial liabilities; debit records increase in foreign financial assets or decrease in foreign financial liabilities. Historical directional rows support the Bangladesh asset/liability sign crosswalk and accounting identity, but are not Q2 2026 observations.
 - Historical FY25 component/sign crosswalk PASS. FY26 Q4 separate national asset/liability values and same-vintage bridge remain NOT_AVAILABLE / NOT_ESTABLISHED; BGD full validation BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Do not carry FY25 zero asset value into FY26.
 - Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
+
+
+## 2026-11-20 — BGD FY26 Q4 national net-only recheck; sign-identity exception
+- Official Bangladesh Bank Quarterly Apr–Jun 2026 Vol XXIII No.4 Table V.1 reports portfolio net FY26 Q4 -109 USDm, with FY26 Q1/Q2/Q3 values -45/-59/-10 and FY26 annual -223; FY26 entries provisional. Calendar 2026-Q2 maps to FY26 Q4.
+- Reused IMF exact-key receipt: A_NFA_T=0 USD; L_NIL_T=-113.334678 USDm. Historical FY25 Bangladesh identity was net=assets−liabilities; applying it mechanically to these IMF legs yields +113.334678 USDm, opposite to national -109 USDm (absolute difference 222.334678 USDm). This is a diagnostic exception only, not proof of an IMF error or validated sign flip. Do not back-solve national legs or silently transform signs.
+- FY26 national net-only source row PASS; separate legs NOT_AVAILABLE; cross-source net identity REVIEW / FAIL_DIAGNOSTIC; same-vintage NOT_ESTABLISHED; BGD dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
