@@ -2587,3 +2587,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_PUBLICATION_PERIOD_BASIS_AND_H1_Q2_AMBIGUITY_CONTINUATION113_20261121.md; create commit 85070d16f9998a480df516733eb1d66df417431a.
 - TJK NOT_VALIDATED / NOT PASS. Next: retrieve PDF bytes, inspect internal period and legs; if H1, require same-vintage Q1 dual legs before derivation; otherwise mark unavailable and advance.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 114 — Timor-Leste TLS official H1 portfolio source gate (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA 163b5cfc1653ba7362db3d7394a134876bb7989b), GCR Queue (blob SHA 24b73fabe206fa3e28bd15181c47d2ced9031cf4), and TJK C113 report (blob SHA f27988d966cc9dfb32a3b597ff5d5358f02584cd). GitHub search found no existing TLS Q2 dual-leg report; PASS work skipped.
+- BCTL Mid-Year Economic Review reports H1 2026 portfolio investment -USD 524.9m and interprets it mainly as drawdown of external portfolio assets/Petroleum Fund assets. This is H1 aggregate/net component, not separate Q2 asset/liability legs.
+- BCTL quarterly BOP schedule lists releases Q1 2025 through Q4 2025 only; Q2 2026 dual-leg release NOT_LOCATED via this route. IIP stock series rejected as BOP transaction substitute.
+- Internal source discrepancy preserved: Executive Summary financial account -USD 705.9m vs detailed table/section -USD 702.9m. No silent reconciliation.
+- Report: docs/GCR_TIMOR_LESTE_TLS_Q2_2026_BCTL_H1_PORTFOLIO_SOURCE_GATE_CONTINUATION114_20261121.md; create commit c9b29c63569df74cad17cd1ac1105a70dc3e0dca.
+- TLS NOT_VALIDATED / NOT PASS; H1 portfolio component captured; Q2 separate legs NOT_CAPTURED; unit USDm for H1 component; Q2 period/sign/vintage and IMF comparison NOT_ESTABLISHED/NOT_DONE.
+- Next: search official BCTL archive for Q2 standalone BOP or H1 separate legs; no H1-Q1 subtraction absent same-vintage Q1 dual legs; otherwise advance.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
