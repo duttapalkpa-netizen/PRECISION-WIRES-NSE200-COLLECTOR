@@ -2240,3 +2240,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: revision calendar/partner semantics PASS; matched-vintage Q2 reconciliation NOT_ESTABLISHED; raw ZIP capture and exact series codes NOT_DONE; causal transmission NOT_DONE; production NOT_AUTHORIZED.
 - Next: supported ZIP-capable capture of official BOJ monthly and quarterly flat files + specification/code lists; verify India series codes and preserve raw bytes/hash. If unavailable, no guessed series IDs.
 - ₹0; no synthetic data or inferred zero; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 84 — BOJ BP01 API and flat-file exact-code retrieval bridge (2026-11-20)
+- Re-fetched current ledger, GCR queue and Japan report; no repeat of Continuation 83 policy audit or prior PDF extraction.
+- Official BOJ API manual confirms BP01 documented metadata endpoint `/api/v1/getMetadata?format=csv&lang=en&db=BP01`, exact-code data endpoint `/api/v1/getDataCode?format=csv&lang=en&db=BP01&startDate=202604&endDate=202606&code=<series-code>`, and layer endpoint. Series code must omit the BP01 prefix. API supports CSV/JSON; metadata updated daily; limits 250 series and 60,000 series-period points/request.
+- BOJ BPM6 page exposes series-code workbook URL exbpsm6a.xlsx; BOJ Flat Files Download exposes monthly ZIP bp_m_en.zip and quarterly ZIP regbp_q_en.zip. Web retrieval rejects XLSX/ZIP MIME and direct byte download failed; no raw bytes/hash.
+- BOJ statistics list confirms BP01 contains separate portfolio asset/liability country-breakdown total and instrument subseries; quarterly Regional BOP lists India. This is taxonomy confirmation only, not exact series-code extraction.
+- Read-only search UI cannot execute controls; API endpoint inaccessible through current retrieval bridge. No guessed series IDs or data values.
+- Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 84.
+- Status: official API/retrieval contract and taxonomy PASS; exact codes/data/raw bytes NOT_DONE; matched-vintage reconciliation NOT_ESTABLISHED; production NOT_AUTHORIZED.
+- Next: supported API/HTTP client or user-supplied official data file; capture BP01 metadata, extract exact India codes, fetch only required series, hash raw bytes before parsing.
+- ₹0; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
