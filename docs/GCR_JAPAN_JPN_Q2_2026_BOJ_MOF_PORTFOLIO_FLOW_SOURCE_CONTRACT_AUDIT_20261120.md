@@ -167,3 +167,39 @@ Open the official 10-Nov-2026 Q2 Regional BOP release and its linked BOJ/ MOF wo
   * BOJ statistics list (portfolio assets/liabilities country breakdown and Regional BOP India): https://www.stat-search.boj.or.jp/ssi/docs/info/statistics_menu_list_e_bop.pdf
   * BOJ flat files download page: https://www.stat-search.boj.or.jp/info/dload_en.html
 - Protected invariants unchanged: ₹0; official/free sources only; no synthetic data, no inferred timestamps, no dash-to-zero conversion, no unsupported FX conversion, no netting across assets/liabilities, no production changes, fixed 63-country IMF cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 84 — BOJ API/flat-file retrieval contract and series-code locator audit (2026-11-20)
+- Re-fetched current Master Continuity Ledger, GCR queue and Japan report; reused Continuation 83 revision/partner semantics and did not repeat monthly/quarterly table extraction.
+- BOJ official API User Manual (18-Feb-2026) establishes three documented methods:
+  * `/api/v1/getMetadata?format=csv&lang=en&db=BP01` for metadata/codebook;
+  * `/api/v1/getDataCode?format=csv&lang=en&db=BP01&startDate=202604&endDate=202606&code=<series-code>` for exact monthly series observations (series code is the code WITHOUT the DB prefix);
+  * `/api/v1/getDataLayer` when a documented layer path is used; no layer path guessed here.
+- Manual states BP01 is Balance of Payments DB, API can return CSV/JSON for all Time-Series Data Search series, metadata is updated daily, and the response limits are 250 series / 60,000 series-period data points per request. It cautions against excessive request frequency.
+- BOJ official BPM6 page's Table 1 exposes the XLSX series-code list for “Balance of Payments, Regional Balance of Payments (Quarterly)” from Jan-2014 onward at https://www.boj.or.jp/en/statistics/br/bop_06/data/exbpsm6a.xlsx . The browser retrieval returned unsupported XLSX MIME; direct byte download also failed. Do not claim the workbook was parsed.
+- BOJ official Flat Files Download page exposes direct ZIPs:
+  * Monthly BOP: https://www.stat-search.boj.or.jp/info/bp_m_en.zip
+  * Regional BOP quarterly: https://www.stat-search.boj.or.jp/info/regbp_q_en.zip
+  Browser retrieval returned unsupported application/zip for both. No raw bytes/hash/headers captured.
+- BOJ search UI's official BOP statistics selection page is available at https://www.stat-search.boj.or.jp/ssi/cgi-bin/famecgi2?cgi=$nme_a000_en&lstSelection=BP01 and explicitly supports search by series name or series code, but the read-only page extraction does not operate the search controls or return selected data.
+- API metadata request was documented precisely from the manual but the API endpoint itself was inaccessible through the current web retrieval bridge (HTTP/tool-level inaccessible response). No API data request succeeded. Therefore no exact portfolio series IDs or data values are asserted in this continuation.
+- Verified metadata taxonomy independently from BOJ's official Statistics List PDF: BP01 includes the monthly Portfolio Investment Assets, Country Breakdown (Total / Equity and investment fund shares / Long-term debt securities / Short-term debt securities) and corresponding Liabilities tables; quarterly Regional BOP includes India as a named partner economy. This confirms item taxonomy, not the series codes or values.
+- Practical retrieval bridge decision: prefer documented BP01 API CSV over ZIP if a supported HTTP/API client is available; first retrieve BP01 metadata, filter exact series names + India, validate frequency and unit, then request only exact code(s) for Apr-Jun 2026. Retrieve quarterly Regional BOP code(s) separately at Q2-2026. Save untouched API CSV response bytes and request URL/headers/UTC/hash before parsing. Do not substitute the quarterly Regional BOP row for the monthly 45-economy series.
+### Acceptance
+| Gate | Status |
+|---|---|
+| Official BP01 database identity and API endpoints/parameters documented | PASS |
+| Official monthly/quarterly ZIP URLs identified | PASS |
+| Official BP01 statistics taxonomy for asset/liability country breakdown identified | PASS |
+| Official XLSX series-code locator URL identified | PASS |
+| XLSX/ZIP raw bytes captured and hashed | NOT_DONE |
+| BP01 metadata response retrieved | NOT_DONE |
+| Exact India portfolio asset/liability monthly series codes | NOT_DONE |
+| Exact quarterly India Regional BOP portfolio series codes | NOT_DONE |
+| April-June 2026 API observations / Q2 code observations | NOT_DONE |
+| Same-vintage / counterparty reconciliation | NOT_ESTABLISHED |
+| Production integration | NOT_AUTHORIZED |
+### Next exact action
+Use a supported API/HTTP client (or user-provided official BOJ CSV/XLSX/ZIP download) to call the documented BP01 metadata endpoint once, preserve the untouched response and hash, identify exact India portfolio asset/liability monthly codes plus Q2 Regional BOP codes, then retrieve only those series and verify periods, units, signs, missing-value symbols and vintage. No guessed code, no undocumented API route, no synthetic Q2.
+- Official sources: BOJ API manual https://www.stat-search.boj.or.jp/info/api_manual_en.pdf ; BOJ BPM6 data page https://www.boj.or.jp/en/statistics/br/bop_06/index.htm ; BOJ flat files https://www.stat-search.boj.or.jp/info/dload_en.html ; BOJ BOP statistics list https://www.stat-search.boj.or.jp/info/statistics_menu_list_e_bop.pdf .
+- Protected invariants unchanged: ₹0, official/free sources only, no fabricated timestamps, no dash-to-zero conversion, no FX conversion, no netting, no production changes, fixed 63-country IMF cohort unchanged. UNKNOWN is never PASS.
