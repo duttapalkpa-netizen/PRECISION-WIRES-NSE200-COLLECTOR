@@ -2014,3 +2014,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 Run a bounded official-source vintage search for BSP portfolio revision archive and IMF observation-level vintage metadata. If no public series-specific revision history or observation-level IMF vintage field exists, close the gate as NOT_ESTABLISHED and advance to the next eligible country after preflight. Do not repeat parser work, re-fetch IMF, or rebuild cohort.
 ### Protected invariants
 Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, weights and trade gates unchanged. UNKNOWN is never PASS. No synthetic data, fabricated timestamps, paid data, forward-fill, imputation, forced netting, production integration or aggregate authorization.
+
+
+## 2026-11-20 — Continuation 45 addendum: PHL vintage-policy search
+- BSP official Revision Policies page confirms all BOP/IIP components released during the reference quarter are preliminary and may be revised in any quarter of the reference year; prior-year revisions may accompany Q2 September and Q4 March releases.
+- BSP September-2025 technical note for 2024 BPM6 BOP series documents portfolio-specific revisions to both asset and liability components (including CPIS and BSP reporting-data updates). This is historical precedent only, not proof PHL Q2-2026 was revised.
+- BSP FDI in-kind revision notice explicitly excluded from portfolio gate.
+- IMF public BOP dataset/API page and BOP/IIP metadata dashboard (18-Nov-2026) expose no PHL Q2 observation-level source submission/revision timestamp; metadata dashboard date is not source observation vintage.
+- Bounded official-source search found no public PHL Q2-2026 portfolio revision chain or IMF observation-level vintage field. Gate closed NOT_ESTABLISHED, not PASS. PHL numeric dual legs 2/2 PASS; raw/parsed capture PASS; national acceptance PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Sources archived in PHL report; official pages: BSP revision policy https://www.bsp.gov.ph/SitePages/Statistics/External.aspx?TabId=2 ; BSP historical revision note https://www.bsp.gov.ph/Media_And_Research/Balance%20of%20Payments%20Report/2025/BOP_2qtr2025.pdf ; IMF BOP dataset https://data.imf.org/en/datasets/IMF.STA%3ABOP?sc_site=idata ; IMF BOP/IIP metadata dashboard https://data.imf.org/en/dashboards/bop%20metadata%20dashboard .
+- Exact next: preflight existing 63-country cohort and priority queue; choose next eligible country. Do not rebuild cohort, repeat generic vintage searches, re-run PHL parser, or re-query IMF absent an actual revision/source release.
