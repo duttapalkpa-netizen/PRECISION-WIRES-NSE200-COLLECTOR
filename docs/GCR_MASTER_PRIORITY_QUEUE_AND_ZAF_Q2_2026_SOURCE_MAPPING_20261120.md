@@ -489,3 +489,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - VNM status: official source-family/labels PASS; Q2 asset/liability NOT_EXTRACTED; quarterly route NOT_ESTABLISHED; sign and vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_VIETNAM_VNM_Q2_2026_SBV_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_CONTINUATION59_20261120.md (commit 8035d1724461c19577ae5f03aa55fcf76acdc3b0).
 - Next: search only for a distinct official SBV quarterly BOP release/data export exposing separate Q2-2026 portfolio legs; if absent, preserve VNM PARTIAL and advance to the next unvalidated fixed-cohort country. No IMF re-query/cohort rebuild or production changes.
+
+
+## Continuation 60 — Paraguay (PRY) Q2-2026 BCP BOP/IIP source-boundary audit (2026-11-20)
+- PHL was preflighted and excluded from repeat work: existing BSP report already has raw+parsed capture PASS, release parity PASS, separate asset/liability numeric 2/2 PASS, and bounded vintage review closed as NOT_ESTABLISHED.
+- PRY selected from the existing fixed 63-country Q2-2026 dual-leg cohort after repository search found no dedicated PRY national portfolio validation report. No IMF re-query, cohort rebuild or panel rebuild.
+- Official BCP BOP/IIP page confirms quarterly and annual dissemination with a three-month lag and exposes the Q2-2026 BOP/IIP XLSX download locator. Exact workbook URL recorded in detail report.
+- Web retrieval returned HTTP 400 unsupported XLSX MIME; independent direct byte-download attempt failed. No workbook bytes, sheets, rows, values or SHA-256 captured. No numeric admission, no annual-to-quarter allocation and no net-only substitution.
+- PRY status: official quarterly source discovery PASS; exact workbook locator PASS; XLSX bytes BLOCKED; asset/liability NOT_EXTRACTED; sign/units/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_PARAGUAY_PRY_Q2_2026_BCP_BOP_IIP_SOURCE_BOUNDARY_AUDIT_CONTINUATION60_20261120.md (commit 68485ed197f90ba823bea0da5d21bb2df2a16179).
+- Next: pursue only a distinct supported XLSX-capable or official BCP API/export route; if unavailable, preserve PRY PARTIAL and advance to the next unvalidated fixed-cohort country. No repeat same-endpoint retries, IMF re-query, cohort rebuild or production changes.
