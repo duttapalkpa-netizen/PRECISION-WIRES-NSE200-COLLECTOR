@@ -850,3 +850,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_SERBIAN_ARCHIVE_ROUTE_AND_REVISION_STATUS_CONTINUATION110_20261121.md (create commit 1e38f608fdb6c8d188b7ceaa57f6182696ada7db).
 - Next: inspect Serbian archive form DOM/Show action in real browser; capture July PDF bytes; verify Table 2.3 header and compare May legs. Stop if authenticated access required absent approval.
 - ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net inference or production changes. UNKNOWN is never PASS.
+
+
+## BU. Serbia SRB — July Bulletin retrieval route exhaustion (Continuation 111)
+- Preflight re-fetched Master Ledger (blob SHA eeef11fd8bfd0ed321e5e5ba35ccf3a6c52f79c9), GCR queue (blob SHA 831c53b4843e9afcac1402a54d75184f98ea24fb), Continuation 110 (blob SHA 13eab75efb08b133c36fe8cd4dcfc989df7832f4). PASS work excluded.
+- Fresh official NBS Serbian/English Bulletin archive checks confirm July 2026 issue (31-Aug / 03-Sep publication-date difference between language archives); both expose archive form only as Select/Input/Show in extracted HTML.
+- Direct July PDF fetch again times out; exact search for PDF/Table 2.3/3,932 returns no indexed header. NBS BOP page lists September current monthly XLS only. No alternate public July PDF/data endpoint found.
+- C107 extracted 3,932 row remains month-unattributed. July header and May legs NOT_VERIFIED; July-to-September revision NOT_DONE. September-vintage May assets -25, liabilities +3,932, net -3,957 EURm remains PASS in C109.
+- Report: docs/GCR_SERBIA_SRB_JULY_BULLETIN_RETRIEVAL_ROUTE_EXHAUSTION_AND_NEXT_GATE_CONTINUATION111_20261121.md (create commit fe431027dfeefe41092fae5d4418c4c1fa158b27).
+- Next route requires actual browser DOM inspection + archive Show action + binary capture. Do not repeat failed direct fetch, guess parameters or apply for gated web service absent explicit approval. If no browser capability, keep gate OPEN/BLOCKED and move to another valuable unfinished task.
+- ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
