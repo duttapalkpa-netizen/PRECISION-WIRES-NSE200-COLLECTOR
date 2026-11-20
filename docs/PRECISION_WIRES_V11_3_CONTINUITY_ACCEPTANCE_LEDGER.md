@@ -2187,3 +2187,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Acceptance: official source-family/period/API contract PASS; exact Q2 India partner legs NOT_DONE; national/India-transmission validation PARTIAL / NOT PASS; production NOT_AUTHORIZED.
 - Next exact action: inspect the official 10-Nov-2026 Q2 Regional BOP attachment and/or official BOJ 45-economy portfolio-by-counterparty data; capture/hash raw bytes before parsing, verify India row, separate assets/liabilities, unit/sign/vintage. Do not infer bilateral values from Japan aggregate BOP.
 - Protected production and 63-country cohort invariants unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 80 — Japan Q2-2026 Regional BOP India-row inspection (2026-11-20)
+- Re-fetched current ledger, GCR queue and Japan Continuation 79 report; selected only the unfinished exact attachment inspection.
+- Followed MOF official release-date page to its Q2-2026 Regional BOP PDF (published 10-Nov-2026): https://www.mof.go.jp/policy/international_policy/reference/balance_of_payments/regional/rbp20260406.pdf .
+- Page 8 Financial Account (Assets) and page 9 Financial Account (Liabilities) each contain a separate Portfolio Investment column and an India row; unit is 100 million yen.
+- India Q2-2026 asset cell is a dash (—), not numeric zero; liability cell is 7,526 (100 million yen). No FX conversion.
+- PDF was visually inspected through official document retrieval, but byte download failed; no raw file hash/headers/length claimed.
+- Result: Q2 India partner-table presence PASS; liability display extraction PASS; asset leg NOT_REPORTED_IN_THIS_TABLE; dual-leg validation PARTIAL / NOT PASS; raw-byte archive NOT_DONE; production NOT_AUTHORIZED.
+- Detail report: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md (updated in this continuation).
+- Next exact action: exact BOJ 45-economy portfolio asset/liability country-breakdown series for India Q2-2026; verify metadata and observations, capture/hash bytes before parsing. No guessed series IDs, no treating dash as zero, no aggregate substitution.
+- All production and fixed 63-country cohort invariants unchanged. UNKNOWN is never PASS.
