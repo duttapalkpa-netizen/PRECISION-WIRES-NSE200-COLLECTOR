@@ -65,3 +65,7 @@ Status: BPM6 sign/recording-method review PASS (bounded); MAD/USD flow-conversio
 
 ## 8. Protected invariants
 Fixed 63-country IMF Q2-2026 cohort unchanged. No new IMF request, no production change, no synthetic data, fabricated timestamps, unsupported FX, forward-fill, guessed mapping or paid API. ₹0. UNKNOWN is never PASS.
+
+
+## Continuation 91 — Final verification marker
+- This is the bounded Morocco official FX and BPM6 methodology audit for Continuation 91. The report's status remains: sign/recording methodology review PASS; official BAM reference-rate method identified; Q2 flow FX conversion convention NOT_ESTABLISHED; no numeric conversion; MAR PARTIAL / NOT PASS; aggregate and production NOT_AUTHORIZED.
