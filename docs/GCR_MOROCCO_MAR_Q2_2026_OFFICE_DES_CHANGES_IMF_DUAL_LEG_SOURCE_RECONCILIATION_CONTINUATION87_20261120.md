@@ -42,14 +42,14 @@ Decision: **Official national dual-leg Q2 values and accounting identity PASS at
 - Normalized panel CSV SHA-256: e8a44abbc8455fef44cc1e4677018ae4b9634d1c04f65bf6fc6dad133cfce62a.
 - Raw IMF asset CSV SHA-256: 677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e.
 - Raw IMF liability CSV SHA-256: 713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba.
-- Exact normalized MDA rows, dataflow IMF.STA:BOP(21.0.0), indicator P_F, unit USD, quarterly 2026-Q2, SCALE=6, PRECISION=6, DERIVATION_TYPE=O, ACTION=R:
-  * A_NFA_T: OBS_VALUE = -28,987,027.88 USD; IFS_FLAG=true.
-  * L_NIL_T: OBS_VALUE = +9,083.44 USD; IFS_FLAG blank.
+- Exact normalized MAR rows, dataflow IMF.STA:BOP(21.0.0), indicator P_F, unit USD, quarterly 2026-Q2, SCALE=6, PRECISION=6, DERIVATION_TYPE=O, ACTION=R:
+  * A_NFA_T: OBS_VALUE = +523,948,820.8007525 USD; IFS_FLAG=true.
+  * L_NIL_T: OBS_VALUE = +3,991,543,275.295832 USD; IFS_FLAG blank.
 - Raw OBS_VALUE and SCALE remain unchanged. Prior empirical IMF panel comparisons use OBS_VALUE / 1,000,000 only as a derived USD-million comparison field; that convention does not alter stored source values.
 
 ## 5. Comparison and blocker decision
 - National source publishes MAD million; IMF rows are USD. No Q2-2026 official daily/quarterly-average MAD/USD conversion series, matching convention or raw FX capture was established in this bounded task. Therefore no numeric USD comparison or residual is calculated.
-- Asset direction diagnostic: national Office des Changes reports positive net acquisition of assets (+4,848 MDH), while IMF A_NFA_T raw OBS_VALUE is negative (-28,987,027.88 USD). This is a sign conflict at the labelled concept level; do not silently flip either series. Scope, valuation, source revision and/or mapping may differ; cause NOT_ESTABLISHED.
+- Asset direction diagnostic: national Office des Changes reports positive net acquisition of assets (+4,848 MDH), and the correct MAR IMF A_NFA_T raw OBS_VALUE is positive (+523,948,820.8007525 USD); directions agree at the labelled concept level. Liability signs also agree: Office des Changes +36,933 MDH and IMF L_NIL_T +3,991,543,275.295832 USD. This is sign-direction agreement only, not numeric comparability.
 - Liability: Office des Changes explicitly reports positive net incurrence (+36,933 MDH); IMF L_NIL_T is positive (+9,083.44 USD), so signs agree, but magnitude comparison is impossible without an official FX convention and scope/vintage bridge.
 - IMF ACTION=R indicates revised status, not the exact observation revision timestamp. Office des Changes Q2 source is preliminary. Same-vintage alignment NOT_ESTABLISHED.
 - No national raw PDF bytes, HTTP headers, retrieval UTC, byte count or SHA-256 were captured: web extraction provided the table, while direct byte download failed. Do not claim a raw national-file hash.
@@ -65,7 +65,7 @@ Decision: **Official national dual-leg Q2 values and accounting identity PASS at
 | Liability sign presentation difference identified | PASS — presentation boundary only |
 | Existing IMF exact Q2 rows recovered without re-query | PASS |
 | IMF raw values and source-file hashes preserved | PASS |
-| Asset sign/concept reconciliation | REVIEW / NOT_RESOLVED |
+| Asset and liability sign-direction agreement | PASS — directional only |
 | MAD→USD Q2 comparison FX convention | NOT_ESTABLISHED |
 | Numeric dual-leg national↔IMF comparison | NOT_DONE |
 | Same-vintage / revision cut-off | NOT_ESTABLISHED |
@@ -74,7 +74,12 @@ Decision: **Official national dual-leg Q2 values and accounting identity PASS at
 | 63-country aggregate admission | NOT_AUTHORIZED |
 | Production integration | NOT_AUTHORIZED |
 
-## 7. Next exact action
+## 7. Correction note — Continuation 88 preflight
+- Post-write independent archive QA found that the prior Continuation 87 draft copied MDA (Moldova) exact IMF values into the MAR section. This was a country-key transcription error.
+- Reopened existing artifact ZIP 14505862034 and filtered exact COUNTRY=MAR, TIME_PERIOD=2026-Q2, BOP_ACCOUNTING_ENTRY=A_NFA_T/L_NIL_T. Correct MAR rows: A_NFA_T +523,948,820.8007525 USD; L_NIL_T +3,991,543,275.295832 USD; both ACTION=R, SCALE=6, PRECISION=6, DERIVATION_TYPE=O. The previously printed -28,987,027.88 and +9,083.44 belong to MDA and are withdrawn from Morocco analysis.
+- ZIP SHA-256 and normalized panel SHA-256 were independently recomputed and match the prior archive receipt. Raw series file hashes unchanged. This correction supersedes the erroneous MDA rows and asset-sign-conflict statement.
+
+## 8. Next exact action
 - Seek an official Bank Al-Maghrib / Office des Changes Q2-2026 daily or quarterly-average MAD/USD reference series and its precise averaging convention; archive raw bytes and hash before calculating a conversion.
 - Inspect Office des Changes' BPM6 compilation methodology for the asset sign and DSBB summary liability-sign transformation. Do not infer sign transformation from arithmetic alone.
 - Then compare separate legs against the already recovered IMF rows using the official conversion convention and source display rounding; seek observation-specific revision vintage.
