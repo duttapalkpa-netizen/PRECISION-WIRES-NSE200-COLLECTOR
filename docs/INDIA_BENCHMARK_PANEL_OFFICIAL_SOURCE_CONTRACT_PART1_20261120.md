@@ -1,5 +1,5 @@
 # India Benchmark Panel — Official Source Contract, Part 1
-Date: 2026-1120 (Asia/Kolkata)
+Date: 2026-11-20 (Asia/Kolkata)
 Project: PRECISION-WIRES V11.3 / Global Capital Rotation & Relative-Attraction Overlay
 Status: **SOURCE-LOCATOR AUDIT PARTIAL PASS; RAW INGESTION, SHA-256 ARCHIVE AND SYNCHRONIZED PANEL NOT YET RUN.**
 Purpose: Execute the first dependency in the India Market Transmission Country Priority Layer: define the Indian outcome panel and the public/official external benchmark inputs before country-specific event studies.
