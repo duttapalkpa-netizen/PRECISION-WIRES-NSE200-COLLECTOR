@@ -779,3 +779,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_SIGN_FX_METHODOLOGY_AND_REVISION_ROUTE_CONTINUATION103_20261120.md (create commit 97226fa883b88f0546b4b72e92ae10fa602c731f).
 - Next: obtain NBS September 2026 XLS and detailed XLS via byte-preserving route; verify May 2026 revised observations; retrieve IMF metadata for exact sign/concept mapping; do not FX-convert EUR aggregates with a generic rate.
 - ₹0; no IMF query, cohort rebuild, synthetic data, inferred FX, sign flip or production changes. UNKNOWN is never PASS.
+
+
+## BN. Serbia SRB — IMF BPM6 A/L + portfolio code bridge; NBS Sep-2026 vintage evidence limit (Continuation 104)
+- Preflight re-fetched Master Ledger (blob SHA e0a7e5641a17363311ce4372f75fba5369be6f73), GCR queue (blob SHA 0888f0895bfd817cbda671d4e9831ed09d5af032), SRB Continuation 103 (blob SHA a6a19a1521d8c405c25cd1e8129912fdc2c80d61), Continuation 102 (blob SHA 874f1908814137b67c0d4032752b73dd3a29e207), and Continuation 101 (blob SHA ca0eb8844ab9d14a378f4278506f363fdf776c65). Excluded completed NBS sign/FX method, Q2 aggregation and IMF exact row extraction.
+- Official IMF BPM6 Compilation Guide Appendix 7 A7.7 states accounting-entry codes N=net, A=assets, L=liabilities; Table A7.2 identifies 3B=Portfolio investment. IMF BPM6 Manual 6.54 defines portfolio investment as cross-border debt/equity securities other than direct investment/reserve assets. This supports standards-level semantic mapping of archived A_NFA_T/L_NIL_T with P_F to NBS separate portfolio assets/liabilities; national scope/timing/valuation equivalence remains NOT_ESTABLISHED.
+- Official NBS September developments PDF (dated 18-Nov-2026, 7 pages) inspected; reports Jan-Sep 2026 net portfolio inflow EUR 4.4bn. Context only; no separate May monthly legs or revision values. No net-to-leg inference.
+- NBS monthly and detailed XLS links still return 400 unsupported content-type application/vnd.ms-excel; no workbook bytes/sheets/values/hash. May revision NOT_DONE.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_IMF_BPM6_CODE_BRIDGE_AND_LATER_VINTAGE_LIMIT_CONTINUATION104_20261120.md (create commit 43cbf03ef895535ad10d05cd56673012d3b86a9d).
+- Updated gate: standards-level IMF/NBS semantic bridge PASS; national coverage/timing/valuation equivalence NOT_ESTABLISHED; exact IMF rows CAPTURED; May later-vintage legs NOT_CAPTURED; USD/EUR transaction-weighted bridge NOT_ESTABLISHED; dual-leg comparison NOT_DONE; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: byte-preserving official XLS/CSV retrieval; May revision check; transaction-weighted FX or official USD presentation; then separate leg comparison.
+- ₹0; no IMF query, cohort rebuild, generic FX, net inference or production changes. UNKNOWN is never PASS.
