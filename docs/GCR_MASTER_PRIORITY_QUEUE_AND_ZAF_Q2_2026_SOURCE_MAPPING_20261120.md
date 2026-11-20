@@ -811,3 +811,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - XLS bytes/sheets/values/hash and May later-vintage separate legs NOT_CAPTURED; USD series NOT_LOCATED; transaction FX bridge NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: inspect live archive form DOM and submission with actual browser capability; capture XLS bytes before parsing; do not apply for authenticated service absent explicit authorization.
 - ₹0; no IMF re-query, cohort rebuild, synthetic data, generic FX, net inference or production changes. UNKNOWN is never PASS.
+
+
+## BQ. Serbia SRB — NBS July-2026 Statistical Bulletin prior-vintage candidate (Continuation 107)
+- Preflight re-fetched Master Ledger (blob SHA 761c100c418e2c7c003df0e46952deeebac34bba), GCR queue (blob SHA dbec3cfe50a6c13022252c0cf687d15620884368), Continuation 106 (blob SHA e5994fc9b1318aaa5b4cc4c4db8aaa1f91106b30). PASS work excluded.
+- New official NBS July-2026 Statistical Bulletin PDF located: https://www.nbs.rs/export/sites/NBS_site/documents-eng/publikacije/sb/sb_07_26.pdf; 156 pages; Table 2.3 printed p.105. PDF text extraction returns portfolio asset/liability rows, including a 3,932 value in one extracted liability row.
+- Exact month/header alignment could not be re-opened because PDF header/page screenshot fetch timed out. Therefore whether 3,932 in July vintage is May 2026 is NOT_VERIFIED; no cross-vintage PASS. September 2026 Table 2.3 May +3,932 EURm remains existing evidence.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_JULY_BULLETIN_PRIOR_VINTAGE_CROSSCHECK_CONTINUATION107_20261120.md (create commit e952b837e44f686b76218504214da85de2b4022e).
+- Next: recover July Table 2.3 header row/page image, verify month for 3,932; compare July and September vintages separately. XLS raw capture and USD/EUR bridge remain open.
+- ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
