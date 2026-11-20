@@ -2458,3 +2458,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: SLV cohort PASS; BCR national source identification PASS; Q2 national A_NFA_T/L_NIL_T NOT_CAPTURED; same-vintage comparison NOT_DONE; SLV PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: locate BCR official Q2-2026 quarterly BOP financial-account portfolio table with separate assets/liabilities; capture raw bytes, vintage and SHA-256. Retrieve archived exact IMF rows without re-query; compare only after concept/sign/scale bridge.
 - ₹0; no stock-as-flow, no annual-to-quarter proration, no net inference, no FX inference, no production changes. Invariants preserved; UNKNOWN is never PASS.
+
+
+## Continuation 101 — Serbia SRB NBS BPM6 Q2-2026 portfolio dual-leg source gate (2026-11-20)
+- Preflight re-fetched current Master Continuity Ledger (blob SHA dc5b53b50cea760387096f0028b52c3892373b71), GCR Priority Queue (blob SHA f048598e774639cb80441e22dacc341efa3d00b2), SLV Continuation 100 (blob SHA 658b83d795529e9eecd99879039e6e8bcdb6a8c3) and immutable 63-country cohort (blob SHA 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8). SRB is next after SLV; both IMF legs present; no dedicated SRB report existed. No cohort rebuild or IMF re-query.
+- Official NBS Statistical Bulletin September 2026, Table 2.3 (BPM6, monthly EURm, preliminary), provides separate portfolio asset/liability flow rows. Apr/May/Jun 2026 sums: assets +248; liabilities +4,112; net -3,864. Arithmetic identity and sum of monthly net rows agree.
+- Material QA flag: May 2026 portfolio liabilities +3,932 EURm is unusually large; retained as published and must be checked against the official downloadable series / subsequent vintage. No correction or sign transform.
+- Detail report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_PORTFOLIO_DUAL_LEG_SOURCE_GATE_CONTINUATION101_20261120.md; create commit a2ae592c6416ee54786be29c684f8bf753056312.
+- National values extracted from official NBS PDF web text only; raw PDF bytes/byte count/SHA-256 NOT_CAPTURED. Exact archived IMF SRB rows NOT_CAPTURED; concept/sign bridge and same-vintage NOT_ESTABLISHED; comparison NOT_DONE. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: byte-preserving NBS PDF capture/hash; verify May liability observation and vintage; retrieve archived IMF SRB exact rows without new query; establish official mapping and compare both legs separately.
+- ₹0; all protected V11.3 invariants unchanged; UNKNOWN is never PASS.
