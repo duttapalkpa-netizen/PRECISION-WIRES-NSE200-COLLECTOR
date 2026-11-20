@@ -58,3 +58,7 @@ Status: OFFICIAL BPM6 SOURCE-SCOPE REVIEW PASS; PORTFOLIO-FLOW MAD/USD CONVERSIO
 
 ## 7. Protected invariants
 Fixed 63-country IMF Q2-2026 cohort unchanged. No new IMF request, no production change, no synthetic data, fabricated timestamps, unsupported FX, forward-fill, guessed mapping or paid API. ₹0. UNKNOWN is never PASS.
+
+
+## Continuation 92 — Final verification marker
+- BOP-versus-settlement methodology distinction reviewed from the official Office des Changes source. Execution-date settlement conversion is not established as the universal Q2 portfolio BOP conversion rule. Numeric conversion remains NOT_DONE; MAR PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
