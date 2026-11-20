@@ -82,3 +82,9 @@ No IMF re-query, no cohort rebuild, no synthetic values, no imputation/forward-f
 
 ### Next exact action
 - Inspect the SBP Data Revision Policy and identify an official, dated revision/vintage history for the CY26 Q2(R) portfolio rows; compare it with IMF archived observation vintage metadata if available. If no observation-specific history is publicly exposed, retain same-vintage as UNKNOWN and move to the next unvalidated country rather than infer it.
+
+
+### Continuation 52 — SBP Data Revision Policy check
+- Official SBP Data Revision Policy (last updated 11-Sep-2019): https://www.sbp.org.pk/departments/stats/Data-Revision-Policy.pdf . It defines revisions and states that provisional observations are marked P and revised observations R; revisions may reflect better source data, routine recalculation, methodology changes or correction of errors. It says reasons/sources are explained when revised series are released (policy PDF lines 21-29, 53-74, 91-111).
+- This supports interpreting SBP's Q2 CY26 (R) label as revised status, but the policy is generic and does not identify the Q2-2026 portfolio rows' specific revision date, prior value, reason, or revision event. Thus it does not close the same-vintage gate. IMF ACTION=R is likewise status-only without matching timestamp evidence.
+- Same-vintage remains NOT_ESTABLISHED / UNKNOWN; PAK remains PARTIAL, not PASS; aggregate NOT_AUTHORIZED. Next best action: proceed to next unvalidated fixed-cohort country while retaining this PAK vintage blocker unless a dated observation-specific SBP revision record becomes publicly available.
