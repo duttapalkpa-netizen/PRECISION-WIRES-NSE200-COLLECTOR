@@ -541,3 +541,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - CDSL 18-Nov custodian/depository reporting semantics are not aligned to NSDL Latest 19-Nov mixed provisional-T-day/custodian-prior-day presentation. Matched-date provider variance remains NOT_COMPUTABLE.
 - Detail report: docs/GCR_CDSL_DAILY_18NOV2026_FULL_TABLE_ARITHMETIC_QA_CONTINUATION77_20261120.md (blob SHA `181e041bc872d96586ead475092432b7bf8f187a`).
 - Next: bounded CDSL archive/date-control contract audit using existing raw HTML only; no guessed postback. If unsupported, retain NOT_DONE and move to another independent official source task. Production, CORE-672, Engines A–E, selector/score and fixed 63-country cohort unchanged.
+
+
+## Continuation 78 — CDSL daily archive static snapshot/freshness audit (2026-11-20)
+- Reused verified artifact 14527092174 / run 44519322726; ZIP SHA-256 `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd` matched. Exact archived member `cdsl_daily_archive.html`: 73,784 bytes, SHA-256 `aa2a03c6621772e52b0b9ac52f11b525d82f1ce80539554302eda861145304df`.
+- Manifest proves official GET to `https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx`, HTTP 200, retrieved 2026-11-19T11:57:09.076562Z. Captured HTML contains no forms, inputs, selects, buttons or date/calendar controls.
+- Static cash/derivatives headings both end 02-Mar-2026. Cash report contains one daily date plus March, 2026 YTD and cumulative aggregates; not a multi-date daily series. CDSL Latest in same ZIP reports 18-Nov-2026, a 261-calendar-day cutoff gap. Keep derivatives separate.
+- Decision: static stale snapshot, no date-control contract in captured HTML; historical daily coverage UNKNOWN/NOT_ESTABLISHED. No hidden endpoint, guessed parameters, challenge bypass or repeat request. Detail report `docs/GCR_CDSL_DAILY_ARCHIVE_STATIC_SNAPSHOT_FRESHNESS_AUDIT_CONTINUATION78_20261120.md` (blob SHA `69597e2fbe40d859bfbccb4af165b6c10959c4a8`).
+- Next: if supported interactive browser exists, inspect visible official UI only; otherwise advance to another unfinished official source. CDSL archive daily series excluded; matched-date NSDL/CDSL NOT_DONE; production NOT_AUTHORIZED.
