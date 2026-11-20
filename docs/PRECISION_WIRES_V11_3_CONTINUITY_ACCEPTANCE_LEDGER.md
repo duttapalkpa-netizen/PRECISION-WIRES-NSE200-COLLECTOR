@@ -2537,3 +2537,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_HEADER_RECOVERY_AND_VINTAGE_GATE_CONTINUATION108_20261121.md; create commit f88dce5962c98f799d494dce9700edd891cfe19b.
 - Next: acquire PDF bytes through browser/alternate official route; inspect header; compare separate May legs across vintages only after exact alignment.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 109 — Serbia SRB September-vintage exact month header verification (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA ccdda277aa8ee8cfa91a8d98c459e1dd24980509), GCR queue (blob SHA 545794c9590ebf5649b2d01a8dda0ad391e4a34a), Continuation 108 (blob SHA bac151f983b989d7bf5dae0d981b8bcbc6ab4d7d). Completed PASS work skipped.
+- Official NBS September-2026 Statistical Bulletin Table 2.3 opened in full at printed p.105. Header at lines 8110–8111 explicitly maps 2026 May to the 10th data column after ITEM.
+- May 2026 September-vintage values: portfolio assets -25 EURm; liabilities +3,932 EURm; net -3,957 EURm. Lines 8145–8147. Arithmetic identity -25 - 3,932 = -3,957 PASS. Notes lines 8178–8180 say data available until 17-Sep-2026 and subject to correction.
+- This closes exact month mapping for September vintage only. July Bulletin PDF remains timeout; prior extracted 3,932 row lacks header. July month mapping NOT_VERIFIED; July-vs-September revision NOT_DONE.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_SEPTEMBER_VINTAGE_EXACT_MONTH_HEADER_VERIFICATION_AND_JULY_LIMIT_CONTINUATION109_20261121.md; create commit 4c8e006e31eeb8878f14846d762e8dd08cb122d1.
+- USD/EUR transaction-weighted bridge and national scope/timing/valuation equivalence NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: recover July PDF through browser/alternate official route, verify month header, then compare separate legs/vintages.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
