@@ -1,0 +1,29 @@
+name: GCR Malaysia Q2-2026 BNM FX Raw Capture (Research Only)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/gcr_mys_q2_bnm_fx_capture.yml"
+      - "scripts/research/capture_mys_q2_bnm_fx.py"
+permissions:
+  contents: read
+jobs:
+  capture-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture official BNM daily and monthly FX series and reconcile Q2
+        run: python scripts/research/capture_mys_q2_bnm_fx.py
+      - name: Upload immutable source bytes, filtered rows and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gcr-mys-q2-2026-bnm-fx-${{ github.run_id }}
+          path: artifacts/gcr_mys_q2_bnm_fx/
+          if-no-files-found: error
+          retention-days: 90
