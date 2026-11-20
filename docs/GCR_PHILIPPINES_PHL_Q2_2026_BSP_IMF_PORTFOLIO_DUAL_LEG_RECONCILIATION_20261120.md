@@ -52,3 +52,21 @@ Repair BSP Table 1.7 Excel-HTML parser with sparse-cell index handling, verify Q
 
 ## 8. Protected invariants
 Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, weights and trading gates unchanged. No paid data, synthetic values, fabricated timestamps, forward-fill, imputation, unauthorized netting, production integration or aggregate authorization. UNKNOWN is never PASS.
+
+
+## 9. Continuation 45 — parser repair and successful evidence artifact (2026-11-20)
+- Reopened the failed Table 1.7 artifact and inspected the raw Excel-HTML. Root cause: a one-cell merged "Portfolio Investment" section heading preceded the actual 20-cell data row; the parser incorrectly treated the heading as a truncated data row. Corrected by ignoring one-cell merged headings, checking the Q2 group header and the 2026p subheader, and extracting column 11 (Q2 2026, distinct from Q2 2025 at column 10).
+- Second parser defect: the dated press release contains several functional-account sections with identically named component rows. The parser had overwritten the Portfolio Investment components with later Other Investment rows. Corrected by anchoring extraction to the Portfolio Investment heading and consuming only its next two component rows; release-vs-Table-1.7 exact parity is now enforced.
+- Q2 preliminary flag is now derived from the verified header cell "2026 p", not a fragile HTML regex.
+- Successful workflow run 44705225122, job 136183035008, conclusion SUCCESS. Workflow head SHA 9c0c84a6b42f43980fdceb650395897dcea69b16. Artifact 14614766459, name gcr-phl-q2-2026-bsp-imf-44705225122, 15,415 bytes, ZIP SHA-256 7e0d57f7d50f6f0a6622183d81f2bb8bbe04ee297f489f20dd982465d3b46b5c, expires 2027-02-18.
+- Downloaded artifact independently inspected. Files:
+  - bsp_table1_7_raw.html: 156,110 bytes, SHA-256 b267ceab83794b86cd6c6a3ce703d878c2185091670e0c528b10df1644774569.
+  - bsp_q2_release_raw.html: 148,165 bytes, SHA-256 272890a3a383bbef2eebfb274746e3835f2c3e7d3ab084f303f317f6813b5707.
+  - phl_q2_2026_bsp_imf_reconciliation.csv: 384 bytes, SHA-256 8bc1a27fc66c40f99ad7d66789884a90c0f1d1cb91b4c64065fdec4e769d2939.
+  - summary.json: 3,919 bytes, SHA-256 376894e48319d0a0a2c0d4e8322f4de0fc578fd8b1b70a4f361e425b0f0dd166.
+- Exact structured result: BSP Q2 preliminary flag TRUE; net -468 USDm, assets +1,331 USDm, liabilities +1,798 USDm; release and Table 1.7 values match exactly. IMF asset residual -0.35704894474 USDm and liability residual +0.28261626536 USDm, both within ±0.5 USDm. Numeric legs 2/2 PASS. Rounded identity differs by +1 USDm and is retained as rounding, not forced to zero.
+- Prior bad parser runs 44690030449, 44690124941, 44690374864 and 44704973071 remain diagnostic/failed; no erroneous rows admitted.
+- Paths-ignore guard was finally verified and added in commit fbaa2617f8e996b996f299652194974141cd0921 for PHL script, PHL workflow and cancellation trigger/workflow paths. Accidental NSE runs 44704973029 and 44704985742 were both confirmed completed/cancelled; no outputs admitted.
+- Remaining blocker: BSP↔IMF same-vintage NOT_ESTABLISHED. BSP Q2 data are explicitly preliminary; HTTP Last-Modified is the current server response timestamp, not a historical revision chain. Public IMF BOP dataset page lists dataset/API/download but no observation-level source submission/revision timestamp. BSP FDI page's announced January–June revision concerns FDI/in-kind transactions, not portfolio investment, so it is not used as evidence for this portfolio series.
+- Final PHL state remains numeric 2/2 PASS; source capture PASS; release parity PASS; same-vintage NOT_ESTABLISHED; full national acceptance PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next action: only pursue a specific BSP portfolio-series revision archive and IMF observation-level vintage field if an official public endpoint/document exists; otherwise close this bounded vintage search as NOT_ESTABLISHED and move to the next cohort country after preflight. No repeat Table 1.7 parser work, no IMF requery, no cohort rebuild.
