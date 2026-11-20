@@ -1840,3 +1840,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Q2 sums in both snapshots: assets 5,749 USDm; liabilities 9,183 USDm. Existing IMF Q2 values: assets 5,749; liabilities 9,270 USDm. Asset residual 0; liability residual +87 USDm. The discrepancy persists unchanged across the two PDF snapshots; no August-to-September revision observed in those PDFs.
 - This is limited two-snapshot evidence only, not a full revision-history proof or exact same-vintage identity. TCMB September ZIP bytes/hash/raw revision metadata remain NOT_INSPECTED due endpoint timeout. TUR remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report updated: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: obtain official September ZIP through supported transfer route; if unavailable, preserve blocker and advance to next cohort member.
+
+
+## 2026-11-20 — Mexico MEX Q2-2026 Banxico vs IMF portfolio BOP validation
+- Preflighted latest Master Ledger, GCR Priority Queue and TUR/POL/SAU/CHN detail reports. Did not repeat blocked TCMB ZIP retrieval or any completed country extraction. Selected MEX from the existing 12-country IMF exact-key sample; no new IMF GET or cohort/panel rebuild.
+- Reused artifact 14505009889 / run 44474458684 / ZIP SHA-256 588101c0deff3b431098e0f3205005d3d5913f3014137065b074890b353ecdf60. MEX A_NFA_T raw CSV SHA-256 a404aca5a719b9558e75b9483b925d18011fa2d9199937d275956782a84c5014; L_NIL_T SHA-256 1a7de8eb3d258875fbffbde987ce22db437eadbdd9c93e05acec12a4ab7785c7.
+- IMF Q2-2026 values: A_NFA_T +USD8,937.255098m; L_NIL_T +USD10,561.285114m. Official Banxico Q2 2026 release (25-Aug-2026), Cuadro 3, USDm: net acquisition of portfolio assets +8,937; net incurrence of liabilities +10,561; portfolio investment balance -1,624 (=8,937−10,561).
+- Residuals IMF−Banxico: assets +0.255098 USDm; liabilities +0.285114 USDm; both within ±0.5 USDm whole-million rounding. Concepts/signs align; no FX or sign transform.
+- Banxico says components may be revised in future releases. Exact Banxico↔IMF same-vintage bridge is NOT_ESTABLISHED; numeric legs PASS but MEX full national dual-leg validation remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: locate versioned Q2 vintage/revision record; if unavailable preserve PARTIAL and advance cohort.
