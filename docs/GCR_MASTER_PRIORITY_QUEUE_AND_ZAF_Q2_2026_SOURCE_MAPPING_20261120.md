@@ -558,3 +558,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md (commit 869e0fe8b91bb48b1f14fed170706e4b834bd76c).
 - Status: source-family/contract PASS; exact bilateral extraction NOT_DONE; Japan→India transmission PARTIAL / NOT PASS; production NOT_AUTHORIZED.
 - Next: inspect the official 10-Nov-2026 Q2 Regional BOP attachment or BOJ portfolio-by-counterparty series; capture/hash bytes, verify India partner coverage and separate asset/liability legs, and preserve vintage. No guessed API series code or aggregate substitution.
+
+
+## AP. Japan JPN Q2-2026 — official Regional BOP India-row inspection (2026-11-20)
+- Reopened current ledger, queue and Japan source-contract report. Followed the MOF official 10-Nov-2026 Q2 Regional BOP link to the 14-page MOF/BOJ PDF.
+- Page 8 Assets and page 9 Liabilities have separate Portfolio Investment columns and an India row; unit is 100 million yen.
+- India Q2-2026 asset cell is an em dash (—), not numeric zero; liability cell is 7,526 (100 million yen). No currency conversion.
+- Official PDF retrieval/page inspection PASS; raw bytes/hash NOT_DONE because direct byte download failed in this execution environment.
+- Japan national dual-leg validation remains PARTIAL / NOT PASS; asset NOT_REPORTED_IN_THIS_TABLE; production NOT_AUTHORIZED.
+- Detail report updated: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md.
+- Next: inspect BOJ's official 45-economy Portfolio Investment Assets and Liabilities country-breakdown series for India Q2-2026; use exact metadata/series IDs, capture/hash original bytes, and preserve publication vintage. Do not treat dash as zero or infer from aggregate BOP.
