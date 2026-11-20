@@ -534,3 +534,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Initial GET contains no archive investment rows. Client script reveals the public control flow but not server-side period semantics or output schema. No POST was sent, no stale ViewState replayed, and no archive output or rows claimed.
 - Detail report: docs/GCR_NSDL_ARCHIVE_PUBLIC_FORM_CONTRACT_AUDIT_CONTINUATION76_20261120.md.
 - Next exact action: with a supported interactive browser, load fresh page state, select one explicit date via calendar, invoke View Report once, capture response bytes/headers/UTC/hash and inspect returned rows. If browser interaction is unavailable, keep archive NOT_DONE and do not guess a POST body. Do not repeat already-PASS capture/digest or 192/192 sector subtotal arithmetic.
+
+## Continuation 77 — CDSL daily 18-Nov-2026 full-table arithmetic QA (2026-11-20)
+- Reused existing verified artifact 14527092174 / run 44519322726; ZIP SHA-256 `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd` independently matched.
+- Parsed archived official CDSL eServices daily HTML. Detailed cash route/scheme INR arithmetic 17/17 PASS; seven category subtotal identities 7/7 PASS; seven subtotal sums reproduce the published INR gross purchases/sales/net total exactly. USD component aggregation residual +0.0003 USDm is retained as display-rounding residual; published total unchanged.
+- CDSL 18-Nov custodian/depository reporting semantics are not aligned to NSDL Latest 19-Nov mixed provisional-T-day/custodian-prior-day presentation. Matched-date provider variance remains NOT_COMPUTABLE.
+- Detail report: docs/GCR_CDSL_DAILY_18NOV2026_FULL_TABLE_ARITHMETIC_QA_CONTINUATION77_20261120.md (blob SHA `181e041bc872d96586ead475092432b7bf8f187a`).
+- Next: bounded CDSL archive/date-control contract audit using existing raw HTML only; no guessed postback. If unsupported, retain NOT_DONE and move to another independent official source task. Production, CORE-672, Engines A–E, selector/score and fixed 63-country cohort unchanged.
