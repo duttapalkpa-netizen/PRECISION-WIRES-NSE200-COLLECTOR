@@ -72,3 +72,25 @@ Open the official 10-Nov-2026 Q2 Regional BOP release and its linked BOJ/ MOF wo
 - Status: official Q2 partner table + India row PASS; liability display extraction PASS; asset leg NOT_REPORTED_IN_THIS_TABLE (dash, not zero); dual-leg national validation PARTIAL / NOT PASS; raw-byte archive/hash NOT_DONE; same-vintage reconciliation NOT_ESTABLISHED; Japan→India causal transmission NOT_DONE; production NOT_AUTHORIZED.
 - Next exact action: inspect the official BOJ portfolio-investment country-breakdown series (45 economies) for Q2-2026, specifically Portfolio Investment Assets, Country Breakdown and Portfolio Investment Liabilities, Country Breakdown, with India as partner. Use exact BOJ metadata/series IDs only; capture original CSV/XLSX bytes and SHA-256 before parsing. If the asset series has no India observation, retain the asset leg UNKNOWN and do not synthesize from totals.
 - Protected invariants unchanged: ₹0 spend; no inferred zero, no netting, no unsupported currency conversion, no synthetic data, no change to Production Selector/RANKING_SCORE/+1 PRESSURE_FADE/CORE-672/Engines A–E/IPO-PLX V2/fixed 63-country IMF cohort. UNKNOWN is never PASS.
+
+
+## Continuation 81 — BOJ 45-economy monthly portfolio country-breakdown verification (2026-11-20)
+- Re-fetched the current Master Continuity Ledger, GCR queue and updated Japan report. Reused the Q2 Regional BOP India-row result; did not repeat the PDF page inspection.
+- BOJ BPM6 source page explicitly defines Portfolio Investment Assets, Country Breakdown as transactions by economy of issuer and Portfolio Investment Liabilities, Country Breakdown as transactions by economy of transactor; each is monthly and covers 45 economies. Official partner-economy list marks portfolio investment country breakdown as 45 economies.
+- Followed MOF official release-date page to June 2026 Portfolio Investment Assets/Liabilities preliminary PDF: https://www.mof.go.jp/policy/international_policy/reference/balance_of_payments/preliminary/bppi202606.pdf . Document title says June 2026 (Preliminary); 6 pages; table unit 100 million yen.
+- Page 4 / section VI Portfolio Investment Assets, Country Breakdown, India row:
+  Total acquisition 1,379; disposition 2,056; net -677.
+  Equity and investment fund shares: acquisition 1,169; disposition 1,860; net -691.
+  Long-term debt securities: acquisition 210; disposition 196; net 14.
+  Short-term debt securities: dash across the displayed fields (preserve as dash, not numeric zero).
+- Page 5 / section VII Portfolio Investment Liabilities, Country Breakdown, India row:
+  Total acquisition 1,187; disposition 2,773; net -1,586.
+  Equity and investment fund shares: acquisition 0; disposition 0; net 0.
+  Long-term debt securities: acquisition dash; disposition 920; net -920.
+  Short-term debt securities: acquisition 1,187; disposition 1,852; net -665.
+- Table arithmetic checks for populated categories: Assets 1,169+210=1,379 acquisitions; 1,860+196=2,056 dispositions; -691+14=-677 net. Liabilities: 0 + dash + 1,187 and 0 + 920 + 1,852 / net 0 + (-920) + (-665) = -1,585, while published total net is -1,586; retain published total and classify the 1 (100 million yen) difference as displayed rounding/rounding residual pending exact source methodology. Do not overwrite published total. Note liabilities long-term debt acquisition is dash, not zero; arithmetic using dash as zero is only a display reconciliation, not a semantic assertion that the underlying value equals zero.
+- June monthly values demonstrate that the BOJ 45-economy country-breakdown publication has India rows for both assets and liabilities. They are monthly preliminary figures, not Q2 totals and not comparable directly to the Q2 Regional BOP table without period/vintage reconciliation.
+- This PDF was inspected via official MOF PDF extraction; byte-preserving download failed in this execution environment. No raw bytes, HTTP headers, local file length, retrieval UTC or SHA-256 claimed.
+- Status: official series definitions/45-economy scope PASS; June 2026 India monthly asset row PASS; June 2026 India monthly liability row PASS; within-source asset arithmetic PASS; liability published-total residual 1 (100 million yen) flagged for rounding/unknown dash semantics; Q2 Apr-Jun matched-vintage aggregation NOT_DONE; raw-byte archive/hash NOT_DONE; production NOT_AUTHORIZED.
+- Next exact action: inspect official April and May 2026 monthly portfolio PDFs (same 45-economy sections), capture/hash original files if supported, and reconcile April/May/June values and revision vintages against the 10-Nov-2026 Q2 Regional BOP release. Do not add preliminary month values into a Q2 total unless vintage/period definitions support it; preserve each month's published totals and dashes.
+- Protected invariants unchanged: ₹0; no inferred zeros, no FX conversion, no netting, no stock/flow mixing, no synthetic values, no changes to Production Selector/RANKING_SCORE/+1 PRESSURE_FADE/CORE-672/Engines A–E/IPO-PLX V2/fixed 63-country IMF cohort. UNKNOWN is never PASS.
