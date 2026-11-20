@@ -2070,3 +2070,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - PAK gates: official quarterly dataset discovery PASS only; Q2 asset/liability values NOT_EXTRACTED; sign mapping and same-vintage NOT_ESTABLISHED; numeric validation NOT_DONE; national validation PARTIAL/BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
 - Official sources: https://www.sbp.org.pk/economic-data ; https://easydata.sbp.org.pk/apex/f?p=10:210:8439371819372: ; https://www.sbp.org.pk/assets/document/Balancepayment_BPM6.pdf ; https://www.sbp.org.pk/ecodata/CPIS-Sdds-Assets-Data.pdf ; https://archive.sbp.org.pk/ecodata/index2.asp .
 - No changes to protected invariants, production selector, ranking, pressure fade, CORE-672, engines A-E or IPO-PLX V2. No synthetic data, stock-flow substitution, inferred sign/vintage, netting or aggregate admission.
+
+
+## 2026-11-20 — Continuation 51: PAK official Q2-2026 portfolio component values extracted
+- Reopened master ledger, queue, fixed cohort and PAK report before continuing. Found a distinct official SBP quarterly calendar-year BPM6 PDF: https://www.sbp.org.pk/assets/document/BPM6_c.pdf . Its two-row header identifies the Q2 CY26 column as revised (R), units USD million.
+- Extracted Q2 CY26(R): Portfolio investment abroad -2 USDm; Portfolio investment in Pakistan -243 USDm. Both are separate portfolio components. This is source-value extraction PASS and corrects Continuation 50's values NOT_EXTRACTED status. The previous September BPM6 table was not the right source for this calendar-quarter view.
+- Do not assume sign equivalence to IMF A_NFA_T/L_NIL_T from the row labels alone. Official sign/definition crosswalk NOT_ESTABLISHED; exact IMF PAK Q2 rows not independently retrieved from the existing archive in this step; same-vintage/revision timestamp NOT_ESTABLISHED; numeric dual-leg comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- No raw PDF bytes/hash captured. No IMF re-query, no cohort rebuild, no netting, no production change. Protected invariants unchanged.
+- Updated report: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. Next: retrieve archived IMF PAK Q2 exact A_NFA_T/L_NIL_T rows, inspect official sign definitions, compare legs separately at SBP USDm display precision, then investigate revision timestamp.
