@@ -2252,3 +2252,16 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: official API/retrieval contract and taxonomy PASS; exact codes/data/raw bytes NOT_DONE; matched-vintage reconciliation NOT_ESTABLISHED; production NOT_AUTHORIZED.
 - Next: supported API/HTTP client or user-supplied official data file; capture BP01 metadata, extract exact India codes, fetch only required series, hash raw bytes before parsing.
 - ₹0; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 85 — BOJ 45-vs-33 partner universe crosswalk and metadata API access gate (2026-11-20)
+- Re-fetched current ledger, GCR queue and Japan report; no repeat of Continuations 80–84 data transcription.
+- Official BOJ BPM6 documentation: monthly portfolio assets/liabilities country breakdown covers 45 economies; quarterly Regional BOP partner universe covers 33 economies. India appears in both, but universes are not interchangeable.
+- BOJ statistics list confirms separate monthly portfolio assets and liabilities country-breakdown totals and instrument subseries, and a separate quarterly Regional BOP India entry.
+- Official API manual documents BP01 metadata then exact-code API workflow; attempted metadata URL via current web bridge was inaccessible and returned no metadata body. This is transport limitation only, not proof API is down. No guessed code.
+- Public Main Time-series Statistics page displays only broad current-account and financial-account net balance series; not a substitute for 45-economy portfolio country breakdown.
+- Structural decision: keep monthly portfolio assets (issuer basis), monthly liabilities (transactor basis), and quarterly Regional BOP partner series separate until exact codes and partner definitions are mapped. India common label does not prove same attribution/coverage.
+- Status: 45/33 universe distinction PASS; India present in both PASS; exact series codes/API metadata NOT_DONE; raw bytes/hash NOT_DONE; cross-product equivalence NOT_ESTABLISHED; production NOT_AUTHORIZED.
+- Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 85.
+- Next: supported HTTP/API client or user-supplied official metadata CSV; capture/hash BP01 metadata, extract exact India codes, query exact monthly observations and separate quarterly series.
+- ₹0; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
