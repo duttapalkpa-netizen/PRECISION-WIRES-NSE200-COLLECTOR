@@ -127,6 +127,8 @@ on:
       - "scripts/research/imf_bop_gnb_series_probe.py"
       - ".github/workflows/imf_bop_gnb_series_probe.yml"
       - "scripts/research/imf_bop_gnb_series_probe_trigger.txt"
+      - ".github/workflows/gcr_mys_q2_bnm_fx_capture.yml"
+      - "scripts/research/capture_mys_q2_bnm_fx.py"
       - ".github/workflows/nse_cancel_accidental_probe_run.yml"
       - "scripts/research/nse_cancel_accidental_probe_trigger.txt"
   schedule:
