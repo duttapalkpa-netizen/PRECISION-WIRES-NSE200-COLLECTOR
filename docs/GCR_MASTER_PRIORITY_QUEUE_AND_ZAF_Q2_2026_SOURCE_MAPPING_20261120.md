@@ -746,3 +746,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Existing exact sample excludes SLV; large panel fetch empty; exact IMF rows NOT_CAPTURED. Q2 national asset/liability NOT_CAPTURED; SLV PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_EL_SALVADOR_SLV_Q2_2026_BCR_PORTFOLIO_SOURCE_FAMILY_GATE_CONTINUATION100_20261120.md (commit 94cec1b68b19e8fef099bc4ccbf2083cfaa7a286; verified blob SHA 658b83d795529e9eecd99879039e6e8bcdb6a8c3).
 - Next: BCR official Q2 BOP dual-leg table; raw bytes/vintage/SHA-256; retrieve archived IMF exact rows without re-query. No stock-as-flow or annual proration.
+
+
+## BK. Serbia SRB — NBS BPM6 Q2-2026 portfolio dual-leg source gate (Continuation 101)
+- SRB is the next member after SLV in the immutable 63-country Q2-2026 both-leg cohort; no dedicated SRB national dual-leg report found in preflight. Re-fetched Master Ledger, GCR queue, SLV Continuation 100 and cohort; no cohort rebuild or IMF re-query.
+- NBS Statistical Bulletin September 2026, Table 2.3, page 105, is an official BPM6 monthly BOP table in EURm with separate portfolio asset and liability transaction rows; data are preliminary and subject to revision.
+- Q2 sums from monthly rows: assets Apr +149, May -25, Jun +124 = **+248 EURm**; liabilities Apr -19, May +3,932, Jun +199 = **+4,112 EURm**; net row Apr +168, May -3,957, Jun -75 = **-3,864 EURm**. Identity 248−4,112=-3,864 and monthly net sum agree.
+- The unusual May liability +3,932 EURm is retained exactly as published and requires independent verification against the NBS downloadable series/subsequent vintage. No silent correction, net-to-leg inference or sign transform.
+- Exact IMF archived SRB rows NOT_CAPTURED; raw PDF bytes/byte count/SHA-256 NOT_CAPTURED; IMF concept/sign bridge and same-vintage alignment NOT_ESTABLISHED; two-leg comparison NOT_DONE. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_PORTFOLIO_DUAL_LEG_SOURCE_GATE_CONTINUATION101_20261120.md (create commit a2ae592c6416ee54786be29c684f8bf753056312).
+- Next: raw-byte archive/hash official NBS PDF; independently verify May liability value and any subsequent revision; retrieve exact archived IMF SRB rows without new query; establish official sign/concept/vintage bridge and compare legs separately.
+- ₹0; no cohort rebuild, IMF re-query, stock-as-flow, net-to-leg inference, FX inference, sign flip or production changes. UNKNOWN is never PASS.
