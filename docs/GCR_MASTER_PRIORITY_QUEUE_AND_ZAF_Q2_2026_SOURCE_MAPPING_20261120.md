@@ -891,3 +891,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - TLS H1 portfolio net component CAPTURED; Q2 separate assets/liabilities NOT_CAPTURED; Q2 period/sign/vintage alignment NOT_ESTABLISHED; IMF comparison NOT_DONE; TLS NOT_VALIDATED / NOT PASS.
 - Next: locate official Q2 2026 BOP dual-leg release or H1 dual-leg table; absent same-vintage Q1 dual legs, do not derive Q2. If unavailable, advance next cohort country.
 - ₹0; no IMF query/cohort rebuild, net-to-leg inference, IIP substitution or production changes. UNKNOWN is never PASS.
+
+
+## BY. Timor-Leste TLS — BCTL BOP archive staleness audit (Continuation 115)
+- Preflight current Master Ledger blob SHA d856df8391de33cfc973a6511d5cf7eab42d9b05, GCR queue blob SHA f02863bd301215904b945f2ec3fe49f768554c80, TLS C114 report blob SHA e698bf465389f925ea0440052775af124100148b.
+- New finding: BCTL archive item labelled “Balance Of Payments | Aug 2026” resolves to a one-page PDF whose header ends at quarterly I–IV 2016/p and annual 2016/P; unit is thousand USD. Aug 2026 is file upload/metadata date, not observation vintage. It has no 2025/2026 rows and cannot support Q2-2026.
+- H1 2026 portfolio component -USD 524.9m remains aggregate only; Q2 separate asset/liability legs NOT_CAPTURED. No net-to-leg inference, no IIP substitution, no H1-Q1 subtraction, no IMF query.
+- Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_BALANCE_OF_PAYMENTS_ARCHIVE_STALENESS_AUDIT_CONTINUATION115_20261121.md (create commit c226bf514c84b281dc36688938fdf6b65229ad78).
+- TLS NOT_VALIDATED / NOT PASS. Next: inspect official Economic Statistics/BOP page and H1 review appendices for current Q2 or H1 dual legs; if unavailable, mark NOT_AVAILABLE and advance.
+- ₹0; no cohort rebuild or production changes. UNKNOWN is never PASS.
