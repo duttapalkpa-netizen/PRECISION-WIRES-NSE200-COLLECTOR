@@ -352,3 +352,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No public PHL Q2-2026 portfolio revision chain or IMF observation-level vintage field located. Same-vintage NOT_ESTABLISHED; numeric 2/2 PASS and raw+parsed capture PASS; full national acceptance PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report update commit 395e5aca2ebf55994dbf36a8c6114b31b97f309a.
 - Close bounded PHL vintage search; do not repeat generic IMF landing-page or BSP policy searches absent a new release. Next action: preflight the existing 63-country queue and choose the next eligible country without rebuilding the cohort.
+
+
+## AK. Colombia COL Q2-2026 — official-source boundary gate (2026-11-20)
+- Selected COL from the existing fixed 63-country Q2 both-leg cohort after repository preflight; GitHub search found no prior COL national-source reconciliation report. Existing coverage matrix confirms 46 observations in each of A_NFA_T and L_NIL_T, both ending 2026-Q2. This is availability only.
+- Official BanRep Q2 report published 1-Sep-2026: Q2 financial-account net capital inflows USD3,719m; summary includes net liquidation of external assets USD6,149m, derivative gains USD804m, decreases in external liabilities USD2,683m and reserve transactions USD550m. It says net portfolio-instrument liquidations partially offset the result but does not provide separate portfolio asset/liability transaction amounts in the inspected report/PDF.
+- BanRep SDDS page last updated 13-Nov-2026 displays Q2 portfolio IIP asset stock USD125,046.1m and liability stock USD118,800.9m (with equity/debt stock components). These are end-period stocks, not Q2 BOP flows; explicitly NOT_ADMITTED to the flow comparison.
+- General BPM6 financial-account sign note is not enough to map portfolio component signs. No raw COL IMF values were copied; no IMF query or cohort rebuild. BanRep statistics portal series route timed out in the web reader; no export/raw bytes acquired.
+- COL portfolio transaction legs NOT_EXTRACTED; sign mapping NOT_ESTABLISHED; same-vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; COL PARTIAL/BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_COLOMBIA_COL_Q2_2026_BANREP_OFFICIAL_SOURCE_BOUNDARY_AUDIT_20261120.md.
+- Next exact action: identify public BanRep export/series metadata for separate Q2 portfolio transaction assets and liabilities, with units/signs/revision metadata. If unavailable, retain blocker and advance. No stock-flow substitution or repeated IMF request.
+- Invariants unchanged; no production code or protected selector/scoring/diagnostic/engine changes.
