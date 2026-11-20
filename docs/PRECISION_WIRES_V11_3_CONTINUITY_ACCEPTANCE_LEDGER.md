@@ -2212,3 +2212,17 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: monthly India row coverage PASS; Q2 matched-vintage Apr-Jun aggregation NOT_DONE; raw archive/hash NOT_DONE; dual-leg Q2 validation PARTIAL; production NOT_AUTHORIZED.
 - Detail report updated in this continuation. Next: inspect official April and May 2026 monthly portfolio PDFs, preserve each vintage and dash; then compare with 10-Nov Q2 Regional BOP without unsupported aggregation.
 - Protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 82 — Japan Q2-2026 April/May monthly India portfolio-flow rows (2026-11-20)
+- Re-fetched current ledger, GCR queue and Japan report; no repeat of completed June row extraction or Q2 Regional BOP page inspection.
+- Official MOF April and May preliminary PDFs inspected. Both months show India in separate Portfolio Investment Assets Country Breakdown and Portfolio Investment Liabilities Country Breakdown tables (unit 100 million yen).
+- April: Assets acquisition/disposition/net 739/1,487/-747; Liabilities 2,070/2,601/-531.
+- May: Assets 789/1,434/-645; Liabilities 64/1,371/-1,307.
+- Together with June values recorded in Continuation 81, India monthly rows are visible in both legs for Apr-Jun. Simple monthly net sums are Assets -2,069 and Liabilities -3,424 (100 million yen); these are not validated Q2 totals.
+- Q2 Regional BOP Continuation 80: India asset dash, not zero; liability 7,526. Vintage/sign/definition/period reconciliation NOT_ESTABLISHED. Do not promote arithmetic sum to quarterly result.
+- Official PDF extraction/screenshots available; raw byte downloads, headers and SHA-256 not captured. No raw archive claim.
+- Detail report: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 82.
+- Status: monthly India row coverage Apr-Jun both legs PASS at table-inspection level; Q2 matched-vintage reconciliation NOT_ESTABLISHED; raw archive/hash NOT_DONE; causal transmission NOT_DONE; production NOT_AUTHORIZED.
+- Next: official historical/revised-vintage bridge and Q2 Regional BOP footnote/definition audit; if no supported bridge, retain monthly and quarterly series separately.
+- ₹0, official/free sources only; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
