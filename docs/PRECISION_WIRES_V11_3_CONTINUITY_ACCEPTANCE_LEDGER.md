@@ -2498,3 +2498,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Exact IMF rows remain captured. May later-vintage separate legs NOT_CAPTURED; transaction-weighted FX bridge NOT_ESTABLISHED; national mapping/coverage equivalence NOT_ESTABLISHED; comparison NOT_DONE. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: supported XLS/CSV raw retrieval, May revision check, official USD or transaction-weighted FX bridge, separate leg comparison.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 105 — Serbia SRB NBS alternate public data-route audit (2026-11-20)
+- Preflight re-fetched Master Ledger (blob SHA 554fa175e22b21db928da579a05ffc63d267fda0), GCR queue (blob SHA ca9822d94a496ec27b5665d2c223c548b800a7fa), Continuation 104 (blob SHA fd1253e3c6f9b2681a825a756c4a88252f83ee80); completed PASS work excluded.
+- NBS BOP page lists September 2026 monthly and detailed BPM6 XLS files; both links fail retrieval with unsupported XLS content type. No raw bytes/sheets/values/hash.
+- Statistical Bulletin “Data series in XLS format” resolves to generic Statistics landing page; no separate public CSV/HTML monthly BOP flow route or official USD separate-leg series located in inspected NBS pages. Scoped NOT_FOUND only.
+- NBS release calendar schedules 3-Dec-2026 for October 2026 bulletin; future candidate, not current data.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_ALTERNATE_DATA_ROUTE_AND_NEXT_VINTAGE_GATE_CONTINUATION105_20261120.md; create commit d82302447ca36e0700af3de96d5c0f8561d0340d.
+- May revision NOT_CAPTURED; USD/EUR transaction bridge NOT_ESTABLISHED; national equivalence NOT_ESTABLISHED; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: inspect NBS archive form underlying endpoint with supported byte-preserving route; re-check October 2026 bulletin after 3-Dec release; verify actual units before use.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
