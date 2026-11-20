@@ -2333,3 +2333,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - No production selector, score, pressure fade, CORE-672, Engines A–E, IPO-PLX V2, weights, gates, or workflows changed. No new market data collection, no synthetic market data, ₹0.
 - Next: after explicit user approval, implement in isolated research-only branch/jobs, first reproducing the failure and then passing each gate. Until then continue only matured outcome tracking and other already-authorized observation tasks.
 - Lesson: specification and implementation are separate approval stages; do not cross the Observation boundary by implication.
+
+
+## Continuation 90 — Independent review of Forward-Label V2 specification (2026-11-20)
+- Preflight re-fetched Master Continuity Ledger, GCR Priority Queue and Continuation 89 specification; no completed PASS research was repeated.
+- Independently reviewed the exact V2 specification against the existing Daily Historical Rolling Backtest Performance Acceptance Contract. Document-level checklist PASS 12/12: provenance/vintage, session spine and identity, full maturity, leakage, hand-check, denominator conservation, JSON/CSV count parity, independent metric recomputation, H+3 >=50 per-State floor, <10-minute runtime, v1/v2 isolation and approval boundary.
+- Review report: docs/V11_4_FORWARD_LABEL_V2_SPECIFICATION_INDEPENDENT_REVIEW_CONTINUATION90_20261120.md; commit 6e8681739faf02ae06716a7b52c9521ff41c6c61.
+- This is a document review only. It does not verify implementation, source data, labels, tests, metrics or workflow execution. Existing H+5 JSON/CSV 613-vs-616 mismatch remains unresolved.
+- Status: specification review PASS 12/12; implementation NOT_AUTHORIZED pending explicit user approval; code/tests/labels/metrics NOT_RUN; V11.4 BLOCKED / NOT_ADMISSIBLE; V11.3 UNKNOWN / NOT_AUTHORIZED / NOT_RUN; GCR UNKNOWN / BLOCKED; production NOT_AUTHORIZED.
+- Next: await explicit approval before V2 implementation; otherwise continue only already-authorized observation and H+3/H+5 outcome tracking after full maturity.
+- No production changes, no workflow dispatch, no new data collection, ₹0. Protected invariants unchanged. UNKNOWN is never PASS.
