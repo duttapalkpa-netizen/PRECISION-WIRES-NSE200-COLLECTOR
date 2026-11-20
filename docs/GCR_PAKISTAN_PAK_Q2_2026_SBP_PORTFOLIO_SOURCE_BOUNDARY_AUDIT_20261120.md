@@ -55,3 +55,30 @@ No IMF re-query, no cohort rebuild, no synthetic values, no imputation/forward-f
 - Next exact action: retrieve the archived IMF PAK Q2 exact A_NFA_T and L_NIL_T observation rows from the existing raw/panel archive (without re-querying IMF), inspect the SBP BPM6 table's official methodology/sign definitions and compare the two legs separately within SBP's USDm display precision. Then seek the SBP revision timestamp/vintage bridge. Do not net the two legs or infer a sign flip.
 - New source: https://www.sbp.org.pk/assets/document/BPM6_c.pdf ; official search/open citation source page indexed 2026-11-20.
 - No production changes, no cohort rebuild, no new IMF request, no synthetic values, no stock-flow substitution, no netting or aggregate admission. All protected V11.3 invariants remain unchanged.
+
+
+## Continuation 52 — archived IMF dual-leg reconciliation and SBP BPM6 sign crosswalk (2026-11-20)
+
+### Exact archived IMF rows (no new IMF query)
+- Reused existing raw archive files; Git blob SHAs:
+  - `docs/evidence/imf_bop_emde_20261119/raw/EMDE_A_NFA_T_P_F_ALL_UNITS_Q.csv`: `15449e87c9057291a1f52f2f8cd9805df55f9fb8`
+  - `docs/evidence/imf_bop_emde_20261119/raw/EMDE_L_NIL_T_P_F_ALL_UNITS_Q.csv`: `15f379dc42e2760eb5f2384618e48f5ddc3177f1`
+- Exact PAK Q2-2026 asset row: `dataflow,IMF.STA:BOP(21.0.0),R,PAK,A_NFA_T,P_F,USD,Q,2026-Q2,-2000000,6,6,,,,,,,,,,,,O,,,,true,,`
+- Exact PAK Q2-2026 liability row: `dataflow,IMF.STA:BOP(21.0.0),R,PAK,L_NIL_T,P_F,USD,Q,2026-Q2,-243000000,6,6,,,,,,,,,,,,O,,,,,,`
+- Both rows carry ACTION=R, UNIT=USD, FREQUENCY=Q, TIME_PERIOD=2026-Q2, SCALE=6, PRECISION=6.
+
+### Official SBP methodology and dual-leg comparison
+- SBP BPM6 revision notice (16-Aug-2013): https://www.sbp.org.pk/departments/stats/Notice/BPM6-Revision-16-Aug-13.pdf . It states that in the financial account increases in assets and liabilities are positive and decreases are negative; its comparison table separately identifies portfolio investment in Pakistan and portfolio investment abroad (PDF text lines 49-57 and 66).
+- SBP FY23 BPM6 introduction: https://www.sbp.org.pk/publications/bop/BOPFY23/Intro.pdf . It states that the financial account presents net acquisition of financial assets (NAFA) and net incurrence of liabilities (NIL), with positive changes indicating increases and negative changes indicating decreases (PDF text lines 62-76).
+- SBP CY26 Q2(R) table in https://www.sbp.org.pk/assets/document/BPM6_c.pdf publishes (USD million) Portfolio investment abroad = -2 and Portfolio investment in Pakistan = -243.
+- Separate comparison: abroad/asset leg: SBP -2 USDm vs IMF A_NFA_T -2 USDm; difference 0 USDm. In-Pakistan/liability leg: SBP -243 USDm vs IMF L_NIL_T -243 USDm; difference 0 USDm. No netting.
+- Result: exact dual-leg numeric agreement at SBP's published USDm precision. SBP's BPM6 methodology supports the sign interpretation (negative = decrease) and NAFA/NIL financial-account framework. This is a source-supported conceptual crosswalk, not proof the underlying raw transaction compilation is identical.
+
+### Vintage and acceptance boundary
+- SBP CY26 Q2 column is marked revised (R); IMF raw observation rows also carry ACTION=R. This is consistent revision-status metadata, not proof of same-vintage timing. Exact SBP revision timestamp, IMF extraction timestamp/vintage bridge, and revision-history identity remain NOT_ESTABLISHED.
+- PAK gates: existing IMF row extraction PASS; SBP official BPM6 sign/framework source PASS; dual-leg numeric comparison 2/2 PASS at USDm display precision; national source/IMF conceptual mapping SUPPORTED; exact same-vintage NOT_ESTABLISHED; complete national validation PARTIAL (not PASS); aggregate admission NOT_AUTHORIZED.
+- No SHA-256 for SBP PDF/raw downloaded bytes is claimed; only Git blob SHAs for archived IMF raw CSVs are recorded.
+- No IMF re-query, no fixed cohort rebuild, no synthetic/filled values, no sign inversion, no netting, no production changes, no workflow run triggered.
+
+### Next exact action
+- Inspect the SBP Data Revision Policy and identify an official, dated revision/vintage history for the CY26 Q2(R) portfolio rows; compare it with IMF archived observation vintage metadata if available. If no observation-specific history is publicly exposed, retain same-vintage as UNKNOWN and move to the next unvalidated country rather than infer it.
