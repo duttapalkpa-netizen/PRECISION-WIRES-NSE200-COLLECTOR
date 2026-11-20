@@ -1833,3 +1833,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - TCMB revision policy states current-year and previous-year monthly data may be revised with monthly dissemination. Official data ZIP locator found, but ZIP bytes/hash/revision metadata not inspected due retrieval timeout. IMF retrieval timestamp does not establish same TCMB vintage. Do not attribute the 87m gap to revisions without evidence.
 - TUR asset numeric comparison PASS; liability REVIEW / NOT PASS; same-vintage NOT_ESTABLISHED; full dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: retrieve/hash/inspect TCMB September 2026 data ZIP and revision metadata via supported transfer route; no new IMF query.
+
+
+## 2026-11-20 — TUR TCMB August-to-September PDF vintage cross-check
+- Compared the official TCMB August 2026 and September 2026 BOP PDF snapshots; no repeat of IMF retrieval. Both show Q2 portfolio asset monthly values 2,368 / 1,266 / 2,115 USDm and liability values 6,334 / -1,802 / 4,651 USDm.
+- Q2 sums in both snapshots: assets 5,749 USDm; liabilities 9,183 USDm. Existing IMF Q2 values: assets 5,749; liabilities 9,270 USDm. Asset residual 0; liability residual +87 USDm. The discrepancy persists unchanged across the two PDF snapshots; no August-to-September revision observed in those PDFs.
+- This is limited two-snapshot evidence only, not a full revision-history proof or exact same-vintage identity. TCMB September ZIP bytes/hash/raw revision metadata remain NOT_INSPECTED due endpoint timeout. TUR remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report updated: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: obtain official September ZIP through supported transfer route; if unavailable, preserve blocker and advance to next cohort member.
