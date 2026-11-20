@@ -38,7 +38,7 @@ The already archived IMF panel contains exact URY Q2 rows, but raw observations 
 - Exact URY 2026-Q2 panel rows:
   - A_NFA_T: OBS_VALUE = **518514442.91881**, SCALE=6, PRECISION=6, DERIVATION_TYPE=O; embedded raw-source SHA-256 `677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e`.
   - L_NIL_T: OBS_VALUE = **-191945243.218418**, SCALE=6, PRECISION=6; embedded raw-source SHA-256 `713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba`.
-- Both rows have TIME_PERIOD=2026-Q2, REF_AREA=TZA, INDICATOR=P_F, UNIT_MEASURE=USD, FREQ=Q, and source origin O in the archived normalized panel.
+- Both rows have TIME_PERIOD=2026-Q2, REF_AREA=URY, INDICATOR=P_F, UNIT_MEASURE=USD, FREQ=Q, and source origin O in the archived normalized panel.
 - Exact IMF raw observations remain unchanged. Do not treat SCALE=6 as permission for a universal multiplier; prior calibration evidence supports a derived OBS_VALUE/1,000,000 display in a bounded 118/118 historical benchmark but does not establish country-specific semantic equivalence for URY or all 154 EMDEs.
 
 ## 4. Numeric comparison — PASS at published precision; vintage boundary remains open
