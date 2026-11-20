@@ -2127,3 +2127,10 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - NPL selected as next fixed-cohort country. NRB official external-sector page lists monthly BPM6/BPM5 and yearly BPM6/BPM5 datasets. Official BPM6 XLSX link found but XLSX bytes could not be inspected through current web retrieval (unsupported MIME). Treat source discovery PASS only; data extraction NOT_DONE.
 - NPL next action: retrieve exact NRB BPM6 workbook through XLSX-capable path, inspect Apr-Jun 2026 rows, determine separate portfolio asset/liability availability, monthly vs cumulative, units/signs and vintage. Reuse existing IMF raw files only.
 - No synthetic data, stock/flow substitution, netting, FX inference, cohort rebuild, IMF re-query, production selector/score/filter/engine changes. UNKNOWN is never PASS.
+
+
+## Continuation 56 — NPL official source boundary (2026-11-20)
+- Reused fixed 63-country cohort and existing IMF archive; no cohort rebuild or IMF re-query. NRB official External Sector page lists monthly BPM6/BPM5 BOP datasets; NSDP lists BOP Browse Data and SDMX, but linked XML is 2024 Q1 and stale.
+- NRB Monthly Statistics archive lists relevant 2082-12, 2083-01, 2083-02 monthly XLSX. Official XLSX fetches failed due unsupported MIME/timeout; no bytes/sheets/values/SHA-256 captured. NRB macro report monthly overall BOP is aggregate only; central-bank foreign-securities balance-sheet items are stocks, excluded.
+- NPL status: official source discovery PASS; workbook inspection NOT_DONE; separate national portfolio assets/liabilities NOT_EXTRACTED; period basis/sign/units/vintage UNKNOWN; dual-leg comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_NEPAL_NPL_Q2_2026_NRB_BPM6_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. Next exact action: obtain XLSX via supported XLSX-capable path, inspect portfolio asset/liability flows and monthly-vs-cumulative basis; only then compare with archived IMF rows. No fabricated values, stocks-as-flows, netting, or production changes.
