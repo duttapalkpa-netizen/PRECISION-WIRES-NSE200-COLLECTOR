@@ -938,3 +938,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_QUARTERLY_BOP_NET_ONLY_SOURCE_BOUNDARY_AUDIT_CONTINUATION119_20261121.md (commit 08e75278237bbd02628205825f00069b6cc0c440).
 - TZA remains PARTIAL / NOT PASS; net observation captured, dual legs and national-to-IMF comparison NOT_DONE; aggregate NOT_AUTHORIZED. Raw PDF bytes/hash NOT_CAPTURED.
 - Next: inspect only a newly identified official detailed BoT/NSDP source if it explicitly publishes portfolio asset/liability transaction legs; otherwise advance to UKR after prior-report/cohort preflight. No IMF re-query, cohort rebuild, net-to-leg inference, IIP substitution or production changes. ₹0; UNKNOWN is never PASS.
+
+
+## CC. Ukraine UKR — NBU Q2-2026 BOP latest-period / publication-boundary audit (Continuation 120, 2026-11-21)
+- Re-fetched current Master Ledger, GCR queue and immutable 63-country cohort; UKR confirmed as a fixed-cohort member. Scoped repository search found no prior dedicated UKR Q2-2026 national dual-leg report. No cohort rebuild or IMF re-query.
+- Official NBU BPM6 quarterly analytical BOP PDF is last updated 19-Dec-2025; visible quarterly headers end Q3 2025. It has separate portfolio asset/liability row structure but no Q2-2026 data. NBU external-sector revision notice last updated 23-Sep-2026 describes revisions through Q1 2026, not Q2.
+- Report: docs/GCR_UKRAINE_UKR_Q2_2026_NBU_BOP_LATEST_PERIOD_AND_PUBLICATION_BOUNDARY_AUDIT_CONTINUATION120_20261121.md (commit 2c353947a40469e2d48631cf5ebe37892b0811ec).
+- UKR NOT_VALIDATED / NOT PASS; Q2-2026 national portfolio assets/liabilities/net NOT_CAPTURED; comparison NOT_DONE; aggregate NOT_AUTHORIZED.
+- Next: use only a newly published official NBU Q2-2026 detailed BOP/Excel/SDMX/API source with explicit separate portfolio legs; else advance to URY after preflight. No stale PDF retry, no inferred legs, stock-as-flow, IMF re-query, cohort rebuild or production changes. ₹0; UNKNOWN is never PASS.
