@@ -2226,3 +2226,17 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: monthly India row coverage Apr-Jun both legs PASS at table-inspection level; Q2 matched-vintage reconciliation NOT_ESTABLISHED; raw archive/hash NOT_DONE; causal transmission NOT_DONE; production NOT_AUTHORIZED.
 - Next: official historical/revised-vintage bridge and Q2 Regional BOP footnote/definition audit; if no supported bridge, retain monthly and quarterly series separately.
 - ₹0, official/free sources only; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 83 — Japan BOJ/MOF revision-vintage and partner-classification boundary (2026-11-20)
+- Re-fetched current ledger, GCR queue and Japan report; no repeat of Continuations 80–82 data extraction.
+- MOF states Preliminary/Second Preliminary figures are temporary and latest values are published under Historical Data; annual BOP revision is each April.
+- BOJ official BPM6 methodology: monthly portfolio assets are by issuer economy; monthly portfolio liabilities by transactor economy; both 45 economies. Monthly preliminary data released two months after reference month; Regional BOP quarterly release five months after quarter-end. Monthly portfolio investment annual revisions in April of following two years; Regional BOP annual revisions in May of following two years.
+- MOF schedule confirms Q2 Regional BOP released 10-Nov-2026. The Oct-08-2026 Q2 Second Preliminary listing is for Direct Investment and Direct Investment Income; do not assume a same-vintage second preliminary portfolio partner dataset.
+- BOJ FAQ clarifies portfolio liability partner may be the foreign transactor/custodian rather than ultimate investor residence. Therefore equal country label alone does not prove exact monthly/quarterly partner equivalence.
+- Q2 monthly simple net sums (-2,069 assets; -3,424 liabilities) remain arithmetic-only, not validated quarterly figures. Q2 Regional India asset dash is not zero; liability 7,526 stays separate. No reconciliation inferred.
+- BOJ monthly and quarterly flat-file ZIP links were exposed, but web tool returned unsupported ZIP MIME and direct container download failed. No bytes/headers/length/retrieval UTC/hash captured; exact series IDs/raw archive NOT_DONE.
+- Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 83.
+- Status: revision calendar/partner semantics PASS; matched-vintage Q2 reconciliation NOT_ESTABLISHED; raw ZIP capture and exact series codes NOT_DONE; causal transmission NOT_DONE; production NOT_AUTHORIZED.
+- Next: supported ZIP-capable capture of official BOJ monthly and quarterly flat files + specification/code lists; verify India series codes and preserve raw bytes/hash. If unavailable, no guessed series IDs.
+- ₹0; no synthetic data or inferred zero; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
