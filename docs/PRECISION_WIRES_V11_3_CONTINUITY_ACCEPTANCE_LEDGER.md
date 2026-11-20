@@ -1991,3 +1991,26 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 Repair the BSP Table 1.7 Excel-HTML parser with sparse-cell index handling; verify extracted Q2 column against the dated BSP release; produce a successful raw+parsed evidence artifact. Then seek PHL observation-level IMF vintage evidence. Do not re-fetch IMF, rebuild cohort, or alter production.
 ### Protected invariants
 Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, weights and trade gates unchanged. UNKNOWN is never PASS. No paid data, synthetic values, fabricated timestamps, forward-fill, imputation, netting, production integration or aggregate authorization.
+
+
+## 2026-11-20 — Research continuation 45: PHL parser repair and evidence artifact PASS
+### Completed tasks
+- Reopened prior raw artifact 14608426572 and inspected BSP Table 1.7 Excel-HTML. Root cause one-cell merged section headings before 20-cell data rows. Corrected parser to skip merged headings and validate Q2 header plus 2026p subheader before extraction.
+- Corrected release parser: identical component labels occur in other functional-account sections. Extraction now anchors on Portfolio Investment and reads only its immediate asset/liability rows. Release parity is enforced; no later Other Investment row can overwrite Portfolio Investment values.
+- Corrected preliminary flag from verified header cell rather than fragile regex.
+- Run 44705225122 SUCCESS; job 136183035008; artifact 14614766459 (15,415 bytes), ZIP SHA-256 7e0d57f7d50f6f0a6622183d81f2bb8bbe04ee297f489f20dd982465d3b46b5c, expiry 2027-02-18. Artifact independently downloaded and inspected.
+- Raw Table 1.7: 156,110 bytes, SHA-256 b267ceab83794b86cd6c6a3ce703d878c2185091670e0c528b10df1644774569. BSP release HTML: 148,165 bytes, SHA-256 272890a3a383bbef2eebfb274746e3835f2c3e7d3ab084f303f317f6813b5707. CSV: 384 bytes, SHA-256 8bc1a27fc66c40f99ad7d66789884a90c0f1d1cb91b4c64065fdec4e769d2939. summary.json: 3,919 bytes, SHA-256 376894e48319d0a0a2c0d4e8322f4de0fc578fd8b1b70a4f361e425b0f0dd166.
+- Official BSP Table 1.7 and dated release agree exactly: Q2 2026 preliminary TRUE; portfolio net -468 USDm; assets +1,331; liabilities +1,798.
+- Archived IMF raw values unchanged; derived comparisons: asset +1,330.64295105526 USDm vs BSP +1,331 (residual -0.35704894474); liability +1,798.28261626536 vs BSP +1,798 (residual +0.28261626536). Both within ±0.5 USDm. Numeric 2/2 PASS. Display identity -467 vs -468 differs by 1 USDm; accepted only as combined display rounding, not forced.
+### Rejected / blockers
+- Prior parser attempts 44690030449, 44690124941, 44690374864 and 44704973071 remain diagnostic/failed. Their incorrect category values are NOT_ADMITTED.
+- BSP Q2 preliminary is not evidence of same-vintage with IMF. Current HTTP Last-Modified response is not a revision history. IMF public BOP dataset page offers API/download but no observation-specific source submission/revision timestamp.
+- BSP FDI page notes an FDI in-kind transaction revision; this applies to FDI, not portfolio flows, so it is explicitly excluded from PHL portfolio vintage evidence.
+- PHL source capture PASS; release parity PASS; numeric dual legs 2/2 PASS; same-vintage NOT_ESTABLISHED; national acceptance PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+### Operational lessons
+- Missing paths-ignore for PHL script/workflow caused accidental full collector runs 44704973029 and 44704985742. Added explicit paths-ignore entries for PHL research paths and cancellation paths in commit fbaa2617f8e996b996f299652194974141cd0921. Both accidental runs were confirmed cancelled; outputs excluded.
+- Never push a research-only script/workflow until the exact script, workflow and any trigger-file paths have been verified in the current nse_collector.yml paths-ignore list.
+### Exact next action
+Run a bounded official-source vintage search for BSP portfolio revision archive and IMF observation-level vintage metadata. If no public series-specific revision history or observation-level IMF vintage field exists, close the gate as NOT_ESTABLISHED and advance to the next eligible country after preflight. Do not repeat parser work, re-fetch IMF, or rebuild cohort.
+### Protected invariants
+Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, weights and trade gates unchanged. UNKNOWN is never PASS. No synthetic data, fabricated timestamps, paid data, forward-fill, imputation, forced netting, production integration or aggregate authorization.
