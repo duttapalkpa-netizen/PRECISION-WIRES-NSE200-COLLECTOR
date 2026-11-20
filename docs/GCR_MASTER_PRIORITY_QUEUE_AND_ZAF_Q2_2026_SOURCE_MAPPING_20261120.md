@@ -922,3 +922,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_BOP_LIVE_SERIES_LATEST_PERIOD_AND_EXPORT_VINTAGE_AUDIT_CONTINUATION117_20261121.md (create commit e2e55fcca37495e560397e06e004fed59a74d33c).
 - Next: actual browser export and inspect Q3-2025 workbook; if vintage stops at Q3-2025, mark public route stale and advance next cohort member. No IMF query/cohort rebuild.
 - ₹0; no net-to-leg inference, IIP substitution or production changes. UNKNOWN is never PASS.
+
+
+## CA. Türkiye TUR — TCMB September-2026 ZIP exact-endpoint access gate (Continuation 118, 2026-11-21)
+- Preflight re-fetched current Master Ledger and queue, then reviewed existing TUR sections O/P and country report. Existing PDF Q2 aggregation and August/September cross-check were not repeated; no IMF query or cohort rebuild.
+- Official TCMB BOP page exposes “Data - September 2026” ZIP. Exact URL resolved: https://tcmb.gov.tr/wps/wcm/connect/08454646-62d8-4188-bfbe-1c8c01d83fc4/bop.zip?CACHEID=ROOTWORKSPACE-08454646-62d8-4188-bfbe-1c8c01d83fc4-q7jJcOm&MOD=AJPERES. Web retrieval timed out; raw ZIP bytes, members, workbook sheets, byte count, SHA-256 and revision metadata NOT_CAPTURED.
+- Existing Q2 national values remain assets USD 5,749m and liabilities USD 9,183m; IMF exact values USD 5,749m / USD 9,270m. Asset published-precision match; liability residual +USD 87m remains unexplained. No claim that revisions caused it.
+- Report: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_SEPTEMBER_ZIP_EXACT_ENDPOINT_ACCESS_GATE_CONTINUATION118_20261121.md (commit 45ca5bcebb0a28cce43458fc3f936e5db9ef3a2a).
+- TUR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: supported actual browser/Computer Use or byte-preserving official route; do not repeat the same timed-out fetch. If unavailable, preflight immutable roster and prior reports, then advance next eligible member. ₹0; no production changes; UNKNOWN is never PASS.
