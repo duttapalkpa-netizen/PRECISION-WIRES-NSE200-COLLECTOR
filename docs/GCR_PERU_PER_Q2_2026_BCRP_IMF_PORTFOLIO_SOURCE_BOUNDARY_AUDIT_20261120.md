@@ -47,3 +47,29 @@ Obtain the official BCRP Note of Studies No. 59 (Q2-2026) PDF through a supporte
 
 ## Invariants
 No IMF re-query, no cohort rebuild, no third-party numeric admission, no IIP stock substitution, no netting, no FX inference, no synthetic/filled values, no aggregate admission, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A-E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 54 addendum — official BCRPData series recovered (2026-11-20)
+
+### Official portal and series identifiers
+- BCRPData quarterly Financial Account page: https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales/cuenta-financiera . It identifies private-sector financial-account series in USD million, quarterly from T1-2012 through T2-2026, last updated 20-Aug-2026; and separate public-sector financial-account series with the same period/update metadata. Official series page explicitly identifies the source sectors and series codes.
+- Private-sector portfolio assets: series PN39278BQ, official result page https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales/resultados/PN39278BQ/html ; T226 = 1,749 USDm.
+- Private-sector portfolio liabilities: series PN39285BQ, official result page https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales/resultados/PN39285BQ/html ; T226 = 279 USDm.
+- Public-sector portfolio liabilities: series PN39404FQ, official result page https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales/resultados/PN39404FQ/html ; T226 = 1,421 USDm.
+- Public-sector series catalogue exposes a public-sector asset aggregate PN39402FQ but does not list a public-sector portfolio-asset subseries in the 25-series list. Therefore the complete national portfolio-asset leg remains unavailable from the inspected catalogue; do not substitute total public assets.
+
+### Separate-leg comparison and scope control
+- Liability leg: BCRP private + public sector portfolio liabilities = 279 + 1,421 = 1,700 USDm. Existing IMF raw PAK-equivalent PER L_NIL_T = 1,699.66407147559 USDm. Difference = +0.33592852441 USDm, within BCRP's whole-USDm published precision. This is a strong rounded numeric match, subject to definition and vintage checks.
+- Asset leg: BCRP private-sector portfolio assets = 1,749 USDm only; IMF A_NFA_T = 1,999.15568669433 USDm. Difference against private-sector-only subtotal = -250.15568669433 USDm, but this is NOT a valid like-for-like discrepancy because the BCRP public-sector portfolio-asset component is not separately identified. Do not call it a failed full asset comparison and do not fill it with total public assets.
+- No netting. Private and public sector liabilities are added only to reconstruct the national liability component, as separate non-overlapping sector series; they are not combined with asset series.
+
+### Revised acceptance status
+- BCRP official Q2-2026 source extraction: PASS for private assets, private liabilities and public liabilities; public portfolio-asset subcomponent NOT_AVAILABLE in inspected series catalogue.
+- National liability leg: numeric comparison PASS at whole-USDm rounding (1,700 vs 1,699.664 USDm; residual +0.336 USDm).
+- National asset leg: PARTIAL / NOT_DONE (private-sector component captured; full-sector portfolio-asset coverage not established).
+- Full dual-leg national validation: PARTIAL / NOT PASS. Sign/definition crosswalk and same-vintage remain NOT_ESTABLISHED; BCRP series last updated 20-Aug-2026, while IMF raw observations only carry ACTION=R and no matching timestamp in the archived rows.
+- BCRP series page provides official public values and series IDs but no raw API payload/bytes or retrieval receipt was archived in this bounded step; no raw-file SHA-256 is claimed.
+- PER aggregate admission remains NOT_AUTHORIZED.
+
+### Next exact action
+- Inspect BCRPData API/developer documentation and the official public-sector asset series metadata to determine whether a portfolio-investment-specific public-sector asset flow series exists outside the 25-series list. Do not use public-sector total assets as a proxy. Then verify BCRP's BPM6 sign/sector definitions and any dated vintage history; if public-sector portfolio assets are not published, preserve the PER asset gate as UNKNOWN/PARTIAL and advance.
