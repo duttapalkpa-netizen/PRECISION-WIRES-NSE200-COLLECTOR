@@ -678,3 +678,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Current Office des Changes BPM6 report says bank settlement data are principal financial-account source, but no portfolio-specific foreign-currency conversion rule found in inspected methodology. BAM daily reference rate is not accepted as proxy.
 - No conversion computed; MAR remains PARTIAL / NOT PASS; numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; aggregate/production NOT_AUTHORIZED.
 - Next: portfolio-investment metadata/technical fiche; if it does not specify the rate rule, close MAR conversion as NOT_ESTABLISHED and move to next fixed cohort member.
+
+
+## BC. Morocco MAR — portfolio metadata and current BOP presentation (Continuation 93)
+- Official 2013 “Compte d’opérations financières” metadata records a historical gross credit/debit national-application statement despite BPM6 net-flow recommendation; its date is 14-Oct-2013.
+- Current Office des Changes 2024 annual report p.59 states financial account net assets/liabilities presentation; p.60 defines portfolio as negotiable equity/debt securities; p.36 reports net portfolio assets +4,864 MDH, liabilities +3,886 MDH, balance +978 MDH. Current evidence supports net presentation. Preserve old fiche as historical/version conflict.
+- Related portfolio-specific metadata fiche link (details/87) timed out; no currency/valuation/FX conversion convention obtained. Official flow-chronology metadata says national recording at settlement, accrual when available; not an FX rule.
+- No MAD/USD conversion, no BAM proxy, no arithmetic mean or quarter-end rate. MAR remains PARTIAL / NOT PASS; FX convention NOT_ESTABLISHED; numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; aggregate/production NOT_AUTHORIZED.
+- Report create response commit c86b71dd38d21ce9312be470cf1c41f251ceb7b2, but subsequent path fetch 404 and retry 422 requiring sha; report artifact not independently verified. Findings and limitations are preserved here.
+- Decision: close this public metadata route as NOT_ESTABLISHED and advance fixed cohort. Revisit only on a new current versioned official portfolio fiche/FX methodology.
