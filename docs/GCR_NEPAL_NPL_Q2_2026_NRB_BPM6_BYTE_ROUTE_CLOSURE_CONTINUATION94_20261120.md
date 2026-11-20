@@ -53,3 +53,7 @@ Status: OFFICIAL DATASET DISCOVERY PASS; XLSX BYTE CAPTURE BLOCKED; NATIONAL LEG
 
 ## 7. Protected invariants
 Fixed 63-country cohort unchanged. No new IMF query, no fabricated values/timestamps, no stocks-as-flows, no netting, no cumulative-to-quarter arithmetic without source proof, no forward-fill, no guessed sign/scale, no production changes. UNKNOWN is never PASS.
+
+
+## Continuation 94 — Final verification marker
+- This report records the bounded NRB BPM6 byte-route closure. Official dataset discovery PASS; XLSX byte retrieval BLOCKED; workbook bytes/hash/sheets not captured; Q2 legs not extracted; NPL PARTIAL / NOT PASS; aggregate and production NOT_AUTHORIZED. No new IMF query or cohort rebuild.
