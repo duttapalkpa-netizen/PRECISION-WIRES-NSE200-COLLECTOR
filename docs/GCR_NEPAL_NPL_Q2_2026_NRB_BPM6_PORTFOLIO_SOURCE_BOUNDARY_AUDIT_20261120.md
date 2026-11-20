@@ -44,3 +44,22 @@ Retrieve the three official NRB monthly XLSX workbooks through an XLSX-capable r
 
 ## Invariants
 No synthetic data, no netting, no FX inference, no stock-as-flow substitution, no cumulative-to-quarter transform without documented source basis, no cohort rebuild, no IMF re-query, no production changes. UNKNOWN is never PASS.
+
+
+## Continuation 57 correction — monthly archive document type verified (2026-11-20)
+
+### Correction to prior source-boundary interpretation
+- Opened the exact NRB Monthly Statistics archive PDF entries for 2082-12 (Mid-April 2026), 2083-01 (Mid-May 2026), and 2083-02 (Mid-June 2026). All three PDFs are titled **Banking & Financial Statistics (Monthly) (Provisional)** and their contents are banking/financial-institution balance sheets, P&L, credit and deposit statistics; not the External Sector BPM6 Balance of Payments workbook. The PDFs have 69, 69 and 70 pages respectively. Exact official PDF surfaces: https://www.nrb.org.np/bfr/2082-12mid-april-2026/ ; https://www.nrb.org.np/bfr/2083-01mid-may-2026/ ; https://www.nrb.org.np/bfr/2083-02mid-june-2026/ . Full-PDF text search found no “portfolio” or “Balance of Payments” match in the April PDF and no “Balance of Payments” match in the May/June PDFs. These three XLSX links must be REMOVED from the NPL BOP candidate list; they are not BOP evidence. This corrects the prior Continuation 56 inference that they might contain the necessary BOP rows.
+- The correct official NRB External Sector page is https://www.nrb.org.np/database-on-nepalese-economy/external-sector/ . It lists Monthly Balance of Payments (BPM 6) as a distinct dataset. The official direct linked workbook is https://www.nrb.org.np/contents/uploads/2026/09/Balance-of-Payments-BPM6.xlsx . Attempted official retrieval returns unsupported XLSX MIME (400); no bytes/sheets/values/hash inspected.
+- NRB NSDP page https://www.nrb.org.np/nsdp/ lists BOP Browse Data and SDMX Download. Browse Data route timed out; SDMX download link points to NEPAL_BOP_2024_Q1.xml (stale) and XML MIME is unsupported. Neither supplies Q2-2026 values.
+
+### Corrected NPL gates
+- Official External Sector BPM6 dataset discovery: PASS.
+- Candidate monthly-statistics PDFs/XLSX: REJECTED as wrong document family (BFR, not BOP).
+- Actual BPM6 XLSX bytes/sheets/rows: NOT_CAPTURED.
+- Separate Q2-2026 national portfolio assets/liabilities: NOT_EXTRACTED.
+- Monthly-vs-cumulative basis, sign/unit, vintage: NOT_ESTABLISHED.
+- Numeric comparison: NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+
+### Next exact action
+- Stop using the monthly Banking & Financial Statistics archive for BOP. Find an XLSX-capable route for the single official External Sector BPM6 workbook or an official NRB API/export surface. If unavailable, keep NPL blocked and move to the next country; no repeated MIME retries, no balance-sheet stock substitution, no IMF re-query.
