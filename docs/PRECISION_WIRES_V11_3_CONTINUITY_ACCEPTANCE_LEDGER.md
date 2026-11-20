@@ -2478,3 +2478,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail report: docs/GCR_SERBIA_SRB_Q2_2026_ARCHIVED_IMF_EXACT_DUAL_LEG_ROW_EXTRACTION_CONTINUATION102_20261120.md; create commit daed219c211da0290f74c1c5c27af11723adbeb3.
 - Next: independent NBS May observation/vintage check, PDF raw capture/hash, official transaction FX and sign/concept bridge, then compare each leg separately.
 - ₹0; protected V11.3 invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 103 — Serbia SRB NBS BPM6 sign / FX methodology and later-vintage route (2026-11-20)
+- Preflight re-fetched Master Ledger (blob SHA bd4259ad6176cbbcd0d481c12c012efff63f7493), GCR queue (blob SHA 250e3cce04832837cf942b6cd285c62db825b7a2), SRB Continuation 102 (blob SHA 874f1908814137b67c0d4032752b73dd3a29e207), and Continuation 101 (blob SHA ca0eb8844ab9d14a378f4278506f363fdf776c65). No PASS work repeated.
+- Official NBS BPM6 Explanatory Notes confirm transaction-date official middle NBS FX rate for original-currency conversion; increases in assets/liabilities positive, decreases negative; net=assets−liabilities. NBS-side sign and transaction-FX methodology PASS.
+- Aggregate EUR-to-USD conversion still NOT_ESTABLISHED; transaction-level data/time are unavailable in aggregate table, so no generic period FX rate used. IMF indicator sign/concept mapping and same-vintage alignment NOT_ESTABLISHED.
+- Official NBS BOP page lists September 2026 monthly and detailed BPM6 XLS files; latest developments release dated 18-Nov-2026. Attempted official XLS route rejected by current retrieval bridge (unsupported content type); raw workbook bytes/sheets/hash not captured; May revision check NOT_DONE.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_SIGN_FX_METHODOLOGY_AND_REVISION_ROUTE_CONTINUATION103_20261120.md; create commit 97226fa883b88f0546b4b72e92ae10fa602c731f.
+- Next: supported XLS byte retrieval, May 2026 revision verification, official IMF A_NFA_T/L_NIL_T definition bridge; compare only after same-vintage/concept basis.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
