@@ -2041,3 +2041,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - COL raw national flow values NOT_EXTRACTED; numeric comparison NOT_DONE; sign mapping and same-vintage NOT_ESTABLISHED; national acceptance BLOCKED/PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. IIP stocks and account-level aggregates remain excluded.
 - Detail report: docs/GCR_COLOMBIA_COL_Q2_2026_BANREP_OFFICIAL_SOURCE_BOUNDARY_AUDIT_20261120.md, update commit 40722e580d98c49ac57328f7d8974115529b4e51.
 - Next exact action: obtain the two component series IDs and raw Q2 export via supported SUAMECA browser route; preserve bytes, receipt, SHA-256 and series sign/vintage metadata. No IMF re-query, no cohort rebuild, no production changes. UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Continuation 48: Colombia SDMX route boundary
+- Reopened current continuity ledger (pre-update blob 99b4a343614637422e5780827083847c0c0688d1), GCR priority queue, fixed 63-country cohort and COL detail report before continuing. The current country task was COL SUAMECA raw export access.
+- Inspected BanRep official SDMX guide v4.0 (Oct-2026). It documents public REST queries and XML/JSON/CSV formats, but its supported flow inventory lists IBR, DTF, TRM, TPM, TIB, COLCAP, monetary aggregates, UVR and TES—not BOP/portfolio investment. The documented SDMX API is therefore NOT_APPLICABLE as a proven BOP export route; no guessed flow ID or unsupported request was made.
+- Official SUAMECA catalogue confirms two separate portfolio transaction component series in current USD millions, quarterly through 2026-Q2, published 2026-09-01; exact series IDs/raw bytes/Q2 values/sign-vintage metadata still unavailable. COL raw capture NOT_DONE, numeric validation NOT_DONE, sign mapping and same-vintage NOT_ESTABLISHED; COL PARTIAL/BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Official sources: https://suameca.banrep.gov.co/archivos/webservices/sdmx_v_3_1/GUIA_CONSUMO_SDMX_V_3_1.pdf ; https://suameca.banrep.gov.co/descarga-multiple-de-datos/ .
+- Next: advance Rank-1 validation to the next not-yet-audited member of the existing 63-country cohort after preflight. Do not rebuild cohort, re-query IMF, use IIP stocks, or infer values/signs. Protected production selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, engines A–E and IPO-PLX V2 unchanged.
