@@ -670,3 +670,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - BAM API portal lists Cours de change V1, but no historical Q2 raw series/revision metadata or Office des Changes flow conversion convention established. No unsupported quarterly conversion made.
 - MAR national and corrected IMF asset/liability directions agree under BPM6 increase-positive semantics. Magnitude comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: find explicit Office des Changes transaction FX conversion rule; if unavailable, advance to next cohort member without inferred conversion.
+
+
+## BB. Morocco MAR — BOP vs settlement FX conversion scope (Continuation 92)
+- Added docs/GCR_MOROCCO_Q2_2026_TRANSACTION_FX_CONVERSION_SCOPE_AUDIT_CONTINUATION92_20261120.md (commit bf6af30f4a4623f9a590405b3d31e51a0d8d6748).
+- Official settlement-balance methodology records MAD countervalue using rate applied at payment execution, but explicitly distinguishes actual settlements from BOP transactions whether settled or deferred. This rule cannot be applied wholesale to portfolio BOP flows.
+- Current Office des Changes BPM6 report says bank settlement data are principal financial-account source, but no portfolio-specific foreign-currency conversion rule found in inspected methodology. BAM daily reference rate is not accepted as proxy.
+- No conversion computed; MAR remains PARTIAL / NOT PASS; numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; aggregate/production NOT_AUTHORIZED.
+- Next: portfolio-investment metadata/technical fiche; if it does not specify the rate rule, close MAR conversion as NOT_ESTABLISHED and move to next fixed cohort member.
