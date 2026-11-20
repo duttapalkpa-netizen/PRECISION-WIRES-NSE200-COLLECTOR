@@ -113,3 +113,57 @@ Open the official 10-Nov-2026 Q2 Regional BOP release and its linked BOJ/ MOF wo
 - Sources inspected: official MOF release schedule and April/May PDFs; April PDF pp.4-5, May PDF pp.4-5; June preliminary report remains separately recorded in Continuation 81; Q2 Regional BOP remains separately recorded in Continuation 80.
 - Next: perform a bounded revision-vintage and definition bridge using MOF's official Historical Data / revised tables for April-June, and the exact Q2 Regional BOP footnotes. If no official matched-vintage bridge exists, retain monthly and quarterly series as separate non-reconciled evidence. Do not synthesize Q2.
 - Protected invariants unchanged: ₹0; no FX conversion, no netting across legs, no synthetic values, no production changes, fixed 63-country cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 83 — Official revision-vintage and partner-classification boundary audit (2026-11-20)
+### 1. MOF publication and revision policy
+- Re-fetched current Master Continuity Ledger, GCR queue and Japan report; reused Continuations 80–82 and did not repeat monthly India row extraction or Q2 PDF table transcription.
+- Official MOF Press Releases (Period) notice states monthly PDF figures are Preliminary / Second Preliminary and that the latest figures are published under Historical Data. MOF's release-period page states annual BOP revisions are conducted each April for data from January 2014 onward.
+- Official MOF Historical Data index links Portfolio Investment and BOJ Time-Series Data Search separately. The Portfolio Investment Historical Data page exposes summary and investor-type tables; it directs more detailed series to BOJ Time-Series Data Search.
+- Official BOJ BPM6 methodology page states:
+  * Monthly BOP portfolio investment country breakdown assets are classified by economy of issuer (45 economies).
+  * Monthly BOP portfolio investment country breakdown liabilities are classified by economy of transactor (45 economies), not necessarily the ultimate investor's residence.
+  * Monthly BOP preliminary figures are released two months after the reference month.
+  * Regional BOP is quarterly, released five months after quarter end.
+  * Monthly portfolio investment annual revisions are released in April of the following two years.
+  * Regional BOP annual revisions are released in May of the following two years.
+- The MOF CY2026 release-date page shows Q2 Regional BOP released 10-Nov-2026. It separately lists the Oct-08-2026 Q2 Second Preliminary items as Direct Investment and Direct Investment Income; it does not list a Second Preliminary Portfolio Investment country-breakdown PDF for Q2. Do not assume the regional release and the monthly portfolio PDFs share a common revision vintage.
+### 2. Consequence for Q2-2026 comparison
+- April/May/June monthly India Portfolio Investment Assets and Liabilities country rows remain preliminary values recorded in Continuations 81–82.
+- The 10-Nov-2026 Q2 Regional BOP India row remains as transcribed in Continuation 80: portfolio asset cell dash (not zero), portfolio liability cell 7,526 (100 million yen).
+- Monthly India portfolio asset partner basis = economy of issuer; liability partner basis = economy of transactor. BOJ FAQ confirms the financial-account asset side partner is debtor economy and portfolio liability partner is transactor economy; when a nonresident trades Japanese securities through a foreign securities firm/custodian, that intermediary economy may be recorded rather than ultimate investor residence.
+- Thus even where the country label is India in both tables, partner attribution semantics must be checked, especially on liabilities. The published definitions alone do not establish that the two India rows are identical in counterparty attribution or that monthly net sums should equal the quarterly table.
+- Unadjusted April–June monthly net sums (-2,069 assets; -3,424 liabilities) remain arithmetic-only diagnostics, not a Q2 result. The quarterly asset dash must remain dash/not-reported; quarterly liability 7,526 must remain in the quarterly dataset. No netting, FX conversion, or substitution.
+- As of 20-Nov-2026, neither series has yet reached the official annual-revision window for Q2-2026: monthly portfolio investment annual revision is scheduled in April of the following two years; Regional BOP annual revision in May of the following two years. For Q2-2026 these are future windows (April 2028 and May 2028 respectively), subject to the official release schedule. The annual revision timing does not itself promise that a missing dash will become numeric.
+### 3. Raw-data boundary
+- BOJ official Flat Files Download page lists separate downloadable ZIP packages for monthly BOP and quarterly Regional BOP. Web retrieval of the monthly and regional ZIPs returned unsupported content-type errors; a direct container download attempt also failed. No archive bytes, response headers, byte lengths, retrieval UTC, or SHA-256 were obtained.
+- BOJ Time-Series Data Search page supports search by statistics, series name and exact series code, and lists a Flat Files Download facility. No guessed series IDs or undocumented query parameters were used. Exact India monthly series-code extraction and raw archive remain NOT_DONE.
+### 4. Acceptance matrix
+| Gate | Status |
+|---|---|
+| MOF preliminary vs Historical Data distinction | PASS |
+| MOF annual revision cadence (April) | PASS |
+| BOJ monthly vs quarterly publication cadence | PASS |
+| Monthly portfolio asset partner definition | PASS |
+| Monthly portfolio liability partner definition | PASS |
+| Monthly portfolio annual revision timing | PASS |
+| Regional BOP annual revision timing | PASS |
+| Q2-2026 monthly and quarterly same-vintage equivalence | NOT_ESTABLISHED |
+| Q2 monthly sum = quarterly India rows | NOT_ESTABLISHED |
+| Raw monthly/quarterly BOJ ZIP archive + SHA-256 | NOT_DONE |
+| Exact BOJ series IDs / India observations from flat file | NOT_DONE |
+| Japan→India causal transmission / event study | NOT_DONE |
+| Production integration | NOT_AUTHORIZED |
+### 5. Decision and next exact action
+- Decision: maintain three distinct evidence objects: (1) monthly preliminary portfolio assets by issuer economy; (2) monthly preliminary portfolio liabilities by transactor economy; (3) quarterly Regional BOP partner-country portfolio asset/liability rows. Do not merge or reconcile until the actual BOJ monthly series vintage, partner code, and quarterly definitions are independently aligned.
+- Next exact action: use BOJ Time-Series Data Search / documented Flat Files Download with a supported ZIP-capable retrieval path to capture the exact monthly and quarterly flat-file packages, their specification/code lists, and source metadata; identify the India series codes and observations for Apr-Jun 2026 and Q2-2026; hash original bytes before parsing. If ZIP-capable retrieval is unavailable, keep exact codes/values and raw archive NOT_DONE and do not guess.
+- Official sources reviewed:
+  * MOF release-period revision notice: https://www.mof.go.jp/english/policy/international_policy/reference/balance_of_payments/release_period.htm
+  * MOF release-date schedule: https://www.mof.go.jp/english/policy/international_policy/reference/balance_of_payments/release_date.htm
+  * MOF Historical Data index: https://www.mof.go.jp/english/policy/international_policy/reference/balance_of_payments/index.htm
+  * MOF Portfolio Investment Historical Data: https://www.mof.go.jp/english/policy/international_policy/reference/balance_of_payments/ebppi.htm
+  * BOJ BPM6 data and release schedule/methodology: https://www.boj.or.jp/en/statistics/br/bop_06/index.htm
+  * BOJ BOP FAQ (partner-economy and financial-account sign/recording principles): https://www.boj.or.jp/en/statistics/outline/exp/faqbpsm6.htm
+  * BOJ statistics list (portfolio assets/liabilities country breakdown and Regional BOP India): https://www.stat-search.boj.or.jp/ssi/docs/info/statistics_menu_list_e_bop.pdf
+  * BOJ flat files download page: https://www.stat-search.boj.or.jp/info/dload_en.html
+- Protected invariants unchanged: ₹0; official/free sources only; no synthetic data, no inferred timestamps, no dash-to-zero conversion, no unsupported FX conversion, no netting across assets/liabilities, no production changes, fixed 63-country IMF cohort unchanged. UNKNOWN is never PASS.
