@@ -1872,3 +1872,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Selected BGD from existing exact-key IMF sample; reused run 44474458684 / artifact 14505009889 / ZIP SHA-256 588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7. Raw BGD A_NFA_T CSV SHA-256 67b7d5a7460fa096a85471b597fe7be5893576e5bbf01a0481acf40bee043106; L_NIL_T SHA-256 de54a736d8cb3975c62a3fe762354921057555dbda830df7f5b8aacf609aafe0.
 - IMF Q2 2026 A_NFA_T=0 USD; L_NIL_T=-USD113.334678m. Bangladesh Bank Quarterly Vol XXIII No.4 Table V.1 publishes FY26 Q4 (Apr-Jun 2026) portfolio investment net -109 USDm, but not separate portfolio asset/liability legs. Do not back-solve split or infer sign mapping. National dual-leg validation BLOCKED / NOT PASS; same vintage NOT_ESTABLISHED; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md. Next: find official separate asset/liability portfolio rows with dated vintage/sign metadata; if unavailable preserve BLOCKED.
+
+
+## 2026-11-20 — BGD Bangladesh Bank NSDP SDMX source-route audit
+- Follow-up to BGD BLOCKED gate: official Bangladesh Bank NSDP page lists BOP Browse Data, Download in SDMX and DSBB Metadata. Exact routes: `https://www.bb.org.bd/econdata/nsdp/browsefile/bpm6_bgd.xls`, `https://www.bb.org.bd/econdata/nsdp/xml/bgd/bop6_bgd.xml`, and alternate presentation `https://www.bb.org.bd/econdata/nsdp/xml/bgd/bopanltcl_bgd.xml`.
+- Web retrieval rejected XLS and XML MIME types; direct XML download also failed. No bytes/hash/headers/SDMX keys/observations/revision attributes captured. Official SDMX route discovery PASS; actual file capture and dual-leg validation NOT_DONE. Do not infer that the SDMX file contains the required two legs or historical vintage metadata.
+- BGD remains BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Detail report updated: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
