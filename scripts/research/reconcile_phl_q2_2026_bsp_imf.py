@@ -60,7 +60,7 @@ def main():
     # Excel-exported HTML includes one-cell merged section headings before
     # the actual 20-cell data rows. Ignore those headings; do not mistake them
     # for a truncated data record. Column 11 is Q2-2026 (Q2 2025 is column 10).
-    if len(parser.rows)<5 or parser.rows[3][10].strip()!="Q2" or parser.rows[4][11].strip()!="2026 p":
+    if len(parser.rows)<5 or parser.rows[3][5].strip()!="Q2" or parser.rows[4][11].strip()!="2026 p":
         raise SystemExit("BSP Table 1.7 Q2-2026 column-header verification failed")
     vals={}
     for row in parser.rows:
