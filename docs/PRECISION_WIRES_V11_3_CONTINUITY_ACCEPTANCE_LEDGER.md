@@ -2176,3 +2176,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Page contains Cloudflare server/CF-RAY metadata and challenge-platform bootstrap marker, but the captured response includes static report body. No challenge bypass or undocumented request attempted. This is not evidence CDSL has no other UI or that all historical access is blocked.
 - Detail report: docs/GCR_CDSL_DAILY_ARCHIVE_STATIC_SNAPSHOT_FRESHNESS_AUDIT_CONTINUATION78_20261120.md; blob SHA `69597e2fbe40d859bfbccb4af165b6c10959c4a8`.
 - Decision: captured archive route is a stale static snapshot; continuous daily history UNKNOWN/NOT_ESTABLISHED; date-control execution NOT_FOUND_IN_CAPTURE; CDSL archive daily series excluded. NSDL/CDSL matched-date and production remain NOT_DONE/BLOCKED. No production changes.
+
+
+## Continuation 79 — Japan (JPN) Q2-2026 BOJ/MOF portfolio-flow source contract (2026-11-20)
+- Re-fetched current ledger, GCR queue and Continuation 78; did not repeat CDSL/NSDL or completed country audits.
+- BOJ official BPM6 documentation confirms monthly portfolio investment assets/liabilities as separate flow legs, with gross and net transactions; asset = net acquisition of financial assets, liability = net incurrence of liabilities. Portfolio investment partner-country flows are described for 45 economies. Regional BOP is a separate quarterly partner-economy product.
+- MOF official CY2026 schedule lists Q2-2026 Regional BOP release on 10-Nov-2026. BOJ public Time-Series Data Search/API supports CSV/JSON; exact portfolio series identifiers and Q2 partner-country rows were not obtained.
+- Exact India bilateral row availability, Q2 values, units, raw bytes/hash and same-vintage status remain NOT_DONE / NOT_ESTABLISHED. No API request, guessed series code, net-only substitution or causal inference.
+- Detail report: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md (commit 869e0fe8b91bb48b1f14fed170706e4b834bd76c; blob 96be39472f3315ba8d5d1f22a32aebfe5c390a0d).
+- Acceptance: official source-family/period/API contract PASS; exact Q2 India partner legs NOT_DONE; national/India-transmission validation PARTIAL / NOT PASS; production NOT_AUTHORIZED.
+- Next exact action: inspect the official 10-Nov-2026 Q2 Regional BOP attachment and/or official BOJ 45-economy portfolio-by-counterparty data; capture/hash raw bytes before parsing, verify India row, separate assets/liabilities, unit/sign/vintage. Do not infer bilateral values from Japan aggregate BOP.
+- Protected production and 63-country cohort invariants unchanged. UNKNOWN is never PASS.
