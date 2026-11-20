@@ -1892,3 +1892,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Reused IMF exact-key receipt: A_NFA_T=0 USD; L_NIL_T=-113.334678 USDm. Historical FY25 Bangladesh identity was net=assets−liabilities; applying it mechanically to these IMF legs yields +113.334678 USDm, opposite to national -109 USDm (absolute difference 222.334678 USDm). This is a diagnostic exception only, not proof of an IMF error or validated sign flip. Do not back-solve national legs or silently transform signs.
 - FY26 national net-only source row PASS; separate legs NOT_AVAILABLE; cross-source net identity REVIEW / FAIL_DIAGNOSTIC; same-vintage NOT_ESTABLISHED; BGD dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
+
+
+## 2026-11-20 — BGD primary quarterly PDF reinspection and publication date
+- Re-inspected official Bangladesh Bank Quarterly Apr–Jun 2026 Vol XXIII No.4, Table V.1 (PDF p.74): unit USDm; portfolio row FY25 -138, FY26P -223, FY26 Q1 -45, Q2 -59, Q3 -10, Q4 -109. Calendar 2026-Q2 maps to FY26 Q4 = -109 USDm; FY26 annual provisional = -223 USDm. P=Provisional; R=Revised. Official recent-publications index dates this edition 2026-11-15.
+- Table V.1 reports portfolio investment only as a net row; no separate portfolio asset/liability legs. Its separate DMB/NBDC and reserve asset/liability rows are different categories and cannot substitute for portfolio legs.
+- Prior IMF-derived +113.334678 USDm is only a conditional diagnostic under a historical FY25 identity, not a proven FY26 sign mapping. Preserve REVIEW / FAIL_DIAGNOSTIC; no inferred sign flip.
+- BGD national net-only PASS; national portfolio legs NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
