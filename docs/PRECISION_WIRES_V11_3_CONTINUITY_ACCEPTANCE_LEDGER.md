@@ -2368,3 +2368,16 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: BOP vs settlement methodology distinction PASS; execution-date rule applicability to all portfolio flows NOT_ESTABLISHED; official portfolio-flow MAD/USD convention NOT_ESTABLISHED; numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
 - Next: inspect portfolio-investment statistical metadata/technical fiche for explicit conversion method; if absent, retain blocker and advance fixed cohort. No further BAM daily series retrieval until conversion rule established.
 - No IMF re-query, no cohort rebuild, no production change, ₹0. UNKNOWN is never PASS.
+
+
+## Continuation 93 — Morocco portfolio metadata and current BOP presentation audit (2026-11-20)
+- Preflight re-fetched Master Ledger, GCR queue and Morocco Continuation 92 report; completed PASS tasks not repeated.
+- Official Office des Changes “Compte d’opérations financières” metadata fiche (created/last updated 14-Oct-2013) says BPM6 recommends net asset acquisition/net liability incurrence, but its national application field says gross credit/debit presentation. Preserve this as historical metadata, not as proof of Q2-2026 current practice.
+- Related “Investissement de portefeuille” metadata link resolved toward details/87 but timed out. Portfolio-specific fiche currency, valuation and FX convention NOT_RETRIEVED.
+- Current Office des Changes 2024 annual BOP/IIP report p.59 says financial account is recorded as net asset/liability flows, not debit/credit; p.60 defines portfolio investment as negotiable equity/debt securities; p.36 reports 2024 portfolio assets +4,864 MDH, liabilities +3,886 MDH, balance +978 MDH. Current report supports net presentation.
+- Official flow-chronology metadata says BPM6 recommends recording at transaction/ownership-transfer time; national practice records at settlement, and accrual basis when information available. This is timing, not FX conversion.
+- No portfolio-specific Q2-2026 transaction/valuation currency or FX conversion convention established. No numeric MAD/USD conversion; no BAM revaluation rate proxy, arithmetic mean, quarter-end rate or third-party rate used.
+- Status: current classification/net presentation PASS; historical metadata age/conflict documented PASS; portfolio fiche NOT_RETRIEVED; FX convention NOT_ESTABLISHED; numeric conversion NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
+- Report path intended: docs/GCR_MOROCCO_Q2_2026_PORTFOLIO_METADATA_AND_BOP_PRESENTATION_AUDIT_CONTINUATION93_20261120.md. GitHub create returned commit c86b71dd38d21ce9312be470cf1c41f251ceb7b2, but subsequent file fetch returned 404 and create retry indicated existing path requires SHA; therefore report-file path/commit association is NOT_VERIFIED. Do not treat the report artifact as verified until resolved. The findings below are recorded in this ledger/queue.
+- Decision: close this public metadata route as NOT_ESTABLISHED and advance to next unfinished country in the fixed cohort; revisit MAR only if current versioned fiche/technical note provides explicit FX convention. No IMF re-query or cohort rebuild.
+- ₹0; fixed 63-country cohort and production invariants unchanged. UNKNOWN is never PASS.
