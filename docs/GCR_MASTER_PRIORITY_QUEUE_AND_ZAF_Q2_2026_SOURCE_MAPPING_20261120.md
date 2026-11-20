@@ -568,3 +568,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Japan national dual-leg validation remains PARTIAL / NOT PASS; asset NOT_REPORTED_IN_THIS_TABLE; production NOT_AUTHORIZED.
 - Detail report updated: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md.
 - Next: inspect BOJ's official 45-economy Portfolio Investment Assets and Liabilities country-breakdown series for India Q2-2026; use exact metadata/series IDs, capture/hash original bytes, and preserve publication vintage. Do not treat dash as zero or infer from aggregate BOP.
+
+
+## AQ. Japan JPN — BOJ 45-economy monthly portfolio country-breakdown, June 2026 (2026-11-20)
+- Reopened current ledger, queue and Japan report; no repetition of Continuation 80's Q2 regional PDF inspection.
+- BOJ official documentation: Portfolio Investment Assets Country Breakdown is by issuer economy; Liabilities Country Breakdown by transactor economy; both monthly and cover 45 economies.
+- Official MOF June 2026 preliminary Portfolio Investment PDF (bppi202606.pdf), pp.4-5, has India rows in both country-breakdown tables; unit 100 million yen.
+- India June Assets: total A 1,379 / D 2,056 / net -677; equity net -691; long-term debt net +14; short-term fields dashes.
+- India June Liabilities: total A 1,187 / D 2,773 / net -1,586; equity 0/0/0; long-term debt A dash, D 920, net -920; short-term A 1,187 / D 1,852 / net -665. Components show net -1,585 vs published -1,586; retain published total and flag 1 unit residual. No dash-to-zero promotion.
+- Assets component arithmetic matches displayed total. June is preliminary monthly, not Q2; Q2 aggregation and vintage bridge NOT_DONE. PDF bytes/hash not captured.
+- Detail report updated in Continuation 81. Next: inspect April/May 2026 monthly portfolio PDFs and vintage, then compare monthly series with 10-Nov-2026 Q2 regional release.
+- Production NOT_AUTHORIZED; fixed cohort and production invariants unchanged.
