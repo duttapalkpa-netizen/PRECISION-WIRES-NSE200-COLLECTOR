@@ -1849,3 +1849,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Residuals IMF−Banxico: assets +0.255098 USDm; liabilities +0.285114 USDm; both within ±0.5 USDm whole-million rounding. Concepts/signs align; no FX or sign transform.
 - Banxico says components may be revised in future releases. Exact Banxico↔IMF same-vintage bridge is NOT_ESTABLISHED; numeric legs PASS but MEX full national dual-leg validation remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: locate versioned Q2 vintage/revision record; if unavailable preserve PARTIAL and advance cohort.
+
+
+## 2026-11-20 — MEX Banxico live SIE CE174 current-series cross-check
+- Re-opened official Banxico SIE CE174 (quarterly BPM6 BOP, USDm, current flows) and CA410 summary after preflighting latest ledger, priority queue and MEX/TUR/POL reports. No duplicate IMF retrieval or original Q2 extraction.
+- CE174 latest period Apr–Jun 2026: portfolio balance -1,624; net acquisition of portfolio assets +8,937; net incurrence of portfolio liabilities +10,561 USDm. The table footnote states observations are preliminary and subject to revisions. Current live values match the 25-Aug-2026 release exactly at published whole-million precision.
+- This is a second official Banxico publication surface and supports the current Q2 values; it is not a dated revision log or historical vintage archive and does not establish which vintage the IMF 2026-11-19 values used.
+- MEX numeric legs remain PASS; exact same-vintage identity NOT_ESTABLISHED; full national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report updated: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Do not infer same-vintage from current SIE match.
