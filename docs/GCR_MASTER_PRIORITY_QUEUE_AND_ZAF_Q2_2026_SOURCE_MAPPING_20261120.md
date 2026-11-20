@@ -409,3 +409,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Exact CY26 Q2(R) values: Portfolio investment abroad = -2 USDm; Portfolio investment in Pakistan = -243 USDm. These are separately published portfolio components, not derived from cumulative/monthly figures. This corrects the prior PAK audit's NOT_EXTRACTED state for source values.
 - Source-value extraction PASS only. Sign/definition crosswalk to IMF A_NFA_T/L_NIL_T NOT_ESTABLISHED; exact IMF PAK Q2 row retrieval from existing archive NOT_DONE; same-vintage/revision timestamp NOT_ESTABLISHED; dual-leg numeric comparison NOT_DONE; PAK PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report updated: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. No IMF re-query or cohort rebuild. Next: retrieve exact archived IMF PAK Q2 rows, verify official BPM6 sign definitions, compare legs separately at USDm display precision, then investigate SBP revision timestamp. No netting or assumed sign transform.
+
+
+## Continuation 52 — PAK Q2-2026 dual-leg archive reconciliation
+- Existing IMF raw archive reused; no IMF query or cohort rebuild. Raw Git blob SHAs: asset `15449e87c9057291a1f52f2f8cd9805df55f9fb8`; liability `15f379dc42e2760eb5f2384618e48f5ddc3177f1`.
+- Exact PAK rows: `A_NFA_T`, P_F, USD, Q, 2026-Q2, OBS_VALUE -2000000, SCALE 6, ACTION R; and `L_NIL_T`, P_F, USD, Q, 2026-Q2, OBS_VALUE -243000000, SCALE 6, ACTION R.
+- SBP official BPM6 revision notice states financial-account increases in assets and liabilities are positive and decreases negative; SBP FY23 BPM6 introduction defines NAFA/NIL and confirms negative changes indicate decreases. Sources: https://www.sbp.org.pk/departments/stats/Notice/BPM6-Revision-16-Aug-13.pdf ; https://www.sbp.org.pk/publications/bop/BOPFY23/Intro.pdf .
+- Separate USDm comparison: abroad/asset SBP -2 vs IMF A_NFA_T -2 (difference 0); in-Pakistan/liability SBP -243 vs IMF L_NIL_T -243 (difference 0). Numeric dual-leg comparison 2/2 PASS at published precision; conceptual sign/framework crosswalk SUPPORTED. No netting.
+- SBP CY26 Q2 is marked revised (R), and IMF rows carry ACTION=R; exact observation-specific revision timestamp and same-vintage bridge remain NOT_ESTABLISHED. PAK national validation PARTIAL, not PASS; aggregate NOT_AUTHORIZED.
+- No SBP raw PDF SHA-256 captured; no IMF re-query, no cohort rebuild, no production changes. Detail: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md.
+- Next: inspect official SBP Data Revision Policy for dated Q2 portfolio revision history; if unavailable, retain UNKNOWN and proceed to next unvalidated cohort country.
