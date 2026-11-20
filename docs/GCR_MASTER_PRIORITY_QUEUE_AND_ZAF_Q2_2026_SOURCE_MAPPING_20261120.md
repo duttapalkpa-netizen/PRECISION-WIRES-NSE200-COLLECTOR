@@ -820,3 +820,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_JULY_BULLETIN_PRIOR_VINTAGE_CROSSCHECK_CONTINUATION107_20261120.md (create commit e952b837e44f686b76218504214da85de2b4022e).
 - Next: recover July Table 2.3 header row/page image, verify month for 3,932; compare July and September vintages separately. XLS raw capture and USD/EUR bridge remain open.
 - ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
+
+
+## BR. Serbia SRB — July Bulletin Table 2.3 header recovery gate (Continuation 108)
+- Preflight re-fetched Master Ledger (blob SHA 698a63e3efe4d1a77aa60f097e38d7f594e62a6f), GCR queue (blob SHA 7c6bc3b48199d8523c040edb9513a58c48afba83), Continuation 107 (blob SHA d7c063d63b2b8a19ff94c6b4fd31a82de98e7729). Completed PASS work skipped.
+- July 2026 NBS Statistical Bulletin official PDF direct open timed out; binary download failed; indexed search did not return the Table 2.3 header. NBS index/news archive independently confirm July Bulletin publication date 03-Sep-2026, but that does not establish the extracted row's month column.
+- Continuation 107 extracted Table 2.3 rows including a 3,932 liability value; month alignment NOT_VERIFIED. July-vintage May liability +3,932 NOT_VERIFIED; cross-vintage May comparison NOT_DONE. September 2026 bulletin May values remain captured separately.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_HEADER_RECOVERY_AND_VINTAGE_GATE_CONTINUATION108_20261121.md (create commit f88dce5962c98f799d494dce9700edd891cfe19b).
+- Next: obtain July PDF bytes through browser/alternate official NBS-hosted route; inspect Table 2.3 header and row; compare May legs across July/September vintages only after alignment.
+- ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
