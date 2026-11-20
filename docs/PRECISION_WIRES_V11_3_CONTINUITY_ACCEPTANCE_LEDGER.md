@@ -2159,3 +2159,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail report: docs/GCR_NSDL_ARCHIVE_PUBLIC_FORM_CONTRACT_AUDIT_CONTINUATION76_20261120.md.
 - Next: use supported interactive browser to obtain fresh form state, select one date using the calendar and invoke View Report once; capture raw response provenance and inspect returned rows. If unavailable, preserve NOT_DONE and move to another independent task.
 - No production changes; ₹0; no synthetic/interpolated data; no alteration of Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, IPO-PLX V2 or fixed 63-country cohort. UNKNOWN is never PASS.
+
+## India FPI — CDSL Daily 18-Nov-2026 Full-Table Arithmetic QA (Continuation 77, 2026-11-20)
+- Re-fetched current ledger and GCR queue; reopened Continuation 76 and prior CDSL sector arithmetic report. Reused existing run 44519322726 / artifact 14527092174; no recapture or repeated sector 192/192 test.
+- Independently recomputed ZIP SHA-256 `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd` matching artifact digest.
+- Parsed exact archived `cdsl_daily_latest_eservices.html` (18-NOV-2026): detailed route/scheme INR arithmetic 17/17 PASS; seven category subtotal identities 7/7 PASS; sum of seven subtotals reproduces published gross purchases INR 29,344.36 cr, sales INR 16,797.46 cr and net INR 12,546.90 cr exactly. USD category subtotals sum to 1,340.9063 vs published 1,340.906 USDm (+0.0003 rounding residual); published total retained.
+- CDSL states custodian/depository reports on 18-Nov and trades through previous trading day(s). NSDL Latest is headed 19-Nov and distinguishes provisional T-day exchange-member data from custodian-confirmed prior-day trades; no matched-date provider comparison, variance NOT_COMPUTABLE.
+- Detail report: docs/GCR_CDSL_DAILY_18NOV2026_FULL_TABLE_ARITHMETIC_QA_CONTINUATION77_20261120.md; report blob SHA `181e041bc872d96586ead475092432b7bf8f187a`.
+- CDSL daily table arithmetic PASS; matched-date NSDL/CDSL NOT_DONE; archive completeness UNKNOWN; sector predictive join BLOCKED; production NOT_AUTHORIZED. No production or cohort changes.
