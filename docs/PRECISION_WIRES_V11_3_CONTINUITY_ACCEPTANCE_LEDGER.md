@@ -2558,3 +2558,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_SERBIAN_ARCHIVE_ROUTE_AND_REVISION_STATUS_CONTINUATION110_20261121.md; create commit 1e38f608fdb6c8d188b7ceaa57f6182696ada7db.
 - Next: real-browser DOM inspection of Serbian archive form, use Show action, capture official July PDF bytes and inspect header; no authenticated application without approval.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 111 — Serbia SRB July Bulletin retrieval route exhaustion (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA eeef11fd8bfd0ed321e5e5ba35ccf3a6c52f79c9), GCR queue (blob SHA 831c53b4843e9afcac1402a54d75184f98ea24fb), Continuation 110 (blob SHA 13eab75efb08b133c36fe8cd4dcfc989df7832f4). PASS work skipped.
+- Fresh official NBS Serbian/English Bulletin archives confirm July 2026 issue; extracted HTML exposes only archive Select/Input/Show controls. Direct July PDF fetch again times out; exact indexed search returns no Table 2.3 header. BOP page lists September current XLS, no direct July dataset.
+- July 3,932 text fragment from C107 remains month-unattributed; July header/May legs NOT_VERIFIED; cross-vintage revision NOT_DONE. September May values -25 / +3,932 / -3,957 EURm remain exact PASS from C109.
+- Report: docs/GCR_SERBIA_SRB_JULY_BULLETIN_RETRIEVAL_ROUTE_EXHAUSTION_AND_NEXT_GATE_CONTINUATION111_20261121.md; create commit fe431027dfeefe41092fae5d4418c4c1fa158b27.
+- Next: requires real browser DOM inspection, form Show action and byte-preserving binary capture. No guessed parameters or gated service application. If unavailable, retain gate BLOCKED and pivot to another unfinished task.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
