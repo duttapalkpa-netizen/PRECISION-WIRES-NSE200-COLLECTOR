@@ -43,7 +43,6 @@
 | Daily alert cohort input | SHA-256 `69c5ecba2d06b9dbe3968f0e1a023bf7b0ff58486d2f580bcaf4735d0c0ae20a` |
 | Daily alert outcome CSV | SHA-256 `65d468c7ea8a662c3cb2d131cc5ee4d636e4abf8f3afb0e8aede78c20b9f2858` |
 | Daily alert outcome summary | SHA-256 `e8da668872fc4f5942c791e94abfde8ac0ae7a9e9e78d2017f8a5c9699f560bb` |
-| Reproducibility bundle | [run416_observation_audit_bundle_20261120.tar.gz](../outputs/audits/run416_observation_audit_bundle_20261120.tar.gz) — scripts, config, audit JSON/CSV, cohort and manifest |
 
 **Provenance limitation:** Run #416 contains the processed 200-session CSV and derived outputs, but not the original raw NSE source bytes or an immutable raw-file manifest. The hashes above verify the downloaded workflow ZIP, processed file and audit outputs; they do not substitute for missing raw-source provenance.
 
