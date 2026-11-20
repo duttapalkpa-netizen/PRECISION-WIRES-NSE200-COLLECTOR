@@ -637,3 +637,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - MAR national dual-leg extraction/arithmetic PASS; IMF exact-row recovery PASS; sign REVIEW / NOT_RESOLVED; FX comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_MOROCCO_MAR_Q2_2026_OFFICE_DES_CHANGES_IMF_DUAL_LEG_SOURCE_RECONCILIATION_CONTINUATION87_20261120.md.
 - Next: official MAD/USD Q2 convention and Office des Changes BPM6 sign methodology, then numeric separate-leg comparison and vintage bridge. No re-query or cohort rebuild.
+
+
+## AX. Morocco MAR — Continuation 88 country-key correction and independent QA
+- Critical correction: Continuation 87 mistakenly copied exact IMF MDA values into MAR section. Reopened existing hash-verified artifact and filtered exact COUNTRY=MAR, TIME_PERIOD=2026-Q2, BOP_ACCOUNTING_ENTRY.
+- Correct MAR rows: A_NFA_T +523,948,820.8007525 USD; L_NIL_T +3,991,543,275.295832 USD; both ACTION=R, SCALE=6, PRECISION=6, DERIVATION_TYPE=O. ZIP and panel SHA independently recomputed and matched.
+- Correct MAR IMF asset/liability directions are positive and directionally agree with Office des Changes +4,848/+36,933 million MAD. Previous asset sign-conflict claim withdrawn. No numeric MAD/USD comparison absent official conversion convention/vintage.
+- Detail report corrected in place with Continuation 88 correction note. MAR remains PARTIAL / NOT PASS; FX comparison NOT_DONE; same-vintage NOT_ESTABLISHED; aggregate NOT_AUTHORIZED.
+- Lesson: exact country + period + accounting-entry assertions before copying archived rows into a country report.
