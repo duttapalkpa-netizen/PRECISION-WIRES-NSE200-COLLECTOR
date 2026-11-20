@@ -2548,3 +2548,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - USD/EUR transaction-weighted bridge and national scope/timing/valuation equivalence NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: recover July PDF through browser/alternate official route, verify month header, then compare separate legs/vintages.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 110 — Serbia SRB NBS July Bulletin Serbian archive route (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA 856d68b455fd5f80cf5d19aae5fb82717f447ef2), GCR queue (blob SHA 6460923fd2db5f709708b3c6d1e1b74f202d6a36), Continuation 109 (blob SHA e3217fd96e3fbc3dd1593e787029e3cafd929100). Completed PASS work excluded.
+- Official Serbian archive confirms July Bulletin issue date 31-Aug-2026; Serbian news archive title “Statistički bilten - jul 2026. godine” dated 31.08.2026. English archive lists 03-Sep-2026. These dates establish issue existence, not table column mapping.
+- Serbian archive text shows interactive form only, no July PDF href; direct English July PDF open still times out. No raw PDF bytes/header recovered.
+- September-vintage May values remain PASS from C109: assets -25 EURm, liabilities +3,932 EURm, net -3,957 EURm; identity holds. July month mapping NOT_VERIFIED; July-vs-September comparison NOT_DONE.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_SERBIAN_ARCHIVE_ROUTE_AND_REVISION_STATUS_CONTINUATION110_20261121.md; create commit 1e38f608fdb6c8d188b7ceaa57f6182696ada7db.
+- Next: real-browser DOM inspection of Serbian archive form, use Show action, capture official July PDF bytes and inspect header; no authenticated application without approval.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
