@@ -39,3 +39,18 @@ Find a Bangladesh Bank official detailed BOP table or SDDS/metadata series that 
 
 ## Protected invariants
 No cross-country aggregation, netting, imputation, forward-fill, synthetic observations, inferred split of net total, silent sign transform, or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Bangladesh NSDP machine-readable BOP source route audit
+- Official Bangladesh Bank NSDP page explicitly lists Balance of Payments with three separate actions: Browse Data, Download in SDMX, and DSBB Metadata. This establishes a designated official machine-readable national BOP publication route beyond the quarterly PDF table.
+- Exact official links exposed by the page:
+  - NSDP landing page: https://www.bb.org.bd/econdata/nsdp/nsdp_bb.php
+  - BOP Browse Data: https://www.bb.org.bd/econdata/nsdp/browsefile/bpm6_bgd.xls
+  - BOP SDMX download: https://www.bb.org.bd/econdata/nsdp/xml/bgd/bop6_bgd.xml
+  - BOP Alternate Presentation SDMX: https://www.bb.org.bd/econdata/nsdp/xml/bgd/bopanltcl_bgd.xml
+  - IMF DSBB BOP metadata: https://dsbb.imf.org/e-gdds/dqaf-base/country/BGD/category/BOP00
+- Retrieval boundary: web reader rejects the XLS MIME and XML MIME (400 unsupported content-type); direct container download of BOP6 XML also failed. The BOP Alternate Presentation XML likewise was not parsed. No raw bytes, retrieval timestamp, content length, HTTP headers, hash, SDMX observation values, dimensions, or revision attributes were captured. Do not describe the SDMX route as successfully downloaded or inspected.
+- The official NSDP page confirms that BOP data are offered in SDMX, but does not itself prove that the XML includes separate portfolio asset and liability flows, or that it contains historical vintage metadata. Therefore BGD remains BLOCKED / NOT PASS; national asset/liability legs and same-vintage bridge remain NOT_ESTABLISHED; aggregate NOT_AUTHORIZED.
+- This is a material source-route discovery and bounded technical access test, not a numerical validation. No repeated retries of the same MIME-blocked URLs are authorized without a supported byte-preserving retrieval mechanism.
+- Sources: Bangladesh Bank NSDP page, lines 2–19 and 34–35; official BOP Browse and SDMX endpoints linked from that page. IMF DSBB BOP metadata link is listed by Bangladesh Bank.
+- Next exact action: use a supported transfer route to capture the official `bop6_bgd.xml` or `bpm6_bgd.xls` bytes and hash; inspect structure/series keys first, then only if both portfolio asset/liability legs exist, extract FY26 Q4 values, units, sign conventions and vintage attributes. Do not back-solve the net-only PDF total.
