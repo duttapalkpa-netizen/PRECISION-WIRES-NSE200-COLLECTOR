@@ -2058,3 +2058,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - PER numeric validation NOT_DONE; sign mapping and same-vintage NOT_ESTABLISHED; full national scope NOT_ESTABLISHED; PARTIAL/BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Detail report: docs/GCR_PERU_PER_Q2_2026_BCRP_PORTFOLIO_SERIES_SOURCE_BOUNDARY_AUDIT_20261120.md (commit 55d03cc785edf7ce853366a41565708b0dec6a91).
 - Official sources: https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales ; https://estadisticas.bcrp.gob.pe/estadisticas/series/documentos/bcrpdataapi.pdf ; https://www.bcrp.gob.pe/docs/Publicaciones/Nota-Estudios/2026/nota-de-estudios-59-2026.pdf .
 - Next: use supported raw-byte route for BCRP API and establish complete national portfolio scope/sign/vintage before comparison. No IMF re-query, cohort rebuild, IIP stock substitution, netting or production changes. Protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Continuation 50: PAK Q2-2026 official source-boundary audit
+- Detail report: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md.
+- PAK was selected only after fixed-cohort and repository preflight; no prior dedicated PAK Q2-2026 national portfolio-flow report was found. No IMF re-query or cohort rebuild.
+- SBP catalogue confirms quarterly BPM6 BOP dataset through Jun-2026 and separately half-yearly Core Set of Portfolio Investment Assets data. EasyData listing reports BPM6 quarterly coverage Sep-2002 to Jun-2026, last release 18-Aug-2026.
+- Inspected SBP September-2026 BPM6 PDF: FY26 Jul-Jun cumulative and Sep monthly columns plus Jul-Sep periods; portfolio assets abroad and liabilities in Pakistan are shown as categories, but no Apr-Jun 2026 Q2-specific rows/column. Do not derive Q2 by mixing cumulative/fiscal periods.
+- Core Set of Portfolio Investment Assets is an End-June-2025 PKR position snapshot, not transaction flows and not a matching liability leg; explicitly NOT_APPLICABLE to A_NFA_T/L_NIL_T flow validation.
+- Separate SBP archive quarterly calendar-year BOP Excel is listed, but raw workbook/metadata/observations were not acquired. Calendar-vs-fiscal period alignment remains NOT_ESTABLISHED.
+- PAK gates: official quarterly dataset discovery PASS only; Q2 asset/liability values NOT_EXTRACTED; sign mapping and same-vintage NOT_ESTABLISHED; numeric validation NOT_DONE; national validation PARTIAL/BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Official sources: https://www.sbp.org.pk/economic-data ; https://easydata.sbp.org.pk/apex/f?p=10:210:8439371819372: ; https://www.sbp.org.pk/assets/document/Balancepayment_BPM6.pdf ; https://www.sbp.org.pk/ecodata/CPIS-Sdds-Assets-Data.pdf ; https://archive.sbp.org.pk/ecodata/index2.asp .
+- No changes to protected invariants, production selector, ranking, pressure fade, CORE-672, engines A-E or IPO-PLX V2. No synthetic data, stock-flow substitution, inferred sign/vintage, netting or aggregate admission.
