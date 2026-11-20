@@ -930,3 +930,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Existing Q2 national values remain assets USD 5,749m and liabilities USD 9,183m; IMF exact values USD 5,749m / USD 9,270m. Asset published-precision match; liability residual +USD 87m remains unexplained. No claim that revisions caused it.
 - Report: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_SEPTEMBER_ZIP_EXACT_ENDPOINT_ACCESS_GATE_CONTINUATION118_20261121.md (commit 45ca5bcebb0a28cce43458fc3f936e5db9ef3a2a).
 - TUR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: supported actual browser/Computer Use or byte-preserving official route; do not repeat the same timed-out fetch. If unavailable, preflight immutable roster and prior reports, then advance next eligible member. ₹0; no production changes; UNKNOWN is never PASS.
+
+
+## CB. Tanzania TZA — Bank of Tanzania Q2-2026 portfolio net-only source boundary (Continuation 119, 2026-11-21)
+- Re-fetched current Master Ledger and GCR queue; checked immutable 63-country cohort order and searched repository for prior TZA Q2 national validation. TZA follows TUR; no prior dedicated TZA report found. No cohort rebuild or IMF re-query.
+- Official Bank of Tanzania Statistical Bulletin, quarter ending September 2026, Vol IV No.3, Table 6.1 (Quarterly Balance of Payments), USDm: Jun-26 Q2 portfolio investment net = -14.0. Portfolio investment is presented as a single net row; separate portfolio assets and liabilities are not published in this inspected table. Do not infer from other-investment asset/liability rows.
+- Report: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_QUARTERLY_BOP_NET_ONLY_SOURCE_BOUNDARY_AUDIT_CONTINUATION119_20261121.md (commit 08e75278237bbd02628205825f00069b6cc0c440).
+- TZA remains PARTIAL / NOT PASS; net observation captured, dual legs and national-to-IMF comparison NOT_DONE; aggregate NOT_AUTHORIZED. Raw PDF bytes/hash NOT_CAPTURED.
+- Next: inspect only a newly identified official detailed BoT/NSDP source if it explicitly publishes portfolio asset/liability transaction legs; otherwise advance to UKR after prior-report/cohort preflight. No IMF re-query, cohort rebuild, net-to-leg inference, IIP substitution or production changes. ₹0; UNKNOWN is never PASS.
