@@ -470,3 +470,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Correct official source remains External Sector monthly Balance of Payments (BPM6): https://www.nrb.org.np/database-on-nepalese-economy/external-sector/ ; linked official workbook https://www.nrb.org.np/contents/uploads/2026/09/Balance-of-Payments-BPM6.xlsx returns unsupported XLSX MIME; no bytes inspected.
 - NSDP BOP browse timed out; SDMX download points to stale 2024-Q1 XML and XML MIME unsupported. NPL actual BOP rows not extracted; separate portfolio legs NOT_EXTRACTED; validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report correction appended. Next: seek an XLSX-capable route for the one BPM6 workbook or official NRB API/export; if blocked, stop retries and advance. No stock substitution, no IMF query, no cohort rebuild.
+
+
+## Continuation 58 — NPL official BPM6 retrieval-route audit (2026-11-20)
+- Reopened the official NRB External Sector page and verified it explicitly lists Monthly Balance of Payments (BPM 6). Exact workbook locator confirmed: https://www.nrb.org.np/contents/uploads/2026/09/Balance-of-Payments-BPM6.xlsx .
+- Reopened NRB NSDP: Balance of Payments has Browse Data and Download in SDMX; current SDMX target is NEPAL_BOP_2024_Q1.xml, stale for Q2-2026 and not admitted. Browse route did not provide a usable Q2 portfolio export in this bounded check.
+- Repeated unsupported XLSX MIME was not retried. A separate direct byte-download attempt against the exact workbook URL also failed. No bytes, workbook sheets/rows, values, or SHA-256 obtained. Discovery PASS; byte retrieval BLOCKED; separate assets/liabilities NOT_EXTRACTED; period/sign/unit/vintage NOT_ESTABLISHED; NPL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- New report: docs/GCR_NEPAL_NPL_Q2_2026_NRB_BPM6_RETRIEVAL_ROUTE_AUDIT_CONTINUATION58_20261120.md (commit `7dd358b7256f01e75e813f489c5d6591e21ae326`).
+- Next: wait for a distinct supported XLSX-capable or official API/export route; then hash and inspect the exact workbook before extracting Q2 portfolio legs. If unavailable, preserve NPL PARTIAL and move to next eligible fixed-cohort country. No IMF re-query/cohort rebuild, no wrong-family monthly XLSX, no stock substitution, no production change.
