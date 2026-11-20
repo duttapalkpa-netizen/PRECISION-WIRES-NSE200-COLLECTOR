@@ -1806,3 +1806,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Asset residual IMF−SAMA -0.217914 USDm; liability residual +0.234539 USDm; both within ±0.5 USDm whole-million display-rounding. Signs/concepts match without transform. Both numerical legs PASS.
 - Exact SAMA↔IMF same-vintage alignment not established: SAMA values are estimated; IMF receipt timestamp alone is not a source-vintage identity. SAU full national dual-leg validation remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: `docs/GCR_SAUDI_ARABIA_SAU_Q2_2026_SAMA_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md`. Next action: seek dated SAMA Q2 estimate revision archive / subsequent revised observation; if unavailable retain PARTIAL and advance within fixed cohort.
+
+
+## 2026-11-20 — SAU Q2-2026 source-vintage follow-up
+- Preflighted current Master Ledger, GCR priority queue, SAU reconciliation report and CHN audit. Did not repeat SAU numeric extraction or IMF exact-key retrieval.
+- SAMA official calendar lists the October 2026 monthly bulletin for 29-Oct-2026 and November 2026 bulletin for 29-Nov-2026. Latest available September 2026 bulletin still marks Q2-2026 portfolio rows as e = Estimate.
+- IMF DSBB metadata describes general BOP revisions as usually three months after reference quarter, but this does not establish that these exact Q2 portfolio rows were revised. No dated public revised Q2 asset/liability observation or same-vintage bridge was found in the official material inspected.
+- SAU asset and liability numeric comparisons remain PASS at published rounding; same-vintage identity NOT_ESTABLISHED; full national dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail audit: docs/GCR_SAUDI_ARABIA_SAU_Q2_2026_SOURCE_VINTAGE_FOLLOWUP_AUDIT_20261120.md. Advance to next eligible country in fixed cohort using existing IMF receipt; no duplicate IMF GET or cohort rebuild.
+- Protected invariants unchanged; UNKNOWN is never PASS.
