@@ -1,4 +1,6 @@
 # GCR Morocco (MAR) Q2-2026 — Office des Changes ↔ IMF portfolio dual-leg source reconciliation
+
+**Continuation 87**
 Date: 2026-11-20 (Asia/Kolkata)
 Decision: **Official national dual-leg Q2 values and accounting identity PASS at source precision; exact IMF rows recovered from the pre-existing archive; national-to-IMF asset sign conflict observed; currency/vintage comparability NOT_ESTABLISHED; MAR remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.**
 
