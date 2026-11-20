@@ -1960,3 +1960,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Seek a public BOT revision-history/archived Q2 snapshot and IMF observation-level source vintage for THA. If unavailable, preserve NOT_ESTABLISHED and advance to the next eligible member of the fixed 63-country cohort after preflight. Do not repeat the same BOT table capture.
 ### Protected invariants
 Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, weights and trade gates unchanged. No paid data, synthetic values, fabricated timestamps, imputation, forward-fill, FX conversion, netting or aggregate authorization. UNKNOWN is never PASS.
+
+
+### Operational guard correction — accidental NSE run containment (2026-11-20)
+- The THA research script commit was pushed just before its new path was added to `.github/workflows/nse_collector.yml` paths-ignore, so an unintended full collector run `44689517549` started. This was not a research or production change.
+- Immediately added the THA script/workflow paths to NSE paths-ignore (guard commit `b983bf461ab852d295b1eea0d17553c322d53953`), then used the existing cancellation workflow.
+- Cancellation workflow updated to include run `44689517549` (commit `02fb5dbf3906f295fb41dcb27e123d2fc7016939`); trigger file updated (commit `ebd7951224eecb6d927b13a8c4c8225fd38a9b03`).
+- Cancellation workflow run `44689721808` completed successfully; its log confirms “Request to cancel workflow 44689517549 submitted”; target NSE run final status **completed / cancelled** at 2026-11-20T06:43:06Z.
+- No claim is made that the full collector completed; its in-progress market-session acquisition was stopped. No production output from that accidental run is admitted as evidence.
+- Guard is now in place for the THA script and workflow paths. Future research-only commits must be added to paths-ignore before their first push; research workflows remain bounded to 5 minutes.
