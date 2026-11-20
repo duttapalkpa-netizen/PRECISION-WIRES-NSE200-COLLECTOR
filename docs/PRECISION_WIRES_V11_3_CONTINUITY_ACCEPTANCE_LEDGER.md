@@ -2356,3 +2356,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: BPM6 sign/recording methodology bounded review PASS; BAM reference-rate method identified PASS; Q2 flow FX convention NOT_ESTABLISHED; raw BAM Q2 daily series NOT_CAPTURED; numeric conversion/comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
 - Next: inspect Office des Changes current methodology appendices for explicit foreign-currency transaction conversion rule; if tied to BAM daily series, retrieve official raw Q2 series and revision metadata with hashes. If no documented convention/vintage bridge, retain PARTIAL and advance cohort.
 - ₹0; fixed cohort and all production invariants unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 92 — Morocco BOP vs settlement FX conversion scope audit (2026-11-20)
+- Preflight re-fetched Master Ledger, GCR queue, Morocco Continuation 91 FX/BPM6 report, Continuation 87/88 dual-leg report and Continuation 90 review. PASS work not repeated.
+- Official Office des Changes “Balance des règlements” methodology says bank payment reports carry foreign currency, MAD countervalue and rate applied on payment execution date. However the same note explicitly distinguishes settlement balance (actual payments) from BOP (all transactions, settled or unsettled/deferred); therefore execution-date rate cannot be applied wholesale to portfolio BOP flow series.
+- Official Office des Changes 2022 annual BPM6 BOP methodology says bank settlement data are the principal source for financial-account statistics and transactions are recorded as net acquisition of assets / net incurrence of liabilities, but the inspected methodology does not state a portfolio-specific foreign-currency conversion convention.
+- Official metadata distinguishes transaction and settlement timing; non-goods BOP recording is mainly based on settlement data, but this still does not establish universal portfolio flow conversion.
+- BAM daily reference rate remains a revaluation rate and is not an approved proxy for portfolio-flow translation. No Q2 arithmetic average, quarter-end conversion or third-party rate used.
+- Report: docs/GCR_MOROCCO_Q2_2026_TRANSACTION_FX_CONVERSION_SCOPE_AUDIT_CONTINUATION92_20261120.md; commit bf6af30f4a4623f9a590405b3d31e51a0d8d6748.
+- Status: BOP vs settlement methodology distinction PASS; execution-date rule applicability to all portfolio flows NOT_ESTABLISHED; official portfolio-flow MAD/USD convention NOT_ESTABLISHED; numeric comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
+- Next: inspect portfolio-investment statistical metadata/technical fiche for explicit conversion method; if absent, retain blocker and advance fixed cohort. No further BAM daily series retrieval until conversion rule established.
+- No IMF re-query, no cohort rebuild, no production change, ₹0. UNKNOWN is never PASS.
