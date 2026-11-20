@@ -1823,3 +1823,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Official NBP quarterly workbook locator bop_q.xlsx is linked from NBP's BOP PDF, but workbook bytes/metadata/hash could not be retrieved. PDF front matter says March 2026 / dated 15-May-2026 / April release 12-Jun-2026, while later tables show Q2/Q3 2026 columns. This internal vintage/date conflict means later table values are quarantined and not used as a benchmark.
 - NBP workbook inspection BLOCKED / NOT_DONE; POL national asset/liability comparisons NOT_DONE; POL full validation BLOCKED; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_IMF_SOURCE_GATE_AUDIT_20261120.md. Next action: retrieve/hash/inspect exact NBP XLSX through supported file transfer; if still blocked, move to next eligible cohort country.
+
+
+## 2026-11-20 — Türkiye TUR Q2-2026 TCMB vs IMF portfolio BOP validation
+- Preflighted current Master Ledger, GCR Priority Queue, POL NBP blocker, SAU vintage audit and CHN access audit. POL's previously failed NBP XLSX path was not retried. Selected TUR from existing 12-country IMF exact-key sample; no new IMF GET or panel/cohort rebuild.
+- Reused artifact 14505009889 / run 44474458684 / ZIP SHA-256 588101c0deff3b431098e0f3205005d3d5913f3014137065b074890b353ecdf60. TUR A_NFA_T raw CSV SHA-256 380018babf368f4e66c49f2c1753e5adc496088f3d0d71e4e4676c8c252f529f; L_NIL_T SHA-256 b8852a6b3e5ddbc7e84ecd47786cc71413b3daf74021791a438d6b0638a5df1d. Both HTTP 200, 46/46 broad-key matches; retrieved 2026-11-19T06:45:23.329543Z and 06:45:23.717012Z.
+- IMF Q2-2026 values: A_NFA_T +USD5,749m; L_NIL_T +USD9,270m.
+- Official TCMB September 2026 monthly detailed BOP table, USDm: April/May/June portfolio assets 2,368/1,266/2,115 (Q2 sum 5,749); liabilities 6,334/-1,802/4,651 (Q2 sum 9,183). Asset leg matches at displayed precision; liability residual IMF−TCMB +USD87m, beyond whole-million rounding.
+- TCMB revision policy states current-year and previous-year monthly data may be revised with monthly dissemination. Official data ZIP locator found, but ZIP bytes/hash/revision metadata not inspected due retrieval timeout. IMF retrieval timestamp does not establish same TCMB vintage. Do not attribute the 87m gap to revisions without evidence.
+- TUR asset numeric comparison PASS; liability REVIEW / NOT PASS; same-vintage NOT_ESTABLISHED; full dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: retrieve/hash/inspect TCMB September 2026 data ZIP and revision metadata via supported transfer route; no new IMF query.
