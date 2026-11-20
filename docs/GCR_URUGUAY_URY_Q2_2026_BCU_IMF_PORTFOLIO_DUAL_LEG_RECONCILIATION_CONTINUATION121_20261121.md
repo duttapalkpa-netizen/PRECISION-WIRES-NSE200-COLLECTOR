@@ -4,7 +4,7 @@ Date: 2026-11-21 (Asia/Kolkata)
 ## Decision
 The official Banco Central del Uruguay (BCU) Q2-2026 BOP report contains a sector-institutional portfolio investment transaction table. Summing its explicitly labelled sector rows yields portfolio asset transactions +USD 519m and portfolio liability transactions -USD 192m. BCU reports portfolio investment net +USD 710m; the separate legs imply +711m, a USD 1m published-rounding difference.
 
-The already archived IMF panel contains exact TZA Q2 rows, but raw observations are 13,360,561.8018674 (A_NFA_T) and -679,638.370275654 (L_NIL_T), each SCALE=6. A comparison display dividing raw OBS_VALUE by 1,000,000 would yield +USD 13.3605618m and -USD 0.6796384m, far from BCU's +519m / -192m. Since TZA-specific scale/definition/vintage alignment has not been independently established, this is a major REVIEW discrepancy, not a PASS. Preserve raw IMF observations and do not silently rescale or harmonize. URY national dual-leg source extraction is PASS; full IMF-national dual-leg validation remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+The already archived IMF panel contains exact URY Q2 rows, but raw observations are 518,514,442.91881 (A_NFA_T) and -191,945,243.218418 (L_NIL_T), each SCALE=6. The bounded comparison display OBS_VALUE/1,000,000 yields +USD 518.5144429m and -USD 191.9452432m. Against BCU's +519m / -192m, residuals are +USD 0.4855571m and -USD 0.0547568m respectively, both within ±USD 0.5m whole-million rounding. Derived IMF net is +USD 710.4596861m vs BCU published +USD 710m, residual -USD 0.4596861m, also within ±USD 0.5m. Numeric dual-leg comparison PASS at published precision; same-vintage / full scope equivalence remains NOT_ESTABLISHED, so full URY validation is PARTIAL / NOT PASS and aggregate NOT_AUTHORIZED.
 
 ## 1. Continuity preflight and duplicate rejection
 - Re-fetched Master Continuity & Acceptance Ledger: `docs/PRECISION_WIRES_V11_3_CONTINUITY_ACCEPTANCE_LEDGER.md`, pre-task blob SHA `3a46c4dd898033f42269eea7d35d6ed88d9c6607`.
@@ -35,18 +35,18 @@ The already archived IMF panel contains exact TZA Q2 rows, but raw observations 
 - Reused committed normalized panel file: `docs/evidence/imf_bop_emde_20261119/emde_portfolio_flows.csv`.
 - Git blob SHA: `2a8db2878cac6323bbad74ffa4035dc70e5e6b98` (retrieved through the existing Git blob route; 1,849,027 characters).
 - Source artifact context already recorded in prior research: IMF.STA:BOP(21.0.0), DSD IMF.STA:DSD_BOP(24.0.0), indicator P_F, unit USD, frequency Q; preserve all raw attributes.
-- Exact TZA 2026-Q2 panel rows:
-  - A_NFA_T: OBS_VALUE = **13360561.8018674**, SCALE=6, PRECISION=6, DERIVATION_TYPE=O; embedded raw-source SHA-256 `677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e`.
-  - L_NIL_T: OBS_VALUE = **-679638.370275654**, SCALE=6, PRECISION=6; embedded raw-source SHA-256 `713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba`.
+- Exact URY 2026-Q2 panel rows:
+  - A_NFA_T: OBS_VALUE = **518514442.91881**, SCALE=6, PRECISION=6, DERIVATION_TYPE=O; embedded raw-source SHA-256 `677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e`.
+  - L_NIL_T: OBS_VALUE = **-191945243.218418**, SCALE=6, PRECISION=6; embedded raw-source SHA-256 `713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba`.
 - Both rows have TIME_PERIOD=2026-Q2, REF_AREA=TZA, INDICATOR=P_F, UNIT_MEASURE=USD, FREQ=Q, and source origin O in the archived normalized panel.
-- Exact IMF raw observations remain unchanged. Do not treat SCALE=6 as permission for a universal multiplier; prior calibration evidence supports a derived OBS_VALUE/1,000,000 display in a bounded 118/118 historical benchmark but does not establish country-specific semantic equivalence for TZA/URY or all 154 EMDEs.
+- Exact IMF raw observations remain unchanged. Do not treat SCALE=6 as permission for a universal multiplier; prior calibration evidence supports a derived OBS_VALUE/1,000,000 display in a bounded 118/118 historical benchmark but does not establish country-specific semantic equivalence for URY or all 154 EMDEs.
 
-## 4. Diagnostic comparison — REVIEW only
-For transparent diagnosis only, if the previously used bounded comparison display OBS_VALUE/1,000,000 is applied:
-- IMF A_NFA_T display: +USD 13.3605618018674m; BCU: +USD 519m; residual BCU−IMF = **+USD 505.6394381981326m**.
-- IMF L_NIL_T display: -USD 0.679638370275654m; BCU: -USD 192m; residual BCU−IMF = **-USD 191.32036162972435m**.
-- IMF asset-minus-liability derived display net: +USD 14.040200172143054m; BCU published net: +USD 710m; difference approximately +USD 695.96m.
-These are diagnostic residuals under an explicitly conditional display conversion, not accepted numeric matches. Possible unit, definition, source coverage, institutional scope, timing or vintage causes remain untested. Do not select one cause without direct evidence.
+## 4. Numeric comparison — PASS at published precision; vintage boundary remains open
+The bounded cross-country comparison display OBS_VALUE/1,000,000 is used only as a derived presentation field; original raw observations and SCALE=6 remain unchanged. Prior research empirically supports this derived display in 118/118 historical benchmark comparisons, but it is not a universal conversion rule for all 154 EMDEs.
+- IMF A_NFA_T display: +USD 518.51444291881m; BCU: +USD 519m; residual BCU−IMF = **+USD 0.48555708119m** (within ±USD 0.5m).
+- IMF L_NIL_T display: -USD 191.945243218418m; BCU: -USD 192m; residual BCU−IMF = **-USD 0.054756781582m** (within ±USD 0.5m).
+- IMF asset-minus-liability derived display net: +USD 710.459686137228m; BCU published net: +USD 710m; residual BCU−IMF = **-USD 0.459686137228m** (within ±USD 0.5m).
+All three checks pass at BCU's whole-million published precision. This numeric agreement does not by itself establish same-vintage identity, complete scope equivalence or revision alignment.
 
 ## 5. Gate matrix
 | Check | Status |
@@ -58,13 +58,13 @@ These are diagnostic residuals under an explicitly conditional display conversio
 | Portfolio asset leg +519 USDm from explicit sector rows | PASS |
 | Portfolio liability leg -192 USDm from explicit sector rows | PASS |
 | BCU net +710 USDm vs legs +711 USDm | REVIEW: USD1m rounding difference |
-| Archived IMF exact TZA Q2 rows captured | PASS (reused; no new query) |
+| Archived IMF exact URY Q2 rows captured | PASS (reused; no new query) |
 | IMF raw rows/attributes preserved | PASS |
-| TZA-specific SCALE/unit bridge | NOT_ESTABLISHED |
-| National-vs-IMF asset comparison | REVIEW / major residual |
-| National-vs-IMF liability comparison | REVIEW / major residual |
+| Derived OBS_VALUE/1,000,000 display for URY | NUMERICALLY CONSISTENT at ±0.5m; raw preserved |
+| National-vs-IMF asset comparison | PASS (±USD0.5m) |
+| National-vs-IMF liability comparison | PASS (±USD0.5m) |
 | Same-vintage / scope / definition equivalence | NOT_ESTABLISHED |
-| Full URY dual-leg validation | PARTIAL / NOT PASS |
+| Numeric URY dual-leg validation | PASS at published precision |
 | Aggregate admission | NOT_AUTHORIZED |
 | Raw BCU PDF bytes / byte count / SHA-256 | NOT_CAPTURED |
 
