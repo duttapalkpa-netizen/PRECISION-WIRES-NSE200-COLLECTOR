@@ -2150,3 +2150,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail report: docs/INDIA_NSE_ACTUAL_RAW_CAPTURE_FEASIBILITY_GATE_PART3_20261120.md.
 - Next: use supported interactive browser/download capability or obtain exact official NSE downloads as user attachments; hash unchanged bytes before parsing, then validate interval, duplicates, sessions, schema, OHLC and price-index/TRI identity.
 - All production invariants and fixed 63-country cohort unchanged; no paid API, synthetic data, inferred timestamps, silent deduplication, forward-fill or production integration. UNKNOWN is never PASS.
+
+## India FPI — NSDL Archive public form contract audit (Continuation 76, 2026-11-20)
+- Reopened the current Continuity Ledger and GCR priority queue and reused the existing FPI raw-capture/schema, CDSL sector capture, matched-date reconciliation and sector arithmetic reports.
+- Downloaded existing artifact 14524707532 (run 44515445620), 184,876 bytes; independent SHA-256 29530f3d0913f3eed93afbeb0759ecb8131b4192c71e5928d79961df77c24c69 matched the stored GitHub digest.
+- Inspected archived NSDL Archive HTML: ASP.NET POST form frmMonthly, action ./Archive.aspx, hidden ViewState/EventValidation fields, disabled initial txtDate, hidden hdnDate, calendar date format %d-%b-%Y, hidden validation/export fields, and public postback targets btnSubmit1 (View Report) / btnExcel (Export to Excel).
+- No POST was sent; server-side query semantics, archive response rows, output bytes/hash and date coverage remain UNKNOWN/NOT_DONE. No stale ViewState replay, guessed body, or source-status promotion.
+- Detail report: docs/GCR_NSDL_ARCHIVE_PUBLIC_FORM_CONTRACT_AUDIT_CONTINUATION76_20261120.md.
+- Next: use supported interactive browser to obtain fresh form state, select one date using the calendar and invoke View Report once; capture raw response provenance and inspect returned rows. If unavailable, preserve NOT_DONE and move to another independent task.
+- No production changes; ₹0; no synthetic/interpolated data; no alteration of Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E, IPO-PLX V2 or fixed 63-country cohort. UNKNOWN is never PASS.
