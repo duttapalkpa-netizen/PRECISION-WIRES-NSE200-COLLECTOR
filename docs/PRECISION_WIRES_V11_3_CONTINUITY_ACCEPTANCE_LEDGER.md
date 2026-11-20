@@ -2167,3 +2167,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - CDSL states custodian/depository reports on 18-Nov and trades through previous trading day(s). NSDL Latest is headed 19-Nov and distinguishes provisional T-day exchange-member data from custodian-confirmed prior-day trades; no matched-date provider comparison, variance NOT_COMPUTABLE.
 - Detail report: docs/GCR_CDSL_DAILY_18NOV2026_FULL_TABLE_ARITHMETIC_QA_CONTINUATION77_20261120.md; report blob SHA `181e041bc872d96586ead475092432b7bf8f187a`.
 - CDSL daily table arithmetic PASS; matched-date NSDL/CDSL NOT_DONE; archive completeness UNKNOWN; sector predictive join BLOCKED; production NOT_AUTHORIZED. No production or cohort changes.
+
+
+## India FPI — CDSL Daily Archive Static Snapshot & Freshness Boundary (Continuation 78, 2026-11-20)
+- Re-fetched current ledger, GCR queue and Continuation 77; reused artifact 14527092174 / run 44519322726; ZIP SHA-256 `83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd` matched.
+- Exact official GET `https://www.cdslindia.com/Publications/ArchiveDataAfter2009.aspx` was captured in manifest on 2026-11-19 11:57:09.076562 UTC; HTTP 200; HTML 73,784 bytes; member SHA-256 `aa2a03c6621772e52b0b9ac52f11b525d82f1ce80539554302eda861145304df`.
+- Captured page has no form/input/select/button/calendar/date selector. Static cash and derivatives report headings both say upto 02-Mar-2026. Cash table has one explicit daily date (02-Mar-2026) plus March, 2026 YTD and cumulative-since-Nov-1992 aggregate sections; derivatives are separate. CDSL Latest in same artifact is 18-Nov-2026: archive snapshot is 261 calendar days older.
+- Page contains Cloudflare server/CF-RAY metadata and challenge-platform bootstrap marker, but the captured response includes static report body. No challenge bypass or undocumented request attempted. This is not evidence CDSL has no other UI or that all historical access is blocked.
+- Detail report: docs/GCR_CDSL_DAILY_ARCHIVE_STATIC_SNAPSHOT_FRESHNESS_AUDIT_CONTINUATION78_20261120.md; blob SHA `69597e2fbe40d859bfbccb4af165b6c10959c4a8`.
+- Decision: captured archive route is a stale static snapshot; continuous daily history UNKNOWN/NOT_ESTABLISHED; date-control execution NOT_FOUND_IN_CAPTURE; CDSL archive daily series excluded. NSDL/CDSL matched-date and production remain NOT_DONE/BLOCKED. No production changes.
