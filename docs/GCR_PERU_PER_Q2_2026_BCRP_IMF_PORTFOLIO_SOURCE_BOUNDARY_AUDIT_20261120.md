@@ -79,3 +79,23 @@ No IMF re-query, no cohort rebuild, no third-party numeric admission, no IIP sto
 - Official BCRPData API developer guide: https://estadisticas.bcrp.gob.pe/estadisticas/series/documentos/bcrpdataapi.pdf . It documents GET series queries, up to 10 same-frequency series, output formats including JSON/CSV, and exact series-code/date-range URL structure (guide pp.2-5; updated 24-May-2022).
 - Constructed one documented, single-period JSON GET for PN39278BQ-PN39285BQ-PN39404FQ, 2026-2/2026-2/ing. The web retrieval returned an internal access error; no raw API payload/receipt was acquired. Do not claim API download or raw-file hash. Previously inspected official HTML series pages remain the evidence for the three displayed values.
 - API path remains an available documented retrieval contract but the exact endpoint access in this session is BLOCKED; do not repeatedly retry the same URL. Continue with HTML display evidence only, and keep the raw-byte archival gate open.
+
+
+## Continuation 55 — BCRP public-asset catalogue closure and next-country handoff (2026-11-20)
+
+### PER public-sector portfolio-asset series check
+- Re-inspected the complete official BCRPData quarterly Financial Account catalogue: https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales/cuenta-financiera . It lists 58 series: private sector 17, public sector 25, short-term capital 16. Public sector includes PN39402FQ aggregate Assets and PN39403FQ aggregate Liabilities, then detailed portfolio-liability series PN39404FQ onward; there is no public-sector portfolio-asset subseries in the full listed 25-series block.
+- The public asset aggregate PN39402FQ is not portfolio-specific and is explicitly rejected as a substitute. Catalogue-based absence finding: PASS (within this official listed catalogue); all-source absence cannot be asserted.
+- BCRPData API developer guide https://estadisticas.bcrp.gob.pe/estadisticas/series/documentos/bcrpdataapi.pdf documents GET/POST and CSV/JSON/XML/HTML formats, but prior exact API GET remained inaccessible. No raw API bytes or SHA-256 captured.
+- PER status unchanged: BCRP source extraction 3 series PASS; liability numeric PASS (1,700 vs IMF 1,699.664 USDm, residual +0.336 within ±0.5); full asset coverage PARTIAL/NOT_DONE; sign/definition and same-vintage NOT_ESTABLISHED; full dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+
+### Next country selected: Nepal (NPL)
+- Confirmed NPL is in the fixed 63-country cohort and found no dedicated NPL Q2-2026 national reconciliation report in the repo search performed in this continuation.
+- NRB official External Sector page https://www.nrb.org.np/database-on-nepalese-economy/external-sector/ lists monthly Balance of Payments (BPM 6) and BPM 5 datasets, plus annual BPM6/BPM5 datasets. This is a viable official source family for calendar Q2 extraction from Apr–Jun 2026, subject to exact series/table availability and period alignment.
+- Official BPM6 workbook link exposed by NRB page: https://www.nrb.org.np/contents/uploads/2026/09/Balance-of-Payments-BPM6.xlsx . Web retrieval refused XLSX MIME (400 unsupported content-type); workbook content not inspected. NRB July 2026 annual macro report is not accepted for quarterly portfolio legs. No use of central-bank balance-sheet investment stocks.
+- NPL next exact action: retrieve the official NRB BPM6 workbook via an XLSX-capable route, inspect its period coverage and separate portfolio assets/liabilities rows for Apr–Jun 2026; verify monthly vs cumulative nature and units/signs. Reuse archived IMF exact rows only; no new IMF query. If the workbook has only net portfolio or no Q2 legs, keep NPL blocked/partial and move on.
+
+### Evidence boundaries
+- BCRP catalogue source: full official series list as inspected 20-Nov-2026; it establishes the listed catalogue's absence of a public portfolio-asset subseries, not universal absence from all NRB/BCRP data.
+- NRB external-sector index and linked BPM6 XLSX are official source discovery only; XLSX contents NOT_INSPECTED, values NOT_EXTRACTED, no raw file hash claimed.
+- No synthetic data, no stocks-as-flows, no netting, no inferred sign/scale, no cohort rebuild, no IMF re-query, no production changes.
