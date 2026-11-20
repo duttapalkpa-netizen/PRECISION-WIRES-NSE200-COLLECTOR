@@ -509,3 +509,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail: docs/INDIA_BENCHMARK_PANEL_OFFICIAL_SOURCE_CONTRACT_PART1_20261120.md (initial commit f6bf86267e32acb9d81b654ac4366b1c28dc5589; date correction commit 4cc47fb9e7d3347b9ce92f7282ba0d2c64b96e34).
 - Acceptance: source locators mostly PASS with explicit rights/freshness limitations; raw archive/SHA-256 NOT_DONE; synchronized benchmark panel NOT_DONE; causal event study NOT_DONE; production NOT_AUTHORIZED.
 - Next exact action: isolated raw capture of NSE NIFTY 50, selected NSE sector indices and India VIX CSV; separately capture U.S. Treasury 2Y/10Y, FRED broad USD and DEXINUS, Cboe VIX, and World Bank monthly Pink Sheet with native timestamps, raw bytes and SHA-256. Keep FBIL/PPAC/FPI freshness and rights gates separate. No production changes.
+
+
+## India Benchmark Panel — NSE preview fixture / duplicate-row boundary audit Part 2 (2026-11-20)
+- Reopened the Part-1 India Benchmark Panel source contract and current GCR queue; inspected official NSE All Reports and NSE Indices Historical Data/FAQ surfaces.
+- Official NSE All Reports exposes Historical Index Data and India VIX date-filter controls/download; NSE Indices Historical Data exposes index selectors, date range, CSV output and separate TRI/NTRI data. NSE Indices FAQ states NIFTY 50 historical data available from 03-Jul-1990.
+- Critical boundary: embedded page examples are not raw payloads. NIFTY 2019 preview repeats 01-Jan-2019 twice; India VIX preview heading says 01–05 Jan 2019 but displayed observation is 03-Sep-2018 twice; TRI preview repeats 01-Jan-2019. These are page-extraction/preview anomalies, not evidence of duplicate rows in downloadable source CSV. All embedded sample values rejected as ingestion evidence.
+- No actual CSV/XLSX/ZIP bytes captured; no SHA-256, raw-payload duplicate test, session coverage test or benchmark panel created. Actual payload status NOT_CAPTURED/NOT_TESTED.
+- Detail report: docs/INDIA_NSE_HISTORICAL_PREVIEW_FIXTURE_AND_DUPLICATE_ROW_BOUNDARY_AUDIT_PART2_20261120.md (commit c3fab39f2037f6324cdc147b661dfbf2b4c2c900).
+- Next: small isolated capture of actual date-filtered NIFTY 50, broad-market companion and India VIX downloadable payloads; hash before parsing; validate interval, exact/conflicting duplicates, sessions/holidays, schema, OHLC and price-index/TRI identity. If automated route returns HTML/blocks, stop retries and use official manual download route. No silent deduplication or production changes.
