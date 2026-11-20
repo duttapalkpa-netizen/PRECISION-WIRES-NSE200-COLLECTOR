@@ -900,3 +900,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_BALANCE_OF_PAYMENTS_ARCHIVE_STALENESS_AUDIT_CONTINUATION115_20261121.md (create commit c226bf514c84b281dc36688938fdf6b65229ad78).
 - TLS NOT_VALIDATED / NOT PASS. Next: inspect official Economic Statistics/BOP page and H1 review appendices for current Q2 or H1 dual legs; if unavailable, mark NOT_AVAILABLE and advance.
 - ₹0; no cohort rebuild or production changes. UNKNOWN is never PASS.
+
+
+## BZ. Timor-Leste TLS — BCTL live BOP dashboard / Excel export route (Continuation 116)
+- Preflight re-fetched Master Ledger blob SHA 5b90932ad15477ba22f74d44b705095f9f29cce6, GCR queue blob SHA 86f1ca7b64a70d77ed94f342349faac7fef1d8d9, TLS C115 report blob SHA 9f243d8b564204e21002b9fe77dec301029f9c0f.
+- New official BCTL route: https://www.bancocentral.tl/stats/balance_pay/ embeds Power BI “BoP_V1”, exposes “Download the full Balance of Payments report” and “+ Export Excel”. Exact XLSX endpoint: https://www.bancocentral.tl/stats/bopdoc/download/c81e728d9d4c2f636f067f89cc14862c/
+- XLSX endpoint MIME recognized as application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; web fetch unsupported MIME and direct container download failed. No bytes/sheets/periods/hash captured. Power BI embed also yielded no extracted rows.
+- This is a newly discovered official data route, not validation. H1 2026 -USD 524.9m remains aggregate; Q2 separate portfolio assets/liabilities NOT_CAPTURED. Old Aug-2026 PDF remains stale through 2016.
+- Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_LIVE_BOP_DASHBOARD_AND_EXCEL_EXPORT_ROUTE_AUDIT_CONTINUATION116_20261121.md (create commit 283427dd67f29be0d6622b492ae698b6ffe6be9d).
+- TLS NOT_VALIDATED / NOT PASS; unit/sign/period/vintage and IMF comparison NOT_ESTABLISHED/NOT_DONE.
+- Next: actual browser/Computer Use export of XLSX or Power BI Export data; capture bytes/hash and inspect dual legs, then compare only with archived IMF rows. If blocked/no legs, record blocker and advance.
+- ₹0; no IMF query/cohort rebuild, synthetic data, net-to-leg inference, IIP substitution or production changes. UNKNOWN is never PASS.
