@@ -2141,3 +2141,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Official NRB External Sector BPM6 dataset remains the valid source family; linked BPM6 XLSX fetch is unsupported MIME, so no raw bytes, rows, values or SHA-256 captured. NSDP BOP browse timed out; linked SDMX XML is 2024-Q1 stale and unsupported MIME.
 - NPL state: official source discovery PASS; actual BPM6 workbook inspection NOT_DONE; separate Q2-2026 portfolio assets/liabilities NOT_EXTRACTED; period/sign/units/vintage UNKNOWN; dual-leg comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: locate supported XLSX-capable retrieval for official External Sector BPM6 workbook or NRB official API/export; otherwise retain blocked and advance. No BFR data substitution, stock-as-flow, IMF re-query, cohort rebuild or production changes. UNKNOWN is never PASS.
+
+
+## India Benchmark Panel — NSE actual raw-capture feasibility gate Part 3 (2026-11-20)
+- Reopened current ledger and GCR queue; reused India Benchmark Panel Parts 1–2 and excluded already-PASS official locator/preview-boundary work.
+- Official NSE All Reports, Historical Reports directory and NSE Indices Historical Data UI surfaces reconfirmed. The available read-only page retrieval interface does not operate the From/To controls or return the resulting download bytes. No direct official API contract was established; no undocumented endpoint probing.
+- Actual NIFTY 50, broad-market companion and India VIX raw payloads remain NOT_CAPTURED. No response headers/MIME/length, raw SHA-256, parsed rows, duplicate/session QA or panel build is claimed. This is an execution-bridge limitation, not evidence of NSE-side denial.
+- Detail report: docs/INDIA_NSE_ACTUAL_RAW_CAPTURE_FEASIBILITY_GATE_PART3_20261120.md.
+- Next: use supported interactive browser/download capability or obtain exact official NSE downloads as user attachments; hash unchanged bytes before parsing, then validate interval, duplicates, sessions, schema, OHLC and price-index/TRI identity.
+- All production invariants and fixed 63-country cohort unchanged; no paid API, synthetic data, inferred timestamps, silent deduplication, forward-fill or production integration. UNKNOWN is never PASS.
