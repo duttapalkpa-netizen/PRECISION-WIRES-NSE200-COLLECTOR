@@ -720,3 +720,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - RWA Q2 national asset/liability observations NOT_CAPTURED; comparison NOT_DONE; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_RWANDA_RWA_Q2_2026_BNR_PORTFOLIO_SOURCE_GATE_CONTINUATION97_20261120.md (commit ef71745ec25c570886974883bbe9cd194cba2547; verified blob SHA af725eba157789e16e65a783e886d96f66fdc727).
 - Next: supported retrieval of BNR 30-Jun-2026 BOP dataset, raw-byte archival and separate leg inspection. No FY proration, net inference, IMF re-query or cohort rebuild.
+
+
+## BH. Rwanda RWA — official source-family rejection / quarter-boundary audit (Continuation 98)
+- New NISR official Q2-2026 external goods trade report found (exports 548.98, imports 1,606.39, re-exports 179.59, trade balance -877.81 USDm). Rejected for portfolio BOP legs: goods trade is the wrong source family.
+- BNR August MPFSS is Q1 summary without portfolio legs; October MPFSS is H1 net-only +14 USDm; both rejected for Q2 dual-leg comparison. BNR 30-Jun-2026 BOP portal item remains JS-only; exact locator/bytes unresolved.
+- RWA remains PARTIAL / NOT PASS; Q2 A_NFA_T/L_NIL_T NOT_CAPTURED; comparison NOT_DONE; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_RWANDA_RWA_Q2_2026_OFFICIAL_SOURCE_FAMILY_REJECTION_CONTINUATION98_20261120.md (commit 1f8997f5c491f62c494fb77494ce1a43537fedcf; verified blob SHA 001cc1fc2d6f698566206a7e746871d9eba1ee90).
+- Close identical JS-only route; advance only after fixed-cohort preflight if no new supported BNR direct dataset/API. No IMF re-query or cohort rebuild.
