@@ -589,3 +589,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No PDF raw bytes/hash captured. Production NOT_AUTHORIZED; fixed 63-country cohort and production invariants unchanged.
 - Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 82.
 - Next: official historical/revised-vintage and definition bridge; if absent, keep monthly and quarterly series separate.
+
+
+## AS. Japan JPN — official revision-vintage and partner-classification boundary (Continuation 83)
+- MOF: Preliminary/Second Preliminary monthly PDFs are temporary; latest values are in Historical Data; annual BOP revision each April.
+- BOJ: monthly portfolio assets classified by issuer economy; liabilities by transactor economy (45 economies each). Monthly preliminary release lag two months; Regional BOP quarterly release lag five months. Monthly portfolio annual revision in April of following two years; Regional BOP annual revision in May of following two years.
+- Q2-2026 Regional BOP released 10-Nov-2026; no assumption of same-vintage with April/May/June monthly preliminary PDFs. Liability counterparty may reflect foreign transactor/custodian, not ultimate investor residence.
+- Monthly arithmetic sums (-2,069 assets; -3,424 liabilities) not validated Q2 values. Quarterly asset dash is not zero; liability 7,526 remains separately recorded.
+- BOJ monthly/quarterly ZIP flat-file links identified but ZIP retrieval failed in current environment; raw bytes/hash and exact India series IDs remain NOT_DONE.
+- Detail report: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 83.
+- Status: policy/definition boundary PASS; same-vintage reconciliation NOT_ESTABLISHED; raw capture and exact codes NOT_DONE; production NOT_AUTHORIZED.
+- Next: supported ZIP-capable retrieval of BOJ flat files + code/specification list; verify India series codes/values before any join.
