@@ -330,3 +330,15 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_PHILIPPINES_PHL_Q2_2026_BSP_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120.md (commit 10b25708ac9df0ad7010a952c84941b6ef1b21a9).
 - Operational correction: accidental NSE runs 44690020188, 44690030398, 44690124814 and 44690374904 were cancelled; no outputs admitted.
 - Exact next: repair Table 1.7 Excel-HTML sparse-cell parser (including ss:Index), capture successful raw+parsed artifact and verify against release, then seek IMF observation-vintage evidence. No IMF requery, cohort rebuild, or production changes.
+
+
+## AI. PHL Q2-2026 parser/capture acceptance PASS; same-vintage remains unresolved (2026-11-20)
+- Fixed two parser defects: (1) ignored one-cell merged section headings in BSP Excel-HTML and validated Q2 group + 2026p subheader before reading the Q2-2026 column; (2) anchored press-release row extraction to the Portfolio Investment section only, preventing later Other Investment rows with identical labels from overwriting values. Preliminary flag is derived from verified Q2 header cell.
+- Successful run 44705225122 / job 136183035008; artifact 14614766459, ZIP SHA-256 7e0d57f7d50f6f0a6622183d81f2bb8bbe04ee297f489f20dd982465d3b46b5c (15,415 bytes).
+- Raw BSP Table 1.7: 156,110 bytes, SHA-256 b267ceab83794b86cd6c6a3ce703d878c2185091670e0c528b10df1644774569. BSP Q2 release raw: 148,165 bytes, SHA-256 272890a3a383bbef2eebfb274746e3835f2c3e7d3ab084f303f317f6813b5707. CSV SHA-256 8bc1a27fc66c40f99ad7d66789884a90c0f1d1cb91b4c64065fdec4e769d2939; summary SHA-256 376894e48319d0a0a2c0d4e8322f4de0fc578fd8b1b70a4f361e425b0f0dd166.
+- BSP Q2 preliminary TRUE; Table 1.7 and dated release match exactly: portfolio net -468 USDm, assets +1,331, liabilities +1,798. IMF comparison residuals -0.35704894474 and +0.28261626536 USDm, both inside ±0.5; numeric legs 2/2 PASS. Rounded asset-minus-liability identity is -467 vs published -468, a 1 USDm difference retained as rounding.
+- Same-vintage NOT_ESTABLISHED. Current BSP Last-Modified response header is not a historical revision chain. IMF public BOP dataset page exposes API/download but no observation-level source submission/revision timestamp. BSP FDI revision notice is not applicable to portfolio investment and is excluded.
+- PHL national acceptance remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Failed diagnostic runs and wrong-category rows remain excluded.
+- Paths-ignore guard added for PHL and cancellation paths in commit fbaa2617f8e996b996f299652194974141cd0921. Accidental NSE runs 44704973029 and 44704985742 confirmed cancelled; no outputs admitted.
+- Detailed report updated: docs/GCR_PHILIPPINES_PHL_Q2_2026_BSP_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120.md (update commit d3808035b3c7ad8372b21ded3f1eeb9f9700deea).
+- Next: bounded official vintage search only; if no specific BSP portfolio revision archive or IMF observation-level vintage attribute is public, retain NOT_ESTABLISHED and advance to next eligible cohort member after preflight. No repeat parser work, IMF requery or cohort rebuild.
