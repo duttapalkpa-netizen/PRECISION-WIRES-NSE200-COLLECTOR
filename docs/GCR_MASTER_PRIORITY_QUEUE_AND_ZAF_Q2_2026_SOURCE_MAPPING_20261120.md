@@ -579,3 +579,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Assets component arithmetic matches displayed total. June is preliminary monthly, not Q2; Q2 aggregation and vintage bridge NOT_DONE. PDF bytes/hash not captured.
 - Detail report updated in Continuation 81. Next: inspect April/May 2026 monthly portfolio PDFs and vintage, then compare monthly series with 10-Nov-2026 Q2 regional release.
 - Production NOT_AUTHORIZED; fixed cohort and production invariants unchanged.
+
+
+## AR. Japan JPN — April/May 2026 India monthly portfolio asset/liability rows (Continuation 82)
+- Official MOF April and May preliminary portfolio PDFs inspected via release-date links. India rows present in both Assets Country Breakdown and Liabilities Country Breakdown for both months; unit 100 million yen.
+- April Assets A/D/net 739/1,487/-747; Liabilities 2,070/2,601/-531.
+- May Assets 789/1,434/-645; Liabilities 64/1,371/-1,307.
+- Combined with June Continuation 81, visible India rows exist for both legs across Apr-Jun. The unadjusted three-month monthly net sums (-2,069 assets; -3,424 liabilities) are not accepted as Q2 totals: preliminary vintage, sign/definition and quarterly bridge are NOT_ESTABLISHED. Q2 Regional BOP asset dash and liability 7,526 remain separately reported; no reconciliation inferred.
+- No PDF raw bytes/hash captured. Production NOT_AUTHORIZED; fixed 63-country cohort and production invariants unchanged.
+- Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 82.
+- Next: official historical/revised-vintage and definition bridge; if absent, keep monthly and quarterly series separate.
