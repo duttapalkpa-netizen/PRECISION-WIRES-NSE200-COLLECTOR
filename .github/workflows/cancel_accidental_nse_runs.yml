@@ -25,3 +25,4 @@ jobs:
           gh run cancel 44689517549 --repo "$GITHUB_REPOSITORY" || true
           gh run cancel 44690020188 --repo "$GITHUB_REPOSITORY" || true
           gh run cancel 44690030398 --repo "$GITHUB_REPOSITORY" || true
+          gh run cancel 44690124814 --repo "$GITHUB_REPOSITORY" || true
