@@ -131,6 +131,10 @@ on:
       - "scripts/research/capture_mys_q2_bnm_fx.py"
       - "scripts/research/reconcile_tha_q2_2026_bot_imf.py"
       - ".github/workflows/gcr_tha_q2_2026_bot_imf.yml"
+      - "scripts/research/reconcile_phl_q2_2026_bsp_imf.py"
+      - ".github/workflows/gcr_phl_q2_2026_bsp_imf.yml"
+      - ".github/workflows/cancel_accidental_nse_runs.yml"
+      - "scripts/research/cancel_accidental_nse_runs_trigger.txt"
       - ".github/workflows/nse_cancel_accidental_probe_run.yml"
       - "scripts/research/nse_cancel_accidental_probe_trigger.txt"
   schedule:
