@@ -860,3 +860,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_SERBIA_SRB_JULY_BULLETIN_RETRIEVAL_ROUTE_EXHAUSTION_AND_NEXT_GATE_CONTINUATION111_20261121.md (create commit fe431027dfeefe41092fae5d4418c4c1fa158b27).
 - Next route requires actual browser DOM inspection + archive Show action + binary capture. Do not repeat failed direct fetch, guess parameters or apply for gated web service absent explicit approval. If no browser capability, keep gate OPEN/BLOCKED and move to another valuable unfinished task.
 - ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
+
+
+## BV. Tajikistan TJK — official NBT Q2-2026 publication source gate (Continuation 112)
+- Preflight current Master Ledger blob SHA 8ff41c04dc598dafbdde6dadcd35f2449f606b4a; GCR Queue blob SHA 92ffaf39d65737d71feb54ece02ccd42cf254f91. Serbia July PDF route remains OPEN/BLOCKED; no identical retry. THA dual-leg numeric comparison 2/2 PASS, vintage unresolved.
+- Existing fixed 63-country cohort contains TJK; repository search found no dedicated TJK national Q2-2026 portfolio dual-leg report. No cohort rebuild or IMF re-query.
+- Official NBT BOP page states NBT compiles BOP under IMF BPM5/BPM6 methodology. Official external-sector publication page exposes 2026 “FOR THE 2 QUARTER” issue link. Exact Q2 PDF URL resolved, but PDF fetch timed out; no bytes/contents/hash.
+- NBT IIP 9-month 2025 report is position reconciliation (operations/revaluation/other changes), rejected as Q2-2026 BOP transaction-leg evidence. IMF CR 26/001 annual staff estimates also rejected as quarterly national source.
+- Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_OFFICIAL_PUBLICATION_SOURCE_GATE_CONTINUATION112_20261121.md (create commit c5b47be1e1cb76e95c6bcbee98503e8054c5b8bf).
+- TJK official Q2 locator PASS; PDF content/bytes NOT_CAPTURED; Q2 portfolio assets/liabilities NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; comparison NOT_DONE; TJK NOT_VALIDATED / NOT PASS.
+- Next: retrieve exact official PDF with byte-preserving route; inspect whether it contains separate Q2 legs vs H1 cumulative; establish units/sign/vintage; then compare archived IMF rows. No H1-Q1 subtraction without aligned vintages.
+- ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net inference, IIP stock substitution, annual-to-quarter proration or production changes. UNKNOWN is never PASS.
