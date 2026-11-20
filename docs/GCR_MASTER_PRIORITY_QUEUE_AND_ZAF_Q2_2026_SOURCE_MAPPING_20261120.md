@@ -946,3 +946,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_UKRAINE_UKR_Q2_2026_NBU_BOP_LATEST_PERIOD_AND_PUBLICATION_BOUNDARY_AUDIT_CONTINUATION120_20261121.md (commit 2c353947a40469e2d48631cf5ebe37892b0811ec).
 - UKR NOT_VALIDATED / NOT PASS; Q2-2026 national portfolio assets/liabilities/net NOT_CAPTURED; comparison NOT_DONE; aggregate NOT_AUTHORIZED.
 - Next: use only a newly published official NBU Q2-2026 detailed BOP/Excel/SDMX/API source with explicit separate portfolio legs; else advance to URY after preflight. No stale PDF retry, no inferred legs, stock-as-flow, IMF re-query, cohort rebuild or production changes. ₹0; UNKNOWN is never PASS.
+
+
+## CD. Uruguay URY — BCU Q2-2026 portfolio dual-leg / archived IMF numeric comparison (Continuation 121, 2026-11-21)
+- Reused fixed 63-country cohort; URY follows UKR. Current Master Ledger and queue were preflighted; scoped repository search found no prior dedicated URY report. No IMF re-query or cohort rebuild.
+- Official BCU Q2-2026 BOP report Table 9: public/private portfolio assets -47/+566 = +519 USDm; liabilities -204/+12 = -192 USDm; published portfolio net +710 USDm. Leg identity yields +711m, +1m published rounding difference. Source labels figures preliminary.
+- Reused archived IMF normalized panel Git blob SHA 2a8db2878cac6323bbad74ffa4035dc70e5e6b98. Exact URY Q2 rows: A_NFA_T 518514442.91881 SCALE=6; L_NIL_T -191945243.218418 SCALE=6. Raw rows preserved; no new IMF query.
+- Bounded derived display /1,000,000 gives assets +518.5144429m, liabilities -191.9452432m; BCU−IMF residuals +0.4855571m and -0.0547568m. Derived net 710.4596861m vs BCU 710m, residual -0.4596861m. All within ±0.5 USDm: numeric dual-leg/net comparison PASS at published precision. Do not generalize this derived display as a universal scale conversion.
+- Same-vintage and full scope/definition equivalence NOT_ESTABLISHED; BCU raw PDF byte count/hash NOT_CAPTURED. URY numeric comparison PASS; full validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_CONTINUATION121_20261121.md (final corrected commit b2be36e37766f3799ed0cd46d736ddbcc62200a6).
+- Next: BCU/IMF metadata and vintage bridge, then raw PDF archival/revision comparison; no duplicate extraction, IMF re-query, cohort rebuild or production changes. ₹0; UNKNOWN is never PASS.
