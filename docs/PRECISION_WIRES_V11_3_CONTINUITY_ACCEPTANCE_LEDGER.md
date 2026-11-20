@@ -2447,3 +2447,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Status: SLB cohort PASS; official BPM6 source PASS; Q2 portfolio asset +38 SBDm and liability nil published; narrative/table sign conflict BLOCKED; IMF exact rows NOT_CAPTURED; SBD/USD basis NOT_ESTABLISHED; comparison NOT_DONE; SLB PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
 - Next: retrieve CBSI sign/methodology note; expose exact archived IMF rows without new IMF query; establish transaction FX and vintage; archive original PDF bytes; only then compare separate legs. Otherwise preserve PARTIAL.
 - ₹0; no sign flip, no net-to-leg inference, no IIP stock-as-flow, no inferred FX, no production changes. Protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 100 — El Salvador SLV Q2-2026 BCR portfolio source-family gate (2026-11-20)
+- Preflight re-fetched Master Ledger (blob SHA 185e55b1423c6b55ac24717a4bc6c893135acb4c), GCR queue (blob SHA 03e99b7cc65ef685d3857ac45ebec25cb06493b3), SLB Continuation 99 (blob SHA 7a696af5f0562941f59363d10bb6b58199319049), exact-sample receipt (blob SHA 053fa26e9feaab26d5bb4c35911a09fc3f71d1bd), and fixed 63-country cohort (blob SHA 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8). SLV is next after SLB, both IMF legs present; no dedicated SLV report found. No cohort rebuild or IMF re-query.
+- BCR official June-2026 financial statement in USD thousands shows “Inversiones en el Exterior (Neto)” balance-sheet stock: 3,834,678.3 at Mar-2026 and 4,233,089.5 at Jun-2026. Explicitly rejected as economy-wide BOP portfolio transaction legs; stock difference is not a transaction flow.
+- IMF staff's El Salvador 2025 EFF/Article IV Table 3a provides annual BPM6 portfolio investment net and separate assets/liabilities, sourced from BCR and IMF staff estimates. It is annual historical/projection context, not Q2-2026 national data; not prorated.
+- Existing exact sample receipt includes 12 countries and not SLV. Large panel GitHub fetch remains empty; exact SLV IMF rows NOT_CAPTURED. No new IMF query.
+- Report: docs/GCR_EL_SALVADOR_SLV_Q2_2026_BCR_PORTFOLIO_SOURCE_FAMILY_GATE_CONTINUATION100_20261120.md; create commit 94cec1b68b19e8fef099bc4ccbf2083cfaa7a286; verified report blob SHA 658b83d795529e9eecd99879039e6e8bcdb6a8c3.
+- Status: SLV cohort PASS; BCR national source identification PASS; Q2 national A_NFA_T/L_NIL_T NOT_CAPTURED; same-vintage comparison NOT_DONE; SLV PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: locate BCR official Q2-2026 quarterly BOP financial-account portfolio table with separate assets/liabilities; capture raw bytes, vintage and SHA-256. Retrieve archived exact IMF rows without re-query; compare only after concept/sign/scale bridge.
+- ₹0; no stock-as-flow, no annual-to-quarter proration, no net inference, no FX inference, no production changes. Invariants preserved; UNKNOWN is never PASS.
