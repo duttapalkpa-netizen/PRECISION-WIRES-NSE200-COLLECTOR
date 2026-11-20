@@ -1857,3 +1857,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - This is a second official Banxico publication surface and supports the current Q2 values; it is not a dated revision log or historical vintage archive and does not establish which vintage the IMF 2026-11-19 values used.
 - MEX numeric legs remain PASS; exact same-vintage identity NOT_ESTABLISHED; full national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report updated: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Do not infer same-vintage from current SIE match.
+
+
+## 2026-11-20 — Argentina (ARG) Q2-2026 INDEC national portfolio validation
+- Preflighted current ledger, GCR queue, MEX/TUR/POL reports and IMF panel report; excluded completed PASS work and selected ARG from the existing 12-country exact-key IMF sample. No new IMF GET or panel rebuild.
+- Reused run 44474458684 / artifact 14505009889 / ZIP SHA-256 588101c0deff3b431098e0f3205005d3d5913f3014137065b074890b353ecdf60. ARG raw A_NFA_T CSV SHA-256 31ed92d953089ee94eb3c46aa486e8ff32f738e2c4c5e994f40d60e5952160ab; L_NIL_T SHA-256 51e19d9729de105b99f65601155b7c721ec0b0a593e262957c09e87b6b46cfc2.
+- IMF Q2 values: assets +USD2,230.206322m; liabilities +USD7,041.052824m. INDEC Q2 report (29-Sep-2026), Table I.13, USDm: ANAF +2,230; ENP +7,041; portfolio balance -4,811. Residuals +0.206322 and +0.052824 USDm; both within ±0.5 whole-million rounding. Concept/sign mapping direct; no FX or sign transform.
+- INDEC marks Q2 2026 provisional and subject to revision. Revision annex compares releases only through Q1 2026; no Q2 prior-vintage portfolio bridge. Same-vintage identity NOT_ESTABLISHED; ARG full dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_ARGENTINA_ARG_Q2_2026_INDEC_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md. Next: seek versioned INDEC Q2 SDMX-ML vintage/revision evidence; otherwise advance cohort without same-vintage assumption.
