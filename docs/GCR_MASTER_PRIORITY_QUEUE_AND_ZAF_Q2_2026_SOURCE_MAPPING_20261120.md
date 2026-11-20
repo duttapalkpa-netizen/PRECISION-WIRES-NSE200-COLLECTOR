@@ -518,3 +518,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No actual CSV/XLSX/ZIP bytes captured; no SHA-256, raw-payload duplicate test, session coverage test or benchmark panel created. Actual payload status NOT_CAPTURED/NOT_TESTED.
 - Detail report: docs/INDIA_NSE_HISTORICAL_PREVIEW_FIXTURE_AND_DUPLICATE_ROW_BOUNDARY_AUDIT_PART2_20261120.md (commit c3fab39f2037f6324cdc147b661dfbf2b4c2c900).
 - Next: small isolated capture of actual date-filtered NIFTY 50, broad-market companion and India VIX downloadable payloads; hash before parsing; validate interval, exact/conflicting duplicates, sessions/holidays, schema, OHLC and price-index/TRI identity. If automated route returns HTML/blocks, stop retries and use official manual download route. No silent deduplication or production changes.
+
+
+## India Benchmark Panel — NSE actual raw-capture feasibility gate Part 3 (2026-11-20)
+- Re-fetched the current continuity ledger, GCR queue, and India Benchmark Panel Parts 1–2 before work; reused existing source/preview findings and did not repeat completed locator or fixture audits.
+- Reconfirmed official NSE All Reports, Historical Reports directory and NSE Indices Historical Data surfaces. The pages expose date controls and download UI, but the available read-only retrieval interface does not operate the controls or return the selected file bytes.
+- No official direct-download/API contract was established from the inspected official pages; third-party endpoint descriptions were not treated as authorization. No undocumented API probe or access-control bypass.
+- Actual NIFTY 50, broad-market companion and India VIX raw bytes remain NOT_CAPTURED; headers/MIME/length, file hash, parsed rows and duplicate/session QA NOT_DONE. This is a session execution-bridge limitation, not proof NSE blocks downloads.
+- Detail report: docs/INDIA_NSE_ACTUAL_RAW_CAPTURE_FEASIBILITY_GATE_PART3_20261120.md.
+- Next exact action: use a supported interactive browser/download route on the official NSE controls, or have the user attach the exact official downloads; hash unchanged bytes before parsing. Keep TRI/NTRI separate. No sample values, no silent deduplication, no production changes.
