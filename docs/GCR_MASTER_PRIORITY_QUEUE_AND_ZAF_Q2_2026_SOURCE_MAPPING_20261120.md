@@ -840,3 +840,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - USD/EUR transaction-weighted bridge and national scope/timing/valuation equivalence remain NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: obtain July PDF bytes through browser/alternate official route; inspect header; compare July-vintage May legs with September values only after exact alignment.
 - ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
+
+
+## BT. Serbia SRB — NBS July Bulletin Serbian archive route audit (Continuation 110)
+- Preflight re-fetched Master Ledger (blob SHA 856d68b455fd5f80cf5d19aae5fb82717f447ef2), GCR queue (blob SHA 6460923fd2db5f709708b3c6d1e1b74f202d6a36), Continuation 109 (blob SHA e3217fd96e3fbc3dd1593e787029e3cafd929100). PASS work skipped.
+- Official Serbian NBS Statistical Bulletin archive confirms July issue dated 31-Aug-2026; Serbian news archive lists “Statistički bilten - jul 2026. godine” dated 31.08.2026. English news archive lists July bulletin dated 03-Sep-2026. Publication date only; not a Table 2.3 header.
+- Serbian archive page text exposes interactive Select/Input form only; no July-specific PDF href. Direct English July PDF URL still times out. No PDF bytes/header recovered.
+- September-vintage May values remain verified in C109: assets -25, liabilities +3,932, net -3,957 EURm; arithmetic identity PASS. July row 3,932 month mapping NOT_VERIFIED; cross-vintage comparison NOT_DONE.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_SERBIAN_ARCHIVE_ROUTE_AND_REVISION_STATUS_CONTINUATION110_20261121.md (create commit 1e38f608fdb6c8d188b7ceaa57f6182696ada7db).
+- Next: inspect Serbian archive form DOM/Show action in real browser; capture July PDF bytes; verify Table 2.3 header and compare May legs. Stop if authenticated access required absent approval.
+- ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net inference or production changes. UNKNOWN is never PASS.
