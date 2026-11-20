@@ -2104,3 +2104,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - PER state: IMF raw row extraction PASS; official BCRP source discovery PASS; Q2 national portfolio asset/liability NOT_EXTRACTED; source bytes/hash NOT_CAPTURED; sign/definition/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detailed report: docs/GCR_PERU_PER_Q2_2026_BCRP_IMF_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. GCR queue updated. Next exact action: obtain official BCRP Q2-2026 report via supported official route and inspect the separate portfolio asset/liability transaction table; if inaccessible, retain BLOCKED and move on.
 - No synthetic values, no IIP stock substitution, no netting, no FX inference, no production changes. Protected V11.3 invariants unchanged.
+
+
+## Continuation 54 — PER official BCRPData series recovery (2026-11-20)
+- Reused fixed 63-country cohort and existing IMF raw archive; no IMF re-query or cohort rebuild. BCRP official Financial Account quarterly portal identifies private-sector series and separate public-sector series through T2-2026, last updated 20-Aug-2026.
+- BCRP Q2-2026 USDm: private portfolio assets PN39278BQ 1,749; private portfolio liabilities PN39285BQ 279; public portfolio liabilities PN39404FQ 1,421. Public source URLs are recorded in the PER report.
+- Separate liability comparison: BCRP 279 + 1,421 = 1,700 USDm vs IMF L_NIL_T 1,699.66407147559 USDm; residual +0.33592852441 USDm, within whole-million display precision. Liability numeric PASS, subject to definition/vintage.
+- Asset comparison remains incomplete: only private-sector assets 1,749 USDm; public-sector catalogue exposes aggregate assets PN39402FQ but no public-sector portfolio asset subseries in inspected list. Do not use total public assets as proxy. The difference to IMF all-sector A_NFA_T is not like-for-like.
+- PER state: official series capture PASS for 3 component series; liability numeric PASS; asset full scope PARTIAL/NOT_DONE; sign/definition and same-vintage NOT_ESTABLISHED; national dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- BCRP catalogue last update 20-Aug-2026; IMF archived rows ACTION=R but no observation-matched timestamp. No raw API payload or raw file SHA-256 captured. No netting or production changes.
+- Detail report: docs/GCR_PERU_PER_Q2_2026_BCRP_IMF_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. GCR queue updated. Next exact action: inspect BCRPData API/developer docs and public-sector asset metadata for a distinct portfolio asset flow series; if absent, retain UNKNOWN and advance.
