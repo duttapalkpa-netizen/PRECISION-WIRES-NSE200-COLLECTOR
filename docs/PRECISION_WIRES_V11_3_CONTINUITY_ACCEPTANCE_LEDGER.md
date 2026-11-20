@@ -2265,3 +2265,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 85.
 - Next: supported HTTP/API client or user-supplied official metadata CSV; capture/hash BP01 metadata, extract exact India codes, query exact monthly observations and separate quarterly series.
 - ₹0; protected production invariants and fixed 63-country cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 86 — Moldova MDA Q2-2026 BNM detailed BOP source gate (2026-11-20)
+- Re-fetched Master Continuity Ledger, GCR queue and relevant country history before selection. Reused fixed 63-country Q2 both-leg cohort CSV (blob 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8); MDA is a member with both IMF legs present. No IMF re-query or cohort rebuild.
+- Repository search found no dedicated MDA national dual-leg Q2 report. Selected MDA as an executable official-source gate.
+- Official BNM Q2 release dated 30-Sep-2026 exposes portfolio investment only as a net aggregate EUR -24.9m in its graphic; no separate asset/liability legs. Do not back-solve or use this net as either leg.
+- Official BNM detailed BPM6 interactive report generator identified. Visible controls include indicator/parameter selection, start/end year 2009–2026, quarterly periodicity, quarter selectors I–IV, EUR/USD options, Generate/Export, Statistical Series and Metadata tabs. Read-only extraction cannot operate controls or return generated export bytes.
+- Q2 workbook locator identified, but raw workbook bytes/content/hash not captured. Exact indicators, values, signs, units, revision vintage and IMF comparison remain NOT_DONE/NOT_ESTABLISHED.
+- Status: cohort membership PASS; Q2 release/source route PASS; separate legs NOT_EXTRACTED; national validation PARTIAL / NOT PASS; aggregate and production NOT_AUTHORIZED.
+- Detail: docs/GCR_MOLDOVA_MDA_Q2_2026_BNM_DETAILED_BOP_SOURCE_GATE_CONTINUATION86_20261120.md.
+- Next: use supported interactive browser to generate/export official detailed BOP for 2026-Q2, inspect metadata and separate portfolio asset/liability series, hash raw bytes before parsing; otherwise user may attach official BNM Q2 workbook/export. No inference from net EUR -24.9m.
+- ₹0; fixed cohort and all production invariants unchanged. UNKNOWN is never PASS.
