@@ -2381,3 +2381,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report path intended: docs/GCR_MOROCCO_Q2_2026_PORTFOLIO_METADATA_AND_BOP_PRESENTATION_AUDIT_CONTINUATION93_20261120.md. GitHub create returned commit c86b71dd38d21ce9312be470cf1c41f251ceb7b2, but subsequent file fetch returned 404 and create retry indicated existing path requires SHA; therefore report-file path/commit association is NOT_VERIFIED. Do not treat the report artifact as verified until resolved. The findings below are recorded in this ledger/queue.
 - Decision: close this public metadata route as NOT_ESTABLISHED and advance to next unfinished country in the fixed cohort; revisit MAR only if current versioned fiche/technical note provides explicit FX convention. No IMF re-query or cohort rebuild.
 - ₹0; fixed 63-country cohort and production invariants unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 94 — Nepal NPL NRB BPM6 byte-route closure (2026-11-20)
+- Preflight re-fetched Master Ledger, GCR queue, NPL Continuation 58 retrieval-route report and NPL source-boundary report. PASS work not repeated.
+- Reconfirmed official NRB External Sector page lists monthly BOP BPM6 dataset and exact workbook URL. Web retrieval returns unsupported XLSX MIME; separate container byte-download invocation also failed. No bytes, workbook structure, values, or SHA-256 captured.
+- NRB NSDP currently linked BOP XML remains stale (NEPAL_BOP_2024_Q1.xml); not admitted for Q2-2026. Monthly Banking & Financial Statistics publications remain rejected as wrong document family under Continuation 57.
+- Exact report: docs/GCR_NEPAL_NPL_Q2_2026_NRB_BPM6_BYTE_ROUTE_CLOSURE_CONTINUATION94_20261120.md; commit 3d578a8d292a8373f40403094752e297c031b2b5.
+- Status: official dataset discovery PASS; exact XLSX locator PASS; browser and separate byte route BLOCKED; workbook bytes/hash/sheets NOT_CAPTURED; Q2 period basis, separate legs, sign/unit/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; NPL PARTIAL / NOT PASS; aggregate/production NOT_AUTHORIZED.
+- Decision: close this exact URL route; do not retry without a genuinely new supported mechanism. Advance to next eligible member of same fixed 63-country cohort after preflight. No IMF re-query or cohort rebuild.
+- No new data collection beyond source-route check, ₹0; all production invariants unchanged. UNKNOWN is never PASS.
