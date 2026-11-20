@@ -600,3 +600,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail report: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md, Continuation 83.
 - Status: policy/definition boundary PASS; same-vintage reconciliation NOT_ESTABLISHED; raw capture and exact codes NOT_DONE; production NOT_AUTHORIZED.
 - Next: supported ZIP-capable retrieval of BOJ flat files + code/specification list; verify India series codes/values before any join.
+
+
+## AT. Japan JPN — BOJ BP01 API/flat-file retrieval bridge (Continuation 84)
+- Official BOJ API manual specifies BP01 metadata `getMetadata` and exact series `getDataCode` endpoints; CSV/JSON; daily-updated metadata; request limits 250 series and 60,000 points.
+- Official series-code XLSX URL identified: https://www.boj.or.jp/en/statistics/br/bop_06/data/exbpsm6a.xlsx . Official flat-file ZIPs identified: https://www.stat-search.boj.or.jp/info/bp_m_en.zip and https://www.stat-search.boj.or.jp/info/regbp_q_en.zip .
+- Official statistics taxonomy confirms monthly portfolio asset/liability country-breakdown totals and instrument subseries; quarterly Regional BOP includes India. This is not exact code/value proof.
+- XLSX/ZIP retrieval rejected by current web/container bridge; API metadata endpoint inaccessible through current bridge; no raw bytes/hash, exact India series codes or values captured. No guessed codes.
+- Detail: Japan report Continuation 84. Status: API contract/taxonomy PASS; exact series codes/data NOT_DONE; same-vintage reconciliation NOT_ESTABLISHED; production NOT_AUTHORIZED.
+- Next: supported API/HTTP client or user-provided official BOJ files; fetch metadata, identify exact India codes, retrieve and hash exact observations before parsing.
