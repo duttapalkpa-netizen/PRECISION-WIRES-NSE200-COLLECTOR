@@ -2078,3 +2078,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Do not assume sign equivalence to IMF A_NFA_T/L_NIL_T from the row labels alone. Official sign/definition crosswalk NOT_ESTABLISHED; exact IMF PAK Q2 rows not independently retrieved from the existing archive in this step; same-vintage/revision timestamp NOT_ESTABLISHED; numeric dual-leg comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - No raw PDF bytes/hash captured. No IMF re-query, no cohort rebuild, no netting, no production change. Protected invariants unchanged.
 - Updated report: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. Next: retrieve archived IMF PAK Q2 exact A_NFA_T/L_NIL_T rows, inspect official sign definitions, compare legs separately at SBP USDm display precision, then investigate revision timestamp.
+
+
+## Continuation 52 — PAK Q2-2026 exact IMF dual-leg reconciliation (2026-11-20)
+- Reopened current ledger, GCR queue, fixed 63-country cohort, PAK report, and exact archived IMF raw CSVs. PAK was already in the fixed cohort; no cohort rebuild and no IMF re-query.
+- Raw IMF Git blob SHAs: asset file 15449e87c9057291a1f52f2f8cd9805df55f9fb8; liability file 15f379dc42e2760eb5f2384618e48f5ddc3177f1.
+- Exact PAK 2026-Q2 rows: A_NFA_T = -2,000,000 USD (scale 6); L_NIL_T = -243,000,000 USD (scale 6). Both ACTION=R, quarterly, USD, Q2-2026.
+- Official SBP BPM6 sources establish financial-account sign convention: increases in assets/liabilities positive, decreases negative; financial account uses NAFA and NIL separately. SBP CY26 Q2(R) values are Portfolio investment abroad -2 USDm and Portfolio investment in Pakistan -243 USDm. Separate leg comparisons each match exactly at published USDm precision (2/2 PASS; differences 0). No netting.
+- PAK: official sign/framework crosswalk SUPPORTED; dual-leg numeric comparison PASS; exact same-vintage NOT_ESTABLISHED despite both records carrying revised metadata; national validation PARTIAL, not PASS; aggregate NOT_AUTHORIZED.
+- No SBP raw PDF SHA-256 claimed; IMF raw archive Git blob SHAs recorded above. No synthetic values, no production change, no cohort rebuild, no new IMF query.
+- Detailed evidence: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. GCR priority queue updated in docs/GCR_MASTER_PRIORITY_QUEUE_AND_ZAF_Q2_2026_SOURCE_MAPPING_20261120.md.
+- Next exact action: inspect official SBP Data Revision Policy for Q2-2026 portfolio observation-specific revision date/history and compare with IMF vintage metadata. If no public dated history exists, retain UNKNOWN and proceed to the next unvalidated cohort member.
