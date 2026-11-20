@@ -402,3 +402,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official sources: https://www.sbp.org.pk/economic-data ; https://easydata.sbp.org.pk/apex/f?p=10:210:8439371819372: ; https://www.sbp.org.pk/assets/document/Balancepayment_BPM6.pdf ; https://www.sbp.org.pk/ecodata/CPIS-Sdds-Assets-Data.pdf ; https://archive.sbp.org.pk/ecodata/index2.asp .
 - Next exact action: retrieve the official SBP quarterly BPM6 EasyData export or calendar-year archive workbook, establish calendar/fiscal period mapping, and capture separate Q2-2026 portfolio asset/liability transaction rows with raw bytes, units, revision flags and hashes. If unavailable, preserve blocker and advance; do not substitute CPIS stocks, net-only flows or FY cumulative values.
 - Protected invariants unchanged; no production code, selector, ranking, pressure fade, CORE-672, Engines A-E, IPO-PLX V2, weights, gates or trade alerts changed.
+
+
+## Continuation 51 — PAK Q2-2026 SBP revised quarterly values extracted (2026-11-20)
+- New official SBP quarterly calendar-year BPM6 table located: https://www.sbp.org.pk/assets/document/BPM6_c.pdf . Header identifies CY26 Q2 as revised (R), units million USD.
+- Exact CY26 Q2(R) values: Portfolio investment abroad = -2 USDm; Portfolio investment in Pakistan = -243 USDm. These are separately published portfolio components, not derived from cumulative/monthly figures. This corrects the prior PAK audit's NOT_EXTRACTED state for source values.
+- Source-value extraction PASS only. Sign/definition crosswalk to IMF A_NFA_T/L_NIL_T NOT_ESTABLISHED; exact IMF PAK Q2 row retrieval from existing archive NOT_DONE; same-vintage/revision timestamp NOT_ESTABLISHED; dual-leg numeric comparison NOT_DONE; PAK PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report updated: docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. No IMF re-query or cohort rebuild. Next: retrieve exact archived IMF PAK Q2 rows, verify official BPM6 sign definitions, compare legs separately at USDm display precision, then investigate SBP revision timestamp. No netting or assumed sign transform.
