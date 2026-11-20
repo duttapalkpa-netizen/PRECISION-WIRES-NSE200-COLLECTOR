@@ -768,3 +768,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail report: docs/GCR_SERBIA_SRB_Q2_2026_ARCHIVED_IMF_EXACT_DUAL_LEG_ROW_EXTRACTION_CONTINUATION102_20261120.md (create commit daed219c211da0290f74c1c5c27af11723adbeb3).
 - Next: independent NBS May observation/vintage check; capture PDF bytes/hash; establish official transaction FX/sign/concept bridge; then compare legs separately.
 - ₹0; no IMF re-query, no cohort rebuild, no inferred FX, no sign flip, no net-to-leg inference, no production changes. UNKNOWN is never PASS.
+
+
+## BM. Serbia SRB — NBS BPM6 sign / transaction-FX methodology and later-vintage route (Continuation 103)
+- Preflight re-fetched Master Ledger (blob SHA bd4259ad6176cbbcd0d481c12c012efff63f7493), GCR queue (blob SHA 250e3cce04832837cf942b6cd285c62db825b7a2), SRB Continuation 102 (blob SHA 874f1908814137b67c0d4032752b73dd3a29e207), and Continuation 101 (blob SHA ca0eb8844ab9d14a378f4278506f363fdf776c65). Excluded all completed cohort, NBS Q2 extraction/arithmetic and IMF row retrieval work.
+- Official NBS BPM6 Explanatory Notes state original-currency transactions are converted to reporting currency using the official NBS middle exchange rate on the transaction date; increases in assets/liabilities are positive, decreases negative; net=assets−liabilities; portfolio includes <10% equity and debt securities.
+- NBS-side sign convention PASS; NBS transaction-date FX methodology PASS. This does not produce an exact conversion of aggregate quarterly EUR totals to IMF USD totals; no transaction-level amounts/dates in the monthly aggregate table, so no generic monthly/quarterly FX substitution.
+- NBS official BOP page lists September 2026 monthly BPM6 XLS and detailed XLS; 18-Nov-2026 September developments also listed. This is a later vintage candidate for May 2026 revision check. Current retrieval bridge rejected XLS content type (400 unsupported); no workbook bytes/sheets/values/hash. May revision NOT_DONE.
+- IMF A_NFA_T/L_NIL_T mapping and same-vintage alignment remain NOT_ESTABLISHED; exact IMF rows remain CAPTURED in Continuation 102. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_SIGN_FX_METHODOLOGY_AND_REVISION_ROUTE_CONTINUATION103_20261120.md (create commit 97226fa883b88f0546b4b72e92ae10fa602c731f).
+- Next: obtain NBS September 2026 XLS and detailed XLS via byte-preserving route; verify May 2026 revised observations; retrieve IMF metadata for exact sign/concept mapping; do not FX-convert EUR aggregates with a generic rate.
+- ₹0; no IMF query, cohort rebuild, synthetic data, inferred FX, sign flip or production changes. UNKNOWN is never PASS.
