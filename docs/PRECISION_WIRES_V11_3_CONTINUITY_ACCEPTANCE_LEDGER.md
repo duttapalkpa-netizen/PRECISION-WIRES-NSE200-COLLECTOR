@@ -2114,3 +2114,9 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - PER state: official series capture PASS for 3 component series; liability numeric PASS; asset full scope PARTIAL/NOT_DONE; sign/definition and same-vintage NOT_ESTABLISHED; national dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - BCRP catalogue last update 20-Aug-2026; IMF archived rows ACTION=R but no observation-matched timestamp. No raw API payload or raw file SHA-256 captured. No netting or production changes.
 - Detail report: docs/GCR_PERU_PER_Q2_2026_BCRP_IMF_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. GCR queue updated. Next exact action: inspect BCRPData API/developer docs and public-sector asset metadata for a distinct portfolio asset flow series; if absent, retain UNKNOWN and advance.
+
+
+### Continuation 54 — BCRP API contract check
+- Official BCRPData API developer guide: https://estadisticas.bcrp.gob.pe/estadisticas/series/documentos/bcrpdataapi.pdf . It documents GET series queries, up to 10 same-frequency series, output formats including JSON/CSV, and exact series-code/date-range URL structure (guide pp.2-5; updated 24-May-2022).
+- Constructed one documented, single-period JSON GET for PN39278BQ-PN39285BQ-PN39404FQ, 2026-2/2026-2/ing. The web retrieval returned an internal access error; no raw API payload/receipt was acquired. Do not claim API download or raw-file hash. Previously inspected official HTML series pages remain the evidence for the three displayed values.
+- API path remains an available documented retrieval contract but the exact endpoint access in this session is BLOCKED; do not repeatedly retry the same URL. Continue with HTML display evidence only, and keep the raw-byte archival gate open.
