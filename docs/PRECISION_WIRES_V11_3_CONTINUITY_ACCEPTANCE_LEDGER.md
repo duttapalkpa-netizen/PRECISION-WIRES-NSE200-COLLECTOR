@@ -1796,3 +1796,13 @@ Report workstream percentages separately from evidence status. Percentage means 
 - BI Q2 2026 report published 2026-08-21 and page updated 2026-09-17; Table V.7 Q2 is ** Very Temporary Data. BI revision metadata says final status occurs five months after first release; current Q2 remains provisional. IMF exact-key receipt retrieval was 2026-11-19, but exact BI↔IMF same-vintage alignment is not established.
 - Thus IDN sign crosswalk and both rounded numerical legs PASS; same-vintage national dual-leg validation remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_INDONESIA_IDN_BPM5_SIGN_CONVENTION_CROSSWALK_AND_Q2_2026_RECHECK_20261120.md`. Next action is a dated BI Q2 revision snapshot/vintage bridge; if unavailable, retain the limitation and advance to the next cohort country.
+
+
+## 2026-11-20 — Saudi Arabia SAU Q2-2026 SAMA vs IMF portfolio BOP validation
+- Preflighted Master Ledger, GCR priority queue, IDN sign crosswalk, CHN blocker, cross-country benchmark and fixed 63-country cohort; skipped all completed PASS work. After IDN sign mapping was closed but same-vintage remained unresolved, selected SAU from the existing cohort. Reused existing 12-country exact-key IMF receipt; no panel rebuild or new IMF GET.
+- IMF receipt run 44474458684 / artifact 14505009889 / ZIP SHA-256 `588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7`. SAU A_NFA_T raw CSV SHA-256 `7574486199f032a8eabfdc2dc38e21f0f70247165537a5732777032de0cbc76d`; L_NIL_T SHA-256 `b2c557662bcfaf22771a3ef50f4d43c48f664abea32d31118adcab5c58cdd926`. Both HTTP 200, 46/46 broad-key matches, 2015-Q1–2026-Q2.
+- IMF Q2-2026 values: A_NFA_T +9,663.782086 USDm; L_NIL_T +6,381.234539 USDm (raw values and SCALE=6 retained).
+- SAMA September 2026 Monthly Statistical Bulletin, Table 1 Balance of Payments, Contd.6, printed/PDF page 131, USDm, Q2 2026 explicitly estimated (e): net acquisition of portfolio assets +9,664; net incurrence of portfolio liabilities +6,381; portfolio balance +3,283.
+- Asset residual IMF−SAMA -0.217914 USDm; liability residual +0.234539 USDm; both within ±0.5 USDm whole-million display-rounding. Signs/concepts match without transform. Both numerical legs PASS.
+- Exact SAMA↔IMF same-vintage alignment not established: SAMA values are estimated; IMF receipt timestamp alone is not a source-vintage identity. SAU full national dual-leg validation remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: `docs/GCR_SAUDI_ARABIA_SAU_Q2_2026_SAMA_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md`. Next action: seek dated SAMA Q2 estimate revision archive / subsequent revised observation; if unavailable retain PARTIAL and advance within fixed cohort.
