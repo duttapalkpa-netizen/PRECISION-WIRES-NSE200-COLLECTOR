@@ -710,3 +710,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Exact ECB API asset/liability retrieval for Q2-2026 remains blocked; asset portal metadata only and liability page 503; no raw bytes/hash/values. ROU PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_ROMANIA_ROU_Q2_2026_ECB_BNR_METHODOLOGY_RETRIEVAL_BOUNDARY_CONTINUATION96_20261120.md (commit ba48066871b9fc5c0cb279b933abc25232d1f175; verified blob SHA 6f3c046255ada664589286bdae276606588cc9a4).
 - Close current identical ECB API route. Revisit only on a new supported BNR interactive/data-set or byte-preserving ECB route. Continue fixed cohort only after next-country preflight; no IMF re-query or cohort rebuild.
+
+
+## BG. Rwanda RWA — BNR Q2-2026 portfolio source gate (Continuation 97)
+- RWA selected as next country after ROU from immutable 63-country Q2-2026 cohort. Preflight checked current Master Ledger, GCR queue, cohort and ROU 95/96 reports; no dedicated RWA report existed. No cohort rebuild or IMF re-query.
+- BNR External Sector Statistics page says BOP/IIP is BPM6 and lists a Balance of Payment item dated 30-Jun-2026; JavaScript portal prevented exact file URL/bytes resolution.
+- BNR Annual Report 2024-2025 Appendix 14 has fiscal-year separate portfolio assets/liabilities in USDm; FY2024/25 12.1 / 6.3, net 5.8; FY2022/23 50.2 / -58.4, net 108.6. Historical arithmetic diagnostic only; not Q2 data and not a proven IMF key bridge.
+- BNR October 2026 MPFSS Table 12 has 2026H1 net-only portfolio +14 USDm; no separate legs or Q2. Direct annual PDF byte download failed; no raw-file SHA/receipt.
+- RWA Q2 national asset/liability observations NOT_CAPTURED; comparison NOT_DONE; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_RWANDA_RWA_Q2_2026_BNR_PORTFOLIO_SOURCE_GATE_CONTINUATION97_20261120.md (commit ef71745ec25c570886974883bbe9cd194cba2547; verified blob SHA af725eba157789e16e65a783e886d96f66fdc727).
+- Next: supported retrieval of BNR 30-Jun-2026 BOP dataset, raw-byte archival and separate leg inspection. No FY proration, net inference, IMF re-query or cohort rebuild.
