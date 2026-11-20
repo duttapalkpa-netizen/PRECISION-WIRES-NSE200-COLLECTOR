@@ -1815,3 +1815,11 @@ Report workstream percentages separately from evidence status. Percentage means 
 - SAU asset and liability numeric comparisons remain PASS at published rounding; same-vintage identity NOT_ESTABLISHED; full national dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail audit: docs/GCR_SAUDI_ARABIA_SAU_Q2_2026_SOURCE_VINTAGE_FOLLOWUP_AUDIT_20261120.md. Advance to next eligible country in fixed cohort using existing IMF receipt; no duplicate IMF GET or cohort rebuild.
 - Protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Poland POL Q2-2026 official NBP source gate
+- Preflighted latest Master Ledger, GCR priority queue, SAU and CHN evidence. Selected POL from the existing 12-country IMF exact-key receipt; no new IMF request or cohort rebuild.
+- Reused artifact 14505009889 (run 44474458684; ZIP SHA-256 588101c0deff3b4310984dae5eabcac64fc8288f4416854b7676b4b6ff6b4cd7). POL Q2-2026 IMF values: A_NFA_T +6,602,000,000 USD; L_NIL_T +19,391,000,000 USD. Raw CSV hashes: A 19ba3d8918245d7abe73125d76c08e27f9970817cc1a46b8753763352e5a2e21; L 365bac8801d0951f3d69f863628e844c6da07b0e69651880614c815b859c769b.
+- Official NBP quarterly workbook locator bop_q.xlsx is linked from NBP's BOP PDF, but workbook bytes/metadata/hash could not be retrieved. PDF front matter says March 2026 / dated 15-May-2026 / April release 12-Jun-2026, while later tables show Q2/Q3 2026 columns. This internal vintage/date conflict means later table values are quarantined and not used as a benchmark.
+- NBP workbook inspection BLOCKED / NOT_DONE; POL national asset/liability comparisons NOT_DONE; POL full validation BLOCKED; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_IMF_SOURCE_GATE_AUDIT_20261120.md. Next action: retrieve/hash/inspect exact NBP XLSX through supported file transfer; if still blocked, move to next eligible cohort country.
