@@ -911,3 +911,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - TLS NOT_VALIDATED / NOT PASS; unit/sign/period/vintage and IMF comparison NOT_ESTABLISHED/NOT_DONE.
 - Next: actual browser/Computer Use export of XLSX or Power BI Export data; capture bytes/hash and inspect dual legs, then compare only with archived IMF rows. If blocked/no legs, record blocker and advance.
 - ₹0; no IMF query/cohort rebuild, synthetic data, net-to-leg inference, IIP substitution or production changes. UNKNOWN is never PASS.
+
+
+## CA. Timor-Leste TLS — BCTL live BOP latest period / export vintage (Continuation 117)
+- Preflight re-fetched Master Ledger blob SHA d5c6ff4eaae89d0a57cb480ed0f149a28767fa6e, GCR queue blob SHA ffc0cefec854638081117e1904253891690f21d0, TLS C116 report blob SHA 282807d8df8ffe3c91e96c14aa2f66f5f7234d69.
+- Official BCTL live BOP chart title/unit “Balance of Payments (Thousand USD)” exposes quarter labels from Jan-Mar-2020 through Jan-Mar-2025 only; latest exposed row is Q1 2025. Three numeric keys y/y2/y3 have no extracted legend; no portfolio mapping assumed.
+- “Export Excel” exact target is https://bancocentral.tl/uploads/portfolio/ficheiros/1764122263_8744_BoP_2025Q3.xlsx (filename vintage Q3-2025). Web click redirected to home and direct container download failed; workbook bytes/sheets/hash NOT_CAPTURED. Q3-2025 filename is not Q2-2026 evidence.
+- BCTL methodology confirms BPM6 broadly, quarterly frequency, USD unit, portfolio asset transactions from Petroleum Fund and commercial bank balance sheets, market value including accrued coupon, excluding non-transaction revaluation. It does not expose Q2-2026 dual legs.
+- H1 2026 -USD 524.9m remains aggregate only. TLS Q2 separate portfolio assets/liabilities NOT_CAPTURED; TLS NOT_VALIDATED / NOT PASS; IMF comparison NOT_DONE.
+- Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_BOP_LIVE_SERIES_LATEST_PERIOD_AND_EXPORT_VINTAGE_AUDIT_CONTINUATION117_20261121.md (create commit e2e55fcca37495e560397e06e004fed59a74d33c).
+- Next: actual browser export and inspect Q3-2025 workbook; if vintage stops at Q3-2025, mark public route stale and advance next cohort member. No IMF query/cohort rebuild.
+- ₹0; no net-to-leg inference, IIP substitution or production changes. UNKNOWN is never PASS.
