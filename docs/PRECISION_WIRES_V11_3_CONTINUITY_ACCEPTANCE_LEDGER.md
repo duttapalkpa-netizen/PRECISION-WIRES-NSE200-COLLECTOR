@@ -1906,3 +1906,9 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Therefore survey definitions PASS for conceptual mapping only; published survey series excluded as a source for FY26 Q2 national flow legs. Do not use Dec-2025 stocks, NITA flows or calendar-2025 totals as quarterly asset/liability flows.
 - Official annual BOP page confirms FY26P net PI -223 USDm but not separate PI legs; DMB/NBDC assets/liabilities are a distinct category. BGD Q2 national legs NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
+
+
+## 2026-11-20 — BGD Open Data / monthly BOP alternate-route boundary
+- Bangladesh Bank Open Data page describes a free monthly-updated Excel workbook with detailed BOP indicators and a 1972 historical workbook; both official XLSX URLs are inaccessible through current supported byte-preserving retrieval (reader rejects XLSX MIME; direct container download of statisticaltable.xlsx failed). No raw bytes/hash claimed.
+- Official monthly BOP table displays portfolio investment as net only for current FY periods; DMB/NBDC and reserve assets/liabilities are separate functional categories, not portfolio legs. Official IIP time series is stock/position data, not transaction flows. Excluded all as substitutes for FY26 Q4 portfolio legs.
+- Open Data route discovery PASS; workbook byte capture NOT_DONE; monthly BOP scope confirms PI net-only; BGD national dual legs NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
