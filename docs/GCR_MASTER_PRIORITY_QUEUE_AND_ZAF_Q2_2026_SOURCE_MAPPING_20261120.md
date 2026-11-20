@@ -880,3 +880,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_PUBLICATION_PERIOD_BASIS_AND_H1_Q2_AMBIGUITY_CONTINUATION113_20261121.md (create commit 85070d16f9998a480df516733eb1d66df417431a).
 - TJK remains NOT_VALIDATED / NOT PASS. Next: byte-preserving PDF capture; inspect reporting period and separate legs. If H1, require same-vintage Q1 legs before any H1−Q1 derivation; else mark unavailable and advance.
 - ₹0; no IMF query/cohort rebuild, synthetic data, FX inference or production changes. UNKNOWN is never PASS.
+
+
+## BX. Timor-Leste TLS — BCTL H1 portfolio source and Q2 dual-leg gate (Continuation 114)
+- Preflight re-fetched current Master Ledger (blob SHA 163b5cfc1653ba7362db3d7394a134876bb7989b), GCR queue (blob SHA 24b73fabe206fa3e28bd15181c47d2ced9031cf4), TJK C113 report (blob SHA f27988d966cc9dfb32a3b597ff5d5358f02584cd); GitHub search found no prior TLS Q2 dual-leg report. PASS work skipped.
+- Official BCTL Mid-Year Economic Review reports H1 2026 portfolio investment -USD 524.9m and explains this negative component mainly as drawdown of external portfolio assets/Petroleum Fund assets. This is H1 aggregate component, not separate portfolio asset/liability legs.
+- BCTL Quarterly BOP page release schedule lists Q1 2025 through Q4 2025 only; Q2 2026 standalone dual-leg table NOT_LOCATED through this route. BOP flows vs IIP stocks kept distinct.
+- Report-level discrepancy retained: Executive Summary says financial account -USD 705.9m, while detailed table/section says -USD 702.9m; not silently reconciled.
+- Report: docs/GCR_TIMOR_LESTE_TLS_Q2_2026_BCTL_H1_PORTFOLIO_SOURCE_GATE_CONTINUATION114_20261121.md (create commit c9b29c63569df74cad17cd1ac1105a70dc3e0dca).
+- TLS H1 portfolio net component CAPTURED; Q2 separate assets/liabilities NOT_CAPTURED; Q2 period/sign/vintage alignment NOT_ESTABLISHED; IMF comparison NOT_DONE; TLS NOT_VALIDATED / NOT PASS.
+- Next: locate official Q2 2026 BOP dual-leg release or H1 dual-leg table; absent same-vintage Q1 dual legs, do not derive Q2. If unavailable, advance next cohort country.
+- ₹0; no IMF query/cohort rebuild, net-to-leg inference, IIP substitution or production changes. UNKNOWN is never PASS.
