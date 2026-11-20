@@ -829,3 +829,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Report: docs/GCR_SERBIA_SRB_Q2_2026_JULY_BULLETIN_HEADER_RECOVERY_AND_VINTAGE_GATE_CONTINUATION108_20261121.md (create commit f88dce5962c98f799d494dce9700edd891cfe19b).
 - Next: obtain July PDF bytes through browser/alternate official NBS-hosted route; inspect Table 2.3 header and row; compare May legs across July/September vintages only after alignment.
 - ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
+
+
+## BS. Serbia SRB — September-vintage exact month-header verification; July vintage still open (Continuation 109)
+- Preflight re-fetched Master Ledger (blob SHA ccdda277aa8ee8cfa91a8d98c459e1dd24980509), GCR queue (blob SHA 545794c9590ebf5649b2d01a8dda0ad391e4a34a), Continuation 108 (blob SHA bac151f983b989d7bf5dae0d981b8bcbc6ab4d7d). PASS work skipped.
+- Opened official NBS September-2026 Statistical Bulletin PDF Table 2.3, printed p.105, lines 8102–8184. Full header explicitly maps 2026 May to the 10th data column after ITEM (header at lines 8110–8111).
+- September-vintage May values independently verified: portfolio assets -25 EURm (line 8146), liabilities +3,932 EURm (line 8147), net -3,957 EURm (line 8145). Identity -25 - 3,932 = -3,957 PASS. NBS notes data available until 17-Sep-2026 and subject to corrections (lines 8178–8180).
+- This resolves September-vintage month alignment only. July 2026 PDF still timed out; Continuation 107's 3,932 row lacks header. July-vintage month mapping NOT_VERIFIED; July-to-September revision NOT_DONE.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_SEPTEMBER_VINTAGE_EXACT_MONTH_HEADER_VERIFICATION_AND_JULY_LIMIT_CONTINUATION109_20261121.md (create commit 4c8e006e31eeb8878f14846d762e8dd08cb122d1).
+- USD/EUR transaction-weighted bridge and national scope/timing/valuation equivalence remain NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: obtain July PDF bytes through browser/alternate official route; inspect header; compare July-vintage May legs with September values only after exact alignment.
+- ₹0; no IMF query/cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
