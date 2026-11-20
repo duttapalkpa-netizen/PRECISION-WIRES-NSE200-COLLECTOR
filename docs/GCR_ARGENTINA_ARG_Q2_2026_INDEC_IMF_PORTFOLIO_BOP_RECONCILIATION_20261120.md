@@ -51,3 +51,8 @@ Seek an INDEC Q2 2026 versioned SDMX-ML historical vintage or a dated source-rev
 
 ## Protected invariants
 No cross-country aggregation, netting, imputation, forward-fill, synthetic observations, silent sign transforms, or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+## 2026-11-20 — bounded official vintage-access check
+- Official INDEC international accounts page lists the current BOP SDMX-ML archive (BOP.xml), but the retrieval interface rejected its text/xml content type; the official Datos Argentina MBP6 quarterly CSV resource link timed out. This does not establish that the live files contain historical vintages or revision logs. No same-vintage evidence was obtained. Preserve ARG PARTIAL / NOT PASS; do not repeatedly retry the same failed public routes.
+- Next exact action remains an accessible versioned Q2 2026 archive/change record or advance to another eligible country.
