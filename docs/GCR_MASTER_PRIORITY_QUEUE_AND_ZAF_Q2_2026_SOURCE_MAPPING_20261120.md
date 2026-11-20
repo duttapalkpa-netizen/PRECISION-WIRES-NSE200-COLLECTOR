@@ -363,3 +363,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail report: docs/GCR_COLOMBIA_COL_Q2_2026_BANREP_OFFICIAL_SOURCE_BOUNDARY_AUDIT_20261120.md.
 - Next exact action: identify public BanRep export/series metadata for separate Q2 portfolio transaction assets and liabilities, with units/signs/revision metadata. If unavailable, retain blocker and advance. No stock-flow substitution or repeated IMF request.
 - Invariants unchanged; no production code or protected selector/scoring/diagnostic/engine changes.
+
+
+## AL. Colombia COL — BanRep exact portfolio-series catalogue identified; export remains blocked (2026-11-20)
+- Continued the official-source boundary work without IMF re-query or cohort rebuild. BanRep's BOP datawarehouse page confirms BPM6 quarterly series from 2000 onward and a dedicated Portfolio Investment annex. Its financial-account sign statement is general, not yet the exact two-series crosswalk.
+- Official SUAMECA multiple-download catalogue search exposes three separate quarterly portfolio series in current USD millions, 2000-Q1 through 2026-Q2, last updated 2026-09-01: portfolio total; portfolio net acquisition of financial assets; portfolio net incurrence of liabilities. The latter two are the required national components corresponding conceptually to A_NFA_T and L_NIL_T.
+- SUAMECA download page timed out when opened; no series IDs, export bytes, Q2 values, exact metadata or hashes obtained. Therefore discovery PASS; raw capture NOT_DONE; numeric validation NOT_DONE; sign mapping NOT_ESTABLISHED; same-vintage NOT_ESTABLISHED; COL PARTIAL/BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Updated detail: docs/GCR_COLOMBIA_COL_Q2_2026_BANREP_OFFICIAL_SOURCE_BOUNDARY_AUDIT_20261120.md (update commit 40722e580d98c49ac57328f7d8974115529b4e51; blob 33ff9eed00159f7c8c0798a061be785440a81f94).
+- Next: access exact SUAMECA series entries via supported browser route; capture series IDs and raw quarterly exports with receipts/hash; inspect Q2 values and series sign metadata. No IMF re-query or cohort rebuild.
