@@ -2509,3 +2509,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - May revision NOT_CAPTURED; USD/EUR transaction bridge NOT_ESTABLISHED; national equivalence NOT_ESTABLISHED; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: inspect NBS archive form underlying endpoint with supported byte-preserving route; re-check October 2026 bulletin after 3-Dec release; verify actual units before use.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 106 — Serbia SRB NBS archive form schema and web-service access gate (2026-11-20)
+- Preflight re-fetched Master Ledger (blob SHA b3d818fa8ad5d5ea3a2c5c2efad82cdd7c222edc), GCR queue (blob SHA aa260f77f4a282db6246ebdd6ecc147a1b2489eb), Continuation 105 (blob SHA 916a9d07c1e15f36a24bfe3d28b11c7958e6c90a). PASS work excluded.
+- Official NBS BOP page shows monthly BPM6 and detailed archive forms, each Select + five Inputs + Show. Extracted page text exposes no DOM names/options/form action/query/download URL; endpoint not guessed.
+- Official NBS web-service page requires a certified application and NBS-issued username/password/licence code. No application or external contact made. Whether archive UI requires this service account UNKNOWN.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_ARCHIVE_FORM_AND_WEBSERVICE_ACCESS_GATE_CONTINUATION106_20261120.md; create commit b7309fd69b0783ca4bdc6a4bea9c2de34b6bec40.
+- XLS raw bytes/sheets/values/hash and May later-vintage separate legs NOT_CAPTURED; USD series NOT_LOCATED; FX bridge NOT_ESTABLISHED; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: inspect archive form DOM/submission via actual browser; capture binary; parse May asset/liability rows; no authenticated service application without explicit authorization.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
