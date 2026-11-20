@@ -203,3 +203,31 @@ Open the official 10-Nov-2026 Q2 Regional BOP release and its linked BOJ/ MOF wo
 Use a supported API/HTTP client (or user-provided official BOJ CSV/XLSX/ZIP download) to call the documented BP01 metadata endpoint once, preserve the untouched response and hash, identify exact India portfolio asset/liability monthly codes plus Q2 Regional BOP codes, then retrieve only those series and verify periods, units, signs, missing-value symbols and vintage. No guessed code, no undocumented API route, no synthetic Q2.
 - Official sources: BOJ API manual https://www.stat-search.boj.or.jp/info/api_manual_en.pdf ; BOJ BPM6 data page https://www.boj.or.jp/en/statistics/br/bop_06/index.htm ; BOJ flat files https://www.stat-search.boj.or.jp/info/dload_en.html ; BOJ BOP statistics list https://www.stat-search.boj.or.jp/info/statistics_menu_list_e_bop.pdf .
 - Protected invariants unchanged: ₹0, official/free sources only, no fabricated timestamps, no dash-to-zero conversion, no FX conversion, no netting, no production changes, fixed 63-country IMF cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 85 — BOJ partner-universe crosswalk and API metadata access gate (2026-11-20)
+- Re-fetched current Master Continuity Ledger, GCR queue and Japan report; skipped repeated monthly PDF transcription and revision-policy audit.
+- Official BOJ BPM6 page confirms monthly portfolio country-breakdown coverage is 45 economies, whereas Regional BOP partner-economy coverage is 33 economies. India is included in the Regional BOP partner list and in the portfolio 45-economy list; the two universes are not interchangeable.
+- BOJ official BOP statistics list confirms BP01 Appendix contains separate monthly Portfolio Investment Assets Country Breakdown (Total + equity/fund, long-term debt, short-term debt) and Portfolio Investment Liabilities Country Breakdown (same split), while Regional BOP (Quarterly) is a separate hierarchy and explicitly lists India.
+- BOJ API manual and quick guidance reconfirm the documented discovery workflow: metadata API by DB name, then code API by exact series code; search site also supports series-name and exact-code search. The official API is intended to return machine-readable CSV/JSON.
+- Attempted documented metadata request for BP01 via the current web retrieval bridge. The API endpoint was not accessible through this bridge; no response body or metadata rows returned. No series code guessed. This is a transport/access limitation, not evidence that the official API is down.
+- The BOJ public "Main Time-series Statistics" page is not a substitute: its visible monthly table covers only Current account/Net balance and Financial account/Net balance, not the 45-economy portfolio country-breakdown series.
+- Structural implication: monthly portfolio 45-economy and quarterly Regional BOP 33-economy datasets require an explicit partner-universe crosswalk; shared India label is a valid common member but does not establish equal classification, partner attribution or equal coverage of all other economies. Monthly assets are issuer-economy basis; liabilities transactor-economy basis; Regional BOP is partner-economy classification. Keep all three data products separate until exact metadata and definition crosswalk are captured.
+### Acceptance
+| Gate | Status |
+|---|---|
+| Monthly portfolio partner universe = 45 economies | PASS |
+| Quarterly Regional BOP partner universe = 33 economies | PASS |
+| India appears in both published partner universes | PASS |
+| BP01 monthly asset/liability country-breakdown taxonomy | PASS |
+| Exact India series codes from BP01 metadata | NOT_DONE |
+| BP01 metadata API response captured | NOT_DONE (bridge inaccessible) |
+| Monthly Apr-Jun observations from exact BOJ API series | NOT_DONE |
+| Quarterly Q2 India exact series code/observation from API | NOT_DONE |
+| Cross-product partner attribution equivalence | NOT_ESTABLISHED |
+| Raw response bytes + headers + retrieval UTC + SHA-256 | NOT_DONE |
+| Production integration | NOT_AUTHORIZED |
+### Next exact action
+Run the official BP01 metadata API using a supported ordinary HTTP/API client or user-provided BOJ metadata CSV; preserve raw response and hash first. Filter exact series names for Portfolio Investment Assets Country Breakdown (Total), Liabilities Country Breakdown (Total), and the India partner entry; record code, frequency, unit, start/end dates and metadata vintage. Then query exact series codes for Apr-Jun 2026. Retrieve quarterly Regional BOP India series separately and document its 33-economy partner definition. No series-code inference from the visible main-statistics page.
+- Sources: BOJ BPM6 data page https://www.boj.or.jp/en/statistics/br/bop_06/index.htm ; BOJ partner-economy list https://www.boj.or.jp/en/statistics/br/bop_06/data/country.pdf ; BOJ BOP statistics list https://www.stat-search.boj.or.jp/info/statistics_menu_list_e_bop.pdf ; BOJ API manual https://www.stat-search.boj.or.jp/info/api_manual_en.pdf ; BOJ API guidance https://www.stat-search.boj.or.jp/ssi/docs/info/nme_aphelp_en.html ; BOJ main statistics page https://www.stat-search.boj.or.jp/ssi/docs/index_en.html .
+- Protected invariants unchanged: ₹0, official/free sources only, no fabricated timestamps, no dash-to-zero, no unsupported FX conversion, no netting, no production changes, fixed 63-country IMF cohort unchanged. UNKNOWN is never PASS.
