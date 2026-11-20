@@ -1768,3 +1768,12 @@ Report workstream percentages separately from evidence status. Percentage means 
 - IMF/SAFE absolute magnitude residuals: assets 5.540896 USDm; liabilities 13.399286 USDm. Both are within the SAFE table's ±50 USDm half-unit display rounding. Liability sign also matches. Asset sign does not: SAFE assets negative, IMF A_NFA_T positive. No sign flip applied; source concept/sign crosswalk remains unresolved.
 - CHN: IMF exact retrieval PASS; SAFE official source and arithmetic PASS; liability comparison PASS at rounded precision; asset magnitude corroboration only, sign REVIEW; full dual-leg national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_IMF_BOP_COMPARISON_20261120.md`. Next action is SAFE detailed time-series BOP export/concept metadata and asset sign mapping; do not use IIP stock data as a flow substitute.
+
+
+## 2026-11-20 — CHN SAFE detailed BOP workbook access audit
+- Continued the open CHN asset sign-mapping task after preflighting the Master Ledger, priority queue, CHN/ZAF reports, cross-country evidence and fixed 63-country cohort. No completed panel, IMF receipt, or prior national-source audit was repeated.
+- Official SAFE Data and Statistics navigation reaches the Balance of Payments category and the dated detailed series page (dispatch 2026-09-29, index 000014453-2019-0016). The page links the XLSX at https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx.
+- Browser extraction rejects the XLSX MIME type and direct byte download failed in the current environment. Workbook content, sheets, exact detailed rows, revision metadata and hash therefore remain NOT_INSPECTED / NOT_DONE. Do not claim a sign crosswalk.
+- SAFE Q2 abridged release (index 000014453-2026-0068) still supports assets -USD48.8bn, liabilities +USD43.3bn, total portfolio -USD5.5bn; its note 2 says credit positive/debit negative; note 8 says BOP data is revised regularly. This does not independently explain IMF A_NFA_T sign for assets.
+- CHN liability comparison remains PASS at rounded display precision; asset sign mapping REVIEW; full CHN dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detailed audit: `docs/GCR_CHINA_CHN_SAFE_DETAILED_BOP_TIME_SERIES_ACCESS_AUDIT_20261120.md`. Next action: retrieve exact XLSX bytes via supported owner-side browser/workflow route, hash and inspect row metadata; do not use IIP stock or cumulative Q3 values as substitute.
