@@ -13,3 +13,5 @@ retry-cancel-third-unintended-run
 2026-11-20 cancel accidental NSE run 44690124814
 
 2026-11-20 cancel accidental NSE run 44690374904
+
+2026-11-20 trigger cancellation of accidental collector runs 44704973029 and 44704985742
