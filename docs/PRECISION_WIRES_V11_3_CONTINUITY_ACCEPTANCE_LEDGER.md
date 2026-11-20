@@ -1899,3 +1899,10 @@ Report workstream percentages separately from evidence status. Percentage means 
 - Table V.1 reports portfolio investment only as a net row; no separate portfolio asset/liability legs. Its separate DMB/NBDC and reserve asset/liability rows are different categories and cannot substitute for portfolio legs.
 - Prior IMF-derived +113.334678 USDm is only a conditional diagnostic under a historical FY25 identity, not a proven FY26 sign mapping. Preserve REVIEW / FAIL_DIAGNOSTIC; no inferred sign flip.
 - BGD national net-only PASS; national portfolio legs NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
+
+
+## 2026-11-20 — BGD portfolio survey source-scope audit
+- Official Bangladesh Bank Survey Forms page defines PI asset side as resident-owned non-resident securities and liability side as resident-issued securities owned by non-residents; survey reports on calendar-year basis. Official July–December 2025 PI chapter says annual series 2010–2025; PI-1 returns from AD banks within 15 days following reference month, and coverage includes inflows/outflows/purchase/sale/stock. Published outputs are annual stock/transaction summaries, not a FY26 Q4 quarterly BPM6 dual-leg flow table.
+- Therefore survey definitions PASS for conceptual mapping only; published survey series excluded as a source for FY26 Q2 national flow legs. Do not use Dec-2025 stocks, NITA flows or calendar-2025 totals as quarterly asset/liability flows.
+- Official annual BOP page confirms FY26P net PI -223 USDm but not separate PI legs; DMB/NBDC assets/liabilities are a distinct category. BGD Q2 national legs NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; dual-leg BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BANGLADESH_BANK_IMF_PORTFOLIO_SOURCE_GATE_20261120.md.
