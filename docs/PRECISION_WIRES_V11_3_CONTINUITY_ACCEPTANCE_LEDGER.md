@@ -2291,3 +2291,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail: docs/GCR_MOROCCO_MAR_Q2_2026_OFFICE_DES_CHANGES_IMF_DUAL_LEG_SOURCE_RECONCILIATION_CONTINUATION87_20261120.md.
 - Next: obtain official Q2 MAD/USD conversion convention and BPM6 sign/mapping methodology; then separate-leg comparison and observation-specific revision-vintage check. No new IMF query/cohort rebuild, unsupported conversion or netting.
 - ₹0; fixed cohort and production invariants unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 88 — Critical MAR country-key transcription correction (2026-11-20)
+- Post-write independent QA reopened existing artifact 14505862034 (run 44474218174); ZIP SHA-256 recomputed 1a1a184f3689e04ff75d4433b44904083a33e18bdc70f096c3e9919900ebeb4f; normalized panel SHA-256 recomputed e8a44abbc8455fef44cc1e4677018ae4b9634d1c04f65bf6fc6dad133cfce62a.
+- Found critical Continuation 87 country-key transcription error: values -28,987,027.88 / +9,083.44 USD were MDA rows mistakenly copied under MAR. Withdrawn from Morocco analysis.
+- Exact filter COUNTRY=MAR, TIME_PERIOD=2026-Q2, BOP_ACCOUNTING_ENTRY=A_NFA_T/L_NIL_T yields correct values: A_NFA_T +523,948,820.8007525 USD; L_NIL_T +3,991,543,275.295832 USD. Both ACTION=R, SCALE=6, PRECISION=6, DERIVATION_TYPE=O. Raw hashes unchanged: assets 677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e; liabilities 713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba.
+- Correct MAR asset/liability signs agree directionally with Office des Changes +4,848/+36,933 million MAD. Direction only; no FX magnitude comparison absent official Q2 conversion convention and vintage bridge.
+- Detail report corrected with explicit Continuation 88 note. National arithmetic PASS; IMF country-key correction PASS; directional agreement PASS; FX comparison NOT_DONE; same-vintage NOT_ESTABLISHED; MAR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Lesson: assert exact COUNTRY + TIME_PERIOD + BOP_ACCOUNTING_ENTRY before any country report write. No new IMF query or cohort rebuild.
