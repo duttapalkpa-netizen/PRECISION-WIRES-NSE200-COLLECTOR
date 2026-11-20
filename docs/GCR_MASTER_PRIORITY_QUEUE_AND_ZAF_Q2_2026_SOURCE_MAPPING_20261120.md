@@ -757,3 +757,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_PORTFOLIO_DUAL_LEG_SOURCE_GATE_CONTINUATION101_20261120.md (create commit a2ae592c6416ee54786be29c684f8bf753056312).
 - Next: raw-byte archive/hash official NBS PDF; independently verify May liability value and any subsequent revision; retrieve exact archived IMF SRB rows without new query; establish official sign/concept/vintage bridge and compare legs separately.
 - ₹0; no cohort rebuild, IMF re-query, stock-as-flow, net-to-leg inference, FX inference, sign flip or production changes. UNKNOWN is never PASS.
+
+
+## BL. Serbia SRB — archived IMF exact Q2-2026 dual-leg extraction (Continuation 102)
+- Preflight re-fetched Master Ledger (blob SHA c57d93a381c4a6cee039c0d2bd58f64410c33aae), GCR queue (blob SHA 4281684d9c879c1ce62ca8a8ececebf3ac365c6b), SRB Continuation 101 (blob SHA ca0eb8844ab9d14a378f4278506f363fdf776c65), and immutable cohort (blob SHA 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8). NBS Q2 extraction/arithmetic already complete; no repeat.
+- Previous large-file fetch returned empty, but the existing archived IMF normalized panel blob SHA `2a8db2878cac6323bbad74ffa4035dc70e5e6b98` was retrieved successfully via Git blob SHA (1,849,027 characters). No IMF query, no cohort rebuild.
+- Exact SRB 2026-Q2 rows captured: A_NFA_T raw 288,993,091.8400176 USD, SCALE=6 => USD 288.9930918400176m; L_NIL_T raw 4,782,903,852.31975 USD, SCALE=6 => USD 4,782.90385231975m. Both Q/P_F. Embedded source file SHA256s: asset 677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e; liability 713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba.
+- NBS Q2 EURm remains +248 assets / +4,112 liabilities / -3,864 net. September bulletin itself confirms May liabilities +3,932 EURm; this is same-document confirmation only, not independent later-vintage verification.
+- USD↔EUR transaction conversion basis, sign/concept mapping and same-vintage alignment remain NOT_ESTABLISHED; separate-leg comparison NOT_DONE. NBS raw PDF bytes/hash NOT_CAPTURED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_SERBIA_SRB_Q2_2026_ARCHIVED_IMF_EXACT_DUAL_LEG_ROW_EXTRACTION_CONTINUATION102_20261120.md (create commit daed219c211da0290f74c1c5c27af11723adbeb3).
+- Next: independent NBS May observation/vintage check; capture PDF bytes/hash; establish official transaction FX/sign/concept bridge; then compare legs separately.
+- ₹0; no IMF re-query, no cohort rebuild, no inferred FX, no sign flip, no net-to-leg inference, no production changes. UNKNOWN is never PASS.
