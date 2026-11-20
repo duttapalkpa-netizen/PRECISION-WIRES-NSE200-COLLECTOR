@@ -58,3 +58,17 @@ Open the official 10-Nov-2026 Q2 Regional BOP release and its linked BOJ/ MOF wo
 
 ## Protected invariants
 ₹0 spend; official/free sources only; no synthetic observations, fabricated timestamps, unsupported FX conversion, forward-fill, net-only substitution, stock/flow mixing, or unverified country attribution. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, and fixed 63-country Q2-2026 IMF cohort unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 80 — official Q2-2026 Regional BOP attachment inspection (2026-11-20)
+- Reopened current Master Continuity Ledger, GCR Master Queue and Japan Continuation 79 report before execution. Completed PASS work was not repeated.
+- Followed the MOF release-date page's exact CY2026 Regional / 2nd quarter link (link 37) to the official PDF: https://www.mof.go.jp/policy/international_policy/reference/balance_of_payments/regional/rbp20260406.pdf .
+- PDF cover identifies “Regional Balance of Payments for the 2nd quarter of 2026”, release date 10-Nov-2026, jointly MOF/BOJ. It is a 14-page PDF; table unit is 100 million yen.
+- Inspected page 8 “Financial account (Assets)” and page 9 “Financial account (Liabilities)” both visually and through extracted table text. Each has a distinct Portfolio investment column and a named India row.
+- India Q2-2026 portfolio investment asset cell on page 8 is displayed as an em dash (—), not a numeric observation. Preserve as reported dash / unavailable-or-not-reported; do not convert to zero.
+- India Q2-2026 portfolio investment liability cell on page 9 is 7,526 (100 million yen), i.e. the source's displayed unit. No conversion to INR/USD performed.
+- Thus the exact official quarterly partner-economy release does expose separate portfolio asset/liability columns and an India row, but only the liability leg is numerically populated in the inspected table. It cannot validate a full dual-leg India portfolio flow for Q2 from this release alone.
+- The PDF was readable via official web document retrieval and page images, but byte-preserving download failed in the current execution environment. No local raw bytes, HTTP headers, retrieval UTC, file length, or SHA-256 are claimed. Citation/page-level visual inspection is evidence, not a raw-file archive.
+- Status: official Q2 partner table + India row PASS; liability display extraction PASS; asset leg NOT_REPORTED_IN_THIS_TABLE (dash, not zero); dual-leg national validation PARTIAL / NOT PASS; raw-byte archive/hash NOT_DONE; same-vintage reconciliation NOT_ESTABLISHED; Japan→India causal transmission NOT_DONE; production NOT_AUTHORIZED.
+- Next exact action: inspect the official BOJ portfolio-investment country-breakdown series (45 economies) for Q2-2026, specifically Portfolio Investment Assets, Country Breakdown and Portfolio Investment Liabilities, Country Breakdown, with India as partner. Use exact BOJ metadata/series IDs only; capture original CSV/XLSX bytes and SHA-256 before parsing. If the asset series has no India observation, retain the asset leg UNKNOWN and do not synthesize from totals.
+- Protected invariants unchanged: ₹0 spend; no inferred zero, no netting, no unsupported currency conversion, no synthetic data, no change to Production Selector/RANKING_SCORE/+1 PRESSURE_FADE/CORE-672/Engines A–E/IPO-PLX V2/fixed 63-country IMF cohort. UNKNOWN is never PASS.
