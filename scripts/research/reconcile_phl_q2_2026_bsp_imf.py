@@ -47,9 +47,13 @@ def main():
     retrieved=datetime.now(timezone.utc).isoformat()
     status,final,headers,raw=get(URL)
     if status!=200: raise SystemExit("BSP table HTTP "+str(status))
+    (OUT/"bsp_table1_raw.html").write_bytes(raw)
     page=raw.decode("utf-8",errors="replace")
-    if "Philippines: Balance of Payments" not in page or "Q2" not in page or "Net Acquisition of Financial Assets" not in page:
-        raise SystemExit("BSP table identity/header check failed")
+    checks={"bop_phrase":"Balance of Payments" in page,"philippines_phrase":"Philippines" in page,"q2_phrase":"Q2" in page,"asset_phrase":"Net Acquisition" in page,"portfolio_phrase":"Portfolio" in page,"html_title":re.findall(r"<title[^>]*>(.*?)</title>",page,re.I|re.S)[:1],"first_1200_chars":page[:1200]}
+    if not checks["bop_phrase"] or not checks["q2_phrase"] or not checks["portfolio_phrase"]:
+        (OUT/"bsp_table_fetch_diagnostic.json").write_text(json.dumps({"url":URL,"http_status":status,"final_url":final,"headers":headers,"byte_count":len(raw),"sha256":sha(raw),"checks":checks},indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
+        print(json.dumps(checks,indent=2,ensure_ascii=False))
+        raise SystemExit("BSP table source identity check failed; diagnostic captured")
     parser=Parser(); parser.feed(page)
     targets={"Portfolio Investment":"net","Net Acquisition of Financial Assets":"asset","Net Incurrence of Liabilities":"liability"}
     vals={}
