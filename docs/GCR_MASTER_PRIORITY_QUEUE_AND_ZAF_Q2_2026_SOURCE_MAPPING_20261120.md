@@ -617,3 +617,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - BP01 metadata API call via current retrieval bridge returned inaccessible/no body. Public main time-series table is only broad account net balances, not portfolio country breakdown. No guessed codes.
 - Status: universe distinction PASS; exact India series IDs/data/raw hash NOT_DONE; cross-product equivalence NOT_ESTABLISHED; production NOT_AUTHORIZED.
 - Detail report Continuation 85. Next: supported HTTP/API client or official metadata CSV upload; hash raw metadata, identify exact codes and query separate monthly/quarterly observations.
+
+
+## AV. Moldova MDA — BNM Q2-2026 detailed BPM6 BOP source gate (Continuation 86)
+- MDA confirmed in existing fixed 63-country Q2-2026 both-leg cohort; no rebuild/IMF re-query. No dedicated MDA dual-leg report found in repository.
+- Official BNM Q2 release (30-Sep-2026) shows portfolio investment only as net EUR -24.9m; separate asset/liability legs are not in the release graphic.
+- BNM official detailed BPM6 interactive report generator has quarter/year/currency selectors, Generate/Export controls, Statistical Series and Metadata tabs. Current read-only extraction cannot execute controls or return generated export bytes.
+- Q2 XLSX locator found, but raw bytes/hash and exact series not captured. MDA remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_MOLDOVA_MDA_Q2_2026_BNM_DETAILED_BOP_SOURCE_GATE_CONTINUATION86_20261120.md.
+- Next: supported interactive browser export or user-supplied official BNM Q2 workbook; capture/hash untouched bytes, extract separate asset/liability series and definitions. Do not infer legs from net -24.9m.
