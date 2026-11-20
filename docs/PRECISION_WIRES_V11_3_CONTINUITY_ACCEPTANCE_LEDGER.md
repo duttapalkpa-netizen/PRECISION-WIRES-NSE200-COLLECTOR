@@ -2488,3 +2488,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_BPM6_SIGN_FX_METHODOLOGY_AND_REVISION_ROUTE_CONTINUATION103_20261120.md; create commit 97226fa883b88f0546b4b72e92ae10fa602c731f.
 - Next: supported XLS byte retrieval, May 2026 revision verification, official IMF A_NFA_T/L_NIL_T definition bridge; compare only after same-vintage/concept basis.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 104 — Serbia SRB IMF BPM6 code bridge and NBS later-vintage limit (2026-11-20)
+- Preflight re-fetched Master Ledger (blob SHA e0a7e5641a17363311ce4372f75fba5369be6f73), GCR queue (blob SHA 0888f0895bfd817cbda671d4e9831ed09d5af032), SRB Continuation 103 (blob SHA a6a19a1521d8c405c25cd1e8129912fdc2c80d61), Continuation 102 (blob SHA 874f1908814137b67c0d4032752b73dd3a29e207), and Continuation 101 (blob SHA ca0eb8844ab9d14a378f4278506f363fdf776c65). No PASS work repeated.
+- Official IMF BPM6 Compilation Guide Appendix 7: A7.7 accounting entry N=net, A=assets, L=liabilities; Table A7.2 3B=portfolio investment. IMF BPM6 Manual 6.54 defines portfolio as cross-border debt/equity securities excluding direct investment and reserve assets. Standards-level semantic mapping of A_NFA_T/L_NIL_T, P_F to NBS portfolio assets/liabilities PASS; national scope/timing/valuation equivalence remains NOT_ESTABLISHED.
+- Official NBS September 2026 developments PDF (18-Nov-2026) inspected; Jan-Sep portfolio net inflow EUR 4.4bn, contextual only; no May separate leg revision evidence. XLS and detailed XLS endpoints return unsupported content type; workbook bytes/values/hash NOT_CAPTURED.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_IMF_BPM6_CODE_BRIDGE_AND_LATER_VINTAGE_LIMIT_CONTINUATION104_20261120.md; create commit 43cbf03ef895535ad10d05cd56673012d3b86a9d.
+- Exact IMF rows remain captured. May later-vintage separate legs NOT_CAPTURED; transaction-weighted FX bridge NOT_ESTABLISHED; national mapping/coverage equivalence NOT_ESTABLISHED; comparison NOT_DONE. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: supported XLS/CSV raw retrieval, May revision check, official USD or transaction-weighted FX bridge, separate leg comparison.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
