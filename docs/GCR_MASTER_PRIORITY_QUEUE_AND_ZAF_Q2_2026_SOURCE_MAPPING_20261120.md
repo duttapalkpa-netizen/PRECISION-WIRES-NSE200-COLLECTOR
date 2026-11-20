@@ -478,3 +478,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Repeated unsupported XLSX MIME was not retried. A separate direct byte-download attempt against the exact workbook URL also failed. No bytes, workbook sheets/rows, values, or SHA-256 obtained. Discovery PASS; byte retrieval BLOCKED; separate assets/liabilities NOT_EXTRACTED; period/sign/unit/vintage NOT_ESTABLISHED; NPL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - New report: docs/GCR_NEPAL_NPL_Q2_2026_NRB_BPM6_RETRIEVAL_ROUTE_AUDIT_CONTINUATION58_20261120.md (commit `7dd358b7256f01e75e813f489c5d6591e21ae326`).
 - Next: wait for a distinct supported XLSX-capable or official API/export route; then hash and inspect the exact workbook before extracting Q2 portfolio legs. If unavailable, preserve NPL PARTIAL and move to next eligible fixed-cohort country. No IMF re-query/cohort rebuild, no wrong-family monthly XLSX, no stock substitution, no production change.
+
+
+
+## Continuation 59 — Vietnam (VNM) Q2-2026 SBV portfolio source-boundary audit (2026-11-20)
+- VNM selected from the existing fixed 63-country Q2-2026 both-leg cohort after repository search found no dedicated VNM national portfolio validation report. MEX already has Banxico dual-leg work, ARG has INDEC dual-leg work, and THA has an existing reconciliation script; duplicate work was rejected.
+- Official SBV Annual Report 2023 Appendix 4 (USD million) explicitly lists “Portfolio Investment Abroad: Assets” and “Portfolio Investment in Viet Nam: Liabilities”, but the latest displayed annual observations are 2022 and 2023, not Q2-2026. SBV Annual Report 2021 uses the same concepts but is older.
+- Official NSO H1/Q2 and Q3/9M 2026 releases were inspected; they provide FDI, securities-market, trade and investment aggregates, but no separate Q2 BOP portfolio asset/liability transaction legs in the inspected content. These aggregates are not substitutes.
+- No official Q2-2026 quarterly SBV portfolio transaction values, quarterly export/API route, raw bytes, SHA-256, sign crosswalk or same-vintage evidence were obtained. No annual-to-quarter allocation, no stock/FDI/securities aggregate substitution, no sign flip.
+- VNM status: official source-family/labels PASS; Q2 asset/liability NOT_EXTRACTED; quarterly route NOT_ESTABLISHED; sign and vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_VIETNAM_VNM_Q2_2026_SBV_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_CONTINUATION59_20261120.md (commit 8035d1724461c19577ae5f03aa55fcf76acdc3b0).
+- Next: search only for a distinct official SBV quarterly BOP release/data export exposing separate Q2-2026 portfolio legs; if absent, preserve VNM PARTIAL and advance to the next unvalidated fixed-cohort country. No IMF re-query/cohort rebuild or production changes.
