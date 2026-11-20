@@ -1969,3 +1969,25 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Cancellation workflow run `44689721808` completed successfully; its log confirms “Request to cancel workflow 44689517549 submitted”; target NSE run final status **completed / cancelled** at 2026-11-20T06:43:06Z.
 - No claim is made that the full collector completed; its in-progress market-session acquisition was stopped. No production output from that accidental run is admitted as evidence.
 - Guard is now in place for the THA script and workflow paths. Future research-only commits must be added to paths-ignore before their first push; research workflows remain bounded to 5 minutes.
+
+
+## 2026-11-20 — Research continuation 44: Philippines PHL Q2-2026 BSP/IMF dual-leg numeric cross-check
+### Completed / evidence
+- Preflight reopened the current continuity ledger, GCR priority queue and THA report; preserved the fixed 63-country Q2-2026 cohort and reused the existing IMF normalized panel. No cohort rebuild, no new IMF query, no MYS/THA work repeated.
+- Selected PHL from the fixed cohort. Existing IMF Q2 raw rows: A_NFA_T +1,330,642,951.05526 USD and L_NIL_T +1,798,282,616.26536 USD; both UNIT=USD, SCALE=6, PRECISION=6, DERIVATION_TYPE=O. Panel SHA-256 e8a44abbc8455fef44cc1e4677018ae4b9634d1c04f65bf6fc6dad133cfce62a.
+- Official BSP dedicated Table 1.7 and 11-Sep-2026 Q2 BOP release show portfolio net -468 USDm, assets +1,331 USDm and liabilities +1,798 USDm. Separate numeric comparison residuals (IMF-derived USDm minus BSP) are -0.35704894474 and +0.28261626536 USDm, both within ±0.5 USDm whole-million display rounding. Numeric dual legs 2/2 PASS at published precision.
+- Rounded identity 1,331 - 1,798 = -467 vs -468; 1 USDm difference is within combined display rounding. No forced identity, no netting, no FX or sign transformation.
+- Same-vintage NOT_ESTABLISHED: BSP release 11-Sep-2026/current Q2 preliminary; IMF panel retrieval 19-Nov-2026 is acquisition time only, no observation-specific IMF submission/revision timestamp. PHL full validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detailed report created: docs/GCR_PHILIPPINES_PHL_Q2_2026_BSP_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120.md, commit 10b25708ac9df0ad7010a952c84941b6ef1b21a9. Priority queue update commit 66cbe880ecba2772ad914b9267de4843671b59c2.
+### Rejected / blockers
+- First generic Table 1 script parse selected similarly named Other Investment rows; erroneous values explicitly NOT_ADMITTED. Run 44690030449 failed closed.
+- Run 44690124941 captured Table 1 raw page and release but parsed wrong category; artifact 14607583953 SHA-256 b8b92e22f272cc19aeab4cc0549ec7046d5f6189fb3f91d0dc40084a92f96938 is diagnostic only.
+- Dedicated Table 1.7 script run 44690374864 failed closed because Python HTMLParser did not parse BSP Excel-HTML sparse-cell rows (including ss:Index). No successful structured raw+parsed artifact claimed. Official web-published Table 1.7/release text supports the values; automated capture acceptance remains NOT_PASS.
+- Same-vintage bridge not inferred from publication/retrieval dates. No aggregate admission.
+### Operational containment / lesson
+- Accidental NSE collector runs 44690020188, 44690030398, 44690124814 and 44690374904 were cancelled; their outputs are excluded from evidence. This is an operational defect to prevent recurrence.
+- Before research-only pushes, ensure the collector paths-ignore contains every touched path, including cancellation trigger files. Cancellation workflow itself can otherwise cause another collector run if its trigger file is not ignored.
+### Exact next action
+Repair the BSP Table 1.7 Excel-HTML parser with sparse-cell index handling; verify extracted Q2 column against the dated BSP release; produce a successful raw+parsed evidence artifact. Then seek PHL observation-level IMF vintage evidence. Do not re-fetch IMF, rebuild cohort, or alter production.
+### Protected invariants
+Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2, weights and trade gates unchanged. UNKNOWN is never PASS. No paid data, synthetic values, fabricated timestamps, forward-fill, imputation, netting, production integration or aggregate authorization.
