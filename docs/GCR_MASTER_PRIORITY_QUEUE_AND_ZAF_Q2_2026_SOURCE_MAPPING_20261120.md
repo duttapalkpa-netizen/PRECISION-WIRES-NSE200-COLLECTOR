@@ -801,3 +801,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - May 2026 later-vintage separate legs NOT_CAPTURED; USD bridge NOT_ESTABLISHED; national scope/timing/valuation equivalence NOT_ESTABLISHED; SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: inspect NBS archive form's underlying endpoint via approved byte-preserving route; re-check October 2026 bulletin after scheduled 3-Dec-2026 release; no currency assumption or generic FX.
 - ₹0; no IMF re-query, cohort rebuild, synthetic data, generic FX, net-to-leg inference or production changes. UNKNOWN is never PASS.
+
+
+## BP. Serbia SRB — NBS archive form schema / authenticated web-service gate (Continuation 106)
+- Preflight re-fetched Master Ledger (blob SHA b3d818fa8ad5d5ea3a2c5c2efad82cdd7c222edc), GCR queue (blob SHA aa260f77f4a282db6246ebdd6ecc147a1b2489eb), Continuation 105 (blob SHA 916a9d07c1e15f36a24bfe3d28b11c7958e6c90a). PASS work excluded.
+- Official NBS BOP page confirms two archive UI forms (monthly BPM6 and detailed BPM6), each shown as Select + five Input controls + Show. Web text extraction does not expose DOM field names, option values, form action, query params or generated download URL. No endpoint guessed.
+- Official NBS web-service system requires completed/certified application; NBS issues username/password/licence code after account creation. This is an authenticated route, not used; no application/contact made. Whether the archive UI requires those credentials remains UNKNOWN.
+- Report: docs/GCR_SERBIA_SRB_Q2_2026_NBS_ARCHIVE_FORM_AND_WEBSERVICE_ACCESS_GATE_CONTINUATION106_20261120.md (create commit b7309fd69b0783ca4bdc6a4bea9c2de34b6bec40).
+- XLS bytes/sheets/values/hash and May later-vintage separate legs NOT_CAPTURED; USD series NOT_LOCATED; transaction FX bridge NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: inspect live archive form DOM and submission with actual browser capability; capture XLS bytes before parsing; do not apply for authenticated service absent explicit authorization.
+- ₹0; no IMF re-query, cohort rebuild, synthetic data, generic FX, net inference or production changes. UNKNOWN is never PASS.
