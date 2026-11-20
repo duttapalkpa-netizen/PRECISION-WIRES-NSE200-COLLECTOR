@@ -694,3 +694,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - NRB External Sector BPM6 workbook locator remains official, but web XLSX retrieval and separate byte-download route both blocked. No workbook bytes/hash/sheets/values. NSDP XML is stale 2024-Q1; Monthly Banking & Financial Statistics is wrong source family and remains rejected.
 - NPL remains PARTIAL / NOT PASS; Q2 legs not extracted; period basis/sign/unit/vintage NOT_ESTABLISHED; aggregate/production NOT_AUTHORIZED.
 - Exact URL route closed; do not repeat without a new supported mechanism. Advance fixed cohort to next eligible member after preflight. No IMF query or cohort rebuild.
+
+
+## BE. Romania ROU — BNR/ECB Q2-2026 portfolio source gate (Continuation 95)
+- ROU is present in the immutable 63-country Q2-2026 both-leg cohort; repository search found no dedicated ROU national dual-leg report. Selected after NPL Continuation 94 closed the exact NRB XLSX route.
+- IMF SDDS/DQAF confirms BNR as compiler, BPM6, separate net asset/liability dissemination, quarterly release timing and ongoing revisions. ECB BPS catalogue exposes Romania monthly portfolio-liability transaction series with National Bank of Romania as source; monthly collection indicator says “summed through period”. Inspected quarterly transaction listing was last updated 17-Apr-2026, before Q2.
+- Exact ECB SDW API asset/liability CSV requests for Apr-Jun 2026 both inaccessible via current bridge. No bytes, values or hashes; no Q2 national observations admitted. ROU PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_ROMANIA_ROU_Q2_2026_BNR_ECB_PORTFOLIO_SOURCE_GATE_CONTINUATION95_20261120.md (commit 4157f08081d19e8876ad1561e4f8f293157230e7; verified blob SHA 37f744511aeab33539d1fca15be0bce08536cd90).
+- Next: supported official BNR/ECB retrieval of both separate Q2 legs with raw-byte hash and vintage; do not sum monthly rows without confirmed flow semantics. Reuse archived IMF rows; no IMF query/cohort rebuild.
