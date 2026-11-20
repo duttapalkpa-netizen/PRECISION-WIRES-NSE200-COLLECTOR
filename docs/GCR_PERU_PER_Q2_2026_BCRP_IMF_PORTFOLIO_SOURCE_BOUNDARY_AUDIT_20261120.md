@@ -73,3 +73,9 @@ No IMF re-query, no cohort rebuild, no third-party numeric admission, no IIP sto
 
 ### Next exact action
 - Inspect BCRPData API/developer documentation and the official public-sector asset series metadata to determine whether a portfolio-investment-specific public-sector asset flow series exists outside the 25-series list. Do not use public-sector total assets as a proxy. Then verify BCRP's BPM6 sign/sector definitions and any dated vintage history; if public-sector portfolio assets are not published, preserve the PER asset gate as UNKNOWN/PARTIAL and advance.
+
+
+### Continuation 54 — BCRP API contract check
+- Official BCRPData API developer guide: https://estadisticas.bcrp.gob.pe/estadisticas/series/documentos/bcrpdataapi.pdf . It documents GET series queries, up to 10 same-frequency series, output formats including JSON/CSV, and exact series-code/date-range URL structure (guide pp.2-5; updated 24-May-2022).
+- Constructed one documented, single-period JSON GET for PN39278BQ-PN39285BQ-PN39404FQ, 2026-2/2026-2/ing. The web retrieval returned an internal access error; no raw API payload/receipt was acquired. Do not claim API download or raw-file hash. Previously inspected official HTML series pages remain the evidence for the three displayed values.
+- API path remains an available documented retrieval contract but the exact endpoint access in this session is BLOCKED; do not repeatedly retry the same URL. Continue with HTML display evidence only, and keep the raw-byte archival gate open.
