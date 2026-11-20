@@ -2617,3 +2617,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_LIVE_BOP_DASHBOARD_AND_EXCEL_EXPORT_ROUTE_AUDIT_CONTINUATION116_20261121.md; create commit 283427dd67f29be0d6622b492ae698b6ffe6be9d.
 - TLS NOT_VALIDATED / NOT PASS. Next: actual browser export of XLSX/Power BI data; capture bytes/hash, inspect period and dual legs; compare archived IMF rows only after alignment. If blocked/no legs, advance.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 117 — Timor-Leste BCTL live BOP series latest period and export vintage (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA d5c6ff4eaae89d0a57cb480ed0f149a28767fa6e), GCR Queue (blob SHA ffc0cefec854638081117e1904253891690f21d0), TLS C116 report (blob SHA 282807d8df8ffe3c91e96c14aa2f66f5f7234d69).
+- Official BCTL live BOP chart (Thousand USD) exposes quarter rows Jan-Mar-2020 through Jan-Mar-2025 only; latest is Q1 2025. Numeric keys y/y2/y3 lack extracted legend; no mapping to portfolio legs.
+- Export Excel resolves to filename BoP_2025Q3.xlsx; exact URL https://bancocentral.tl/uploads/portfolio/ficheiros/1764122263_8744_BoP_2025Q3.xlsx. Browser click redirected home; direct download failed. Workbook bytes/sheets/hash NOT_CAPTURED; Q3-2025 filename is not Q2-2026 evidence.
+- BCTL methodology: BPM6 broadly, quarterly BOP, USD unit, portfolio asset transactions sourced from Petroleum Fund and commercial bank balance sheets, market valuation incl. accrued coupon, excludes non-transaction revaluation. No Q2-2026 dual legs in source.
+- H1 2026 -USD 524.9m remains aggregate. TLS Q2 asset/liability legs NOT_CAPTURED; TLS NOT_VALIDATED / NOT PASS; IMF comparison NOT_DONE.
+- Report: docs/GCR_TIMOR_LESTE_TLS_BCTL_BOP_LIVE_SERIES_LATEST_PERIOD_AND_EXPORT_VINTAGE_AUDIT_CONTINUATION117_20261121.md; create commit e2e55fcca37495e560397e06e004fed59a74d33c.
+- Next: actual browser export/inspect Q3-2025 workbook; if no newer vintage, mark route stale and advance. No IMF query/cohort rebuild.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
