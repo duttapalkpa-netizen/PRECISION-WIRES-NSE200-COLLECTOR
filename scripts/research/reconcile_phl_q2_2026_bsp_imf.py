@@ -57,14 +57,19 @@ def main():
     parser=Parser(); parser.feed(page)
     # Dedicated BSP Table 1.7 prevents reading identically named rows from other functional categories.
     labels={"Portfolio Investment":"net","Net Acquisition of Financial Assets":"asset","Net Incurrence of Liabilities":"liability"}
+    # Excel-exported HTML includes one-cell merged section headings before
+    # the actual 20-cell data rows. Ignore those headings; do not mistake them
+    # for a truncated data record. Column 11 is Q2-2026 (Q2 2025 is column 10).
+    if len(parser.rows)<5 or parser.rows[3][10].strip()!="Q2" or parser.rows[4][11].strip()!="2026 p":
+        raise SystemExit("BSP Table 1.7 Q2-2026 column-header verification failed")
     vals={}
     for row in parser.rows:
-        if row and row[0].strip() in labels:
-            key=labels[row[0].strip()]
-            if key in vals: raise SystemExit("duplicate dedicated portfolio row: "+key)
-            if len(row)<=11: raise SystemExit("unexpected BSP Table 1.7 columns: "+repr(row))
-            vals[key]=number(row[11])  # Q2 2026 column, verified against the table header
-    if set(vals)!={"net","asset","liability"}: raise SystemExit("missing BSP Table 1.7 rows: "+repr(vals))
+        if not row or row[0].strip() not in labels or len(row)<=11:
+            continue
+        key=labels[row[0].strip()]
+        if key in vals: raise SystemExit("duplicate BSP Table 1.7 data row: "+key)
+        vals[key]=number(row[11])
+    if set(vals)!={"net","asset","liability"}: raise SystemExit("missing BSP Table 1.7 data rows: "+repr(vals))
     release_status,release_final,release_headers,release_raw=get(RELEASE_URL)
     release_page=release_raw.decode("utf-8",errors="replace")
     if release_status!=200 or "Portfolio Investment" not in release_page or "Net Acquisition of Financial Assets" not in release_page:
@@ -77,6 +82,10 @@ def main():
             label=row[0].strip()
             if len(row)>2: release_vals[label]=row[2]
     if len(release_vals)!=3: raise SystemExit("BSP release portfolio row extraction incomplete: "+repr(release_vals))
+    release_map={"net":"Portfolio Investment","asset":"Net Acquisition of Financial Assets","liability":"Net Incurrence of Liabilities"}
+    for key,label in release_map.items():
+        if number(release_vals[label]) != vals[key]:
+            raise SystemExit("BSP Table 1.7 vs dated release mismatch for "+key+": "+str(vals[key])+" vs "+release_vals[label])
     imf={}
     with PANEL.open(encoding="utf-8-sig",newline="") as f:
         for row in csv.DictReader(f):
@@ -84,6 +93,7 @@ def main():
                 k=row["BOP_ACCOUNTING_ENTRY"]
                 if k in imf: raise SystemExit("duplicate IMF key "+k)
                 imf[k]=row
+    identity=vals["asset"]-vals["liability"]
     results=[]
     for entry,bspkey in (("A_NFA_T","asset"),("L_NIL_T","liability")):
         row=imf.get(entry)
@@ -98,7 +108,6 @@ def main():
     safe={k:v for k,v in headers.items() if k.lower() not in ("set-cookie","authorization")}
     summary={"task":"PHL Q2-2026 BSP official BOP vs archived IMF portfolio dual-leg","bsp_table_url":URL,"bsp_table_final_url":final,"bsp_table_http_status":status,"bsp_table_retrieved_at_utc":retrieved,"bsp_table_byte_count":len(raw),"bsp_table_sha256":sha(raw),"bsp_table_headers":safe,"bsp_release_url":RELEASE_URL,"bsp_release_http_status":release_status,"bsp_release_final_url":release_final,"bsp_release_rows":release_vals,"bsp_current_table_q2_2026_preliminary":bool(re.search(r"2026.{0,20}p",page,re.I)),"bsp_q2_values_usd_million":{k:str(v) for k,v in vals.items()},"bsp_asset_minus_liability_identity_usd_million":str(identity),"bsp_identity_difference_vs_reported_net":str(identity-vals["net"]),"imf_panel_file":str(PANEL),"imf_panel_sha256":sha(PANEL.read_bytes()),"imf_panel_archive_retrieved_2026_11_19":True,"imf_rows":results,"numeric_leg_pass_count":sum(x["status"]=="PASS" for x in results),"numeric_leg_review_count":sum(x["status"]!="PASS" for x in results),"same_vintage_status":"NOT_ESTABLISHED","same_vintage_reason":"BSP Q2 2026 release is dated 11-Sep-2026 and current table labels 2026 preliminary; archived IMF panel retrieval is 19-Nov-2026 but no observation-specific IMF source submission/revision timestamp is exposed. Retrieval time is not source vintage.","decision":"NUMERIC_2_OF_2_PASS_VINTAGE_NOT_ESTABLISHED" if all(x["status"]=="PASS" for x in results) else "PHL_PARTIAL_REVIEW"}
     (OUT/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    (OUT/"bsp_table1_raw.html").write_bytes(raw)
     (OUT/"bsp_q2_release_raw.html").write_bytes(release_raw)
     print(json.dumps(summary,indent=2,ensure_ascii=False))
     return 0 if summary["numeric_leg_review_count"]==0 else 1
