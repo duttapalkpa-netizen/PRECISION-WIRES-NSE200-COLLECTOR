@@ -2199,3 +2199,16 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail report: docs/GCR_JAPAN_JPN_Q2_2026_BOJ_MOF_PORTFOLIO_FLOW_SOURCE_CONTRACT_AUDIT_20261120.md (updated in this continuation).
 - Next exact action: exact BOJ 45-economy portfolio asset/liability country-breakdown series for India Q2-2026; verify metadata and observations, capture/hash bytes before parsing. No guessed series IDs, no treating dash as zero, no aggregate substitution.
 - All production and fixed 63-country cohort invariants unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 81 — Japan BOJ 45-economy monthly portfolio country-breakdown (2026-11-20)
+- Re-fetched current ledger, queue and Japan report; reused Continuation 80's Q2 Regional BOP row inspection without repeating it.
+- BOJ official BPM6 page and official partner list confirm Portfolio Investment Assets by issuer economy and Liabilities by transactor economy, monthly, 45 economies.
+- Official MOF June-2026 Portfolio Investment PDF (preliminary), page 4 assets and page 5 liabilities, contains India rows in both sections. Unit 100 million yen.
+- June India Assets: total acquisition 1,379; disposition 2,056; net -677; equity net -691; long-term debt net +14; short-term fields are dashes.
+- June India Liabilities: total acquisition 1,187; disposition 2,773; net -1,586; equity 0/0/0; long-term debt acquisition dash, disposition 920, net -920; short-term 1,187/1,852/-665. Published liability net retained; displayed component net sum -1,585 leaves 1 unit residual; dash semantics/rounding not resolved.
+- Assets populated component arithmetic reconciles exactly to total. Both monthly India legs have source rows. These are June preliminary month values only, not Q2 aggregate.
+- PDF web extraction available; raw byte download unsupported in current session, so no raw SHA/HTTP metadata asserted.
+- Status: monthly India row coverage PASS; Q2 matched-vintage Apr-Jun aggregation NOT_DONE; raw archive/hash NOT_DONE; dual-leg Q2 validation PARTIAL; production NOT_AUTHORIZED.
+- Detail report updated in this continuation. Next: inspect official April and May 2026 monthly portfolio PDFs, preserve each vintage and dash; then compare with 10-Nov Q2 Regional BOP without unsupported aggregation.
+- Protected invariants unchanged; UNKNOWN is never PASS.
