@@ -54,3 +54,13 @@ Retrieve and hash the exact TCMB September 2026 data ZIP through a supported tra
 
 ## Protected invariants
 No aggregation across countries, no netting, imputation, forward-fill, synthetic data, silent sign transform, or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+## 2026-11-20 — August-to-September TCMB PDF vintage cross-check
+- Follow-up preflight: re-fetched Master Continuity Ledger, GCR priority queue, TUR detailed report and adjacent POL/SAU/CHN blocker reports. Reused the prior exact IMF artifact; no duplicate IMF request or data panel rebuild.
+- Inspected two distinct official TCMB monthly PDF snapshots: August 2026 PDF (official URL: https://www.tcmb.gov.tr/wps/wcm/connect/2c897137-850e-4d15-9a2a-c0d4735d9986/bop.pdf?CACHEID=ROOTWORKSPACE-2c897137-850e-4d15-9a2a-c0d4735d9986-mJkOjvD&MOD=AJPERES) and September 2026 PDF (official URL: https://www.tcmb.gov.tr/wps/wcm/connect/2c897137-850e-4d15-9a2a-c0d4735d9986/bop.pdf?CACHEID=ROOTWORKSPACE-2c897137-850e-4d15-9a2a-c0d4735d9986-mVuqob0&MOD=AJPERES).
+- August snapshot Table 1 reports Q2 monthly portfolio assets 2,368 / 1,266 / 2,115 USDm and liabilities 6,334 / -1,802 / 4,651 USDm. September snapshot Table 1 reports the same monthly values. September Table 1 marks the table provisional. August PDF table lines 48–49 and September PDF lines 40–41 show the Q2 component rows; detailed table column headers explicitly identify April, May, June.
+- Recomputed Q2 sums in both snapshots: assets 5,749 USDm; liabilities 9,183 USDm. Against existing IMF Q2 exact values assets 5,749 and liabilities 9,270 USDm, asset residual 0 and liability residual +87 USDm. The +87m discrepancy persists unchanged across the two TCMB PDF snapshots; no August-to-September revision of these Q2 rows is observed in these PDFs.
+- This is a limited two-snapshot comparison, not proof of the complete revision history or exact source-vintage identity. The September data ZIP bytes/hash and row-level revision metadata remain NOT_INSPECTED because the official ZIP endpoint timed out. Do not infer the cause of the discrepancy or mark same-vintage PASS.
+- Updated status: TUR asset leg PASS; liability leg REVIEW / NOT PASS; full national dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next exact action: obtain the September 2026 official ZIP through a supported transfer route, inspect raw data/vintage fields, and compare to IMF raw receipt. If unavailable, retain blocker and advance to another cohort member.
