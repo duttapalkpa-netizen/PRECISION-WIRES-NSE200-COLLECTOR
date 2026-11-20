@@ -54,3 +54,19 @@ No cross-country aggregation, netting, imputation, forward-fill, synthetic obser
 - This is a material source-route discovery and bounded technical access test, not a numerical validation. No repeated retries of the same MIME-blocked URLs are authorized without a supported byte-preserving retrieval mechanism.
 - Sources: Bangladesh Bank NSDP page, lines 2–19 and 34–35; official BOP Browse and SDMX endpoints linked from that page. IMF DSBB BOP metadata link is listed by Bangladesh Bank.
 - Next exact action: use a supported transfer route to capture the official `bop6_bgd.xml` or `bpm6_bgd.xls` bytes and hash; inspect structure/series keys first, then only if both portfolio asset/liability legs exist, extract FY26 Q4 values, units, sign conventions and vintage attributes. Do not back-solve the net-only PDF total.
+
+
+## 2026-11-20 — Bangladesh Bank annual BPM6 component/sign crosswalk (historical only)
+- Inspected the official Bangladesh Bank publication `Balance of Payments & International Investment Position of Bangladesh — Annual 2024–25`: https://www.bb.org.bd/pub/annual/bop/bop%2024-25.pdf (PDF title page identifies Annual 2024–25; statistical tables are in Chapter Four).
+- Table 11, “Bangladesh financial account transactions”, unit million BDT, separately reports portfolio investment (net), assets and liabilities for each quarter of FY2024–25. Portfolio rows:
+  - FY25 Q1 (Jul–Sep): net -607; assets 0; liabilities +607.
+  - FY25 Q2 (Oct–Dec): net +6,889; assets 0; liabilities -6,889.
+  - FY25 Q3 (Jan–Mar): net +6,487; assets 0; liabilities -6,487.
+  - FY25 Q4 (Apr–Jun): net +3,996; assets 0; liabilities -3,996.
+  - FY25 full year: net +16,765; assets 0; liabilities -16,765.
+- Identity across these rows: portfolio net = asset net acquisition − liability net incurrence. Example FY25 Q4: 0 − (−3,996) = +3,996. The table therefore exposes a country-specific historical component mapping; it is not the target FY26 Q4 observation.
+- Bangladesh Bank methodology (section 1.1) states a credit entry records a decrease in foreign financial asset holdings or increase in foreign financial liabilities; debit records an increase in foreign financial assets or decrease in foreign financial liabilities; net positions deduct debits from credits. In the financial-account table's directional asset/liability presentation, the separate component rows are consistent with A_NFA_T and L_NIL_T signed directions, and portfolio balance is assets minus liabilities. This is a historical sign/concept crosswalk only; no FY26-Q4 sign assumption is applied until the current-period detailed source is captured.
+- Critical limitation: the annual publication ends at FY2024–25. It does not provide FY2025–26 Q4 / calendar 2026-Q2 values, a dated Q2-2026 vintage, or a revision bridge. The NSDP XML/XLS raw files remain uninspected due MIME/transfer restrictions. No Q2 2026 numerical comparison is made.
+- Updated acceptance: historical Bangladesh portfolio component/sign crosswalk PASS for FY2024–25; current Q2 2026 national asset and liability observations NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; BGD full dual-leg validation remains BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Sources: official PDF title and contents pages; methodology lines 266–272; Table 11 lines 2872–2903; portfolio-liability description and figures lines 3129–3145. Browser source references: turn738669view1, turn391275view1, turn391275view2, turn391275view0.
+- Next exact action: obtain FY2025–26 annual BOP statistical table or Q4 FY26 quarterly detailed table from Bangladesh Bank with separate portfolio asset/liability rows, units, publication date and revision status. Do not substitute FY25 values for FY26 Q4.
