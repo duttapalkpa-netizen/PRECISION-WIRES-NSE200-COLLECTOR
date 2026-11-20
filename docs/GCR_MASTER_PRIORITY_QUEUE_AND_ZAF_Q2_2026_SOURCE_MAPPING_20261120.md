@@ -442,3 +442,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Asset remains incomplete: private-sector portfolio assets 1,749 USDm only. Catalogue has public-sector asset aggregate PN39402FQ but no public-sector portfolio-asset subseries among listed 25 series. IMF A_NFA_T is 1,999.15568669433 USDm; private-only residual is not a valid full-scope comparison. Do not substitute total public assets.
 - PER state: BCRP source extraction PASS for 3 series; liability numeric PASS; asset full-scope PARTIAL/NOT_DONE; sign/definition and same-vintage NOT_ESTABLISHED; full national dual-leg validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. BCRP series metadata last updated 20-Aug-2026; IMF ACTION=R lacks matched timestamp.
 - Detail report updated: docs/GCR_PERU_PER_Q2_2026_BCRP_IMF_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md. Next: inspect BCRP API/docs and public asset metadata for a separate public-sector portfolio-asset series; otherwise preserve asset UNKNOWN and advance.
+
+
+### Continuation 54 — BCRP API contract check
+- Official BCRPData API developer guide: https://estadisticas.bcrp.gob.pe/estadisticas/series/documentos/bcrpdataapi.pdf . It documents GET series queries, up to 10 same-frequency series, output formats including JSON/CSV, and exact series-code/date-range URL structure (guide pp.2-5; updated 24-May-2022).
+- Constructed one documented, single-period JSON GET for PN39278BQ-PN39285BQ-PN39404FQ, 2026-2/2026-2/ing. The web retrieval returned an internal access error; no raw API payload/receipt was acquired. Do not claim API download or raw-file hash. Previously inspected official HTML series pages remain the evidence for the three displayed values.
+- API path remains an available documented retrieval contract but the exact endpoint access in this session is BLOCKED; do not repeatedly retry the same URL. Continue with HTML display evidence only, and keep the raw-byte archival gate open.
