@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import csv, hashlib, json, re, sys
 
-URL="https://www.bsp.gov.ph/Statistics/External/table1_data.aspx"
+URL="https://www.bsp.gov.ph/Statistics/External/table1.7_data.aspx"
 RELEASE_URL="https://www.bsp.gov.ph/Media_And_Research/Media%20Releases/2026_09/news-09112026a1.aspx"
 PANEL=Path("docs/evidence/imf_bop_emde_20261119/emde_portfolio_flows.csv")
 OUT=Path("artifacts/gcr_phl_q2_2026_bsp_imf")
@@ -47,25 +47,24 @@ def main():
     retrieved=datetime.now(timezone.utc).isoformat()
     status,final,headers,raw=get(URL)
     if status!=200: raise SystemExit("BSP table HTTP "+str(status))
-    (OUT/"bsp_table1_raw.html").write_bytes(raw)
+    (OUT/"bsp_table1_7_raw.html").write_bytes(raw)
     page=raw.decode("utf-8",errors="replace")
     checks={"bop_phrase":"Balance of Payments" in page,"philippines_phrase":"Philippines" in page,"q2_phrase":"Q2" in page,"asset_phrase":"Net Acquisition" in page,"portfolio_phrase":"Portfolio" in page,"html_title":re.findall(r"<title[^>]*>(.*?)</title>",page,re.I|re.S)[:1],"first_1200_chars":page[:1200]}
-    if not checks["bop_phrase"] or not checks["q2_phrase"] or not checks["portfolio_phrase"]:
+    if not checks["bop_phrase"] or not checks["q2_phrase"] or not checks["portfolio_phrase"] or "Table 1.7" not in page:
         (OUT/"bsp_table_fetch_diagnostic.json").write_text(json.dumps({"url":URL,"http_status":status,"final_url":final,"headers":headers,"byte_count":len(raw),"sha256":sha(raw),"checks":checks},indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
         print(json.dumps(checks,indent=2,ensure_ascii=False))
         raise SystemExit("BSP table source identity check failed; diagnostic captured")
     parser=Parser(); parser.feed(page)
-    targets={"Portfolio Investment":"net","Net Acquisition of Financial Assets":"asset","Net Incurrence of Liabilities":"liability"}
+    # Dedicated BSP Table 1.7 prevents reading identically named rows from other functional categories.
+    labels={"Portfolio Investment":"net","Net Acquisition of Financial Assets":"asset","Net Incurrence of Liabilities":"liability"}
     vals={}
     for row in parser.rows:
-        if row and row[0].strip() in targets:
-            label=row[0].strip()
-            if label in vals: raise SystemExit("duplicate BSP row: "+label)
-            if len(row)<=11: raise SystemExit("unexpected BSP table columns for "+label+": "+repr(row))
-            vals[targets[label]]=number(row[11])
-    if set(vals)!={"net","asset","liability"}: raise SystemExit("missing exact BSP portfolio rows: "+repr(vals))
-    # BSP technical note says financial account = net acquisition of financial assets less net incurrence of liabilities.
-    identity=vals["asset"]-vals["liability"]
+        if row and row[0].strip() in labels:
+            key=labels[row[0].strip()]
+            if key in vals: raise SystemExit("duplicate dedicated portfolio row: "+key)
+            if len(row)<=11: raise SystemExit("unexpected BSP Table 1.7 columns: "+repr(row))
+            vals[key]=number(row[11])  # Q2 2026 column, verified against the table header
+    if set(vals)!={"net","asset","liability"}: raise SystemExit("missing BSP Table 1.7 rows: "+repr(vals))
     release_status,release_final,release_headers,release_raw=get(RELEASE_URL)
     release_page=release_raw.decode("utf-8",errors="replace")
     if release_status!=200 or "Portfolio Investment" not in release_page or "Net Acquisition of Financial Assets" not in release_page:
