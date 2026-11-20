@@ -2578,3 +2578,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - TJK Q2 PDF content/bytes NOT_CAPTURED; separate Q2 asset/liability legs NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; comparison NOT_DONE; TJK NOT_VALIDATED / NOT PASS.
 - Next: byte-preserving PDF retrieval, inspect Q2 vs H1 reporting basis and separate legs; then reconcile to archived IMF rows only after period/sign/unit/vintage alignment.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 113 — Tajikistan NBT publication period-basis ambiguity (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA e7222e8e08233bb2f94decb543f7213a553465e8), GCR Queue (blob SHA 5ca1d0c7fbbc24e8686b9577ffe12c96d7f28195), Continuation 112 (blob SHA dbc7ff164bf05d54e7898365ff6f2359f6bed03d). Completed PASS work skipped.
+- NBT official archive link label says “FOR THE 2 QUARTER”; resolved PDF filename “ПБ-нимсолаи 1 с.2026.pdf” denotes first half-year. PDF retrieval times out; internal period basis cannot be verified. Standalone Q2 vs H1 cumulative remains AMBIGUOUS.
+- Standard representation page yields no extracted data table. No portfolio asset/liability legs, unit/sign/vintage captured. No H1-Q1 subtraction; IIP and annual estimates rejected as substitutes.
+- Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_PUBLICATION_PERIOD_BASIS_AND_H1_Q2_AMBIGUITY_CONTINUATION113_20261121.md; create commit 85070d16f9998a480df516733eb1d66df417431a.
+- TJK NOT_VALIDATED / NOT PASS. Next: retrieve PDF bytes, inspect internal period and legs; if H1, require same-vintage Q1 dual legs before derivation; otherwise mark unavailable and advance.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
