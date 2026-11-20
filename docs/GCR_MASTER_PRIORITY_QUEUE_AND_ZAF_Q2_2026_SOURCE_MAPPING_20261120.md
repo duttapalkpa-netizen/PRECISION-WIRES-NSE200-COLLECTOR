@@ -609,3 +609,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - XLSX/ZIP retrieval rejected by current web/container bridge; API metadata endpoint inaccessible through current bridge; no raw bytes/hash, exact India series codes or values captured. No guessed codes.
 - Detail: Japan report Continuation 84. Status: API contract/taxonomy PASS; exact series codes/data NOT_DONE; same-vintage reconciliation NOT_ESTABLISHED; production NOT_AUTHORIZED.
 - Next: supported API/HTTP client or user-provided official BOJ files; fetch metadata, identify exact India codes, retrieve and hash exact observations before parsing.
+
+
+## AU. Japan JPN — BOJ monthly 45-economy vs quarterly 33-economy partner universe (Continuation 85)
+- Official BOJ confirms monthly portfolio asset/liability country breakdown covers 45 economies; quarterly Regional BOP covers 33. India is included in both, but universes are distinct.
+- Monthly asset country attribution = issuer economy; monthly liability = transactor economy; quarterly Regional BOP remains a separate partner-economy product.
+- BP01 metadata API call via current retrieval bridge returned inaccessible/no body. Public main time-series table is only broad account net balances, not portfolio country breakdown. No guessed codes.
+- Status: universe distinction PASS; exact India series IDs/data/raw hash NOT_DONE; cross-product equivalence NOT_ESTABLISHED; production NOT_AUTHORIZED.
+- Detail report Continuation 85. Next: supported HTTP/API client or official metadata CSV upload; hash raw metadata, identify exact codes and query separate monthly/quarterly observations.
