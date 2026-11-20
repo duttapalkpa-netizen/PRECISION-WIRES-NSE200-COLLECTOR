@@ -56,3 +56,13 @@ Seek a versioned Banxico Q2-2026 data vintage or dated revision record for the t
 
 ## Protected invariants
 No cross-country aggregation, netting, imputation, forward-fill, synthetic observations, silent sign transform or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+## 2026-11-20 — Banxico live SIE current-series cross-check
+- Re-opened the exact official SIE quarterly BPM6 table CE174 and the analytical summary CA410, after preflighting the Master Ledger, GCR priority queue and MEX/TUR/POL detail reports. No completed IMF retrieval or original Q2 release extraction was repeated.
+- CE174 reports quarterly current flows in USD millions, latest period Apr–Jun 2026. In the portfolio section: net portfolio investment = -1,624; net acquisition of portfolio financial assets = +8,937; net incurrence of portfolio liabilities = +10,561. The page footnote states the information is preliminary and subject to subsequent revisions.
+- The independent CA410 analytical table also reports Q2 2026 current values for the aggregate BOP, but CE174 is the direct detailed portfolio-component evidence; CA410 does not replace component-level CE174.
+- The current live SIE values match the 25-Aug-2026 Banxico Q2 release and the prior comparison exactly at whole-USDm precision. This establishes a second official Banxico publication surface with the same current Q2 component values, but it does not provide a dated revision log or historical vintage snapshot. Therefore it cannot establish the precise vintage that the IMF 2026-11-19 observation used.
+- MEX asset and liability numeric comparisons remain PASS at ±0.5 USDm; current SIE preliminary status PASS; exact same-vintage identity remains NOT_ESTABLISHED; full MEX validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Sources: https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CE174&locale=es ; https://www.banxico.org.mx/SieInternet/consultarCuadroAnalitico&idCuadro=CA410&locale=es&sector=1 . Official CE174 page lines 30–47 define quarterly USDm current-flow table; lines 512–521 show portfolio balance/assets; lines 612–616 show liabilities; line 1165 states preliminary/revision note.
+- Next: preserve the vintage limitation; next country only if another existing exact-key receipt is eligible. Do not infer same-vintage from the live SIE match.
