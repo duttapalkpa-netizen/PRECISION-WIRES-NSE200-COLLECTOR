@@ -702,3 +702,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Exact ECB SDW API asset/liability CSV requests for Apr-Jun 2026 both inaccessible via current bridge. No bytes, values or hashes; no Q2 national observations admitted. ROU PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_ROMANIA_ROU_Q2_2026_BNR_ECB_PORTFOLIO_SOURCE_GATE_CONTINUATION95_20261120.md (commit 4157f08081d19e8876ad1561e4f8f293157230e7; verified blob SHA 37f744511aeab33539d1fca15be0bce08536cd90).
 - Next: supported official BNR/ECB retrieval of both separate Q2 legs with raw-byte hash and vintage; do not sum monthly rows without confirmed flow semantics. Reuse archived IMF rows; no IMF query/cohort rebuild.
+
+
+## BF. Romania ROU — ECB/BNR methodology and retrieval boundary (Continuation 96)
+- New official IMF DSBB metadata confirms BNR portfolio coverage is partial due incomplete external-custodian information.
+- ECB 2025 BOP/IIP e-book §7.3 states Romania uses monthly security-by-security stocks and derives monthly portfolio flows from stock changes, with price, FX and other changes separately compiled; assets use CSDB reference data; external-custodian-held Romanian debt securities are not covered; liabilities use residual approach and SHSDB inputs.
+- Exact ECB API asset/liability retrieval for Q2-2026 remains blocked; asset portal metadata only and liability page 503; no raw bytes/hash/values. ROU PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_ROMANIA_ROU_Q2_2026_ECB_BNR_METHODOLOGY_RETRIEVAL_BOUNDARY_CONTINUATION96_20261120.md (commit ba48066871b9fc5c0cb279b933abc25232d1f175; verified blob SHA 6f3c046255ada664589286bdae276606588cc9a4).
+- Close current identical ECB API route. Revisit only on a new supported BNR interactive/data-set or byte-preserving ECB route. Continue fixed cohort only after next-country preflight; no IMF re-query or cohort rebuild.
