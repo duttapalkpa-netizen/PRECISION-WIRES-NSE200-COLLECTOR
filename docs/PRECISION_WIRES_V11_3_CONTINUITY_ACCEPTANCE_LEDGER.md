@@ -2567,3 +2567,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Report: docs/GCR_SERBIA_SRB_JULY_BULLETIN_RETRIEVAL_ROUTE_EXHAUSTION_AND_NEXT_GATE_CONTINUATION111_20261121.md; create commit fe431027dfeefe41092fae5d4418c4c1fa158b27.
 - Next: requires real browser DOM inspection, form Show action and byte-preserving binary capture. No guessed parameters or gated service application. If unavailable, retain gate BLOCKED and pivot to another unfinished task.
 - ₹0; protected invariants unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 112 — Tajikistan TJK official NBT Q2-2026 publication source gate (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA 8ff41c04dc598dafbdde6dadcd35f2449f606b4a), GCR Queue (blob SHA 92ffaf39d65737d71feb54ece02ccd42cf254f91); Serbia July-vintage PDF route remains blocked, no duplicate retry. THA numeric legs 2/2 PASS but vintage unresolved.
+- TJK is in immutable 63-country cohort; no dedicated national Q2-2026 dual-leg report found in repo search. No cohort rebuild/IMF query.
+- NBT official BOP page states BOP compilation under BPM5/BPM6. Official external-sector publication archive exposes a 2026 “FOR THE 2 QUARTER” issue; exact PDF URL resolved but fetch timed out. No PDF bytes, contents or hash.
+- IIP 9-month 2025 operations/revaluation table rejected as quarterly BOP flow source; IMF CR 26/001 annual staff estimates rejected as quarterly national source.
+- Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_OFFICIAL_PUBLICATION_SOURCE_GATE_CONTINUATION112_20261121.md; create commit c5b47be1e1cb76e95c6bcbee98503e8054c5b8bf.
+- TJK Q2 PDF content/bytes NOT_CAPTURED; separate Q2 asset/liability legs NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; comparison NOT_DONE; TJK NOT_VALIDATED / NOT PASS.
+- Next: byte-preserving PDF retrieval, inspect Q2 vs H1 reporting basis and separate legs; then reconcile to archived IMF rows only after period/sign/unit/vintage alignment.
+- ₹0; protected invariants unchanged; UNKNOWN is never PASS.
