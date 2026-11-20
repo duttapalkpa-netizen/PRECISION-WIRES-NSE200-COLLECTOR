@@ -527,3 +527,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Actual NIFTY 50, broad-market companion and India VIX raw bytes remain NOT_CAPTURED; headers/MIME/length, file hash, parsed rows and duplicate/session QA NOT_DONE. This is a session execution-bridge limitation, not proof NSE blocks downloads.
 - Detail report: docs/INDIA_NSE_ACTUAL_RAW_CAPTURE_FEASIBILITY_GATE_PART3_20261120.md.
 - Next exact action: use a supported interactive browser/download route on the official NSE controls, or have the user attach the exact official downloads; hash unchanged bytes before parsing. Keep TRI/NTRI separate. No sample values, no silent deduplication, no production changes.
+
+## India FPI — NSDL Archive public form contract audit (Continuation 76, 2026-11-20)
+- Reused existing verified artifact 14524707532 (run 44515445620); downloaded ZIP size 184,876 bytes and independently recomputed SHA-256 29530f3d0913f3eed93afbeb0759ecb8131b4192c71e5928d79961df77c24c69, matching recorded digest.
+- Inspected the exact archived NSDL Archive HTML. Identified ASP.NET POST form frmMonthly action ./Archive.aspx; state fields __VIEWSTATE, __VIEWSTATEGENERATOR, __EVENTVALIDATION; date fields txtDate (disabled initial text input) and hdnDate; calendar format %d-%b-%Y; hidden validation/export fields hdnFlag, HdnValexceldata; public postback targets btnSubmit1 (View Report) and btnExcel (Export to Excel).
+- Initial GET contains no archive investment rows. Client script reveals the public control flow but not server-side period semantics or output schema. No POST was sent, no stale ViewState replayed, and no archive output or rows claimed.
+- Detail report: docs/GCR_NSDL_ARCHIVE_PUBLIC_FORM_CONTRACT_AUDIT_CONTINUATION76_20261120.md.
+- Next exact action: with a supported interactive browser, load fresh page state, select one explicit date via calendar, invoke View Report once, capture response bytes/headers/UTC/hash and inspect returned rows. If browser interaction is unavailable, keep archive NOT_DONE and do not guess a POST body. Do not repeat already-PASS capture/digest or 192/192 sector subtotal arithmetic.
