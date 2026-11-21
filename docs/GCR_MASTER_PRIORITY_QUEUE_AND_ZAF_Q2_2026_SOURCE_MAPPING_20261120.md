@@ -966,3 +966,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - IMF BOP/IIP metadata dashboard landing published 18-Nov-2026 but country-level URY interactive data not retrieved. BCU raw PDF bytes/size/SHA256 NOT_CAPTURED after byte-preserving download attempt failed. Same-vintage/revision alignment NOT_ESTABLISHED.
 - Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_IMF_METHODOLOGY_SCOPE_VINTAGE_BRIDGE_CONTINUATION122_20261121.md (commit c5b9daf0208e75d9610f34b0a1740f53edc62e7c).
 - C121 numeric dual-leg comparison PASS remains unchanged; full URY PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: only supported byte-preserving BCU PDF capture and country-specific IMF vintage export; otherwise preserve blocker and advance fixed cohort. ₹0; no production changes; UNKNOWN is never PASS.
+
+
+## CF. Uzbekistan UZB — CBU Q2-2026 portfolio dual-leg / archived IMF numeric comparison (Continuation 123, 2026-11-21)
+- Re-fetched Master Ledger, GCR queue and immutable 63-country cohort; UZB follows URY. Scoped repo search found no prior dedicated UZB report. No IMF re-query/cohort rebuild.
+- Official CBU quarterly BOP dataset page update 29-Sep-2026 11:21, periods 2005-Q1 through 2026-Q2, separate portfolio asset/liability rows. Q2 preview values: assets USD0.01m; liabilities USD1,960.49m; literal unit note “million USD, end of period”. XLSX raw bytes/hash not captured.
+- Official CBU GDDS-DQAF BOP metadata states BPM6, quarterly compilation/publication, accrual basis with adjustments, no known coverage exceptions, and quarterly revision policy.
+- Reused IMF archived normalized panel Git blob SHA 2a8db2878cac6323bbad74ffa4035dc70e5e6b98; exact UZB Q2 raw observations A_NFA_T 9793.61706018728 SCALE=6 and L_NIL_T 1960492267.78624 SCALE=6. No IMF re-query.
+- Bounded display /1e6 yields assets 0.009793617m, liabilities 1960.492267786m; residuals +0.000206383m and -0.002267786m within ±0.005m. Numeric dual-leg comparison PASS at displayed precision.
+- Time-basis caveat: “end of period” needs workbook header clarification for BOP transaction rows. BCU update 29-Sep-2026 and IMF retrieval 19-Nov-2026 are not same-vintage evidence. Full UZB validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_UZBEKISTAN_UZB_Q2_2026_CBU_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_CONTINUATION123_20261121.md (commit bbce4b2aeefb6786eb706d8a32dd9f38c4fd12eb).
+- Next: byte-preserving CBU XLSX retrieval and unit/time-basis/vintage inspection; if unsupported, preserve UZB blocker and advance VNM after preflight. ₹0; no production changes; UNKNOWN is never PASS.
