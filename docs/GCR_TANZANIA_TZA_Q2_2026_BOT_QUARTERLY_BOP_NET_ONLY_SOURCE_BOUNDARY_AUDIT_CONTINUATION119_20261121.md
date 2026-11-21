@@ -56,3 +56,9 @@ The official Bank of Tanzania Statistical Bulletin for the quarter ending Septem
 ## Sources
 - Bank of Tanzania Statistical Bulletin, quarter ending September 2026, Table 6.1: https://www.bot.go.tz/Publications/Regular/Quarterly%20statistical%20Bulletin/sw/2026110312172422.pdf
 - Immutable 63-country cohort report: `docs/GCR_2026Q2_SYNCHRONOUS_DUAL_LEG_COVERAGE_COHORT_CONTINUATION40_PART5_20261119.md`
+
+
+## Continuation 133 — Tanzania alternative-source boundary reconfirmed (2026-11-21)
+- Re-fetched current Ledger/Queue/cohort and TZA Continuation 119. Fresh official BoT Quarterly Statistical Bulletin search result independently reconfirmed Table 6.1: Q2-2026 portfolio investment single net line -USD14.0m. Other-investment assets/liabilities are separately listed but are not portfolio legs.
+- BoT official quarterly publication filter exposes a separate “Balance of Payments in USD” dataset only dated 25-Aug-2020; this is not Q2-2026. Other current BoT quarterly bulletin versions retain portfolio as net-only. Tanzania Investment Report is annual and not a quarterly BOP flow source. Do not back-solve or substitute unrelated instruments.
+- TZA remains net-only / PARTIAL / NOT PASS; no national dual-leg values. Follow the existing TZA report's next item UKR. No IMF query/cohort rebuild; ₹0; UNKNOWN never PASS.
