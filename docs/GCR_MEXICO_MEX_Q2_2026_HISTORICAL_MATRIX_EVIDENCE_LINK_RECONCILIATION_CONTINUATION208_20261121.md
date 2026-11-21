@@ -29,3 +29,14 @@ No new source retrieval, IMF re-query/cohort rebuild, synthetic data, paid spend
 
 ## Next exact action
 Reopen MEX only if Banxico publishes a versioned Q2-2026 vintage/revision record or a dated source bridge that proves whether the IMF 19-Nov-2026 observations use that exact vintage. Do not infer vintage identity from the small numeric residuals.
+
+
+## Read-back closure — 2026-11-21
+All five artifacts were re-fetched from the default branch after the writes:
+- Matrix: 63 data rows / 30 columns; MEX evidence_ref points to the dedicated Banxico reconciliation. MEX remains DATA_CAPTURED / asset PASS / liability PASS / vintage PENDING / FULL_PASS NO / aggregate NOT_AUTHORIZED. Matrix blob SHA-1: `efcc44b085abd2ff250a82c988b9a4fa2dc69c23`.
+- Recomputed stages: SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0. Independent gates: ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0. All 63 aggregate_admission values remain NOT_AUTHORIZED.
+- C208 detail report read-back blob SHA-1: `103940b8a172c47746bef97a4d78b3106c7207a4`.
+- Priority Queue read-back blob SHA-1: `0509453928c232df37e0f1654560013507c4fe97`.
+- Historical Registry read-back blob SHA-1: `f8df7e0dcf6caae4a00c34fffb1eaef8c2fcf7bd`.
+- Master Continuity Ledger read-back blob SHA-1: `aa042c2a3bcd28c54bec85f221f9ec4b258181a4`.
+- C208 marker and exact Banxico report reference verified in detail report, queue, registry and ledger. No data, vintage or aggregate gate was promoted.
