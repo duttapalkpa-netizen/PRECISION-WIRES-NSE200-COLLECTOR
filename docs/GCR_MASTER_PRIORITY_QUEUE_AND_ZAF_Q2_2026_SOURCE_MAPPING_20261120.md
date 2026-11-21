@@ -1648,3 +1648,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail: `docs/GCR_NIGERIA_NGA_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION202_20261121.md`.
 - Recomputed stages after this single-country correction: SOURCE_FOUND 19; DATA_CAPTURED 24; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 16; LIABILITY_PASS 16; VINTAGE_PASS 0; FULL_PASS 0. Below DATA_CAPTURED: 39. Counts are not additive across independent gates.
 - No IMF re-query/cohort rebuild; aggregate remains NOT_AUTHORIZED; ₹0; all production invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 203 — Pakistan PAK matrix evidence reconciliation (2026-11-21)
+- PAK C51–C52 already captured official SBP CY26 Q2(R) portfolio asset/liability values (-2 / -243 USDm), reused exact archived IMF rows, documented SBP BPM6 sign framework, and passed separate numeric comparisons 2/2 at published USDm precision.
+- Rejected repeat source fetch, IMF extraction, sign crosswalk and numeric comparison. Selected the actionable stale-matrix correction only: PAK was still SOURCE_FOUND despite the accepted C51–C52 evidence.
+- Matrix row corrected to DATA_CAPTURED; ASSET_PASS; LIABILITY_PASS; VINTAGE_PENDING; FULL_PASS=NO; aggregate NOT_AUTHORIZED. Read-back: 63 rows / 30 columns; CSV blob SHA-1 `2e9b5a9246cebc249acc2e615cae5e43d4d8f4ac`.
+- Counts after PAK correction: SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Independent gate counts overlap.
+- PAK exact SBP revision timestamp / IMF same-vintage bridge remains NOT_ESTABLISHED; do not promote to FULL_PASS. Detail: `docs/GCR_PAKISTAN_PAK_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION203_20261121.md`. Next: continue the same fixed-cohort historical evidence reconciliation with another demonstrably stale matrix row; inspect its latest country report first and do not re-run completed PASS work or closed routes. No IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED; production invariants unchanged.
