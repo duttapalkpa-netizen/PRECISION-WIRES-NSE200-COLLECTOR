@@ -3677,3 +3677,11 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Matrix update commits: initial note edit `67a11f26d6f10cd9e4666bfe5d044051ef4c5054` was immediately corrected for CSV field quoting; final valid CSV commit `2074feae218e6890088d95412fbf7a1013c71bbf`, blob SHA `b91df09667dc67b6b6fd595824606d324367b24f`.
 - Detail report: `docs/GCR_MONGOLIA_MNG_Q2_2026_MATRIX_EVIDENCE_REFERENCE_AND_API_BOUNDARY_READBACK_CONTINUATION222_20261121.md`; report commit `7eea1f9e2341be21351a7e5201e95aa3c49a283b`.
 - No API retry, IMF re-query, cohort rebuild, national data capture or production change. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 223 — GEO NBG statistics-data route boundary and matrix evidence correction (2026-11-21)
+- Re-fetched current Ledger, Priority Queue, Registry, fixed cohort, matrix and GEO C154 report. Reused C154 release/BPM5/NSDP boundary; no IMF re-query or cohort rebuild.
+- New official NBG Statistics and Statistics Data pages confirm static Excel tables/interactive dashboards and title/code search, but inspected rendering exposes no BOP table ID, Q2 workbook URL, API schema or payload. GEO Q2 national legs remain NOT_CAPTURED.
+- Corrected only GEO matrix descriptive note/evidence_ref to C154; preserved SOURCE_FOUND, data capture NO, asset/liability NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
+- Matrix commit `9655247cb907dee8e4846bd9dd33e6b5d91f67c0`; blob `de7b182d3a3debee674c35c1e9fd980e99ab83b3`. Detail report commit `e279d4262f50e73311d1e306c812efb7909fdf67`.
+- GEO remains PARTIAL / NOT PASS. No guessed export/API, synthetic data, stock-flow substitution, net-to-leg back-solving or production changes; ₹0; UNKNOWN never PASS.
