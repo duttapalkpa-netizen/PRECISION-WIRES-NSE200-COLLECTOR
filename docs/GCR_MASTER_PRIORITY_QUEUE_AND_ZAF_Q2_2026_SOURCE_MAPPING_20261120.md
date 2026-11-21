@@ -1721,3 +1721,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Corrected only ECU matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_ECUADOR_ECU_Q2_2026_BCE_PORTFOLIO_DUAL_LEG_NUMERIC_RECONCILIATION_CONTINUATION147_20261121. ECU remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_ECUADOR_ECU_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION211_20261121.md`; matrix commit `7ab32d8bb18a77b6c4ed8837a71fc4de2d8b444d`; matrix blob SHA-1 `15b89466d49e1f38c2d9c01a9dd3041f7971126b`; detail report commit `b48a52c2b92ad0a61e8df2a4f7920218b27568de`.
 - No BCE/IMF re-fetch, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 212 — Philippines PHL Q2-2026 matrix evidence-link reconciliation (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Task Registry, 63-country matrix and controlling BSP–IMF report before selection. Completed parser/capture/numeric work and closed generic vintage-search routes were not repeated.
+- Existing report records BSP Q2 assets +1,331 USDm and liabilities +1,798 USDm; IMF differences -0.35704894474 / +0.28261626536 USDm, both within ±0.5 USDm. Successful raw/parsed artifact and release parity are documented; same-vintage remains NOT_ESTABLISHED.
+- Corrected only PHL matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_PHILIPPINES_PHL_Q2_2026_BSP_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120. Preserved DATA_CAPTURED, asset REVIEW, liability REVIEW, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED; no gate promotion.
+- Detail: `docs/GCR_PHILIPPINES_PHL_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION212_20261121.md`; matrix commit `4de3e0c125678ba9dfbe75b8358ae29478f9cdb8`, blob SHA-1 `a1a49e1d9517f09afcf584286d698aac637307a4`; report commit `270f5714db041305fd8839639804e2a4cb5c6c9e`.
+- No BSP/IMF re-fetch, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
