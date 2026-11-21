@@ -1432,3 +1432,14 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - MNG PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not use net-only/annual/H1/IIP substitutes.
 - Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_BOP_QUARTERLY_SOURCE_AND_API_GATE_CONTINUATION179_20261121.md` (commit `6b01b968365b9f2b8e636518f8458079e2ab090b`).
 - Next: obtain official PxWeb codebook and exact JSON-stat2 data query through a supported API/export path; otherwise request official export attachment and move to next eligible cohort member.
+
+
+## Continuation 180 — Montenegro (MNE) CBCG / NSDP SDMX source boundary (2026-11-21)
+- MNE selected after current continuity preflight and no dedicated prior country dual-leg report in scoped repository search. MNG C179 inaccessible PxWeb API route not repeated.
+- Official CBCG BOP page: BPM6 2010–2026, quarterly EUR, financial account displayed as net acquisition of assets / net incurrence of liabilities; page updated 19-Nov-2026.
+- Official CBCG ZIP archive locator found but download blocked HTTP 400 application/zip; no bytes/hash.
+- Official MONSTAT NSDP BOP Browse Data endpoint on legacy CBCG domain timed out; SDMX download resolves to official DSBB XML `https://dsbb.imf.org/xml/MNE/BOP6_Montenegro.xml`, but XML retrieval blocked HTTP 400 text/xml. These are locator-only, not content validation.
+- Official Q2-2026 release date 19-Aug-2026. MONSTAT metadata confirms quarterly BPM6 BOP and portfolio investment coverage; metadata unit EUR thousands.
+- No Q2-2026 separate portfolio legs captured; MNE PARTIAL / NOT PASS; exact cohort-row membership not re-extracted; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BOP6_NSDP_SDMX_SOURCE_BOUNDARY_CONTINUATION180_20261121.md` (commit `04fc8bbbf529eed183eaa9453496de2df12bc3f0`).
+- Next: new supported transfer for ZIP/XML + exact MNE cohort-row check; no retry of same blocked routes.
