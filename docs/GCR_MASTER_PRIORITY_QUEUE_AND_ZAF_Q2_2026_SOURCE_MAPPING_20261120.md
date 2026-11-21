@@ -1589,3 +1589,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Cross-check: NBG NSDP shows BOP “Download in SDMX” label without an exposed BOP href/target; Statistics Data page is a JS search shell. CBBH C156 and BNM C86 also have documented UI export controls but no executed workboards.
 - Process improvement PASS: new Execution-Mode Gate requires route classification (static/API/UI) before selection. Select UI routes only when a JS-capable browser is actually available; otherwise mark NOT_EXECUTED — UI CAPABILITY UNAVAILABLE and advance to a retrievable static official route. Never count page-shell inspection as export/data PASS.
 - Detail: `docs/GCR_INTERACTIVE_OFFICIAL_PORTAL_EXECUTION_CAPABILITY_GATE_CONTINUATION198_20261121.md`. No country validation progress; ROU/GEO/BIH/MDA remain PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No IMF re-query/cohort rebuild; all protected invariants unchanged.
+
+
+## Continuation 199 — Armenia ARM current CBA Financial Account export route (2026-11-21)
+- Reused fixed 63-country cohort and archived ARM IMF rows; no IMF request/cohort rebuild. Full C143 reviewed; its legacy XLS URL remains closed and was not retried.
+- Distinct current official route: CBA Financial Account page https://www.cba.am/en/statistics/financial-account/275 exposes XLSX/XML/JSON export controls. Exact export-all target https://www.cba.am/en/statistics/financial-account/275/export-all/ timed out once; no body/bytes/hash or Q2 portfolio series captured.
+- CBA metadata: BPM6, USD millions, quarterly/annual BOP, annual revision practice. Armstat NSDP's Q2 financial-account aggregate omits portfolio flow line; not zero. IIP portfolio positions excluded as stocks.
+- ARM remains PARTIAL / NOT PASS; no numeric validation or aggregate admission. Detail: docs/GCR_ARMENIA_ARM_Q2_2026_CBA_CURRENT_FINANCIAL_ACCOUNT_EXPORT_ROUTE_GATE_CONTINUATION199_20261121.md. No repeat of either C143 legacy XLS or C199 same-surface export timeout. Next: move to another eligible fixed-cohort member with a retrievable static official source under C198 Execution-Mode Gate.
