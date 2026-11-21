@@ -3022,3 +3022,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Therefore Part 8 BDE observations remain source-page evidence only. Raw API/Excel bytes, receipt, retrieval timestamp, SHA-256, updatedAt/vintage snapshot and same-vintage cut-off NOT_CAPTURED/NOT_ESTABLISHED. CHL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_CHILE_CHL_Q2_2026_BCCH_BDE_API_EXPORT_ACCESS_GATE_AUDIT_CONTINUATION161_20261121.md (create commit 9a192c2c893f2c2ea368f57eb46a1a030599e7f0).
 - Next: if an authorized BDE session is available, activate free API or execute official basket Excel export; archive exact response/workbook bytes, URL, timestamp, series IDs, update/vintage metadata and SHA-256. Otherwise retain CHL PARTIAL and advance. No IMF re-query/cohort rebuild or production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 162 — Chapter 47 Part 10: Colombia COL SUAMECA public quarterly series route recheck (2026-11-21)
+- Re-fetched current ledger, priority queue, immutable 63-country Q2 both-leg cohort and prior COL source report. COL remains fixed-cohort member with both IMF panel legs present; no IMF re-query/cohort rebuild and no repeated SDMX route (official SDMX guide excludes BOP).
+- Official BanRep/SUAMECA multiple-download catalogue again exposes distinct quarterly portfolio net acquisition of assets and net incurrence of liabilities series, current USD million, 2000-Q1 through Q2-2026, last updated 2026-09-01. Official prebuilt BOP dashboard confirms quarterly detail and annex views through Q2-2026.
+- Current retrieval recheck: multiple-download page HTTP 502; prebuilt dashboard timed out. These are retrieval bridge failures, not proof of source absence. No exact series IDs, Q2 observations, export action, raw bytes, receipt, timestamp or SHA-256 captured. IIP stocks/financial-account aggregates not substituted.
+- COL remains PARTIAL / BLOCKED / NOT PASS; sign and same-vintage bridge NOT_ESTABLISHED; numeric comparison NOT_DONE; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_COLOMBIA_COL_Q2_2026_SUAMECA_PUBLIC_SERIES_ROUTE_RECHECK_CONTINUATION162_20261121.md (create commit 2ac1deb306091269a8471531f1f22c8f58c979fd).
+- Next: only resume COL via a genuinely supported interactive session that executes official SUAMECA export and captures both Q2 series with raw bytes, vintage, timestamp and SHA-256; otherwise close route and advance to POL. No repeated 502/timeout/SDMX probes. ₹0; no production changes; UNKNOWN never PASS.
