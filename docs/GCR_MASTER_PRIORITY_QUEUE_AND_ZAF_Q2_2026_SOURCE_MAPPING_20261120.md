@@ -1531,3 +1531,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official NSO table now displays update marker 09-Nov-2026 and Q2-2026 among periods; quarterly, million USD, Bank of Mongolia source. Page metadata only; not observation vintage. Indicator codebook and separate portfolio legs still NOT_CAPTURED.
 - MNG PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_CORRECTED_METADATA_ENDPOINT_AND_ACCESS_GATE_CONTINUATION191_20261121.md` (commit 3dddaefe0093bd366a7c755e5407a088f498517e).
 - Do not retry same blocked API surface; reopen only with a distinct supported official export/attachment capability.
+
+
+## Continuation 192 — ALB Q2 release calendar vs legacy Main-data ceiling (2026-11-21)
+- Official Bank of Albania calendar confirms Q2-2026 BOP release date 10-Sep-2026; official time-series landing page shows the same page update marker.
+- Click-through legacy quarterly table has EURm and C.2.A/C.2.L taxonomy but its displayed methodology cites the 11-Sep-2017 publication/revision and exposes no Q2-2026 observation cells or export bytes. Same route family as C140/C141; closed for repeat.
+- ALB remains PARTIAL / NOT PASS; Q2-specific export and values NOT_CAPTURED; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_ALBANIA_ALB_Q2_2026_BOA_Q2_RELEASE_CALENDAR_VS_LEGACY_TABLE_CEILING_CONTINUATION192_20261121.md` (commit 46725db533106245fa306ad2387720b59a9392f9).
+- Reopen only on distinct Q2-specific official export/API/workbook locator; otherwise advance to next eligible fixed-cohort member.
