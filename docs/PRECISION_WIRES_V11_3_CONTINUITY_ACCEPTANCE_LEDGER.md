@@ -3078,3 +3078,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - TUR exact ZIP timeout remains closed; POL transaction-date FX principle is known but does not authorize aggregate FX conversion. Other country fingerprints/statuses are indexed in the registry.
 - Final verification rule: re-fetch every modified file and record commit SHA + final blob SHA; unverified writes must be reported NOT_VERIFIED. Registry is rolling and does not claim all 63 countries fully indexed.
 - No production code/configuration changed; protected invariants unchanged; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 167 — Chapter 47 Part 15: Honduras HND official BCH source/export gate (2026-11-21)
+- Re-fetched current Ledger, Queue, duplicate registry and immutable 63-country cohort. HND is in the cohort; repository search found no prior dedicated HND Q2-2026 national portfolio dual-leg report. No IMF re-query/cohort rebuild.
+- BCH official dynamic BOP page confirms quarterly/annual frequency and “Obtener serie de Datos”; official calendar lists quarterly BOP and BOP/IIP/debt report with 90-day release timing and Excel/PDF formats. BCH SDDS page lists BOP Browse Data and SDMX download.
+- Exact XLSX locator resolved to SharePoint WOPI; browser page exposed app shell only and separate container download failed. Official SDMX XML retrieval returned HTTP 400 unsupported text/xml. No bytes/sheets/observations/hash captured. Q3-2025 portfolio chart is historical context only, not Q2-2026.
+- HND national Q2 asset/liability legs NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; comparison NOT_DONE; HND PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_HONDURAS_HND_Q2_2026_BCH_OFFICIAL_BOP_SOURCE_AND_XLSX_ACCESS_GATE_CONTINUATION167_20261121.md` (commit `bb1df78f301d016ab90b13c0d6fcbd2f342a0335`).
+- Duplicate gate: close identical XLSX/WOPI/XML routes; reopen only on a genuinely distinct supported official API/export/byte-transfer capability. Next: advance to next unvalidated cohort member after full preflight. ₹0; no production changes; UNKNOWN never PASS.
