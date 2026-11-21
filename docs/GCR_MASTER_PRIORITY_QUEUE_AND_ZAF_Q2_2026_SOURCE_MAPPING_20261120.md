@@ -1502,3 +1502,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Existing IMF Q1 values: A_NFA_T -74.050352868 USDm; L_NIL_T -13,633.508347332 USDm. Asset comparison remains PASS (+0.050353 residual); liability remains REVIEW (-1,512.508347 residual); combined net REVIEW (-1,512.457994). RBI published-value revision does not explain discrepancy on evidence inspected; underlying cause/vintage NOT_ESTABLISHED.
 - India remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_INDIA_IND_Q1_2026_RBI_TABLE42_RELEASE_PERSISTENCE_AUDIT_CONTINUATION187_20261121.md` (commit c4f73d755090a71c0312f9f82ac7afecd7b226ab).
 - Next: genuinely distinct official RBI Q1 revision-history/transaction-level data or already archived IMF vintage metadata; otherwise retain REVIEW and advance. Do not repeat known releases or issue new IMF GET.
+
+
+## Continuation 188 — LKA CBSL official page freshness gate (2026-11-21)
+- Reused LKA C174–C177 and fixed cohort; no IMF re-query/cohort rebuild. Treasury Table 7 Q2 assets +26 and liabilities -351 USDm remain provisional and numerically corroborated at published rounding.
+- New CBSL official search-indexed External Sector page metadata: page content updated 01-Oct-2026 11:30; describes BPM6 quarterly BOP 2012Q1–Latest. Direct page open 403; no current workbook/export URL, raw bytes/hash, or statistical revision identifier exposed.
+- This is page freshness only, not data vintage. It does not bridge C175's 30-Sep-2026 workbook filename marker to the 12-Nov-2026 Treasury report. LKA remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- C188 detail: `docs/GCR_SRI_LANKA_LKA_Q2_2026_CBSL_EXTERNAL_SECTOR_PAGE_FRESHNESS_AND_EXPORT_GATE_CONTINUATION188_20261121.md` (commit 2971a494803edc77b51290e607c8aa2af763a44b).
+- Close repeat C175–C177 route attempts. Reopen only on distinct official export/API locator or actual current Table 2.10 revision identifier.
