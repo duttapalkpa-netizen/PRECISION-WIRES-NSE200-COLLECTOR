@@ -1300,3 +1300,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - POL: no official matched Q2-2026 USD portfolio asset/liability table found in bounded NBP official-domain search. Retain NBP Q2 legs in PLN (assets 24,144m; liabilities 70,910m); do not infer USD using aggregate FX. POL PARTIAL / NOT PASS.
 - TUR: TCMB official page confirms monthly BPM6/EVDS and separate USD portfolio assets/liabilities. September summary table is Sep monthly + Jan-Sep cumulative + 12-month, not Q2-only. Existing Q2 PDF sums remain assets 5,749 vs IMF 5,749; liabilities 9,183 vs IMF 9,270 (87m unexplained). Exact official ZIP endpoint previously timed out; no new byte-preserving route, do not repeat. TUR PARTIAL / NOT PASS.
 - Next eligible cohort member NPL: avoid previously failed NRB XLSX and stale NSDP/SDMX routes; use only a genuinely new official supported API/export. If unavailable, close once and advance to RWA. ₹0; no IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED; UNKNOWN never PASS.
+
+
+## 2026-11-21 — Duplicate-prevention handoff correction
+- Mandatory GCR historical task registry: `docs/GCR_Q2_2026_HISTORICAL_TASK_REGISTRY_AND_DUPLICATE_PREVENTION_GATE_20261121.md`.
+- Correction to stale Continuation 166 handoff: NPL is NOT a fresh next task. Its NRB BPM6 XLSX, stale NSDP XML and wrong-family archive routes were already audited/closed across Continuations 55/56/58/94/128/130. Do not repeat absent a genuinely new supported official route.
+- RWA is also NOT a fresh task: BNR portal source gate Continuation 97 and portal recheck Continuation 130 already exist; exact JS-only portal route remains unresolved. Do not repeat absent a new exact download/API/export route.
+- SLV has Continuation 100 history and is not a new-country candidate. Reconcile the complete queue and report inventory before selecting any next country; stale rank snippets cannot override prior work.
+- Enforce route fingerprints, PASS skip, named unmet gate for PARTIAL, no retry of closed BLOCKED routes without new evidence, and final re-fetch verification of report/ledger/queue. Aggregate remains NOT_AUTHORIZED; no production changes; ₹0; UNKNOWN never PASS.
