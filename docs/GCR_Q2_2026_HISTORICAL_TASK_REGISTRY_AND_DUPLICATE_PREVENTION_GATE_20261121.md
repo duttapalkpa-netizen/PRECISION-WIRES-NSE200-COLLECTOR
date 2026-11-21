@@ -209,3 +209,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | MNG Mongolia | Corrected PxWeb metadata endpoint ending `DT_NSO_0100_001V10_quarter.px`; official table currently shows update marker 09-Nov-2026 | C191: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_CORRECTED_METADATA_ENDPOINT_AND_ACCESS_GATE_CONTINUATION191_20261121.md` | Endpoint syntax corrected, retrieval bridge still inaccessible; 69 indicator labels/codes and Q2 A/L cells NOT_CAPTURED; PARTIAL / NOT PASS | Do not repeat corrected URL through same retrieval surface; C190 omitted `.px` and is explicitly corrected | Distinct supported official export/attachment route or new raw payload |
 - Page update marker is not an observation-level vintage. Aggregate NOT_AUTHORIZED.
+
+
+## Continuation 192 — Albania legacy time-series route fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| ALB Albania | Bank of Albania legacy quarterly time-series detail: `https://www.bankofalbania.org/Statistics/External_sector_statistics/Balance_of_Payments/Time_Series-Balance_of_Payments.html?cregtab_id=705&evb=agregate&evn=agregate_detaje&periudha_id=3` | C192: `docs/GCR_ALBANIA_ALB_Q2_2026_BOA_Q2_RELEASE_CALENDAR_VS_LEGACY_TABLE_CEILING_CONTINUATION192_20261121.md` | Q2 release date PASS; legacy taxonomy EURm PASS; legacy method cites 2017 publication; Q2-2026 cells/export NOT_EXPOSED; PARTIAL / NOT PASS | Close same legacy Main-data route; do not repeat C140/C141 extraction | Distinct Q2-specific attachment, API response, or supported workbook export |
+- The calendar date and landing-page update marker do not establish the Q2 observation vintage. Aggregate NOT_AUTHORIZED.
