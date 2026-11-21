@@ -1569,3 +1569,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - MKD remains PARTIAL / NOT PASS; separate portfolio A/L cells and vintage bridge NOT_CAPTURED; aggregate NOT_AUTHORIZED. No IMF GET/cohort rebuild.
 - Detail: `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_API_METADATA_ROUTE_ACCESS_GATE_CONTINUATION195_20261121.md` (commit c85f91b43b4fae8941613b1f29b42e7ac20b7b5d).
 - Next: select next eligible fixed-cohort member after full prior-report and route-fingerprint preflight.
+
+
+## Continuation 196 — Peru PER BCRP current-catalogue scope refresh (2026-11-21)
+- Fresh official BCRP quarterly catalogue (inspected 21-Nov; rows last updated 20-Nov) reconfirms PN39278BQ private-sector portfolio assets and PN39285BQ private-sector portfolio liabilities through T3-2026. Public-sector list includes PN39402FQ aggregate assets, PN39403FQ aggregate liabilities and PN39404FQ portfolio liabilities, but no public-sector portfolio-specific asset series in the displayed 25-series group.
+- No API retry: prior exact route is inaccessible through current retrieval bridge. No Q2 observations/raw bytes/hash captured. Do not add aggregate public assets to private portfolio assets or treat IIP stocks/net totals as substitutes.
+- PER remains PARTIAL / NOT PASS; full national asset scope NOT_ESTABLISHED; aggregate NOT_AUTHORIZED. Detail: docs/GCR_PERU_PER_Q2_2026_BCRP_CATALOGUE_REFRESH_AND_PUBLIC_ASSET_SCOPE_GATE_CONTINUATION196_20261121.md.
+- Reopen only on a distinct official public-sector portfolio-asset transaction series or explicit full-economy scope statement; otherwise advance after full history/route preflight.
