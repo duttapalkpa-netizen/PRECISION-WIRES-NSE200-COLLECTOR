@@ -305,3 +305,16 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Detail: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_RECONCILIATION_CONTINUATION201_20261121.md`.
 - CSV update commit: `f596dc889642e3a9262f2fd7b7dc9b02a6a57a0a`; CSV blob SHA-1: `45e466c72c034d460dfccf57474b07bfb6d12ea9`.
 - Preserve immutable cohort, no IMF re-query/rebuild, no unsupported inference, ₹0, and all V11.3 production invariants.
+
+
+## Continuation 200 — 63-country national validation master matrix (2026-11-21)
+| Artifact | Result |
+|---|---|
+| Immutable cohort | 63 rows; both IMF entries present; unchanged |
+| Master matrix | Existing file upgraded in place with normalized status columns |
+| Membership/period/entry alignment | 63/63 exact; 0 mismatches |
+| Overall statuses | SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; NOT_STARTED 1; FULL_PASS 0 |
+| Vintage | No VINTAGE_PASS established in this baseline |
+| Aggregate | NOT_AUTHORIZED |
+- Report: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_AUDIT_CONTINUATION200_20261121.md`.
+- DATA_CAPTURED is not FULL_PASS; inspect original gate and country report before promotion. Blocked route fingerprints remain closed absent new evidence.
