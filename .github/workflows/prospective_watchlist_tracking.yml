@@ -202,6 +202,10 @@ jobs:
           name: prospective-watchlist-audit
           path: |
             data/qa/qa_report.json
+            data/raw/sec_bhavdata_full_*.csv
+            data/raw/sessions.txt
+            data/raw/acquisition_diagnostics.json
+            data/reference/security_master.csv
             outputs/prospective/watchlist_ledger.csv
             outputs/prospective/latest_picks.csv
             outputs/backtest/walk_forward_metrics.json
