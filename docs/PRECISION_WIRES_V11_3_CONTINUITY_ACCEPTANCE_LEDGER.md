@@ -3218,3 +3218,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - No Q2-2026 portfolio asset/liability observations or raw national bytes captured. MNE PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. IIP/external debt and annual/net-only summaries rejected as dual-leg substitutes.
 - Detail: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BOP6_NSDP_SDMX_SOURCE_BOUNDARY_CONTINUATION180_20261121.md` (commit `04fc8bbbf529eed183eaa9453496de2df12bc3f0`).
 - Next: retrieve ZIP/XML only through a supported new transfer method, verify exact MNE cohort row, parse Q2 rows and separately compare legs with existing archived IMF rows. Do not repeat same ZIP/XML clicks; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 181 — Chapter 47 Part 29: POL NBP public USD dual-leg publication search closure (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Registry and POL C165 transaction-FX report before work.
+- Reused prior official Q2-2026 portfolio legs (assets 24,144 mn PLN; liabilities 70,910 mn PLN) and official PW-AIN/PW-RIN transaction-date FX principle. Did not repeat blocked PDF/XLSX retrieval, did not run FX approximation, no IMF re-query/cohort rebuild.
+- Performed a distinct bounded search of current NBP public BOP/statistical publication surfaces for an official USD-denominated Q2-2026 portfolio asset/liability flow table. Current NBP English BOP PDF locator https://static.nbp.pl/dane/bilans-platniczy/bopa_en.pdf is in million PLN, not USD; public reporting list did not surface a matching USD dual-leg publication. NBP Web API documented scope is currency rates, not portfolio transaction amounts/weights.
+- Historical cash-basis USD annexes are not current Q2-2026 BPM6 evidence and are rejected. No official matched USD Q2 legs or transaction-level date/currency weights found; no numeric conversion performed.
+- POL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No production changes; UNKNOWN never PASS.
+- Detail report: docs/GCR_POLAND_POL_Q2_2026_NBP_USD_DUAL_LEG_PUBLICATION_SEARCH_CLOSURE_CONTINUATION181_20261121.md (commit 5ab4cf466d2caab451674faa0d65666426ae5084).
+- Next: move to next fixed-cohort member with a genuinely unexhausted official national route after exact preflight. Reopen POL only on new official matched USD Q2 dual-leg publication or transaction-level dated/currency data.
