@@ -3577,3 +3577,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Corrected matrix to asset_gate REVIEW, liability_gate PASS; status_ASSET_PASS NO, status_LIABILITY_PASS YES; asset_status DATA_CAPTURED, liability_status LIABILITY_PASS. Stage DATA_CAPTURED, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED preserved.
 - Matrix correction commit `86dfe96ae4b3a71a78a0eebbabd4fd36bd4ac4e3`; blob `a4ed9fcf8732dd81a1d1563aaf5388ed6c2bbd0a`. C215 report addendum commit `96cf932d5345859c01b7fb92ade0986f992b0ec5`.
 - New SARB API Q2 historical payload remains NOT_CAPTURED; asset FX REVIEW remains open. No gate promotion, IMF re-query, cohort rebuild, tolerance widening or production change; UNKNOWN never PASS.
+
+
+## Continuation 216 — ZAF SARB official historical export route audit (2026-11-21)
+- Re-fetched the current Master Ledger, GCR Priority Queue, Historical Task Registry and controlling C215/C215A report before selection. C215 route discovery and C215A matrix correction were excluded from repeat work.
+- Official SARB daily endpoint returns latest snapshot only: 2026-11-20, EXCX135D Rand per US Dollar = 17.4429. Official monthly endpoint returns three monthly indicators (effective exchange rates and real prime lending rate), not daily ZAR/USD Q2 observations; it is not a substitute.
+- The documented date-bounded and unbounded GetTimeseriesObservations routes remained inaccessible through the current retrieval surface; no Q2 observations, raw bytes, headers or SHA-256 captured.
+- Located the official Selected Historical Rates page with Start Date/End Date controls and CSV/XML/DOC/PDF download actions, but its rendered page does not expose the exact export request/URL. No export file or Q2 values captured.
+- Current Market Rates footnote describes a weighted-average exchange rate based on banks' daily rates at approximately 10:30am; this does not establish the BOP portfolio transaction conversion convention. No assumption made.
+- ZAF asset remains REVIEW / NOT PASS; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix gate changes.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_OFFICIAL_HISTORICAL_EXPORT_ROUTE_AUDIT_CONTINUATION216_20261121.md (commit ecd203f4e52781c1d1e3bc5023bfae39d12c3a38).
+- Next: identify the exact SARB-owned CSV/XML/PDF export request exposed by the Selected Historical Rates UI; capture Q2 daily EXCX135D bytes + SHA-256; independently establish BOP FX convention before asset reconciliation. ₹0; no IMF re-query/cohort rebuild, synthetic data, tolerance widening or production change; UNKNOWN never PASS.
