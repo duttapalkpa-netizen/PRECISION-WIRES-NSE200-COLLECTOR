@@ -1517,3 +1517,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official 22nd MPC page directly opens and shows “Télécharger”, but the extracted page link inventory exposes no attachment href/document URL. No URL guessed; no bytes/hash or Q2 portfolio observations captured.
 - GIN remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_GUINEA_GIN_Q2_2026_BCRG_MPC_DOWNLOAD_AFFORDANCE_AND_LINK_TARGET_ACCESS_GATE_CONTINUATION189_20261121.md` (commit 9bebc3da4f89d745c4599d0d0e4da39339c0f7ab).
 - Reopen only on a distinct official BCRG attachment/API export target; do not repeat static page inspection.
+
+
+## Continuation 190 — MNG NSO PxWeb API metadata-route recheck (2026-11-21)
+- Selected MNG's open C179 dependency after fresh preflight of Ledger/Queue/Registry/C189/MNG report/fixed cohort.
+- Official table metadata confirms quarterly BOP flow scope, Bank of Mongolia source, million USD, and Q2-2026 period example. Direct PxWeb v1 metadata URL tested but retrieval surface returned “URL not accessible”; no HTTP response/body/bytes/hash or indicator labels captured.
+- MNG remains PARTIAL / NOT PASS; national portfolio A/L NOT_CAPTURED; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_API_METADATA_ROUTE_RECHECK_CONTINUATION190_20261121.md` (commit b34c392e7cac13b24e260ee2bd5e3011004a5e13).
+- Do not repeat the same API URL through the same retrieval surface. Reopen only on a genuinely different official export/attachment capability.
