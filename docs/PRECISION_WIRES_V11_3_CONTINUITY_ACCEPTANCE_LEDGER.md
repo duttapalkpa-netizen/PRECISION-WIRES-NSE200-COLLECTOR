@@ -3588,3 +3588,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - ZAF asset remains REVIEW / NOT PASS; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix gate changes.
 - Detail: docs/GCR_ZAF_Q2_2026_SARB_OFFICIAL_HISTORICAL_EXPORT_ROUTE_AUDIT_CONTINUATION216_20261121.md (commit ecd203f4e52781c1d1e3bc5023bfae39d12c3a38).
 - Next: identify the exact SARB-owned CSV/XML/PDF export request exposed by the Selected Historical Rates UI; capture Q2 daily EXCX135D bytes + SHA-256; independently establish BOP FX convention before asset reconciliation. ₹0; no IMF re-query/cohort rebuild, synthetic data, tolerance widening or production change; UNKNOWN never PASS.
+
+## Continuation 217 — ZAF SARB Online Statistical Query export-family boundary (2026-11-21)
+- Preflighted and re-fetched the current Master Continuity Ledger, GCR Master Priority Queue, Historical Task Registry and controlling C215/C215A/C216 reports before selection. Existing PASS work was excluded.
+- Verified SARB's official Online Statistical Query workflow: KBP code/keyword search, available-version selection, frequency/date-range selection, and Excel/CSV/PDF/DOC exports for Quarterly Bulletin time series. The page documents the 29-Sep-2026 KBP1 Week 5 date-format change.
+- Explicit boundary: this KBP-prefixed Quarterly Bulletin export facility is not proven to expose daily FX series EXCX135D. No code mapping, export URL or Q2 FX payload was guessed or claimed. It is not a substitute for the daily SARB API series.
+- ZAF asset REVIEW / NOT PASS; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix gate changes, IMF re-query, cohort rebuild or production change.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_ONLINE_STATISTICAL_QUERY_EXPORT_FAMILY_BOUNDARY_CONTINUATION217_20261121.md.
+- Next C218: establish whether any official KBP daily USD/ZAR series is documented and independently inspect the Selected Historical Rates export request via a supported HTTP-capable route. ₹0; UNKNOWN never PASS.
