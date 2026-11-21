@@ -85,3 +85,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | LAO Lao PDR | NSDP https://www.lsb.gov.la/lsb-en.htm → XLSX https://www.bol.gov.la/statistics/BOP6_Lao%20PDR.xlsx ; SDMX XML https://www.bol.gov.la/statistics2/BOP6_Lao%20PDR.xml ; DSBB https://dsbb.imf.org/egdds/dqaf-base/country/LAO/category/BOP00 ; IMF registry https://sdmxcentral.imf.org/data/registrations.html | Continuation 173 report | XLSX/XML HTTP 502 on live click; DSBB generic dynamic shell; no LAO match in inspected IMF public registrations page; no bytes/hash/observations; PARTIAL | Closed for same direct links and same registry-page lookup | Distinct official BOL mirror/export, public NSDP data service, or new supported byte-transfer capability |
 - No conclusion that data are absent; no Q2 portfolio leg claims; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 174 — LKA Sri Lanka official Q2 BOP dual-leg source fingerprint (2026-11-21)
+| Country | Official route / fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| LKA Sri Lanka | Ministry of Finance Sri Lanka, Budget Economic and Fiscal Position Report–2027, issued 12-Nov-2026, official PDF https://treasury.gov.lk/api/file/04b45c52-3ded-4621-86c7-b8c67455c9d8 , Table 7 page 102, BOP 2026, USD mn, explicitly sourced to CBSL; Q2 provisional portfolio assets +26, liabilities -351 | Continuation 174 report | Separate legs present; both independently match archived IMF raw at whole USD-million rounding; same-vintage bridge and primary CBSL raw hash pending; strong reconciliation / provisional | Do not repeat Table 7 extraction; no Macro Lab secondary data; no IIP stock | Underlying CBSL Table 2.10 export/metadata or release revision date becomes accessible |
+- Archived IMF raw row values: assets +25,676,196.5415909 USD; liabilities -350,932,889.850796 USD. These round to national +26/-351 USD mn. National table values provisional. Aggregate NOT_AUTHORIZED.
