@@ -3529,3 +3529,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Corrected only CRI matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_COSTA_RICA_CRI_Q2_2026_SECMCA_BCCR_PORTFOLIO_DUAL_LEG_NUMERIC_RECONCILIATION_CONTINUATION148_20261121. CRI remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_COSTA_RICA_CRI_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION210_20261121.md`. Matrix commit `a442364f24dc3bfae527e2a6d3965613da9d1138`; matrix blob SHA `027d23b1a5ba868dad697d92061425d6c7915c37`; detail report commit `f42b0369004e20c3bc1034c64885683b4d64cc85`.
 - No SECMCA/BCCR re-fetch, IMF re-query/cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 211 — Ecuador ECU Q2-2026 matrix evidence-link reconciliation (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Task Registry, 63-country matrix and dedicated BCE report before selection. Rejected repeat numeric comparison and source retrieval.
+- Existing BCE report records Q2 assets -595.2 USDm and liabilities +1,000.3 USDm; residuals -0.03583203999 / -0.048809 USDm, both PASS at 0.1 USDm publication precision. National raw-file SHA-256 NOT_CAPTURED; same-vintage NOT_ESTABLISHED.
+- Corrected only ECU matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_ECUADOR_ECU_Q2_2026_BCE_PORTFOLIO_DUAL_LEG_NUMERIC_RECONCILIATION_CONTINUATION147_20261121. ECU remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_ECUADOR_ECU_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION211_20261121.md`; matrix commit `7ab32d8bb18a77b6c4ed8837a71fc4de2d8b444d`; matrix blob SHA-1 `15b89466d49e1f38c2d9c01a9dd3041f7971126b`; detail report commit `b48a52c2b92ad0a61e8df2a4f7920218b27568de`.
+- No BCE/IMF re-fetch, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
