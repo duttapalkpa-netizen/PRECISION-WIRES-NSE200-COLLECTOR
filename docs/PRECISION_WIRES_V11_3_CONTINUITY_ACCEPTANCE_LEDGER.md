@@ -2777,3 +2777,10 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - NPL: official NRB External Sector BPM6 workbook locator reconfirmed; direct XLSX MIME route fails. Distinct NSDP route tested: BOP Browse Data resolves to a general macro-report archive, while SDMX download is stale 2024-Q1 XML. No alternate current Q2 dataset/API route found; NPL separate national portfolio assets/liabilities NOT_EXTRACTED, PARTIAL/BLOCKED. Same routes must not be retried without a changed source surface.
 - RWA: official BNR portal search-indexed record lists 30-Jun-2026 Balance of Payment, BPM6; portal direct open is JS-only and exact document URL unresolved. August-2026 BNR summary table omits portfolio legs and is Q1 scope; H1 net-only +14 USDm and annual FY legs remain non-Q2 evidence. RWA remains PARTIAL/NOT PASS.
 - Batch report updated with both country outcomes. Next batch action: resolve BNR June-30 portal item via a genuinely supported document/API route; if unavailable, advance to SLV. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 131 — SLV BCR publication-calendar audit (2026-11-21)
+- Re-fetched latest Master Ledger, Priority Queue, immutable cohort, Batch-1 report and SLV country report; prior PASS work skipped.
+- New official BCR Revista Trimestral Abril–Junio 2026 located. Publication calendar schedules Q2-2026 Balance of Payments for 30-Sep-2026, but this is a scheduled release date only. Table II.2 in the PDF still contains 2025Q3, 2025Q4 and 2026Q1; Q1 portfolio assets +282.76 USDm and liabilities -56.61 USDm are not Q2 evidence.
+- BCR SDDS current Quarterly BOP Data Base link cdr=130 timed out. NSDP is stale (2022-12-23). No Q2 national portfolio legs/raw file/hash/vintage retrieved. SLV remains PARTIAL/BLOCKED; no inference from absent search snippets.
+- Next fixed-batch item SLB. No IMF re-query/cohort rebuild; ₹0; no production changes; UNKNOWN is never PASS.
