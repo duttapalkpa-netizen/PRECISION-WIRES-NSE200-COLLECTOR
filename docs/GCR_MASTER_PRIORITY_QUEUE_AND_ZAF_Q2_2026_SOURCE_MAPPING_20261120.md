@@ -1266,3 +1266,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - IMF archived CHL Q2 values: asset 5,098,898,918.11 USD SCALE=6; liability 5,397,501,758.8 USD SCALE=6. Diagnostic /1e6 is near BDE sums but not admitted as PASS; exact same-vintage cut-off and source raw bytes/SHA-256 remain missing. CHL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detailed report: docs/GCR_CHILE_CHL_Q2_2026_BCCH_BDE_MONTHLY_DUAL_LEG_VINTAGE_AUDIT_CONTINUATION160_20261121.md (commit df6d0252ef70c345308a1da44574671050f8141e).
 - Next: documented raw export/API capture for the two BCCh BDE series, with response bytes, timestamp, series codes, vintage metadata and SHA-256; then exact sign/scale/vintage reconciliation. If unavailable, retain PARTIAL and advance. No IMF re-query/cohort rebuild or production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 161 — Chapter 47 Part 9 priority update (2026-11-21)
+- CHL Part 8 established separate official monthly BDE portfolio asset/liability flows and Q2 arithmetic, but not immutable raw bytes. Part 9 confirms the official free REST API is account/token-gated; no authorized BDE token in context, so no API request was made. The public Canasta UI advertises Excel export, but export action and bytes remain NOT_EXECUTED/NOT_CAPTURED.
+- CHL stays PARTIAL / NOT PASS; raw SHA-256 and same-vintage metadata unresolved; aggregate NOT_AUTHORIZED.
+- Rank-1 next: authorized BDE API or Canasta Excel export capture if available; otherwise stop retrying credential-gated endpoint and advance to next eligible immutable-cohort country. Do not request/store secrets or change production. ₹0; UNKNOWN never PASS.
