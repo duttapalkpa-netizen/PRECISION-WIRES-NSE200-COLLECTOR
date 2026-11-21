@@ -1288,3 +1288,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 ## Continuation 164 — Chapter 47 Part 12 priority update (2026-11-21)
 - POL NBP methodology gate: official Sep-2023 methodological notes establish quarterly publication timing, September Q2 revision cycle (up to nine quarters), security-by-security source and portfolio transaction valuation, but do not specify exact Q2 portfolio transaction FX conversion rule. NBP Q2 release is Sep-30 vintage; IMF raw archive Nov-19; vintage equivalence NOT_ESTABLISHED.
 - Raw Q2 PDF download via new container route failed; raw SHA-256 not captured. POL retains PARTIAL / NOT PASS. Next: seek explicit official reporting-form FX conversion spec or matched-vintage USD dual-leg table; otherwise advance, no repeated PDF attempts or ad-hoc FX. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 165 — Chapter 47 Part 13 priority update (2026-11-21)
+- POL: Official NBP reporting notes v1.8 establish transaction FX rule for portfolio securities: actual exchange rate on transaction date (or §6 fallback actual rate / NBP average rate on preceding day); quarter-end average rate applies to end-period balances, not flows. PW-AIN and PW-RIN examples demonstrate trade-date rate distinctly from end-period rate.
+- This closes the methodology-rule discovery gap, but does not permit converting national Q2 PLN aggregate totals to USD without transaction-level currency/date weights or an official matched USD Q2 dual-leg aggregate. NBP PDF SHA-256 and Sep-30 NBP vs Nov-19 IMF same-vintage bridge remain open. POL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Next: seek official NBP Q2 USD dual-leg aggregate/series and vintage metadata; if unavailable, preserve PLN values and advance. No quarter-average/quarter-end/implied-rate aggregate conversion. ₹0; UNKNOWN never PASS.
