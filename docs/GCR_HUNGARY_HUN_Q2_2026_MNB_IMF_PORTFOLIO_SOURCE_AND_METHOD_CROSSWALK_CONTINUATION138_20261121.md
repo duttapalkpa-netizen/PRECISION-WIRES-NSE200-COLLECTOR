@@ -86,3 +86,12 @@ Status: Official national Q2 BOP source and separate portfolio legs captured; MN
 
 ## 8. Protected invariants
 ₹0; free official sources only. No synthetic data, fabricated timestamps, unapproved scale/sign conversion, stock-as-flow, net-to-leg back-solving, duplicate IMF requests, or cohort rebuild. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 139 addendum — MNB monthly-portfolio route bounded and closed (2026-11-21)
+- Rechecked official MNB Data and Time Series index: monthly BOP HUF and EUR data categories are listed as updated 13-Nov-2026. However the dedicated MNB “Monthly data” publication page explicitly states monthly dissemination covers selected estimates for goods/services, compensation and certain secondary income; monthly data are published only for the open quarter until quarterly release, and “monthly time series are not published.”
+- Therefore the index's monthly BOP labels do not establish a continuous monthly portfolio-asset/liability flow dataset. The inspected official monthly publication page does not offer monthly portfolio transaction legs for Apr/May/Jun 2026. MNB's prescribed monthly currency conversion method cannot be reproduced from this public route.
+- HUN monthly portfolio flow route: NOT_AVAILABLE / CLOSED after bounded official-source check. Do not repeatedly retry this same MNB monthly data page or infer monthly portfolio values from quarterly aggregates.
+- HUN remains: national separate-leg source PASS; methodology PASS; monthly portfolio inputs NOT_AVAILABLE; exact currency reconciliation NOT_DONE; IMF item equivalence NOT_ESTABLISHED; same-vintage NOT_ESTABLISHED; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Sources: MNB monthly-data page https://statisztika.mnb.hu/statistical-topics/balance-of-payments-and-related-statistics/balance-of-payments_-international-investment-postion/monthly-data ; MNB data/time-series index https://statisztika.mnb.hu/adatok-idosorok . Web evidence inspected 2026-11-21.
+- Next: retain HUN as PARTIAL; advance to another unvalidated fixed-cohort member. No synthetic monthly split, no quarterly FX shortcut, no IMF re-query.
