@@ -60,3 +60,10 @@ No netting, aggregation, imputation, forward-fill, synthetic observations, silen
 - After this documented mapping, BI Q2-2026 asset +1,488 USDm vs IMF +1,487.605237 USDm gives absolute residual 0.394763 USDm; liability +11,440 vs IMF +11,440.221642 USDm gives residual 0.221642 USDm. Both are within BI's ±0.5 USDm whole-million display-rounding bound.
 - The asset-sign gate and both numeric rounding checks are now PASS. Full IDN dual-leg national validation remains PARTIAL / NOT PASS because BI marks Q2 2026 as **Very Temporary** and exact BI↔IMF same-vintage identity / subsequent revision bridge remains NOT_ESTABLISHED. Aggregate remains NOT_AUTHORIZED.
 - Detailed C185 report: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_BPM5_TO_IMF_BPM6_SIGN_CROSSWALK_CONTINUATION185_20261121.md` (commit d7c62b821f7b7cb439c46cbc691eb674924b7099).
+
+
+## Continuation 186 superseding national-vintage addendum (2026-11-21)
+- The C185 sign mapping remains correct, but the older BI Q2** values in this base report are superseded for current national comparison by Bank Indonesia's Q3-2026 BOP report published 20-Nov-2026.
+- Latest official BI Q2 provisional portfolio legs: assets -1,466 USDm; liabilities +11,399 USDm; total +9,934 USDm (PDF Table 7 p.37). BI Box 1 p.28 says Q1–Q2 2026 portfolio data were updated due to LLD and ULN updates.
+- Reusing the IMF snapshot retrieved 19-Nov-2026 and applying the established BPM5→BPM6 bridge gives latest BI mapped values +1,466 and +11,399 versus IMF +1,487.605237 and +11,440.221642 USDm. Residuals +21.605237 / +41.221642 USDm exceed ±0.5 rounding. Same-vintage identity NOT_ESTABLISHED; overall PARTIAL / NOT PASS.
+- See C186 report `docs/GCR_INDONESIA_IDN_Q2_2026_BI_NOV2026_REVISION_VINTAGE_RECHECK_CONTINUATION186_20261121.md`. Aggregate NOT_AUTHORIZED.
