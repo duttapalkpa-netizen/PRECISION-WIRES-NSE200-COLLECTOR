@@ -110,3 +110,16 @@ Batch selection is grounded in existing unresolved reports, national-source avai
 - PER: national liability numeric PASS; asset full-sector coverage PARTIAL; overall PARTIAL / NOT PASS.
 - ROU: PARTIAL / NOT PASS; Q2 national legs NOT_CAPTURED.
 - Next: NPL, then RWA, SLV, SLB.
+
+
+## 8. Sequential execution update — NPL and RWA (Continuation 130, 2026-11-21)
+
+### NPL — distinct NRB NSDP route tested; no current Q2 export
+- Reopened NRB External Sector page; it lists Monthly Balance of Payments (BPM 6). The linked official September-2026 workbook remains the correct candidate, but direct retrieval still returns HTTP 400 unsupported XLSX MIME; no bytes/sheets/values/hash.
+- Tested NRB NSDP separately. Its BOP Browse Data link resolves to a general macroeconomic report archive, not a BOP series browser. Its SDMX Download link points to NEPAL_BOP_2024_Q1.xml, stale for Q2-2026 and unsupported by current XML retrieval. DSBB link is metadata only.
+- No alternate usable official Q2 export/API route found. Separate national portfolio assets/liabilities NOT_EXTRACTED; period basis/sign/unit/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE. NPL PARTIAL / BLOCKED. Do not retry identical XLSX, NSDP XML or wrong BFR monthly archive route. Advance to RWA.
+
+### RWA — BNR June-2026 portal locator rechecked
+- Official BNR External Sector portal search-indexed text lists “Balance of Payment” dated 30-Jun-2026 and states BPM6 compilation. Direct portal open returns a JavaScript-app shell; exact document URL/bytes remain unresolved.
+- Official BNR August-2026 Monetary Policy Report Table 2 is only a 2025Q1/2026Q1 summary BOP table, omits portfolio legs, and cannot validate Q2. Existing H1 net-only +14 USDm and annual fiscal-year separate legs are not Q2 evidence.
+- RWA Q2 A_NFA_T/L_NIL_T NOT_CAPTURED; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: resolve June-30 BNR item through supported route, otherwise advance to SLV.
