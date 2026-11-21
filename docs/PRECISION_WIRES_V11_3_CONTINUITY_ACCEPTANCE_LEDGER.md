@@ -3702,3 +3702,10 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Updated only AZE matrix note/evidence_ref to C225; preserved SOURCE_FOUND, data capture NO, A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
 - Matrix commit `b85f7d9cfc927b7301bf91591ae0b004d54a0282`; blob `9b1b7a82cf43455eaba82cd0a054e3976e734f5d`; C225 report commit `af4425511747a7dc3c91b68508e63023fe44d3f7`.
 - AZE remains PARTIAL / NOT PASS; combined portfolio+other rows are not admitted. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 226 — BDI BRB June-2026 monthly indicators source boundary (2026-11-21)
+- Preflighted current Master Ledger, GCR Priority Queue, Historical Task Registry, fixed 63-country cohort and BDI C155/C207 reports. Excluded completed C155 historical dual-leg table audit and C207 evidence-reference correction.
+- Inspected a distinct official BRB June-2026 “Indicateurs de conjoncture” PDF (18 pages). It covers trade/FX and macro-financial indicators, not BOP; “Balance des paiements” is absent. It provides no Q2 portfolio transaction asset/liability legs.
+- Created C226 source-boundary report: `docs/GCR_BURUNDI_BDI_Q2_2026_BRB_JUNE_2026_INDICATEURS_NON_BOP_SOURCE_BOUNDARY_CONTINUATION226_20261121.md`. BDI remains PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix change warranted.
+- No IMF re-query, cohort rebuild, synthetic data, stock-flow substitution, paid spend or production change. Protected V11.3 invariants unchanged; ₹0; UNKNOWN never PASS.
