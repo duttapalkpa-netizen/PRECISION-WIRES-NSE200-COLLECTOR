@@ -53,3 +53,25 @@ Decision: **SLV fixed-cohort membership PASS; country-specific BCR source-family
 
 ## 7. Protected invariants
 No cohort rebuild, no IMF re-query, no stock-as-flow, no stock-difference-as-transaction, no annual-to-quarter proration, no net-to-leg inference, no FX inference, no synthetic data, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS. Research spend ₹0.
+
+
+## Continuation 131 — BCR quarterly publication-calendar and Q2 release gate (2026-11-21)
+
+### New official-source findings
+- Re-fetched current Master Ledger, Priority Queue, fixed 63-country cohort, Batch-1 report and this SLV report before work. SLV remains the next fixed-batch item after NPL/RWA; prior stock/annual exclusions preserved.
+- Located and opened BCR's official **Revista Trimestral Abril–Junio 2026** PDF: https://www.bcr.gob.sv/documental/Inicio/vista/2482985c1d8a6b2f69742a62bfa1e402.pdf . It explicitly states that the statistical database may contain more recent information than the PDF (cover, lines 0–24).
+- The same PDF's official publication calendar schedules **Balanza de Pagos (Q2-2026 / T2-26) for 30-Sep-2026** (lines 503–510); it also schedules external debt, FDI and IIP Q2 data for the same date (lines 513–529). This proves a Q2 release was planned, not that the Q2 portfolio rows have been retrieved.
+- Its Table II.2 “Balanza de Pagos de El Salvador - Trimestral” still reports only 2025-Q3, 2025-Q4 and 2026-Q1 (table around lines 2317–2357); Q2 is absent from this PDF. For Q1-2026 the table has separate portfolio investment net acquisition of financial assets +282.76 USDm and net liabilities incurred -56.61 USDm, but these are Q1 only and are not admitted as Q2.
+- The BCR SDDS “Data Base” link for Quarterly Balance of Payments (cdr=130) was followed as a distinct current database route but timed out. The BCR NSDP page is explicitly last updated 2022-12-23 and cannot establish current Q2 data. Search/index queries for BCR Q2 portfolio rows returned no current official Q2 row. Do not treat lack of indexed results as proof of non-publication.
+- BCR's table notes its figures become final two years after the reference year and are published in the relevant Quarterly Magazine; the current Q2 vintage therefore remains preliminary. Exact national Q2 A_NFA_T/L_NIL_T values, publication vintage, raw bytes/hash and IMF row bridge remain NOT_CAPTURED.
+
+### Decision
+- Official national source family and Q2 publication-calendar target: PASS (discovery only).
+- Q2-2026 BCR portfolio asset transaction: NOT_CAPTURED.
+- Q2-2026 BCR portfolio liability transaction: NOT_CAPTURED.
+- BCR database direct fetch: BLOCKED (timeout); PDF Q2 table: NOT_PRESENT (latest rows stop at Q1-2026).
+- Sign/unit/concept and same-vintage crosswalk: NOT_ESTABLISHED.
+- Numeric comparison: NOT_DONE; SLV remains PARTIAL / BLOCKED; aggregate NOT_AUTHORIZED.
+- Next fixed-batch item: SLB — resolve CBSI Q2-2026 Table 1.17 sign/presentation conflict with primary methodology and archived exact IMF rows. Do not repeat BCR cdr=130 timeout or substitute IIP stocks / annual estimates.
+
+No IMF re-query, cohort rebuild, net-to-leg inference, stock-as-flow, annual-to-quarter allocation or production changes. ₹0; UNKNOWN is never PASS.
