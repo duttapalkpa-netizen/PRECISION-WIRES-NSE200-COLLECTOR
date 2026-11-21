@@ -986,3 +986,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No raw national Q2 file/hash; no annual-to-quarter allocation, sign inference, IMF re-query or cohort rebuild. VNM remains PARTIAL / NOT PASS; dual-leg NOT_DONE; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_VIETNAM_VNM_Q2_2026_SBV_OFFICIAL_QUARTERLY_SOURCE_CLOSURE_CONTINUATION124_20261121.md (commit 4e56a8919fb4478997dd624c8c0605df4bd70db8).
 - Next fixed cohort member WSM (Samoa), subject to preflight. ₹0; no production changes; UNKNOWN is never PASS.
+
+
+## CH. Samoa WSM — CBS Q2-2026 quarterly BOP portfolio source-boundary audit (Continuation 125, 2026-11-21)
+- Re-fetched Master Ledger, GCR queue, immutable 63-country cohort; WSM follows VNM; scoped repo search found no dedicated WSM Q2 national report.
+- Official CBS quarterly bulletin index says releases cover quarter-end data and are published with three-month delay. Latest listed June-2026 bulletin, but its contents/narrative explicitly cover March 2026 / Q1; Table B-1 columns stop at 2026-I. Table B-1 (Tala million) contains separate portfolio net/assets/liabilities and BPM6 note.
+- Q2-2026 national legs NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Annual forecasts, IMF Article IV estimates and IIP stocks rejected as substitutes.
+- Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_QUARTERLY_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION125_20261121.md (commit 92260e1155d537f6fe2f2cdc2d35fb50a35d79c9).
+- Next: locate a later CBS bulletin that actually reports June-2026 Q2; archive raw bytes/URL/time/size/SHA256 and extract Q2-II legs. If unavailable, preserve blocker and advance after preflight. ₹0; production unchanged; UNKNOWN is never PASS.
