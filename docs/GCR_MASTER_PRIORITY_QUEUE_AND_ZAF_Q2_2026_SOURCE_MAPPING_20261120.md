@@ -1664,3 +1664,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Read-back matrix: 63 rows; NOT_STARTED 0; SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Aggregate remains NOT_AUTHORIZED.
 - Detail: `docs/GCR_BOLIVIA_BOL_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION204_20261121.md`.
 - Next: select the next demonstrably stale matrix row only after checking current Ledger, Registry, full country report history and route fingerprint. Prefer an executable new official static/API route; do not retry closed routes or treat a status correction as country validation. ₹0; protected production invariants unchanged.
+
+
+## Continuation 205 — India IND Q2-2026 matrix evidence correction (2026-11-21)
+- Reused existing RBI Table 42 Apr-Jun 2026 release (23-Oct-2026), current-vintage supplement, archived exact IMF observations and comparison CSV; no re-fetch/re-query.
+- The prior IND matrix row was stale at SOURCE_FOUND despite 3/3 Q2 asset/liability/combined-net comparisons PASS within ±USD0.5m. Corrected IND to DATA_CAPTURED, asset PASS, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED.
+- Q2 residuals: assets -0.489413221 USDm; liabilities +0.240053743 USDm; combined net -0.270533037 USDm. RBI source raw HTML SHA-256 075c28122d588e5bce0ff45c8c8d5d8b453c53dc5b9a20f79d5cd3a6e54f5396; comparison CSV SHA 8ff2534dc730c822b20351530b9379fb86369cb2.
+- C187 India Q1 liability REVIEW (-1,512.508347 USDm residual) remains open; no all-period FULL_PASS. BOJ API C84-C85 is closed for repeated same-route probes.
+- Detail: docs/GCR_INDIA_IND_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION205_20261121.md.
+- Next: only seek new primary same-vintage/revision evidence for the open Q1 liability or vintage bridge; do not repeat completed Q2 comparison or BOJ inaccessible API route. ₹0; protected production invariants unchanged; UNKNOWN never PASS.
