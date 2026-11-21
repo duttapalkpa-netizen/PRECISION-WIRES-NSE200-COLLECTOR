@@ -3228,3 +3228,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - POL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No production changes; UNKNOWN never PASS.
 - Detail report: docs/GCR_POLAND_POL_Q2_2026_NBP_USD_DUAL_LEG_PUBLICATION_SEARCH_CLOSURE_CONTINUATION181_20261121.md (commit 5ab4cf466d2caab451674faa0d65666426ae5084).
 - Next: move to next fixed-cohort member with a genuinely unexhausted official national route after exact preflight. Reopen POL only on new official matched USD Q2 dual-leg publication or transaction-level dated/currency data.
+
+
+## Continuation 182 — Chapter 47 Part 30: MNE CBCG Bulletin 9/2026 BOP table-export locator (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Registry and MNE C180 report. Reused fixed 63-country cohort without rebuilding/requerying IMF; verified exact MNE row: A_NFA_T_PRESENT, L_NIL_T_PRESENT, BOTH_LEGS_PRESENT_IN_IMF_PANEL, NATIONAL_SOURCE_VINTAGE_VALIDATION_PENDING, NOT_AUTHORIZED. Cohort SHA-256 remains 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8.
+- Did not retry C180's blocked CBCG ZIP / MONSTAT NSDP XML / legacy Browse routes. Found a distinct official source: CBCG Bulletin 9/2026 PDF (65 pages), BOP section printed p.55/PDF p.54, explicitly advertises Tables 5.1–5.4 download tables. Methodology confirms quarterly EUR reporting, BPM6, transaction-day/monthly/annual average and period-end FX roles, and preliminary/revisable status; portfolio data are monitored via ITRS and surveys.
+- PDF does not contain separate Q2-2026 portfolio asset/liability observations; linked table payload URL/bytes/hash and numeric rows not captured. MNE remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_EXPORT_LOCATOR_CONTINUATION182_20261121.md (commit 6ec0f976e2a5fdb26c704b0991b5cd0e5f3fa888).
+- Next: resolve PDF embedded Tables 5.1–5.4 download annotations / distinct official table export, capture raw bytes and Q2 dual legs; if unavailable, do not repeat old C180 routes and advance cohort. No production changes; UNKNOWN never PASS.
