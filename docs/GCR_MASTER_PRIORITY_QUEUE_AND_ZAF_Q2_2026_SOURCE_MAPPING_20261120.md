@@ -1814,3 +1814,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - AZE matrix note/evidence_ref updated to C225; country gates preserved: national A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED. No IMF re-query/cohort rebuild.
 - Matrix commit `b85f7d9cfc927b7301bf91591ae0b004d54a0282`; blob `9b1b7a82cf43455eaba82cd0a054e3976e734f5d`; report commit `af4425511747a7dc3c91b68508e63023fe44d3f7`.
 - Reopen only on a distinct detailed Q2 export/API with portfolio separated from other investment for both legs.
+
+
+## Continuation 226 — BDI BRB June-2026 monthly indicators non-BOP boundary (2026-11-21)
+- Fresh preflight reused C155/C207 and excluded completed historical-table audit/evidence-link correction. Inspected a distinct official BRB June-2026 “Indicateurs de conjoncture” PDF (18 pages) from the official index.
+- PDF contents cover production, CPI, trade, FX, public finance, monetary/banking indicators; no BOP section. Full-text search for “Balance des paiements” returned no match. Trade and FX data are not portfolio transaction legs.
+- No Q2-2026 portfolio asset/liability values, BOP raw bytes, revision metadata or SHA-256 captured. BDI remains PARTIAL / NOT PASS; national legs NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- No matrix change because this is a source-family exclusion only; no IMF re-query/cohort rebuild or production change. Detail: `docs/GCR_BURUNDI_BDI_Q2_2026_BRB_JUNE_2026_INDICATEURS_NON_BOP_SOURCE_BOUNDARY_CONTINUATION226_20261121.md`. Reopen BDI only on a distinct official Q2 BOP dual-leg export with dated revision metadata. ₹0; UNKNOWN never PASS.
