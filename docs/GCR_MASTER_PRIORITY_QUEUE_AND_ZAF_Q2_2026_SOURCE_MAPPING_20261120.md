@@ -1021,3 +1021,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - COL new official BanRep SUAMECA multiple-download catalogue result lists separate quarterly portfolio net acquisition of assets and net incurrence of liabilities through Q2-2026 in USDm, update 2026-09-01. Page open returned 502; no raw export, series IDs or numeric values; PARTIAL/BLOCKED.
 - Full per-country next actions and evidence boundary are in docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md (commit 5a1952a9b3b89db59e4d9dbdc53760aa509aab02).
 - Next batch item: POL official NBP XLSX retrieval through a genuinely supported file route; if unavailable, record once and proceed to TUR. No IMF re-query/cohort rebuild. ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Batch 1 execution update — POL/TUR/PER/ROU (Continuation 129, 2026-11-21)
+- POL: direct official NBP XLSX browser fetch returned 400 unsupported content type; separate container download failed. BLOCKED; no raw bytes/hash.
+- TUR: direct official TCMB ZIP route inaccessible. BLOCKED for ZIP; existing asset numeric match remains displayed PASS; liability +87 USDm REVIEW; full validation PARTIAL.
+- PER: official BCRPData quarterly catalogue and three result pages re-opened. Q2-2026 private portfolio assets +1,749 USDm; private liabilities +279; public liabilities +1,421. Combined liabilities +1,700 vs IMF +1,699.664071, residual +0.335929 within ±0.5 = numeric PASS. Public portfolio asset-specific series absent from listed 25-series public block; full asset coverage PARTIAL. No raw API bytes/hash.
+- ROU: official BNR methodology confirms portfolio investment uses title-by-title monthly compilation at market value/accrual and distinguishes IIP stocks from BOP flows. No Q2 transaction-leg extract/raw bytes; PARTIAL.
+- Updated batch report: docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md, update commit d255c5bbeb286087a9a9ff185162f6372bcbe7ff.
+- Next: NPL NRB alternate API/export route; then RWA, SLV, SLB. No IMF query/cohort rebuild. ₹0; production unchanged; UNKNOWN never PASS.
