@@ -512,5 +512,40 @@ class QuarterlyResultsResearchTests(unittest.TestCase):
             self.assertEqual(len(report["duplicate_keys"]), 1)
 
 
+    def test_official_nse_archive_dot_in_filing_url_is_preserved_as_source(self):
+        row = {
+            "symbol": "ABC", "sm_isin": "INE123A01011",
+            "qe_Date": "30-SEP-2026", "broadcast_Date": "21-Nov-2026 14:04:23",
+            "consolidated": "Consolidated",
+            "xbrl": "https://nsearchives.nseindia.in/corporate/xbrl/ABC.xml",
+        }
+        normalized = stage.normalize_event(
+            row, "RESULT_DISCLOSURE",
+            "https://nseindia.in/api/integrated-filing-results?page=1")
+        self.assertEqual(normalized["SOURCE_URL"], row["xbrl"])
+        self.assertTrue(normalized["SOURCE_URL"].startswith(
+            ("https://www.nseindia.com/", "https://nsearchives.nseindia.com/",
+             "https://nsearchives.nseindia.in/")))
+
+    def test_official_nse_archive_dot_in_xbrl_can_resolve_isin_with_company_match(self):
+        from unittest.mock import MagicMock
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <xbrl xmlns="http://www.xbrl.org/2003/instance">
+          <ISIN contextRef="OneD">INE691G01015</ISIN>
+          <NameOfTheCompany contextRef="OneD">Impex Ferro Tech Limited</NameOfTheCompany>
+        </xbrl>"""
+        response = MagicMock()
+        response.content = xml
+        response.raise_for_status.return_value = None
+        row = {
+            "symbol": "IMPEXFERRO", "companyName": "Impex Ferro Tech Limited",
+            "xbrl": "https://nsearchives.nseindia.in/corporate/xbrl/official.xml",
+        }
+        with patch.object(stage, "_SECURITY_ISIN_MAP", {}), patch.object(
+            stage.requests, "get", return_value=response
+        ):
+            self.assertEqual(stage.security_isin("IMPEXFERRO", row), "INE691G01015")
+
+
 if __name__ == "__main__":
     unittest.main()
