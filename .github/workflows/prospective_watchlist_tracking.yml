@@ -47,6 +47,10 @@ jobs:
         run: python collector/nse_download.py --sessions 200
       - name: Strict per-file acquisition manifest and hash validation
         run: python qa/validate_acquisition_manifest.py --sessions 200
+      - name: Acquire legacy NSE equity master with source provenance
+        run: python collector/security_master.py
+      - name: Fail-closed security master provenance and freshness validation
+        run: python qa/validate_security_master.py
       - name: Build normalized adaptive dataset
         run: python collector/build_200_sessions.py
       - name: Strict dataset QA
@@ -210,6 +214,7 @@ jobs:
             data/raw/acquisition_manifest.json
             outputs/prospective/acquisition_manifest_validation.json
             data/reference/security_master.csv
+            data/reference/security_master_manifest.json
             outputs/prospective/watchlist_ledger.csv
             outputs/prospective/latest_picks.csv
             outputs/backtest/walk_forward_metrics.json
