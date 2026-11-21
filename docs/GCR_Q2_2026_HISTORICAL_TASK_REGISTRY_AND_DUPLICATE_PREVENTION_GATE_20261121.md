@@ -195,3 +195,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | GIN Guinea | BCRG 22nd MPC page https://www.bcrg-guinee.org/22eme-reunion-ordinaire-du-comite-de-politique-monetaire-de-la-republique-de-guinee/; visible “Télécharger” affordance | C189: `docs/GCR_GUINEA_GIN_Q2_2026_BCRG_MPC_DOWNLOAD_AFFORDANCE_AND_LINK_TARGET_ACCESS_GATE_CONTINUATION189_20261121.md` | Page PASS; attachment href/document URL NOT_EXPOSED; bytes/hash NOT_CAPTURED; Q2 separate portfolio legs NOT_CAPTURED; PARTIAL / NOT PASS | Do not guess URL or repeat same page extraction/static BOP page route | Distinct official attachment target or machine-readable BCRG export/API locator |
 - This is an access-boundary record, not proof that national data are absent. Aggregate NOT_AUTHORIZED.
+
+
+## Continuation 190 — Mongolia NSO PxWeb metadata API fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| MNG Mongolia | NSO PxWeb table `DT_NSO_0100_001V10_quarter`; exact API metadata route `https://data.1212.mn/api/v1/en/NSO/NSO__Economy%2C%20environment__Balance%20of%20Payments/DT_NSO_0100_001V10_quarter` | C190: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_API_METADATA_ROUTE_RECHECK_CONTINUATION190_20261121.md` | Table metadata PASS; API URL retrieval not accessible in current bridge; indicator labels/codebook and Q2 portfolio A/L NOT_CAPTURED; PARTIAL / NOT PASS | Do not repeat same API URL/surface or guess indicator codes | Different supported official export or NSO/Bank of Mongolia data attachment |
+- Q2-2026 national dual-leg validation remains incomplete; aggregate NOT_AUTHORIZED.
