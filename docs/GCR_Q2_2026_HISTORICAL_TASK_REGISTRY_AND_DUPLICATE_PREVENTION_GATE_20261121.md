@@ -230,3 +230,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | CHN China | SAFE BOP time-series page `https://www.safe.gov.cn/en/2019/0329/1496.html`; exact linked XLSX `https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx` | C194: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_OFFICIAL_TIMESERIES_WORKBOOK_LOCATOR_AND_RAW_ACCESS_GATE_CONTINUATION194_20261121.md` | Official href PASS; XLSX raw retrieval BLOCKED / NOT_CAPTURED; workbook cells and asset sign bridge NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not retry same unsupported MIME/download route or substitute IIP/net | Exact workbook retrievable through supported file workflow or distinct official machine-readable export |
 - Existing CHN magnitude checks remain unchanged; aggregate NOT_AUTHORIZED.
+
+
+## C194 correction — CHN English/Chinese SAFE XLSX duplicate route (2026-11-21)
+| Country | Route fingerprint | Evidence | Corrected status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| CHN China | SAFE English detail page `https://www.safe.gov.cn/en/2019/0329/1496.html` → XLSX `https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx`; Chinese attachment route previously recorded in C136 | C135 and C136 reports; C194 was a repeat of the known English XLSX endpoint | Locator already known; raw XLSX remains BLOCKED / NOT_CAPTURED; C194 DUPLICATE / NO PROGRESS | Do not retry either known English/Chinese XLSX via same unsupported retrieval surfaces | A genuinely different supported file-transfer path or distinct official dataset/export is available |
+- C136's COL next action is restored; inspect prior COL route history before any new action. Mandatory full preflight and read-back gate added to Master Ledger.
