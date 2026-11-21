@@ -3521,3 +3521,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Corrected only THA matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_THAILAND_THA_Q2_2026_BOT_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120. THA remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_THAILAND_THA_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION209_20261121.md`. Matrix commit `0c3e3c46b5d56678295e2e02dfe0f4637ccc9b78`; matrix blob SHA `a9162af9a86514eaf78f741ba5e8c5927da50a7d`. Detail report commit `0be627c2d5aed9f94e017e4752602f71ad406209`.
 - No BOT/IMF re-fetch, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 210 — Costa Rica CRI Q2-2026 matrix evidence-link correction (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Registry, 63-country matrix and dedicated SECMCA/BCCR report before selection; no repeat numeric work or source retrieval.
+- Existing report records Q2 portfolio assets +1,275.5 USDm and liabilities +1,167.5 USDm; residuals +0.04033796522 / -0.00633015469 USDm, both PASS at 0.1 USDm display precision. Direct BCCR raw-file SHA-256 and exact same-vintage bridge remain NOT_ESTABLISHED.
+- Corrected only CRI matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_COSTA_RICA_CRI_Q2_2026_SECMCA_BCCR_PORTFOLIO_DUAL_LEG_NUMERIC_RECONCILIATION_CONTINUATION148_20261121. CRI remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_COSTA_RICA_CRI_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION210_20261121.md`. Matrix commit `a442364f24dc3bfae527e2a6d3965613da9d1138`; matrix blob SHA `027d23b1a5ba868dad697d92061425d6c7915c37`; detail report commit `f42b0369004e20c3bc1034c64885683b4d64cc85`.
+- No SECMCA/BCCR re-fetch, IMF re-query/cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
