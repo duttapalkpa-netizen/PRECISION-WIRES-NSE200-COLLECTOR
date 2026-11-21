@@ -1561,3 +1561,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Retract C194's “newly recovered locator” characterization. Mark C194 DUPLICATE / NO PROGRESS. CHN remains PARTIAL / NOT PASS; do not repeat either known XLSX route on the same access surfaces.
 - Restore C136's next actionable item: COL — retrieve the already identified separate BanRep/SUAMECA quarterly portfolio asset and liability transaction series through a genuinely different supported route. Recheck current COL reports and route fingerprints first; do not repeat same 502/timeout catalogue route. No IMF GET/cohort rebuild.
 - All future selections must pass full Ledger/Queue/Registry + prior report + URL/API/file fingerprint preflight; skip PASS and exhausted routes before selecting the highest-value unfinished task.
+
+
+## Continuation 195 — MKD NBRNM PxWeb API metadata route boundary (2026-11-21)
+- Re-fetched Ledger/Queue/Registry and full MKD history; C184 was the only dedicated MKD report. Selected its open official ES-001 codebook/dual-leg extraction dependency; reused fixed cohort and archived IMF panel.
+- Tested a distinct PxWeb v1 metadata API path constructed from the exact official `.px` table URL. Retrieval surface returned inaccessible; no JSON/body/headers/bytes/hash. Do not repeat same route/surface.
+- MKD remains PARTIAL / NOT PASS; separate portfolio A/L cells and vintage bridge NOT_CAPTURED; aggregate NOT_AUTHORIZED. No IMF GET/cohort rebuild.
+- Detail: `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_API_METADATA_ROUTE_ACCESS_GATE_CONTINUATION195_20261121.md` (commit c85f91b43b4fae8941613b1f29b42e7ac20b7b5d).
+- Next: select next eligible fixed-cohort member after full prior-report and route-fingerprint preflight.
