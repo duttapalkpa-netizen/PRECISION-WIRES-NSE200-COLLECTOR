@@ -36,3 +36,14 @@ Completed a narrow evidence-link correction in the existing 63-country Q2-2026 n
 
 ## Next exact action
 Only pursue a distinct, accessible, versioned INDEC Q2-2026 SDMX-ML archive or dated source revision record. The previously tested text/xml transfer and Datos Argentina CSV route are closed for identical retries. If no genuinely new byte-capable official route is available, preserve vintage PENDING and advance to another eligible cohort member.
+
+
+## Read-back closure — 2026-11-21
+All five artifacts were re-fetched from the default branch after the writes:
+- Matrix: 63 data rows / 30 columns; ARG evidence_ref verified as the dedicated INDEC–IMF report; row remains DATA_CAPTURED / asset PASS / liability PASS / vintage PENDING / FULL_PASS NO / aggregate NOT_AUTHORIZED. Blob SHA-1: `1fa8a1e7c57b064ad58f51e6ae18ebe8c3336daf`.
+- Recomputed matrix stages: SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0. Independent gates: ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0. All 63 aggregate_admission values remain NOT_AUTHORIZED.
+- Detail report read-back blob SHA-1: `95e95fd2215fb264f2b298dce121e861e1301df3`.
+- Priority Queue read-back blob SHA-1: `af5aece9d9d1d64a28b691db2d5010974f92976f`.
+- Historical Registry read-back blob SHA-1: `adc74756c6243cb8f127f71455d5780527ee6e9f`.
+- Master Continuity Ledger read-back blob SHA-1: `df92b6865cb5df6811ddf0b3a83b987c445d03b7`.
+- C206 marker and ARG report reference were verified in the detail report, queue, registry and ledger. No numeric, vintage or aggregate status was promoted.
