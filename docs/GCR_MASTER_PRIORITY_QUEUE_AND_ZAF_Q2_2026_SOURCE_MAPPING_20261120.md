@@ -1792,3 +1792,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Corrected only the MNG national validation matrix evidence_ref to C221 and clarified its metadata/API boundary note. Preserved BLOCKED, both national legs NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
 - Final matrix commit `2074feae218e6890088d95412fbf7a1013c71bbf`; blob `b91df09667dc67b6b6fd595824606d324367b24f`. C222 report commit `7eea1f9e2341be21351a7e5201e95aa3c49a283b`.
 - Next: MNG remains closed absent official API manual/OpenAPI or official Q2 export. Select another eligible fixed-cohort member only after exact report/route preflight. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 223 — GEO NBG statistics-data route boundary and matrix evidence correction (2026-11-21)
+- New official NBG Statistics Data discovery surface confirms static Excel/interactive dashboards and title/code search; no accessible Q2 BOP table locator/API schema/payload found. C154's Q2 BPM5 release boundary and stale NSDP snapshot reused, not repeated.
+- Corrected GEO matrix evidence_ref to C154 and clarified unresolved national Q2 dual-leg capture; all gates preserved (SOURCE_FOUND, national data NO, A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED).
+- Matrix commit `9655247cb907dee8e4846bd9dd33e6b5d91f67c0`; blob `de7b182d3a3debee674c35c1e9fd980e99ab83b3`; C223 report commit `e279d4262f50e73311d1e306c812efb7909fdf67`.
+- Next: GEO remains PARTIAL; reopen only on an exact official Q2 BOP export/API locator and raw data. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
