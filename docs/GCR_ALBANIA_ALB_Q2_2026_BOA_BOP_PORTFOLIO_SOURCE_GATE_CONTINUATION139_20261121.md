@@ -57,3 +57,40 @@ Status: Fixed-cohort and official quarterly BOP route PASS; separate portfolio a
 
 ## 6. Protected invariants
 ₹0; free official sources only. No synthetic data, no fabricated values/timestamps, no IIP stocks as BOP flows, no net-to-leg back-solving, no unsupported FX/sign/scale transform, no repeated IMF requests. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 140 — ALB BPM6 sign, FX and revision gates; interactive export boundary (2026-11-21)
+
+### Official methodology/sign crosswalk — PASS
+- Bank of Albania External Sector Statistics page states Albania's BOP is compiled according to IMF BPM6 and explicitly distinguishes BOP transactions over a period from IIP asset/liability stocks at a point in time.
+- Bank of Albania's official 2014 “Commentary for changes in the publication of external sector statistics according to BPM6” states for the financial account: increases in assets and liabilities carry positive signs; decreases in assets and liabilities carry negative signs; financial-account balance is change in assets minus change in liabilities. This is a directly relevant national sign-convention document, not an inferred generic rule.
+- IMF GDDS/DQAF Albania BOP metadata states data are published in EUR millions; transactions in other currencies are converted to ALL using monthly exchange rates applicable at transaction time; financial transactions are recorded on accrual basis; revision policy is published in methodological notes and revisions occur at fixed publication moments. It also says the time-series table can be downloaded in Excel and the online dynamic table can be copied to Excel.
+- These establish the broad BPM6 sign and conversion framework, but not the exact Q2-2026 values, observation-level revision vintage, or item-by-item IMF series equivalence.
+
+### Exact value extraction — retrieval boundary
+- Reopened official Bank of Albania Main data page (cregtab_id=645). It exposes the quarterly BOP dataset, EUR-million unit, period controls and portfolio rows C.2.A / C.2.L with equity/debt children. Official page metadata says data updated 10-Sep-2026.
+- Web-readable response exposes the index and interactive controls only; it does not return the selected quarter's observation cells or downloadable workbook bytes. No numeric C.2.A/C.2.L Q2 values, export bytes, retrieval receipt, or national SHA-256 were captured.
+- This is a limitation of the current retrieval channel, not evidence that Bank of Albania does not publish the values. The IMF DQAF says the detailed time-series tables are downloadable as Excel and the dynamic HTML table is copyable to Excel. Therefore the next valid route is a supported interactive browser/Excel export, not a guessed API endpoint.
+- No values were invented; no net-to-leg back-solving; no IIP-stock substitution; no parent/child double counting.
+
+### Updated acceptance
+| Gate | Status |
+|---|---|
+| Official Q2 BOP dataset / quarterly / EURm / update 10-Sep-2026 | PASS |
+| C.2.A and C.2.L separate hierarchy | PASS |
+| BPM6 national financial-account sign rule | PASS |
+| Transaction FX basis / accrual / revision policy metadata | PASS (general methodology only) |
+| Exact national Q2 C.2.A / C.2.L observations | NOT_CAPTURED |
+| Raw export bytes / national SHA-256 | NOT_CAPTURED |
+| IMF archived Q2 rows | PASS (reused; no new request) |
+| Numeric dual-leg reconciliation | NOT_DONE |
+| Exact source-vintage bridge | NOT_ESTABLISHED |
+| Full ALB validation | PARTIAL / NOT PASS |
+| Aggregate admission | NOT_AUTHORIZED |
+
+### Next action
+- Obtain official Bank of Albania interactive table export through a supported browser/Excel route (owner-side export is an acceptable recovery path). Preserve original workbook/HTML, retrieval UTC, source page URL and SHA-256. Extract only Q2 2026 C.2.A and C.2.L plus C.2.A.1/.2 and C.2.L.1/.2; reconcile parent-child totals without double counting. Then compare separately with existing IMF rows, retaining raw values and explicit conversion/vintage status.
+- If interactive export is unavailable, keep ALB PARTIAL and move to the next unvalidated member of the fixed 63-country cohort. No IMF re-query or cohort rebuild.
+
+### Protected invariants
+₹0; official/free sources only. No synthetic data, fabricated timestamps, guessed API, net-to-leg inference, stock-as-flow, unapproved FX/sign/scale transform, duplicate IMF requests, cohort rebuild, or production changes. UNKNOWN is never PASS.
