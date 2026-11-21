@@ -1404,3 +1404,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - C174 national Treasury values remain provisional +26/-351 USD mn; C175 same-vintage bridge still NOT_ESTABLISHED. Primary CBSL workbook bytes/hash NOT_CAPTURED; LKA remains strong dual-leg reconciliation / provisional, not final PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_SRI_LANKA_LKA_Q2_2026_TABLE210_SERIES_CROSSCHECK_AND_REVISION_RISK_CONTINUATION176_20261121.md (commit 1df18af6c399d01d92962180bf1502fc8fe4e24b).
 - Next: seek genuinely different official CBSL/SDDS raw export and exact release-vintage metadata; if none, close LKA retrieval as PARTIAL and advance after preflight. No production changes, ₹0; UNKNOWN never PASS.
+
+
+## Continuation 177 — Chapter 47 Part 25: LKA official SDDS alternate BOP workbook route (2026-11-21)
+- Re-fetched Master Ledger, Priority Queue, Historical Registry, C174–C176 and fixed cohort before work. LKA remains cohort member; no IMF re-query/cohort rebuild. Prior Table 2.10 XLSX and Macro Lab HTML routes not repeated.
+- CBSL official SDDS/NSDP page https://www.cbsl.gov.lk/en/node/1809 was reopened. It explicitly says “Last Updated On: 11th November 2017”; its BOP rows display Q2/17 observations. The BOP “More Data” link 191 resolves to distinct official file https://www.cbsl.gov.lk/sites/default/files/cbslweb_documents/statistics/sdds/BOP.xlsx.
+- The click returned HTTP 400 unsupported content-type for XLSX; container download failed. No bytes, headers, workbook sheets, Q2-2026 rows or SHA-256. The separate erd.cbsl.gov.lk SDDS portal click timed out HTTP 400.
+- Important: BOP.xlsx is a valid official alternate locator, but the linked NSDP page is stale 2017; no evidence the workbook contains Q2-2026. Route discovery PASS only; currentness/data NOT_VERIFIED. LKA remains strong provisional reconciliation, not final PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_SRI_LANKA_LKA_Q2_2026_SDDS_BOP_OFFICIAL_ALTERNATE_WORKBOOK_ROUTE_CONTINUATION177_20261121.md (commit 392722448bcea6ed8697efad140dc8b986508b9e).
+- Next: inspect workbook only if a genuinely new supported byte-transfer route becomes available; otherwise close stale legacy route and advance to next fixed-cohort member after full preflight. No production changes, ₹0; UNKNOWN never PASS.
