@@ -1413,3 +1413,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Important: BOP.xlsx is a valid official alternate locator, but the linked NSDP page is stale 2017; no evidence the workbook contains Q2-2026. Route discovery PASS only; currentness/data NOT_VERIFIED. LKA remains strong provisional reconciliation, not final PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_SRI_LANKA_LKA_Q2_2026_SDDS_BOP_OFFICIAL_ALTERNATE_WORKBOOK_ROUTE_CONTINUATION177_20261121.md (commit 392722448bcea6ed8697efad140dc8b986508b9e).
 - Next: inspect workbook only if a genuinely new supported byte-transfer route becomes available; otherwise close stale legacy route and advance to next fixed-cohort member after full preflight. No production changes, ₹0; UNKNOWN never PASS.
+
+
+## Continuation 178 — Lesotho (LSO) CBL BPM6 portfolio source boundary (2026-11-21)
+- LSO is in the immutable 63-country 2026-Q2 dual-leg cohort; no dedicated LSO national portfolio dual-leg report found in scoped repository search. No cohort rebuild/IMF re-query.
+- Official CBL Statistical Research Portal BOP6 catalogue lists `BPI_BPM6_XDC` Portfolio investment in Million Maloti as a single aggregate series; no separate portfolio assets/liabilities series or equity/debt children are exposed in that category.
+- CBL Quarterly Economic Review September-2025 Table 19 reports Portfolio Investments net only and ends Q3-2025. It is not Q2-2026 evidence.
+- Net-only BPI and government-finance foreign asset/liability balance-sheet series rejected as dual-leg substitutes. No back-solving or unsupported conversion.
+- LSO PARTIAL / NOT PASS; national Q2-2026 dual legs NOT_CAPTURED; aggregate NOT_AUTHORIZED.
+- Detail report: `docs/GCR_LESOTHO_LSO_Q2_2026_CBL_BPM6_PORTAL_PORTFOLIO_DUAL_LEG_SOURCE_BOUNDARY_CONTINUATION178_20261121.md` (commit `683d34767c3a8ec8b75b470ca8c704469582d418`).
+- Next: only reopen LSO on a genuinely new official detailed Q2 dual-leg route; otherwise select next cohort member after full duplicate-prevention preflight.
