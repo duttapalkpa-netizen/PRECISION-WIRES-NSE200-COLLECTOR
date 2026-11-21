@@ -138,7 +138,7 @@ def security_isin(symbol, row):
                         isin_value = str(rr["ISIN"]).strip().upper()
                         source_url = str(rr["SOURCE_URL"]).strip()
                         evidence_type = str(rr["EVIDENCE_TYPE"]).strip().upper()
-                        if (symbol_key and isin_value and source_url.startswith(("https://nsearchives.nseindia.com/", "https://www.kundanmineralsandmetals.com/"))
+                        if (symbol_key and isin_value and source_url.startswith(("https://nsearchives.nseindia.com/", "https://nsearchives.nseindia.in/", "https://www.kundanmineralsandmetals.com/"))
                                 and evidence_type in {"OFFICIAL_NSE_IXBRL", "OFFICIAL_NSE_PRESS_RELEASE", "OFFICIAL_NSE_CIRCULAR", "OFFICIAL_ISSUER_FILING"}):
                             # Conflicting official identifiers remain unresolved.
                             existing = _SECURITY_ISIN_MAP.get(symbol_key)
@@ -211,7 +211,7 @@ def security_isin(symbol, row):
         "ixbrlfile", "ixbrlfileurl", "ixbrlfilepath", "attchmntfile",
         "attachment", "attachmenturl", "pdfurl", "fileurl"
     ]) or first(row, ["sourceurl"])).strip()
-    if not attachment.startswith(("https://nsearchives.nseindia.com/", "https://archives.nseindia.com/")):
+    if not attachment.startswith(("https://nsearchives.nseindia.com/", "https://nsearchives.nseindia.in/", "https://archives.nseindia.com/")):
         return ""
     try:
         response = requests.get(attachment, headers=HEADERS, timeout=(5, 15))
@@ -302,7 +302,7 @@ def normalize_event(row, kind, source_url):
         "BROADCAST_AT": broadcast, "PUBLICATION_TIMESTAMP": publication_timestamp,
         "ORIGINAL_BROADCAST_AT": original_broadcast, "REVISION_TIMESTAMP": revision_timestamp,
         "MEETING_DATE": meeting, "PERIOD_END": period,
-        "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if (attachment.startswith("https://www.nseindia.com/") or attachment.startswith("https://nsearchives.nseindia.com/")) else source_url,
+        "ATTACHMENT_URL": attachment, "SOURCE_URL": attachment if (attachment.startswith("https://www.nseindia.com/") or attachment.startswith(("https://nsearchives.nseindia.com/", "https://nsearchives.nseindia.in/"))) else source_url,
         "SOURCE_RECORD_SHA256": digest(row), "OBSERVED_AT_UTC": now_utc(),
         "RAW_RECORD_JSON": json.dumps(row, sort_keys=True, default=str),
     }
@@ -624,7 +624,7 @@ def main():
             target.extend(normalized)
             for item in normalized:
                 fields = {
-                    "source_url": (str(item.get("SOURCE_URL", "")).startswith("https://www.nseindia.com/") or str(item.get("SOURCE_URL", "")).startswith("https://nsearchives.nseindia.com/")),
+                    "source_url": (str(item.get("SOURCE_URL", "")).startswith("https://www.nseindia.com/") or str(item.get("SOURCE_URL", "")).startswith(("https://nsearchives.nseindia.com/", "https://nsearchives.nseindia.in/"))),
                     "publication_timestamp": bool(parse_date(item.get("PUBLICATION_TIMESTAMP") or item.get("BROADCAST_AT"))),
                     "reporting_period": bool(str(item.get("PERIOD_END", "")).strip()) if kind == "RESULT_DISCLOSURE" else True,
                     "symbol": bool(re.fullmatch(r"[A-Z0-9&._-]{1,30}", str(item.get("SYMBOL", "")))),
