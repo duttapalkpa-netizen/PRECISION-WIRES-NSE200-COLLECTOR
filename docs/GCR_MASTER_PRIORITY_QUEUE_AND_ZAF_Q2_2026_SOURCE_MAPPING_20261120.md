@@ -1476,3 +1476,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - NBRNM methodology and revision PDFs linked from PxWeb returned 403 via the available retrieval path. MKD remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_AND_SSO_PORTFOLIO_SOURCE_BOUNDARY_CONTINUATION184_20261121.md` (commit 049aa09b4dd0df397364cd16fc76f5160eefd00c).
 - Next: retrieve NBRNM full table metadata/codebook and Q2-2026 portfolio asset/liability observations through a supported official export/API path; preserve bytes, MIME, UTC timestamp, hash and vintage. If unavailable, retain PARTIAL and move to next eligible cohort member after full preflight.
+
+
+## Continuation 185 — Indonesia (IDN) BI BPM5-to-IMF BPM6 sign crosswalk (2026-11-21)
+- Selected the open actionable dependency in the existing IDN report after fresh Master Ledger / Priority Queue / Historical Registry / cohort / exact-key receipt preflight. No later IDN follow-up report was found. Reused archived IMF exact-key rows; no IMF re-query or cohort rebuild.
+- Bank Indonesia's official BOP metadata explicitly says data are compiled using BPM6 concepts but published financial-account asset/liability sides remain presented under BPM5 as net inflow/outflow (positive inflow/credit, negative outflow/debit). IMF BPM6 Compilation Guide Table 8.10 supplies the exact sign conversion: BPM5 asset increases negative vs BPM6 asset increases positive; liability increases positive in both.
+- Therefore reverse BI's asset sign only and retain BI's liability sign. Mapped BI assets +1,488 USDm vs IMF +1,487.605237 (absolute residual 0.394763); liabilities +11,440 vs IMF +11,440.221642 (residual 0.221642). Both within ±0.5 USDm BI whole-million rounding. No net-to-leg back-solving.
+- Sign bridge and both numeric checks PASS. BI Q2 2026 is explicitly **Very Temporary**; same-vintage/revision identity remains NOT_ESTABLISHED. IDN overall PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_BPM5_TO_IMF_BPM6_SIGN_CROSSWALK_CONTINUATION185_20261121.md` (commit d7c62b821f7b7cb439c46cbc691eb674924b7099).
+- Next: inspect subsequent official BI SEKI V.7 Q2-2026 vintages/revision markers and establish same-vintage match; retain overall PARTIAL until evidenced.
