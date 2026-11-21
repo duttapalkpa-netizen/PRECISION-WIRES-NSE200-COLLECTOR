@@ -459,3 +459,9 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - ZAF asset REVIEW / NOT PASS; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix gate changes, IMF re-query, cohort rebuild or production change.
 - Detail: docs/GCR_ZAF_Q2_2026_SARB_ONLINE_STATISTICAL_QUERY_EXPORT_FAMILY_BOUNDARY_CONTINUATION217_20261121.md.
 - Next C218: establish whether any official KBP daily USD/ZAR series is documented and independently inspect the Selected Historical Rates export request via a supported HTTP-capable route. ₹0; UNKNOWN never PASS.
+## Continuation 218 — ZAF official SARB KBP5339M monthly USD/ZAR series verification (2026-11-21)
+- Preflighted current Master Ledger, GCR Priority Queue, Historical Task Registry and C216/C217. Completed daily API discovery, matrix correction and C217 export-family boundary were excluded from repeat work.
+- Official SARB September 2026 Quarterly Bulletin, External economic accounts, p. S-114, identifies the USA Dollar monthly-average middle-rate series as (5339M), in SA cents per USD. Footnote: weighted average of banks' daily rates at approximately 10:30, weighted by banks' FX transactions.
+- Q2 values verified: April 1,653.90 cents = R16.5390/USD; May 1,648.06 = R16.4806/USD; June 1,639.70 = R16.3970/USD. No quarterly aggregation.
+- This is monthly KBP5339M, not daily API EXCX135D. The 10:30 footnote does not establish BOP portfolio-transaction conversion convention. Daily history and BOP methodology remain NOT_ESTABLISHED; ZAF asset REVIEW / NOT PASS; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_KBP5339M_OFFICIAL_MONTHLY_USD_ZAR_SERIES_VERIFICATION_CONTINUATION218_20261121.md. Next C219: verify any official daily USD/ZAR series separately and locate current SARB BOP portfolio FX conversion methodology. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
