@@ -3668,3 +3668,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Hypothesis/test: acquired bytes were omitted by artifact packaging/retention. Inspect only an existing authorized archive and reconcile all 200 expected raw-file entries; do not redownload or fabricate. Expected artifact: raw-source recovery receipt, per-file URL/time/byte-count/SHA-256 manifest and inventory reconciliation. Sample: 200 logged sessions, 2,999 symbols; no proof of raw-byte retention; current cohort immature. Limitation/blocker: archive location not verified. Acceptance OPEN / NOT_ACCEPTED.
 
 No new lesson IDs were created by this detail append; all entries remain Observation-only. Next nightly review must read the original entries and this addendum before selecting work.
+
+
+## Continuation 222 — MNG matrix evidence-reference/read-back correction (2026-11-21)
+- Re-fetched current Master Ledger, GCR Priority Queue, Historical Task Registry, immutable 63-country cohort, national validation matrix and C221 report. Excluded C221 API-contract work from repetition.
+- Found MNG matrix row still had `NO_DEDICATED_REPORT_REF_IN_BASELINE` despite the dedicated C221 official API-contract boundary report. Corrected only its evidence_ref and descriptive note.
+- Preserved BLOCKED; source FOUND; data capture NO; asset/liability NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. No country gate promotion.
+- Matrix update commits: initial note edit `67a11f26d6f10cd9e4666bfe5d044051ef4c5054` was immediately corrected for CSV field quoting; final valid CSV commit `2074feae218e6890088d95412fbf7a1013c71bbf`, blob SHA `b91df09667dc67b6b6fd595824606d324367b24f`.
+- Detail report: `docs/GCR_MONGOLIA_MNG_Q2_2026_MATRIX_EVIDENCE_REFERENCE_AND_API_BOUNDARY_READBACK_CONTINUATION222_20261121.md`; report commit `7eea1f9e2341be21351a7e5201e95aa3c49a283b`.
+- No API retry, IMF re-query, cohort rebuild, national data capture or production change. ₹0; UNKNOWN never PASS.
