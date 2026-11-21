@@ -1576,3 +1576,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No API retry: prior exact route is inaccessible through current retrieval bridge. No Q2 observations/raw bytes/hash captured. Do not add aggregate public assets to private portfolio assets or treat IIP stocks/net totals as substitutes.
 - PER remains PARTIAL / NOT PASS; full national asset scope NOT_ESTABLISHED; aggregate NOT_AUTHORIZED. Detail: docs/GCR_PERU_PER_Q2_2026_BCRP_CATALOGUE_REFRESH_AND_PUBLIC_ASSET_SCOPE_GATE_CONTINUATION196_20261121.md.
 - Reopen only on a distinct official public-sector portfolio-asset transaction series or explicit full-economy scope statement; otherwise advance after full history/route preflight.
+
+
+## Continuation 197 — ROU BNR Interactive Database route discovery (2026-11-21)
+- C95/C96 and full route history rechecked; same ECB SDW API endpoints remain closed and were not retried. New distinct official route: BNR Interactive Database https://www.bnr.ro/en/2550-interactive-database. IMF DSBB metadata confirms detailed BOP data are disseminated through Statistics → Interactive Database and Statistics → Data Sets.
+- The BNR landing page is a JS shell in this text retrieval; no table locator, Q2 portfolio A/L observations, export bytes, receipt or SHA-256 captured. Route-discovery PASS only; ROU remains PARTIAL / NOT PASS; external-custodian portfolio coverage caveat remains.
+- Detail: docs/GCR_ROMANIA_ROU_Q2_2026_BNR_INTERACTIVE_DATABASE_OFFICIAL_ROUTE_DISCOVERY_CONTINUATION197_20261121.md. Next: use JS-capable interactive browser to export exact Q2 separate portfolio A/L rows and preserve native bytes/metadata/hash; if unavailable, advance without retrying ECB endpoints.
