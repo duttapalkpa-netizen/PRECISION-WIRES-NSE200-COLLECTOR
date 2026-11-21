@@ -1283,3 +1283,8 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - POL Q2 blocker partially resolved: distinct official NBP Q2 release (30-Sep-2026) Appendix 1 publishes separate portfolio assets 24,144 mn PLN and liabilities 70,910 mn PLN, with equity/debt components summing exactly to each leg. Prior bopa_en.pdf date mismatch does not apply to this separate Q2 PDF.
 - Existing IMF exact values reused: +USD6,602m assets and +USD19,391m liabilities. NBP PDF raw-byte SHA-256 not captured; transaction USD/PLN conversion method and same-vintage bridge not established. No cross-currency comparison; POL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Rank-1 next: obtain NBP PDF raw bytes/hash and authoritative transaction FX/vintage bridge or matched USD legs. If no route, preserve captured PLN legs and advance to next eligible country. Do not retry known NBP XLSX unsupported route. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 164 — Chapter 47 Part 12 priority update (2026-11-21)
+- POL NBP methodology gate: official Sep-2023 methodological notes establish quarterly publication timing, September Q2 revision cycle (up to nine quarters), security-by-security source and portfolio transaction valuation, but do not specify exact Q2 portfolio transaction FX conversion rule. NBP Q2 release is Sep-30 vintage; IMF raw archive Nov-19; vintage equivalence NOT_ESTABLISHED.
+- Raw Q2 PDF download via new container route failed; raw SHA-256 not captured. POL retains PARTIAL / NOT PASS. Next: seek explicit official reporting-form FX conversion spec or matched-vintage USD dual-leg table; otherwise advance, no repeated PDF attempts or ad-hoc FX. ₹0; UNKNOWN never PASS.
