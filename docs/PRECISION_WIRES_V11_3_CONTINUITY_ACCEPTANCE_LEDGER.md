@@ -3561,3 +3561,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Preserved SOURCE_FOUND; data_capture NO; asset/liability NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. No numeric or country gate promotion.
 - Detail: `docs/GCR_CABO_VERDE_CPV_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION214_20261121.md`; report commit `f0483d5696df1122b98195e273de5b0363d58cdf`.
 - No BCV XLS retry, IMF re-query, cohort rebuild, synthetic data or production changes; ₹0; protected invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 215 — ZAF official SARB daily FX API route discovery (2026-11-21)
+- Preflighted current Master Ledger, Priority Queue, Historical Task Registry and 63-country matrix; reopened controlling ZAF reconciliation and C127 FX boundary. Existing liability PASS and asset REVIEW were not recalculated.
+- Discovered official SARB OpenAPI contract: `GET /WebIndicators/HistoricalExchangeRatesDaily`; live snapshot identifies “Rand per US Dollar”, series `EXCX135D`, latest observation 2026-11-20 = 17.4429. OpenAPI also documents date-bounded `GetTimeseriesObservations/{timeseriesCode}/{startDate}/{endDate}`.
+- Attempted Q2 2026 date-bounded endpoint; current retrieval channel returned inaccessible/internal error. No Q2 rows, raw bytes/hash or response metadata captured. This is a retrieval-channel boundary, not proof SARB lacks the data. BOP transaction FX convention remains NOT_ESTABLISHED; ZAF asset REVIEW / NOT PASS; aggregate NOT_AUTHORIZED.
+- Updated only ZAF matrix descriptive note; all stage/gate fields preserved. Matrix commit `95540297274a9a6f001e7b0f49dd47050f5acce2`; blob SHA-1 `3758ed7d60f65fffeffbd43d7228ffeb92bbc3f6`.
+- Detail: `docs/GCR_ZAF_Q2_2026_SARB_OFFICIAL_DAILY_FX_API_ROUTE_DISCOVERY_CONTINUATION215_20261121.md`; report commit `51b16cb4e839ca32337be1c6e1becfa4739f4a7f`.
+- Next: obtain the documented historical payload through a supported HTTP/API-capable route; validate dates/coverage and only use a daily mean if SARB's BOP conversion convention supports it. No IMF re-query/cohort rebuild, synthetic data, tolerance widening or production change; ₹0; UNKNOWN never PASS.
