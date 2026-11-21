@@ -325,3 +325,12 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - The earlier C201 CSV commit blob SHA `45e466c72c034d460dfccf57474b07bfb6d12ea9` is a prior intermediate snapshot; use the final read-back blob SHA above.
 - Recomputed from the final CSV: NOT_STARTED 1; SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; ASSET_PASS 15; LIABILITY_PASS 15; VINTAGE_PASS 0; FULL_PASS 0. Cohort membership remains exact 63/63.
 - Interpretation unchanged: 40 are below DATA_CAPTURED; 23 have national data recorded but remain short of FULL_PASS; all 63 remain not fully accepted; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 202 — Nigeria NGA historical evidence reconciliation (2026-11-21)
+- Existing report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_NIGERIA_20261119.md` was inspected; CBN Q2-2026 BOP Highlights national source and both portfolio legs are already captured. Six comparisons (assets/liabilities across Q2-2025, Q1-2026, Q2-2026) PASS within the report's ±USD 5m rounding tolerance. Q2-2026 is provisional; same-vintage bridge remains pending.
+- Corrected stale NGA row in `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`: DATA_CAPTURED; ASSET_PASS; LIABILITY_PASS; VINTAGE_PENDING; FULL_PASS=NO; aggregate NOT_AUTHORIZED. evidence_ref now points to the Nigeria report.
+- Final matrix blob SHA-1 after read-back pending: `f9d68b4a24d92c41e6c72db776d89254a8f6d7de`.
+- Detail: `docs/GCR_NIGERIA_NGA_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION202_20261121.md`.
+- Recomputed stages after this single-country correction: SOURCE_FOUND 19; DATA_CAPTURED 24; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 16; LIABILITY_PASS 16; VINTAGE_PASS 0; FULL_PASS 0. Below DATA_CAPTURED: 39. Counts are not additive across independent gates.
+- No IMF re-query/cohort rebuild; aggregate remains NOT_AUTHORIZED; ₹0; all production invariants unchanged; UNKNOWN never PASS.
