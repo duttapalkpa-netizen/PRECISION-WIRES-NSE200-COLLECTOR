@@ -223,3 +223,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | IDN Indonesia | Repository archive docs/evidence/imf_bop_emde_20261119/exact_sample_checks/summary.json; 19-Nov-2026 IMF raw asset/liability receipts | C193: docs/GCR_INDONESIA_IDN_Q2_2026_IMF_ARCHIVED_VINTAGE_INVENTORY_AND_MATCH_GATE_CONTINUATION193_20261121.md | Later archived snapshot NOT_AVAILABLE; point-in-time vintage metadata NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not re-query IMF or repeat identical repository inventory | New archived IMF snapshot, official observation revision timestamp, or documented BI↔IMF vintage bridge |
 - C186 residuals remain +21.605237 / +41.221642 USDm; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 194 — CHN SAFE time-series XLSX route fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| CHN China | SAFE BOP time-series page `https://www.safe.gov.cn/en/2019/0329/1496.html`; exact linked XLSX `https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx` | C194: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_OFFICIAL_TIMESERIES_WORKBOOK_LOCATOR_AND_RAW_ACCESS_GATE_CONTINUATION194_20261121.md` | Official href PASS; XLSX raw retrieval BLOCKED / NOT_CAPTURED; workbook cells and asset sign bridge NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not retry same unsupported MIME/download route or substitute IIP/net | Exact workbook retrievable through supported file workflow or distinct official machine-readable export |
+- Existing CHN magnitude checks remain unchanged; aggregate NOT_AUTHORIZED.
