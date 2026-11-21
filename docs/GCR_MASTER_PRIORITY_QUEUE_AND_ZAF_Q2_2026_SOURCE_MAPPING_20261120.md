@@ -1582,3 +1582,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - C95/C96 and full route history rechecked; same ECB SDW API endpoints remain closed and were not retried. New distinct official route: BNR Interactive Database https://www.bnr.ro/en/2550-interactive-database. IMF DSBB metadata confirms detailed BOP data are disseminated through Statistics → Interactive Database and Statistics → Data Sets.
 - The BNR landing page is a JS shell in this text retrieval; no table locator, Q2 portfolio A/L observations, export bytes, receipt or SHA-256 captured. Route-discovery PASS only; ROU remains PARTIAL / NOT PASS; external-custodian portfolio coverage caveat remains.
 - Detail: docs/GCR_ROMANIA_ROU_Q2_2026_BNR_INTERACTIVE_DATABASE_OFFICIAL_ROUTE_DISCOVERY_CONTINUATION197_20261121.md. Next: use JS-capable interactive browser to export exact Q2 separate portfolio A/L rows and preserve native bytes/metadata/hash; if unavailable, advance without retrying ECB endpoints.
+
+
+## Continuation 198 — Interactive portal execution-mode gate (2026-11-21)
+- C197 ROU BNR Interactive Database remains a valid official locator but is not executable in the current session: BNR page is a JS shell and no JS-capable browser / Computer Use action is exposed. No query/export/bytes; ROU PARTIAL / NOT PASS.
+- Cross-check: NBG NSDP shows BOP “Download in SDMX” label without an exposed BOP href/target; Statistics Data page is a JS search shell. CBBH C156 and BNM C86 also have documented UI export controls but no executed workboards.
+- Process improvement PASS: new Execution-Mode Gate requires route classification (static/API/UI) before selection. Select UI routes only when a JS-capable browser is actually available; otherwise mark NOT_EXECUTED — UI CAPABILITY UNAVAILABLE and advance to a retrievable static official route. Never count page-shell inspection as export/data PASS.
+- Detail: `docs/GCR_INTERACTIVE_OFFICIAL_PORTAL_EXECUTION_CAPABILITY_GATE_CONTINUATION198_20261121.md`. No country validation progress; ROU/GEO/BIH/MDA remain PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No IMF re-query/cohort rebuild; all protected invariants unchanged.
