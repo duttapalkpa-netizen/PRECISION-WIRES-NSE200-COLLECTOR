@@ -3348,3 +3348,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Existing CHN SAFE/IMF magnitude comparison preserved; asset sign unresolved; CHN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_OFFICIAL_TIMESERIES_WORKBOOK_LOCATOR_AND_RAW_ACCESS_GATE_CONTINUATION194_20261121.md` (commit 265712fed07a20bed233e29c9ab77cdd7ea742ea).
 - Reopen only when exact official XLSX can be retrieved through a supported workflow or a distinct official export appears. All invariants unchanged; UNKNOWN never PASS.
+
+
+## C194 correction / anti-repeat control (2026-11-21)
+- User identified that C194 repeated a previously exhausted CHN SAFE English XLSX route. Re-opened CHN detailed audit, C135 and C136 reports: C135 explicitly says English/Chinese routes resolve to the same XLSX and same-endpoint retries must stop; C136 explicitly says do not retry either known XLSX URL through the same unsupported retrieval paths.
+- Therefore C194's claim that the English XLSX locator was a new distinct route is RETRACTED. The URL was already known; C194 did not create new research evidence and must be treated as DUPLICATE / NO PROGRESS, not as a new locator discovery.
+- CHN remains PARTIAL / NOT PASS; no raw workbook bytes/hash/sheets; asset sign mapping unresolved. Do not retry known English or Chinese XLSX URLs through the same retrieval surfaces.
+- C136's exact next action was COL (Colombia) BanRep/SUAMECA two separate quarterly portfolio transaction series, using a genuinely different supported retrieval route. Before execution, re-fetch current Ledger/Queue/Registry and COL reports/route fingerprints; skip any already PASS work and any same 502/timeout route.
+- Mandatory pre-action gate for every future continuation: (1) fetch current main HEAD + Master Ledger + Priority Queue + Historical Registry; (2) identify exact country/task and search all prior reports/route fingerprints; (3) build PASS / PARTIAL / BLOCKED / UNKNOWN / NOT_DONE status; (4) list previously attempted URLs, API endpoints, file hashes and failure modes; (5) reject every completed PASS and every exhausted duplicate route; (6) only then select the highest-value actionable unfinished task. If any required prior source cannot be fetched, STOP and report the missing source; do not guess or start work.
+- Mandatory completion gate: create a detailed evidence report and update Ledger, Queue and Registry; re-fetch all four from main and verify C# entry + final HEAD. Never claim GitHub memory persistence without successful read-back.
+- This is a process correction, not a production-system change. Protected invariants unchanged; ₹0; UNKNOWN never PASS.
