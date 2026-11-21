@@ -1538,3 +1538,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Click-through legacy quarterly table has EURm and C.2.A/C.2.L taxonomy but its displayed methodology cites the 11-Sep-2017 publication/revision and exposes no Q2-2026 observation cells or export bytes. Same route family as C140/C141; closed for repeat.
 - ALB remains PARTIAL / NOT PASS; Q2-specific export and values NOT_CAPTURED; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_ALBANIA_ALB_Q2_2026_BOA_Q2_RELEASE_CALENDAR_VS_LEGACY_TABLE_CEILING_CONTINUATION192_20261121.md` (commit 46725db533106245fa306ad2387720b59a9392f9).
 - Reopen only on distinct Q2-specific official export/API/workbook locator; otherwise advance to next eligible fixed-cohort member.
+
+
+## Continuation 193 — IDN archived IMF vintage inventory closure (2026-11-21)
+- Current repository tree and IMF exact-sample/coverage manifests were inspected after re-fetching Ledger, Queue, Registry and IDN C185/C186 reports. Only the 19-Nov-2026 exact-key IMF transport snapshot is archived for IDN; no later snapshot or observation-level revision metadata found.
+- The coverage QA manifest explicitly describes a current retrieval snapshot with no point-in-time historical vintages. BI's 20-Nov revised Q2 legs remain discrepant against the 19-Nov IMF snapshot by +21.605237 USDm assets and +41.221642 USDm liabilities; same-vintage NOT_ESTABLISHED.
+- C186 archive-follow-up branch closed NOT_AVAILABLE. IDN remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No new IMF GET, BI extraction or cohort rebuild.
+- Detail: docs/GCR_INDONESIA_IDN_Q2_2026_IMF_ARCHIVED_VINTAGE_INVENTORY_AND_MATCH_GATE_CONTINUATION193_20261121.md (commit d1319128935b78064c01edc66e0458759de19ca7).
+- Next: choose the next eligible fixed-cohort country only after full history and route-fingerprint preflight.
