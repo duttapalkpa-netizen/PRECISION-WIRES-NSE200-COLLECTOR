@@ -1308,3 +1308,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - RWA is also NOT a fresh task: BNR portal source gate Continuation 97 and portal recheck Continuation 130 already exist; exact JS-only portal route remains unresolved. Do not repeat absent a new exact download/API/export route.
 - SLV has Continuation 100 history and is not a new-country candidate. Reconcile the complete queue and report inventory before selecting any next country; stale rank snippets cannot override prior work.
 - Enforce route fingerprints, PASS skip, named unmet gate for PARTIAL, no retry of closed BLOCKED routes without new evidence, and final re-fetch verification of report/ledger/queue. Aggregate remains NOT_AUTHORIZED; no production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 167 — Honduras HND BCH Q2-2026 source gate (2026-11-21)
+- Selected HND from the immutable 63-country cohort after preflight; no dedicated HND Q2 national dual-leg report found. Reused existing cohort; no IMF re-query/cohort rebuild.
+- BCH official dynamic BOP page confirms quarterly/annual frequency and provides an XLSX locator. Official calendar specifies quarterly BOP reporting and a 90-day release schedule; SDDS page lists BOP Browse Data/SDMX.
+- XLSX locator redirects to SharePoint WOPI app shell; container byte-download failed. Official SDMX XML route returned HTTP 400 unsupported text/xml. No raw bytes, sheets, observations, Q2 portfolio legs or SHA-256 captured. Q3-2025 chart is not Q2 evidence.
+- HND PARTIAL / NOT PASS; Q2 portfolio assets/liabilities NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; comparison NOT_DONE; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_HONDURAS_HND_Q2_2026_BCH_OFFICIAL_BOP_SOURCE_AND_XLSX_ACCESS_GATE_CONTINUATION167_20261121.md` (commit `bb1df78f301d016ab90b13c0d6fcbd2f342a0335`).
+- Do not repeat identical XLSX/WOPI/XML routes. Reopen only with a new supported official API/export/byte route. Next selection must follow complete report-history preflight. ₹0; no production changes; UNKNOWN never PASS.
