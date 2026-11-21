@@ -76,3 +76,9 @@ Validated proposed CSV before write:
 | Aggregate admission | NOT_AUTHORIZED |
 
 ₹0; official/free evidence only; no synthetic observations, fabricated timestamps, IMF re-query, cohort rebuild, unsupported sign/scale changes, or production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## Final GitHub read-back (2026-11-21)
+- Matrix correction committed and re-fetched from the default branch. The IND row now reads DATA_CAPTURED / asset PASS / liability PASS / vintage PENDING / FULL_PASS NO / aggregate NOT_AUTHORIZED.
+- Recomputed after read-back: 63 rows; SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0; ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0.
+- Master Ledger, Priority Queue, Historical Registry, Matrix and this report were all re-fetched after writes; all five contain the C205 entry/correction. All 63 aggregate_admission fields remain NOT_AUTHORIZED.
