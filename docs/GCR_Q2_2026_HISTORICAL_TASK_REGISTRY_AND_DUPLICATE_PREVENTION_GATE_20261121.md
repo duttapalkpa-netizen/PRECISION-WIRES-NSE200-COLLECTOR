@@ -501,3 +501,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - C170 remains controlling for Q2 BOP scope; no Q2 portfolio legs/raw bytes captured. GIN BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
 - Matrix commit `0c4f29eebc6b508e7f17473a26f0c28f6bbd90be`; blob `d6b1986f1c029f0ea4b69dd77549e0b6cbd596b3`; C224 report commit `9415534d63c43c5d3d64acf3b225ad8fb0e7eb23`.
 - Duplicate gate: do not repeat this article/archive inspection; reopen only on a distinct official attachment locator or data export/API.
+
+
+## Continuation 225 — AZE CBAR external-sector route fingerprint
+- Official route: CBAR External Sector Statistics index https://www.cbar.az/page-43/external-sector-statistics?language=en; 2026 section exposes eight publication entries; Interactive Statistic Database link routes to navigation.e-cbar.az but text retrieval returns an empty shell.
+- Q2 bulletin Table 1.4 has asset/liability financial-account rows; portfolio remains combined with other investment (-302/+2,466 USDm). Not admissible as portfolio-only national legs. No raw detailed Q2 export captured.
+- C225 report: `docs/GCR_AZERBAIJAN_AZE_Q2_2026_CBAR_EXTERNAL_SECTOR_INDEX_AND_Q2_COMBINED_CATEGORY_BOUNDARY_CONTINUATION225_20261121.md`; matrix commit `b85f7d9cfc927b7301bf91591ae0b004d54a0282`.
+- Duplicate gate: do not repeat C146/C225 bulletin/index inspection; reopen only with distinct detailed Q2 portfolio-only export/API and revision metadata.
