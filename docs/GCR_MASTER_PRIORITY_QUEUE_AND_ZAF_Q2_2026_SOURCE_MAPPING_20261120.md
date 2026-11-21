@@ -977,3 +977,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Time-basis caveat: “end of period” needs workbook header clarification for BOP transaction rows. BCU update 29-Sep-2026 and IMF retrieval 19-Nov-2026 are not same-vintage evidence. Full UZB validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_UZBEKISTAN_UZB_Q2_2026_CBU_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_CONTINUATION123_20261121.md (commit bbce4b2aeefb6786eb706d8a32dd9f38c4fd12eb).
 - Next: byte-preserving CBU XLSX retrieval and unit/time-basis/vintage inspection; if unsupported, preserve UZB blocker and advance VNM after preflight. ₹0; no production changes; UNKNOWN is never PASS.
+
+
+## CG. Vietnam VNM — official quarterly Q2-2026 portfolio source closure (Continuation 124, 2026-11-21)
+- Re-fetched Master Ledger, GCR queue, fixed 63-country cohort and prior VNM C59 report; completed C59's exact next action to search for a distinct official SBV quarterly Q2-2026 BOP dual-leg publication/API/export.
+- No qualifying Q2 national portfolio assets/liabilities rows located. SBV annual reports show separate asset/liability labels through annual 2023 only. NSO official Q2/H1 and Q3/9M 2026 releases do not provide BOP portfolio legs; FDI/securities/trade aggregates rejected as proxies.
+- IMF e-GDDS DQAF BOP metadata search-indexed text states no portfolio asset/liability data currently available, but page's update date not visible; treat as corroborative/possibly legacy, not definitive current 2026 publication evidence.
+- No raw national Q2 file/hash; no annual-to-quarter allocation, sign inference, IMF re-query or cohort rebuild. VNM remains PARTIAL / NOT PASS; dual-leg NOT_DONE; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_VIETNAM_VNM_Q2_2026_SBV_OFFICIAL_QUARTERLY_SOURCE_CLOSURE_CONTINUATION124_20261121.md (commit 4e56a8919fb4478997dd624c8c0605df4bd70db8).
+- Next fixed cohort member WSM (Samoa), subject to preflight. ₹0; no production changes; UNKNOWN is never PASS.
