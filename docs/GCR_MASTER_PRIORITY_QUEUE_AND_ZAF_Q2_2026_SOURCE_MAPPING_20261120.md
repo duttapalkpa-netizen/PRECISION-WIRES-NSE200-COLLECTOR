@@ -1494,3 +1494,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Current sign mapping PASS; latest national revision evidence PASS; numeric match to archived IMF snapshot FAIL/REVIEW; exact same-vintage bridge NOT_ESTABLISHED; IDN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_NOV2026_REVISION_VINTAGE_RECHECK_CONTINUATION186_20261121.md` (commit 51ba355709893c89a718d0eb94d87c98ad22e277).
 - Next: inspect only a later IMF snapshot already in the archive with explicit retrieval/revision metadata. If none exists, do not re-query IMF; retain mismatch and advance to next eligible cohort country after preflight.
+
+
+## Continuation 187 — India (IND) Q1-2026 RBI published-value persistence (2026-11-21)
+- Selected exact open Continuation 41 item after fresh preflight of Ledger, Queue, Registry, India prior reports and existing IMF exact rows. No new IMF request/cohort rebuild.
+- Official RBI Table 43/42 pages dated 22-Jun, 22-Jul and 25-Aug 2026 show Q1-2026 portfolio investment in India net -12,121 USDm (July/August), portfolio investment by India net +74 USDm, total net -12,047 USDm; same Q1 values persisted across the inspected releases. October Table42 captured in prior work is Q2-only, not a newer Q1 release.
+- Existing IMF Q1 values: A_NFA_T -74.050352868 USDm; L_NIL_T -13,633.508347332 USDm. Asset comparison remains PASS (+0.050353 residual); liability remains REVIEW (-1,512.508347 residual); combined net REVIEW (-1,512.457994). RBI published-value revision does not explain discrepancy on evidence inspected; underlying cause/vintage NOT_ESTABLISHED.
+- India remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_INDIA_IND_Q1_2026_RBI_TABLE42_RELEASE_PERSISTENCE_AUDIT_CONTINUATION187_20261121.md` (commit c4f73d755090a71c0312f9f82ac7afecd7b226ab).
+- Next: genuinely distinct official RBI Q1 revision-history/transaction-level data or already archived IMF vintage metadata; otherwise retain REVIEW and advance. Do not repeat known releases or issue new IMF GET.
