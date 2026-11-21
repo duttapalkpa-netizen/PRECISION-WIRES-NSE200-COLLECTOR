@@ -380,3 +380,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Corrected BDI evidence_ref only to `GCR_BURUNDI_BDI_Q2_2026_BRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION155_20261121`. No Q2 data, unit/sign, comparison or vintage gate promotion.
 - Matrix commit `641e119f6a7dd13a2fd4893bf3549592152acb62`; blob SHA-1 `7a27ec249675fb40721340f3ed065ca9a2c5bb5c`; C207 detail report `docs/GCR_BURUNDI_BDI_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION207_20261121.md`.
 - BDI remains PARTIAL / NOT PASS; Q2 legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. No repeated BRB/IMF routes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 208 — MEX matrix evidence-reference correction (2026-11-21)
+- Existing Banxico report already contains separate Q2-2026 asset/liability numeric PASS comparisons; the matrix evidence_ref remained a stale placeholder.
+- Corrected MEX evidence_ref only to `GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120`. Numeric gates remain PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Exact same-vintage bridge remains NOT_ESTABLISHED.
+- Matrix commit `f9094b380ff959e13d59a9d68713cb35fe82e42c`; blob SHA-1 `efcc44b085abd2ff250a82c988b9a4fa2dc69c23`; C208 report `docs/GCR_MEXICO_MEX_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION208_20261121.md`.
+- Do not repeat completed numeric comparison or infer vintage from close residuals. ₹0; UNKNOWN never PASS.
