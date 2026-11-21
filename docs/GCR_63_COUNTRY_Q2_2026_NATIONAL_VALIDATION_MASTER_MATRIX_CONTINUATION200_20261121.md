@@ -38,3 +38,22 @@ This first matrix consolidates the immutable cohort, current registry/queue and 
 ## Protected constraints
 
 ₹0; official/free sources only; no synthetic values or fabricated timestamps; no IIP stocks as BOP flows; no annual/H1-to-quarter allocation; no net-to-leg back-solving; no unsupported sign/scale/FX transform; no IMF re-query or cohort rebuild; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS. Aggregate remains NOT_AUTHORIZED.
+
+
+## Continuation 201 — exact cohort count reconciliation (2026-11-21)
+
+The CSV now treats stage flags and acceptance flags independently: the four stage flags mirror `current_stage`; `status_ASSET_PASS`, `status_LIABILITY_PASS`, `status_VINTAGE_PASS`, and `status_FULL_PASS` mirror the respective gate columns. A country can therefore have an asset PASS while remaining incomplete overall.
+
+| Measure | Count |
+|---|---:|
+| Immutable cohort rows | ${counts.total} |
+| NOT_STARTED | ${counts.NOT_STARTED} |
+| SOURCE_FOUND | ${counts.SOURCE_FOUND} |
+| DATA_CAPTURED | ${counts.DATA_CAPTURED} |
+| BLOCKED | ${counts.BLOCKED} |
+| ASSET_PASS | ${counts.ASSET_PASS} |
+| LIABILITY_PASS | ${counts.LIABILITY_PASS} |
+| VINTAGE_PASS | ${counts.VINTAGE_PASS} |
+| FULL_PASS | ${counts.FULL_PASS} |
+
+Stage counts are mutually exclusive and sum to 63. Acceptance-gate counts overlap and must not be added to stage counts. Every row remains `NOT_AUTHORIZED` for aggregate admission. `DATA_CAPTURED` does not mean validation passed. The immutable cohort CSV and IMF panel were not modified or re-queried.
