@@ -1596,3 +1596,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Distinct current official route: CBA Financial Account page https://www.cba.am/en/statistics/financial-account/275 exposes XLSX/XML/JSON export controls. Exact export-all target https://www.cba.am/en/statistics/financial-account/275/export-all/ timed out once; no body/bytes/hash or Q2 portfolio series captured.
 - CBA metadata: BPM6, USD millions, quarterly/annual BOP, annual revision practice. Armstat NSDP's Q2 financial-account aggregate omits portfolio flow line; not zero. IIP portfolio positions excluded as stocks.
 - ARM remains PARTIAL / NOT PASS; no numeric validation or aggregate admission. Detail: docs/GCR_ARMENIA_ARM_Q2_2026_CBA_CURRENT_FINANCIAL_ACCOUNT_EXPORT_ROUTE_GATE_CONTINUATION199_20261121.md. No repeat of either C143 legacy XLS or C199 same-surface export timeout. Next: move to another eligible fixed-cohort member with a retrievable static official source under C198 Execution-Mode Gate.
+
+
+## Continuation 200 — 63-country national validation master matrix
+- Matrix report: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_CONTINUATION200_20261121.md`.
+- CSV: `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`.
+- Fixed cohort SHA-1 `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; exactly 63 rows. All 63 have IMF A_NFA_T and L_NIL_T entries present; national validation is a separate gate.
+- Snapshot stage counts: SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; NOT_STARTED 1; FULL_PASS 0. Therefore 63/63 remain outside full national validation; aggregate NOT_AUTHORIZED.
+- Asset gate: PASS 15 / REVIEW 7 / NOT_CAPTURED 41. Liability gate: PASS 15 / REVIEW 8 / NOT_CAPTURED 40. Vintage: PENDING 23 / UNKNOWN 40.
+- This is a first consolidated inventory, not a complete re-audit of every historical report. Continue from latest country-specific report; do not repeat PASS work or closed routes. Update a country only with new primary evidence and read-back verification.
