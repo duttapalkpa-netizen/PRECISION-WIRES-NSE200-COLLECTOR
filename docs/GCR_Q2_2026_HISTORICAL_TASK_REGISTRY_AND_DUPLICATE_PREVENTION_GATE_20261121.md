@@ -342,3 +342,13 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | PAK Pakistan | C51–C52 in `docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md`; C203 detail: `docs/GCR_PAKISTAN_PAK_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION203_20261121.md` | DATA_CAPTURED; asset PASS; liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED | Do not repeat SBP source fetch, archived IMF row extraction, BPM6 sign crosswalk or 2/2 numeric comparison. Reopen vintage only on observation-specific SBP revision history or an exact IMF same-vintage receipt/bridge. |
 - Matrix CSV read-back SHA-1: `2e9b5a9246cebc249acc2e615cae5e43d4d8f4ac`; 63 rows / 30 columns. Counts: SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0.
 - PAK remains PARTIAL / NOT PASS; no aggregate admission. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS; production invariants unchanged.
+
+
+## Continuation 204 — BOL Bolivia historical matrix reconciliation (2026-11-21)
+| Country | Authority / route fingerprint | Evidence | Corrected status | Duplicate decision / reopen only if |
+|---|---|---|---|---|
+| BOL Bolivia | BCB Q2-2026 VI Manual BOP workbook and time-series XLSX; Q2-2026 separate portfolio assets/liabilities | C158 report `docs/GCR_BOLIVIA_BOL_Q2_2026_BCB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION158_20261121.md`; C204 matrix reconciliation `docs/GCR_BOLIVIA_BOL_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION204_20261121.md` | Official Q2 locators FOUND; both same-route XLSX retrievals HTTP 400; no bytes/values; BLOCKED / PARTIAL / NOT PASS | Do not retry identical XLSX routes via same retrieval surfaces. Reopen only with a distinct supported official export/byte-transfer path. No H1/annual substitution. |
+
+- C204 corrected the stale BOL row in `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv` from NOT_STARTED/NOT_FOUND to BLOCKED with source_gate=FOUND, data_capture=NO, both national legs NOT_CAPTURED, vintage UNKNOWN, FULL_PASS=NO, aggregate NOT_AUTHORIZED.
+- Matrix read-back: 63 rows; NOT_STARTED 0; SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Gate counts overlap.
+- No IMF re-query/cohort rebuild, no national XLSX retry, no synthetic values, no production changes; UNKNOWN never PASS.
