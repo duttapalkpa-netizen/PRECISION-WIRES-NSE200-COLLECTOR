@@ -3505,3 +3505,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Corrected only BDI matrix evidence_ref from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_BURUNDI_BDI_Q2_2026_BRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION155_20261121`. BDI remains SOURCE_FOUND; data_capture NO; both legs NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Matrix commit `641e119f6a7dd13a2fd4893bf3549592152acb62`; blob SHA-1 `7a27ec249675fb40721340f3ed065ca9a2c5bb5c`. Detail report `docs/GCR_BURUNDI_BDI_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION207_20261121.md`.
 - No new source retrieval, IMF re-query/cohort rebuild, synthetic data, paid spend or production change; ₹0; protected V11.3 invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 208 — Mexico MEX Q2-2026 evidence-link correction (2026-11-21)
+- Preflighted current Master Ledger, Priority Queue, Historical Registry, 63-country matrix and dedicated Banxico reconciliation. Selected a stale matrix evidence_ref; rejected repeated PASS comparison and source retrieval.
+- Existing Banxico Q2-2026 asset/liability comparisons: residuals +0.255098 / +0.285114 USDm, both within ±0.5 USDm. Banxico states components may be revised; same-vintage bridge remains NOT_ESTABLISHED.
+- Corrected only MEX matrix evidence_ref from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120`. MEX remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Matrix commit `f9094b380ff959e13d59a9d68713cb35fe82e42c`; blob SHA-1 `efcc44b085abd2ff250a82c988b9a4fa2dc69c23`. Detail report `docs/GCR_MEXICO_MEX_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION208_20261121.md`.
+- No Banxico/IMF re-fetch, cohort rebuild, synthetic data, paid spend or production changes; ₹0; protected invariants unchanged; UNKNOWN never PASS.
