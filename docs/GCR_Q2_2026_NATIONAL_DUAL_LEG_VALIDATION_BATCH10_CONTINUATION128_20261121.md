@@ -68,3 +68,45 @@ Batch selection is grounded in existing unresolved reports, national-source avai
 
 ## 5. Protected invariants
 ₹0; official/free sources only. No synthetic data, fabricated timestamps, inferred sign/scale transformations, stock-as-flow, annual-to-quarter allocation, net-to-leg back-solving, IMF re-query, cohort rebuild, or aggregate admission. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## 6. Sequential execution update — POL, TUR, PER and ROU (2026-11-21)
+
+### POL — second distinct official workbook route exhausted
+- Re-opened official NBP workbook URL `https://static.nbp.pl/dane/bilans-platniczy/bop_q.xlsx` through the direct browser open route. It returned HTTP-layer 400 unsupported XLSX content-type.
+- A separate container byte-download attempt also failed. No workbook bytes, response headers, content length, sheet names, revision timestamp or SHA-256 captured.
+- This is now a second distinct retrieval surface beyond the earlier browser and direct file attempt documented in the prior POL audit. No more identical XLSX retries in this cycle.
+- POL remains BLOCKED / NOT_DONE; national legs NOT_CAPTURED; no comparison. Advance to TUR.
+
+### TUR — official ZIP direct route remains inaccessible
+- Reused exact official TCMB ZIP URL already recorded in the prior country report and opened it directly through a separate browser route.
+- Browser returned “URL is not accessible via this tool”. No ZIP bytes, headers, timestamp, content length or SHA-256 captured.
+- Existing August/September PDF cross-check remains unchanged: assets 5,749 USDm reconcile at displayed precision; liabilities 9,183 vs IMF 9,270 USDm, residual +87 USDm; same-vintage identity NOT_ESTABLISHED.
+- No repeated IMF query and no new PDF extraction. TUR remains PARTIAL / NOT PASS. Advance to PER.
+
+### PER — official BCRP quarterly series page values independently rechecked
+- Reopened official BCRPData quarterly Financial Account catalogue. It lists 58 quarterly series, with private-sector block (17) and public-sector block (25), USD millions, through T2-2026, last updated 20-Aug-2026.
+- Reopened three official result pages and verified Q2 values:
+  - Private-sector portfolio assets, PN39278BQ: T226 = +1,749 USDm.
+  - Private-sector portfolio liabilities, PN39285BQ: T226 = +279 USDm.
+  - Public-sector portfolio liabilities, PN39404FQ: T226 = +1,421 USDm.
+  - Combined national liabilities = 279 + 1,421 = 1,700 USDm; against archived IMF L_NIL_T 1,699.66407147559 USDm, residual +0.33592852441 USDm, within ±0.5 USDm published precision.
+- The public-sector catalogue contains aggregate assets PN39402FQ but no portfolio-specific public asset subseries in the complete listed 25-series block. Do not substitute the aggregate.
+- The private asset + public asset full-sector coverage remains incomplete; the earlier private-only 1,749 vs IMF 1,999.15568669433 is not a valid like-for-like residual. PER national liability leg remains numeric PASS at whole-USDm precision; full asset leg PARTIAL / NOT_DONE; same-vintage/sign-definition not established; full dual-leg PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Official HTML result pages are the evidence; no raw API payload/bytes or SHA-256 archived. The documented BCRP API endpoint had already failed once; do not repeat the same exact API call.
+
+### ROU — official methodology boundary reconfirmed; Q2 legs remain unavailable in this bounded step
+- Search surfaced official BNR methodology material stating the BOP/IIP compilation uses title-by-title monthly data for portfolio investment at market value/accrual basis and quarterly surveys for other non-FDI/non-portfolio positions.
+- BNR monthly bulletin methodology distinguishes IIP stock positions from BOP financial-account flows and notes quarterly IIP data are revised in March/September for previous reference periods. This is not a Q2-2026 transaction-leg extract and cannot be substituted for it.
+- Official BNR pages/documents encountered through the retrieval bridge frequently returned “Request Rejected”; no Q2 national portfolio asset/liability rows, raw bytes/hash or exact vintage bridge captured.
+- ROU remains PARTIAL / NOT PASS; both Q2 legs NOT_CAPTURED; numeric comparison NOT_DONE; aggregate NOT_AUTHORIZED.
+- Batch next item is NPL (Nepal). Reuse existing NRB source discovery; do not retry known monthly archive route or identical unsupported XLSX fetch. Find a genuinely different supported NRB API/export route; otherwise document blocker and advance to RWA.
+
+## 7. Current batch position
+- CHN: BLOCKED (official SAFE XLSX bytes unavailable after distinct route).
+- COL: BLOCKED (official SUAMECA page 502; series concepts discovered).
+- POL: BLOCKED (NBP XLSX direct browser 400 and container download failed).
+- TUR: BLOCKED for ZIP byte retrieval; numeric liability REVIEW +87m remains.
+- PER: national liability numeric PASS; asset full-sector coverage PARTIAL; overall PARTIAL / NOT PASS.
+- ROU: PARTIAL / NOT PASS; Q2 national legs NOT_CAPTURED.
+- Next: NPL, then RWA, SLV, SLB.
