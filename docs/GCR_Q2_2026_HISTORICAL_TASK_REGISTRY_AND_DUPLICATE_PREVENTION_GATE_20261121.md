@@ -244,3 +244,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | MKD North Macedonia | NBRNM ES-001 table `6_FinansiskaSmetkaTrimesecniEN.px`; tested PxWeb v1 metadata path ending in the same `.px` filename | C184 source report; C195 `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_API_METADATA_ROUTE_ACCESS_GATE_CONTINUATION195_20261121.md` | Table metadata PASS; API retrieval inaccessible; codebook, Q2 portfolio A/L values, bytes/hash and vintage NOT_CAPTURED; PARTIAL / NOT PASS | Do not retry exact API URL through same retrieval surface; do not use SSO net-only or financial-account-wide legs | Supported API/export retrieval or distinct official Q2 portfolio dual-leg attachment |
 - Aggregate NOT_AUTHORIZED.
+
+
+## Continuation 196 — PER BCRP current catalogue scope fingerprint (2026-11-21)
+| Country | Authority / exact route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| PER Peru | BCRP quarterly catalogue https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales; USD-million financial-account series; Q2-2026; full-economy portfolio A/L | C196: docs/GCR_PERU_PER_Q2_2026_BCRP_CATALOGUE_REFRESH_AND_PUBLIC_ASSET_SCOPE_GATE_CONTINUATION196_20261121.md | Catalogue refresh PASS; private portfolio A/L PN39278BQ/PN39285BQ and public portfolio liability PN39404FQ listed; no public portfolio-specific asset series in displayed public-sector 25-series group; full-economy scope NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not combine private portfolio assets with aggregate public-sector assets PN39402FQ; do not retry prior inaccessible BCRP API route through same retrieval surface | Distinct official public-sector portfolio asset transaction series or explicit official scope statement proving private asset series is full-economy |
+- No Q2 raw values/bytes/hash captured; aggregate NOT_AUTHORIZED.
