@@ -2723,3 +2723,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - VNM remains PARTIAL / NOT PASS; numeric dual-leg NOT_DONE; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_VIETNAM_VNM_Q2_2026_SBV_OFFICIAL_QUARTERLY_SOURCE_CLOSURE_CONTINUATION124_20261121.md; commit 4e56a8919fb4478997dd624c8c0605df4bd70db8.
 - Next fixed-cohort member after VNM is WSM (Samoa); preflight its prior report/source coverage before any extraction. Reopen VNM only on new official Q2 dual-leg source/revision. ₹0; production unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 125 — Samoa WSM CBS Q2-2026 BOP portfolio source-boundary audit (2026-11-21)
+- Preflight re-fetched Master Ledger (blob SHA 102208e5e1d8cf5f127484479eef0089e008d59e), GCR queue (blob SHA 967b4e7d968811c6e9d6d9d117ba285897750b6b), immutable 63-country cohort (blob SHA 1f767e22095865c8e5f87c2cfca55d9104b91e3e); WSM follows VNM. Scoped repo search found no dedicated prior WSM Q2-2026 national report.
+- Official CBS Quarterly Bulletin index states quarterly releases cover quarter-end data and are published with a three-month delay; latest listed June 2026 bulletin. June 2026 Bulletin Table B-1 (Balance of Payments), Tala million, contains distinct Portfolio Investment net/assets/liabilities and BPM6 note. But contents/narrative identify it as covering first quarter/March 2026; table period columns extend only to 2026-I. Bulletin issue month is not the reporting quarter.
+- Therefore official quarterly source family PASS, separate labels PASS, BPM6 PASS; Q2-2026 national asset/liability NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Annual forecasts, IMF Article IV projections, and IIP stocks explicitly rejected as substitutes.
+- Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_QUARTERLY_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION125_20261121.md; commit 92260e1155d537f6fe2f2cdc2d35fb50a35d79c9.
+- Next: do not repeat June bulletin. Locate next CBS bulletin that actually covers June 2026 (Q2), then archive raw bytes/URL/time/size/SHA256 and extract separate Q2-II portfolio legs; compare to existing IMF archive without new query. If not published, retain WSM PARTIAL and advance cohort after preflight. ₹0; no production changes; UNKNOWN is never PASS.
