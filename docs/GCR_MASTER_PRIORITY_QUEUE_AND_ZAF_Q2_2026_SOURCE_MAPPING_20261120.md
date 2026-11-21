@@ -1240,3 +1240,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official BOP page exposes full XLSX locator; browser fetch returned HTTP 400 unsupported XLSX MIME, so no workbook bytes/sheets/Q2 values/hash. IMF e-GDDS describes quarterly BOP and separate portfolio legs.
 - Reused IMF Q2 raw rows: BLZ A_NFA_T=142.2106890070215 USD SCALE=6; L_NIL_T=0 USD SCALE=6. Raw panel blobs unchanged. No conversion/comparison. BLZ Q2-only national legs NOT_CAPTURED; BLZ PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail report: docs/GCR_BELIZE_BLZ_Q2_2026_CBB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION157_20261121.md.
 - Next: supported raw-byte/export retrieval of CBB official XLSX; inspect exact Q2 dual legs. If inaccessible, retain BLZ PARTIAL and advance. No H1-to-Q2 inference, IIP substitution, net-to-leg inference, IMF query, cohort rebuild or production changes. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 158 — BOL (Bolivia) Q2-2026 source-gate result
+- BOL was selected from the immutable 63-country cohort after checking the latest ledger/queue and confirming no prior dedicated BOL Q2 national dual-leg report. Both archived IMF Q2 rows are present; no re-query or cohort rebuild.
+- BCB's official VI Manual page lists two quarter-specific files: “Balanza de Pagos” XLSX and “Series de tiempo: Balanza de Pagos” XLSX for SEGUNDO TRIMESTRE 2026. Both XLSX retrieval attempts failed at the supported web route (HTTP 400 unsupported XLSX MIME) and separate byte-download attempt did not yield bytes. The H1-2026 publication is not a Q2 substitute.
+- IMF raw values reused exactly: A_NFA_T OBS_VALUE=-154107393.924487, SCALE=6; L_NIL_T OBS_VALUE=974071938.904098, SCALE=6. Raw panel blob SHAs unchanged: 15449e87c9057291a1f52f2f8cd9805df55f9fb8 / 15f379dc42e2760eb5f2384618e48f5ddc3177f1.
+- Status: official Q2 locators PASS; national values/bytes/layout NOT_CAPTURED; Q2 methodology/sign/unit/scale/vintage NOT_ESTABLISHED; comparison NOT_DONE; BOL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_BOLIVIA_BOL_Q2_2026_BCB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION158_20261121.md (commit 88a2d13a353f73a2af386fc1f31deaa4ab7879be).
+- Next rank-1 bounded item: BLR Belarus source feasibility, after duplicate-report check; retain BOL PARTIAL and revisit only with a genuinely supported official BCB byte/export route. ₹0; no production changes; UNKNOWN never PASS.
