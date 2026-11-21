@@ -1459,3 +1459,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - The PDF contains no Q2-2026 portfolio asset/liability values; table export payload not retrieved. MNE PARTIAL / NOT PASS.
 - Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_EXPORT_LOCATOR_CONTINUATION182_20261121.md (commit 6ec0f976e2a5fdb26c704b0991b5cd0e5f3fa888).
 - Next: resolve the linked official Tables 5.1–5.4 export, or move on without repeating blocked C180 transfer paths.
+
+
+## Continuation 183 — MNE PDF table-export annotation access boundary (2026-11-21)
+- Reopened official CBCG Bulletin 9/2026 PDF and confirmed the BOP Tables 5.1–5.4 download affordance, quarterly EUR/BPM6 methodology, FX methodology, and preliminary/revision caveat.
+- Available PDF extraction exposed the affordance text but not the annotation target URL; direct PDF byte download failed. No table bytes, MIME, timestamp, hash, or Q2 portfolio legs were captured. This is an access boundary, not evidence of data absence.
+- MNE remains PARTIAL / NOT PASS; fixed cohort and IMF archive unchanged; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_PDF_ANNOTATION_ACCESS_AUDIT_CONTINUATION183_20261121.md` (commit 54e8d2efe633049b7aef672ff84339d8ee18a741).
+- Next: do not repeat the same PDF extraction/download route. Select the next eligible fixed-cohort country only after complete historical/queue preflight; reopen MNE only on a genuinely new official export locator or supported annotation-download capability.
