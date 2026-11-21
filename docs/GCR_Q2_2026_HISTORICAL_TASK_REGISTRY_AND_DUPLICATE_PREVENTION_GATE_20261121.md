@@ -202,3 +202,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | MNG Mongolia | NSO PxWeb table `DT_NSO_0100_001V10_quarter`; exact API metadata route `https://data.1212.mn/api/v1/en/NSO/NSO__Economy%2C%20environment__Balance%20of%20Payments/DT_NSO_0100_001V10_quarter` | C190: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_API_METADATA_ROUTE_RECHECK_CONTINUATION190_20261121.md` | Table metadata PASS; API URL retrieval not accessible in current bridge; indicator labels/codebook and Q2 portfolio A/L NOT_CAPTURED; PARTIAL / NOT PASS | Do not repeat same API URL/surface or guess indicator codes | Different supported official export or NSO/Bank of Mongolia data attachment |
 - Q2-2026 national dual-leg validation remains incomplete; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 191 — MNG corrected PxWeb metadata endpoint fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| MNG Mongolia | Corrected PxWeb metadata endpoint ending `DT_NSO_0100_001V10_quarter.px`; official table currently shows update marker 09-Nov-2026 | C191: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_CORRECTED_METADATA_ENDPOINT_AND_ACCESS_GATE_CONTINUATION191_20261121.md` | Endpoint syntax corrected, retrieval bridge still inaccessible; 69 indicator labels/codes and Q2 A/L cells NOT_CAPTURED; PARTIAL / NOT PASS | Do not repeat corrected URL through same retrieval surface; C190 omitted `.px` and is explicitly corrected | Distinct supported official export/attachment route or new raw payload |
+- Page update marker is not an observation-level vintage. Aggregate NOT_AUTHORIZED.
