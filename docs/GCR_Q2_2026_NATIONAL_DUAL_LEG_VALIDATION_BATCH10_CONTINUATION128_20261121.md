@@ -123,3 +123,13 @@ Batch selection is grounded in existing unresolved reports, national-source avai
 - Official BNR External Sector portal search-indexed text lists “Balance of Payment” dated 30-Jun-2026 and states BPM6 compilation. Direct portal open returns a JavaScript-app shell; exact document URL/bytes remain unresolved.
 - Official BNR August-2026 Monetary Policy Report Table 2 is only a 2025Q1/2026Q1 summary BOP table, omits portfolio legs, and cannot validate Q2. Existing H1 net-only +14 USDm and annual fiscal-year separate legs are not Q2 evidence.
 - RWA Q2 A_NFA_T/L_NIL_T NOT_CAPTURED; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: resolve June-30 BNR item through supported route, otherwise advance to SLV.
+
+
+## 9. Sequential execution update — SLV (Continuation 131, 2026-11-21)
+
+### SLV — official BCR quarterly publication calendar found; Q2 transaction rows not captured
+- Located official BCR Revista Trimestral Abril–Junio 2026. Its publication calendar schedules quarterly Balance of Payments T2-26 for 30-Sep-2026; this is a planned publication date, not proof of actual availability.
+- Table II.2 in that PDF still shows only 2025-Q3, 2025-Q4 and 2026-Q1. Q1-2026 portfolio assets net acquisition +282.76 USDm and liabilities net incurred -56.61 USDm are Q1-only; do not use as Q2.
+- BCR SDDS quarterly BOP Data Base link (cdr=130) was followed as a distinct current data route and timed out. NSDP is stale (last update 2022-12-23). No exact Q2 row/value, raw file/hash or current database vintage retrieved.
+- SLV Q2 assets/liabilities NOT_CAPTURED; sign/unit/concept/same-vintage bridge NOT_ESTABLISHED; numeric comparison NOT_DONE; PARTIAL / BLOCKED; aggregate NOT_AUTHORIZED. Do not interpret no search result as definitive non-publication.
+- Next batch item: SLB (Solomon Islands), resolve CBSI Table 1.17 sign/presentation conflict using primary methodology and archived exact IMF rows; no inferred sign.
