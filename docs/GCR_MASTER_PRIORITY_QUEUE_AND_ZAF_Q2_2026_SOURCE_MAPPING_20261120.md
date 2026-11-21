@@ -1003,3 +1003,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Q2-2026 WSM legs NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No raw Q2 archive/hash.
 - Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_RELEASE_STATUS_RECHECK_CONTINUATION126_20261121.md (commit 0b7d5d9bd57def55020f8b4139f7445605a57d6f).
 - Next: after preflight, move to ZAF South Africa. Recheck CBS only when a later bulletin is officially listed. ₹0; production unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 127 — ZAF Q2-2026 FX conversion methodology boundary (2026-11-21)
+- Reopened current Master Ledger, queue, fixed cohort and ZAF Parts 3/4 + 20-Nov numeric reconciliation. Existing SARB/IMF values retained; no re-extraction or IMF query.
+- Prior ZAF liabilities residual +0.007354619 USDm remains prior PASS; asset residual -0.056053395 USDm remains REVIEW, outside prior 0.0304 USDm rounding bound.
+- IMF BPM6 §§3.104–3.106 and draft BPM7 §§4.258–4.259 require transaction-date rates or shortest-period averages in principle; the OECD quarterly average used in the prior comparison is not proven to be SARB's compilation conversion method. ZAF DQAF page fetch returned generic shell only. Quarter-average equivalence NOT_ESTABLISHED.
+- ZAF full validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Report: docs/GCR_ZAF_Q2_2026_FX_CONVERSION_METHODOLOGY_BOUNDARY_CONTINUATION127_20261121.md (commit b008571b86b3ebe8855b1c7170ee64a722e20f50).
+- Next rank-1 task: CHN official SAFE detailed Q2-2026 BOP XLSX byte retrieval/workbook inspection. Existing CHN audit says URL located but bytes not retrieved; retry only via a genuinely different supported transfer route, otherwise preserve BLOCKED and move on. ₹0; no production changes; UNKNOWN is never PASS.
