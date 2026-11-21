@@ -3709,3 +3709,11 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Inspected a distinct official BRB June-2026 “Indicateurs de conjoncture” PDF (18 pages). It covers trade/FX and macro-financial indicators, not BOP; “Balance des paiements” is absent. It provides no Q2 portfolio transaction asset/liability legs.
 - Created C226 source-boundary report: `docs/GCR_BURUNDI_BDI_Q2_2026_BRB_JUNE_2026_INDICATEURS_NON_BOP_SOURCE_BOUNDARY_CONTINUATION226_20261121.md`. BDI remains PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix change warranted.
 - No IMF re-query, cohort rebuild, synthetic data, stock-flow substitution, paid spend or production change. Protected V11.3 invariants unchanged; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 227 — MYS Q2-2026 matrix evidence-reference correction (2026-11-21)
+- Re-fetched current Master Ledger, GCR Priority Queue, Historical Task Registry, fixed cohort matrix and controlling MYS official BNM dual-leg reconciliation before selecting this traceability task.
+- Existing BNM 1200-middle raw capture and separate asset/liability numeric comparisons were reused; no repeated acquisition, IMF query, cohort rebuild or recalculation.
+- Corrected only the MYS matrix evidence_ref to `GCR_MALAYSIA_MYS_Q2_2026_BNM_OFFICIAL_FX_AND_DUAL_LEG_RECONCILIATION_20261120`; preserved DATA_CAPTURED, asset/liability PASS, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED.
+- Detail report: `docs/GCR_MALAYSIA_MYS_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION227_20261121.md`; matrix commit `7e544e73de2aac8c8f12d1e6e43391ae00ec3f05`; queue/registry continuation 227 appended.
+- MYS remains PARTIAL / NOT PASS: same-vintage BNM preliminary ↔ IMF panel alignment NOT_ESTABLISHED. No production changes; ₹0; UNKNOWN never PASS.
