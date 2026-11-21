@@ -3358,3 +3358,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Mandatory pre-action gate for every future continuation: (1) fetch current main HEAD + Master Ledger + Priority Queue + Historical Registry; (2) identify exact country/task and search all prior reports/route fingerprints; (3) build PASS / PARTIAL / BLOCKED / UNKNOWN / NOT_DONE status; (4) list previously attempted URLs, API endpoints, file hashes and failure modes; (5) reject every completed PASS and every exhausted duplicate route; (6) only then select the highest-value actionable unfinished task. If any required prior source cannot be fetched, STOP and report the missing source; do not guess or start work.
 - Mandatory completion gate: create a detailed evidence report and update Ledger, Queue and Registry; re-fetch all four from main and verify C# entry + final HEAD. Never claim GitHub memory persistence without successful read-back.
 - This is a process correction, not a production-system change. Protected invariants unchanged; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 195 — MKD NBRNM PxWeb v1 metadata API access gate (2026-11-21)
+- Re-fetched current Ledger, Priority Queue, Registry and full MKD report history; only C184 dedicated MKD report existed. C184's open action was the official ES-001 quarterly financial-account codebook and Q2 portfolio dual-leg extraction.
+- Reused immutable 63-country cohort and existing IMF panel; no IMF GET/cohort rebuild. Rejected PASS work (cohort, IMF leg coverage, ES-001 table identity/source/unit/dimensions, SSO net-only context).
+- Constructed/tested a distinct PxWeb v1 metadata API path from the exact official table URL, including `.px`: `https://nbstat.nbrm.mk/PxWeb/api/v1/en/Eksterni%20statistiki/Eksterni%20statistiki__Platen%20Bilans__Platen%20bilans%20trimesecni/6_FinansiskaSmetkaTrimesecniEN.px`. Retrieval surface returned URL inaccessible; no HTTP response/body/headers or raw bytes. API gate BLOCKED / NOT_CAPTURED; do not repeat same URL through same surface.
+- MKD remains PARTIAL / NOT PASS; portfolio A/L observations, codebook, raw hash and vintage bridge NOT_CAPTURED; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_API_METADATA_ROUTE_ACCESS_GATE_CONTINUATION195_20261121.md` (commit c85f91b43b4fae8941613b1f29b42e7ac20b7b5d).
+- Next: advance to next eligible fixed-cohort member only after complete history/route-fingerprint preflight; no IMF GET/cohort rebuild. Invariants unchanged; UNKNOWN never PASS.
