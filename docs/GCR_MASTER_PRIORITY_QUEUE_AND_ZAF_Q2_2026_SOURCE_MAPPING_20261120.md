@@ -1011,3 +1011,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - IMF BPM6 §§3.104–3.106 and draft BPM7 §§4.258–4.259 require transaction-date rates or shortest-period averages in principle; the OECD quarterly average used in the prior comparison is not proven to be SARB's compilation conversion method. ZAF DQAF page fetch returned generic shell only. Quarter-average equivalence NOT_ESTABLISHED.
 - ZAF full validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Report: docs/GCR_ZAF_Q2_2026_FX_CONVERSION_METHODOLOGY_BOUNDARY_CONTINUATION127_20261121.md (commit b008571b86b3ebe8855b1c7170ee64a722e20f50).
 - Next rank-1 task: CHN official SAFE detailed Q2-2026 BOP XLSX byte retrieval/workbook inspection. Existing CHN audit says URL located but bytes not retrieved; retry only via a genuinely different supported transfer route, otherwise preserve BLOCKED and move on. ₹0; no production changes; UNKNOWN is never PASS.
+
+
+## Batch 1 — 10-country national Q2-2026 dual-leg validation (Continuation 128, 2026-11-21)
+- User asked to work in batches of 10/15/20 rather than one country per prompt. Fixed batch size 10 adopted for this cycle; no need for user to reselect between countries.
+- Preflighted latest Master Ledger, GCR queue, fixed cohort, and ten prior reports. PASS work excluded.
+- Batch order: CHN, COL, POL, TUR, PER, ROU, NPL, RWA, SLV, SLB.
+- CHN new distinct browser link route to official SAFE XLSX still returned 400 unsupported XLSX MIME; no bytes/hash; PARTIAL/BLOCKED.
+- COL new official BanRep SUAMECA multiple-download catalogue result lists separate quarterly portfolio net acquisition of assets and net incurrence of liabilities through Q2-2026 in USDm, update 2026-09-01. Page open returned 502; no raw export, series IDs or numeric values; PARTIAL/BLOCKED.
+- Full per-country next actions and evidence boundary are in docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md (commit 5a1952a9b3b89db59e4d9dbdc53760aa509aab02).
+- Next batch item: POL official NBP XLSX retrieval through a genuinely supported file route; if unavailable, record once and proceed to TUR. No IMF re-query/cohort rebuild. ₹0; production unchanged; UNKNOWN never PASS.
