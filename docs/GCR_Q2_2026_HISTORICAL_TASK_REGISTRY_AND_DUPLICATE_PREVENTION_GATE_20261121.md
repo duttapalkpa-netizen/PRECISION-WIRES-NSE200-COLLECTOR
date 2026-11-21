@@ -419,3 +419,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Corrected only PHL matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_PHILIPPINES_PHL_Q2_2026_BSP_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120. Preserved DATA_CAPTURED, asset REVIEW, liability REVIEW, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED; no gate promotion.
 - Detail: `docs/GCR_PHILIPPINES_PHL_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION212_20261121.md`; matrix commit `4de3e0c125678ba9dfbe75b8358ae29478f9cdb8`, blob SHA-1 `a1a49e1d9517f09afcf584286d698aac637307a4`; report commit `270f5714db041305fd8839639804e2a4cb5c6c9e`.
 - No BSP/IMF re-fetch, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 213 — Cabo Verde CPV Q2-2026 BPM6 methodology conflict resolution (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Task Registry, 63-country matrix and C153 BCV source-gate report. Excluded repeated failed XLS retrieval; selected the distinct open BPM5/BPM6 methodology conflict.
+- Official BCV June-2016 external-sector methodology explicitly documents BPM6 adoption, distinguishes BOP flows from IIP stocks, defines portfolio investment, and states BPM6 sign convention/gross reporting. The IMF e-GDDS BPM5 entry is therefore treated as likely legacy metadata, not current proof. The 12-Nov-2026 BCV methodology notice concerns monetary/financial statistics and does not supersede the external-sector note.
+- Updated only CPV matrix descriptive note; retained BLOCKED, NOT_CAPTURED legs, UNKNOWN vintage, FULL_PASS NO and aggregate NOT_AUTHORIZED. No numeric gate promotion.
+- Detail: `docs/GCR_CABO_VERDE_CPV_Q2_2026_BCV_BPM5_BPM6_METHODOLOGY_CONFLICT_RESOLUTION_CONTINUATION213_20261121.md`; matrix commit `d5c778f5ad1063a3d39ade392d2224bb6c04b1ce`, blob SHA-1 `1569f1eb77b5ad3eaddea881f72e5ca23ab5522e`; report commit `79d2ff1f143d1e17ce3b1d6013a101846978fd72`.
+- No BCV XLS retry, IMF re-query, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
