@@ -1737,3 +1737,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Updated only CPV matrix descriptive note; retained SOURCE_FOUND, NOT_CAPTURED legs, UNKNOWN vintage, FULL_PASS NO and aggregate NOT_AUTHORIZED. No numeric gate promotion.
 - Detail: `docs/GCR_CABO_VERDE_CPV_Q2_2026_BCV_BPM5_BPM6_METHODOLOGY_CONFLICT_RESOLUTION_CONTINUATION213_20261121.md`; matrix commit `d5c778f5ad1063a3d39ade392d2224bb6c04b1ce`, blob SHA-1 `1569f1eb77b5ad3eaddea881f72e5ca23ab5522e`; report commit `79d2ff1f143d1e17ce3b1d6013a101846978fd72`.
 - No BCV XLS retry, IMF re-query, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 214 — CPV C213 matrix evidence-reference read-back correction (2026-11-21)
+- Preflighted the current Master Ledger, Priority Queue, Historical Task Registry and 63-country matrix; reopened C213. Found C213 had updated the CPV descriptive note but left evidence_ref at older C153.
+- Corrected only CPV evidence_ref to `GCR_CABO_VERDE_CPV_Q2_2026_BCV_BPM5_BPM6_METHODOLOGY_CONFLICT_RESOLUTION_CONTINUATION213_20261121`. Matrix commit `e794becb96cf8342c3a285f156138b444f29731e`; blob SHA-1 `c14f4f8799e2c25cf054fbac4366c5840cf3c66e`.
+- Preserved SOURCE_FOUND; data_capture NO; asset/liability NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. No numeric or country gate promotion.
+- Detail: `docs/GCR_CABO_VERDE_CPV_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION214_20261121.md`; report commit `f0483d5696df1122b98195e273de5b0363d58cdf`.
+- No BCV XLS retry, IMF re-query, cohort rebuild, synthetic data or production changes; ₹0; protected invariants unchanged; UNKNOWN never PASS.
