@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, csv, io, json, time, zipfile
-from datetime import date, timedelta
+import argparse, csv, hashlib, io, json, time, zipfile
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import requests
 
@@ -18,6 +18,29 @@ HEADERS = {
     "Referer": "https://www.nseindia.com/",
     "Connection": "keep-alive",
 }
+
+def manifest_entry(trade_date: date, target: Path, acquisition: dict | None = None) -> dict:
+    """Record immutable retained-file identity and only observed acquisition provenance."""
+    retained = target.read_bytes()
+    acquisition = acquisition or {}
+    fresh = bool(acquisition.get("retrieved_at_utc") and acquisition.get("source_url"))
+    source_bytes = acquisition.get("source_bytes")
+    source_digest = acquisition.get("source_sha256")
+    return {
+        "trade_date": trade_date.isoformat(),
+        "retained_file": str(target),
+        "retained_bytes": len(retained),
+        "retained_sha256": hashlib.sha256(retained).hexdigest(),
+        "source_url": acquisition.get("source_url"),
+        "requested_url": acquisition.get("requested_url"),
+        "retrieved_at_utc": acquisition.get("retrieved_at_utc"),
+        "source_bytes": source_bytes,
+        "source_sha256": source_digest,
+        "source_content_type": acquisition.get("source_content_type"),
+        "acquisition_status": "ACQUIRED_AND_HASHED" if fresh else "UNKNOWN_PREEXISTING_CACHE",
+        "provenance_status": "VERIFIED_AT_ACQUISITION" if fresh else "UNKNOWN",
+    }
+
 
 def looks_blocked(content: bytes) -> bool:
     head = content[:1000].lstrip().lower()
@@ -201,7 +224,7 @@ def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
         return False
 
 
-def download_full_delivery(session, stamp: str, out: Path) -> bool:
+def download_full_delivery(session, stamp: str, out: Path) -> dict | None:
     """Prefer NSE's combined Full Bhavcopy + Security Deliverable report."""
     urls = [
         f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{stamp}.csv",
@@ -213,11 +236,17 @@ def download_full_delivery(session, stamp: str, out: Path) -> bool:
             r = session.get(url, timeout=(10, 25))
             print(f"FULL_DELIVERY {stamp} status={r.status_code} bytes={len(r.content)}", flush=True)
             if r.status_code == 200 and validate_full_delivery(r.content, stamp):
+                retrieved_at = datetime.now(timezone.utc).isoformat()
                 target.write_bytes(r.content)
-                return True
+                return {
+                    "requested_url": url, "source_url": r.url,
+                    "retrieved_at_utc": retrieved_at, "source_bytes": len(r.content),
+                    "source_sha256": hashlib.sha256(r.content).hexdigest(),
+                    "source_content_type": r.headers.get("Content-Type", ""),
+                }
         except requests.RequestException as e:
             print(f"FULL_DELIVERY_WARN {stamp}: {type(e).__name__}", flush=True)
-    return False
+    return None
 
 
 def main():
@@ -242,6 +271,7 @@ def main():
     today = date.today()
     valid = []
     diagnostics = []
+    manifest_entries = []
 
     for offset in range(args.lookback_days + 1):
         if len(valid) >= args.sessions:
@@ -257,18 +287,21 @@ def main():
         if target.exists() and validate_legacy(target.read_bytes()):
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "CACHED"})
-            print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
+            manifest_entries.append(manifest_entry(d, target))
+            print(f"CACHED {d.isoformat()} ({len(valid)}/{args.sessions}); provenance=UNKNOWN", flush=True)
             continue
 
-        got = download_full_delivery(s, stamp, out)
-        if got:
+        acquisition = download_full_delivery(s, stamp, out)
+        if acquisition:
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "OK_FULL_BHAVCOPY_DELIVERY"})
+            manifest_entries.append(manifest_entry(d, target, acquisition))
             print(f"OK_FULL_BHAVCOPY_DELIVERY {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
             time.sleep(0.3)
             continue
 
         got = False
+        acquisition = None
         for attempt in range(2):
             try:
                 url = UDIFF.format(yyyymmdd=ymd)
@@ -278,6 +311,13 @@ def main():
                 if r.status_code == 200 and not looks_blocked(r.content) and r.content[:2] == b"PK":
                     if normalize_udiff(r.content, stamp, out):
                         got = True
+                        acquisition = {
+                            "requested_url": url, "source_url": r.url,
+                            "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                            "source_bytes": len(r.content),
+                            "source_sha256": hashlib.sha256(r.content).hexdigest(),
+                            "source_content_type": ctype,
+                        }
                         break
                 if r.status_code in (403, 404):
                     break
@@ -291,8 +331,15 @@ def main():
                 r = s.get(url, timeout=(10, 25))
                 print(f"LEGACY {d.isoformat()} status={r.status_code} bytes={len(r.content)} type={r.headers.get('Content-Type','')}", flush=True)
                 if r.status_code == 200 and validate_legacy(r.content):
+                    retrieved_at = datetime.now(timezone.utc).isoformat()
                     target.write_bytes(r.content)
                     got = True
+                    acquisition = {
+                        "requested_url": url, "source_url": r.url,
+                        "retrieved_at_utc": retrieved_at, "source_bytes": len(r.content),
+                        "source_sha256": hashlib.sha256(r.content).hexdigest(),
+                        "source_content_type": r.headers.get("Content-Type", ""),
+                    }
                 elif target.exists():
                     target.unlink()
             except requests.RequestException as e:
@@ -301,6 +348,7 @@ def main():
         if got:
             valid.append(d)
             diagnostics.append({"date": d.isoformat(), "status": "OK"})
+            manifest_entries.append(manifest_entry(d, target, acquisition))
             print(f"OK {d.isoformat()} ({len(valid)}/{args.sessions})", flush=True)
         else:
             diagnostics.append({"date": d.isoformat(), "status": "MISS"})
@@ -310,6 +358,12 @@ def main():
 
     valid.sort()
     (out / "sessions.txt").write_text("\n".join(d.isoformat() for d in valid) + "\n")
+    (out / "acquisition_manifest.json").write_text(json.dumps({
+        "schema_version": 1,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "requested_sessions": args.sessions,
+        "entries": sorted(manifest_entries, key=lambda x: x["trade_date"]),
+    }, indent=2) + "\\n", encoding="utf-8"))
     (out / "acquisition_diagnostics.json").write_text(json.dumps({
         "requested_sessions": args.sessions,
         "lookback_days": args.lookback_days,
