@@ -387,3 +387,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Corrected MEX evidence_ref only to `GCR_MEXICO_MEX_Q2_2026_BANXICO_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120`. Numeric gates remain PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Exact same-vintage bridge remains NOT_ESTABLISHED.
 - Matrix commit `f9094b380ff959e13d59a9d68713cb35fe82e42c`; blob SHA-1 `efcc44b085abd2ff250a82c988b9a4fa2dc69c23`; C208 report `docs/GCR_MEXICO_MEX_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION208_20261121.md`.
 - Do not repeat completed numeric comparison or infer vintage from close residuals. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 209 — Thailand THA Q2-2026 matrix evidence-link correction (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Registry, 63-country matrix and dedicated BOT–IMF report before selection. Rejected repeat numeric PASS and same-page source retrieval.
+- Existing BOT report records Q2 assets +4,679.07 USDm and liabilities -238.36 USDm; archived IMF residuals +0.00342150334 / +0.001811289819 USDm, both PASS at ±0.005 USDm. BOT source remains preliminary; same-vintage NOT_ESTABLISHED.
+- Corrected only THA matrix evidence_ref from NO_DEDICATED_REPORT_REF_IN_BASELINE to GCR_THAILAND_THA_Q2_2026_BOT_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_20261120. THA remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_THAILAND_THA_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION209_20261121.md`. Matrix commit `0c3e3c46b5d56678295e2e02dfe0f4637ccc9b78`; matrix blob SHA `a9162af9a86514eaf78f741ba5e8c5927da50a7d`. Detail report commit `0be627c2d5aed9f94e017e4752602f71ad406209`.
+- No BOT/IMF re-fetch, cohort rebuild, synthetic data or production change; ₹0; UNKNOWN never PASS.
