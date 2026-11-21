@@ -216,3 +216,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | ALB Albania | Bank of Albania legacy quarterly time-series detail: `https://www.bankofalbania.org/Statistics/External_sector_statistics/Balance_of_Payments/Time_Series-Balance_of_Payments.html?cregtab_id=705&evb=agregate&evn=agregate_detaje&periudha_id=3` | C192: `docs/GCR_ALBANIA_ALB_Q2_2026_BOA_Q2_RELEASE_CALENDAR_VS_LEGACY_TABLE_CEILING_CONTINUATION192_20261121.md` | Q2 release date PASS; legacy taxonomy EURm PASS; legacy method cites 2017 publication; Q2-2026 cells/export NOT_EXPOSED; PARTIAL / NOT PASS | Close same legacy Main-data route; do not repeat C140/C141 extraction | Distinct Q2-specific attachment, API response, or supported workbook export |
 - The calendar date and landing-page update marker do not establish the Q2 observation vintage. Aggregate NOT_AUTHORIZED.
+
+
+## Continuation 193 — IDN IMF vintage archive route fingerprint (2026-11-21)
+| Country | Archive fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| IDN Indonesia | Repository archive docs/evidence/imf_bop_emde_20261119/exact_sample_checks/summary.json; 19-Nov-2026 IMF raw asset/liability receipts | C193: docs/GCR_INDONESIA_IDN_Q2_2026_IMF_ARCHIVED_VINTAGE_INVENTORY_AND_MATCH_GATE_CONTINUATION193_20261121.md | Later archived snapshot NOT_AVAILABLE; point-in-time vintage metadata NOT_AVAILABLE; same-vintage NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not re-query IMF or repeat identical repository inventory | New archived IMF snapshot, official observation revision timestamp, or documented BI↔IMF vintage bridge |
+- C186 residuals remain +21.605237 / +41.221642 USDm; aggregate NOT_AUTHORIZED.
