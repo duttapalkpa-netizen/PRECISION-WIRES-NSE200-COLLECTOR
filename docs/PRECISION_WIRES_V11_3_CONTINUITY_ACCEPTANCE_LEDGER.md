@@ -3685,3 +3685,11 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Corrected only GEO matrix descriptive note/evidence_ref to C154; preserved SOURCE_FOUND, data capture NO, asset/liability NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
 - Matrix commit `9655247cb907dee8e4846bd9dd33e6b5d91f67c0`; blob `de7b182d3a3debee674c35c1e9fd980e99ab83b3`. Detail report commit `e279d4262f50e73311d1e306c812efb7909fdf67`.
 - GEO remains PARTIAL / NOT PASS. No guessed export/API, synthetic data, stock-flow substitution, net-to-leg back-solving or production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 224 — GIN BCRG MPC attachment resolution boundary and matrix evidence correction (2026-11-21)
+- Re-fetched current Ledger, Priority Queue, Registry, fixed cohort, matrix and GIN C170 report. Excluded closed GMB route and reused C170's BCRG source boundaries; no IMF re-query/cohort rebuild.
+- Opened the official BCRG 22nd MPC article and reached it independently through the official 2026 archive (22-Sep-2026). The article exposes a “Télécharger” label but the inspected representation has no file URL, attachment name or downloadable target. No guessed WordPress path/API used; raw file and Q2 national portfolio legs remain NOT_CAPTURED.
+- Corrected only GIN matrix note/evidence_ref to C170; preserved BLOCKED, national capture NO, A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
+- Matrix commit `0c4f29eebc6b508e7f17473a26f0c28f6bbd90be`; blob `d6b1986f1c029f0ea4b69dd77549e0b6cbd596b3`. C224 report commit `9415534d63c43c5d3d64acf3b225ad8fb0e7eb23`.
+- GIN remains BLOCKED / NOT PASS. No production changes; ₹0; UNKNOWN never PASS.
