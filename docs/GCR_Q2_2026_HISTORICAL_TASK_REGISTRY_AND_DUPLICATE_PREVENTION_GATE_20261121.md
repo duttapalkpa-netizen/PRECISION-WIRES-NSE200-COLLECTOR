@@ -476,3 +476,8 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - New evidence: alternate official `www` hostname successfully renders PDF; direct raw-byte transfer failed; hyperlink destination not exposed by text extraction. No table export URL/bytes/values/hash. Existing C182 ZIP/XML routes remain closed; this is only an alternate PDF rendering path.
 - Status: PDF rendering PASS; export destination NOT_RESOLVED; national dual legs NOT_CAPTURED; MNE PARTIAL / NOT PASS. Reopen only on raw PDF annotation access or distinct official table export URL.
 - Next candidate MNG NSO PxWeb API; require exact endpoint/request method from official documentation before any query. No guessed indicator codes or payload.
+## Continuation 221 — MNG official NSO PxWeb API terms / route fingerprint (2026-11-21)
+- Official NSO Terms of Use URL `https://www.nso.mn/en/terms_of_use`: OPEN DATA API exists; JSON/XML outputs; CC BY 4.0; maximum one request per second per IP.
+- Official table `DT_NSO_0100_001V10_quarter` page confirms 69 Indicator values, 71 Quarter values, Q2 `2026-2`, million USD, quarterly frequency and Bank of Mongolia as source.
+- Exact official API root/path, method, query schema and indicator keys NOT_DOCUMENTED in inspected official sources. No API call or national data extraction performed. MNG PARTIAL / NOT PASS; no aggregate authorization.
+- Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_OFFICIAL_API_CONTRACT_BOUNDARY_CONTINUATION221_20261121.md. Reopen only on official API contract/export evidence.
