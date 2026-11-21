@@ -2995,3 +2995,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Cohort and IMF row presence PASS; official Q2 workbook locators PASS; national values/bytes/dual-leg layout NOT_CAPTURED; Q2-specific BPM/sign/unit/scale/vintage bridge NOT_ESTABLISHED; numeric comparison NOT_DONE; BOL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_BOLIVIA_BOL_Q2_2026_BCB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION158_20261121.md (commit 88a2d13a353f73a2af386fc1f31deaa4ab7879be).
 - Next: use a genuinely supported official BCB raw-byte/export route for the two Q2 XLSX files; if inaccessible, retain PARTIAL and advance. No H1/annual/IIP/net substitute, no IMF re-query, no cohort rebuild. ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 159 — Belarus BLR Q2-2026 NBRB official BOP source-boundary audit (2026-11-21; Chapter 47 Part 7)
+- Re-fetched Master Ledger, GCR Priority Queue and immutable 63-country cohort; BLR is a member with both archived IMF Q2 rows present. No prior dedicated BLR Q2 national dual-leg report. Previous BLZ/BOL audits were not repeated; no IMF re-query/cohort rebuild.
+- NBRB official metadata and methodology confirm BPM6, quarterly BOP, standard/analytic presentations, portfolio investment functional category, net asset acquisition and net liability incurrence separately, plus=net increase/minus=net decrease, USD/BYN, and preliminary/revision policy. Q2 live data page timed out/inaccessible; no Q2 national dual-leg values or source bytes retrieved.
+- Reused exact IMF raw rows: BLR A_NFA_T OBS_VALUE=6414501.08999999 USD SCALE=6; L_NIL_T OBS_VALUE=-325487157.39 USD SCALE=6. Raw panel Git blob SHAs unchanged: 15449e87c9057291a1f52f2f8cd9805df55f9fb8 / 15f379dc42e2760eb5f2384618e48f5ddc3177f1. No conversion/comparison.
+- National Q2 values/raw bytes/hash NOT_CAPTURED; Q2 vintage/item/sign/scale bridge NOT_ESTABLISHED; numeric comparison NOT_DONE; BLR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: docs/GCR_BELARUS_BLR_Q2_2026_NBRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION159_20261121.md (create commit 47c7d96056c770943d12cd7040b5cf95d726f2d2).
+- Next: supported NBRB Q2-2026 bulletin/data export raw-byte retrieval; otherwise retain PARTIAL and advance. No IIP/annual/adjacent-quarter/net-total substitution. ₹0; production unchanged; UNKNOWN never PASS.
