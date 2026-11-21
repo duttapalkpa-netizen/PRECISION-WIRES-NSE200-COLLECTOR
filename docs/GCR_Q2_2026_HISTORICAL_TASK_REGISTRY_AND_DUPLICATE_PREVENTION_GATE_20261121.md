@@ -352,3 +352,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - C204 corrected the stale BOL row in `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv` from NOT_STARTED/NOT_FOUND to BLOCKED with source_gate=FOUND, data_capture=NO, both national legs NOT_CAPTURED, vintage UNKNOWN, FULL_PASS=NO, aggregate NOT_AUTHORIZED.
 - Matrix read-back: 63 rows; NOT_STARTED 0; SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Gate counts overlap.
 - No IMF re-query/cohort rebuild, no national XLSX retry, no synthetic values, no production changes; UNKNOWN never PASS.
+
+
+## Continuation 205 — IND India Q2-2026 official RBI dual-leg matrix fingerprint (2026-11-21)
+| Country | Official source / period | Evidence | Corrected status | Duplicate prevention / remaining gate |
+|---|---|---|---|---|
+| IND India | RBI Table 42, Apr-Jun 2026, published 23-Oct-2026; USD million; BPM6 | docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_CURRENT_VINTAGE_SUPPLEMENT_20261119.md; C205 docs/GCR_INDIA_IND_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION205_20261121.md; crosswalk CSV blob 8ff2534dc730c822b20351530b9379fb86369cb2 | Q2 asset, liability and combined net each PASS within ±0.5 USDm; matrix DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED | Do not repeat RBI Table 42 Q2 capture, IMF comparison, or sign/scale mapping. Q1-2026 liability remains REVIEW under C187. Reopen only for exact RBI/IMF same-vintage bridge or Q1 underlying liability evidence. |
+- Q2 raw RBI HTML SHA-256: 075c28122d588e5bce0ff45c8c8d5d8b453c53dc5b9a20f79d5cd3a6e54f5396. Archived crosswalk confirms Q2 residuals: asset -0.489413221 USDm; liability +0.240053743 USDm; combined net -0.270533037 USDm.
+- C205 matrix read-back is pending; Q2 vintage remains PENDING and India is not FULL_PASS.
