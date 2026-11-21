@@ -1510,3 +1510,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - This is page freshness only, not data vintage. It does not bridge C175's 30-Sep-2026 workbook filename marker to the 12-Nov-2026 Treasury report. LKA remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - C188 detail: `docs/GCR_SRI_LANKA_LKA_Q2_2026_CBSL_EXTERNAL_SECTOR_PAGE_FRESHNESS_AND_EXPORT_GATE_CONTINUATION188_20261121.md` (commit 2971a494803edc77b51290e607c8aa2af763a44b).
 - Close repeat C175–C177 route attempts. Reopen only on distinct official export/API locator or actual current Table 2.10 revision identifier.
+
+
+## Continuation 189 — GIN BCRG official MPC download-affordance boundary (2026-11-21)
+- Selected GIN after C188 and fresh preflight of Ledger/Queue/Registry/C170/C188/fixed cohort. No IMF re-query or cohort rebuild.
+- Official 22nd MPC page directly opens and shows “Télécharger”, but the extracted page link inventory exposes no attachment href/document URL. No URL guessed; no bytes/hash or Q2 portfolio observations captured.
+- GIN remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_GUINEA_GIN_Q2_2026_BCRG_MPC_DOWNLOAD_AFFORDANCE_AND_LINK_TARGET_ACCESS_GATE_CONTINUATION189_20261121.md` (commit 9bebc3da4f89d745c4599d0d0e4da39339c0f7ab).
+- Reopen only on a distinct official BCRG attachment/API export target; do not repeat static page inspection.
