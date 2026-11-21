@@ -2740,3 +2740,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - WSM Q2 assets/liabilities NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No raw Q2 file/hash because no qualifying Q2 bulletin is listed.
 - Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_RELEASE_STATUS_RECHECK_CONTINUATION126_20261121.md; commit 0b7d5d9bd57def55020f8b4139f7445605a57d6f.
 - Next fixed cohort member after WSM is ZAF (South Africa), subject to preflight of current ledger/queue and any prior ZAF report/source mapping. Recheck CBS only when a later issue is officially listed. ₹0; production unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 127 — ZAF Q2-2026 FX conversion methodology boundary (2026-11-21)
+- Re-fetched current Master Ledger (blob SHA c2b4bf75acad32a2999a9baae3102716b7cef9f2), Priority Queue (blob SHA bf720dc4590c1b781e2abe2ac706494eed295f93), fixed 63-country cohort (blob SHA 1f767e22095865c8e5f87c2cfca55d9104b91e3e), and ZAF Parts 3/4 plus 20-Nov numeric report.
+- Reused ZAF IMF exact rows and SARB Table KB502; no IMF query, no SARB re-extraction, no cohort rebuild. Prior liabilities comparison remains PASS at prior stated precision; assets residual remains REVIEW (0.056053395 USDm > 0.0304 USDm bound).
+- New methodological finding: IMF BPM6 §§3.104–3.106 and draft BPM7 §§4.258–4.259 prefer transaction-date rates or shortest-period averages; quarter-average FX is not established as SARB's own conversion method for this flow aggregate. IMF ZAF BOP DQAF page returned only a generic shell, not usable country-specific conversion metadata. SARB narrative confirms net outflow direction only.
+- Exact quarter-average conversion equivalence NOT_ESTABLISHED; ZAF full dual-leg remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No tolerance widening or forced PASS.
+- Report: docs/GCR_ZAF_Q2_2026_FX_CONVERSION_METHODOLOGY_BOUNDARY_CONTINUATION127_20261121.md (commit b008571b86b3ebe8855b1c7170ee64a722e20f50).
+- Next rank-1 task: continue CHN (China) detailed SAFE Q2-2026 BOP XLSX byte retrieval and workbook inspection; previous audit says official file locator found but bytes unavailable. Do not repeat ZAF or IMF capture. ₹0; production unchanged; UNKNOWN is never PASS.
