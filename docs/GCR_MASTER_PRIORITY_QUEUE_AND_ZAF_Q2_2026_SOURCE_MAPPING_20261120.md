@@ -1554,3 +1554,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - CHN remains PARTIAL / NOT PASS; asset sign unresolved; aggregate NOT_AUTHORIZED. No IMF GET/cohort rebuild.
 - Detail: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_OFFICIAL_TIMESERIES_WORKBOOK_LOCATOR_AND_RAW_ACCESS_GATE_CONTINUATION194_20261121.md` (commit 265712fed07a20bed233e29c9ab77cdd7ea742ea).
 - Next: retrieve this exact official workbook via supported browser/file workflow; otherwise wait for a distinct official machine-readable export. Do not repeat identical unsupported fetch.
+
+
+## C194 correction — CHN duplicate route; restore COL next action (2026-11-21)
+- C194's SAFE English XLSX URL was not a new route. C135 already established English and Chinese links resolve to the same XLSX and ordered no same-endpoint retries; C136 explicitly prohibited retrying either known XLSX URL through the same unsupported retrieval paths.
+- Retract C194's “newly recovered locator” characterization. Mark C194 DUPLICATE / NO PROGRESS. CHN remains PARTIAL / NOT PASS; do not repeat either known XLSX route on the same access surfaces.
+- Restore C136's next actionable item: COL — retrieve the already identified separate BanRep/SUAMECA quarterly portfolio asset and liability transaction series through a genuinely different supported route. Recheck current COL reports and route fingerprints first; do not repeat same 502/timeout catalogue route. No IMF GET/cohort rebuild.
+- All future selections must pass full Ledger/Queue/Registry + prior report + URL/API/file fingerprint preflight; skip PASS and exhausted routes before selecting the highest-value unfinished task.
