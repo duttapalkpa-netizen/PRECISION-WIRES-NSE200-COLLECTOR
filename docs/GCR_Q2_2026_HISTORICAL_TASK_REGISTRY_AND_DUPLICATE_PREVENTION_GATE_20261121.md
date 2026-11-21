@@ -258,3 +258,14 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | ROU Romania | National Bank of Romania; https://www.bnr.ro/en/2550-interactive-database; Statistics → Interactive Database → Balance of payments; Q2-2026; total-economy portfolio investment transaction assets/liabilities | C197: docs/GCR_ROMANIA_ROU_Q2_2026_BNR_INTERACTIVE_DATABASE_OFFICIAL_ROUTE_DISCOVERY_CONTINUATION197_20261121.md | Distinct official route locator PASS; dynamic controls/table locator/export not exposed; Q2 A/L values and raw bytes/hash NOT_CAPTURED; ROU PARTIAL / NOT PASS | Not a repeat of closed ECB SDW API route; do not claim data retrieval | JS-capable browser executes official BNR query/export and captures exact Q2 dual legs, metadata, revision vintage and SHA-256 |
 - Keep BNR external-custodian coverage caveat visible; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 198 — Cross-country interactive-portal execution gate (2026-11-21)
+| Scope | Official route families | Evidence | Status | Duplicate / selection rule |
+|---|---|---|---|---|
+| ROU Romania | BNR Interactive Database; C197 official locator + IMF DSBB metadata | C198: `docs/GCR_INTERACTIVE_OFFICIAL_PORTAL_EXECUTION_CAPABILITY_GATE_CONTINUATION198_20261121.md` | Locator PASS only; current session lacks JS-capable browser action; Q2 A/L/export NOT_EXECUTED | Do not repeat JS-shell inspection or closed ECB API. Reopen only with actual interactive browser capability or user-supplied official export |
+| GEO Georgia | NBG NSDP BOP SDMX label / Statistics Data UI | C154 + C198 | No BOP download href/target or data payload exposed in captured text; stale NSDP Q3/21 remains excluded; PARTIAL / NOT PASS | No repeat same page-shell inspection. Reopen only with exact official export/API target or browser capability |
+| BIH Bosnia and Herzegovina | CBBH Panorama Necto | C156 + C198 | Anonymous portal and Excel/PDF controls documented; workboard/export NOT_EXECUTED | UI task requires actual JS-capable browser |
+| MDA Moldova | BNM Reports Generator | C86 + C198 | Selectors and Generate/Export controls documented; report/export NOT_DONE | UI task requires actual JS-capable browser or user-supplied official export |
+- Permanent rule: route type must be classified before task selection; UI route is not executable without an actual JS-capable browser action. Mark `NOT_EXECUTED — UI CAPABILITY UNAVAILABLE`; advance to a retrievable static official route. Never promote locator/page-shell discovery to data retrieval PASS.
+- No country data or national validation promoted in C198; aggregate NOT_AUTHORIZED; immutable cohort and IMF archive unchanged.
