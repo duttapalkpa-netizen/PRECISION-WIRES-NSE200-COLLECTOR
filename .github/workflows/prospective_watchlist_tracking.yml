@@ -45,6 +45,8 @@ jobs:
         run: python -m unittest discover -s qa -p "test_*.py" -v
       - name: Acquire normalized NSE history
         run: python collector/nse_download.py --sessions 200
+      - name: Strict per-file acquisition manifest and hash validation
+        run: python qa/validate_acquisition_manifest.py --sessions 200
       - name: Build normalized adaptive dataset
         run: python collector/build_200_sessions.py
       - name: Strict dataset QA
@@ -206,6 +208,7 @@ jobs:
             data/raw/sessions.txt
             data/raw/acquisition_diagnostics.json
             data/raw/acquisition_manifest.json
+            outputs/prospective/acquisition_manifest_validation.json
             data/reference/security_master.csv
             outputs/prospective/watchlist_ledger.csv
             outputs/prospective/latest_picks.csv
