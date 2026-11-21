@@ -1767,3 +1767,8 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - It is not proven to expose EXCX135D; do not treat KBP exports as the daily ZAR/USD target or infer a code mapping. No payload/hash captured.
 - ZAF asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED unchanged.
 - Detail: docs/GCR_ZAF_Q2_2026_SARB_ONLINE_STATISTICAL_QUERY_EXPORT_FAMILY_BOUNDARY_CONTINUATION217_20261121.md. Next C218: prove or reject an official KBP daily USD/ZAR series and inspect the Selected Historical Rates export request via supported HTTP route.
+## Continuation 218 — South Africa ZAF SARB KBP5339M monthly USD/ZAR cross-check (2026-11-21)
+- Verified official SARB September 2026 Quarterly Bulletin p. S-114 series `(5339M)` (USA Dollar; monthly average; middle rates in SA cents per USD) and 10:30 weighted-average footnote.
+- Q2 values: Apr 1,653.90 cents/R16.5390; May 1,648.06/R16.4806; Jun 1,639.70/R16.3970. No quarter aggregation.
+- Monthly series is not daily EXCX135D; BOP transaction conversion convention remains NOT_ESTABLISHED. ZAF asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED unchanged.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_KBP5339M_OFFICIAL_MONTHLY_USD_ZAR_SERIES_VERIFICATION_CONTINUATION218_20261121.md. Next C219: daily series and BOP FX methodology.
