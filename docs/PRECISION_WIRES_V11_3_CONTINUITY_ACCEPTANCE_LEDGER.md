@@ -3693,3 +3693,12 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Corrected only GIN matrix note/evidence_ref to C170; preserved BLOCKED, national capture NO, A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
 - Matrix commit `0c4f29eebc6b508e7f17473a26f0c28f6bbd90be`; blob `d6b1986f1c029f0ea4b69dd77549e0b6cbd596b3`. C224 report commit `9415534d63c43c5d3d64acf3b225ad8fb0e7eb23`.
 - GIN remains BLOCKED / NOT PASS. No production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 225 — AZE CBAR external-sector index and Q2 combined-category boundary (2026-11-21)
+- Re-fetched current Ledger, Queue, Registry, fixed cohort, matrix and AZE C146 report. Excluded closed ALB C139–C141/C192, GIN C170/C224 and GEO C154/C223 routes. Reused existing IMF raw rows; no IMF re-query/cohort rebuild.
+- Inspected distinct official CBAR External Sector Statistics index and Interactive Statistic Database link. The database shell returned no text payload; 2026 attachment controls resolved only to same-page anchors in this retrieval channel, not a raw Q2 export URL.
+- Rechecked CBAR Statistical Bulletin 09/2026 Table 1.4: Q2 2026 asset/liability top-level rows exist, but child categories are “portfolio and other investments” combined (-302/+2,466 USDm). These are not portfolio-only values and are excluded from national validation.
+- Updated only AZE matrix note/evidence_ref to C225; preserved SOURCE_FOUND, data capture NO, A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
+- Matrix commit `b85f7d9cfc927b7301bf91591ae0b004d54a0282`; blob `9b1b7a82cf43455eaba82cd0a054e3976e734f5d`; C225 report commit `af4425511747a7dc3c91b68508e63023fe44d3f7`.
+- AZE remains PARTIAL / NOT PASS; combined portfolio+other rows are not admitted. ₹0; no production changes; UNKNOWN never PASS.
