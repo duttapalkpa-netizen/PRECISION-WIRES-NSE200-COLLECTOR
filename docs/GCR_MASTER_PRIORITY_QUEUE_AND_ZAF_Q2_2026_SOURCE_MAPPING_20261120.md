@@ -994,3 +994,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Q2-2026 national legs NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Annual forecasts, IMF Article IV estimates and IIP stocks rejected as substitutes.
 - Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_QUARTERLY_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION125_20261121.md (commit 92260e1155d537f6fe2f2cdc2d35fb50a35d79c9).
 - Next: locate a later CBS bulletin that actually reports June-2026 Q2; archive raw bytes/URL/time/size/SHA256 and extract Q2-II legs. If unavailable, preserve blocker and advance after preflight. ₹0; production unchanged; UNKNOWN is never PASS.
+
+
+## CH. Samoa WSM — Q2-2026 CBS release-status recheck (Continuation 126, 2026-11-21)
+- Re-fetched current Master Ledger, queue, fixed 63-country cohort, and prior WSM Continuation 125 report. Fixed order after WSM is ZAF (South Africa).
+- Direct CBS index https://cbs.gov.ws/quarterly-bulletin lists June 2026 as latest and footer last updated 18 Aug 2026; September 2026 is not listed. Conflicting search snippet treated as stale/unverified.
+- June-2026 PDF internal contents/title identify March 2026 / Q1; Table B-1 has distinct portfolio net/assets/liabilities, Tala million, BPM6, but latest quarter 2026-I only.
+- Q2-2026 WSM legs NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No raw Q2 archive/hash.
+- Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_RELEASE_STATUS_RECHECK_CONTINUATION126_20261121.md (commit 0b7d5d9bd57def55020f8b4139f7445605a57d6f).
+- Next: after preflight, move to ZAF South Africa. Recheck CBS only when a later bulletin is officially listed. ₹0; production unchanged; UNKNOWN is never PASS.
