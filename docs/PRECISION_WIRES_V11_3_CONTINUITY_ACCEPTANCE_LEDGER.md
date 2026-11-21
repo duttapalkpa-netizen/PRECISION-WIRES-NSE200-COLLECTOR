@@ -2759,3 +2759,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - COL: official BanRep SUAMECA multiple-download catalogue search exposes separate quarterly portfolio net acquisition of financial assets and net incurrence of liabilities series through 2026-Q2, in current USD millions, update date 2026-09-01. Opening the multiple-download route returned 502; no exact series IDs/export bytes/values/hash. COL remains PARTIAL / BLOCKED; no IIP stock substitution.
 - Report: docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md (commit 5a1952a9b3b89db59e4d9dbdc53760aa509aab02).
 - Continue batch sequentially with POL next; preserve no-repeat rule, ₹0, production invariants and UNKNOWN never PASS.
+
+
+## Continuation 129 — Batch 1 sequential progress through ROU (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Batch 1 report and relevant POL/TUR/PER/ROU reports before continuing.
+- POL: official NBP bop_q.xlsx direct browser route returned 400 unsupported XLSX; separate container download failed. No bytes/hash; POL remains BLOCKED. No more same-route retries.
+- TUR: official TCMB bop.zip direct browser route inaccessible; no bytes/hash. Existing PDF numeric status retained: asset displayed PASS; liability residual +87 USDm REVIEW; overall PARTIAL.
+- PER: official BCRPData catalogue/result pages re-opened. Q2-2026 USDm: private portfolio assets +1,749; private liabilities +279; public liabilities +1,421. National liabilities total 1,700 vs IMF 1,699.664071 (residual +0.335929, within ±0.5) numeric PASS. Public portfolio-asset subseries absent from full listed public-sector catalogue; full asset coverage PARTIAL; no aggregate substitution. Raw API payload/hash NOT_CAPTURED.
+- ROU: official BNR methodology reconfirms portfolio investment compiled title-by-title monthly at market value/accrual; BOP/IIP stocks distinguished. Official Q2 transaction legs/raw file not captured; PARTIAL / NOT PASS.
+- Batch 1 report updated: docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md (update commit d255c5bbeb286087a9a9ff185162f6372bcbe7ff).
+- Next country: NPL. Use a genuinely different supported NRB API/export route; no repeat of known unsupported XLSX or monthly archive route. Then RWA, SLV, SLB.
+- No IMF re-query, no cohort rebuild, no aggregation or production changes. ₹0; UNKNOWN is never PASS.
