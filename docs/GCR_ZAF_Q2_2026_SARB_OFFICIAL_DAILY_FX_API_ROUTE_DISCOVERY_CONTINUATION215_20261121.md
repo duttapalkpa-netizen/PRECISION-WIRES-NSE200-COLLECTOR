@@ -65,3 +65,10 @@ Status: NEW OFFICIAL API ROUTE IDENTIFIED; HISTORICAL Q2 OBSERVATIONS NOT_CAPTUR
 - SARB selected historical rates page: https://www.resbank.co.za/en/home/what-we-do/statistics/key-statistics/selected-historical-rates.pdf
 - SARB September 2026 Quarterly Bulletin XLSX download information: https://www.resbank.co.za/en/home/publications/publication-detail-pages/quarterly-bulletins/download-information-from-xlsx-data-files/2026/-download-information-from-xlsx-data-files
 - Earlier controlling ZAF reports: `docs/GCR_ZAF_Q2_2026_IMF_SARB_OECD_FX_RECONCILIATION_20261120.md` and `docs/GCR_ZAF_Q2_2026_FX_CONVERSION_METHODOLOGY_BOUNDARY_CONTINUATION127_20261121.md`.
+
+
+## Continuation 215A — ZAF matrix gate-orientation defect corrected (2026-11-21)
+- Independent post-write read-back exposed a pre-existing matrix inconsistency: the controlling ZAF report states asset residual REVIEW and liability comparison PASS, while the matrix had asset_gate=PASS and liability_gate=REVIEW. This was a status inversion, not a research conclusion.
+- Corrected ZAF only: asset_gate REVIEW; liability_gate PASS; status_ASSET_PASS NO; status_LIABILITY_PASS YES; asset_status DATA_CAPTURED; liability_status LIABILITY_PASS. Preserved DATA_CAPTURED stage, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED.
+- Matrix correction commit `86dfe96ae4b3a71a78a0eebbabd4fd36bd4ac4e3`; blob SHA-1 `a4ed9fcf8732dd81a1d1563aaf5388ed6c2bbd0a`.
+- This correction is grounded in the controlling ZAF reconciliation and C127 boundary report; it does not claim the new SARB API historical payload was captured or the asset FX issue resolved. It prevents a false asset PASS and restores the correct liability PASS.
