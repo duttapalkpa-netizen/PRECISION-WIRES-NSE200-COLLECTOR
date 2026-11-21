@@ -3031,3 +3031,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - COL remains PARTIAL / BLOCKED / NOT PASS; sign and same-vintage bridge NOT_ESTABLISHED; numeric comparison NOT_DONE; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_COLOMBIA_COL_Q2_2026_SUAMECA_PUBLIC_SERIES_ROUTE_RECHECK_CONTINUATION162_20261121.md (create commit 2ac1deb306091269a8471531f1f22c8f58c979fd).
 - Next: only resume COL via a genuinely supported interactive session that executes official SUAMECA export and captures both Q2 series with raw bytes, vintage, timestamp and SHA-256; otherwise close route and advance to POL. No repeated 502/timeout/SDMX probes. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 163 — Chapter 47 Part 11: Poland POL Q2-2026 NBP quarterly release dual-leg capture (2026-11-21)
+- Re-fetched current ledger, priority queue and prior POL source-gate report. The prior quarantine applied to bopa_en.pdf with March 2026 front matter; did not reuse it.
+- Identified distinct official NBP Q2 release https://static.nbp.pl/dane/bilans-platniczy/bop_kw_en.pdf, titled “Balance of Payments in Q2 of 2026”, Warsaw 30-Sep-2026. Appendix 1 page 11 (PDF p.10), unit mn PLN, Q2 column: portfolio assets 24,144 (equity 9,616 + debt 14,528); portfolio liabilities 70,910 (equity 969 + debt 69,941). Both dual legs captured independently from national table; arithmetic checks pass.
+- Reused existing IMF exact rows without re-query: A_NFA_T +USD6,602m, raw SHA-256 19ba3d8918245d7abe73125d76c08e27f9970817cc1a46b8753763352e5a2e21; L_NIL_T +USD19,391m, raw SHA-256 365bac8801d0951f3d69f863628e844c6da07b0e69651880614c815b859c769b.
+- NBP release date known, but raw PDF bytes/SHA-256 not captured (container download failed). No ad-hoc PLN/USD conversion. Exact transaction FX convention and same-vintage bridge to IMF 19-Nov archive NOT_ESTABLISHED; cross-currency comparison NOT_DONE. POL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_QUARTERLY_RELEASE_DUAL_LEG_CAPTURE_CONTINUATION163_20261121.md (commit 438a3deedcd99fc245cdd2c500da6d5b940f7998).
+- Next: capture NBP PDF raw bytes/SHA through supported route; establish exact transaction FX conversion or matched USD presentation for same two legs and revision-vintage bridge. If unresolved, retain PARTIAL and advance. No IMF query/cohort rebuild/production changes; ₹0; UNKNOWN never PASS.
