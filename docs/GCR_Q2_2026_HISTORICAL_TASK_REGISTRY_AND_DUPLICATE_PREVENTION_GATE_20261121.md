@@ -43,3 +43,10 @@ Status: CONTROL DOCUMENTATION CREATED; registry is a rolling evidence index, not
 
 ## Immutable constraints
 Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic data or fabricated timestamps; preserve Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2. UNKNOWN is never PASS. Aggregate remains NOT_AUTHORIZED until all required gates pass.
+
+
+## Continuation 168 — KOS Kosovo route fingerprint update (2026-11-21)
+| Country | Authority / exact route fingerprint | Prior evidence | Last known status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| KOS Kosovo | BQK; https://bqk-kos.org/wp-content/uploads/2024/09/ROW%20Matrix%20%E2%80%93%20Transactions.xls; ROW Matrix (S.2) Transactions; XLS; Q2-2026; verify separate portfolio asset/liability transaction legs | Continuation 168: docs/GCR_KOSOVO_KOS_Q2_2026_BQK_ROW_TRANSACTION_MATRIX_SOURCE_GATE_CONTINUATION168_20261121.md | PARTIAL / NOT PASS; official locator and flow methodology PASS; XLS bytes HTTP 403; portfolio legs NOT_VERIFIED / NOT_CAPTURED | CLOSED for identical XLS URL and same browser retrieval path; separate monthly Financial account XLS route also failed HTTP 400 and container download | A genuinely new supported public XLS byte-transfer capability or distinct official export/API endpoint |
+- KOS is in the immutable 63-country Q2-2026 both-leg cohort; no cohort rebuild/IMF re-query. Q2 IIP portfolio is stocks and NOT_ADMITTED as a BOP flow substitute. Aggregate NOT_AUTHORIZED.
