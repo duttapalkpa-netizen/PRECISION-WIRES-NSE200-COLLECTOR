@@ -51,3 +51,9 @@ Skipped completed PASS work; did not retry the identical PDF fetch.
 
 ## 7. Protected invariants
 No IMF re-query, no cohort rebuild, no synthetic data, no generic FX conversion, no sign flip, no net-to-leg inference, no stock-as-flow, no annual-to-quarter proration or H1-Q1 subtraction without same-vintage evidence, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS. Research spend ₹0.
+
+
+## Continuation 133 — NBT Q2/H1 route closed at period-basis gate (2026-11-21)
+- Rechecked current Ledger/Queue/cohort and TJK Continuation 113. The exact NBT archive link still conflicts: visible label “FOR THE 2 QUARTER” but URL filename “ПБ-нимсолаи 1 с.2026.pdf” (half-year 1). Exact PDF retrieval had already timed out; no alternate indexed official file or independent standalone Q2 table found in this continuation.
+- No verified same-vintage Q1 separate portfolio legs exist in the inspected source set. Therefore H1−Q1 derivation is not admissible. No IIP stock, annual estimate, net-only or inferred leg substitution.
+- TJK national Q2 dual legs remain NOT_CAPTURED; source route BLOCKED / period basis AMBIGUOUS; TJK NOT_VALIDATED / NOT PASS. Close this identical NBT route and advance to TLS. No IMF query/cohort rebuild; ₹0; UNKNOWN never PASS.
