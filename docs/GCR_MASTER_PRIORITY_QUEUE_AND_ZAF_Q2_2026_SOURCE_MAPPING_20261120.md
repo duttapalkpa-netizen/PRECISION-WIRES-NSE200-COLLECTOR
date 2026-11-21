@@ -1277,3 +1277,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 ## Continuation 162 — Chapter 47 Part 10 priority update (2026-11-21)
 - COL remains PARTIAL/BLOCKED: official BanRep catalogue exposes separate quarterly portfolio asset/liability series through Q2-2026, but SUAMECA multiple-download returned 502 and prebuilt dashboard timed out; no exact Q2 observations/raw export captured. Do not substitute IIP stocks or financial-account net totals.
 - Next eligible queue item: POL (Poland) per existing batch priority, after avoiding further identical COL 502/timeout/SDMX probes. For POL, use only a genuinely new XLSX-capable raw-byte route; prior exact NBP workbook endpoint already failed, so no identical retries. Preserve status until source bytes/legs/vintage/sign are evidenced. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 163 — Chapter 47 Part 11 priority update (2026-11-21)
+- POL Q2 blocker partially resolved: distinct official NBP Q2 release (30-Sep-2026) Appendix 1 publishes separate portfolio assets 24,144 mn PLN and liabilities 70,910 mn PLN, with equity/debt components summing exactly to each leg. Prior bopa_en.pdf date mismatch does not apply to this separate Q2 PDF.
+- Existing IMF exact values reused: +USD6,602m assets and +USD19,391m liabilities. NBP PDF raw-byte SHA-256 not captured; transaction USD/PLN conversion method and same-vintage bridge not established. No cross-currency comparison; POL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Rank-1 next: obtain NBP PDF raw bytes/hash and authoritative transaction FX/vintage bridge or matched USD legs. If no route, preserve captured PLN legs and advance to next eligible country. Do not retry known NBP XLSX unsupported route. ₹0; no production changes; UNKNOWN never PASS.
