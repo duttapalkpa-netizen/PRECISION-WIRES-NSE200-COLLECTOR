@@ -181,3 +181,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | IND India, Q1-2026 | RBI Table 43 dated 22-Jun-2026 (₹ crore), Table 42 dated 22-Jul-2026 and 25-Aug-2026 (USDm); existing RBI October Table42 is Q2-only | C187 report: `docs/GCR_INDIA_IND_Q1_2026_RBI_TABLE42_RELEASE_PERSISTENCE_AUDIT_CONTINUATION187_20261121.md` | Q1 portfolio liabilities net -12,121 USDm and assets/by-India net +74 USDm unchanged in July/August; total -12,047. Existing IMF asset comparison PASS; liability residual -1,512.508347 USDm REVIEW; same-vintage/underlying cause NOT_ESTABLISHED; India Q1 PARTIAL / NOT PASS | Do not repeat the three RBI pages or IMF exact GET; no assumption that general revision policy proves this value changed | Distinct official RBI Q1 revision history / transaction-level liability series, or already archived IMF snapshot with explicit revision metadata |
 - Q1 persistence does not explain the RBI/IMF liability residual; preserve REVIEW and aggregate NOT_AUTHORIZED.
+
+
+## Continuation 188 — LKA CBSL page freshness / export fingerprint (2026-11-21)
+| Country | Authority / source fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| LKA Sri Lanka | CBSL External Sector official search-indexed page; update marker 01-Oct-2026 11:30; page describes BPM6 quarterly BOP 2012Q1–Latest | C188: `docs/GCR_SRI_LANKA_LKA_Q2_2026_CBSL_EXTERNAL_SECTOR_PAGE_FRESHNESS_AND_EXPORT_GATE_CONTINUATION188_20261121.md` | Page freshness metadata PASS; current Table 2.10 export URL/bytes/hash and revision ID NOT_CAPTURED; C174 Treasury dual legs remain provisional strong reconciliation; same-vintage NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not repeat C175 direct Table 2.10 403, C177 stale 2017 SDDS BOP.xlsx route, or C176 secondary CSV/JSON click | Distinct official current export/API locator or an actual Table 2.10 Q2-2026 revision/vintage identifier |
+- Page content update timestamp is not the statistical observation vintage. Aggregate NOT_AUTHORIZED.
