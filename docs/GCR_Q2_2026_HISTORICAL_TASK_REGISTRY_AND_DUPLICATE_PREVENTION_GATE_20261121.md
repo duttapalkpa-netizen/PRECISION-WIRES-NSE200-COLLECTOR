@@ -481,3 +481,9 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Official table `DT_NSO_0100_001V10_quarter` page confirms 69 Indicator values, 71 Quarter values, Q2 `2026-2`, million USD, quarterly frequency and Bank of Mongolia as source.
 - Exact official API root/path, method, query schema and indicator keys NOT_DOCUMENTED in inspected official sources. No API call or national data extraction performed. MNG PARTIAL / NOT PASS; no aggregate authorization.
 - Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_OFFICIAL_API_CONTRACT_BOUNDARY_CONTINUATION221_20261121.md. Reopen only on official API contract/export evidence.
+
+## Continuation 222 — MNG matrix evidence-reference/read-back correction (2026-11-21)
+- Matrix evidence_ref corrected to C221 official API-contract boundary report; descriptive note records quarterly USDm/Q2 2026-2 metadata and the unresolved exact API contract.
+- No country gate promotion: MNG BLOCKED; national A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Final matrix commit `2074feae218e6890088d95412fbf7a1013c71bbf`; C222 report commit `7eea1f9e2341be21351a7e5201e95aa3c49a283b`.
+- Duplicate prevention: do not repeat C221 terms/table metadata checks or failed C179/C190/C191 API routes. Reopen only with official endpoint contract or official export bytes.
