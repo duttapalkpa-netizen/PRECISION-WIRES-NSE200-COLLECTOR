@@ -269,3 +269,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | MDA Moldova | BNM Reports Generator | C86 + C198 | Selectors and Generate/Export controls documented; report/export NOT_DONE | UI task requires actual JS-capable browser or user-supplied official export |
 - Permanent rule: route type must be classified before task selection; UI route is not executable without an actual JS-capable browser action. Mark `NOT_EXECUTED — UI CAPABILITY UNAVAILABLE`; advance to a retrievable static official route. Never promote locator/page-shell discovery to data retrieval PASS.
 - No country data or national validation promoted in C198; aggregate NOT_AUTHORIZED; immutable cohort and IMF archive unchanged.
+
+
+## Continuation 199 — ARM current-domain CBA export route fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate / selection rule |
+|---|---|---|---|---|
+| ARM Armenia | CBA Financial Account page https://www.cba.am/en/statistics/financial-account/275; exact Export all target https://www.cba.am/en/statistics/financial-account/275/export-all/; formats XLSX/XML/JSON; Q2-2026 BPM6 BOP portfolio A/L | C143 legacy XLS report + C199 docs/GCR_ARMENIA_ARM_Q2_2026_CBA_CURRENT_FINANCIAL_ACCOUNT_EXPORT_ROUTE_GATE_CONTINUATION199_20261121.md | New current-domain locator/control PASS; export target timed out; Q2 portfolio A/L and raw bytes/hash NOT_CAPTURED; ARM PARTIAL / NOT PASS | Do not retry C143 legacy XLS URL or same C199 export-all target via same retrieval surface. Reopen only on a distinct supported machine route or successful official export bytes |
+- CBA metadata confirms USD million, quarterly BPM6 BOP and annual revision practice; Armstat Q2 NSDP summary omits separate portfolio flow line (not zero); IIP stocks excluded.
+- No country validation promoted; aggregate NOT_AUTHORIZED; no IMF re-query/cohort rebuild. Apply C198 Execution-Mode Gate to future selections.
