@@ -3295,3 +3295,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - LKA remains strong provisional dual-leg reconciliation; primary CBSL raw export and same-vintage bridge NOT_ESTABLISHED; final validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_SRI_LANKA_LKA_Q2_2026_CBSL_EXTERNAL_SECTOR_PAGE_FRESHNESS_AND_EXPORT_GATE_CONTINUATION188_20261121.md` (commit 2971a494803edc77b51290e607c8aa2af763a44b).
 - Next: do not repeat C175–C177 routes. Reopen only on a genuinely distinct official export/API locator or actual current Table 2.10 revision identifier; otherwise advance after preflight. All protected invariants unchanged.
+
+
+## Continuation 189 — Guinea (GIN) BCRG MPC download-affordance target audit (2026-11-21)
+- Re-fetched Master Ledger, Priority Queue, Historical Registry, C188, GIN C170 and fixed 63-country cohort. LKA route repetition excluded; GIN selected as next eligible C188 follow-up. No IMF re-query/cohort rebuild.
+- Official BCRG 22nd MPC page opened directly: https://www.bcrg-guinee.org/22eme-reunion-ordinaire-du-comite-de-politique-monetaire-de-la-republique-de-guinee/. It visibly contains “Télécharger” but the extracted numbered-link inventory does not expose an attachment href/document URL. No guessed URL, attachment bytes, MIME, timestamp, size or hash.
+- This is a link-target access boundary only, not evidence data are absent. GIN Q2 portfolio legs remain NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_GUINEA_GIN_Q2_2026_BCRG_MPC_DOWNLOAD_AFFORDANCE_AND_LINK_TARGET_ACCESS_GATE_CONTINUATION189_20261121.md` (commit 9bebc3da4f89d745c4599d0d0e4da39339c0f7ab).
+- Next: reopen only on distinct official BCRG attachment target/API export; otherwise advance after full preflight. All invariants unchanged; UNKNOWN never PASS.
