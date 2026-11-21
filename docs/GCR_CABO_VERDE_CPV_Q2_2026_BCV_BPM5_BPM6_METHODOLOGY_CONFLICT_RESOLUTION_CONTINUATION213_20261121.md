@@ -37,7 +37,7 @@ Decision: OFFICIAL BCV BPM6 EXTERNAL-SECTOR METHODOLOGY CONFIRMED AS THE DOCUMEN
 
 ## 4. Matrix treatment
 - Update only CPV descriptive note to record that BCV's official external-sector BPM6 note is verified and the IMF e-GDDS BPM5 label is treated as likely legacy metadata.
-- Keep CPV stage BLOCKED, national source present YES, asset/liability NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED.
+- Keep CPV stage SOURCE_FOUND, national source present YES, asset/liability NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED.
 - Do not infer dual-leg capture from the methodological gross-reporting statement.
 
 ## 5. Next action
