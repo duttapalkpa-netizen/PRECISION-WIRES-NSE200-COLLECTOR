@@ -515,3 +515,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - This is not the Q2 BOP report and contains no separate portfolio asset/liability transaction legs. No raw BOP data, Q2 portfolio values, revision metadata or hash captured.
 - C155 historical dual-leg Q4/Q3-2025 reports and C207 matrix evidence correction remain controlling; no repeat of those tasks. BDI remains PARTIAL / NOT PASS; both legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
 - C226 detail: `docs/GCR_BURUNDI_BDI_Q2_2026_BRB_JUNE_2026_INDICATEURS_NON_BOP_SOURCE_BOUNDARY_CONTINUATION226_20261121.md`. Duplicate gate: do not repeat this monthly indicators PDF; reopen only on a distinct official Q2 BOP portfolio dual-leg export/API with revision metadata.
+
+
+## Continuation 227 — MYS matrix evidence-reference read-back correction
+- Existing controlling report `GCR_MALAYSIA_MYS_Q2_2026_BNM_OFFICIAL_FX_AND_DUAL_LEG_RECONCILIATION_20261120.md` already contains official BNM 1200-middle raw capture, separate asset/liability numeric checks and the unresolved same-vintage boundary.
+- Corrected only the MYS matrix evidence_ref to that report; retained asset/liability PASS, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED. No numeric gate promotion.
+- Matrix commit `7e544e73de2aac8c8f12d1e6e43391ae00ec3f05`; C227 report: `docs/GCR_MALAYSIA_MYS_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION227_20261121.md`; queue appended under C227.
+- Duplicate gate: do not repeat BNM FX raw capture, monthly/daily mean QA, IMF row extraction or dual-leg numeric comparisons. Reopen only on new dated BNM/DOSM revision-cutoff evidence or later archived IMF vintage.
