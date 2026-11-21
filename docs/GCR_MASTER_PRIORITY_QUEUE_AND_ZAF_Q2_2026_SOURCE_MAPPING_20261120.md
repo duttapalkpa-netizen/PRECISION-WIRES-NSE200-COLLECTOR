@@ -1272,3 +1272,8 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - CHL Part 8 established separate official monthly BDE portfolio asset/liability flows and Q2 arithmetic, but not immutable raw bytes. Part 9 confirms the official free REST API is account/token-gated; no authorized BDE token in context, so no API request was made. The public Canasta UI advertises Excel export, but export action and bytes remain NOT_EXECUTED/NOT_CAPTURED.
 - CHL stays PARTIAL / NOT PASS; raw SHA-256 and same-vintage metadata unresolved; aggregate NOT_AUTHORIZED.
 - Rank-1 next: authorized BDE API or Canasta Excel export capture if available; otherwise stop retrying credential-gated endpoint and advance to next eligible immutable-cohort country. Do not request/store secrets or change production. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 162 — Chapter 47 Part 10 priority update (2026-11-21)
+- COL remains PARTIAL/BLOCKED: official BanRep catalogue exposes separate quarterly portfolio asset/liability series through Q2-2026, but SUAMECA multiple-download returned 502 and prebuilt dashboard timed out; no exact Q2 observations/raw export captured. Do not substitute IIP stocks or financial-account net totals.
+- Next eligible queue item: POL (Poland) per existing batch priority, after avoiding further identical COL 502/timeout/SDMX probes. For POL, use only a genuinely new XLSX-capable raw-byte route; prior exact NBP workbook endpoint already failed, so no identical retries. Preserve status until source bytes/legs/vintage/sign are evidenced. ₹0; UNKNOWN never PASS.
