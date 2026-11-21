@@ -2749,3 +2749,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Exact quarter-average conversion equivalence NOT_ESTABLISHED; ZAF full dual-leg remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No tolerance widening or forced PASS.
 - Report: docs/GCR_ZAF_Q2_2026_FX_CONVERSION_METHODOLOGY_BOUNDARY_CONTINUATION127_20261121.md (commit b008571b86b3ebe8855b1c7170ee64a722e20f50).
 - Next rank-1 task: continue CHN (China) detailed SAFE Q2-2026 BOP XLSX byte retrieval and workbook inspection; previous audit says official file locator found but bytes unavailable. Do not repeat ZAF or IMF capture. ₹0; production unchanged; UNKNOWN is never PASS.
+
+
+## Continuation 128 — Fixed 10-country batch selected and sequential work started (2026-11-21)
+- User requested batch selection of 10/15/20 countries and sequential execution without repeated user direction. Adopted a fixed 10-country batch for this cycle; each country is worked in order, and blocked routes are recorded once before advancing.
+- Preflight re-fetched current Master Ledger, Priority Queue, fixed 63-country cohort and all ten prior country reports. PASS work excluded; no cohort rebuild or IMF re-query.
+- Batch order: CHN, COL, POL, TUR, PER, ROU, NPL, RWA, SLV, SLB. Exact next action for each is recorded in the batch report.
+- CHN: reopened official SAFE detailed time-series page and followed its XLSX link via a distinct browser link route; fetch returned 400 unsupported XLSX content type. No bytes/hash obtained; CHN remains PARTIAL / BLOCKED.
+- COL: official BanRep SUAMECA multiple-download catalogue search exposes separate quarterly portfolio net acquisition of financial assets and net incurrence of liabilities series through 2026-Q2, in current USD millions, update date 2026-09-01. Opening the multiple-download route returned 502; no exact series IDs/export bytes/values/hash. COL remains PARTIAL / BLOCKED; no IIP stock substitution.
+- Report: docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md (commit 5a1952a9b3b89db59e4d9dbdc53760aa509aab02).
+- Continue batch sequentially with POL next; preserve no-repeat rule, ₹0, production invariants and UNKNOWN never PASS.
