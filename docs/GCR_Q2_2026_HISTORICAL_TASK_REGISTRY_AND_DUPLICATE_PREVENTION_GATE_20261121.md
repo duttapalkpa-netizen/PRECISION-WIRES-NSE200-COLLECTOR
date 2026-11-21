@@ -334,3 +334,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Detail: `docs/GCR_NIGERIA_NGA_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION202_20261121.md`.
 - Recomputed stages after this single-country correction: SOURCE_FOUND 19; DATA_CAPTURED 24; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 16; LIABILITY_PASS 16; VINTAGE_PASS 0; FULL_PASS 0. Below DATA_CAPTURED: 39. Counts are not additive across independent gates.
 - No IMF re-query/cohort rebuild; aggregate remains NOT_AUTHORIZED; ₹0; all production invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 203 — PAK Pakistan matrix status correction (2026-11-21)
+| Country | Existing evidence / report | Corrected matrix status | Duplicate prevention / open gate |
+|---|---|---|---|
+| PAK Pakistan | C51–C52 in `docs/GCR_PAKISTAN_PAK_Q2_2026_SBP_PORTFOLIO_SOURCE_BOUNDARY_AUDIT_20261120.md`; C203 detail: `docs/GCR_PAKISTAN_PAK_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION203_20261121.md` | DATA_CAPTURED; asset PASS; liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED | Do not repeat SBP source fetch, archived IMF row extraction, BPM6 sign crosswalk or 2/2 numeric comparison. Reopen vintage only on observation-specific SBP revision history or an exact IMF same-vintage receipt/bridge. |
+- Matrix CSV read-back SHA-1: `2e9b5a9246cebc249acc2e615cae5e43d4d8f4ac`; 63 rows / 30 columns. Counts: SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0.
+- PAK remains PARTIAL / NOT PASS; no aggregate admission. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS; production invariants unchanged.
