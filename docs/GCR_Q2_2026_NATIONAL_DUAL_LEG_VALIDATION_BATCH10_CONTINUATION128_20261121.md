@@ -133,3 +133,12 @@ Batch selection is grounded in existing unresolved reports, national-source avai
 - BCR SDDS quarterly BOP Data Base link (cdr=130) was followed as a distinct current data route and timed out. NSDP is stale (last update 2022-12-23). No exact Q2 row/value, raw file/hash or current database vintage retrieved.
 - SLV Q2 assets/liabilities NOT_CAPTURED; sign/unit/concept/same-vintage bridge NOT_ESTABLISHED; numeric comparison NOT_DONE; PARTIAL / BLOCKED; aggregate NOT_AUTHORIZED. Do not interpret no search result as definitive non-publication.
 - Next batch item: SLB (Solomon Islands), resolve CBSI Table 1.17 sign/presentation conflict using primary methodology and archived exact IMF rows; no inferred sign.
+
+
+## 10. Sequential execution update — SLB (Continuation 132, 2026-11-21)
+
+### SLB — sign conflict conceptually reconciled; IMF exact rows retrieved from existing archive
+- CBSI June-2026 Table 1.17 Q2: portfolio assets +38 SBDm, liabilities nil; Chapter IV narrative says portfolio investment deficit 38. Under BPM6, positive asset acquisition contributes +38 to net lending (assets minus liabilities), equivalently -38 from a net-inflow/deficit perspective. Do not flip the table sign. CBSI does not explicitly define narrative deficit convention.
+- Retrieved exact SLB Q2 rows from archived raw IMF CSVs (no new IMF query): A_NFA_T OBS_VALUE 4675384.136569459, SCALE=6, USD; L_NIL_T OBS_VALUE 0, SCALE=6, USD. Raw asset blob SHA 15449e87c9057291a1f52f2f8cd9805df55f9fb8; raw liability blob SHA 15f379dc42e2760eb5f2384618e48f5ddc3177f1.
+- Candidate-only arithmetic using Q2 average 8.08 SBD/USD: 38 SBDm -> 4.702970297 USDm; IMF asset display under /1e6 candidate -> 4.675384137 USDm; residual -0.027586160 USDm, within CBSI SBDm rounding interval ±0.061881188 USDm. Liability zero matches nil. NOT PASS: SLB-specific SCALE conversion not validated and CBSI does not explicitly state 8.08 is its BOP transaction conversion rate.
+- CBSI PDF raw bytes/SHA and official transaction FX method remain NOT_CAPTURED/NOT_ESTABLISHED. SLB remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next action: explicit CBSI FX-conversion metadata; if unavailable, close and advance beyond fixed batch. No IMF query/cohort rebuild.
