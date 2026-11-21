@@ -154,3 +154,48 @@ No earlier immutable lesson IDs/register were present in the master ledger. The 
 - Acceptance status: all three lessons recorded; all three recurrence-prevention tests remain OPEN / NOT_ACCEPTED until a future authorized validation produces evidence.
 - Next verification: read this register first; check v2 approval status; verify raw manifest recovery; require exact integer parity before any metric release.
 - Protected invariants unchanged; ₹0; free official sources only; UNKNOWN is never PASS.
+
+
+## 10A. Lesson-to-experiment detail (append-only clarification)
+
+The following detail expands the same three immutable IDs above; it does not create duplicate lessons.
+
+### PW-LSN-20261121-001 — forward-label window defect
+- Date/cutoff: identified in the 2026-11-20 Run #416 audit; affected historical cutoff set 2026-06-29 through 2026-11-13, with archive data through 2026-11-20.
+- Symbol/target/horizon: ALL eligible security identities; +5% H+1, +10% H+3 and +20% H+5. No single-symbol cause is asserted.
+- Expected vs actual: expected exactly the next h exchange sessions T+1…T+h and full-horizon maturity; actual source expression uses symbol-grouped shift(-1) followed by trailing rolling(h, min_periods=1), allowing partial windows and symbol-local session compression.
+- Root-cause confidence: VERIFIED by source-code read-back and the independent Run #416 label audit.
+- Evidence time and hashes: Run #416 created 2026-11-20T13:28:24Z, updated 2026-11-20T13:38:42Z; artifact created 2026-11-20T13:38:39Z. Source commit 6572a69776272cbda3fde4fec457bddbf7c58ad5; code blob SHA-1 d085f7a2d35a88b4c4eaba65144a429a06961b09; code SHA-256 dca7363ef1c5f56a097ed66b4305935f2c90975e2387b9c5b44780c4101f83e2; dataset SHA-256 d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db; config SHA-256 1d17284e1c4a16e59e51a0d117a8b1e9888cfba39bd5378ce1c61dfca1c6d8a8.
+- Affected step/filter/diagnostic: V11.4 forward outcome labels; H+1/H+3/H+5 target diagnostics; prior-window training targets and composite ranking path.
+- Research hypothesis: an explicit exchange-session spine plus full-horizon state machine removes partial-window and missing-session label contamination.
+- Bounded diagnostic experiment: after approval, first validate five fully matured historical cutoffs against actual archived rows for all three horizons; then run the fixed 100-cutoff walk-forward only after the pilot passes. Keep every job 20–60 seconds where feasible and below 10 minutes. The five-cutoff pilot is a software correctness check, not a performance claim.
+- Sample/maturity rule: all h expected session rows are required; incomplete rows excluded with reason codes. H+3 State calibration still requires >=50 fully matured observations per State.
+- Expected artifact: versioned v2 code/config, test report, canonical row-level label ledger, per-cutoff denominator ledger, independent hand-check, raw/derived manifest and SHA-256 receipt.
+- Limitation/blocker: v2 implementation is explicitly NOT_AUTHORIZED; raw-source manifest is incomplete; corrected labels alone do not validate a frozen ranking trained on contaminated labels. Separate user approval is required before implementation; production admission remains separately prohibited.
+
+### PW-LSN-20261121-002 — H+5 JSON/CSV integer mismatch
+- Date/cutoff: documented in the 2026-11-20 Run #416 audit.
+- Symbol/target/horizon: Top-30 aggregate, +20% H+5; exact discrepant symbol rows are not identified in the retained report.
+- Expected vs actual: expected JSON, row-level CSV, summary and manifest integer counts to be exactly equal; actual JSON precision implies 613 hits while row-level CSV contains 616, a three-row mismatch.
+- Root-cause confidence: SUPPORTED; the mismatch is verified in the audit record, but the specific row-level serialization cause remains unknown.
+- Evidence time/hashes: Run #416 / artifact 14632139339 / ZIP SHA-256 b12ea634f24af8241ee9a901635dd743195f4b8a3a1511cc2ffe3c3246282082; report SHA-256 ff6baca2ffd4d0c14464dbf274e6fe94f1071e31d536b46f779f22730a6835b4; source code SHA-256 dca7363ef1c5f56a097ed66b4305935f2c90975e2387b9c5b44780c4101f83e2.
+- Affected step/filter/diagnostic: V11.4 metric aggregation, serialization, denominator reconciliation and acceptance gate D/E.
+- Research hypothesis: separate aggregation/serialization paths or row filtering explain the count difference; one canonical row ledger should eliminate it.
+- Bounded diagnostic experiment: re-derive all target counts from one canonical row ledger, then compare JSON/CSV/summary/manifest integer totals and independently recompute precision/recall/F1. One artifact-only deterministic audit; no market-data download.
+- Sample/maturity: +20% H+5 Top-30 mature rows 2,966; exact 613-vs-616 rows remain unresolved. Full-horizon maturity and unique security/cutoff keys required.
+- Expected artifact: row-level reconciliation diff, canonical metrics JSON/CSV, denominator ledger, independent count-parity report and manifest.
+- Limitation/blocker: no evidence currently establishes whether 613 or 616 is correct; source-row lineage must adjudicate before any metric is released. Acceptance remains OPEN / NOT_ACCEPTED.
+
+### PW-LSN-20261121-003 — raw NSE archive provenance omission
+- Date/cutoff: 2026-11-20 acquisition, reviewed in the 2026-11-21 morning alert.
+- Symbol/target/horizon: eight experimental shadow symbols (NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP); all targets/horizons remain IMMATURE at this review because the cutoff is 2026-11-20 and the next market session is 2026-11-23.
+- Expected vs actual: expected retained raw bhavcopy/delivery/security-master bytes and an immutable per-file manifest; actual Run #339 log reports 200 successful downloads, but the retained artifact omits raw bytes and raw manifest, preventing independent inspection of current candidate prices/timestamps.
+- Root-cause confidence: SUPPORTED; artifact contents and missing raw files are documented by the morning report, but the exact packaging-stage omission has not been independently traced.
+- Evidence time/hashes: Run #339 created 2026-11-20T19:09:53Z and completed 2026-11-20T19:18:04Z; artifact 14660032260; ZIP SHA-256 23e74e7f9ef2e32bf5b6bbc5a931814c06fe065835b8bdda74f3c00dbdafd213; source commit 624be8f126f39bd6a146d732ec3f87edde964aec; morning report SHA-256 652bc7717d6cd5206005ae49ff4e77329c4f39b86eeded4971fa0dfef5dab0dc.
+- Affected step/filter/diagnostic: NSE source ingestion, raw-source provenance, current price/volume/circuit/surveillance eligibility and candidate audit.
+- Research hypothesis: the workflow acquired the raw files but the artifact packaging/retention contract did not include them or their manifest.
+- Bounded diagnostic experiment: inspect the already-authorized archive location and compare the 200 expected raw-file entries with the artifact inventory; do not redownload or synthesize missing bytes. Produce one recovery/packaging audit.
+- Sample/maturity: 200 session downloads logged; 2,999 symbols in workflow QA. This does not establish 200 independently inspectable raw files; current 8-symbol shadow cohort remains immature.
+- Expected artifact: raw-file recovery receipt, per-file URL and timestamp semantics, byte-count/SHA-256 manifest, inventory reconciliation and candidate-price provenance report.
+- Limitation/blocker: no verified archive location was established in this review; no new raw-source hash is claimed. Acceptance remains OPEN / NOT_ACCEPTED.
+
