@@ -2770,3 +2770,10 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Batch 1 report updated: docs/GCR_Q2_2026_NATIONAL_DUAL_LEG_VALIDATION_BATCH10_CONTINUATION128_20261121.md (update commit d255c5bbeb286087a9a9ff185162f6372bcbe7ff).
 - Next country: NPL. Use a genuinely different supported NRB API/export route; no repeat of known unsupported XLSX or monthly archive route. Then RWA, SLV, SLB.
 - No IMF re-query, no cohort rebuild, no aggregation or production changes. ₹0; UNKNOWN is never PASS.
+
+
+## Continuation 130 — NPL closed at source-route boundary; RWA rechecked (2026-11-21)
+- Preflight re-fetched current Master Ledger, Priority Queue, immutable 63-country cohort, Batch-1 report and NPL/RWA country reports. Batch order preserved.
+- NPL: official NRB External Sector BPM6 workbook locator reconfirmed; direct XLSX MIME route fails. Distinct NSDP route tested: BOP Browse Data resolves to a general macro-report archive, while SDMX download is stale 2024-Q1 XML. No alternate current Q2 dataset/API route found; NPL separate national portfolio assets/liabilities NOT_EXTRACTED, PARTIAL/BLOCKED. Same routes must not be retried without a changed source surface.
+- RWA: official BNR portal search-indexed record lists 30-Jun-2026 Balance of Payment, BPM6; portal direct open is JS-only and exact document URL unresolved. August-2026 BNR summary table omits portfolio legs and is Q1 scope; H1 net-only +14 USDm and annual FY legs remain non-Q2 evidence. RWA remains PARTIAL/NOT PASS.
+- Batch report updated with both country outcomes. Next batch action: resolve BNR June-30 portal item via a genuinely supported document/API route; if unavailable, advance to SLV. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN is never PASS.
