@@ -40,9 +40,15 @@ jobs:
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_clarification_and_delayed_submission_are_not_result_events \
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_reporting_period_alias_and_nse_attachment_source_are_preserved \
             qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_run121_four_invalid_disclosures_preserve_provenance_and_unknown \
-            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_period_aliases_are_explicit_and_conflicts_remain_unknown
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_period_aliases_are_explicit_and_conflicts_remain_unknown \
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_official_nse_archive_dot_in_filing_url_is_preserved_as_source \
+            qa.test_quarterly_results_research.QuarterlyResultsResearchTests.test_official_nse_archive_dot_in_xbrl_can_resolve_isin_with_company_match
       - name: Refresh official NSE security master for missing ISIN resolution
-        run: python collector/security_master.py
+        continue-on-error: true
+        run: |
+          python collector/security_master.py || {
+            echo "SECURITY_MASTER=UNKNOWN_OFFICIAL_ENDPOINT_UNAVAILABLE; downstream ISINs remain unresolved unless per-filing official evidence exists"
+          }
       - name: Run bounded live quarterly endpoint/schema audit only
         run: |
           python pipeline/quarterly_results_research.py
@@ -187,7 +193,7 @@ jobs:
                       continue
                   url = str(row.get("SOURCE_URL", "")).strip()
                   item = {"symbol": symbol, "source_url": url, "status": "BLOCKED_NO_OFFICIAL_ISIN_EVIDENCE", "isin_candidates": []}
-                  if url.startswith(("https://nsearchives.nseindia.com/", "https://www.nseindia.com/")):
+                  if url.startswith(("https://nsearchives.nseindia.com/", "https://nsearchives.nseindia.in/", "https://www.nseindia.com/")):
                       try:
                           resp = requests.get(url, headers={"User-Agent":"Mozilla/5.0","Accept":"*/*"}, timeout=(4,8))
                           item["http_status"] = resp.status_code
