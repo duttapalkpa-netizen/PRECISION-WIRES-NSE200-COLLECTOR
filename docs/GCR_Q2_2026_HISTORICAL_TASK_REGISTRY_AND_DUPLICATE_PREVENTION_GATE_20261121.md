@@ -251,3 +251,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | PER Peru | BCRP quarterly catalogue https://estadisticas.bcrp.gob.pe/estadisticas/series/trimestrales; USD-million financial-account series; Q2-2026; full-economy portfolio A/L | C196: docs/GCR_PERU_PER_Q2_2026_BCRP_CATALOGUE_REFRESH_AND_PUBLIC_ASSET_SCOPE_GATE_CONTINUATION196_20261121.md | Catalogue refresh PASS; private portfolio A/L PN39278BQ/PN39285BQ and public portfolio liability PN39404FQ listed; no public portfolio-specific asset series in displayed public-sector 25-series group; full-economy scope NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not combine private portfolio assets with aggregate public-sector assets PN39402FQ; do not retry prior inaccessible BCRP API route through same retrieval surface | Distinct official public-sector portfolio asset transaction series or explicit official scope statement proving private asset series is full-economy |
 - No Q2 raw values/bytes/hash captured; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 197 — ROU BNR Interactive Database route fingerprint (2026-11-21)
+| Country | Authority / exact route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| ROU Romania | National Bank of Romania; https://www.bnr.ro/en/2550-interactive-database; Statistics → Interactive Database → Balance of payments; Q2-2026; total-economy portfolio investment transaction assets/liabilities | C197: docs/GCR_ROMANIA_ROU_Q2_2026_BNR_INTERACTIVE_DATABASE_OFFICIAL_ROUTE_DISCOVERY_CONTINUATION197_20261121.md | Distinct official route locator PASS; dynamic controls/table locator/export not exposed; Q2 A/L values and raw bytes/hash NOT_CAPTURED; ROU PARTIAL / NOT PASS | Not a repeat of closed ECB SDW API route; do not claim data retrieval | JS-capable browser executes official BNR query/export and captures exact Q2 dual legs, metadata, revision vintage and SHA-256 |
+- Keep BNR external-custodian coverage caveat visible; aggregate NOT_AUTHORIZED.
