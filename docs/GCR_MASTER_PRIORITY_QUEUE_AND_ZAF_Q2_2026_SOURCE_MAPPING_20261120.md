@@ -1524,3 +1524,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official table metadata confirms quarterly BOP flow scope, Bank of Mongolia source, million USD, and Q2-2026 period example. Direct PxWeb v1 metadata URL tested but retrieval surface returned “URL not accessible”; no HTTP response/body/bytes/hash or indicator labels captured.
 - MNG remains PARTIAL / NOT PASS; national portfolio A/L NOT_CAPTURED; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_API_METADATA_ROUTE_RECHECK_CONTINUATION190_20261121.md` (commit b34c392e7cac13b24e260ee2bd5e3011004a5e13).
 - Do not repeat the same API URL through the same retrieval surface. Reopen only on a genuinely different official export/attachment capability.
+
+
+## Continuation 191 — MNG corrected PxWeb metadata endpoint and page update check (2026-11-21)
+- C190 endpoint audit found its metadata URL omitted the table filename suffix `.px`; corrected the endpoint using the public PxWeb client construction. The corrected URL was tested but remains inaccessible through the current retrieval bridge; no raw JSON/HTTP response captured.
+- Official NSO table now displays update marker 09-Nov-2026 and Q2-2026 among periods; quarterly, million USD, Bank of Mongolia source. Page metadata only; not observation vintage. Indicator codebook and separate portfolio legs still NOT_CAPTURED.
+- MNG PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_CORRECTED_METADATA_ENDPOINT_AND_ACCESS_GATE_CONTINUATION191_20261121.md` (commit 3dddaefe0093bd366a7c755e5407a088f498517e).
+- Do not retry same blocked API surface; reopen only with a distinct supported official export/attachment capability.
