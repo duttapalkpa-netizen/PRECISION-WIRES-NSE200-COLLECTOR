@@ -444,3 +444,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Updated only ZAF matrix descriptive note; all stage/gate fields preserved. Matrix commit `95540297274a9a6f001e7b0f49dd47050f5acce2`; blob SHA-1 `3758ed7d60f65fffeffbd43d7228ffeb92bbc3f6`.
 - Detail: `docs/GCR_ZAF_Q2_2026_SARB_OFFICIAL_DAILY_FX_API_ROUTE_DISCOVERY_CONTINUATION215_20261121.md`; report commit `51b16cb4e839ca32337be1c6e1becfa4739f4a7f`.
 - Next: obtain the documented historical payload through a supported HTTP/API-capable route; validate dates/coverage and only use a daily mean if SARB's BOP conversion convention supports it. No IMF re-query/cohort rebuild, synthetic data, tolerance widening or production change; ₹0; UNKNOWN never PASS.
+
+
+### C215A — ZAF matrix gate-orientation correction (2026-11-21)
+- Independent read-back found the ZAF matrix asset/liability gates inverted relative to the controlling reconciliation: matrix had asset PASS / liability REVIEW, while the report has asset REVIEW / liability PASS.
+- Corrected matrix to asset_gate REVIEW, liability_gate PASS; status_ASSET_PASS NO, status_LIABILITY_PASS YES; asset_status DATA_CAPTURED, liability_status LIABILITY_PASS. Stage DATA_CAPTURED, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED preserved.
+- Matrix correction commit `86dfe96ae4b3a71a78a0eebbabd4fd36bd4ac4e3`; blob `a4ed9fcf8732dd81a1d1563aaf5388ed6c2bbd0a`. C215 report addendum commit `96cf932d5345859c01b7fb92ade0986f992b0ec5`.
+- New SARB API Q2 historical payload remains NOT_CAPTURED; asset FX REVIEW remains open. No gate promotion, IMF re-query, cohort rebuild, tolerance widening or production change; UNKNOWN never PASS.
