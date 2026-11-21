@@ -113,3 +113,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | LKA Sri Lanka | CBSL SDDS NSDP https://www.cbsl.gov.lk/en/node/1809 → BOP “More Data” → https://www.cbsl.gov.lk/sites/default/files/cbslweb_documents/statistics/sdds/BOP.xlsx | C177 report | Distinct official locator PASS; linked NSDP page last updated 11-Nov-2017 and shows Q2/17; XLSX retrieval HTTP 400 unsupported content-type; container download failed; bytes/hash/Q2-2026 content NOT_CAPTURED | Do not retry same click/download path; do not treat stale 2017 NSDP as current | New supported byte-transfer route or refreshed official SDDS/NSDP link |
 - LKA remains provisional; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 178 — LSO Lesotho route fingerprint update (2026-11-21)
+| Country | Authority / exact route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| LSO Lesotho | Central Bank of Lesotho Statistical Research Portal https://statisticalwebportal.azurewebsites.net/ → Balance of Payments 6 category → `BPI_BPM6_XDC` Portfolio investment, Million Maloti; CBL Quarterly Economic Review September-2025 Table 19 | Continuation 178: `docs/GCR_LESOTHO_LSO_Q2_2026_CBL_BPM6_PORTAL_PORTFOLIO_DUAL_LEG_SOURCE_BOUNDARY_CONTINUATION178_20261121.md` | PARTIAL / NOT PASS; official BOP6 catalogue exposes one aggregate portfolio series only; Q2-2026 separate national portfolio assets/liabilities NOT_CAPTURED; report-family table is net-only and ends Q3-2025 | CLOSED for treating BPI_BPM6_XDC or “Portfolio Investments net” as dual-leg evidence; government-finance balance-sheet assets/liabilities are wrong source family | Distinct official Q2-2026 detailed BOP report/export/API exposing separate portfolio asset and liability transaction legs, with supported raw-byte capture |
+- LSO is in the immutable 63-country cohort; no IMF re-query/cohort rebuild. Aggregate NOT_AUTHORIZED.
