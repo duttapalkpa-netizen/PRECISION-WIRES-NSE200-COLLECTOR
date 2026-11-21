@@ -285,3 +285,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Snapshot: 63 rows; stage SOURCE_FOUND 20 / DATA_CAPTURED 23 / BLOCKED 19 / NOT_STARTED 1 / FULL_PASS 0. Per-leg asset PASS 15, liability PASS 15; vintage PENDING 23, UNKNOWN 40. 63/63 remain outside FULL_PASS and aggregate admission remains NOT_AUTHORIZED.
 - The matrix is a conservative inventory, not an exhaustive line-by-line re-audit. Use the latest country continuation as authority; no status promotion from a source locator, numerical rounding match, IIP stock, net-only figure, or publication date alone.
 - No IMF re-query/cohort rebuild; immutable constraints retained.
+
+
+## Continuation 200 — 63-country Q2-2026 master status matrix (2026-11-21)
+- Added `docs/GCR_2026Q2_63_COUNTRY_MASTER_STATUS_MATRIX_CONTINUATION200_20261121.md` and machine-readable companion `docs/evidence/gcr_2026q2_country_master_status_matrix.csv`.
+- Immutable cohort input reused unchanged: `docs/evidence/imf_bop_emde_20261119/coverage_qa/2026Q2_both_legs_candidate_cohort.csv`, blob SHA `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; 63 rows, both IMF Q2 legs present for each. No cohort rebuild or IMF re-query.
+- Bounded inventory snapshot: SOURCE_FOUND or later 58/63; DATA_CAPTURED 12; ASSET_PASS 6; LIABILITY_PASS 6; VINTAGE_PASS 0; FULL_PASS 0; BLOCKED 24; NOT_STARTED 4. All aggregate_admission remain NOT_AUTHORIZED.
+- Important limitation: matrix is a first conservative inventory, not exhaustive 63-country report-history re-audit. NOT_STARTED means no evidence surfaced in bounded inventory, not proof of no prior work. The per-country notes and gates are explicit in the matrix; statuses must be refined only after exact report inspection.
+- Next: complete exhaustive 63-country report-history audit, then reconcile leg-specific and vintage statuses. Never promote a country to FULL_PASS without both separate national legs, scope/sign/scale, same-vintage and provenance gates.
