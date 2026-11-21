@@ -2927,3 +2927,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail: docs/GCR_COLOMBIA_COL_Q2_2026_BANREP_SUAMECA_OFFICIAL_QUARTERLY_SOURCE_CONFIRMATION_CONTINUATION151_20261121.md (commit c3ddbbbfedc47208aeee8460d59dabbc7e4e099d).
 - Acceptance: cohort PASS; official separate series identity/quarterly frequency/USDm/Q2 coverage PASS; exact values/IDs/raw export/hash NOT_CAPTURED; sign/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; COL PARTIAL / BLOCKED, NOT PASS; aggregate NOT_AUTHORIZED.
 - Next: use documented desktop SUAMECA export or a genuinely different supported official export route for both legs together; if inaccessible, stop repeating the same 502 route and advance. Do not use IIP stocks, narrative, or net flow as substitutes. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 152 — Colombia COL SUAMECA desktop export execution boundary (2026-11-21)
+- Reopened and preserved Continuation 151, current GCR Priority Queue, fixed 63-country cohort and COL source-boundary evidence. No IMF re-query, cohort rebuild or repeated 502 endpoint attempt.
+- Reopened BanRep's official user guide. It documents the multiple-download workflow: add both separate quarterly portfolio series via cart controls; confirm with “Ver datos de series”; set the required period; review the data; use “Exportar a Excel”. The guide states the prebuilt-table right-click export is desktop-only; multiple-download is documented as a multi-series export function.
+- The current official catalogue still indexes both portfolio asset net-acquisition and liability net-incurrence series, current USDm, quarterly, through 2026-Q2, disclosed 2026-09-01. Exact IDs/values remain unavailable from indexed content.
+- This session has no interactive desktop portal control, so the documented desktop export was not executed. No exact series IDs, Q2 values, raw export bytes, retrieval timestamp, SHA-256 or observation-specific revision metadata captured. This is NOT_EXECUTED, not proof of data absence.
+- Detail: docs/GCR_COLOMBIA_COL_Q2_2026_SUAMECA_DESKTOP_EXPORT_EXECUTION_BOUNDARY_CONTINUATION152_20261121.md (commit 6fec2421fbce817557dfa1090125e65e71c3351e).
+- Acceptance: official procedure PASS; desktop execution NOT_EXECUTED; exact values/IDs/raw bytes/hash NOT_CAPTURED; sign/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; COL PARTIAL / BLOCKED, NOT PASS; 63-country aggregate NOT_AUTHORIZED.
+- Next: obtain the two-series Q2-2026 export from the documented desktop portal and preserve the original file for hash/metadata/value extraction. No IIP stock, net-flow, qualitative narrative or other financial-account substitute. ₹0; no production changes; UNKNOWN never PASS.
