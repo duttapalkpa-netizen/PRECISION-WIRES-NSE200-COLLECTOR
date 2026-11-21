@@ -1042,3 +1042,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official BCR Revista Trimestral Abril–Junio 2026 publication calendar schedules Q2-2026 BOP for 30-Sep-2026; PDF Table II.2 still has Q1-2026 as latest displayed quarter. Q1 portfolio asset +282.76 USDm / liability -56.61 USDm values are explicitly not Q2.
 - Distinct BCR SDDS Quarterly BOP Data Base route (cdr=130) timed out; NSDP last updated 2022-12-23. Exact Q2 values, raw bytes/hash and vintage not captured. SLV PARTIAL/BLOCKED; aggregate NOT_AUTHORIZED.
 - Next: SLB Solomon Islands primary-methodology resolution of CBSI Table 1.17 sign conflict, reusing archived IMF rows. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
+
+
+## Batch 1 execution update — SLB (Continuation 132, 2026-11-21)
+- CBSI June-2026 Table 1.17: Q2 portfolio assets +38 SBDm, liabilities nil. Chapter IV narrative “deficit 38” is conceptually consistent as the reverse net-inflow perspective; under BPM6 +38 asset acquisition contributes positive net lending. Do not flip sign. CBSI does not explicitly define narrative deficit convention.
+- Extracted exact archived IMF SLB Q2 rows without a new query: A_NFA_T OBS_VALUE 4675384.136569459 SCALE=6; L_NIL_T OBS_VALUE 0 SCALE=6. Raw CSV blob SHAs 15449e87c9057291a1f52f2f8cd9805df55f9fb8 and 15f379dc42e2760eb5f2384618e48f5ddc3177f1.
+- Provisional arithmetic only using Q2 average 8.08 SBD/USD: 38/8.08=4.702970297 USDm vs IMF candidate OBS_VALUE/1e6=4.675384137 USDm; residual -0.027586160, within ±0.061881188 USDm SBD table-rounding bound. Liability zero vs nil. Not PASS: SLB-specific SCALE/display and CBSI BOP transaction FX method not proven; PDF original bytes/hash unavailable.
+- SLB remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: explicit CBSI transaction FX method or advance to next eligible fixed cohort member. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
