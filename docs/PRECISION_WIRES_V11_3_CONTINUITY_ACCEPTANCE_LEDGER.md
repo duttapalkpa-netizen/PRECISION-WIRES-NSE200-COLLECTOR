@@ -3367,3 +3367,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - MKD remains PARTIAL / NOT PASS; portfolio A/L observations, codebook, raw hash and vintage bridge NOT_CAPTURED; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_API_METADATA_ROUTE_ACCESS_GATE_CONTINUATION195_20261121.md` (commit c85f91b43b4fae8941613b1f29b42e7ac20b7b5d).
 - Next: advance to next eligible fixed-cohort member only after complete history/route-fingerprint preflight; no IMF GET/cohort rebuild. Invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 196 — PER BCRP current-catalogue and public-sector portfolio-asset scope gate (2026-11-21)
+- Re-fetched Master Ledger, GCR Priority Queue, Historical Task Registry and full PER source-boundary history; reused fixed 63-country cohort and archived IMF evidence. No IMF GET/cohort rebuild and no repeat of the previously inaccessible API route.
+- Fresh official BCRP quarterly catalogue inspection (21-Nov; catalogue rows updated 20-Nov-2026) confirms private-sector portfolio assets PN39278BQ and liabilities PN39285BQ, both through T3-2026; public-sector group lists aggregate assets PN39402FQ, aggregate liabilities PN39403FQ and portfolio liabilities PN39404FQ, but no public-sector portfolio-specific asset series among its 25 displayed series.
+- This is a bounded catalogue-scope finding, not proof that no other official attachment/dataset exists. Do not combine private portfolio assets with aggregate public-sector assets; do not infer national full-economy coverage.
+- BCRP API guide confirms documented GET/POST and CSV/JSON/XML/XLS formats, but prior exact API route remains inaccessible through current retrieval bridge; not retried. No Q2 values/raw bytes/receipt/hash captured.
+- PER remains PARTIAL / NOT PASS; full-economy A/L scope NOT_ESTABLISHED; aggregate NOT_AUTHORIZED. Detail: docs/GCR_PERU_PER_Q2_2026_BCRP_CATALOGUE_REFRESH_AND_PUBLIC_ASSET_SCOPE_GATE_CONTINUATION196_20261121.md.
+- Next: reopen only on a distinct official BCRP source proving a public-sector portfolio asset transaction series or explicit scope statement for PN39278BQ; otherwise advance to next eligible fixed-cohort country after complete history/route preflight. Invariants unchanged; UNKNOWN never PASS.
