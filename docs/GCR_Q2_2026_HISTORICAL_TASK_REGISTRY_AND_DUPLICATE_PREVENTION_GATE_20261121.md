@@ -522,3 +522,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Corrected only the MYS matrix evidence_ref to that report; retained asset/liability PASS, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED. No numeric gate promotion.
 - Matrix commit `7e544e73de2aac8c8f12d1e6e43391ae00ec3f05`; C227 report: `docs/GCR_MALAYSIA_MYS_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION227_20261121.md`; queue appended under C227.
 - Duplicate gate: do not repeat BNM FX raw capture, monthly/daily mean QA, IMF row extraction or dual-leg numeric comparisons. Reopen only on new dated BNM/DOSM revision-cutoff evidence or later archived IMF vintage.
+
+
+## Continuation 228 — Run #339 raw-source artifact allowlist root cause
+- Run #339 artifact 14660032260 independently downloaded and inspected: 17 entries; raw NSE CSVs, sessions, acquisition diagnostics, security master and manifest absent, despite job log/QA recording 200 raw files.
+- Run #416 artifact 14632139339 also lacks original raw files/manifest; it contains normalized 200-session data and security master only.
+- Exact defect: prospective workflow upload-artifact path allowlist omitted `data/raw/sec_bhavdata_full_*.csv`, sessions, acquisition diagnostics and security master. Corrected those paths on isolated audit branch; commit `46f4a359f21da676cb0c92e874fb08f14ee20d90`.
+- Future-run artifact proof PENDING; per-file URL/retrieval-time/bytes/SHA manifest NOT_DONE; historical Run #339 raw recovery BLOCKED. Do not redownload or fabricate original provenance.
+- Detail: `docs/NSE_RUN339_RAW_SOURCE_ARTIFACT_PACKAGING_ROOT_CAUSE_AND_RETENTION_FIX_CONTINUATION228_20261121.md`. Duplicate prevention: do not repeat artifact inventory/hash inspection absent a new artifact; next step is verify the next bounded workflow artifact and then implement acquisition-time manifest capture.
