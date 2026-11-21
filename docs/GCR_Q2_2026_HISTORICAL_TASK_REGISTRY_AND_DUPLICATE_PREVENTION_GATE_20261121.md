@@ -78,3 +78,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | LAO Lao PDR | Lao Statistics Bureau NSDP https://www.lsb.gov.la/lsb-en.htm → Balance of Payments → Browse Data: https://www.bol.gov.la/statistics/BOP6_Lao%20PDR.xlsx ; Download in SDMX: https://www.bol.gov.la/statistics2/BOP6_Lao%20PDR.xml ; DSBB Metadata: https://dsbb.imf.org/egdds/dqaf-base/country/LAO/category/BOP00 | Continuation 172: docs/GCR_LAO_PDR_LAO_Q2_2026_BOL_NSDP_SDMX_EXPORT_LOCATOR_DISCOVERY_CONTINUATION172_20261121.md | Exact official XLSX/XML/metadata locators PASS; XLSX/XML retrieval HTTP 400 timeout; no bytes/hash/observations; Q2 dual legs NOT_VERIFIED; PARTIAL / NOT PASS | Closed for same direct XLSX/XML fetch route after timeout | Genuinely new supported byte-transfer capability or distinct official mirror/export endpoint |
 - No Q2-2026 or portfolio-leg claims until file inspection. Historical 2023 Table 13 remains schema-only; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 173 — LAO BOL/NSDP retrieval cross-check (2026-11-21)
+| Country | Route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| LAO Lao PDR | NSDP https://www.lsb.gov.la/lsb-en.htm → XLSX https://www.bol.gov.la/statistics/BOP6_Lao%20PDR.xlsx ; SDMX XML https://www.bol.gov.la/statistics2/BOP6_Lao%20PDR.xml ; DSBB https://dsbb.imf.org/egdds/dqaf-base/country/LAO/category/BOP00 ; IMF registry https://sdmxcentral.imf.org/data/registrations.html | Continuation 173 report | XLSX/XML HTTP 502 on live click; DSBB generic dynamic shell; no LAO match in inspected IMF public registrations page; no bytes/hash/observations; PARTIAL | Closed for same direct links and same registry-page lookup | Distinct official BOL mirror/export, public NSDP data service, or new supported byte-transfer capability |
+- No conclusion that data are absent; no Q2 portfolio leg claims; aggregate NOT_AUTHORIZED.
