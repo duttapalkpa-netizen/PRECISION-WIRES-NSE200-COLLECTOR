@@ -3330,3 +3330,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Q2-specific attachment/export still NOT_CAPTURED; ALB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_ALBANIA_ALB_Q2_2026_BOA_Q2_RELEASE_CALENDAR_VS_LEGACY_TABLE_CEILING_CONTINUATION192_20261121.md` (commit 46725db533106245fa306ad2387720b59a9392f9).
 - Reopen only on distinct Q2-2026 export/API/workbook route. All invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 193 — IDN archived IMF vintage inventory closure (2026-11-21)
+- Re-fetched current Ledger, Queue, Registry, IDN C185/C186 reports, fixed cohort, exact-sample receipt and coverage QA manifest. No BI re-extraction, IMF GET or cohort rebuild.
+- Recursive repository inventory found only the 19-Nov-2026 IMF exact-key transport snapshot for IDN. Exact receipt timestamps: A_NFA_T 06:45:17.435091Z; L_NIL_T 06:45:17.874893Z. Coverage QA manifest states current retrieval snapshot only; no point-in-time historical vintages captured.
+- No later archived IMF snapshot or observation-level revision metadata found in the inspected repo tree. C186 residuals against BI's 20-Nov revised Q2 legs remain +21.605237 USDm assets and +41.221642 USDm liabilities, outside ±0.5; same-vintage NOT_ESTABLISHED.
+- Close C186 later-archive branch as NOT_AVAILABLE; retain IDN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not issue IMF GET or repeat inventory absent a new archive artifact.
+- Detail: docs/GCR_INDONESIA_IDN_Q2_2026_IMF_ARCHIVED_VINTAGE_INVENTORY_AND_MATCH_GATE_CONTINUATION193_20261121.md (commit d1319128935b78064c01edc66e0458759de19ca7).
+- All protected invariants unchanged; UNKNOWN never PASS.
