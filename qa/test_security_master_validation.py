@@ -15,7 +15,7 @@ class SecurityMasterValidationTests(unittest.TestCase):
         self.root=Path(self.tmp.name)
         self.master=self.root/"security_master.csv"
         self.manifest=self.root/"security_master_manifest.json"
-        self.payload=b"SYMBOL,ISIN,LISTING_DATE\\nABC,INE000A01001,\\n"
+        self.payload=b"SYMBOL,ISIN,LISTING_DATE\nABC,INE000A01001,\n"
         self.master.write_bytes(self.payload)
         self.data={
             "source_url":"https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
@@ -44,10 +44,10 @@ class SecurityMasterValidationTests(unittest.TestCase):
         self.manifest.write_text(json.dumps(self.data),encoding="utf-8")
         with self.assertRaisesRegex(ValueError,"stale"): validate(self.master,self.manifest,self.now)
     def test_hash_mismatch_blocks(self):
-        self.master.write_text("SYMBOL,ISIN,LISTING_DATE\\nXYZ,INE000A01002,\\n",encoding="utf-8")
+        self.master.write_text("SYMBOL,ISIN,LISTING_DATE\nXYZ,INE000A01002,\n",encoding="utf-8")
         with self.assertRaisesRegex(ValueError,"SHA-256"): validate(self.master,self.manifest,self.now)
     def test_missing_isin_blocks(self):
-        self.master.write_text("SYMBOL,ISIN,LISTING_DATE\\nABC,,\\n",encoding="utf-8")
+        self.master.write_text("SYMBOL,ISIN,LISTING_DATE\nABC,,\n",encoding="utf-8")
         self.data["normalized_sha256"]=hashlib.sha256(self.master.read_bytes()).hexdigest()
         self.manifest.write_text(json.dumps(self.data),encoding="utf-8")
         with self.assertRaisesRegex(ValueError,"missing SYMBOL/ISIN"): validate(self.master,self.manifest,self.now)
