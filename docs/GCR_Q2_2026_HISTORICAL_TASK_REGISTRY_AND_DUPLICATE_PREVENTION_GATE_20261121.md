@@ -451,3 +451,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Corrected matrix to asset_gate REVIEW, liability_gate PASS; status_ASSET_PASS NO, status_LIABILITY_PASS YES; asset_status DATA_CAPTURED, liability_status LIABILITY_PASS. Stage DATA_CAPTURED, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED preserved.
 - Matrix correction commit `86dfe96ae4b3a71a78a0eebbabd4fd36bd4ac4e3`; blob `a4ed9fcf8732dd81a1d1563aaf5388ed6c2bbd0a`. C215 report addendum commit `96cf932d5345859c01b7fb92ade0986f992b0ec5`.
 - New SARB API Q2 historical payload remains NOT_CAPTURED; asset FX REVIEW remains open. No gate promotion, IMF re-query, cohort rebuild, tolerance widening or production change; UNKNOWN never PASS.
+
+## Continuation 217 — ZAF SARB Online Statistical Query export-family boundary (2026-11-21)
+- Preflighted and re-fetched the current Master Continuity Ledger, GCR Master Priority Queue, Historical Task Registry and controlling C215/C215A/C216 reports before selection. Existing PASS work was excluded.
+- Verified SARB's official Online Statistical Query workflow: KBP code/keyword search, available-version selection, frequency/date-range selection, and Excel/CSV/PDF/DOC exports for Quarterly Bulletin time series. The page documents the 29-Sep-2026 KBP1 Week 5 date-format change.
+- Explicit boundary: this KBP-prefixed Quarterly Bulletin export facility is not proven to expose daily FX series EXCX135D. No code mapping, export URL or Q2 FX payload was guessed or claimed. It is not a substitute for the daily SARB API series.
+- ZAF asset REVIEW / NOT PASS; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix gate changes, IMF re-query, cohort rebuild or production change.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_ONLINE_STATISTICAL_QUERY_EXPORT_FAMILY_BOUNDARY_CONTINUATION217_20261121.md.
+- Next C218: establish whether any official KBP daily USD/ZAR series is documented and independently inspect the Selected Historical Rates export request via a supported HTTP-capable route. ₹0; UNKNOWN never PASS.
