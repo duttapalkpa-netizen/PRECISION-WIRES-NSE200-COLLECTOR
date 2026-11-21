@@ -1467,3 +1467,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - MNE remains PARTIAL / NOT PASS; fixed cohort and IMF archive unchanged; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_PDF_ANNOTATION_ACCESS_AUDIT_CONTINUATION183_20261121.md` (commit 54e8d2efe633049b7aef672ff84339d8ee18a741).
 - Next: do not repeat the same PDF extraction/download route. Select the next eligible fixed-cohort country only after complete historical/queue preflight; reopen MNE only on a genuinely new official export locator or supported annotation-download capability.
+
+
+## Continuation 184 — North Macedonia (MKD) Q2-2026 official source-boundary audit (2026-11-21)
+- Fresh continuity preflight and duplicate check completed; MKD had no prior dedicated national-validation report in the repository inventory. Exact MKD row confirmed in the immutable 63-country cohort; both IMF Q2 legs present; no cohort rebuild or IMF re-query.
+- Official NBRNM PxWeb quarterly financial-account table located (matrix ES-001; source NBRNM; created 23-Sep-2026; units million EUR/USD; 210 item values; 114 quarters). Full codebook and selected observation payload were not exposed by the available page rendering; raw API/export bytes/hash not captured.
+- Official SSO Bulletin 10/2026 reports Q2-2026 portfolio investment net +USD227.7m only. Its +USD144.9m net acquisition of financial assets and +USD431.0m net incurrence of liabilities are financial-account-wide totals, not portfolio-specific legs. 2025/2026 data are marked provisional.
+- NBRNM methodology and revision PDFs linked from PxWeb returned 403 via the available retrieval path. MKD remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_AND_SSO_PORTFOLIO_SOURCE_BOUNDARY_CONTINUATION184_20261121.md` (commit 049aa09b4dd0df397364cd16fc76f5160eefd00c).
+- Next: retrieve NBRNM full table metadata/codebook and Q2-2026 portfolio asset/liability observations through a supported official export/API path; preserve bytes, MIME, UTC timestamp, hash and vintage. If unavailable, retain PARTIAL and move to next eligible cohort member after full preflight.
