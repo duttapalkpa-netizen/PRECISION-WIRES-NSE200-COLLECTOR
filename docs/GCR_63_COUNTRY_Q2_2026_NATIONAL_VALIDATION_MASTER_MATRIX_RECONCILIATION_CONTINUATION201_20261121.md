@@ -90,3 +90,10 @@ CSV update commit: `f596dc889642e3a9262f2fd7b7dc9b02a6a57a0a`; resulting blob SH
 ## Protected invariants
 
 ₹0; official/free sources only; no synthetic data, fabricated timestamps, unsupported conversion, stock-as-flow, net-to-leg back-solving, IMF re-query or cohort rebuild. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. Aggregate NOT_AUTHORIZED.
+
+
+### C201 read-back correction — final matrix snapshot
+- Final read-back matrix CSV blob SHA-1: `64bb4a85cb2f004b5faa906b6353a6f71ecb9ad2`. The CSV currently has 63 data rows and 30 columns, including the eight requested YES/NO status flags plus detailed source/data/asset/liability/vintage/overall status and evidence_ref fields.
+- The earlier C201 CSV commit blob SHA `45e466c72c034d460dfccf57474b07bfb6d12ea9` is a prior intermediate snapshot; use the final read-back blob SHA above.
+- Recomputed from the final CSV: NOT_STARTED 1; SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; ASSET_PASS 15; LIABILITY_PASS 15; VINTAGE_PASS 0; FULL_PASS 0. Cohort membership remains exact 63/63.
+- Interpretation unchanged: 40 are below DATA_CAPTURED; 23 have national data recorded but remain short of FULL_PASS; all 63 remain not fully accepted; aggregate NOT_AUTHORIZED.
