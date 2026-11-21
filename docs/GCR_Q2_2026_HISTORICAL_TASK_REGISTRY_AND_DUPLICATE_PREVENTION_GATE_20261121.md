@@ -188,3 +188,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | LKA Sri Lanka | CBSL External Sector official search-indexed page; update marker 01-Oct-2026 11:30; page describes BPM6 quarterly BOP 2012Q1–Latest | C188: `docs/GCR_SRI_LANKA_LKA_Q2_2026_CBSL_EXTERNAL_SECTOR_PAGE_FRESHNESS_AND_EXPORT_GATE_CONTINUATION188_20261121.md` | Page freshness metadata PASS; current Table 2.10 export URL/bytes/hash and revision ID NOT_CAPTURED; C174 Treasury dual legs remain provisional strong reconciliation; same-vintage NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not repeat C175 direct Table 2.10 403, C177 stale 2017 SDDS BOP.xlsx route, or C176 secondary CSV/JSON click | Distinct official current export/API locator or an actual Table 2.10 Q2-2026 revision/vintage identifier |
 - Page content update timestamp is not the statistical observation vintage. Aggregate NOT_AUTHORIZED.
+
+
+## Continuation 189 — Guinea BCRG MPC attachment-link fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| GIN Guinea | BCRG 22nd MPC page https://www.bcrg-guinee.org/22eme-reunion-ordinaire-du-comite-de-politique-monetaire-de-la-republique-de-guinee/; visible “Télécharger” affordance | C189: `docs/GCR_GUINEA_GIN_Q2_2026_BCRG_MPC_DOWNLOAD_AFFORDANCE_AND_LINK_TARGET_ACCESS_GATE_CONTINUATION189_20261121.md` | Page PASS; attachment href/document URL NOT_EXPOSED; bytes/hash NOT_CAPTURED; Q2 separate portfolio legs NOT_CAPTURED; PARTIAL / NOT PASS | Do not guess URL or repeat same page extraction/static BOP page route | Distinct official attachment target or machine-readable BCRG export/API locator |
+- This is an access-boundary record, not proof that national data are absent. Aggregate NOT_AUTHORIZED.
