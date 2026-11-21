@@ -1546,3 +1546,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - C186 archive-follow-up branch closed NOT_AVAILABLE. IDN remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No new IMF GET, BI extraction or cohort rebuild.
 - Detail: docs/GCR_INDONESIA_IDN_Q2_2026_IMF_ARCHIVED_VINTAGE_INVENTORY_AND_MATCH_GATE_CONTINUATION193_20261121.md (commit d1319128935b78064c01edc66e0458759de19ca7).
 - Next: choose the next eligible fixed-cohort country only after full history and route-fingerprint preflight.
+
+
+## Continuation 194 — CHN SAFE detailed time-series workbook locator (2026-11-21)
+- After C193, CHN's open prior-report next action was selected: inspect the official SAFE detailed BOP time-series attachment, not IIP stocks. Ledger/Queue/Registry and CHN report were re-fetched; cohort and IMF receipt reused.
+- SAFE time-series page exposes exact linked XLSX target `https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx`. Official locator recovered; web surface rejected XLSX MIME and direct container download failed. No raw bytes/hash/workbook cells.
+- CHN remains PARTIAL / NOT PASS; asset sign unresolved; aggregate NOT_AUTHORIZED. No IMF GET/cohort rebuild.
+- Detail: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_OFFICIAL_TIMESERIES_WORKBOOK_LOCATOR_AND_RAW_ACCESS_GATE_CONTINUATION194_20261121.md` (commit 265712fed07a20bed233e29c9ab77cdd7ea742ea).
+- Next: retrieve this exact official workbook via supported browser/file workflow; otherwise wait for a distinct official machine-readable export. Do not repeat identical unsupported fetch.
