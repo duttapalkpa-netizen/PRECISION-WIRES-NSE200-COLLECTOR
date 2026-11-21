@@ -80,3 +80,11 @@ Archived IMF exact-key receipt reused (Run 44474458684; artifact 14505009889; ZI
 - Do not infer sign from net portfolio total, IIP stocks, or financial-account balance.
 - Do not claim same-vintage identity from close values; Q2 BI is marked very temporary.
 - ₹0; official/free sources only. No synthetic data/timestamps, no IMF re-query, no cohort rebuild, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 186 superseding vintage addendum — latest BI Q2 values (2026-11-21)
+- C185's sign convention remains valid: reverse BI asset sign only, retain BI liability sign. However, C185's numeric PASS applied to the earlier BI 21-Aug-2026 Q2** release and is no longer the current national benchmark.
+- New BI Q3-2026 report published 20-Nov-2026 explicitly states that Q1–Q2 2026 portfolio transaction data were updated due to LLD and ULN source updates (PDF Box 1 p.28). Latest Q2 provisional Table 7 values (PDF p.37): assets -1,466 USDm; liabilities +11,399 USDm; total +9,934 USDm.
+- Against the already archived IMF snapshot retrieved 19-Nov-2026, BPM6-mapped BI values are +1,466 and +11,399; residuals are +21.605237 and +41.221642 USDm, both outside ±0.5 rounding. C185 old-vintage arithmetic is preserved historically but superseded for current comparison.
+- Latest national revision evidence PASS; sign crosswalk PASS; numeric agreement with archived IMF snapshot FAIL/REVIEW; exact same-vintage IMF observation identity NOT_ESTABLISHED; IDN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Full C186 audit: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_NOV2026_REVISION_VINTAGE_RECHECK_CONTINUATION186_20261121.md` (commit 51ba355709893c89a718d0eb94d87c98ad22e277).
