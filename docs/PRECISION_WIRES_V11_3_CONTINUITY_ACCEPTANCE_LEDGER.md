@@ -3457,3 +3457,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail: `docs/GCR_NIGERIA_NGA_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION202_20261121.md`.
 - Recomputed stages after this single-country correction: SOURCE_FOUND 19; DATA_CAPTURED 24; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 16; LIABILITY_PASS 16; VINTAGE_PASS 0; FULL_PASS 0. Below DATA_CAPTURED: 39. Counts are not additive across independent gates.
 - No IMF re-query/cohort rebuild; aggregate remains NOT_AUTHORIZED; ₹0; all production invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 203 — Pakistan (PAK) historical evidence / matrix reconciliation (2026-11-21)
+- Re-fetched current main-branch Master Ledger (pre-task blob `0c6173ba7ef3e659f62d953e6a2c1661185daf73`), Priority Queue (`6accec0825233063a6965d7a654030e8d2b73e9d`), Historical Registry (`3eec21119b875adc871caf9d525be03b93c589be`), 63-country matrix (`f9d68b4a24d92c41e6c72db776d89254a8f6d7de`) and PAK report (`dc5d939ce280d937fe6275212f22ba9e8de3c846`).
+- Reused C51–C52 evidence; no SBP re-download, IMF GET, cohort rebuild, or repeated sign/numeric comparison.
+- Existing SBP CY26 Q2(R) values are -2 USDm abroad/assets and -243 USDm in-Pakistan/liabilities. Archived IMF A_NFA_T and L_NIL_T are -2 and -243 USDm respectively; separate comparisons 2/2 PASS at SBP display precision. SBP BPM6 methodology supports the sign/framework crosswalk.
+- Corrected stale PAK row in `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`: DATA_CAPTURED; asset PASS; liability PASS; vintage PENDING; FULL_PASS=NO; aggregate NOT_AUTHORIZED. Read-back verified 63 rows / 30 columns and PAK row. New CSV blob SHA-1: `2e9b5a9246cebc249acc2e615cae5e43d4d8f4ac`.
+- Updated counts: SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Counts across independent gates overlap.
+- Exact observation-level SBP revision timestamp / IMF same-vintage bridge remains NOT_ESTABLISHED; PAK remains PARTIAL / NOT PASS. Detail report: `docs/GCR_PAKISTAN_PAK_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION203_20261121.md`, report commit `2dd3df3e7aad775ecd9770c43dcea703f76a3e35`; matrix commit `52002c837b960e06e5c6f07c0308c8d4cc30c625`.
+- No IMF re-query/cohort rebuild; ₹0; all protected V11.3 invariants unchanged; UNKNOWN never PASS.
