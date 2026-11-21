@@ -494,3 +494,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - C154 Q2 release/BPM5 and stale NSDP boundaries reused. Matrix evidence_ref corrected to C154; national data/gates unchanged. GEO remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Matrix commit `9655247cb907dee8e4846bd9dd33e6b5d91f67c0`; blob `de7b182d3a3debee674c35c1e9fd980e99ab83b3`; C223 report commit `e279d4262f50e73311d1e306c812efb7909fdf67`.
 - Do not repeat C154 press-release/NSDP extraction; reopen only on an exact official Q2 BOP dataset locator or export/API contract.
+
+
+## Continuation 224 — GIN BCRG attachment target route fingerprint
+- Official 2026 archive entry and 22nd MPC article were reopened. Archive links to the article; article contains a “Télécharger” label but inspected content exposes no file URL, attachment name or payload. No guessed media/API route used.
+- C170 remains controlling for Q2 BOP scope; no Q2 portfolio legs/raw bytes captured. GIN BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED.
+- Matrix commit `0c4f29eebc6b508e7f17473a26f0c28f6bbd90be`; blob `d6b1986f1c029f0ea4b69dd77549e0b6cbd596b3`; C224 report commit `9415534d63c43c5d3d64acf3b225ad8fb0e7eb23`.
+- Duplicate gate: do not repeat this article/archive inspection; reopen only on a distinct official attachment locator or data export/API.
