@@ -1232,3 +1232,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - IMF e-GDDS confirms quarterly CBBH BOP, KM million and revision practices. Reused exact archived IMF Q2 rows: BIH A_NFA_T=61489941.04204912 USD SCALE=6; L_NIL_T=1324417089.731674 USD SCALE=6. Raw panel blobs unchanged. No conversion/comparison.
 - Q2 national legs/raw bytes/hash NOT_CAPTURED; portal execution NOT_EXECUTED; sign/scale/vintage bridge NOT_ESTABLISHED; BIH PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail report: docs/GCR_BOSNIA_HERZEGOVINA_BIH_Q2_2026_CBBH_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION156_20261121.md.
 - Next: attempt exact anonymous CBBH portal Q2 export only through supported interactive access; if unavailable, retain BIH PARTIAL and advance to next eligible cohort member. No Q1/IIP/BIS/projection substitute, net-to-leg inference, IMF re-query, cohort rebuild or production changes. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 157 — BLZ Belize Q2-2026 CBB official BOP source boundary (2026-11-21)
+- Selected after BIH from fixed cohort; no prior dedicated BLZ Q2 national dual-leg report. BIH CBBH dynamic portal remains NOT_EXECUTED; no repeat.
+- Official CBB June-2026 Quarterly Review Table A.22 (page 51, $mn) publishes separate portfolio asset=0.0 and liability=0.0 for Jan–June 2026, H1 cumulative only. 2026 figures provisional. Table A.21 net-only and IIP Table A.31 not substitutes.
+- Official BOP page exposes full XLSX locator; browser fetch returned HTTP 400 unsupported XLSX MIME, so no workbook bytes/sheets/Q2 values/hash. IMF e-GDDS describes quarterly BOP and separate portfolio legs.
+- Reused IMF Q2 raw rows: BLZ A_NFA_T=142.2106890070215 USD SCALE=6; L_NIL_T=0 USD SCALE=6. Raw panel blobs unchanged. No conversion/comparison. BLZ Q2-only national legs NOT_CAPTURED; BLZ PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail report: docs/GCR_BELIZE_BLZ_Q2_2026_CBB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION157_20261121.md.
+- Next: supported raw-byte/export retrieval of CBB official XLSX; inspect exact Q2 dual legs. If inaccessible, retain BLZ PARTIAL and advance. No H1-to-Q2 inference, IIP substitution, net-to-leg inference, IMF query, cohort rebuild or production changes. ₹0; UNKNOWN never PASS.
