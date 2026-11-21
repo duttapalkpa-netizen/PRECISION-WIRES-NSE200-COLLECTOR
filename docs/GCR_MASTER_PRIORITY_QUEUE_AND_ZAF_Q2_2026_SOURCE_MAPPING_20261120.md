@@ -1215,3 +1215,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Acceptance: cohort/IMF row presence PASS; official Q2 BOP release and BPM5 statement PASS; separate Q2 national transaction legs NOT_CAPTURED; visible NSDP labels PASS for taxonomy only but period stale; item/sign/scale/vintage equivalence NOT_ESTABLISHED; national raw bytes/hash NOT_CAPTURED; numeric comparison NOT_DONE; GEO PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_GEORGIA_GEO_Q2_2026_NBG_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION154_20261121.md (commit 3af8633ad131bf2aa95da82a48b4e4c8aff9c8f9).
 - Next: investigate a genuinely different NBG current statistics export/API for Q2 separate portfolio transaction legs and dated revision metadata; do not retry same release page, use stale NSDP values or substitute IIP stocks. If unavailable, retain GEO PARTIAL and advance. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 155 — BDI Burundi Q2-2026 official BRB source boundary (2026-11-21)
+- Rank-1 country validation continues from GEO. BDI is confirmed in the immutable 63-country cohort with both archived IMF Q2 rows present; no prior dedicated BDI Q2 national dual-leg report.
+- BRB Q4-2025 Monetary Policy Report (published 26-Feb-2026) Table 9 supplies historical separate portfolio asset/liability legs in MBIF, but not target Q2-2026. Current BRB “Autres Documents” index shows Q4-2025/Q3-2025 reports; no Q2-2026 BOP table captured.
+- Reused IMF Q2 raw rows: A_NFA_T=130723.2699945969 USD SCALE=6; L_NIL_T=0 USD SCALE=6. Raw panel blobs unchanged. No conversion or numeric comparison.
+- BDI Q2 national legs NOT_CAPTURED; unit/sign/BPM/vintage bridge NOT_ESTABLISHED; BDI PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail report: docs/GCR_BURUNDI_BDI_Q2_2026_BRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION155_20261121.md.
+- GEO source-route addendum: official NBG NSDP advertises BOP Browse Data / Download in SDMX, but exact download URL/current Q2 data not captured. NBG Q2-2026 release's BPM5 statement conflicts with NBG's own official notice that BPM6 applies from 2015 onward; GEO remains PARTIAL pending resolution.
+- Next: continue rank-1 validation with the next eligible immutable-cohort member after duplicate-report and official-source feasibility checks. No IMF re-query/cohort rebuild, stock-as-flow, annual-to-quarter allocation, net-to-leg back-solving or production change. ₹0; UNKNOWN never PASS.
