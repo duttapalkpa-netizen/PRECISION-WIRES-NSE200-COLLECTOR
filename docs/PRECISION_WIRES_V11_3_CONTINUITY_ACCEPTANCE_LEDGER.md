@@ -3236,3 +3236,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - PDF does not contain separate Q2-2026 portfolio asset/liability observations; linked table payload URL/bytes/hash and numeric rows not captured. MNE remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_EXPORT_LOCATOR_CONTINUATION182_20261121.md (commit 6ec0f976e2a5fdb26c704b0991b5cd0e5f3fa888).
 - Next: resolve PDF embedded Tables 5.1–5.4 download annotations / distinct official table export, capture raw bytes and Q2 dual legs; if unavailable, do not repeat old C180 routes and advance cohort. No production changes; UNKNOWN never PASS.
+
+
+## Continuation 183 — Chapter 49 Part 1: MNE CBCG Bulletin PDF annotation access audit (2026-11-21)
+- Reused Continuation 182 evidence and fixed cohort; exact MNE row remains A_NFA_T_PRESENT, L_NIL_T_PRESENT, BOTH_LEGS_PRESENT_IN_IMF_PANEL, NATIONAL_SOURCE_VINTAGE_VALIDATION_PENDING, NOT_AUTHORIZED. Cohort SHA-256: 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8.
+- Reopened official CBCG Bulletin 9/2026 PDF. Confirmed BOP section printed page 55/PDF page 54, Tables 5.1–5.4 download affordance, quarterly EUR reporting, BPM6 methodology, FX handling, ITRS/survey portfolio data sources, and preliminary/revision caveat.
+- The available PDF extraction did not expose the embedded annotation target URL; direct PDF byte download failed. No workbook/CSV bytes, MIME, retrieval timestamp, SHA-256, separate Q2-2026 portfolio asset/liability rows, sign mapping, or national-IMF comparison captured.
+- C183 access boundary is BLOCKED / NOT_EXPOSED, not proof of source absence. MNE remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not repeat same C180 ZIP/XML/Browse routes or same C183 PDF extraction/download attempts.
+- Detail report: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_PDF_ANNOTATION_ACCESS_AUDIT_CONTINUATION183_20261121.md` (commit 54e8d2efe633049b7aef672ff84339d8ee18a741).
+- Next action: fresh full historical/queue preflight, then continue rank-1 63-country national-source validation with the next eligible member; reuse immutable cohort and archived IMF exact-key receipt. Reopen MNE only if a genuinely new supported annotation/export path appears.
+- Invariants unchanged: ₹0, official free sources only, no synthetic data/timestamps, no IMF re-query/cohort rebuild, no net-to-leg back-solving, no stock-as-flow substitution; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged; UNKNOWN is never PASS.
