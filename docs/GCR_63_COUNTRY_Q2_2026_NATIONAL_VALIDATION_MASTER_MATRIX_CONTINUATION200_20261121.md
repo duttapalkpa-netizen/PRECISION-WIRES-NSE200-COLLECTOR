@@ -57,3 +57,30 @@ The CSV now treats stage flags and acceptance flags independently: the four stag
 | FULL_PASS | ${counts.FULL_PASS} |
 
 Stage counts are mutually exclusive and sum to 63. Acceptance-gate counts overlap and must not be added to stage counts. Every row remains `NOT_AUTHORIZED` for aggregate admission. `DATA_CAPTURED` does not mean validation passed. The immutable cohort CSV and IMF panel were not modified or re-queried.
+
+
+## Count reconciliation — independent read-back audit (2026-11-21)
+The immutable cohort CSV and machine-readable matrix were re-fetched from the default branch and parsed independently.
+
+| Check | Result |
+|---|---:|
+| Immutable cohort rows | 63 |
+| Matrix data rows | 63 |
+| Unique country codes in matrix | 63 |
+| Exact cohort order and membership match | PASS |
+| NOT_STARTED | 1 |
+| SOURCE_FOUND | 20 |
+| DATA_CAPTURED | 23 |
+| BLOCKED | 19 |
+| ASSET_PASS gate | 15 |
+| LIABILITY_PASS gate | 15 |
+| Both asset and liability gates PASS | 13 |
+| VINTAGE_PASS | 0 |
+| FULL_PASS | 0 |
+| Aggregate admission NOT_AUTHORIZED | 63 |
+
+The current-stage buckets sum to 63 (1 + 20 + 23 + 19). The 15 asset-pass and 15 liability-pass counts are gate counts, not unique countries; 13 countries have both numeric leg gates marked PASS. These 13 still do NOT qualify as FULL_PASS because all 63 vintage gates remain pending/unknown and raw-source provenance, same-vintage, scope or other acceptance conditions remain open in the matrix. No country has a FULL_PASS.
+
+**Remaining to full country acceptance: 63/63.** This does not mean all 63 lack useful evidence: 23 have national values captured, 13 have both numeric leg gates PASS, and 19 are currently classified BLOCKED. The remaining full acceptance work includes the applicable source/provenance, sign/scale, vintage and scope gates. Do not count SOURCE_FOUND, DATA_CAPTURED, or a single-leg PASS as a validated country.
+
+Audit method: parsed the exact 63-row immutable cohort and 63-row matrix; confirmed unique codes and identical order. Cohort blob SHA-1 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8; matrix CSV blob SHA-1 64bb4a85cb2f004b5faa906b6353a6f71ecb9ad2. This is a read-back/count audit only; no national source values, cohort rows, or status gates were changed.
