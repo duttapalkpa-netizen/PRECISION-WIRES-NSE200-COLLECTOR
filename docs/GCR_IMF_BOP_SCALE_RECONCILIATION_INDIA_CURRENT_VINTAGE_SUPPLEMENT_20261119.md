@@ -47,3 +47,10 @@ The existing India report `docs/GCR_IMF_BOP_SCALE_RECONCILIATION_INDIA_20261119.
 
 ## Decision
 India scale/sign validation remains **PARTIAL for the latest current-year vintage**: the six-quarter historical baseline is 12/12 PASS, the 2026-Q2 extension passes, but 2026-Q1 liability/combined net is REVIEW. Do not blend the conflicting 2026-Q1 values or use the full panel for aggregate/backtest/production until vintage alignment is resolved. No paid data, no synthetic observations, no forward-fill, and no production selector/ranking/pressure-fade/CORE-672/Engines A–E changes.
+
+
+## Continuation 187 — Q1-2026 RBI release-persistence addendum (2026-11-21)
+- RBI official Q1 Table 43/42 releases inspected: 22-Jun-2026, 22-Jul-2026 and 25-Aug-2026. The published Q1 portfolio investment in India net remains -12,121 USDm in July/August; portfolio investment by India net +74 USDm; total -12,047 USDm. No published Q1 value change is evidenced across those releases.
+- The archived IMF Q1 L_NIL_T remains -13,633.508347 USDm; the residual vs RBI -12,121 remains -1,512.508347 USDm. Asset remains PASS; liability and combined net remain REVIEW. No cause or same-vintage identity inferred.
+- October 2026 Table42 used for Q2 in this supplement does not provide a later Q1 value. Preserve Q1 as PARTIAL / NOT PASS pending a distinct official RBI revision history/transaction-level series or already archived IMF revision metadata.
+- C187 detail: `docs/GCR_INDIA_IND_Q1_2026_RBI_TABLE42_RELEASE_PERSISTENCE_AUDIT_CONTINUATION187_20261121.md`.
