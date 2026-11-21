@@ -1423,3 +1423,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - LSO PARTIAL / NOT PASS; national Q2-2026 dual legs NOT_CAPTURED; aggregate NOT_AUTHORIZED.
 - Detail report: `docs/GCR_LESOTHO_LSO_Q2_2026_CBL_BPM6_PORTAL_PORTFOLIO_DUAL_LEG_SOURCE_BOUNDARY_CONTINUATION178_20261121.md` (commit `683d34767c3a8ec8b75b470ca8c704469582d418`).
 - Next: only reopen LSO on a genuinely new official detailed Q2 dual-leg route; otherwise select next cohort member after full duplicate-prevention preflight.
+
+
+## Continuation 179 — Mongolia (MNG) NSO PxWeb quarterly BOP source/API gate (2026-11-21)
+- MNG fixed-cohort membership PASS; no dedicated prior MNG Q2-2026 national dual-leg report found. No cohort rebuild or IMF re-query.
+- Official NSO quarterly BOP PxWeb table `DT_NSO_0100_001V10_quarter` located; source metadata = Bank of Mongolia, unit million USD, frequency quarterly, period includes `2026-2`; 69 indicator values.
+- The web-readable page did not expose indicator labels or observations. Documented PxWeb API base found in public client references, but actual API metadata retrieval was inaccessible (web layer) and DNS failed in container. No raw API response/hash, no separate portfolio legs.
+- MNG PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not use net-only/annual/H1/IIP substitutes.
+- Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_BOP_QUARTERLY_SOURCE_AND_API_GATE_CONTINUATION179_20261121.md` (commit `6b01b968365b9f2b8e636518f8458079e2ab090b`).
+- Next: obtain official PxWeb codebook and exact JSON-stat2 data query through a supported API/export path; otherwise request official export attachment and move to next eligible cohort member.
