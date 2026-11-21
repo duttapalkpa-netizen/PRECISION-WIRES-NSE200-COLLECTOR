@@ -146,3 +146,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | Country | Authority / route | Evidence | Status | Duplicate decision | Reopen only if |
 |---|---|---|---|---|---|
 | MNE Montenegro | CBCG Bulletin archive https://cbcg.me/en/publications/regular-publications/cbcg-bulletin → Bulletin 9/2026 PDF https://cbcg.me/slike_i_fajlovi/fajlovi/fajlovi_publikacije/biltencbcg/2026/bilten_9-2026.pdf → BOP Tables 5.1–5.4 “download tables” affordance | C182 report docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_EXPORT_LOCATOR_CONTINUATION182_20261121.md | PARTIAL / NOT PASS; official PDF and methodology verified; export affordance identified, but linked table payload URL/bytes/hash and separate Q2-2026 portfolio legs not captured | Do not repeat C180 ZIP/XML/legacy Browse failures; PDF table link locator is new and may be resolved via supported link-annotation/download route | Raw official Tables 5.1–5.4 workbook/CSV with Q2-2026 asset/liability rows, metadata and SHA-256 |
+
+
+## Continuation 183 — MNE CBCG Bulletin PDF annotation access boundary (2026-11-21)
+| Country | Route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| MNE Montenegro | CBCG Bulletin 9/2026 PDF, BOP section printed p.55/PDF p.54, Tables 5.1–5.4 “download tables” annotation | C183 report: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_PDF_ANNOTATION_ACCESS_AUDIT_CONTINUATION183_20261121.md` | PDF and methodology reverified; available extraction exposes annotation text but not target URL; PDF byte download failed; table bytes/hash and Q2 separate portfolio legs NOT_CAPTURED; PARTIAL / NOT PASS | Closed for repeating same PDF text extraction/search and identical direct download attempt | A genuinely different supported PDF annotation extractor or distinct official workbook/CSV/API export locator |
+- C183 does not establish that tables are absent; it records an access/tool boundary only. No guessed URL, timestamp, MIME, or hash. Fixed cohort unchanged; MNE remains PARTIAL; aggregate NOT_AUTHORIZED.
