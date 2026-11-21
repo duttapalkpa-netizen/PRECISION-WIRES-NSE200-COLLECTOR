@@ -3195,3 +3195,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - LSO status: source-family/catalogue boundary PASS; separate Q2-2026 national legs NOT_CAPTURED; LSO PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_LESOTHO_LSO_Q2_2026_CBL_BPM6_PORTAL_PORTFOLIO_DUAL_LEG_SOURCE_BOUNDARY_CONTINUATION178_20261121.md` (commit `683d34767c3a8ec8b75b470ca8c704469582d418`).
 - Next: reopen LSO only on a distinct official detailed Q2 report/export/API with separate asset and liability legs; otherwise move to next fixed-cohort member after full preflight. No production changes, ₹0; UNKNOWN never PASS.
+
+
+## Continuation 179 — Chapter 47 Part 27: MNG NSO PxWeb quarterly BOP source/API gate (2026-11-21)
+- Re-fetched current Master Ledger, GCR Priority Queue, Historical Registry, C178 and fixed cohort before selecting MNG. Cohort SHA unchanged: `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; no IMF re-query/rebuild.
+- MNG is an eligible fixed-cohort member; repository search found no dedicated MNG Q2-2026 national portfolio dual-leg report. Existing MAR/MDA/MYS reports were excluded from duplicate work.
+- Official NSO quarterly BOP PxWeb table located: `DT_NSO_0100_001V10_quarter`; metadata says Bank of Mongolia source, million USD, quarterly BOP flows; Q2-2026 period `2026-2` appears in the period dimension. Table has 69 indicator values.
+- Metadata freshness conflict: search-indexed version reports updated 11-Sep-2026 / through 2026-3; live page opened in this audit says 10-Aug-2026 and next update 09-Sep-2026. Preserve conflict; do not infer exact vintage.
+- Documented PxWeb API base `https://data.1212.mn/api/v1` discovered from public client references. Actual metadata endpoint retrieval failed in web retrieval layer; container HTTP attempt failed DNS resolution. No response bytes/hash, indicator codebook, separate portfolio legs or Q2 values captured.
+- MNG remains PARTIAL / NOT PASS; separate national portfolio asset/liability observations NOT_VERIFIED; aggregate NOT_AUTHORIZED. Annual/H1 IMF Article IV and net-only totals rejected.
+- Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_BOP_QUARTERLY_SOURCE_AND_API_GATE_CONTINUATION179_20261121.md` (commit `6b01b968365b9f2b8e636518f8458079e2ab090b`).
+- Next: supported PxWeb metadata/codebook and JSON-stat2 query for only verified portfolio asset/liability indicators at `2026-2`; if unsupported, request official export attachment and advance. No production changes; UNKNOWN never PASS.
