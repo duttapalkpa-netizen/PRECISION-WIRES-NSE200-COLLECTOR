@@ -318,3 +318,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | Aggregate | NOT_AUTHORIZED |
 - Report: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_AUDIT_CONTINUATION200_20261121.md`.
 - DATA_CAPTURED is not FULL_PASS; inspect original gate and country report before promotion. Blocked route fingerprints remain closed absent new evidence.
+
+
+### C201 read-back correction — final matrix snapshot
+- Final read-back matrix CSV blob SHA-1: `64bb4a85cb2f004b5faa906b6353a6f71ecb9ad2`. The CSV currently has 63 data rows and 30 columns, including the eight requested YES/NO status flags plus detailed source/data/asset/liability/vintage/overall status and evidence_ref fields.
+- The earlier C201 CSV commit blob SHA `45e466c72c034d460dfccf57474b07bfb6d12ea9` is a prior intermediate snapshot; use the final read-back blob SHA above.
+- Recomputed from the final CSV: NOT_STARTED 1; SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; ASSET_PASS 15; LIABILITY_PASS 15; VINTAGE_PASS 0; FULL_PASS 0. Cohort membership remains exact 63/63.
+- Interpretation unchanged: 40 are below DATA_CAPTURED; 23 have national data recorded but remain short of FULL_PASS; all 63 remain not fully accepted; aggregate NOT_AUTHORIZED.
