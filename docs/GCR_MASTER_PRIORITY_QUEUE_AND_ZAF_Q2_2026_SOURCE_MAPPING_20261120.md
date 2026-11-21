@@ -1786,3 +1786,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official NSO terms confirm JSON/XML open-data API, CC BY 4.0 and one-request-per-second/IP limit; live BOP table confirms Bank of Mongolia source, quarterly frequency, million USD, 69 indicators, 71 quarters and Q2 `2026-2`.
 - Exact API root/path, HTTP method, query schema and indicator codes are not stated in inspected official docs. C179's failed API base was not retried; no guessed third-party client route used. No data bytes or hash captured.
 - MNG remains PARTIAL / NOT PASS; next action requires an official API manual/OpenAPI contract or official Q2 export. Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_OFFICIAL_API_CONTRACT_BOUNDARY_CONTINUATION221_20261121.md. No IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED.
+
+## Continuation 222 — MNG matrix evidence-reference/read-back correction (2026-11-21)
+- Reused C221 official NSO API-contract boundary; did not retry API or repeat source research.
+- Corrected only the MNG national validation matrix evidence_ref to C221 and clarified its metadata/API boundary note. Preserved BLOCKED, both national legs NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO and aggregate NOT_AUTHORIZED.
+- Final matrix commit `2074feae218e6890088d95412fbf7a1013c71bbf`; blob `b91df09667dc67b6b6fd595824606d324367b24f`. C222 report commit `7eea1f9e2341be21351a7e5201e95aa3c49a283b`.
+- Next: MNG remains closed absent official API manual/OpenAPI or official Q2 export. Select another eligible fixed-cohort member only after exact report/route preflight. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
