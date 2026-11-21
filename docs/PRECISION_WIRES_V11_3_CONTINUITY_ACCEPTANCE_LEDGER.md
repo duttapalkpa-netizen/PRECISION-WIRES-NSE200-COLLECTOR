@@ -3303,3 +3303,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - This is a link-target access boundary only, not evidence data are absent. GIN Q2 portfolio legs remain NOT_CAPTURED; sign/unit/vintage NOT_ESTABLISHED; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_GUINEA_GIN_Q2_2026_BCRG_MPC_DOWNLOAD_AFFORDANCE_AND_LINK_TARGET_ACCESS_GATE_CONTINUATION189_20261121.md` (commit 9bebc3da4f89d745c4599d0d0e4da39339c0f7ab).
 - Next: reopen only on distinct official BCRG attachment target/API export; otherwise advance after full preflight. All invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 190 — Mongolia (MNG) NSO PxWeb API metadata-route recheck (2026-11-21)
+- Re-fetched current Ledger, Priority Queue, Historical Registry, C189, MNG C179 and fixed 63-country cohort. C189 GIN repeat route excluded; MNG C179's official PxWeb codebook/API dependency selected. No IMF re-query/cohort rebuild.
+- Official NSO table re-opened: quarterly BOP scope includes portfolio investment; source Bank of Mongolia; unit million USD; Quarter dimension has 2026-2 example. Page metadata says updated 10-Aug-2026; this is page metadata, not proven statistical vintage.
+- Tested exact PxWeb v1 metadata URL `https://data.1212.mn/api/v1/en/NSO/NSO__Economy%2C%20environment__Balance%20of%20Payments/DT_NSO_0100_001V10_quarter`; retrieval surface returned “URL not accessible” with no HTTP status/body/bytes/hash. No indicator codebook or selected cells.
+- MNG remains PARTIAL / NOT PASS; portfolio A/L indicator identity and Q2 observations NOT_CAPTURED; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_API_METADATA_ROUTE_RECHECK_CONTINUATION190_20261121.md` (commit b34c392e7cac13b24e260ee2bd5e3011004a5e13).
+- Next: only a genuinely different supported official export or published attachment; do not retry same API route. All invariants unchanged; UNKNOWN never PASS.
