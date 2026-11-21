@@ -68,3 +68,12 @@ BNR Annual Report 2024-2025 Appendix 14, BOP in USD million:
 
 ## 8. Protected invariants
 No cohort rebuild, no IMF re-query, no synthetic data, no fiscal-year proration, no quarterly interpolation, no net-to-leg inference, no netting, no stocks-as-flows, no inferred FX, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS. Research spend ₹0.
+
+
+## Continuation 130 — RWA official portal locator recheck (2026-11-21)
+- Re-fetched the current Master Ledger, GCR Priority Queue, fixed cohort, Batch-1 report, NPL report and this RWA report. NPL's distinct NSDP route did not yield current Q2 data; per fixed batch order, advanced to RWA.
+- Rechecked the official National Bank of Rwanda External Sector Statistics portal. Search-indexed official portal text lists a “Balance of Payment” document dated 30-Jun-2026 and states BOP/IIP statistics are compiled under IMF BPM6. Direct portal open returns only “You need to enable JavaScript to run this app”; the document's exact downloadable URL/bytes remain unresolved.
+- Rechecked official BNR Monetary Policy Report August 2026: Table 2 is a summary BOP table for 2025Q1/2026Q1 and omits portfolio investment assets/liabilities. It mentions Q2 merchandise export developments but does not publish Q2 portfolio transaction legs. Rejected as non-matching scope.
+- No new raw Q2 transaction rows, URL, bytes, hash or separate A_NFA_T/L_NIL_T values obtained. Existing fiscal-year separate-leg rows remain crosswalk/methodology evidence only; 2026H1 net-only +14 USDm is not Q2 and cannot be split into legs.
+- RWA remains PARTIAL / NOT PASS; Q2 asset/liability legs NOT_CAPTURED; same-vintage/sign crosswalk NOT_ESTABLISHED; aggregate NOT_AUTHORIZED. Next exact action: resolve the BNR portal's June-30 item via an actually supported document/API route; if unavailable, close that route once and advance to SLV.
+- Evidence: https://www.bnr.rw/esstatistics ; https://www.bnr.rw/documents/Monetary_Policy_Report_August_2026.pdf . No IMF re-query/cohort rebuild. ₹0; production unchanged; UNKNOWN is never PASS.
