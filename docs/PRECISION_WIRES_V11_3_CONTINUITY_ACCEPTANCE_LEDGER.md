@@ -3467,3 +3467,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Updated counts: SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Counts across independent gates overlap.
 - Exact observation-level SBP revision timestamp / IMF same-vintage bridge remains NOT_ESTABLISHED; PAK remains PARTIAL / NOT PASS. Detail report: `docs/GCR_PAKISTAN_PAK_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION203_20261121.md`, report commit `2dd3df3e7aad775ecd9770c43dcea703f76a3e35`; matrix commit `52002c837b960e06e5c6f07c0308c8d4cc30c625`.
 - No IMF re-query/cohort rebuild; ₹0; all protected V11.3 invariants unchanged; UNKNOWN never PASS.
+
+
+## 2026-11-21 — GCR Continuation 204: BOL stale matrix row correction
+- Mandatory preflight completed: current Ledger, GCR Priority Queue, Historical Task Registry, BOL C158 report, matrix and immutable cohort re-fetched before selection.
+- C158 is the controlling BOL report: official Q2-2026 BCB BOP and time-series XLSX locators were found; both same-route retrievals returned HTTP 400 unsupported XLSX MIME. No workbook bytes, national values, raw hash, or numeric comparison exist. Same route is closed; no retry was made.
+- Defect: the 63-country national validation matrix still marked BOL NOT_STARTED/NOT_FOUND despite C158.
+- Corrected only BOL to current_stage=BLOCKED, source_gate=FOUND, data_capture_gate=NO, asset/liability=NOT_CAPTURED, vintage=UNKNOWN, full_pass=NO, aggregate_admission=NOT_AUTHORIZED; status_SOURCE_FOUND flag remains NO because the stage is BLOCKED, status_BLOCKED=YES, source_status=SOURCE_FOUND, remaining data/gate statuses BLOCKED, evidence_ref=C158.
+- Matrix re-fetch/read-back verified BOL row and 63 rows: NOT_STARTED 0; SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. All 63 remain outside FULL_PASS; aggregate NOT_AUTHORIZED.
+- Detail report: `docs/GCR_BOLIVIA_BOL_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION204_20261121.md`.
+- Status: matrix correction PASS; BOL national validation PARTIAL / NOT PASS; no source retrieval, IMF re-query, cohort rebuild, synthetic data, paid spend or production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
