@@ -43,3 +43,10 @@ Do not substitute IIP stocks, external debt stocks, or Q3 cumulative totals for 
 
 ## Protected invariants
 No production changes, aggregation, netting, imputation, synthetic data, silent sign flip, or repeated IMF/SARB work. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 135 — SAFE alternate-language attachment route exhausted (2026-11-21)
+- Re-fetched CHN detailed time-series audit, Q2 abridged comparison, current Master Ledger and GCR Priority Queue before attempting another route.
+- Re-opened official SAFE English detail page https://www.safe.gov.cn/en/2019/0329/1496.html and followed its attachment link. It resolves to the exact same official XLSX endpoint https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx; browser fetch again returns HTTP/tool 400 unsupported XLSX MIME. This is not a new file or alternate data vintage; no workbook bytes/hash/sheets captured.
+- SAFE English index and Chinese search index both identify the 29-Sep-2026 “The time-series data of Balance of Payments of China (BPM6)” record. The English/Chinese routes point to the same file. The official Q2 release (29-Sep-2026) remains the only inspectable national numeric summary: portfolio net -USD5.5bn, assets -USD48.8bn, liabilities +USD43.3bn, with credit positive/debit negative and net as their sum; this does not resolve the detailed A_NFA_T sign mapping or detailed workbook revision metadata.
+- Decision unchanged: detailed workbook content inspection BLOCKED; liability signed/magnitude comparison remains previously recorded PASS at published precision; asset magnitude corroboration remains REVIEW for sign mapping; CHN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Stop same XLSX endpoint retries. Next route must be genuinely different (e.g. supported browser file download or a distinct SAFE source file/API), otherwise move to next high-weight unvalidated cohort country. No IMF query, no cohort rebuild.
