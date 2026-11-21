@@ -487,3 +487,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - No country gate promotion: MNG BLOCKED; national A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Final matrix commit `2074feae218e6890088d95412fbf7a1013c71bbf`; C222 report commit `7eea1f9e2341be21351a7e5201e95aa3c49a283b`.
 - Duplicate prevention: do not repeat C221 terms/table metadata checks or failed C179/C190/C191 API routes. Reopen only with official endpoint contract or official export bytes.
+
+
+## Continuation 223 — GEO NBG Statistics Data route fingerprint
+- Official NBG Statistics page and Statistics Data search surface verified; rendered content states static Excel/interactive dashboard dissemination but does not expose a Q2 BOP workbook locator, API contract or payload.
+- C154 Q2 release/BPM5 and stale NSDP boundaries reused. Matrix evidence_ref corrected to C154; national data/gates unchanged. GEO remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Matrix commit `9655247cb907dee8e4846bd9dd33e6b5d91f67c0`; blob `de7b182d3a3debee674c35c1e9fd980e99ab83b3`; C223 report commit `e279d4262f50e73311d1e306c812efb7909fdf67`.
+- Do not repeat C154 press-release/NSDP extraction; reopen only on an exact official Q2 BOP dataset locator or export/API contract.
