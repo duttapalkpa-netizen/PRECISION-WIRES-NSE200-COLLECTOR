@@ -1777,3 +1777,8 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Neither guide discloses the compiler-side FX rate source/method for conversion into published BOP USD series. BPM6 3.104–3.106 gives the general benchmark but not proof of SARB's actual implementation. Prior ZAF liability arithmetic PASS and asset REVIEW preserved; method equivalence NOT_ESTABLISHED; ZAF remains PARTIAL; aggregate NOT_AUTHORIZED.
 - ZAF guide search is bounded; do not repeat absent a new official source/revision. Next rank-1 cohort task returns to CHN detailed SAFE workbook access audit per C127; no IMF re-query/cohort rebuild.
 - Detail: docs/GCR_ZAF_Q2_2026_SARB_B03_B31_REPORTING_CURRENCY_FX_METHODOLOGY_BOUNDARY_CONTINUATION219_20261121.md.
+## Continuation 220 — Montenegro MNE CBCG Bulletin alternate-host route; next MNG candidate (2026-11-21)
+- New distinct official `www.cbcg.me` host renders Bulletin 9/2026 (65 pages); the Tables 5.1–5.4 download affordance is visually confirmed on page 54.
+- Raw PDF download failed; link annotation target and table-export URL remain unresolved; no workbook bytes/hash or Q2 dual-leg observations captured. MNE remains PARTIAL / NOT PASS.
+- Next candidate MNG NSO PxWeb BOP table: official table page is accessible; public JSON/XML API is stated in NSO terms, but do not guess API route/request/indicator codes. Require official endpoint and method evidence before query.
+- Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_ALTERNATE_HOST_AND_TABLE_LINK_ACCESS_CONTINUATION220_20261121.md. No IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED.
