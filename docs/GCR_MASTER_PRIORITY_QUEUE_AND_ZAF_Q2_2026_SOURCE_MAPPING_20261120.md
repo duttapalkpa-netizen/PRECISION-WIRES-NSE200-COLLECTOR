@@ -1772,3 +1772,8 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Q2 values: Apr 1,653.90 cents/R16.5390; May 1,648.06/R16.4806; Jun 1,639.70/R16.3970. No quarter aggregation.
 - Monthly series is not daily EXCX135D; BOP transaction conversion convention remains NOT_ESTABLISHED. ZAF asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED unchanged.
 - Detail: docs/GCR_ZAF_Q2_2026_SARB_KBP5339M_OFFICIAL_MONTHLY_USD_ZAR_SERIES_VERIFICATION_CONTINUATION218_20261121.md. Next C219: daily series and BOP FX methodology.
+## Continuation 219 — ZAF SARB B03/B31 reporting-currency methodology boundary and CHN handoff (2026-11-21)
+- New official SARB B03 (May 2021) and B31 (June 2021) guides reviewed. B03/B31 report monetary amounts in ZAR thousands; B03 specifies accrual/transaction-time and market-price valuation for traded equity/debt; B31 covers institutional-investor foreign-asset acquisitions/disposals and transaction-value/time reporting.
+- Neither guide discloses the compiler-side FX rate source/method for conversion into published BOP USD series. BPM6 3.104–3.106 gives the general benchmark but not proof of SARB's actual implementation. Prior ZAF liability arithmetic PASS and asset REVIEW preserved; method equivalence NOT_ESTABLISHED; ZAF remains PARTIAL; aggregate NOT_AUTHORIZED.
+- ZAF guide search is bounded; do not repeat absent a new official source/revision. Next rank-1 cohort task returns to CHN detailed SAFE workbook access audit per C127; no IMF re-query/cohort rebuild.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_B03_B31_REPORTING_CURRENCY_FX_METHODOLOGY_BOUNDARY_CONTINUATION219_20261121.md.
