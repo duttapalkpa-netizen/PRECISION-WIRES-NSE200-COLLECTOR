@@ -1451,3 +1451,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - POL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_USD_DUAL_LEG_PUBLICATION_SEARCH_CLOSURE_CONTINUATION181_20261121.md (commit 5ab4cf466d2caab451674faa0d65666426ae5084).
 - Next: next unexhausted fixed-cohort country after repository/registry duplicate-prevention preflight.
+
+
+## Continuation 182 — MNE Montenegro CBCG Bulletin 9/2026 export locator (2026-11-21)
+- Exact fixed-cohort row verified against immutable cohort SHA-256 31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8: MNE has both IMF panel legs present, national validation pending, aggregate NOT_AUTHORIZED.
+- Distinct official CBCG Bulletin 9/2026 PDF route identified; BOP section points to Tables 5.1–5.4 download tables. Quarterly EUR BPM6 methodology, FX treatment and preliminary/revision warning verified.
+- The PDF contains no Q2-2026 portfolio asset/liability values; table export payload not retrieved. MNE PARTIAL / NOT PASS.
+- Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_EXPORT_LOCATOR_CONTINUATION182_20261121.md (commit 6ec0f976e2a5fdb26c704b0991b5cd0e5f3fa888).
+- Next: resolve the linked official Tables 5.1–5.4 export, or move on without repeating blocked C180 transfer paths.
