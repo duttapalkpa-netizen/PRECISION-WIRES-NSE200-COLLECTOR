@@ -1673,3 +1673,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - C187 India Q1 liability REVIEW (-1,512.508347 USDm residual) remains open; no all-period FULL_PASS. BOJ API C84-C85 is closed for repeated same-route probes.
 - Detail: docs/GCR_INDIA_IND_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION205_20261121.md.
 - Next: only seek new primary same-vintage/revision evidence for the open Q1 liability or vintage bridge; do not repeat completed Q2 comparison or BOJ inaccessible API route. ₹0; protected production invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 206 — Argentina ARG matrix evidence-link reconciliation (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Task Registry, 63-country matrix and ARG INDEC–IMF report before selection. Completed PASS work and closed INDEC vintage routes were not repeated.
+- Existing report `docs/GCR_ARGENTINA_ARG_Q2_2026_INDEC_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md` already records Q2-2026 assets/liabilities numeric PASS at ±USD0.5m; residuals +0.206322m / +0.052824m. Same-vintage remains NOT_ESTABLISHED.
+- Defect: ARG matrix row had evidence_ref=NO_DEDICATED_REPORT_REF_IN_BASELINE despite the dedicated report. Corrected only evidence_ref to `GCR_ARGENTINA_ARG_Q2_2026_INDEC_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120`; no stage or gate promotion.
+- Matrix commit `c8b346302cea6197b0de577ef26045fd7dc0eb70`; blob SHA-1 `1fa8a1e7c57b064ad58f51e6ae18ebe8c3336daf`. Detail: `docs/GCR_ARGENTINA_ARG_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION206_20261121.md`.
+- ARG remains DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No IMF re-query/cohort rebuild, no new national data, no production change; ₹0; UNKNOWN never PASS.
