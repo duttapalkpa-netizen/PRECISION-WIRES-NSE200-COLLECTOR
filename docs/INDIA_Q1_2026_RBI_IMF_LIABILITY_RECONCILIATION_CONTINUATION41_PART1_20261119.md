@@ -30,3 +30,10 @@ Obtain the exact archived RBI Table 42 release/vintage rows for the Q1-2026 obse
 
 ## Invariants
 ₹0; official/free sources only. No synthetic data, inferred alias, fabricated timestamp, guessed revision, or aggregate. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), and Engines A–E unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 187 addendum — RBI Q1-2026 published-value persistence (2026-11-21)
+- Official RBI Table 43/42 release pages dated 22-Jun-2026, 22-Jul-2026 and 25-Aug-2026 were inspected. The Q1-2026 portfolio investment in India net is unchanged at -12,121 USDm in July/August; portfolio investment by India remains +74 USDm; total net remains -12,047 USDm. June Table 43 reports the Q1 values in ₹ crore (-110,826; +677; -110,149); no conversion was applied.
+- This shows no change in the published RBI Q1 net values across the three inspected release pages. It does not establish a complete revision history or the IMF source vintage.
+- Existing IMF Q1 L_NIL_T remains -13,633.508347 USDm vs RBI -12,121, residual -1,512.508347 USDm; liability and combined net remain REVIEW. Asset comparison remains PASS. Full India Q1 remains PARTIAL / NOT PASS.
+- C187 report: `docs/GCR_INDIA_IND_Q1_2026_RBI_TABLE42_RELEASE_PERSISTENCE_AUDIT_CONTINUATION187_20261121.md`. No new IMF GET, no cohort rebuild, no inferred cause.
