@@ -3477,3 +3477,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Matrix re-fetch/read-back verified BOL row and 63 rows: NOT_STARTED 0; SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. All 63 remain outside FULL_PASS; aggregate NOT_AUTHORIZED.
 - Detail report: `docs/GCR_BOLIVIA_BOL_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION204_20261121.md`.
 - Status: matrix correction PASS; BOL national validation PARTIAL / NOT PASS; no source retrieval, IMF re-query, cohort rebuild, synthetic data, paid spend or production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 205 — IND India Q2-2026 historical matrix reconciliation (2026-11-21)
+- Re-fetched the current Master Ledger, GCR Priority Queue, Historical Registry, India Q2 current-vintage supplement, India C187 Q1 report, existing comparison CSV, fixed 63-country cohort and matrix before selection. No IMF re-query/cohort rebuild or RBI page re-fetch.
+- Existing RBI Table 42 Apr-Jun 2026 release (published 23-Oct-2026; https://www.rbi.org.in/Scripts/BS_ViewBulletin.aspx?Id=24566) and archived crosswalk prove Q2-2026 assets, liabilities and combined net each compare PASS within ±USD0.5m: assets IMF 923.510586779m vs RBI +924m (residual -0.489413221m); liabilities IMF -8,638.759946257m vs RBI -8,639m (residual +0.240053743m); combined net IMF -9,562.270533037m vs RBI -9,562m (residual -0.270533037m).
+- The existing supplement archives the RBI raw HTML, retrieval metadata and SHA-256 075c28122d588e5bce0ff45c8c8d5d8b453c53dc5b9a20f79d5cd3a6e54f5396; comparison CSV blob SHA 8ff2534dc730c822b20351530b9379fb86369cb2.
+- Corrected only IND Q2 matrix row: DATA_CAPTURED; asset PASS; liability PASS; vintage PENDING; FULL_PASS=NO; aggregate NOT_AUTHORIZED; evidence_ref points to India current-vintage supplement. Exact same-vintage bridge remains unestablished.
+- C187 Q1 liability residual -1,512.508347 USDm remains REVIEW and unchanged. Do not blend Q1 and Q2 or promote India overall FULL_PASS.
+- BOJ C84-C85 metadata/API access gate was inspected; repeated API/ZIP probes were excluded.
+- Detail: docs/GCR_INDIA_IND_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION205_20261121.md.
+- Recomputed proposed matrix: 63 rows; SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0; ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0. Independent gate counts overlap. Aggregate remains NOT_AUTHORIZED.
+- No IMF GET/cohort rebuild, no production changes; ₹0; UNKNOWN never PASS.
