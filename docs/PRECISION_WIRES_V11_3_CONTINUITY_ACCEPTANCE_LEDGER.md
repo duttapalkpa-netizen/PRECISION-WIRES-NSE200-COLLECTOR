@@ -2663,3 +2663,22 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Same-vintage alignment and full scope/definition equivalence remain NOT_ESTABLISHED; raw BCU PDF byte archive/hash NOT_CAPTURED. URY numeric dual-leg comparison PASS; full national validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_CONTINUATION121_20261121.md; final correction commit b2be36e37766f3799ed0cd46d736ddbcc62200a6.
 - Next: inspect BCU/IMF metadata and revision history specifically for URY Q2 definition/scope/vintage alignment; archive raw BCU PDF bytes/hash before any revision comparison. No repeated extraction, no IMF re-query/cohort rebuild, no production changes. ₹0; UNKNOWN is never PASS.
+
+
+---
+
+## Daily Unified Top-5 Swing Watchlist — 2026-11-21
+
+- Dated report: docs/DAILY_UNIFIED_TOP5_SWING_WATCHLIST_20261121.md
+- Report commit: 602180faa94dcacfd5520e4c792f8af1bd7070c6
+- Independently fetched report SHA-256: e92c3d73c8d7f9b9cd303be848fbf3f3fbe4a8d1d25cf18966cf2f03ae8d0eb3
+- Latest prospective run inspected: #339 / run ID 44799560798; conclusion success; source commit 624be8f126f39bd6a146d732ec3f87edde964aec.
+- Artifact ID 14660032260; size 50,543 bytes; independently computed ZIP SHA-256 23e74e7f9ef2e32bf5b6bbc5a931814c06fe065835b8bdda74f3c00dbdafd213, matching GitHub artifact digest.
+- Run log confirms 200 FULL_BHAVCOPY_DELIVERY downloads with HTTP 200, newest date 20112026; 200 valid sessions; normalized dataset log 503,892 rows / 2,999 symbols / 200 dates. QA JSON reports PASS. Raw delivery bytes, raw manifest and per-file raw hashes are absent from retained artifact; candidate price extraction therefore remains BLOCKED.
+- Latest selector cutoff 2026-11-20; 10 label-free picks, 8 unique symbols, all outside frozen production Top-30. No 20-Nov labels read from future; latest outcomes remain immature.
+- Strict 30-matured-cutoff shadow audit independently recalculated from artifact CSV: CURRENT_WINNER_PROB +5 H+1 = 41/150 TP, 109 FP, 0.482% outside-Top-30 recall; +10 H+3 = 31/150, 119 FP, 0.572%; +20 H+5 = 20/150, 130 FP, 1.294%. 20,000 cutoff-cluster bootstrap resamples, seed 20261121; intervals and denominators are in the dated report. These are outside-Top-30 capture metrics, not full-market recall.
+- Main 100-cutoff / 3,000-row V11.4 Top-30 metrics remain provisional because all_by_date recall denominator is not reconciled to the eligible-universe export; FP counts / confidence intervals UNKNOWN.
+- Engine statuses: A PARTIAL (retrospective only); B UNKNOWN (no approved execution assumptions / replay); C UNKNOWN (no vintage-aligned macro-sector-stock-outcome join). No candidate qualified; 0 alerts released.
+- Shadow union: NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP. Four retained vs prior cutoff (NRL, KDDL, YATRA, HINDOILEXP); four new (V2RETAIL, SIGACHI, RSDFIN, KMCSHIL); three removed (ELITECON, LEENEE, ARYAMAN). This is selector turnover, not performance improvement.
+- No new workflow dispatched; no production logic, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2 changed. UNKNOWN remains not PASS.
+- Run artifact internal SHA-256 values, limitations, official sources, candidate exclusions and next actions are recorded in the dated report.
