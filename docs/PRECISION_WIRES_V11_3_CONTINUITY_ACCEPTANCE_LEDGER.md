@@ -3717,3 +3717,12 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Corrected only the MYS matrix evidence_ref to `GCR_MALAYSIA_MYS_Q2_2026_BNM_OFFICIAL_FX_AND_DUAL_LEG_RECONCILIATION_20261120`; preserved DATA_CAPTURED, asset/liability PASS, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED.
 - Detail report: `docs/GCR_MALAYSIA_MYS_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION227_20261121.md`; matrix commit `7e544e73de2aac8c8f12d1e6e43391ae00ec3f05`; queue/registry continuation 227 appended.
 - MYS remains PARTIAL / NOT PASS: same-vintage BNM preliminary ↔ IMF panel alignment NOT_ESTABLISHED. No production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 228 — Run #339 raw NSE source retention root-cause correction (2026-11-21)
+- Re-fetched the current Ledger, GCR Priority Queue and Historical Task Registry before selecting this unfinished task; reviewed Nightly Review and immutable lesson PW-LSN-20261121-003. Completed C227 and duplicate CHN SAFE route were skipped.
+- Downloaded and independently inventoried Run #339 artifact 14660032260 (50,543 bytes; SHA-256 `23e74e7f9ef2e32bf5b6bbc5a931814c06fe065835b8bdda74f3c00dbdafd213`): 17 entries, no raw NSE files or manifest. Its job log records 200 successful full-delivery downloads and QA raw_files=200.
+- Run #416 artifact 14632139339 (61,990,061 bytes; SHA-256 `b12ea634f24af8241ee9a901635dd743195f4b8a3a1511cc2ffe3c3246282082`) contains normalized data/security master, but no original raw CSVs or manifest.
+- Confirmed the precise root cause: workflow upload-artifact allowlist omitted the raw NSE CSV glob, sessions, acquisition diagnostics and security master. Added these paths to the isolated `audit/prospective-selector-tracking` workflow; commit `46f4a359f21da676cb0c92e874fb08f14ee20d90`.
+- Future-run retention proof remains PENDING; historical Run #339 raw recovery remains BLOCKED; per-file acquisition-time URL/timestamp/bytes/SHA manifest remains NOT_DONE. No old data redownloaded or provenance inferred.
+- Detail: `docs/NSE_RUN339_RAW_SOURCE_ARTIFACT_PACKAGING_ROOT_CAUSE_AND_RETENTION_FIX_CONTINUATION228_20261121.md`; Priority Queue and Historical Task Registry appended as C228. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; ₹0; UNKNOWN never PASS.
