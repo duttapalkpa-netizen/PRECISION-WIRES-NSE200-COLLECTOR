@@ -63,3 +63,13 @@ No synthetic data, no netting, no FX inference, no stock-as-flow substitution, n
 
 ### Next exact action
 - Stop using the monthly Banking & Financial Statistics archive for BOP. Find an XLSX-capable route for the single official External Sector BPM6 workbook or an official NRB API/export surface. If unavailable, keep NPL blocked and move to the next country; no repeated MIME retries, no balance-sheet stock substitution, no IMF re-query.
+
+
+## Continuation 130 — NRB alternate publication-route check (2026-11-21)
+- Re-fetched the current Master Ledger, GCR Priority Queue, fixed 63-country cohort, Batch-1 report and this NPL report before work. Existing batch order retained; NPL was the next unfinished country.
+- Re-opened the official NRB External Sector page. It explicitly lists Monthly Balance of Payments (BPM 6) as the relevant dataset and its linked workbook remains the September-2026 Balance-of-Payments-BPM6.xlsx URL. The direct official link still fails at the retrieval bridge with HTTP 400 unsupported XLSX MIME; no workbook bytes/sheets/values/hash captured.
+- Tested the distinct NRB National Summary Data Page (NSDP) route. Its BOP row advertises Browse Data and SDMX Download, but the actual Browse Data link resolves to the general Current Macro-Economic and Financial Situation archive, not a BOP series browser. The SDMX Download link resolves to NEPAL_BOP_2024_Q1.xml (2024-Q1), which is stale for Q2-2026 and its XML MIME is unsupported by the current retrieval bridge. IMF DSBB metadata link is metadata only, not a transaction dataset.
+- NRB's latest macroeconomic report search result reports aggregate BOP/current-account context only; no separate Q2 portfolio transaction asset/liability observations. No proxy admitted.
+- Result: no genuinely usable alternate official Q2 export/API route found in this bounded attempt. NPL national Q2 portfolio assets/liabilities remain NOT_EXTRACTED; period basis/sign/unit/vintage NOT_ESTABLISHED; numeric comparison NOT_DONE; NPL PARTIAL / BLOCKED; aggregate NOT_AUTHORIZED. Do not retry the same XLSX, NSDP XML or BFR monthly archive route. Advance to RWA.
+- Official evidence: NRB External Sector page https://www.nrb.org.np/database-on-nepalese-economy/external-sector/ ; NSDP https://www.nrb.org.np/nsdp/ ; official Q2 candidate workbook https://www.nrb.org.np/contents/uploads/2026/09/Balance-of-Payments-BPM6.xlsx .
+- No IMF re-query, no cohort rebuild, no annual/monthly cumulative allocation, no stock-as-flow, no synthetic values. ₹0; production invariants unchanged; UNKNOWN is never PASS.
