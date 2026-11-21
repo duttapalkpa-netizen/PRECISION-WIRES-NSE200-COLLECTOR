@@ -1443,3 +1443,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - No Q2-2026 separate portfolio legs captured; MNE PARTIAL / NOT PASS; exact cohort-row membership not re-extracted; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BOP6_NSDP_SDMX_SOURCE_BOUNDARY_CONTINUATION180_20261121.md` (commit `04fc8bbbf529eed183eaa9453496de2df12bc3f0`).
 - Next: new supported transfer for ZIP/XML + exact MNE cohort-row check; no retry of same blocked routes.
+
+
+## Continuation 181 — Poland (POL) NBP USD publication gate closure (2026-11-21)
+- Current NBP public BOP PDF remains PLN-million; no current Q2-2026 official USD portfolio assets/liabilities table surfaced in the bounded public publication search. NBP Web API documentation concerns currency quotations and does not supply transaction-level weights.
+- Prior national PLN legs and transaction-date FX principle are retained; no guessed conversion or quarter-end FX.
+- POL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_USD_DUAL_LEG_PUBLICATION_SEARCH_CLOSURE_CONTINUATION181_20261121.md (commit 5ab4cf466d2caab451674faa0d65666426ae5084).
+- Next: next unexhausted fixed-cohort country after repository/registry duplicate-prevention preflight.
