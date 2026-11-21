@@ -1806,3 +1806,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Corrected GIN matrix evidence_ref to C170 and clarified that the attachment target remains unresolved. GIN remains BLOCKED; A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Matrix commit `0c4f29eebc6b508e7f17473a26f0c28f6bbd90be`; blob `d6b1986f1c029f0ea4b69dd77549e0b6cbd596b3`; C224 report commit `9415534d63c43c5d3d64acf3b225ad8fb0e7eb23`.
 - Do not repeat the same article/archive extraction. Reopen only if BCRG exposes a distinct downloadable file target or documented data export/API.
+
+
+## Continuation 225 — AZE CBAR external-sector index / combined-category boundary
+- Distinct official CBAR External Sector Statistics index and Interactive Statistic Database navigation inspected. Database shell returned no data text; 2026 attachment controls did not expose a distinct Q2 raw export locator.
+- CBAR Statistical Bulletin 09/2026 Table 1.4 confirms Q2-2026 asset/liability totals but only groups “portfolio and other investments” under each leg (-302 / +2,466 USDm). These combined figures are not portfolio-only and cannot validate IMF portfolio rows.
+- AZE matrix note/evidence_ref updated to C225; country gates preserved: national A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED. No IMF re-query/cohort rebuild.
+- Matrix commit `b85f7d9cfc927b7301bf91591ae0b004d54a0282`; blob `9b1b7a82cf43455eaba82cd0a054e3976e734f5d`; report commit `af4425511747a7dc3c91b68508e63023fe44d3f7`.
+- Reopen only on a distinct detailed Q2 export/API with portfolio separated from other investment for both legs.
