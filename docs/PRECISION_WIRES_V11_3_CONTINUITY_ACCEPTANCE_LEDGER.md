@@ -3399,3 +3399,14 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - CBA metadata confirms BPM6, USD millions, quarterly/annual BOP, release timing and annual revision practice. Armstat NSDP last updated 20-Nov shows Q2 BOP aggregate components but no separate portfolio BOP flow row; this is not zero. Its Q2 IIP portfolio positions remain stocks and are excluded.
 - ARM remains PARTIAL / NOT PASS; Q2 national A/L NOT_CAPTURED; comparison NOT_DONE; aggregate NOT_AUTHORIZED. Detail: docs/GCR_ARMENIA_ARM_Q2_2026_CBA_CURRENT_FINANCIAL_ACCOUNT_EXPORT_ROUTE_GATE_CONTINUATION199_20261121.md.
 - No production changes; UNKNOWN never PASS. Apply C198 Execution-Mode Gate; do not retry either closed legacy XLS or same current export-all timeout through same surface.
+
+
+## GCR Continuation 200 — 63-country Q2-2026 national validation master matrix (2026-11-21)
+- Immutable cohort CSV re-fetched; blob SHA-1 `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; exactly 63 country rows, each with A_NFA_T_PRESENT and L_NIL_T_PRESENT in the archived IMF panel. No cohort rebuild or IMF re-query.
+- New matrix report: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_CONTINUATION200_20261121.md`.
+- Machine-readable CSV: `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`.
+- Matrix report commit: `993f678694f1784cd0431868e0aecda70bbe61e0`; CSV commit: `e180b9c6ea57eb457881b4cf4718c47b445fdd19`.
+- Initial conservative current-stage count: SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; NOT_STARTED 1. FULL_PASS 0. Thus 63/63 remain outside full country acceptance; 0/63 may be admitted to the national-source-validated aggregate on this matrix snapshot.
+- Per-leg gate counts: asset PASS 15, REVIEW 7, NOT_CAPTURED 41; liability PASS 15, REVIEW 8, NOT_CAPTURED 40. Vintage: PENDING 23, UNKNOWN 40. These are evidence-stage counts, not additive country counts; each country's gates are independent.
+- DATA_CAPTURED is not country PASS. Numeric rounding matches do not close exact vintage, raw-source byte/hash, sign/scope, or external-custodian gates. The matrix is an initial consolidated inventory based on the immutable cohort, current queue/registry and bounded country report search; it is not yet a line-by-line re-audit of every historical report. Latest country continuations govern any future promotion.
+- Aggregate remains NOT_AUTHORIZED. UNKNOWN is never PASS. ₹0, official/free sources only; no synthetic data, no production changes, no cohort rebuild, no IMF re-query; all protected V11.3 invariants remain unchanged.
