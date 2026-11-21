@@ -3339,3 +3339,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Close C186 later-archive branch as NOT_AVAILABLE; retain IDN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not issue IMF GET or repeat inventory absent a new archive artifact.
 - Detail: docs/GCR_INDONESIA_IDN_Q2_2026_IMF_ARCHIVED_VINTAGE_INVENTORY_AND_MATCH_GATE_CONTINUATION193_20261121.md (commit d1319128935b78064c01edc66e0458759de19ca7).
 - All protected invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 194 — CHN SAFE official time-series workbook locator/access gate (2026-11-21)
+- Re-fetched current Ledger, Queue, Registry and CHN prior report; reused fixed cohort and archived IMF receipt. No IMF GET or cohort rebuild.
+- Followed the official SAFE Balance of Payments time-series landing page and recovered its exact attachment target `https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx` (page-linked XLSX). This is a distinct official locator.
+- Web retrieval rejected the XLSX MIME as unsupported; direct container download also failed. No bytes/MIME receipt/size/hash/worksheets/cells captured. Locator PASS only; raw workbook access BLOCKED / NOT_CAPTURED.
+- Existing CHN SAFE/IMF magnitude comparison preserved; asset sign unresolved; CHN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_CHINA_CHN_Q2_2026_SAFE_OFFICIAL_TIMESERIES_WORKBOOK_LOCATOR_AND_RAW_ACCESS_GATE_CONTINUATION194_20261121.md` (commit 265712fed07a20bed233e29c9ab77cdd7ea742ea).
+- Reopen only when exact official XLSX can be retrieved through a supported workflow or a distinct official export appears. All invariants unchanged; UNKNOWN never PASS.
