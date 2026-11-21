@@ -3312,3 +3312,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - MNG remains PARTIAL / NOT PASS; portfolio A/L indicator identity and Q2 observations NOT_CAPTURED; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_API_METADATA_ROUTE_RECHECK_CONTINUATION190_20261121.md` (commit b34c392e7cac13b24e260ee2bd5e3011004a5e13).
 - Next: only a genuinely different supported official export or published attachment; do not retry same API route. All invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 191 — MNG corrected PxWeb metadata endpoint (2026-11-21)
+- Re-fetched Ledger, Queue, Registry, C179, C190, C189 and immutable cohort. MNG remained the selected open dependency; no IMF re-query/cohort rebuild.
+- Code-level review of public mongolstats PxWeb client source exposed a C190 route-construction error: C190 omitted the table filename suffix `.px`. Corrected metadata URL tested: `https://data.1212.mn/api/v1/en/NSO/NSO__Economy%2C%20environment__Balance%20of%20Payments/DT_NSO_0100_001V10_quarter.px`. Retrieval bridge still returned “URL not accessible”; no HTTP response/body/bytes/hash. C190's endpoint test is corrected, not retroactively called successful.
+- Official NSO table currently shows information updated 09-Nov-2026, quarterly, million USD, Bank of Mongolia source, 69 Indicator values, 71 Quarter values including 2026-2. This is page metadata only, not observation revision vintage. Exact labels and selected cells remain unavailable.
+- MNG PARTIAL / NOT PASS; A/L indicator identity and Q2 observations NOT_CAPTURED; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_CORRECTED_METADATA_ENDPOINT_AND_ACCESS_GATE_CONTINUATION191_20261121.md` (commit 3dddaefe0093bd366a7c755e5407a088f498517e).
+- Next: different supported official export/attachment only; do not retry same blocked API surface. Invariants unchanged; UNKNOWN never PASS.
