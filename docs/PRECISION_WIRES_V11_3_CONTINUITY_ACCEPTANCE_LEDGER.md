@@ -3639,3 +3639,32 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Research integration: added only these documented gaps to the Observation-phase diagnostic backlog. No threshold, selector, ranking, score, workflow or production code changed. No separate planning/organizing or production admission.
 - Duplicate handling: no prior immutable lesson IDs existed in the master ledger; no duplicate lesson was created against a prior ID. Existing narrative incidents were consolidated into the first formal IDs above.
 - Next run must read these IDs first and re-check the three acceptance tests. Preserve ₹0, free official sources only, no synthetic data, no forward-fill, no guessed mappings, no fabricated timestamps, no look-ahead. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2 remain unchanged.
+
+
+### Lessons Learned Register — 2026-11-21 detail addendum (same immutable IDs)
+
+- Revised nightly report: [NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261121.md](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261121.md).
+- Revised report commit: 4b62dceb760f51d8d22e633c7b8245a120e80c6b.
+- Revised report content SHA-256: 7349399c43e72154b2278d3e45bb9a373f00605b50ca1802de27e315f412adff. This supersedes the initial report hash ff6baca2ffd4d0c14464dbf274e6fe94f1071e31d536b46f779f22730a6835b4; initial commit 967fe6d63935dba34872f504bd3ca1142237443b is retained as history.
+
+**PW-LSN-20261121-001 — expanded fields**
+- Date/cutoff 2026-11-20; symbols ALL eligible; targets +5% H+1, +10% H+3, +20% H+5.
+- Expected exact T+1…T+h exchange-session windows and full maturity; actual source used shift(-1)+trailing rolling with partial windows and symbol-local row compression. Root cause VERIFIED.
+- Affected V11.4 label generation, target diagnostics and contaminated training/ranking path.
+- Evidence: Run #416 ID 44744602064, artifact 14632139339, ZIP SHA-256 b12ea634f24af8241ee9a901635dd743195f4b8a3a1511cc2ffe3c3246282082; source commit 6572a69776272cbda3fde4fec457bddbf7c58ad5; code SHA-256 dca7363ef1c5f56a097ed66b4305935f2c90975e2387b9c5b44780c4101f83e2; dataset SHA-256 d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db; config SHA-256 1d17284e1c4a16e59e51a0d117a8b1e9888cfba39bd5378ce1c61dfca1c6d8a8.
+- Hypothesis/test: explicit session spine and full maturity prevent compressed/partial labels; bounded first five fully matured cutoffs for three horizons, actual archive rows and independent hand-check, then fixed 100-cutoff walk-forward only after pilot acceptance.
+- Sample/maturity: all h sessions required; H+3 State floor >=50 fully matured observations per State. Expected artifact: v2 code/config, tests, canonical row ledger, denominator ledger, hand-check, manifest/hash receipt. Limitation: five-cutoff pilot is correctness-only; corrected labels do not validate a model trained on v1. Blocker: implementation NOT_AUTHORIZED; production admission separately prohibited. Acceptance OPEN / NOT_ACCEPTED.
+
+**PW-LSN-20261121-002 — expanded fields**
+- Date/cutoff 2026-11-20; aggregate Top-30; +20% H+5; exact affected symbols unresolved.
+- Expected one canonical row-ledger count across CSV/JSON/summary/manifest; actual JSON implies 613 hits and CSV has 616. Root cause SUPPORTED, serialization cause UNKNOWN.
+- Affected V11.4 aggregation/serialization/denominator QA. Evidence Run #416 artifact 14632139339, ZIP SHA-256 b12ea634f24af8241ee9a901635dd743195f4b8a3a1511cc2ffe3c3246282082; revised report commit 4b62dceb760f51d8d22e633c7b8245a120e80c6b / SHA-256 7349399c43e72154b2278d3e45bb9a373f00605b50ca1802de27e315f412adff.
+- Hypothesis/test: independent serializer/filter paths cause mismatch; regenerate all target metrics from one canonical ledger and compare exact integer counts; no market-data download. Sample: +20% H+5 Top-30 mature n=2,966; 613 vs 616 unresolved. Expected artifact: row-level diff, canonical metrics, denominator ledger, parity report and manifest. Limitation: neither count can be selected without source-row evidence. Acceptance OPEN / NOT_ACCEPTED.
+
+**PW-LSN-20261121-003 — expanded fields**
+- Date/cutoff 2026-11-20; eight shadow symbols NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP; all horizons IMMATURE at 2026-11-21 review.
+- Expected retained raw bhavcopy/delivery/security-master bytes and per-file manifest; actual Run #339 logged 200 successful downloads but retained artifact omitted raw bytes/manifest. Root cause SUPPORTED; exact packaging cause UNKNOWN.
+- Affected ingestion provenance, current quote/time and candidate risk eligibility. Evidence Run #339 ID 44799560798, artifact 14660032260, ZIP SHA-256 23e74e7f9ef2e32bf5b6bbc5a931814c06fe065835b8bdda74f3c00dbdafd213; source commit 624be8f126f39bd6a146d732ec3f87edde964aec; morning alert report SHA-256 652bc7717d6cd5206005ae49ff4e77329c4f39b86eeded4971fa0dfef5dab0dc.
+- Hypothesis/test: acquired bytes were omitted by artifact packaging/retention. Inspect only an existing authorized archive and reconcile all 200 expected raw-file entries; do not redownload or fabricate. Expected artifact: raw-source recovery receipt, per-file URL/time/byte-count/SHA-256 manifest and inventory reconciliation. Sample: 200 logged sessions, 2,999 symbols; no proof of raw-byte retention; current cohort immature. Limitation/blocker: archive location not verified. Acceptance OPEN / NOT_ACCEPTED.
+
+No new lesson IDs were created by this detail append; all entries remain Observation-only. Next nightly review must read the original entries and this addendum before selecting work.
