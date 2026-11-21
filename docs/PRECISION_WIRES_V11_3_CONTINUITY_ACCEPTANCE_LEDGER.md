@@ -3497,3 +3497,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Corrected only ARG matrix evidence_ref from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_ARGENTINA_ARG_Q2_2026_INDEC_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120`. No stage/gate promotion: DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Matrix commit `c8b346302cea6197b0de577ef26045fd7dc0eb70`; blob SHA-1 `1fa8a1e7c57b064ad58f51e6ae18ebe8c3336daf`. Detail report `docs/GCR_ARGENTINA_ARG_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION206_20261121.md`.
 - No new source retrieval, IMF re-query/cohort rebuild, synthetic data, paid spend or production changes; ₹0; protected V11.3 invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 207 — Burundi BDI Q2-2026 evidence-link correction (2026-11-21)
+- Preflighted current Master Ledger, Priority Queue, Historical Registry, 63-country matrix and C155 BRB report. Chose a demonstrably stale evidence_ref; rejected repeat BRB/IMF retrieval and historical-quarter substitution.
+- Existing C155 establishes only Q4/Q3-2025 historical dual-leg table format; Q2-2026 national portfolio asset/liability legs remain NOT_CAPTURED. IMF Q2 rows are archived but no national comparison is admitted.
+- Corrected only BDI matrix evidence_ref from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_BURUNDI_BDI_Q2_2026_BRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION155_20261121`. BDI remains SOURCE_FOUND; data_capture NO; both legs NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Matrix commit `641e119f6a7dd13a2fd4893bf3549592152acb62`; blob SHA-1 `7a27ec249675fb40721340f3ed065ca9a2c5bb5c`. Detail report `docs/GCR_BURUNDI_BDI_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION207_20261121.md`.
+- No new source retrieval, IMF re-query/cohort rebuild, synthetic data, paid spend or production change; ₹0; protected V11.3 invariants unchanged; UNKNOWN never PASS.
