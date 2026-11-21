@@ -3135,3 +3135,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Q2-2026 presence, separate portfolio asset/liability legs, sign, units, BPM6 and revision vintage remain NOT_VERIFIED / NOT_ESTABLISHED. LAO PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_LAO_PDR_LAO_Q2_2026_BOL_NSDP_SDMX_EXPORT_LOCATOR_DISCOVERY_CONTINUATION172_20261121.md (commit 0628b1ba96b4e3ab31e4530373c7bdb8f5070826).
 - Next: retrieve exact XLSX or XML through a genuinely different supported byte-transfer route; record URL/time/status/content type/byte count/SHA-256; inspect Q2-2026 portfolio assets and liabilities separately, signs/units/vintage; only then reconcile archived IMF rows. Do not repeat same timed-out fetch path. No production changes, ₹0, UNKNOWN never PASS.
+
+
+## Continuation 173 — Chapter 47 Part 21: LAO BOL SDMX Central / DSBB metadata cross-check (2026-11-21)
+- Re-fetched Master Ledger, Priority Queue, Historical Registry, Continuation 172 and 171 before work. LAO fixed cohort and both IMF rows remain as previously established; no IMF re-query/cohort rebuild.
+- Live official NSDP page https://www.lsb.gov.la/lsb-en.htm reconfirmed BOP Browse Data, Download in SDMX and DSBB Metadata links. Clicking BOL XLSX https://www.bol.gov.la/statistics/BOP6_Lao%20PDR.xlsx and XML https://www.bol.gov.la/statistics2/BOP6_Lao%20PDR.xml now returns HTTP 502 Bad Gateway (C172 recorded HTTP 400 timeout; retain both outcomes as separate attempts). No bytes/headers/length/sheets/series/observations/hash.
+- DSBB URL https://dsbb.imf.org/egdds/dqaf-base/country/LAO/category/BOP00 resolves but extracted view is a generic dynamic shell with {{country.CountryName}} and no LAO-specific BOP periodicity/timeliness/methodology/revision fields. Only locator PASS.
+- Public IMF SDMX Central registrations page https://sdmxcentral.imf.org/data/registrations.html inspected; find exact “LAO” returned no match. This is scoped absence in that registry page only, not proof no feed exists. No alternate registered mirror identified.
+- Q2-2026 period, portfolio asset/liability legs, signs, units, BPM6 and vintage NOT_VERIFIED/NOT_ESTABLISHED; raw data/hash NOT_CAPTURED; LAO PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail report: docs/GCR_LAO_PDR_LAO_Q2_2026_BOL_SDMX_CENTRAL_REGISTRY_AND_DSBB_METADATA_CROSSCHECK_CONTINUATION173_20261121.md (commit 39fd1886b182f813a3101905a2bee93bd26f61b8).
+- Next: only a distinct official BOL mirror/export, public NSDP data-service endpoint, or genuinely new supported byte-transfer capability; preserve bytes/hash and inspect two Q2 portfolio legs. If unavailable, keep PARTIAL and advance after full preflight. No historical/IMF-only substitutes, production changes; ₹0; UNKNOWN never PASS.
