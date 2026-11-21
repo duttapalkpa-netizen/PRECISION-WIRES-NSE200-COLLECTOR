@@ -1799,3 +1799,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Corrected GEO matrix evidence_ref to C154 and clarified unresolved national Q2 dual-leg capture; all gates preserved (SOURCE_FOUND, national data NO, A/L NOT_CAPTURED, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED).
 - Matrix commit `9655247cb907dee8e4846bd9dd33e6b5d91f67c0`; blob `de7b182d3a3debee674c35c1e9fd980e99ab83b3`; C223 report commit `e279d4262f50e73311d1e306c812efb7909fdf67`.
 - Next: GEO remains PARTIAL; reopen only on an exact official Q2 BOP export/API locator and raw data. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 224 — GIN BCRG MPC attachment resolution boundary (2026-11-21)
+- Reused C170 BCRG source audit. Official 2026 archive links to the 22nd MPC article (22-Sep-2026); article exposes “Télécharger” text but no file target/attachment URL in the inspected page representation. No guessed media path or API; no raw bytes or Q2 portfolio legs.
+- Corrected GIN matrix evidence_ref to C170 and clarified that the attachment target remains unresolved. GIN remains BLOCKED; A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Matrix commit `0c4f29eebc6b508e7f17473a26f0c28f6bbd90be`; blob `d6b1986f1c029f0ea4b69dd77549e0b6cbd596b3`; C224 report commit `9415534d63c43c5d3d64acf3b225ad8fb0e7eb23`.
+- Do not repeat the same article/archive extraction. Reopen only if BCRG exposes a distinct downloadable file target or documented data export/API.
