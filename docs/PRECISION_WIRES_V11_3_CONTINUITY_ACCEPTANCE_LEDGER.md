@@ -3040,3 +3040,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - NBP release date known, but raw PDF bytes/SHA-256 not captured (container download failed). No ad-hoc PLN/USD conversion. Exact transaction FX convention and same-vintage bridge to IMF 19-Nov archive NOT_ESTABLISHED; cross-currency comparison NOT_DONE. POL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_QUARTERLY_RELEASE_DUAL_LEG_CAPTURE_CONTINUATION163_20261121.md (commit 438a3deedcd99fc245cdd2c500da6d5b940f7998).
 - Next: capture NBP PDF raw bytes/SHA through supported route; establish exact transaction FX conversion or matched USD presentation for same two legs and revision-vintage bridge. If unresolved, retain PARTIAL and advance. No IMF query/cohort rebuild/production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 164 — Chapter 47 Part 12: Poland NBP methodology/revision-vintage gate (2026-11-21)
+- Re-fetched ledger, queue and POL Part-11 report; reused national Q2 dual-leg values and IMF exact receipt, no IMF re-query/cohort rebuild.
+- Inspected official NBP Department of Statistics “Balance of payments Statistics — Methodological notes” (Sep-2023): quarterly BOP disseminated about three months after quarter and in PLN/EUR/USD; Q2 compiled/revised in September with up to nine quarters revision depth; portfolio flows sourced from security-by-security reports (holders for assets, issuers/intermediaries for liabilities), transaction market values calculated security-by-security, repo adjusted/excluded. Exact Q2 portfolio transaction FX conversion convention is not stated in this methodology edition.
+- IMF DSBB Poland IIP metadata confirms separate portfolio assets/liabilities and security-by-security source, but is not a Q2 BOP conversion rule. NBP Q2 Sep-30 vintage vs IMF archive Nov-19 same-vintage bridge remains NOT_ESTABLISHED.
+- New container-backed direct raw PDF download attempt failed; raw bytes/headers/byte count/SHA-256 still NOT_CAPTURED. POL remains PARTIAL / NOT PASS; cross-currency comparison NOT_DONE; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_POLAND_POL_Q2_2026_NBP_METHODOLOGY_REVISION_VINTAGE_GATE_CONTINUATION164_20261121.md (commit 5ca794a0d0ff42a15e06034adabc7a10281a0d46).
+- Next: only pursue an official reporting-form technical spec explicitly stating transaction conversion or a matched-vintage USD Q2 dual-leg table; otherwise preserve PLN observations and advance. No repeat PDF download, FX inference, IMF query or production changes. ₹0; UNKNOWN never PASS.
