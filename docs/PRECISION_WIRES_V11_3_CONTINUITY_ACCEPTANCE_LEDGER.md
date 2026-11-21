@@ -3286,3 +3286,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Asset residual +0.050353 USDm PASS within ±0.5; liability residual -1,512.508347 USDm REVIEW; combined net residual -1,512.457994 USDm REVIEW. RBI published Q1 values are unchanged across three inspected release pages, so a revision of the published RBI Q1 net figure is not evidenced as the cause. Same-vintage/underlying source cause NOT_ESTABLISHED. India Q1 remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail report: `docs/GCR_INDIA_IND_Q1_2026_RBI_TABLE42_RELEASE_PERSISTENCE_AUDIT_CONTINUATION187_20261121.md` (commit c4f73d755090a71c0312f9f82ac7afecd7b226ab).
 - Next: only a genuinely distinct official RBI Q1 revision-history/transaction-level source or an already archived IMF snapshot with explicit revision metadata; no repeat of these pages or IMF GET. If unavailable, retain REVIEW and advance after full preflight. All invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 188 — Sri Lanka (LKA) CBSL page-freshness / export gate (2026-11-21)
+- Fresh preflight: Master Ledger, GCR Priority Queue, Historical Registry, C174–C177, and immutable 63-country cohort. LKA fixed row retained; no cohort rebuild or IMF re-query.
+- Excluded C174 PASS work: provisional Treasury Table 7 dual legs +26/-351 USDm and rounded IMF match; excluded C176 secondary catalogue arithmetic; excluded C175 exact Table 2.10 403 and C177 stale 2017 SDDS BOP.xlsx transfer retries.
+- New discovery: CBSL official search-indexed External Sector page reports content update 01-Oct-2026 11:30 and describes BPM6 quarterly BOP tables 2012Q1–Latest. Direct page open 403; no workbook URL, revision ID, bytes or SHA exposed. Page update timestamp is not statistical-data vintage and cannot bridge 30-Sep workbook marker to 12-Nov Treasury report.
+- LKA remains strong provisional dual-leg reconciliation; primary CBSL raw export and same-vintage bridge NOT_ESTABLISHED; final validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_SRI_LANKA_LKA_Q2_2026_CBSL_EXTERNAL_SECTOR_PAGE_FRESHNESS_AND_EXPORT_GATE_CONTINUATION188_20261121.md` (commit 2971a494803edc77b51290e607c8aa2af763a44b).
+- Next: do not repeat C175–C177 routes. Reopen only on a genuinely distinct official export/API locator or actual current Table 2.10 revision identifier; otherwise advance after preflight. All protected invariants unchanged.
