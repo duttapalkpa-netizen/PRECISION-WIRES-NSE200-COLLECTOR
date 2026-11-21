@@ -1249,3 +1249,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Status: official Q2 locators PASS; national values/bytes/layout NOT_CAPTURED; Q2 methodology/sign/unit/scale/vintage NOT_ESTABLISHED; comparison NOT_DONE; BOL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_BOLIVIA_BOL_Q2_2026_BCB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION158_20261121.md (commit 88a2d13a353f73a2af386fc1f31deaa4ab7879be).
 - Next rank-1 bounded item: BLR Belarus source feasibility, after duplicate-report check; retain BOL PARTIAL and revisit only with a genuinely supported official BCB byte/export route. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 159 — BLR (Belarus) Q2-2026 source-gate result — Chapter 47 Part 7
+- Selected after BOL from the immutable 63-country cohort; no duplicate dedicated BLR Q2 national dual-leg audit. Both archived IMF Q2 raw rows present; no IMF re-query/cohort rebuild.
+- NBRB official BPM6 methodology and metadata confirm quarterly BOP, standard/analytic presentations, separate net asset acquisition/liability incurrence by functional category, portfolio investment classification, USD/BYN, and preliminary/revision policy. Live data page timed out/inaccessible; Q2-2026 national asset/liability values and raw bytes NOT_CAPTURED.
+- Exact archived IMF values reused: A_NFA_T OBS_VALUE=6414501.08999999, SCALE=6; L_NIL_T OBS_VALUE=-325487157.39, SCALE=6. Raw panel Git blob SHAs unchanged: 15449e87c9057291a1f52f2f8cd9805df55f9fb8 / 15f379dc42e2760eb5f2384618e48f5ddc3177f1.
+- Status: cohort/IMF row presence PASS; official BPM6/quarterly methodology PASS; national Q2 dual legs/raw bytes NOT_CAPTURED; Q2 vintage/item/sign/scale bridge NOT_ESTABLISHED; comparison NOT_DONE; BLR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_BELARUS_BLR_Q2_2026_NBRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION159_20261121.md (commit 47c7d96056c770943d12cd7040b5cf95d726f2d2).
+- Next rank-1 bounded action: supported NBRB Q2-2026 bulletin/data-export raw-byte retrieval; if inaccessible, retain BLR PARTIAL and advance. No IIP/annual/adjacent-quarter/net-total substitute, no production changes; ₹0; UNKNOWN never PASS.
