@@ -34,3 +34,14 @@ Corrected one stale evidence reference in the fixed 63-country Q2-2026 matrix. B
 
 ## Next exact action
 BDI may be reopened only if BRB publishes a Q2-2026 BOP table or a genuinely different official export provides target-quarter separate portfolio transaction legs and dated revision metadata. Do not use Q4-2025/Q3-2025 values as Q2-2026 and do not repeat the existing IMF or BRB retrieval work.
+
+
+## Read-back closure — 2026-11-21
+All five artifacts were re-fetched from the default branch after the writes:
+- Matrix: 63 data rows / 30 columns; BDI evidence_ref points to the C155 BRB report. BDI remains SOURCE_FOUND / source FOUND / data capture NO / asset NOT_CAPTURED / liability NOT_CAPTURED / vintage UNKNOWN / FULL_PASS NO / aggregate NOT_AUTHORIZED. Matrix blob SHA-1: `7a27ec249675fb40721340f3ed065ca9a2c5bb5c`.
+- Recomputed matrix stages: SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0. Independent gates: ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0. All 63 aggregate_admission values remain NOT_AUTHORIZED.
+- C207 detail report read-back blob SHA-1: `f5b7ea4458d6c9b019c96a12c032c7b11055b373`.
+- Priority Queue read-back blob SHA-1: `108e8c37e2811636d5e7aac795a34ed248aee938`.
+- Historical Registry read-back blob SHA-1: `6b8d7175733be0a9b04fd60ce0c85e74765d36f8`.
+- Master Continuity Ledger read-back blob SHA-1: `455d252969f586e50c77f3a22419cd5aa7d2fe8d`.
+- C207 marker and C155 evidence reference verified in detail report, queue, registry and ledger. No national-data, vintage or aggregate gate was promoted.
