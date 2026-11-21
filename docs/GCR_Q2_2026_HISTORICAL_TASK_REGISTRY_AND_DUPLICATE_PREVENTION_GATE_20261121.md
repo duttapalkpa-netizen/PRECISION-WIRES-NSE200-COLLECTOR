@@ -293,3 +293,15 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Bounded inventory snapshot: SOURCE_FOUND or later 58/63; DATA_CAPTURED 12; ASSET_PASS 6; LIABILITY_PASS 6; VINTAGE_PASS 0; FULL_PASS 0; BLOCKED 24; NOT_STARTED 4. All aggregate_admission remain NOT_AUTHORIZED.
 - Important limitation: matrix is a first conservative inventory, not exhaustive 63-country report-history re-audit. NOT_STARTED means no evidence surfaced in bounded inventory, not proof of no prior work. The per-country notes and gates are explicit in the matrix; statuses must be refined only after exact report inspection.
 - Next: complete exhaustive 63-country report-history audit, then reconcile leg-specific and vintage statuses. Never promote a country to FULL_PASS without both separate national legs, scope/sign/scale, same-vintage and provenance gates.
+
+
+## Continuation 201 — 63-country Q2-2026 national validation matrix reconciled (2026-11-21)
+- Immutable cohort CSV SHA-1: `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; exactly 63 unique members.
+- Matrix CSV: `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`; explicit YES/NO flags added for NOT_STARTED, SOURCE_FOUND, DATA_CAPTURED, ASSET_PASS, LIABILITY_PASS, VINTAGE_PASS, FULL_PASS and BLOCKED.
+- Exact cohort-to-matrix reconciliation: 63/63; missing 0; extra 0; duplicate 0.
+- Current stages: NOT_STARTED 1; SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19. Therefore 40 countries remain below DATA_CAPTURED (20+19+1); 23 have captured national values, not necessarily accepted.
+- Independent gates: ASSET_PASS 15; LIABILITY_PASS 15; VINTAGE_PASS 0; FULL_PASS 0. These gate counts overlap; do not sum them.
+- No country has FULL_PASS; aggregate remains NOT_AUTHORIZED. Matrix is a status inventory, not a complete line-by-line re-audit of every historical report; latest country continuations control promotions.
+- Detail: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_RECONCILIATION_CONTINUATION201_20261121.md`.
+- CSV update commit: `f596dc889642e3a9262f2fd7b7dc9b02a6a57a0a`; CSV blob SHA-1: `45e466c72c034d460dfccf57474b07bfb6d12ea9`.
+- Preserve immutable cohort, no IMF re-query/rebuild, no unsupported inference, ₹0, and all V11.3 production invariants.
