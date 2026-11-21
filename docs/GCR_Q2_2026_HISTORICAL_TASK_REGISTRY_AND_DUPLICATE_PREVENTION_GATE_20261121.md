@@ -366,3 +366,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Matrix row IND re-fetched from default branch and verified as DATA_CAPTURED / asset PASS / liability PASS / vintage PENDING / FULL_PASS NO / aggregate NOT_AUTHORIZED.
 - Recomputed matrix: 63 rows; SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0; ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0. Aggregate remains NOT_AUTHORIZED.
 - C205 detail report and updated Master Ledger, Priority Queue, Registry and Matrix all re-fetched after writes. No additional source or data status was promoted.
+
+
+## Continuation 206 — ARG matrix evidence-reference correction (2026-11-21)
+- Existing ARG report `docs/GCR_ARGENTINA_ARG_Q2_2026_INDEC_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120.md` confirms separate Q2-2026 numeric asset/liability comparisons PASS at published USDm rounding; same-vintage NOT_ESTABLISHED. Failed INDEC text/xml and Datos Argentina CSV routes remain closed for identical retries.
+- Matrix defect: evidence_ref was stale placeholder despite existing report. Corrected evidence_ref only to the dedicated report basename; DATA_CAPTURED, ASSET_PASS, LIABILITY_PASS, VINTAGE_PENDING, FULL_PASS=NO, aggregate NOT_AUTHORIZED unchanged.
+- Matrix commit `c8b346302cea6197b0de577ef26045fd7dc0eb70`; blob SHA-1 `1fa8a1e7c57b064ad58f51e6ae18ebe8c3336daf`; detail report `docs/GCR_ARGENTINA_ARG_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION206_20261121.md`.
+- Do not repeat numerical comparison or closed vintage routes. Reopen only with a distinct official versioned Q2 source/revision record. No IMF re-query, cohort rebuild or production changes; UNKNOWN never PASS.
