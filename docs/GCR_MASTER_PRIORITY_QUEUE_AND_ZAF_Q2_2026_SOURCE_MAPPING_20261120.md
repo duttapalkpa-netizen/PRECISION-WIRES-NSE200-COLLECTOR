@@ -1829,3 +1829,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Corrected only MYS matrix `evidence_ref` from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_MALAYSIA_MYS_Q2_2026_BNM_OFFICIAL_FX_AND_DUAL_LEG_RECONCILIATION_20261120`. Preserved DATA_CAPTURED, asset/liability PASS, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_MALAYSIA_MYS_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION227_20261121.md`. Matrix commit `7e544e73de2aac8c8f12d1e6e43391ae00ec3f05`, blob SHA `4a81b4216e37013e0dc1a60a3c00e9a682f6f059`.
 - MYS remains PARTIAL / NOT PASS because same-vintage BNM preliminary ↔ IMF alignment is NOT_ESTABLISHED. Do not repeat FX capture or promote aggregate; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 228 — NSE Run #339 raw-source artifact packaging root cause and retention correction (2026-11-21)
+- Inspected Run #339 job log and downloaded artifact 14660032260. ZIP SHA-256 `23e74e7f9ef2e32bf5b6bbc5a931814c06fe065835b8bdda74f3c00dbdafd213`; 17 entries, no NSE raw bhavcopy/delivery CSV, sessions file, acquisition diagnostics, security master or raw manifest. Job log/QA nevertheless records 200 successful full-delivery files / raw_files=200.
+- Compared Run #416 artifact 14632139339 (SHA-256 `b12ea634f24af8241ee9a901635dd743195f4b8a3a1511cc2ffe3c3246282082`): normalized 200-session data and security master retained, but original raw files/manifest absent.
+- Direct workflow inspection confirmed upload-artifact allowlist omitted `data/raw/sec_bhavdata_full_*.csv`, sessions, acquisition diagnostics and security master. Corrected the allowlist on isolated branch `audit/prospective-selector-tracking` only; commit `46f4a359f21da676cb0c92e874fb08f14ee20d90`.
+- Future artifact-retention correction PASS by commit; future-run proof PENDING. Historical Run #339 raw bytes remain BLOCKED; per-file provenance manifest NOT_DONE. Do not redownload or infer old URL/timestamps.
+- Detail: `docs/NSE_RUN339_RAW_SOURCE_ARTIFACT_PACKAGING_ROOT_CAUSE_AND_RETENTION_FIX_CONTINUATION228_20261121.md`. No production code/selector/ranking/CORE-672 changes; ₹0; UNKNOWN never PASS.
