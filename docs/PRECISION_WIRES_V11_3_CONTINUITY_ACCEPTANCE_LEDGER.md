@@ -3206,3 +3206,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - MNG remains PARTIAL / NOT PASS; separate national portfolio asset/liability observations NOT_VERIFIED; aggregate NOT_AUTHORIZED. Annual/H1 IMF Article IV and net-only totals rejected.
 - Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_BOP_QUARTERLY_SOURCE_AND_API_GATE_CONTINUATION179_20261121.md` (commit `6b01b968365b9f2b8e636518f8458079e2ab090b`).
 - Next: supported PxWeb metadata/codebook and JSON-stat2 query for only verified portfolio asset/liability indicators at `2026-2`; if unsupported, request official export attachment and advance. No production changes; UNKNOWN never PASS.
+
+
+## Continuation 180 — Chapter 47 Part 28: MNE CBCG BPM6 / NSDP SDMX source-boundary audit (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Registry and MNG C179 before selection. C179 MNG remains PARTIAL; its inaccessible PxWeb API route was not retried.
+- Repository search found no dedicated MNE Q2-2026 national portfolio dual-leg report. Selected a distinct official CBCG/NSDP route. Fixed cohort SHA remains `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; exact MNE row membership not re-extracted in this bounded pass, so numeric work is blocked pending that check; no cohort rebuild/IMF re-query.
+- Official CBCG BOP page says quarterly EUR reporting, BPM6 for 2010 onward, and financial account shown as net acquisition of financial assets / net incurrence of liabilities. Page updated 19-Nov-2026.
+- CBCG BPM6 2010–2026 archive link resolves to official ZIP `https://www.cbcg.me/slike_i_fajlovi/fajlovi/fajlovi_publikacije/statistika/bop_sep_2026.zip`; web transfer returned HTTP 400 unsupported application/zip. No bytes/hash/observations.
+- MONSTAT NSDP has BOP Browse Data and Download in SDMX. Browse endpoint on legacy CBCG domain timed out. SDMX link resolves to `https://dsbb.imf.org/xml/MNE/BOP6_Montenegro.xml`; retrieval returned HTTP 400 unsupported text/xml. Locator discovery PASS only; XML not parsed.
+- Official release calendar lists Q2-2026 BOP release 19-Aug-2026. MONSTAT metadata says quarterly BPM6 BOP, includes portfolio investment, unit EUR thousands; metadata vintage last updated 21-Nov-2025. CBCG Bulletin 1/2026 methodology notes EUR reporting and transaction-day/monthly/annual/period-end rates in relevant contexts; not a Q2 dual-leg conversion validation.
+- No Q2-2026 portfolio asset/liability observations or raw national bytes captured. MNE PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. IIP/external debt and annual/net-only summaries rejected as dual-leg substitutes.
+- Detail: `docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BOP6_NSDP_SDMX_SOURCE_BOUNDARY_CONTINUATION180_20261121.md` (commit `04fc8bbbf529eed183eaa9453496de2df12bc3f0`).
+- Next: retrieve ZIP/XML only through a supported new transfer method, verify exact MNE cohort row, parse Q2 rows and separately compare legs with existing archived IMF rows. Do not repeat same ZIP/XML clicks; no production changes; UNKNOWN never PASS.
