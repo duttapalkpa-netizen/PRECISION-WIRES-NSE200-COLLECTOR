@@ -106,3 +106,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | LKA Sri Lanka | Macro Lab series pages attributed to CBSL Table 2.10: assets https://macrolab.lk/data/series/LK.EXT.BOP_Q.ASSETS_FINANCIAL_ACCOUNT_PORTFOLIO_INVESTMENTS.Q/ ; liabilities https://macrolab.lk/data/series/LK.EXT.BOP_Q.LIABILITIES_FINANCIAL_ACCOUNT_PORTFOLIO_INVESTMENTS.Q/ ; equity liabilities https://macrolab.lk/data/series/LK.EXT.BOP_Q.LIABILITIES_FINANCIAL_ACCOUNT_PORTFO_S_EQUITY_AND_INVESTMENT_FUND_SHARES.Q/ ; debt liabilities https://macrolab.lk/data/series/LK.EXT.BOP_Q.LIABILITIES_FINANCIAL_ACCOUNT_PORTFOLIO_INVESTMENTS_DEBT_SECURITIES.Q/ | C176 report | Secondary Q2 values corroborate CBSL Table 2.10 release dated 30-Sep-2026; CSV/JSON raw export not captured; primary CBSL bytes/hash unavailable; 2021 old-mirror discrepancies reported; vintage bridge NOT_ESTABLISHED | Do not repeat HTML series-page extraction or promote secondary data to primary | New official CBSL/SDDS export or explicit official release-vintage metadata |
 - LKA provisional; aggregate NOT_AUTHORIZED. Historical discrepancy values and caveats are detailed in C176.
+
+
+## Continuation 177 — LKA official SDDS BOP.xlsx route fingerprint (2026-11-21)
+| Country | Route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| LKA Sri Lanka | CBSL SDDS NSDP https://www.cbsl.gov.lk/en/node/1809 → BOP “More Data” → https://www.cbsl.gov.lk/sites/default/files/cbslweb_documents/statistics/sdds/BOP.xlsx | C177 report | Distinct official locator PASS; linked NSDP page last updated 11-Nov-2017 and shows Q2/17; XLSX retrieval HTTP 400 unsupported content-type; container download failed; bytes/hash/Q2-2026 content NOT_CAPTURED | Do not retry same click/download path; do not treat stale 2017 NSDP as current | New supported byte-transfer route or refreshed official SDDS/NSDP link |
+- LKA remains provisional; aggregate NOT_AUTHORIZED.
