@@ -1485,3 +1485,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Sign bridge and both numeric checks PASS. BI Q2 2026 is explicitly **Very Temporary**; same-vintage/revision identity remains NOT_ESTABLISHED. IDN overall PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_BPM5_TO_IMF_BPM6_SIGN_CROSSWALK_CONTINUATION185_20261121.md` (commit d7c62b821f7b7cb439c46cbc691eb674924b7099).
 - Next: inspect subsequent official BI SEKI V.7 Q2-2026 vintages/revision markers and establish same-vintage match; retain overall PARTIAL until evidenced.
+
+
+## Continuation 186 — Indonesia (IDN) latest BI Q2 revision vs archived IMF vintage (2026-11-21)
+- Selected the exact open C185 next action after fresh Ledger/Priority Queue/Registry/C185/IDN prior-report/IMF receipt preflight. No duplicate BI Table V.7 extraction, IMF re-query or cohort rebuild.
+- New official BI Q3-2026 BOP report, published 20-Nov-2026, provides Table 7 (PDF p.37): Q2-2026 provisional portfolio assets -1,466 USDm, liabilities +11,399 USDm, total +9,934. Box 1 (PDF p.28) explicitly states Q1–Q2 2026 portfolio-investment data were updated due to updated LLD and ULN data. This supersedes the older 21-Aug Q2** values -1,488 / +11,440 / +9,953.
+- Retained official BI BPM5→IMF BPM6 sign mapping: reverse asset sign only; retain liability sign. Reused archived IMF snapshot retrieved 19-Nov: A_NFA_T +1,487.605237 USDm; L_NIL_T +11,440.221642 USDm. Residuals against latest BI mapped values: asset +21.605237; liability +41.221642 USDm, both > ±0.5 rounding.
+- Current sign mapping PASS; latest national revision evidence PASS; numeric match to archived IMF snapshot FAIL/REVIEW; exact same-vintage bridge NOT_ESTABLISHED; IDN PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_NOV2026_REVISION_VINTAGE_RECHECK_CONTINUATION186_20261121.md` (commit 51ba355709893c89a718d0eb94d87c98ad22e277).
+- Next: inspect only a later IMF snapshot already in the archive with explicit retrieval/revision metadata. If none exists, do not re-query IMF; retain mismatch and advance to next eligible cohort country after preflight.
