@@ -73,3 +73,9 @@ https://www.bancocentral.tl/uploads/documentos/documento_1741650203_4205.pdf
 
 ## 9. Protected invariants
 No IMF re-query, no cohort rebuild, no synthetic data, no generic FX conversion, no sign flip, no net-to-leg inference, no stock-as-flow, no annual-to-quarter proration or cross-vintage H1-Q1 subtraction, no production changes. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS. Research spend ₹0.
+
+
+## Continuation 133 — BCTL public route closed as stale for Q2-2026 (2026-11-21)
+- Rechecked current Ledger/Queue/cohort and TLS Continuation 117. Official live BCTL chart ends Q1-2025; export workbook name BoP_2025Q3.xlsx; H1-2026 mid-year review has only net portfolio component -USD524.9m, not separate Q2 legs. The previously inspected “Aug 2026” archive PDF contains observations only through 2016.
+- No new official standalone Q2-2026 separate portfolio asset/liability table was found in the current BCTL public route evidence. Do not use H1 net, old Q3-2025 workbook, IIP stocks, or Petroleum Fund valuations as Q2 dual legs.
+- TLS national Q2 dual legs NOT_CAPTURED; public route stale / Q2 NOT_AVAILABLE in inspected sources; TLS NOT_VALIDATED / NOT PASS. Advance to next fixed-cohort member. No IMF query/cohort rebuild; ₹0; UNKNOWN never PASS.
