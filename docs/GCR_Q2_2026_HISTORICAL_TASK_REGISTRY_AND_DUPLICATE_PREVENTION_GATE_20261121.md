@@ -277,3 +277,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | ARM Armenia | CBA Financial Account page https://www.cba.am/en/statistics/financial-account/275; exact Export all target https://www.cba.am/en/statistics/financial-account/275/export-all/; formats XLSX/XML/JSON; Q2-2026 BPM6 BOP portfolio A/L | C143 legacy XLS report + C199 docs/GCR_ARMENIA_ARM_Q2_2026_CBA_CURRENT_FINANCIAL_ACCOUNT_EXPORT_ROUTE_GATE_CONTINUATION199_20261121.md | New current-domain locator/control PASS; export target timed out; Q2 portfolio A/L and raw bytes/hash NOT_CAPTURED; ARM PARTIAL / NOT PASS | Do not retry C143 legacy XLS URL or same C199 export-all target via same retrieval surface. Reopen only on a distinct supported machine route or successful official export bytes |
 - CBA metadata confirms USD million, quarterly BPM6 BOP and annual revision practice; Armstat Q2 NSDP summary omits separate portfolio flow line (not zero); IIP stocks excluded.
 - No country validation promoted; aggregate NOT_AUTHORIZED; no IMF re-query/cohort rebuild. Apply C198 Execution-Mode Gate to future selections.
+
+
+## Continuation 200 — 63-country master matrix inventory (2026-11-21)
+- Immutable cohort source: `docs/evidence/imf_bop_emde_20261119/coverage_qa/2026Q2_both_legs_candidate_cohort.csv`, blob SHA-1 `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`.
+- Consolidated matrix: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_CONTINUATION200_20261121.md` and `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`.
+- Snapshot: 63 rows; stage SOURCE_FOUND 20 / DATA_CAPTURED 23 / BLOCKED 19 / NOT_STARTED 1 / FULL_PASS 0. Per-leg asset PASS 15, liability PASS 15; vintage PENDING 23, UNKNOWN 40. 63/63 remain outside FULL_PASS and aggregate admission remains NOT_AUTHORIZED.
+- The matrix is a conservative inventory, not an exhaustive line-by-line re-audit. Use the latest country continuation as authority; no status promotion from a source locator, numerical rounding match, IIP stock, net-only figure, or publication date alone.
+- No IMF re-query/cohort rebuild; immutable constraints retained.
