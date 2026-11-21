@@ -2682,3 +2682,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Shadow union: NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP. Four retained vs prior cutoff (NRL, KDDL, YATRA, HINDOILEXP); four new (V2RETAIL, SIGACHI, RSDFIN, KMCSHIL); three removed (ELITECON, LEENEE, ARYAMAN). This is selector turnover, not performance improvement.
 - No new workflow dispatched; no production logic, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2 changed. UNKNOWN remains not PASS.
 - Run artifact internal SHA-256 values, limitations, official sources, candidate exclusions and next actions are recorded in the dated report.
+
+
+### 2026-11-21 report correction — NRL security identity and KDDL catalyst wording
+
+- Corrected dated report commit: 2bf04bbec060c144bd7f92b1de953d59cb582a0a
+- Corrected report Git blob: b055c883801b936ce33d3ed2aceeda874956336b
+- Corrected report SHA-256, independently recomputed after fetching the committed file: 652bc7717d6cd5206005ae49ff4e77329c4f39b86eeded4971fa0dfef5dab0dc
+- NRL's 12-Nov-2026 Q2 outcome PDF prints ISIN INEQJMS01013, while an earlier NSE integrated filing prints INE0JM501013. This cross-source conflict is unresolved; NRL ISIN is now UNKNOWN, not verified. The 12-Nov PDF is retained as Q2 catalyst evidence only, not as a security crosswalk.
+- KDDL's 13-Nov results/investor-presentation assertion was removed because this audit did not independently re-verify the corresponding filing. The report now states no fresh 20-Nov catalyst was independently verified.
+- No candidate status changed: NRL and all other shadow picks remain excluded; qualified candidates remain 0. Production invariants remain unchanged.
