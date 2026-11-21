@@ -363,7 +363,7 @@ def main():
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "requested_sessions": args.sessions,
         "entries": sorted(manifest_entries, key=lambda x: x["trade_date"]),
-    }, indent=2) + "\\n", encoding="utf-8"))
+    }, indent=2) + "\n", encoding="utf-8"))
     (out / "acquisition_diagnostics.json").write_text(json.dumps({
         "requested_sessions": args.sessions,
         "lookback_days": args.lookback_days,
