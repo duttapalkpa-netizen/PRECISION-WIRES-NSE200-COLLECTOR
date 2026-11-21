@@ -1258,3 +1258,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Status: cohort/IMF row presence PASS; official BPM6/quarterly methodology PASS; national Q2 dual legs/raw bytes NOT_CAPTURED; Q2 vintage/item/sign/scale bridge NOT_ESTABLISHED; comparison NOT_DONE; BLR PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_BELARUS_BLR_Q2_2026_NBRB_OFFICIAL_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION159_20261121.md (commit 47c7d96056c770943d12cd7040b5cf95d726f2d2).
 - Next rank-1 bounded action: supported NBRB Q2-2026 bulletin/data-export raw-byte retrieval; if inaccessible, retain BLR PARTIAL and advance. No IIP/annual/adjacent-quarter/net-total substitute, no production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 160 — Chapter 47 Part 8 update (2026-11-21)
+- BLR follow-up: NBRB official latest 2026 publication locator is Jan–June; exact PDF timeout/direct download failure; Q2 national legs remain uncaptured. Keep BLR PARTIAL; no H1 substitution.
+- CHL selected after cohort/duplicate preflight. Official BCCh Q2 BOP publication + official BDE monthly source independently expose both portfolio transaction legs. Q2 BDE sums: assets USD 5,098.91m; liabilities USD 5,397.51m; net difference USD 298.60m, rounding to Q2 report's USD 299m net. No net-to-leg back-solving.
+- IMF archived CHL Q2 values: asset 5,098,898,918.11 USD SCALE=6; liability 5,397,501,758.8 USD SCALE=6. Diagnostic /1e6 is near BDE sums but not admitted as PASS; exact same-vintage cut-off and source raw bytes/SHA-256 remain missing. CHL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detailed report: docs/GCR_CHILE_CHL_Q2_2026_BCCH_BDE_MONTHLY_DUAL_LEG_VINTAGE_AUDIT_CONTINUATION160_20261121.md (commit df6d0252ef70c345308a1da44574671050f8141e).
+- Next: documented raw export/API capture for the two BCCh BDE series, with response bytes, timestamp, series codes, vintage metadata and SHA-256; then exact sign/scale/vintage reconciliation. If unavailable, retain PARTIAL and advance. No IMF re-query/cohort rebuild or production changes; ₹0; UNKNOWN never PASS.
