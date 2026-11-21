@@ -3321,3 +3321,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - MNG PARTIAL / NOT PASS; A/L indicator identity and Q2 observations NOT_CAPTURED; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_CORRECTED_METADATA_ENDPOINT_AND_ACCESS_GATE_CONTINUATION191_20261121.md` (commit 3dddaefe0093bd366a7c755e5407a088f498517e).
 - Next: different supported official export/attachment only; do not retry same blocked API surface. Invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 192 — Albania (ALB) Q2 release-calendar vs legacy table ceiling (2026-11-21)
+- Re-fetched current Ledger, Priority Queue, Historical Registry, ALB C139/C140/C141 history and fixed cohort. Selected ALB's open legacy-vs-Q2-release route question; no IMF re-query/cohort rebuild.
+- Official Bank of Albania Statistics Calendar 2026 lists Q2-2026 BOP release for 10-Sep-2026. Official time-series landing page also reports data update 10-Sep-2026.
+- Clicked the official legacy quarterly table detail route. It reports EUR-million quarterly data and portfolio C.2.A/C.2.L hierarchy, but its displayed methodology refers to the 11-Sep-2017 publication/revision vintage and no Q2-2026 observation cells or export bytes are exposed. This is the same legacy Main-data family bounded in C140/C141; closed for repeat.
+- Q2-specific attachment/export still NOT_CAPTURED; ALB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_ALBANIA_ALB_Q2_2026_BOA_Q2_RELEASE_CALENDAR_VS_LEGACY_TABLE_CEILING_CONTINUATION192_20261121.md` (commit 46725db533106245fa306ad2387720b59a9392f9).
+- Reopen only on distinct Q2-2026 export/API/workbook route. All invariants unchanged; UNKNOWN never PASS.
