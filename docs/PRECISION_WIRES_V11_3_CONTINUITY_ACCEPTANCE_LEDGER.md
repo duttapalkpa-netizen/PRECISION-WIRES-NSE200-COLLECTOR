@@ -3489,3 +3489,11 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Detail: docs/GCR_INDIA_IND_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION205_20261121.md.
 - Recomputed proposed matrix: 63 rows; SOURCE_FOUND 17; DATA_CAPTURED 26; BLOCKED 20; NOT_STARTED 0; ASSET_PASS 18; LIABILITY_PASS 18; VINTAGE_PASS 0; FULL_PASS 0. Independent gate counts overlap. Aggregate remains NOT_AUTHORIZED.
 - No IMF GET/cohort rebuild, no production changes; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 206 — Argentina ARG Q2-2026 evidence-link correction (2026-11-21)
+- Preflight: re-fetched current Master Ledger, Priority Queue, Historical Registry, 63-country matrix and ARG detail report. Selected a demonstrably stale evidence_ref after rejecting repeated numeric PASS work and the closed INDEC vintage routes.
+- ARG existing INDEC–IMF report: Q2 asset residual +0.206322 USDm and liability residual +0.052824 USDm; both numeric comparisons PASS within ±0.5 USDm. INDEC Q2 values are provisional/revisable; same-vintage remains NOT_ESTABLISHED.
+- Corrected only ARG matrix evidence_ref from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_ARGENTINA_ARG_Q2_2026_INDEC_IMF_PORTFOLIO_BOP_RECONCILIATION_20261120`. No stage/gate promotion: DATA_CAPTURED; asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Matrix commit `c8b346302cea6197b0de577ef26045fd7dc0eb70`; blob SHA-1 `1fa8a1e7c57b064ad58f51e6ae18ebe8c3336daf`. Detail report `docs/GCR_ARGENTINA_ARG_Q2_2026_HISTORICAL_MATRIX_EVIDENCE_LINK_RECONCILIATION_CONTINUATION206_20261121.md`.
+- No new source retrieval, IMF re-query/cohort rebuild, synthetic data, paid spend or production changes; ₹0; protected V11.3 invariants unchanged; UNKNOWN never PASS.
