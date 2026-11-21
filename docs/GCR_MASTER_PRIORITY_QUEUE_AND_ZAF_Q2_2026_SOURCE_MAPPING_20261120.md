@@ -956,3 +956,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Same-vintage and full scope/definition equivalence NOT_ESTABLISHED; BCU raw PDF byte count/hash NOT_CAPTURED. URY numeric comparison PASS; full validation PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_IMF_PORTFOLIO_DUAL_LEG_RECONCILIATION_CONTINUATION121_20261121.md (final corrected commit b2be36e37766f3799ed0cd46d736ddbcc62200a6).
 - Next: BCU/IMF metadata and vintage bridge, then raw PDF archival/revision comparison; no duplicate extraction, IMF re-query, cohort rebuild or production changes. ₹0; UNKNOWN is never PASS.
+
+
+## CE. Uruguay URY — BCU/IMF methodology, scope and vintage bridge (Continuation 122, 2026-11-21)
+- Re-fetched current Master Ledger, GCR queue, C121 report and prior IMF panel/methodology evidence; PASS work excluded; no repeat of Table 9 extraction, IMF query or cohort rebuild.
+- Official BCU methodology (MBP6 update Dec-2020) maps portfolio data sources: EGESE for non-financial private sector; BCU debt registers for public securities (market valuation/accrual); SSF statements for regulated financial institutions with transaction changes calculated by original currency; SSF/pension-fund/external-custody records and quarterly/annual surveys for related holdings.
+- Current BCU SDDS page shows Q2/26 BOP latest and portfolio net USD710m. SDDS template states portfolio investment unit USD millions and separate P_123/L_123 fields; extracted placeholders not numeric observations. Q2 report explicitly says preliminary and notes rounding.
+- Existing IMF raw broad CSV receipts reused: A_NFA_T captured 2026-11-19T06:46:34.357106Z, 484139 bytes, SHA256 677054017f5d3ae5fdd0403d7341588ebf43ad8b54124ae1b616bf323229326e; L_NIL_T captured 2026-11-19T06:46:34.878465Z, 451290 bytes, SHA256 713b7a3000712e2ffb07cd574d08d7e6f3c02a6b2573ce4b40d06e0458cd7bba. Retrieval timestamps do not establish last revision timestamp.
+- IMF BOP/IIP metadata dashboard landing published 18-Nov-2026 but country-level URY interactive data not retrieved. BCU raw PDF bytes/size/SHA256 NOT_CAPTURED after byte-preserving download attempt failed. Same-vintage/revision alignment NOT_ESTABLISHED.
+- Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_IMF_METHODOLOGY_SCOPE_VINTAGE_BRIDGE_CONTINUATION122_20261121.md (commit c5b9daf0208e75d9610f34b0a1740f53edc62e7c).
+- C121 numeric dual-leg comparison PASS remains unchanged; full URY PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: only supported byte-preserving BCU PDF capture and country-specific IMF vintage export; otherwise preserve blocker and advance fixed cohort. ₹0; no production changes; UNKNOWN is never PASS.
