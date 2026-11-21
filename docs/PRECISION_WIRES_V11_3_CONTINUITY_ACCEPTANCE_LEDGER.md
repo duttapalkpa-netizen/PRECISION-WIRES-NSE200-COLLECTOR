@@ -3183,3 +3183,15 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Important: BOP.xlsx is a valid official alternate locator, but the linked NSDP page is stale 2017; no evidence the workbook contains Q2-2026. Route discovery PASS only; currentness/data NOT_VERIFIED. LKA remains strong provisional reconciliation, not final PASS; aggregate NOT_AUTHORIZED.
 - Detail report: docs/GCR_SRI_LANKA_LKA_Q2_2026_SDDS_BOP_OFFICIAL_ALTERNATE_WORKBOOK_ROUTE_CONTINUATION177_20261121.md (commit 392722448bcea6ed8697efad140dc8b986508b9e).
 - Next: inspect workbook only if a genuinely new supported byte-transfer route becomes available; otherwise close stale legacy route and advance to next fixed-cohort member after full preflight. No production changes, ₹0; UNKNOWN never PASS.
+
+
+## Continuation 178 — Chapter 47 Part 26: LSO CBL BPM6 portfolio source-boundary audit (2026-11-21)
+- Re-fetched Master Ledger, GCR Priority Queue, Historical Task Registry, LKA C174–C177 and fixed 63-country cohort before selection. Cohort SHA remains `31f5bfe5adb59f4c1a139b6d8c54b5ad9fb672c8`; no cohort rebuild/IMF re-query.
+- Full ALB report history C139–C141 was retrieved; ALB was rejected as a duplicate because its Main-data/interactive export route had already been bounded and closed. No ALB route retry.
+- LSO is a fixed-cohort member and repository searches found no dedicated LSO Q2-2026 national dual-leg report.
+- Official CBL Statistical Research Portal BOP6 category was inspected. It lists `BPI_BPM6_XDC` (Portfolio investment, Million Maloti) as a single aggregate portfolio series, alongside financial account, direct investment, derivatives, other investment and reserves; no separate portfolio assets/liabilities or equity/debt child series are exposed in this BOP6 catalogue.
+- Official CBL September-2025 Quarterly Economic Review Table 19 also shows Portfolio Investments net only and ends at Q3-2025; not Q2-2026 dual-leg evidence.
+- BOP6 net series and quarterly net-only table rejected as dual-leg proxies; government-finance balance-sheet foreign assets/liabilities are not BOP portfolio flows. No values invented, no net-to-leg back-solving, no unsupported conversion.
+- LSO status: source-family/catalogue boundary PASS; separate Q2-2026 national legs NOT_CAPTURED; LSO PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_LESOTHO_LSO_Q2_2026_CBL_BPM6_PORTAL_PORTFOLIO_DUAL_LEG_SOURCE_BOUNDARY_CONTINUATION178_20261121.md` (commit `683d34767c3a8ec8b75b470ca8c704469582d418`).
+- Next: reopen LSO only on a distinct official detailed Q2 report/export/API with separate asset and liability legs; otherwise move to next fixed-cohort member after full preflight. No production changes, ₹0; UNKNOWN never PASS.
