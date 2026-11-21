@@ -3068,3 +3068,13 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - POL official USD Q2 dual-leg search yielded no matched table; retain PLN values and advance. Next fixed-cohort priority: NPL, but avoid already-failed NRB XLSX and stale NSDP/SDMX routes; seek only a genuinely supported official NRB API/export. If none, close once and advance to RWA.
 - Detail: docs/GCR_TURKIYE_TUR_Q2_2026_TCMB_OFFICIAL_SERIES_AND_ZIP_ROUTE_CLOSURE_CONTINUATION166_20261121.md (commit 8cc0d9513ef491f5c9b91715f47483e4d92453af).
 - ₹0; no synthetic data, unsupported conversion, IMF re-query, cohort rebuild or production changes; UNKNOWN never PASS.
+
+
+## 2026-11-21 — Mandatory GCR historical-task / duplicate-prevention gate
+- New registry: `docs/GCR_Q2_2026_HISTORICAL_TASK_REGISTRY_AND_DUPLICATE_PREVENTION_GATE_20261121.md`.
+- This control supersedes stale next-country handoffs where prior country reports already exist. Mandatory preflight: fetch current Ledger + Queue, search full country report history, inspect exact prior route failures, and build route fingerprint before any action.
+- PASS tasks are skipped. PARTIAL requires a named unmet gate. BLOCKED/NOT_CAPTURED route is closed and cannot be retried without concrete new official endpoint/API/export, supported transfer capability, permission, or source revision. NOT_DONE is not permission to repeat.
+- Duplicate correction: NPL has Continuations 55/56/58/94/128/130 and its NRB BPM6 XLSX, stale NSDP XML and wrong-family monthly archive routes are closed. RWA has Continuations 97/130 and its JS-only BNR portal route is already rechecked. SLV has Continuation 100 history. Do not select any as a new country without new evidence.
+- TUR exact ZIP timeout remains closed; POL transaction-date FX principle is known but does not authorize aggregate FX conversion. Other country fingerprints/statuses are indexed in the registry.
+- Final verification rule: re-fetch every modified file and record commit SHA + final blob SHA; unverified writes must be reported NOT_VERIFIED. Registry is rolling and does not claim all 63 countries fully indexed.
+- No production code/configuration changed; protected invariants unchanged; ₹0; UNKNOWN never PASS.
