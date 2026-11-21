@@ -1782,3 +1782,7 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Raw PDF download failed; link annotation target and table-export URL remain unresolved; no workbook bytes/hash or Q2 dual-leg observations captured. MNE remains PARTIAL / NOT PASS.
 - Next candidate MNG NSO PxWeb BOP table: official table page is accessible; public JSON/XML API is stated in NSO terms, but do not guess API route/request/indicator codes. Require official endpoint and method evidence before query.
 - Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_ALTERNATE_HOST_AND_TABLE_LINK_ACCESS_CONTINUATION220_20261121.md. No IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED.
+## Continuation 221 — Mongolia MNG NSO official API contract boundary (2026-11-21)
+- Official NSO terms confirm JSON/XML open-data API, CC BY 4.0 and one-request-per-second/IP limit; live BOP table confirms Bank of Mongolia source, quarterly frequency, million USD, 69 indicators, 71 quarters and Q2 `2026-2`.
+- Exact API root/path, HTTP method, query schema and indicator codes are not stated in inspected official docs. C179's failed API base was not retried; no guessed third-party client route used. No data bytes or hash captured.
+- MNG remains PARTIAL / NOT PASS; next action requires an official API manual/OpenAPI contract or official Q2 export. Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_NSO_PXWEB_OFFICIAL_API_CONTRACT_BOUNDARY_CONTINUATION221_20261121.md. No IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED.
