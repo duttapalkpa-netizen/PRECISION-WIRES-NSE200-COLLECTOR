@@ -508,3 +508,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Q2 bulletin Table 1.4 has asset/liability financial-account rows; portfolio remains combined with other investment (-302/+2,466 USDm). Not admissible as portfolio-only national legs. No raw detailed Q2 export captured.
 - C225 report: `docs/GCR_AZERBAIJAN_AZE_Q2_2026_CBAR_EXTERNAL_SECTOR_INDEX_AND_Q2_COMBINED_CATEGORY_BOUNDARY_CONTINUATION225_20261121.md`; matrix commit `b85f7d9cfc927b7301bf91591ae0b004d54a0282`.
 - Duplicate gate: do not repeat C146/C225 bulletin/index inspection; reopen only with distinct detailed Q2 portfolio-only export/API and revision metadata.
+
+
+## Continuation 226 — BDI BRB June-2026 monthly indicators source fingerprint
+- Official BRB index `https://www.brb.bi/indicateurs_de_conjoncture` lists a distinct June-2026 “Indicateur de conjoncture” PDF. The official 18-page PDF covers macro indicators, trade, FX, fiscal, monetary and banking statistics; it has no BOP section and no “Balance des paiements” text match.
+- This is not the Q2 BOP report and contains no separate portfolio asset/liability transaction legs. No raw BOP data, Q2 portfolio values, revision metadata or hash captured.
+- C155 historical dual-leg Q4/Q3-2025 reports and C207 matrix evidence correction remain controlling; no repeat of those tasks. BDI remains PARTIAL / NOT PASS; both legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
+- C226 detail: `docs/GCR_BURUNDI_BDI_Q2_2026_BRB_JUNE_2026_INDICATEURS_NON_BOP_SOURCE_BOUNDARY_CONTINUATION226_20261121.md`. Duplicate gate: do not repeat this monthly indicators PDF; reopen only on a distinct official Q2 BOP portfolio dual-leg export/API with revision metadata.
