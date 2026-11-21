@@ -52,3 +52,11 @@ Retrieve the Bank Indonesia table's detailed methodology/metadata explaining ass
 
 ## Protected invariants
 No netting, aggregation, imputation, forward-fill, synthetic observations, silent sign reversal, or production integration. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2 unchanged. UNKNOWN is never PASS.
+
+
+## Continuation 185 addendum — official BPM5-to-BPM6 sign crosswalk resolved (2026-11-21)
+- The previously unresolved asset sign question is resolved by Bank Indonesia's own official BOP metadata: although compiled with BPM6 concepts, published financial-account asset/liability sides remain presented under BPM5 as positive inflow/credit and negative outflow/debit (Section 4.3, official metadata updated July 2024).
+- The IMF BPM6 Compilation Guide Table 8.10 establishes that BPM5 increases in assets are negative debits, while BPM6 increases in assets are positive; liability increases are positive under both conventions. Thus BI asset sign is reversed for comparison with IMF A_NFA_T; liability sign is retained for L_NIL_T. This is a source-defined convention bridge, not an inferred or residual-tuned adjustment.
+- After this documented mapping, BI Q2-2026 asset +1,488 USDm vs IMF +1,487.605237 USDm gives absolute residual 0.394763 USDm; liability +11,440 vs IMF +11,440.221642 USDm gives residual 0.221642 USDm. Both are within BI's ±0.5 USDm whole-million display-rounding bound.
+- The asset-sign gate and both numeric rounding checks are now PASS. Full IDN dual-leg national validation remains PARTIAL / NOT PASS because BI marks Q2 2026 as **Very Temporary** and exact BI↔IMF same-vintage identity / subsequent revision bridge remains NOT_ESTABLISHED. Aggregate remains NOT_AUTHORIZED.
+- Detailed C185 report: `docs/GCR_INDONESIA_IDN_Q2_2026_BI_BPM5_TO_IMF_BPM6_SIGN_CROSSWALK_CONTINUATION185_20261121.md` (commit d7c62b821f7b7cb439c46cbc691eb674924b7099).
