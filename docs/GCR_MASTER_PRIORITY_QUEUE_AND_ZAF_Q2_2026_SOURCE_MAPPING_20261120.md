@@ -1761,3 +1761,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Corrected matrix to asset_gate REVIEW, liability_gate PASS; status_ASSET_PASS NO, status_LIABILITY_PASS YES; asset_status DATA_CAPTURED, liability_status LIABILITY_PASS. Stage DATA_CAPTURED, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED preserved.
 - Matrix correction commit `86dfe96ae4b3a71a78a0eebbabd4fd36bd4ac4e3`; blob `a4ed9fcf8732dd81a1d1563aaf5388ed6c2bbd0a`. C215 report addendum commit `96cf932d5345859c01b7fb92ade0986f992b0ec5`.
 - New SARB API Q2 historical payload remains NOT_CAPTURED; asset FX REVIEW remains open. No gate promotion, IMF re-query, cohort rebuild, tolerance widening or production change; UNKNOWN never PASS.
+
+## Continuation 217 — South Africa ZAF SARB alternate export-family boundary (2026-11-21)
+- Official SARB Online Statistical Query workflow verified: KBP code/keyword, version, frequency/date-range selection and Excel/CSV/PDF/DOC export for Quarterly Bulletin series.
+- It is not proven to expose EXCX135D; do not treat KBP exports as the daily ZAR/USD target or infer a code mapping. No payload/hash captured.
+- ZAF asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED unchanged.
+- Detail: docs/GCR_ZAF_Q2_2026_SARB_ONLINE_STATISTICAL_QUERY_EXPORT_FAMILY_BOUNDARY_CONTINUATION217_20261121.md. Next C218: prove or reject an official KBP daily USD/ZAR series and inspect the Selected Historical Rates export request via supported HTTP route.
