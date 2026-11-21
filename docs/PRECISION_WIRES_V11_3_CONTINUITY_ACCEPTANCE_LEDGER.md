@@ -2731,3 +2731,12 @@ Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines
 - Therefore official quarterly source family PASS, separate labels PASS, BPM6 PASS; Q2-2026 national asset/liability NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Annual forecasts, IMF Article IV projections, and IIP stocks explicitly rejected as substitutes.
 - Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_QUARTERLY_BOP_SOURCE_BOUNDARY_AUDIT_CONTINUATION125_20261121.md; commit 92260e1155d537f6fe2f2cdc2d35fb50a35d79c9.
 - Next: do not repeat June bulletin. Locate next CBS bulletin that actually covers June 2026 (Q2), then archive raw bytes/URL/time/size/SHA256 and extract separate Q2-II portfolio legs; compare to existing IMF archive without new query. If not published, retain WSM PARTIAL and advance cohort after preflight. ₹0; no production changes; UNKNOWN is never PASS.
+
+
+## Continuation 126 — Samoa WSM Q2-2026 CBS release-status recheck (2026-11-21)
+- Re-fetched current Master Ledger (blob SHA f4274f9aae19a7dfdc74f64726377c10abd5f6df), GCR queue (blob SHA df6deb6441940b6165469ed1f58a271caf222092), immutable cohort report (blob SHA 1f767e22095865c8e5f87c2cfca55d9104b91e3e), and prior WSM Continuation 125 report (blob SHA 997ac798c8d5b86b7960ddcc37e825ac5b96a3d1).
+- Direct CBS official Quarterly Bulletin index lists June 2026 as latest and footer says last updated 18 Aug 2026; September 2026 not listed. A search-engine snippet suggested September 2026, but direct official index contradicts it; snippet treated as stale/unverified, not release evidence.
+- June-2026 PDF cover/title says June 2026, but contents and overview identify March 2026 / Q1. Table B-1 (PDF page 37; printed page 34) has Portfolio Investment net/assets/liabilities, Tala million, BPM6 note; latest quarter column 2026-I only. No Q2-II values.
+- WSM Q2 assets/liabilities NOT_CAPTURED; numeric comparison NOT_DONE; WSM PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No raw Q2 file/hash because no qualifying Q2 bulletin is listed.
+- Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_RELEASE_STATUS_RECHECK_CONTINUATION126_20261121.md; commit 0b7d5d9bd57def55020f8b4139f7445605a57d6f.
+- Next fixed cohort member after WSM is ZAF (South Africa), subject to preflight of current ledger/queue and any prior ZAF report/source mapping. Recheck CBS only when a later issue is officially listed. ₹0; production unchanged; UNKNOWN is never PASS.
