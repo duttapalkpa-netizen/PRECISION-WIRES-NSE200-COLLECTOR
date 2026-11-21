@@ -1821,3 +1821,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - PDF contents cover production, CPI, trade, FX, public finance, monetary/banking indicators; no BOP section. Full-text search for “Balance des paiements” returned no match. Trade and FX data are not portfolio transaction legs.
 - No Q2-2026 portfolio asset/liability values, BOP raw bytes, revision metadata or SHA-256 captured. BDI remains PARTIAL / NOT PASS; national legs NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - No matrix change because this is a source-family exclusion only; no IMF re-query/cohort rebuild or production change. Detail: `docs/GCR_BURUNDI_BDI_Q2_2026_BRB_JUNE_2026_INDICATEURS_NON_BOP_SOURCE_BOUNDARY_CONTINUATION226_20261121.md`. Reopen BDI only on a distinct official Q2 BOP dual-leg export with dated revision metadata. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 227 — Malaysia MYS Q2-2026 matrix evidence-reference correction (2026-11-21)
+- Re-fetched current Master Ledger, Priority Queue, Historical Task Registry, fixed 63-country matrix and controlling MYS BNM reconciliation report before selection.
+- Existing BNM official 1200-middle raw capture, FX QA and separate-leg comparisons were already complete; no BNM re-fetch, IMF re-query, cohort rebuild or numeric recalculation.
+- Corrected only MYS matrix `evidence_ref` from `NO_DEDICATED_REPORT_REF_IN_BASELINE` to `GCR_MALAYSIA_MYS_Q2_2026_BNM_OFFICIAL_FX_AND_DUAL_LEG_RECONCILIATION_20261120`. Preserved DATA_CAPTURED, asset/liability PASS, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_MALAYSIA_MYS_Q2_2026_MATRIX_EVIDENCE_REFERENCE_READBACK_CORRECTION_CONTINUATION227_20261121.md`. Matrix commit `7e544e73de2aac8c8f12d1e6e43391ae00ec3f05`, blob SHA `4a81b4216e37013e0dc1a60a3c00e9a682f6f059`.
+- MYS remains PARTIAL / NOT PASS because same-vintage BNM preliminary ↔ IMF alignment is NOT_ESTABLISHED. Do not repeat FX capture or promote aggregate; ₹0; UNKNOWN never PASS.
