@@ -237,3 +237,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|---|
 | CHN China | SAFE English detail page `https://www.safe.gov.cn/en/2019/0329/1496.html` → XLSX `https://www.safe.gov.cn/en/file/file/20260929/20c1e5e45d704a77b302ba234211a75b.xlsx`; Chinese attachment route previously recorded in C136 | C135 and C136 reports; C194 was a repeat of the known English XLSX endpoint | Locator already known; raw XLSX remains BLOCKED / NOT_CAPTURED; C194 DUPLICATE / NO PROGRESS | Do not retry either known English/Chinese XLSX via same unsupported retrieval surfaces | A genuinely different supported file-transfer path or distinct official dataset/export is available |
 - C136's COL next action is restored; inspect prior COL route history before any new action. Mandatory full preflight and read-back gate added to Master Ledger.
+
+
+## Continuation 195 — MKD NBRNM PxWeb API metadata route fingerprint (2026-11-21)
+| Country | Official route fingerprint | Evidence | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| MKD North Macedonia | NBRNM ES-001 table `6_FinansiskaSmetkaTrimesecniEN.px`; tested PxWeb v1 metadata path ending in the same `.px` filename | C184 source report; C195 `docs/GCR_NORTH_MACEDONIA_MKD_Q2_2026_NBRNM_PXWEB_API_METADATA_ROUTE_ACCESS_GATE_CONTINUATION195_20261121.md` | Table metadata PASS; API retrieval inaccessible; codebook, Q2 portfolio A/L values, bytes/hash and vintage NOT_CAPTURED; PARTIAL / NOT PASS | Do not retry exact API URL through same retrieval surface; do not use SSO net-only or financial-account-wide legs | Supported API/export retrieval or distinct official Q2 portfolio dual-leg attachment |
+- Aggregate NOT_AUTHORIZED.
