@@ -32,6 +32,9 @@ Status: CONTROL DOCUMENTATION CREATED; registry is a rolling evidence index, not
 | PER Peru | BCRPData API/catalogue; Q2-2026; separate legs | Prior PER source-boundary report and queue | PARTIAL; public-sector portfolio asset series absent from located catalogue; API inaccessible | Do not infer public assets from aggregate | New official public-sector portfolio asset series or supported API |
 | SLB Solomon Islands | CBSI Table 1.17; Q2-2026; separate legs | Queue and Continuation 128 | PARTIAL / NOT PASS; sign convention conflict only conceptually reconciled; exact vintage/scale unresolved | No sign flip or unverified conversion | Official sign methodology and same-vintage/scale bridge |
 
+
+| HND Honduras | BCH; quarterly BOP dynamic page; XLSX locator https://www.bch.hn/estadisticos/EME/Series%20pblicas/Balanza%20de%20Pagos.xlsx?d=wb684924b7bd14bdca0d4bc95686dcbab; WOPI frame and SDMX XML route; Q2-2026; separate portfolio legs | Continuation 167: `docs/GCR_HONDURAS_HND_Q2_2026_BCH_OFFICIAL_BOP_SOURCE_AND_XLSX_ACCESS_GATE_CONTINUATION167_20261121.md` | PARTIAL / NOT PASS; official quarterly BOP + XLSX/SDMX locators PASS; XLSX/WOPI/XML bytes blocked; Q2 portfolio legs NOT_CAPTURED | CLOSED for same XLSX/WOPI and XML retrieval routes | Distinct supported official API/export/byte route capturing Q2 separate portfolio assets/liabilities and metadata |
+
 ## Selection and handoff control
 - The immediately preceding queue text named NPL after TUR, but NPL has already been investigated in multiple continuations and its exact routes are closed. That handoff was stale and must not be followed.
 - RWA was subsequently investigated in Continuations 97 and 130; its exact JS-only portal route was rechecked and remains unresolved. It is not a fresh country task.
