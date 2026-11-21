@@ -1656,3 +1656,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Matrix row corrected to DATA_CAPTURED; ASSET_PASS; LIABILITY_PASS; VINTAGE_PENDING; FULL_PASS=NO; aggregate NOT_AUTHORIZED. Read-back: 63 rows / 30 columns; CSV blob SHA-1 `2e9b5a9246cebc249acc2e615cae5e43d4d8f4ac`.
 - Counts after PAK correction: SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 19; NOT_STARTED 1; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Independent gate counts overlap.
 - PAK exact SBP revision timestamp / IMF same-vintage bridge remains NOT_ESTABLISHED; do not promote to FULL_PASS. Detail: `docs/GCR_PAKISTAN_PAK_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION203_20261121.md`. Next: continue the same fixed-cohort historical evidence reconciliation with another demonstrably stale matrix row; inspect its latest country report first and do not re-run completed PASS work or closed routes. No IMF re-query/cohort rebuild; aggregate NOT_AUTHORIZED; production invariants unchanged.
+
+
+## Continuation 204 — BOL Bolivia matrix status reconciliation (2026-11-21)
+- Reused C158 official BCB Q2 locator report; no repeated XLSX route, no IMF request, no cohort rebuild.
+- Corrected the stale 63-country matrix row from NOT_STARTED/NOT_FOUND to BLOCKED / SOURCE_FOUND, because official Q2 locators exist but both XLSX retrievals returned HTTP 400 and no national bytes/legs were captured.
+- Read-back matrix: 63 rows; NOT_STARTED 0; SOURCE_FOUND 18; DATA_CAPTURED 25; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 17; VINTAGE_PASS 0; FULL_PASS 0. Aggregate remains NOT_AUTHORIZED.
+- Detail: `docs/GCR_BOLIVIA_BOL_Q2_2026_HISTORICAL_EVIDENCE_MATRIX_RECONCILIATION_CONTINUATION204_20261121.md`.
+- Next: select the next demonstrably stale matrix row only after checking current Ledger, Registry, full country report history and route fingerprint. Prefer an executable new official static/API route; do not retry closed routes or treat a status correction as country validation. ₹0; protected production invariants unchanged.
