@@ -1625,3 +1625,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Detail: `docs/GCR_63_COUNTRY_Q2_2026_NATIONAL_VALIDATION_MASTER_MATRIX_RECONCILIATION_CONTINUATION201_20261121.md`.
 - CSV update commit: `f596dc889642e3a9262f2fd7b7dc9b02a6a57a0a`; CSV blob SHA-1: `45e466c72c034d460dfccf57474b07bfb6d12ea9`.
 - Preserve immutable cohort, no IMF re-query/rebuild, no unsupported inference, ₹0, and all V11.3 production invariants.
+
+
+## GCR Continuation 200 — country master matrix baseline (2026-11-21)
+- Matrix `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`: 63/63 fixed cohort rows matched; 0 key/period/leg mismatches.
+- Overall stages: SOURCE_FOUND 20; DATA_CAPTURED 23; BLOCKED 19; NOT_STARTED 1; FULL_PASS 0.
+- Continue one country at a time. Resolve captured-but-REVIEW/PENDING gates and prioritize executable official sources among SOURCE_FOUND. Do not retry BLOCKED routes without genuinely new official route or supported retrieval capability.
+- Check underlying country reports and raw evidence before status promotion. Matrix is a baseline, not a substitute for source reports. Aggregate NOT_AUTHORIZED; no cohort rebuild, IMF re-query, production changes or paid data.
