@@ -64,3 +64,12 @@
 - Affected diagnostic: Macro-Geo P0 index archive fallback / producer-consumer schema contract. Expected vs actual: archive metadata should serialize observed-session request count; actual missing key aborts collection. Sample: 200-session input archive; progress log reached 180/200 before exception; no macro source rows accepted.
 - Recurrence-prevention test: bounded, network-free fixture over 3 observed sessions; assert producer return keys and caller access keys match; expected artifact archive_report_contract_validation.json plus test log; runtime target <60 sec. No code patch or workflow rerun authorized in this review.
 - Limitation/blocker: macro source collection and hard gate never ran; no GCR metric may be inferred. Lesson status OPEN / NOT_ACCEPTED pending test and separately authorized recovery.
+
+
+### PW-LSN-20261122-002 — Archive report consumer key mismatch repaired (2026-11-22)
+- Root cause: nse_index_history() returns observed_session_requests, while main() consumed weekday_requests; Run #45038111510 failed with KeyError after 180/200 observed sessions.
+- Bounded fix: consumer now reads observed_session_requests. Collector commit afa063959b39846c6722370afa655cb77335d4df; blob 78fe030e5964b8728963a4a0e0604f3cbe184c3f.
+- Regression test added: qa/test_macro_geo_archive_report_contract.py, AST-based producer/consumer contract; commit 491cf1ff7b94ce40129f00c9e8baea499d6087c8; blob 56d62af1f318414b7db0eb51d25a122e8a4ae03a.
+- Recovery workflow runs this test before P0 collection; workflow commit 1c9ecb82c29433f91b14e7bc9173652aa6ead67f; blob 546234eb9415a916038120d810946089b13c9012.
+- Status: CODE PATCH COMMITTED; REGRESSION EXECUTION PENDING; end-to-end Macro-Geo remains BLOCKED until the new run proves collection and downstream evidence. Do not mark PASS based on commits.
+- No selector, threshold, ranking, production code or admission changes. UNKNOWN remains not PASS.
