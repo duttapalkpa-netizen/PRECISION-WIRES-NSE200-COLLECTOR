@@ -73,6 +73,9 @@ jobs:
       - name: Strict canonical NSE dataset QA
         run: python qa/validate_dataset.py
 
+      - name: Verify Macro-Geo archive report schema contract
+        run: python -m pytest -q qa/test_macro_geo_archive_report_contract.py
+
       - name: Collect P0 macro market panel and timestamped news
         timeout-minutes: 35
         env:
