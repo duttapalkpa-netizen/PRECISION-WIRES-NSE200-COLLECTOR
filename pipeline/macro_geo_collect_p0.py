@@ -165,43 +165,43 @@ def nse_index_history(start,end):
     session_dates=[d for d in session_dates if start<=d<=end]
     for day in session_dates:
         stamp=day.strftime("%d%m%Y")
-            urls=[
-              f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
-              f"https://archives.nseindia.com/content/indices/ind_close_all_{stamp}.csv"
-            ]
-            found=False
-            for url in urls:
-                try:
-                    resp=session.get(url,timeout=(4,8),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":NSE+"/all-reports"})
-                    if resp.status_code==404: continue
-                    resp.raise_for_status()
-                    from io import StringIO
-                    df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
-                    df.columns=[str(c).strip().upper() for c in df.columns]
-                    namecol=next((c for c in ["INDEX NAME","INDEX_NAME"] if c in df.columns),None)
-                    datecol=next((c for c in ["INDEX DATE","INDEX_DATE","DATE"] if c in df.columns),None)
-                    closecol=next((c for c in ["CLOSING INDEX VALUE","CLOSING","CLOSE","CLOSE VALUE"] if c in df.columns),None)
-                    if not namecol or not datecol or not closecol:
-                        failures.append({"date":day.isoformat(),"url":url,"error":"Unrecognized official NSE index CSV schema",
-                          "columns":list(df.columns),"preview":resp.text[:180]})
-                        # A 200 response can still be an HTML/block page; try the alternate archive host.
-                        continue
-                    df["_KEY"]=df[namecol].astype(str).str.lower().str.replace(r"[^a-z0-9]","",regex=True)
-                    for _,row in df[df["_KEY"].isin(aliases)].iterrows():
-                        close=pd.to_numeric(pd.Series([row[closecol]]),errors="coerce").iloc[0]
-                        dt=pd.to_datetime(row[datecol],errors="coerce",dayfirst=True)
-                        if pd.isna(close) or close<=0 or pd.isna(dt): continue
-                        label=aliases[row["_KEY"]]
-                        rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(close),
-                          "SOURCE":"NSE daily index close archive","SOURCE_URL":url,
-                          "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
-                    found=True; days_seen+=1; break
-                except Exception as exc:
-                    failures.append({"date":day.isoformat(),"url":url,"error":f"{type(exc).__name__}: {exc}"})
-            # Only verified observed trading sessions are requested.
-            if days_seen and days_seen % 20 == 0:
-                print(f"NSE_INDEX_ARCHIVE_PROGRESS={days_seen}/{len(session_dates)} sessions; rows={len(rows)}", flush=True)
-            time.sleep(0.04)
+        urls=[
+          f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
+          f"https://archives.nseindia.com/content/indices/ind_close_all_{stamp}.csv"
+        ]
+        found=False
+        for url in urls:
+            try:
+                resp=session.get(url,timeout=(4,8),headers={"User-Agent":UA,"Accept":"text/csv,*/*","Referer":NSE+"/all-reports"})
+                if resp.status_code==404: continue
+                resp.raise_for_status()
+                from io import StringIO
+                df=pd.read_csv(StringIO(resp.content.decode("utf-8-sig",errors="replace")))
+                df.columns=[str(c).strip().upper() for c in df.columns]
+                namecol=next((c for c in ["INDEX NAME","INDEX_NAME"] if c in df.columns),None)
+                datecol=next((c for c in ["INDEX DATE","INDEX_DATE","DATE"] if c in df.columns),None)
+                closecol=next((c for c in ["CLOSING INDEX VALUE","CLOSING","CLOSE","CLOSE VALUE"] if c in df.columns),None)
+                if not namecol or not datecol or not closecol:
+                    failures.append({"date":day.isoformat(),"url":url,"error":"Unrecognized official NSE index CSV schema",
+                      "columns":list(df.columns),"preview":resp.text[:180]})
+                    # A 200 response can still be an HTML/block page; try the alternate archive host.
+                    continue
+                df["_KEY"]=df[namecol].astype(str).str.lower().str.replace(r"[^a-z0-9]","",regex=True)
+                for _,row in df[df["_KEY"].isin(aliases)].iterrows():
+                    close=pd.to_numeric(pd.Series([row[closecol]]),errors="coerce").iloc[0]
+                    dt=pd.to_datetime(row[datecol],errors="coerce",dayfirst=True)
+                    if pd.isna(close) or close<=0 or pd.isna(dt): continue
+                    label=aliases[row["_KEY"]]
+                    rows.append({"DATE":dt.date().isoformat(),"SERIES":label,"CLOSE":float(close),
+                      "SOURCE":"NSE daily index close archive","SOURCE_URL":url,
+                      "OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+                found=True; days_seen+=1; break
+            except Exception as exc:
+                failures.append({"date":day.isoformat(),"url":url,"error":f"{type(exc).__name__}: {exc}"})
+        # Only verified observed trading sessions are requested.
+        if days_seen and days_seen % 20 == 0:
+            print(f"NSE_INDEX_ARCHIVE_PROGRESS={days_seen}/{len(session_dates)} sessions; rows={len(rows)}", flush=True)
+        time.sleep(0.04)
     return rows,{"observed_session_requests":days_seen,"rows":len(rows),"failures":failures}
 
 def fred_history(label,series_id,start,end):
