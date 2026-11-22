@@ -70,20 +70,13 @@ def fallback_public_series(series_id,label,outfile,start,end):
    if pd.notna(dt) and pd.notna(val) and start<=dt.date()<=end:
     rows.append({"DATE":dt.date().isoformat(),"CLOSE":float(val),"SERIES":label,"SOURCE":"US EIA RBRTE daily Brent spot (official XLS)","SOURCE_SERIES":"RBRTE","SOURCE_URL":url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
  elif series_id=="DEXINUS":
-  url="https://raw.githubusercontent.com/the-solipsist/rbi-forex-reference-rates/main/rbi_forex_reference_rates_long.csv"
-  response=requests.get(url,headers={"User-Agent":UA},timeout=(8,35)); response.raise_for_status()
-  df=pd.read_csv(StringIO(response.content.decode("utf-8-sig",errors="replace")))
-  df.columns=[str(x).strip().lower() for x in df.columns]
-  if not {"date","currency","rate"}.issubset(df.columns): raise RuntimeError("RBI/FBIL mirror schema mismatch")
-  df=df[df["currency"].astype(str).str.upper().eq("USD")].copy()
-  for _,r in df.iterrows():
-   dt=pd.to_datetime(r["date"],errors="coerce"); val=pd.to_numeric(pd.Series([r["rate"]]),errors="coerce").iloc[0]
-   if pd.notna(dt) and pd.notna(val) and start<=dt.date()<=end:
-    rows.append({"DATE":dt.date().isoformat(),"CLOSE":float(val),"SERIES":label,"SOURCE":"Community mirror of RBI/FBIL reference rates (secondary; not direct RBI feed)","SOURCE_SERIES":"USD_INR_REFERENCE","SOURCE_URL":url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()})
+  raise RuntimeError("No verified direct official RBI/FBIL USD-INR fallback is configured; community mirrors are prohibited")
  if not rows: raise RuntimeError(f"No valid fallback rows for {series_id}")
  out=pd.DataFrame(rows).drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
  out.to_csv(RAW/outfile,index=False)
- return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),"source":str(out.SOURCE.iloc[0]),"url":str(out.SOURCE_URL.iloc[0]),"path":str(RAW/outfile)}
+ status="AVAILABLE" if series_id=="DCOILBRENTEU" and str(out.SOURCE.iloc[0]).startswith("US EIA") else "BLOCKED"
+ if status!="AVAILABLE": raise RuntimeError("Fallback source is not an approved official source")
+ return {"status":status,"rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),"source":str(out.SOURCE.iloc[0]),"url":str(out.SOURCE_URL.iloc[0]),"path":str(RAW/outfile)}
 
 def fred(series_id,label,outfile):
  url="https://fred.stlouisfed.org/graph/fredgraph.csv"
@@ -118,7 +111,7 @@ def fred(series_id,label,outfile):
  if out.empty: raise RuntimeError("FRED returned zero valid rows")
  out.to_csv(RAW/outfile,index=False)
  return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),
-  "source":"FRED "+series_id,"url":";".join(urls),"path":str(RAW/outfile)}
+  "source":"Federal Reserve Bank of St. Louis FRED series "+series_id,"url":";".join(urls),"path":str(RAW/outfile)}
 
 def main():
  report={"observed_at_utc":datetime.now(timezone.utc).isoformat(),"groups":{},"p0_window":None,"policy":"Secondary series remain explicitly labelled; no missing values are fabricated. P0 series are bounded to the NSE 200-session panel; longer regime studies are separate."}
@@ -129,13 +122,17 @@ def main():
    report["groups"][name]=fred(series,label,file)
   except Exception as e:
    primary_error=type(e).__name__+": "+str(e)[:220]
-   try:
-    start,end=p0_window()
-    fallback=fallback_public_series(series,label,file,start,end)
-    fallback["primary_error"]=primary_error
-    report["groups"][name]=fallback
-   except Exception as fallback_error:
-    report["groups"][name]={"status":"BLOCKED","rows":0,"primary_error":primary_error,"fallback_error":type(fallback_error).__name__+": "+str(fallback_error)[:220]}
+   if series=="DEXINUS":
+    report["groups"][name]={"status":"BLOCKED","rows":0,"primary_error":primary_error,
+      "fallback_error":"No verified direct official RBI/FBIL endpoint configured; community mirror fallback disabled"}
+   else:
+    try:
+     start,end=p0_window()
+     fallback=fallback_public_series(series,label,file,start,end)
+     fallback["primary_error"]=primary_error
+     report["groups"][name]=fallback
+    except Exception as fallback_error:
+     report["groups"][name]={"status":"BLOCKED","rows":0,"primary_error":primary_error,"fallback_error":type(fallback_error).__name__+": "+str(fallback_error)[:220]}
  # Prefer preserved NSE result disclosures, then call the documented NSE
  # corporate-announcements endpoint directly with a bounded recent date range.
  source=Path("data/raw/quarterly_results_raw_responses/result_disclosure.json")
@@ -271,7 +268,7 @@ def main():
   else: flow_meta={"status":"BLOCKED","rows":0,"reason":"; ".join(errors)}
  except Exception as e: flow_meta={"status":"BLOCKED","rows":0,"error":type(e).__name__+": "+str(e)[:250]}
  report["groups"]["fpi_dii_flows"]=flow_meta
- report["status"]="ALL_FOUR_AVAILABLE" if all(v.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") and v.get("rows",0)>0 for v in report["groups"].values()) else "REPAIR_WITH_GAPS"
+ report["status"]="ALL_FOUR_AVAILABLE" if all(v.get("status")=="AVAILABLE" and v.get("rows",0)>0 for v in report["groups"].values()) else "REPAIR_WITH_GAPS"
  REPORT.write_text(json.dumps(report,indent=2),encoding="utf-8")
  print(json.dumps(report,indent=2)); return 0
 if __name__=="__main__": raise SystemExit(main())
