@@ -15,6 +15,10 @@ def validate(master_path=MASTER, manifest_path=MANIFEST, now=None):
     if not master_path.is_file() or not manifest_path.is_file():
         raise ValueError("master or provenance manifest missing")
     manifest=json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("schema_version")!=1:
+        raise ValueError("unsupported or missing manifest schema_version")
+    if manifest.get("http_status")!=200:
+        raise ValueError("source HTTP status is not 200")
     parsed=urlparse(str(manifest.get("source_url","")))
     if parsed.scheme!="https" or parsed.hostname not in ALLOWED_HOSTS:
         raise ValueError("source URL is not an approved official NSE host")
@@ -39,8 +43,9 @@ def validate(master_path=MASTER, manifest_path=MANIFEST, now=None):
         raise ValueError("duplicate SYMBOL values")
     if len(df)!=int(manifest.get("rows",-1)):
         raise ValueError("manifest row count mismatch")
-    if int(manifest.get("source_bytes",0))<=0 or len(str(manifest.get("source_sha256","")))!=64:
-        raise ValueError("source-byte provenance incomplete")
+    source_hash=str(manifest.get("source_sha256",""))
+    if int(manifest.get("source_bytes",0))<=0 or len(source_hash)!=64 or any(c not in "0123456789abcdef" for c in source_hash.lower()):
+        raise ValueError("source-byte provenance incomplete or invalid SHA-256")
     return {"status":"PASS","rows":len(df),"source_family":"LEGACY_EQUITY_L_CSV","daily_mii_equivalence":"NOT_ESTABLISHED"}
 
 if __name__=="__main__":
