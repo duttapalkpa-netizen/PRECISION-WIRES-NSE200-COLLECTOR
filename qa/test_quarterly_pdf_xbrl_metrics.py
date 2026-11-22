@@ -4,6 +4,25 @@ from pipeline.quarterly_pdf_xbrl_metrics import ALIASES, choose, parse_xbrl, fet
 
 
 class QuarterlyXbrlMetricTests(unittest.TestCase):
+    def test_disclosure_selection_cap_is_explicit_and_reports_truncation(self):
+        import pandas as pd
+        from pipeline.quarterly_pdf_xbrl_metrics import select_result_disclosures
+        frame = pd.DataFrame({
+            "EVENT_KIND": ["RESULT_DISCLOSURE", "BOARD_MEETING", "RESULT_DISCLOSURE", "RESULT_DISCLOSURE"],
+            "SYMBOL": ["AAA", "BBB", "CCC", "DDD"],
+        })
+        selected, available, processed, truncated = select_result_disclosures(frame, 2)
+        self.assertEqual((available, processed, truncated), (3, 2, 1))
+        self.assertEqual(selected["SYMBOL"].tolist(), ["AAA", "CCC"])
+
+    def test_nonpositive_disclosure_cap_means_uncapped(self):
+        import pandas as pd
+        from pipeline.quarterly_pdf_xbrl_metrics import select_result_disclosures
+        frame = pd.DataFrame({"EVENT_KIND": ["RESULT_DISCLOSURE", "RESULT_DISCLOSURE"]})
+        selected, available, processed, truncated = select_result_disclosures(frame, 0)
+        self.assertEqual((available, processed, truncated), (2, 2, 0))
+        self.assertEqual(len(selected), 2)
+
     def test_sebi_taxonomy_revenue_pat_eps_facts_are_recognized(self):
         xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <xbrl xmlns="http://www.xbrl.org/2003/instance">
