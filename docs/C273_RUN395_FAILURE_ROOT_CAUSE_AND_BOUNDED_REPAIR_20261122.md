@@ -39,3 +39,13 @@ The maturity function correctly requires a non-null forward outcome and its hori
 5. Only after these checks, update the Master Continuity Ledger and C273 acceptance status. Do not claim PASS based on code commit or unit tests alone.
 
 Constraints: ₹0 spend; free/official sources only; no synthetic or immature observations; UNKNOWN is never PASS.
+
+
+## Follow-up correction after Run #396 and Run #397 (2026-11-22)
+
+- Run #396 (`45018125140`) completed **FAIL** at walk-forward step 15 with the same `KeyError: FUT1_END_DATE`. Its head SHA was `73b865cc830280ef89012b1cc1e25c63ee5b50d1`, predating the first serializer change; it did not validate that change. Artifact `14752917639`, SHA-256 `8bbac34bb7c3c668fba262fd9dabe99ecd8c30333dc537bea86fc3c90d7da763`.
+- Run #397 (`45018883341`) also completed **FAIL** with the same KeyError. Inspection of its checked-out source exposed the exact mistake in the first repair: commit `c55c542` added end-date fields to `universe_predictions`, but `_matured_state_target_metrics()` consumes `pred = pd.DataFrame(predictions)`, the separate Top-30 `predictions` dataframe. Thus the original repair changed the wrong serializer. Run #397 head SHA was `c55c54226151a9acd973c415d98e02227f93dc0b`; artifact `14753496627`, SHA-256 `47483ec441ec52dc9df33aaa4e8f0b18cb7b1b05eb02adabbf1bf28679ae7160`.
+- Corrected the actual Top-30 `predictions.append({...})` row serializer to include `FUT1_END_DATE`, `FUT3_END_DATE`, and `FUT5_END_DATE`. Commit `7360870b768a6ed746451afa96ea918a3bffae07`; file blob `548a61688446ca538feb6a538bd6f61eb629a17c`. Read-back confirms all three fields in the Top-30 block consumed by `pd.DataFrame(predictions)`.
+- Added a regression test that checks the exact Top-30 serializer block as well as existing 49/50-observation and independent State/Target denominator tests. Test file blob `7013571db8c116d7774a1ee7be3d0d68b728814f`; latest associated test commit `da9c57b0d32b2850b335117c75d80e25a86e98c7`. Regression test execution is pending; do not mark PASS until the current queued workflow confirms it.
+- Run #398 (`45027842316`) on source-fix commit `7360870b768a6ed746451afa96ea918a3bffae07` was **IN_PROGRESS** during this report update, currently in NSE history acquisition. Run #402 (`45027949881`) for the regression-test commit was **PENDING** in the workflow queue. These statuses must be refreshed before acceptance.
+- C273 remains **NOT PASS**. The first repair commit `c55c542` is superseded for the actual Top-30 fix; do not cite it as the completed fix. Acceptance still requires a successful walk-forward step on code containing the Top-30 serializer fix, successful regression tests, and artifact-level numerator/denominator inspection. H+3 n<50 remains UNKNOWN.
