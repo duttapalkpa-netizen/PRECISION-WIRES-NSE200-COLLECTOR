@@ -47,3 +47,20 @@
 - Research addition: raw bytes + per-file acquisition-time manifest + point-in-time security identity + official price timestamp remain hard gates for daily candidate eligibility. Link to PW-LSN-20261121-003; do not create a duplicate lesson.
 - Next verification: future artifact retention proof; acquisition-time manifest completeness; security-master provenance; then current price/volume/circuit gates.
 - No production selector, rank, threshold, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E or IPO-PLX V2 changes.
+
+
+## 2026-11-22 — Run #398 raw-retention evidence update
+- Existing lesson updated: PW-LSN-20261121-003 (no duplicate ID).
+- Run #398 / run ID 45027842316, job 137232482609, artifact 14757294944, source head 7360870b768a6ed746451afa96ea918a3bffae07.
+- Artifact ZIP SHA-256 212a84103f2a9f47681865c7e165fe0247001b02d9563a5cef578636fb0b1898 independently matches GitHub digest. Inventory: 200 raw NSE bhavcopy CSVs, 200 acquisition-manifest entries; independent per-file retained-byte and SHA-256 checks: 200/200 PASS. QA: 200 sessions, 2,999 symbols, 100% delivery quantity/percentage coverage.
+- Field-level limitation: source URL, retrieval timestamp, source byte count, source SHA-256 and content type are present for 200/200; per-file HTTP status 0/200 and publication timestamp 0/200. Therefore future raw-byte retention is PASS for Run #398, but complete per-file provenance remains PARTIAL. Original Run #339 raw bytes remain BLOCKED/unrecoverable from inspected artifacts.
+- Evidence file hashes: acquisition manifest SHA-256 0c501b483c9bcb7de0e079bf15171bb59ad91edee966d036475423c8c9a4d5be; manifest-validation JSON 38704f930ad171bf71fe68b73f2c7fa2fe29c2250595490626938064cd87641a; QA JSON 48547e28ff82e978c8b63712c9fc5e4692268c3c99fba015bd1bfa3d7bd1af19.
+
+### PW-LSN-20261122-001 — Macro-Geo archive report schema mismatch
+- Date/cutoff: 2026-11-22; Run 45038111510, latest attempt job 137256604023; failed log timestamp 2026-11-22T15:27:37Z.
+- Expected: nse_index_history() returns archive metrics accepted by its caller. Actual: producer returns observed_session_requests, rows, failures; main() indexes missing weekday_requests at line 530 and raises KeyError. Root-cause confidence: **VERIFIED** by source inspection and job log.
+- Run outcome: Steps 1–8 SUCCESS; P0 collection Step 9 FAILED; repair, source coverage, event study and hard gate SKIPPED. Artifact 14759889454 SHA-256 618fde324b34fef465a1a9190b07825594c39e2d9ab2dc9f84917c9668cac6cb independently verified; all P0 external inputs and downstream reports are MISSING.
+- Dataset SHA-256: d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db. Collector code blob SHA-1 99b0fdd1a8155fe9471a2cc6e349d927e046caed; collector code SHA-256 255da8657e7cb838a52b2ba328458befb3d51f7000221acc912bef2c4335041a. Workflow YAML blob SHA-1 2859d1884a7c9c58d538ac1a2f00ef9c20c84731; workflow SHA-256 064b85f9a8d2befb71bf02d495586a6136b236c24ff84437072cc7084e789904. The SERIES registry is inline in the collector; no separate config file was used.
+- Affected diagnostic: Macro-Geo P0 index archive fallback / producer-consumer schema contract. Expected vs actual: archive metadata should serialize observed-session request count; actual missing key aborts collection. Sample: 200-session input archive; progress log reached 180/200 before exception; no macro source rows accepted.
+- Recurrence-prevention test: bounded, network-free fixture over 3 observed sessions; assert producer return keys and caller access keys match; expected artifact archive_report_contract_validation.json plus test log; runtime target <60 sec. No code patch or workflow rerun authorized in this review.
+- Limitation/blocker: macro source collection and hard gate never ran; no GCR metric may be inferred. Lesson status OPEN / NOT_ACCEPTED pending test and separately authorized recovery.
