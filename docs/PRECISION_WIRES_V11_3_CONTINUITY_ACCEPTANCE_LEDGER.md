@@ -3749,3 +3749,16 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Daily report blob SHA-1: `193bc1a463cd8d83bbda50c361cf3e10efcb2581`; independently computed UTF-8 content SHA-256: `18f800e1a0fbca910d806e170a0388dca3bcb9cf09aa5a188fef18776ce68070`; commit `b911f73b1d13a0f06c30816c594500594924b2f6`.
 - Failure & Lessons Learned log blob SHA-1: `fb0a299983273aae01fa51aef5ebd5d916e7db70`; independently computed UTF-8 content SHA-256: `fe0295220d748135a3cf7d975184865118afcee9141e7807364475fe8ace245f`; commit `8502619cae5f86e32f6c550d4559da1a21de7cf0`.
 - Both files were re-fetched from the main branch; required date, lesson IDs and decision text were present. SHA-256 implementation checked against the standard `abc` test vector. Ledger update follows this read-back; final ledger hash must be re-fetched and independently recomputed.
+
+
+## C273 — State × Target matured-denominator failure and bounded repair (2026-11-22)
+
+- Continuity preflight: re-read this Master Ledger, current 2026-11-22 daily report and failure/learning log; reused existing C273 checkpoint. Prior PASS work was not repeated.
+- Run #395 / ID `45018120031`: workflow **FAIL**. NSE normalized-history acquisition, per-file manifest/hash validation, security-master provenance/freshness, adaptive dataset build, strict dataset QA and quarterly results/calendar collection succeeded. Corrected-label walk-forward failed with `KeyError: 'FUT1_END_DATE'` in `_matured_state_target_metrics()`.
+- Root cause VERIFIED: `future_outcomes()` generated FUT1/FUT3/FUT5 end-date columns, but the Top-30 `predictions` serializer retained outcome percentages and omitted the three end-date fields required by the matured-denominator function.
+- Run #395 artifact: `14751684904`; ZIP SHA-256 `3e6fa054c44edae50661feb03d2a0968098f88bb3a2894cb5ed72f214b59af76`.
+- Bounded repair committed only to isolated branch `audit/prospective-selector-tracking`: commit `c55c54226151a9acd973c415d98e02227f93dc0b`; file blob `062d55a0ff6bc4982f051e4c1b24918e75c0d23d`. Added `FUT1_END_DATE`, `FUT3_END_DATE`, `FUT5_END_DATE` to each prediction row; independently re-fetched the branch file and confirmed the fields. No production selector/rank/score/pressure-fade/CORE-672/Engine A-E/IPO-PLX change.
+- Permanent bounded-repair report committed to isolated branch: `docs/C273_RUN395_FAILURE_ROOT_CAUSE_AND_BOUNDED_REPAIR_20261122.md`, commit `34935d52e4d461adcb84eb9df504efd1847e1ecd`, blob `e45f48d3c36305b2d6e1b6f49710abc2d8f93fad`.
+- Run #396 / ID `45018125140` was still **IN_PROGRESS** at this ledger update. It checked out before repair commit `c55c542`; therefore it cannot validate the repair. Do not count it as validation of the fix.
+- Acceptance: root cause VERIFIED; code repair COMMITTED and READ-BACK VERIFIED; execution validation PENDING; C273 overall NOT PASS until a run on the repaired commit completes and artifact/denominators are inspected.
+- Next: (1) capture Run #396 final status/log/artifact; (2) validate the repaired commit in a bounded workflow run; (3) reconcile each State × target matured numerator/denominator; H+3 with n<50 remains UNKNOWN; (4) verify artifact manifest/SHA-256; (5) only then close C273 and proceed to official USD/INR daily-history raw capture. ₹0; no synthetic/immature data; UNKNOWN never PASS.
