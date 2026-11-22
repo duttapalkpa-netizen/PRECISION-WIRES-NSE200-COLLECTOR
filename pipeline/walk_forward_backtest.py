@@ -525,6 +525,43 @@ def _hit_rate(frame, column, threshold):
     return float((outcome>=threshold).mean()) if len(outcome) else float("nan")
 
 
+def _matured_state_target_metrics(frame):
+    """Per-state target hit rates with explicit fully matured denominators.
+
+    Maturity requires both a non-null forward outcome and its horizon end date.
+    H+3/+10 calibration eligibility is a hard >=50 observation rule.
+    """
+    targets = [
+        ("T5_H1", "FUT1_HIGH_PCT", "FUT1_END_DATE", 5),
+        ("T10_H3", "FUT3_HIGH_PCT", "FUT3_END_DATE", 10),
+        ("T15_H5", "FUT5_HIGH_PCT", "FUT5_END_DATE", 15),
+        ("T20_H5", "FUT5_HIGH_PCT", "FUT5_END_DATE", 20),
+    ]
+    result = {}
+    if frame.empty:
+        return result
+    for state, group in frame.groupby("STATE", dropna=False):
+        state_key = str(state) if pd.notna(state) else "UNKNOWN_STATE"
+        result[state_key] = {}
+        for target, outcome_col, end_col, threshold in targets:
+            valid = group[outcome_col].notna() & group[end_col].notna()
+            matured = group.loc[valid, outcome_col]
+            n = int(len(matured))
+            hits = int((matured >= threshold).sum()) if n else 0
+            eligible = n >= 50 if target == "T10_H3" else None
+            result[state_key][target] = {
+                "matured_observations": n,
+                "numerator": hits,
+                "denominator": n,
+                "hit_rate": float(hits / n) if n else None,
+                "calibration_eligible": eligible,
+                "calibration_status": (
+                    "CALIBRATED" if eligible else "UNKNOWN"
+                ) if target == "T10_H3" else "NOT_APPLICABLE",
+            }
+    return result
+
+
 def main():
     df=pd.read_csv(SRC,parse_dates=["DATE"])
     df=add_features(df)
@@ -750,7 +787,8 @@ def main():
                 "hit10_h3":_hit_rate(g,"FUT3_HIGH_PCT",10),
                 "hit15_h5":_hit_rate(g,"FUT5_HIGH_PCT",15),"hit20_h5":_hit_rate(g,"FUT5_HIGH_PCT",20),
                 "median_winner_probability":float(g.WINNER_PROBABILITY.median()),
-                "median_percentile":float(g.WINNER_PROBABILITY_PCTL.median())}
+                "median_percentile":float(g.WINNER_PROBABILITY_PCTL.median()),
+                "matured_target_metrics":_matured_state_target_metrics(g).get(str(state), {})}
         metrics["winner_probability_separation"]={
             "winner_mean":float(pred.loc[pred.FUT3_HIGH_PCT>=10,"WINNER_PROBABILITY"].mean()),
             "nonwinner_mean":float(pred.loc[pred.FUT3_HIGH_PCT<10,"WINNER_PROBABILITY"].mean()),
