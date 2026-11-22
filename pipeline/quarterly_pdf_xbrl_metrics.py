@@ -492,10 +492,10 @@ def main():
       "EPS":None if not eps else {"tag":eps.get("tag"),"context":eps.get("context"),"unit":eps.get("unit"),"period_end":eps.get("period_end"),"start_date":eps.get("start_date"),"dimensions":eps.get("dimensions",[])}},
      "basis_metadata":{"consolidated":str(raw.get("consolidated","")),"subject":str(r.get("SUBJECT","")),"attachment_text":str(raw.get("attchmntText",""))[:300]},"response_diagnostics":{"content_type":ctype,"bytes":len(blob),"prefix":blob[:500].decode("utf-8",errors="replace"),"contains_ix_nonfraction":bool(re.search(br"ix:nonfraction",blob,re.I)),"contains_context":bool(re.search(br"(?:xbrli:)?context",blob,re.I)),"final_url":resp.url}})
    except Exception as exc:
-   error_row={"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]}
-   if getattr(exc,"attempts",None):
-    error_row["official_host_attempts"]=exc.attempts
-   errors.append(error_row)
+    error_row={"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]}
+    if getattr(exc,"attempts",None):
+     error_row["official_host_attempts"]=exc.attempts
+    errors.append(error_row)
   if not extracted:
    # Issuer PDF fallback is tightly scoped to the matching issuer, ISIN, period,
    # and basis declared by the NSE disclosure metadata. Never infer basis from
