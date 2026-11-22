@@ -137,3 +137,15 @@ Official NSDL reports listing exposes “Archive DII”, which resolves to the o
 Official live DII page continues to show separate INR-crore and USD-million columns and provisional T-day versus confirmed previous-day semantics; this remains page-level, not row-level proof.
 Statuses: C254 clipping CODED; regression step SUCCESS; fresh artifact window validation PENDING. 2026-07-17 row/parser mapping UNKNOWN. USD/INR and Macro-Geo P0 release gate BLOCKED. Production branch/invariants unchanged.
 Next: (1) inspect #389/#315 completion and artifacts; (2) verify all FPI dates clipped to 2026-06-23..2026-11-20; (3) preserve exact 2026-07-17 DII gap unless official row is retrieved; (4) inspect official form HTML/JS for an evidenced date-submit contract before implementing anything; (5) keep all hard gates strict.
+
+
+### C257 — prospective audit artifact review
+Report: `research/PROSPECTIVE_AUDIT_ARTIFACT_REVIEW_CONTINUATION257_2026-11-22.md`
+Report commit: `b5609ccecbf5943514a8ea060e35658f703be469`.
+Re-fetched ledger, C256 and C255 reports; no prior PASS work repeated.
+Run #389 / ID `44998017821`, head `71e7102acd3e647263e29b5f806e596e048096b8`, conclusion CANCELLED. Steps 1–15 SUCCESS (including C254 tests step 5 and corrected-label walk-forward step 15); step 16 P0 collection cancelled; steps 17–33 skipped; artifact upload step 34 SUCCESS.
+Artifact `prospective-watchlist-audit`, ID `14744698608`, 31,122,264 bytes; GitHub digest and independently computed ZIP SHA-256 both `5abaa9ca0110848f1181297db69b5774ced282b39f2cd045fa67993ceeb4ad6d`. Artifact confirms 200/200 provenanced NSE sessions (2026-02-16..2026-11-20), manifest validation PASS, dataset QA PASS, 2,999 symbols and 100% delivery coverage.
+Walk-forward artifact: 100 sessions, 3,000 candidates, Top-30. Precision/lift: T5_H1 32.43%/3.54x; T10_H3 22.03%/3.23x; T15_H5 14.10%/2.89x; T20_H5 6.96%/3.17x. Recall 4.08%, 3.62%, 3.19%, 3.49%. Full-universe winner mean probability 0.086886 is slightly below nonwinner 0.087184; median separation is also weak. Investigate probability discrimination and target-label joins before interpreting calibration. No T2_H1 result and no cost-aware profitability evidence; no net-return claim.
+Artifact contains no NSDL/FPI/DII/flow files, so it does not verify C254's FPI date clipping or 2026-07-17 DII gap. C254 stays CODED; test step SUCCESS; real NSDL output verification PENDING.
+Run #315 / ID `44998007758` remains IN_PROGRESS; P0 market/media steps 8 and corporate disclosure step 9 SUCCESS; step 10 bounded repair IN_PROGRESS; no artifact yet. USD/INR and Macro-Geo hard gate remain BLOCKED/UNVERIFIED.
+Next: investigate probability score vs winner separation without modifying production selector/ranking; secure an audit run with actual NSDL flow artifact; inspect #315 final source evidence and strict gate; no inferred +2% or profitability data. All protected invariants unchanged.
