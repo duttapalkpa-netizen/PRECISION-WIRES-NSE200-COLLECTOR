@@ -584,8 +584,10 @@ def main():
                 continue
             found=[x for x in all_rows if x["SERIES"]==label]
             sources=sorted(set(x["SOURCE"] for x in found))
-            manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE" if found else "BLOCKED",
-              "rows":len(found),"date_min":min((x["DATE"] for x in found),default=None),
+            official_found=[x for x in found if x.get("SOURCE") in ("NSE Indices historical data API","NSE daily index close archive","NSE Indices India VIX historical API")]
+            manifest["market_series"].append({"series":label,"group":spec["group"],"status":"AVAILABLE" if official_found else ("AVAILABLE_SECONDARY" if found else "BLOCKED"),
+              "rows":len(found),"official_rows":len(official_found),
+              "date_min":min((x["DATE"] for x in found),default=None),
               "date_max":max((x["DATE"] for x in found),default=None),"sources":sources})
             continue
         series_id=spec.get("fred_id")
@@ -704,7 +706,8 @@ def main():
     manifest["market_panel"]={"status":"AVAILABLE" if not panel.empty else "BLOCKED","rows":len(panel),
       "series":int(panel.SERIES.nunique()) if not panel.empty else 0,"path":str(RAW/"market_panel.csv")}
     manifest["events_file"]={"status":"AVAILABLE" if len(events) else "BLOCKED","rows":len(events),"path":str(RAW/"events.csv")}
-    p0_series_ok=all(any(x.get("series")==name and x.get("status") in ("AVAILABLE","AVAILABLE_SECONDARY") for x in manifest["market_series"])
+    p0_series_ok=all(any(x.get("series")==name and x.get("status")=="AVAILABLE" and
+      x.get("official_rows",x.get("rows",0))>0 for x in manifest["market_series"])
       for name in ("NIFTY 50","NIFTY IT","NIFTY BANK","INDIA VIX","BRENT CRUDE FRONT MONTH","USD INR"))
     manifest["historical_research_window"]={"requested_start":start.isoformat(),"requested_end":end.isoformat(),
       "series_with_rows":sum(bool(x.get("rows")) for x in manifest["market_series"]),
