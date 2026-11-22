@@ -119,7 +119,7 @@ def discover_official_attachments(blob, base_url, limit=8):
   parser.close()
  except Exception:
   return []
- allowed_hosts={"nsearchives.nseindia.com","archives.nseindia.com","www.nseindia.com","www1.nseindia.com"}
+ allowed_hosts={"nsearchives.nseindia.in","nsearchives.nseindia.com","archives.nseindia.com","www.nseindia.com","www1.nseindia.com"}
  allowed_paths=("/corporate/xbrl/","/corporate/ixbrl/","/corporate/pdf/","/corporate/attachments/","/corporate/announcements/")
  found=[]
  for raw in parser.values:
@@ -213,10 +213,15 @@ class AttachmentFetchError(requests.HTTPError):
 def fetch_attachment(session, url):
  """Fetch an official NSE attachment, falling back between official archive hosts on 403."""
  candidates = [url]
- if url.startswith("https://nsearchives.nseindia.com/"):
+ # NSE's current integrated-filing API emits nsearchives.nseindia.in URLs.
+ # Keep the legacy NSE archive as a second official host, but never use
+ # third-party mirrors or alter the attachment path.
+ if url.startswith("https://nsearchives.nseindia.in/"):
+  candidates.append(url.replace("https://nsearchives.nseindia.in/", "https://archives.nseindia.com/", 1))
+ elif url.startswith("https://nsearchives.nseindia.com/"):
   candidates.append(url.replace("https://nsearchives.nseindia.com/", "https://archives.nseindia.com/", 1))
  elif url.startswith("https://archives.nseindia.com/"):
-  candidates.append(url.replace("https://archives.nseindia.com/", "https://nsearchives.nseindia.com/", 1))
+  candidates.append(url.replace("https://archives.nseindia.com/", "https://nsearchives.nseindia.in/", 1))
  attempts = []
  for candidate in dict.fromkeys(candidates):
   try:
