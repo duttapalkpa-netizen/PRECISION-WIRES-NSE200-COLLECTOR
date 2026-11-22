@@ -3925,3 +3925,11 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Failure lesson PW-LSN-20261122-002 appended to docs/FAILURE_LESSONS_LEARNED_20261122.md; commit 92b238eaf9f11384a1b70d7a3628b7dda4155395; blob 090fcf96252ac186f2c71a953b0ea0dfe7940597.
 - Next action: inspect new recovery run, confirm regression PASS, then collection manifest and all P0 groups; run repair/source coverage/event study/hard gate only with required upstream files. Verify artifact SHA-256. No release unless hard_gate_report explicitly PASS, blockers empty, candidate_release_allowed true.
 - Constraints preserved: ₹0, free/official sources only, no synthetic values or fabricated timestamps, H+3 >=50 matured observations per State, UNKNOWN never PASS. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX unchanged.
+
+
+## 2026-11-22 — Schema regression execution checkpoint
+- New recovery workflow Run `45047612429`, head `1c9ecb82c29433f91b14e7bc9173652aa6ead67f`, job `137285531377`.
+- Steps 1–8 SUCCESS (handoff, provenance, canonical panel rebuild, strict NSE QA); new Step 9 “Verify Macro-Geo archive report schema contract” SUCCESS; Step 10 P0 collection IN_PROGRESS at latest poll. Repair/source coverage/event study/hard gate not yet run.
+- Job log endpoint returned transient BlobNotFound while the job is still active; this is log unavailability, not evidence of a job failure. Do not infer success/failure for Step 10.
+- Next action: poll Run 45047612429 until Step 10 reaches terminal status; if successful, inspect collection manifest and source-level rows/statuses before downstream repair; if failed, inspect terminal log and artifact to isolate exact issue. Hard gate only accepted from explicit report PASS with no blockers and release flag true.
+- Regression test PASS is an independent bounded code-contract validation only; it does not imply P0 collection or Macro-Geo acceptance.
