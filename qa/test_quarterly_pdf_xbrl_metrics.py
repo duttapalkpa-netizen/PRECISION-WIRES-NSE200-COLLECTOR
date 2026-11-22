@@ -34,6 +34,9 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         second.status_code = 403
         second.content = b"forbidden"
         second.headers = {"Content-Type": "text/html"}
+        import requests
+        first.raise_for_status.side_effect = requests.HTTPError("403 Forbidden")
+        second.raise_for_status.side_effect = requests.HTTPError("403 Forbidden")
         session = MagicMock()
         session.get.side_effect = [first, second]
         with self.assertRaises(AttachmentFetchError) as caught:
