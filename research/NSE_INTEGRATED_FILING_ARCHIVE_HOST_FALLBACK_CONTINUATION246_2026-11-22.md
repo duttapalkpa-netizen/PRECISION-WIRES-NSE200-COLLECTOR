@@ -19,7 +19,7 @@ The NSE integrated-filing API returned attachment URLs on `nsearchives.nseindia.
 ## CI verification state
 - Code commit: b8a9f541ec98fbf427caec27905cc4e4f4fba5da
 - Regression test commit: 6eed3272521cea3ab1b4eb255b55f5eeb3ceaabf
-- Targeted test Run #135 (44992957011) was in progress at report creation; dependency installation was active and regression tests had not yet run. Therefore code change is committed but CI acceptance remains PENDING until Run #135 completes successfully.
+- Targeted test Run #135 (44992957011): regression-suite step completed SUCCESS, including the new .in-to-.com fallback test. The overall job remains IN_PROGRESS because bounded live XBRL extraction, feature rebuild, diagnostics and artifact upload have not completed. Therefore unit/regression acceptance is PASS, but end-to-end extraction acceptance remains PENDING.
 - Run #134 (44992948452) was triggered on the intermediate code-only commit and is not the final acceptance run.
 
 ## Next action
