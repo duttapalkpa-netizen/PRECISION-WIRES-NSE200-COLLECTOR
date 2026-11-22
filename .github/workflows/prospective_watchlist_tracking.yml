@@ -13,7 +13,6 @@ on:
       - "pipeline/**"
       - "collector/**"
       - "requirements.txt"
-      - "research/**"
       - "config/macro_factor_registry.csv"
       - ".github/workflows/prospective_watchlist_tracking.yml"
 
