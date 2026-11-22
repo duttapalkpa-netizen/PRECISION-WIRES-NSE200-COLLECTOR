@@ -8,6 +8,8 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from qa.validate_security_master import validate
+from unittest.mock import patch
+from collector import security_master
 
 class SecurityMasterValidationTests(unittest.TestCase):
     def setUp(self):
@@ -28,6 +30,23 @@ class SecurityMasterValidationTests(unittest.TestCase):
         self.manifest.write_text(json.dumps(self.data),encoding="utf-8")
         self.now=datetime(2026,11,22,1,tzinfo=timezone.utc)
     def tearDown(self): self.tmp.cleanup()
+    def test_failed_fresh_acquisition_removes_previous_master_and_manifest(self):
+        old_out, old_manifest = security_master.OUT, security_master.MANIFEST
+        try:
+            security_master.OUT = self.master
+            security_master.MANIFEST = self.manifest
+            class FailedSession:
+                headers = {}
+                def get(self, url, timeout):
+                    raise OSError("simulated network failure")
+            with patch.object(security_master.requests, "Session", return_value=FailedSession()):
+                with self.assertRaises(SystemExit):
+                    security_master.main()
+            self.assertFalse(self.master.exists())
+            self.assertFalse(self.manifest.exists())
+        finally:
+            security_master.OUT, security_master.MANIFEST = old_out, old_manifest
+
     def test_valid_master_passes_without_claiming_mii_equivalence(self):
         result=validate(self.master,self.manifest,self.now)
         self.assertEqual(result["status"],"PASS")
