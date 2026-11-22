@@ -129,6 +129,32 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertIn("income", tags)
 
 
+    def test_current_nse_in_archive_host_fallback_on_403(self):
+        from unittest.mock import MagicMock
+        import requests
+        first = MagicMock()
+        first.status_code = 403
+        first.content = b"forbidden"
+        first.headers = {"Content-Type": "text/html"}
+        first.raise_for_status.side_effect = requests.HTTPError("403 Forbidden")
+        second = MagicMock()
+        second.status_code = 200
+        second.content = b"<xbrl/>"
+        second.headers = {"Content-Type": "application/xml"}
+        second.raise_for_status.return_value = None
+        session = MagicMock()
+        session.get.side_effect = [first, second]
+        response, fetched_url = fetch_attachment(
+            session,
+            "https://nsearchives.nseindia.in/corporate/xbrl/sample.xml",
+        )
+        self.assertIs(response, second)
+        self.assertEqual(
+            fetched_url,
+            "https://archives.nseindia.com/corporate/xbrl/sample.xml",
+        )
+        self.assertEqual(session.get.call_count, 2)
+
     def test_official_archive_host_fallback_on_403(self):
         from unittest.mock import MagicMock
         import requests
