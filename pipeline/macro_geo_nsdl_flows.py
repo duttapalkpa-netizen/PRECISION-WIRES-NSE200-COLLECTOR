@@ -27,7 +27,6 @@ FIRST_DII=date(2026,6,1)
 # NSE Capital Market holidays verified against circular NSE/CMTR/71775 (2025-12-12).
 NSE_TRADING_HOLIDAYS_2026 = {
     date(2026,6,26): "Muharram",
-    date(2026,8,26): "Id-E-Milad",
     date(2026,9,14): "Ganesh Chaturthi",
     date(2026,10,2): "Mahatma Gandhi Jayanti",
     date(2026,10,20): "Dussehra",
