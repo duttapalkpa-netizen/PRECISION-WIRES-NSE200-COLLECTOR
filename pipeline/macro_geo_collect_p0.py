@@ -527,7 +527,7 @@ def main():
         nse_rows.extend(x for x in archive_rows if (x["DATE"],x["SERIES"]) not in existing)
         if archive_rows: nse_source="NSE Indices API + official daily index close archive (recent fallback)"
         manifest["nse_archive_fallback"]={"window_start":archive_start.isoformat(),"window_end":end.isoformat(),
-            "rows":len(archive_rows),"weekday_requests":archive_report["weekday_requests"],
+            "rows":len(archive_rows),"observed_session_requests":archive_report["observed_session_requests"],
             "failures":archive_report["failures"][-25:]}
     all_rows.extend(nse_rows)
     official_keys={(x["DATE"],x["SERIES"]) for x in nse_rows}
