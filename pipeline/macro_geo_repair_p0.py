@@ -110,7 +110,7 @@ def fred(series_id,label,outfile):
  if not out.empty: out=out.drop_duplicates(["DATE","SERIES"]).sort_values(["DATE","SERIES"])
  if out.empty: raise RuntimeError("FRED returned zero valid rows")
  out.to_csv(RAW/outfile,index=False)
- return {"status":"AVAILABLE_SECONDARY","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),
+ return {"status":"AVAILABLE","rows":len(out),"date_min":str(out.DATE.min()),"date_max":str(out.DATE.max()),
   "source":"Federal Reserve Bank of St. Louis FRED series "+series_id,"url":";".join(urls),"path":str(RAW/outfile)}
 
 def main():
