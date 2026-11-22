@@ -3743,3 +3743,9 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Daily report: docs/DAILY_UNIFIED_TOP5_SWING_WATCHLIST_20261122.md; commit b911f73b1d13a0f06c30816c594500594924b2f6.
 - Daily failure/learning log: docs/FAILURE_LESSONS_LEARNED_20261122.md; commit 8502619cae5f86e32f6c550d4559da1a21de7cf0.
 - No new workflow dispatch, NSE download, paid source, synthetic data or production change. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
+
+
+### 2026-11-22 daily report read-back verification
+- Daily report blob SHA-1: `193bc1a463cd8d83bbda50c361cf3e10efcb2581`; independently computed UTF-8 content SHA-256: `18f800e1a0fbca910d806e170a0388dca3bcb9cf09aa5a188fef18776ce68070`; commit `b911f73b1d13a0f06c30816c594500594924b2f6`.
+- Failure & Lessons Learned log blob SHA-1: `fb0a299983273aae01fa51aef5ebd5d916e7db70`; independently computed UTF-8 content SHA-256: `fe0295220d748135a3cf7d975184865118afcee9141e7807364475fe8ace245f`; commit `8502619cae5f86e32f6c550d4559da1a21de7cf0`.
+- Both files were re-fetched from the main branch; required date, lesson IDs and decision text were present. SHA-256 implementation checked against the standard `abc` test vector. Ledger update follows this read-back; final ledger hash must be re-fetched and independently recomputed.
