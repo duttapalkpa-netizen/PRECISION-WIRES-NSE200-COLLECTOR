@@ -2,9 +2,23 @@ import unittest
 from datetime import date
 import pandas as pd
 
-from pipeline.macro_geo_nsdl_flows import clip_to_window, coverage_audit
+from pipeline.macro_geo_nsdl_flows import clip_to_window, coverage_audit, nse_trading_holiday_name
 
 class NsdlFlowWindowTests(unittest.TestCase):
+    def test_official_2026_nse_holidays_are_classified(self):
+        expected = {
+            date(2026, 6, 26): "Muharram",
+            date(2026, 8, 26): "Id-E-Milad",
+            date(2026, 9, 14): "Ganesh Chaturthi",
+            date(2026, 10, 2): "Mahatma Gandhi Jayanti",
+            date(2026, 10, 20): "Dussehra",
+            date(2026, 11, 10): "Diwali-Balipratipada",
+        }
+        for day, name in expected.items():
+            self.assertEqual(nse_trading_holiday_name(day), name)
+        # July 17 remains an unresolved archive/schema gap, not a holiday.
+        self.assertIsNone(nse_trading_holiday_name(date(2026, 7, 17)))
+
     def test_monthly_fpi_rows_are_clipped_to_declared_window(self):
         frame = pd.DataFrame([
             {"DATE": "2026-06-01", "GROUP": "FPI", "NET_VALUE": 10},
