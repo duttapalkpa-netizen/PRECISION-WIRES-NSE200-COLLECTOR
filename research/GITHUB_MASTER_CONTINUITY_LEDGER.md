@@ -188,3 +188,15 @@ Next: inspect #393/#317 when jobs appear; launch/inspect corrected full Macro-Ge
 
 
 C261 report-path correction: the report was successfully created at `research/NSDL_DII_20260717_OFFICIAL_SOURCE_TRIAGE_AND_CI_QUEUE_CONTINUATION261_2026-11-22.md` with actual create commit `74a76fe5cfb0fee39c331e17549d87c943241720`. Use this actual commit, superseding the earlier provisional commit reference in the C261 entry.
+
+
+### C262 — corrected NSDL holiday-scope CI progress check
+Re-fetched the current Master Ledger, C261 official-source triage report, corrected collector and regression test before continuing. No PASS work repeated; no code changes.
+Current Actions API snapshot (2026-11-22 08:07 UTC):
+- Run #393 / ID `45001043441`, corrected test SHA `9fac7d42bd09f6b0a4d9a4c0742a36451816e0a4`: job `137143246564` IN_PROGRESS. Regression step “Test corrected forward labels and prospective ledger” SUCCESS; acquisition of normalized NSE history IN_PROGRESS; remaining steps pending. This is a scoped regression-step PASS, not full workflow PASS.
+- Run #317 / ID `45001040455`, corrected collector SHA `885528a076e98996455358ee236f1a2960a276ea`: job `137143161030` IN_PROGRESS. Setup and event-study timestamp/data-quality tests SUCCESS; 200-session NSE acquisition IN_PROGRESS; NSDL collection and artifact steps not yet reached.
+- Older Runs #390/#316 completed CANCELLED on superseded C259 SHA and are not acceptance evidence.
+- C261 report push also triggered unrelated/new Actions entries #419 (ID `45001275480`, IN_PROGRESS, no artifacts at inspection) and #1348 (ID `45001274333`, FAILURE, no jobs exposed by API). These are report-push side effects, not evidence for corrected collector or test acceptance. Do not count them as PASS.
+- Job-log endpoint returned BlobNotFound during this snapshot; job step summaries were available and are the basis for the statuses above.
+No corrected full CI result, NSDL artifact, 2026-07-17 response, or 2026-08-26 response is verified yet. C261 remains current source triage. USDINR and mature-event-window blockers remain. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged.
+Exact next action: re-check Runs #393/#317; wait for their current NSE-history steps to resolve; inspect complete step summaries and artifacts. Only after #317 reaches NSDL collection inspect actual query outcomes for 2026-07-17 and 2026-08-26. If no official row/response, retain UNKNOWN/BLOCKED. Do not launch duplicate workflows or edit collector while these jobs are active.
