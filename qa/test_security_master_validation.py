@@ -20,7 +20,8 @@ class SecurityMasterValidationTests(unittest.TestCase):
         self.payload=b"SYMBOL,ISIN,LISTING_DATE\nABC,INE000A01001,\n"
         self.master.write_bytes(self.payload)
         self.data={
-            "schema_version":1,"http_status":200,\n            "source_url":"https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
+            "schema_version":1,"http_status":200,
+            "source_url":"https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
             "retrieved_at_utc":"2026-11-22T00:00:00+00:00",
             "source_family":"LEGACY_EQUITY_L_CSV",
             "daily_mii_equivalence":"NOT_ESTABLISHED",
