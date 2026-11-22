@@ -158,10 +158,13 @@ def nse_index_history(start,end):
       "indiavix":"INDIA VIX"
     }
     rows=[]; failures=[]; days_seen=0
-    day=start
-    while day<=end:
-        if day.weekday()<5:
-            stamp=day.strftime("%d%m%Y")
+    # Use only exact observed NSE sessions from the canonical 200-session panel.
+    # Calendar-day iteration creates avoidable holiday/closure requests.
+    panel_dates=pd.read_csv(PROCESSED,usecols=lambda c: str(c).strip().upper()=="DATE")
+    session_dates=sorted(pd.to_datetime(panel_dates.iloc[:,0],errors="coerce").dropna().dt.date.unique())
+    session_dates=[d for d in session_dates if start<=d<=end]
+    for day in session_dates:
+        stamp=day.strftime("%d%m%Y")
             urls=[
               f"https://nsearchives.nseindia.com/content/indices/ind_close_all_{stamp}.csv",
               f"https://archives.nseindia.com/content/indices/ind_close_all_{stamp}.csv"
@@ -195,10 +198,11 @@ def nse_index_history(start,end):
                     found=True; days_seen+=1; break
                 except Exception as exc:
                     failures.append({"date":day.isoformat(),"url":url,"error":f"{type(exc).__name__}: {exc}"})
-            # A weekend/holiday 404 is normal. Keep a small pause for archive courtesy.
-            time.sleep(0.08)
-        day+=timedelta(days=1)
-    return rows,{"weekday_requests":days_seen,"rows":len(rows),"failures":failures}
+            # Only verified observed trading sessions are requested.
+            if days_seen and days_seen % 20 == 0:
+                print(f"NSE_INDEX_ARCHIVE_PROGRESS={days_seen}/{len(session_dates)} sessions; rows={len(rows)}", flush=True)
+            time.sleep(0.04)
+    return rows,{"observed_session_requests":days_seen,"rows":len(rows),"failures":failures}
 
 def fred_history(label,series_id,start,end):
     """Fetch public FRED CSV in bounded 5-year windows to avoid long-request timeouts."""
