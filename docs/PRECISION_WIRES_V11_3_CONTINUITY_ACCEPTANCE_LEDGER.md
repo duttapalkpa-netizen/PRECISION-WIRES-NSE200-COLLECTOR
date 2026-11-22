@@ -3775,3 +3775,10 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Corrected permanent failure report on isolated branch: `docs/C273_RUN395_FAILURE_ROOT_CAUSE_AND_BOUNDED_REPAIR_20261122.md`, update commit `3c95bc43f322a4cd8c455644fcf1254612053185`, blob `1282aa4adb226a454d4cd9230e6f4c059e9fa501`.
 - C273 acceptance remains **NOT PASS**: actual Top-30 source fix is committed/read-back verified; automated regression and full walk-forward execution are pending; target denominators and artifact checks not yet validated. Do not lower 50 matured observations; H+3 with n<50 remains UNKNOWN. ₹0, official/free sources only, no synthetic or immature data.
 - Next exact actions: (1) refresh Run #398 and #402; (2) if #398 fails, inspect its precise log and patch only the failing defect; (3) require the serializer regression test to pass; (4) complete a full walk-forward run on the corrected source; (5) inspect resulting matured per-State × Target numerators/denominators and artifact SHA-256; (6) only then close C273 and move to official USD/INR daily-history acquisition.
+
+
+### C273 live workflow checkpoint — 2026-11-22 19:00 IST
+- Re-fetched GitHub Actions after the previous ledger write. Run #398 / `45027842316` remains **IN_PROGRESS**; 11 steps completed successfully and step 12 (quarterly results/calendar collection) was active; no failure recorded yet; no final artifact yet.
+- Run #402 / `45027949881` remains **PENDING** in the concurrency queue; it is associated with the serializer regression-test commit. It has no job result yet.
+- The current source read-back shows all three horizon-end-date fields in the Top-30 `predictions.append` block, not only in `universe_predictions`. The regression test is committed but not yet accepted as PASS.
+- Do not rerun completed acquisition/QA work unnecessarily. Await Run #398; then inspect Run #402 test outcome. C273 remains NOT PASS until both regression and walk-forward validation pass and artifact metrics are inspected.
