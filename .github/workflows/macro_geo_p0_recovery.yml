@@ -86,6 +86,9 @@ jobs:
         timeout-minutes: 12
         run: python pipeline/macro_geo_repair_p0.py
 
+      - name: Test source coverage fail-closed rules
+        run: python -m pytest -q qa/test_macro_geo_source_coverage.py qa/test_macro_geo_archive_report_contract.py
+
       - name: Audit macro, geopolitical and sector source coverage
         run: python pipeline/macro_geo_source_coverage.py
 
