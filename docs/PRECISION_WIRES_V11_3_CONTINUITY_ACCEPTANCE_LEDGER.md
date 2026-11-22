@@ -3868,3 +3868,33 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Reran only the failed recovery job using GitHub's failed-job rerun operation. It retains workflow run ID `45038111510`; inspect the latest attempt/job ID and logs. The recovery-watch automation was updated to monitor this run ID.
 - Earlier run artifact `14760606890` from the syntax-error attempt is retained as a failure artifact only; do not treat it as Macro-Geo evidence. The run's final status remains failure for attempt 1; the rerun attempt must be evaluated independently.
 - Do not rerun other concurrently triggered workflows merely because they failed; first inspect their exact failure reason and only act if relevant to the Macro-Geo P0 acceptance path.
+
+
+## 2026-11-22 — Nightly Rotation Backtest Review and Lessons Learned
+
+### Preflight / reused evidence
+- Re-read this Master Continuity Ledger (pre-append blob SHA-1 bedfd62b00311bdcbab3f4625494506cdd89fce6), morning report docs/DAILY_UNIFIED_TOP5_SWING_WATCHLIST_20261122.md (blob SHA-1 193bc1a463cd8d83bbda50c361cf3e10efcb2581), previous nightly report docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261121.md (blob SHA-1 1cd8217aed06d6c8021baa5873c467c81208177e), and existing lessons register docs/FAILURE_LESSONS_LEARNED_20261122.md (pre-update blob SHA-1 fb0a299983273aae01fa51aef5ebd5d916e7db70).
+- No regular NSE session on 2026-11-22 (Sunday). Latest cutoff remains 2026-11-20; current shadow cohort 8 unique symbols / 10 selector rows; qualified candidates 0; all H+1/H+3/H+5 outcomes immature. New matured observations 0; no new rolling validation run (0/10); no 120-minute prospective workflow launched.
+
+### Performance status
+- V11.4 Historical Behavioural Selector: BLOCKED / NOT_ADMISSIBLE; no accepted Precision/Recall/F1/capture rate/CI. Existing v1 forward-label defect and 613-vs-616 H+5 serialization mismatch remain unresolved; H+3 State 24 <50, UNKNOWN.
+- V11.3 Cost-aware replay: UNKNOWN / NOT_AUTHORIZED / NOT_RUN.
+- GCR: UNKNOWN / BLOCKED; Macro-Geo P0 recovery did not reach source coverage/event study/hard gate.
+- Best-3 target lists: no historical winners or prospective candidates can be evidence-ranked; UNKNOWN/BLOCKED for all five targets. Current false positives/missed winners remain UNKNOWN/IMMATURE; Run #339 full-universe denominator is unreconciled.
+
+### Independent artifact verification
+- Run #398 45027842316, job 137232482609, artifact 14757294944, head 7360870b768a6ed746451afa96ea918a3bffae07: GitHub digest and independent ZIP SHA-256 212a84103f2a9f47681865c7e165fe0247001b02d9563a5cef578636fb0b1898. 200 raw NSE bhavcopy files and 200 manifest entries; independent byte/hash checks 200/200; QA 200 sessions, 2,999 symbols, delivery coverage 100%. Raw retention PASS for this run. Per-file HTTP status and publication timestamp absent (0/200), so full provenance PARTIAL. Run #339 original raw bytes remain BLOCKED.
+- Run #45038111510 latest attempt job 137256604023: Steps 1–8 SUCCESS, Step 9 FAILED, Steps 10–13 SKIPPED. Verified failure: KeyError weekday_requests at pipeline/macro_geo_collect_p0.py:530; producer returns observed_session_requests, while caller expects weekday_requests. Artifact 14759889454, GitHub digest = independently computed ZIP SHA-256 618fde324b34fef465a1a9190b07825594c39e2d9ab2dc9f84917c9668cac6cb. QA and upstream manifest validation PASS; all P0 external inputs and downstream Macro-Geo reports MISSING. Dataset SHA-256 d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db.
+- Collector code SHA-256 255da8657e7cb838a52b2ba328458befb3d51f7000221acc912bef2c4335041a; workflow YAML SHA-256 064b85f9a8d2befb71bf02d495586a6136b236c24ff84437072cc7084e789904. No source-code patch or new workflow dispatch performed during this nightly review.
+
+### Dated Lessons Learned Register linkage
+- Existing PW-LSN-20261121-001 (forward-label defect) and PW-LSN-20261121-002 (H+5 serialization mismatch) carried forward; no duplicate IDs.
+- Existing PW-LSN-20261121-003 updated: Run #398 raw-file retention and byte/hash parity PASS; per-file provenance PARTIAL; Run #339 recovery remains BLOCKED.
+- New immutable lesson PW-LSN-20261122-001: Macro-Geo archive-report producer/consumer schema mismatch; root cause VERIFIED; status OPEN / NOT_ACCEPTED. Bounded network-free three-session schema contract test proposed; expected artifact archive_report_contract_validation.json.
+- Research note added to Observation-only diagnostic backlog: archive-report schema contract validation. No selector, threshold, ranking, production code or admission change.
+
+### Report / commit / hashes
+- Dated report: docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261122.md; commit 095bcef4a6e70c58ade2575d12e4527bde41ca8e; content SHA-256 fbf27507cf9a5e37e585bc18e1d229105dd9cf1af85eed8d831f6c4960ff1f53.
+- Lessons register: docs/FAILURE_LESSONS_LEARNED_20261122.md; commit 8757212b3988e84558ad74396294aac4cc849c29; content SHA-256 0ad52a16750c69a1d4ea8781d03d8624315b064cb5c1e0bebdbc7edad49d8731.
+- Acceptance: report and lesson append committed; workflow/artifact evidence independently inspected. Performance scorecards remain BLOCKED/UNKNOWN; no PASS is claimed for V11.4, V11.3 replay or GCR.
+- Next bounded actions: (1) read-only producer/consumer schema contract test; (2) per-file HTTP-status/publication-time provenance completeness; (3) Run #339 eligible-universe denominator reconciliation. Explicit user approval remains required before forward-label-v2 implementation or any production admission.
