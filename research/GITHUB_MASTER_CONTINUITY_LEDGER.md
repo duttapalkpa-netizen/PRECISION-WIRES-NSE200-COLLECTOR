@@ -16,8 +16,9 @@ Constraints: audit branch only; ₹0 spend; free official sources only; no synth
 
 ## Current priority
 **IN_PROGRESS — Run #383**, workflow run ID `44992957027`, head `6eed3272521cea3ab1b4eb255b55f5eeb3ceaabf`.
-Latest verified transition (C249): corrected-label walk-forward step completed SUCCESS; P0 market panel and timestamped geopolitical news collection is now IN_PROGRESS; four-group Macro-Geo P0 repair remains PENDING. No Run #383 artifact was available at the latest check. Step execution SUCCESS is not a performance acceptance PASS until metrics and sample coverage are inspected.
-C249 report: `research/CORRECTED_LABEL_WALK_FORWARD_STEP_ACCEPTANCE_CONTINUATION249_2026-11-22.md`; commit recorded in the report commit history.
+C249: corrected-label walk-forward step SUCCESS; P0 market/news collection IN_PROGRESS at last check.
+C250: source-policy audit found Yahoo secondary fallback and GDELT/RSS media discovery in `pipeline/macro_geo_collect_p0.py`; the required-series predicate accepts `AVAILABLE_SECONDARY`. `pipeline/macro_geo_repair_p0.py` also has a community GitHub USD/INR mirror fallback. These cannot satisfy official-only acceptance. No code changed while Run #383 is executing. C250 report: `research/MACRO_GEO_P0_OFFICIAL_SOURCE_POLICY_AUDIT_CONTINUATION250_2026-11-22.md`, commit `e7b4e4fd4098f1df9720eb239a71335367203c9b`.
+Next: after Run #383 ends, make secondary sources ineligible for official P0 gate; remove community mirror fallback; preserve GDELT/RSS only as clearly labelled media-publication discovery.
 URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44992957027
 
 ## Recent verified continuity
