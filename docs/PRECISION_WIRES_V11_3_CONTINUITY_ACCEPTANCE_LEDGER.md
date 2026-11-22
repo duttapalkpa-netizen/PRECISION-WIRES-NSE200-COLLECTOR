@@ -3898,3 +3898,9 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Lessons register: docs/FAILURE_LESSONS_LEARNED_20261122.md; commit 8757212b3988e84558ad74396294aac4cc849c29; content SHA-256 0ad52a16750c69a1d4ea8781d03d8624315b064cb5c1e0bebdbc7edad49d8731.
 - Acceptance: report and lesson append committed; workflow/artifact evidence independently inspected. Performance scorecards remain BLOCKED/UNKNOWN; no PASS is claimed for V11.4, V11.3 replay or GCR.
 - Next bounded actions: (1) read-only producer/consumer schema contract test; (2) per-file HTTP-status/publication-time provenance completeness; (3) Run #339 eligible-universe denominator reconciliation. Explicit user approval remains required before forward-label-v2 implementation or any production admission.
+
+
+### 2026-11-22 — Nightly report read-back refinement
+- Added a symbol-level maturity ledger for all eight 2026-11-20 cutoff shadow names (NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP): all five target scenarios remain IMMATURE; adverse excursion UNKNOWN; exact per-symbol cutoff price timestamp NOT_VERIFIED. This makes no hit/miss inference.
+- Corrected Run #45038111510 provenance wording: workflow event head dc8022b321a7adb41b0d172e792d696db410f4e9; latest attempt job 137256604023 checked out branch commit 135801ecea21460f565dd22d19439878bb0b49b3.
+- Latest report revision commit c1eb972abdade94008a46cfa4c1312758f3d14ef; content SHA-256 f5379d83e9c75ab517ba425dee5d7bc8217a9ea6e4cfd55e864d7a385f05d53e; read-back and hash reconciliation required.
