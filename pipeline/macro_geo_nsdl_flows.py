@@ -139,6 +139,31 @@ def find_flow_rows(page,group,query_date,source_url):
             return [{"DATE":query_date.isoformat(),"GROUP":"DII","NET_VALUE":float(vals.sum()),"SOURCE":"NSDL official DII daily archive","SOURCE_URL":source_url,"OBSERVED_AT_UTC":datetime.now(timezone.utc).isoformat()}]
     raise RuntimeError(f"NSDL {group} schema not recognized for {query_date}; no Equity/Stock Exchange net-investment table")
 
+def clip_to_window(df, start, end):
+    """Keep only valid source dates inside the declared collection window."""
+    if df.empty:
+        return df.copy()
+    dates = pd.to_datetime(df["DATE"], errors="coerce").dt.date
+    keep = dates.notna() & dates.ge(start) & dates.le(end)
+    out = df.loc[keep].copy()
+    out["DATE"] = dates.loc[keep].astype("string")
+    return out
+
+def coverage_audit(df, start, end):
+    """Measure DII coverage against official FPI archive dates, not weekdays."""
+    fpi = set(df.loc[df["GROUP"] == "FPI", "DATE"].dropna().astype(str))
+    dii = set(df.loc[df["GROUP"] == "DII", "DATE"].dropna().astype(str))
+    missing = sorted(fpi - dii)
+    return {
+        "window_start": start.isoformat(),
+        "window_end": end.isoformat(),
+        "fpi_archive_dates": len(fpi),
+        "dii_archive_dates": len(dii),
+        "dii_missing_fpi_archive_dates": missing,
+        "dii_coverage_vs_fpi_archive_dates_pct": round(100 * len(fpi & dii) / len(fpi), 2) if fpi else None,
+        "comparison_basis": "official FPI archive observation dates within the declared window; not a fabricated weekday calendar",
+        "quality": "AVAILABLE" if not missing else "AVAILABLE_WITH_GAPS"
+    }
 def main():
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True)
     report={"status":"BLOCKED","source":"NSDL official public FPI/DII archives","fpi_url":FPI_URL,"dii_url":DII_URL,"groups":{},"errors":[]}
@@ -177,6 +202,9 @@ def main():
         df["DATE"]=pd.to_datetime(df["DATE"],errors="coerce").dt.date.astype("string")
         df["NET_VALUE"]=pd.to_numeric(df["NET_VALUE"],errors="coerce")
         df=df.dropna(subset=["DATE","GROUP","NET_VALUE"]).drop_duplicates(["DATE","GROUP"]).sort_values(["DATE","GROUP"])
+        # Monthly FPI postbacks return the entire month; clip to the declared P0 window.
+        df=clip_to_window(df,start,end)
+    report["coverage_audit"]=coverage_audit(df,start,end)
     details={}
     for group in ("FPI","DII"):
         g=df[df["GROUP"]==group] if not df.empty else pd.DataFrame()
