@@ -57,6 +57,9 @@ jobs:
       - name: Collect quarterly results and board calendar (audit only)
         run: python pipeline/quarterly_results_research.py
       - name: Extract source-linked metrics from NSE XBRL attachments (audit only)
+        env:
+          QUARTERLY_METRIC_MAX_DISCLOSURES: "30"
+          QUARTERLY_METRIC_MAX_ATTACHMENTS_PER_DISCLOSURE: "2"
         run: python -m pipeline.quarterly_pdf_xbrl_metrics
       - name: Validate normalized quarterly metrics and build features (audit only)
         run: python pipeline/quarterly_results_research.py
