@@ -37,6 +37,19 @@
 - Reused the 2026-11-22 morning report; no new NSE download or 120-minute prospective workflow was launched.
 - Cutoff 2026-11-20; all 8 shadow symbols / 10 rows remain pending. H+1/H+3/H+5 hit/miss, adverse excursion and source-time outcome rows are **IMMATURE**, not false positives or misses.
 - Current eligibility gates admitted 0 names. No historical winner is promoted as a prospective candidate.
+- Symbol-level maturity ledger (cutoff 2026-11-20): each of the following 8 unique names has all target scenarios IMMATURE; per-symbol future-bar adverse excursion is UNKNOWN and no verified per-symbol cutoff price timestamp is admitted in the morning report.
+
+| Symbol | +2% H+1 | +5% H+1 | +10% H+3 | +15% H+5 | +20% H+5 | Adverse excursion | Cutoff source timestamp |
+|---|---|---|---|---|---|---|---|
+| NRL | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| V2RETAIL | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| SIGACHI | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| RSDFIN | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| KDDL | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| YATRA | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| KMCSHIL | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+| HINDOILEXP | IMMATURE | IMMATURE | IMMATURE | IMMATURE | IMMATURE | UNKNOWN | 2026-11-20 cutoff; exact timestamp NOT_VERIFIED |
+
 
 ## 4. Best 3 Stocks per Target
 
@@ -63,7 +76,7 @@ For all five targets: **পর্যাপ্ত যাচাইকৃত প্
 - Strict field-level provenance limitation: all 200 entries contain source URL, retrieval timestamp, source bytes, source SHA-256 and content type, but per-file HTTP status is absent (0/200) and publication timestamp is absent (0/200). Thus raw-byte retention = **PASS for Run #398**; full per-file provenance = **PARTIAL**. This does not recover the original missing Run #339 artifact bytes.
 
 ### Run #45038111510 — Macro-Geo recovery failure
-- Latest attempt job **137256604023** on head **135801ecea21460f565dd22d19439878bb0b49b3**: Steps 1–8 SUCCESS; Step 9 Collect P0 macro market panel and timestamped news FAILED; Steps 10–13 SKIPPED. Log timestamp 2026-11-22T15:27:37Z: **KeyError: 'weekday_requests'** at pipeline/macro_geo_collect_p0.py:530.
+- Workflow event head **dc8022b321a7adb41b0d172e792d696db410f4e9**; latest attempt job **137256604023** checked out branch commit **135801ecea21460f565dd22d19439878bb0b49b3**: Steps 1–8 SUCCESS; Step 9 Collect P0 macro market panel and timestamped news FAILED; Steps 10–13 SKIPPED. Log timestamp 2026-11-22T15:27:37Z: **KeyError: 'weekday_requests'** at pipeline/macro_geo_collect_p0.py:530.
 - Source inspection confirms nse_index_history() returns observed_session_requests, rows, failures, while main() still indexes archive_report["weekday_requests"]. The caller/return-schema mismatch is VERIFIED; collection stopped before P0 repair, coverage, event study or hard gate.
 - Artifact **14759889454**, GitHub digest and independently recomputed ZIP SHA-256 **618fde324b34fef465a1a9190b07825594c39e2d9ab2dc9f84917c9668cac6cb**. Embedded NSE QA and 200-session manifest validation PASS; canonical panel SHA-256 **d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db**. All seven P0 external input files and the repair, collection-manifest, source-coverage, event-study and hard-gate reports are MISSING. Macro-Geo remains BLOCKED.
 - Code SHA-256: **255da8657e7cb838a52b2ba328458befb3d51f7000221acc912bef2c4335041a**; workflow YAML SHA-256: **064b85f9a8d2befb71bf02d495586a6136b236c24ff84437072cc7084e789904**. The series registry is inline in the script; no separate config file was executed.
