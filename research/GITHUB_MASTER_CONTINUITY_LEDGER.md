@@ -232,3 +232,10 @@ Re-fetched Master Ledger, C264 report and collector. No PASS work repeated; no c
 - Both job-log downloads returned Azure BlobNotFound. This is log retrieval failure only, not run failure or acceptance evidence.
 - No defensible new PASS/FAIL. No duplicate runs, no source edits, no production changes. NSDL 2026-07-17 and 2026-08-26 outcomes remain UNKNOWN; USDINR and mature event-window blockers remain.
 - Next: re-poll when updated_at changes; inspect #317 once NSDL step is reached and #393 on completion. If unchanged, inspect checks/annotations rather than duplicating work.
+
+
+### C266 — Run #393 cancellation and Macro-Geo stall diagnostic (2026-11-22)
+Report: `research/ACTIVE_RUN_CANCELLATION_AND_MACRO_GEO_STALL_DIAGNOSTIC266_2026-11-22.md`; report commit `0c45780008385e426aef44642d6579925b4c61ed`.
+Re-fetched ledger, C265 and C261 before work. Run #393 / ID `45001043441`, corrected test SHA `9fac7d42bd09f6b0a4d9a4c0742a36451816e0a4`, is now completed/cancelled (updated_at 2026-11-22T08:17:32Z). Steps through quarterly metric feature validation succeeded, but corrected-label walk-forward was CANCELLED; all downstream P0, hard-gate, selector diagnostics and prospective-pick steps were SKIPPED. Artifact `prospective-watchlist-audit` ID `14746596124`, 31,123,316 bytes, SHA-256 `a06f41ff5dceeda60094414f0cb9ab5a155364f5699e88f9e3e09b5fd83d2f1a`; artifact contents not inspected, so no metric acceptance inferred.
+Run #317 / ID `45001040455`, collector SHA `885528a076e98996455358ee236f1a2960a276ea`, remains IN_PROGRESS; steps 1–7 SUCCESS, step 8 P0 market/media collection IN_PROGRESS; NSDL collection step 11 not reached; no artifacts. Do not duplicate or edit while active. NSDL 2026-07-17 and 2026-08-26 remain UNKNOWN; USDINR and mature event windows remain BLOCKED. No production changes.
+Next: poll #317 after state change; inspect NSDL artifact and exact date outcomes once step 11 is reached; inspect full strict gate only after completion. Inspect #393 artifact contents only if a supported route exists; do not infer walk-forward results. PASS work skipped.
