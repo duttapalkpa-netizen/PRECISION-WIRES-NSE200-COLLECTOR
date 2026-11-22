@@ -1,0 +1,179 @@
+name: Audit-only Macro-Geo P0 Recovery
+
+on:
+  push:
+    branches: [audit/prospective-selector-tracking]
+    paths:
+      - ".github/workflows/macro_geo_p0_recovery.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: macro-geo-p0-recovery
+  cancel-in-progress: false
+
+jobs:
+  macro-geo-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout isolated audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: audit/prospective-selector-tracking
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install pinned project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Download exact upstream Run 398 handoff artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: prospective-watchlist-audit
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 45027842316
+          path: handoff
+
+      - name: Restore upstream files and verify acquisition provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a handoff/. .
+          test -s data/raw/acquisition_manifest.json
+          test -s outputs/prospective/acquisition_manifest_validation.json
+          test -s data/reference/security_master.csv
+          test -s data/reference/security_master_manifest.json
+          python - <<'PY'
+          import json
+          qa=json.load(open("data/qa/qa_report.json"))
+          manifest=json.load(open("outputs/prospective/acquisition_manifest_validation.json"))
+          assert qa.get("status") == "PASS", qa
+          assert qa.get("raw_files") == 200 and qa.get("sessions") == 200, qa
+          assert manifest.get("status") == "PASS", manifest
+          assert manifest.get("verified_retained_files") == 200, manifest
+          assert manifest.get("fully_provenanced_entries") == 200, manifest
+          assert not manifest.get("errors"), manifest
+          print("UPSTREAM_HANDOFF=PASS; 200 retained NSE sessions and provenance verified")
+          PY
+          python qa/validate_acquisition_manifest.py --sessions 200
+
+      - name: Rebuild canonical processed NSE panel from verified raw archive
+        run: python collector/build_200_sessions.py
+
+      - name: Strict canonical NSE dataset QA
+        run: python qa/validate_dataset.py
+
+      - name: Collect P0 macro market panel and timestamped news
+        timeout-minutes: 15
+        run: python pipeline/macro_geo_collect_p0.py
+
+      - name: Repair four missing P0 source groups
+        timeout-minutes: 12
+        run: python pipeline/macro_geo_repair_p0.py
+
+      - name: Audit macro, geopolitical and sector source coverage
+        run: python pipeline/macro_geo_source_coverage.py
+
+      - name: Run historical Macro-Geo event study
+        id: event_study
+        shell: bash
+        run: |
+          set +e
+          python pipeline/macro_geo_event_study.py
+          rc=$?
+          set -e
+          echo "event_study_exit_code=$rc" >> "$GITHUB_OUTPUT"
+          if [ ! -s outputs/macro_geo/event_study_report.json ]; then
+            echo "::error::Event study report missing; no hard-gate acceptance possible."
+            exit 1
+          fi
+          echo "Event study report exists; strict gate will determine acceptance."
+
+      - name: Enforce strict Macro-Geo hard gate
+        id: macro_geo_gate
+        shell: bash
+        run: |
+          set +e
+          python pipeline/macro_geo_hard_gate.py
+          rc=$?
+          set -e
+          test -s outputs/macro_geo/hard_gate_report.json
+          status="$(python -c 'import json; print(json.load(open("outputs/macro_geo/hard_gate_report.json")).get("status","INVALID"))')"
+          if [ "$status" = "PASS" ] && [ "$rc" -eq 0 ]; then
+            echo "candidate_release_allowed=true" >> "$GITHUB_OUTPUT"
+            echo "Macro-Geo hard gate PASS."
+          elif [ "$status" = "BLOCKED" ] && [ "$rc" -ne 0 ]; then
+            echo "candidate_release_allowed=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Research evidence collected, but release remains BLOCKED."
+          else
+            echo "::error::Unexpected gate status/exit combination: status=$status rc=$rc"
+            exit 1
+          fi
+
+      - name: Build reproducibility digest manifest for Macro-Geo outputs
+        if: always()
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          paths=[
+            "data/processed/nse_eq_200_sessions.csv",
+            "data/external/market_panel.csv",
+            "data/external/benchmark_indices.csv",
+            "data/external/sector_indices.csv",
+            "data/external/brent_crude.csv",
+            "data/external/usd_inr.csv",
+            "data/external/fpi_dii_flows.csv",
+            "data/external/corporate_events.csv",
+            "outputs/macro_geo/p0_repair_report.json",
+            "outputs/macro_geo/p0_collection_manifest.json",
+            "outputs/macro_geo/source_coverage.json",
+            "outputs/macro_geo/event_study_report.json",
+            "outputs/macro_geo/hard_gate_report.json",
+          ]
+          records=[]
+          for name in paths:
+            p=Path(name)
+            if p.is_file():
+              h=hashlib.sha256(p.read_bytes()).hexdigest()
+              records.append({"path":name,"bytes":p.stat().st_size,"sha256":h,"status":"PRESENT"})
+            else:
+              records.append({"path":name,"bytes":None,"sha256":None,"status":"MISSING"})
+          out=Path("outputs/macro_geo/recovery_sha256_manifest.json")
+          out.parent.mkdir(parents=True,exist_ok=True)
+          out.write_text(json.dumps({"schema_version":1,"records":records},indent=2))
+          print(out.read_text())
+          PY
+
+      - name: Upload Macro-Geo recovery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-geo-p0-recovery
+          path: |
+            data/qa/qa_report.json
+            data/raw/acquisition_manifest.json
+            outputs/prospective/acquisition_manifest_validation.json
+            data/reference/security_master.csv
+            data/reference/security_master_manifest.json
+            data/processed/nse_eq_200_sessions.csv
+            data/external/market_panel.csv
+            data/external/benchmark_indices.csv
+            data/external/sector_indices.csv
+            data/external/brent_crude.csv
+            data/external/usd_inr.csv
+            data/external/fpi_dii_flows.csv
+            data/external/corporate_events.csv
+            outputs/macro_geo/**
+          if-no-files-found: warn
+          compression-level: 6
