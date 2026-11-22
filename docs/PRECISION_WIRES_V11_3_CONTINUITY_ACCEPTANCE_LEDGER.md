@@ -1,5 +1,5 @@
 # PRECISION-WIRES V11.3 — Continuity & Acceptance Ledger
-Last reconciled: 2026-11-08 (Asia/Kolkata)
+Last reconciled: 2026-11-22 (Asia/Kolkata)
 Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR
 
 ## 1. Non-negotiable project invariants
@@ -3726,3 +3726,20 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Confirmed the precise root cause: workflow upload-artifact allowlist omitted the raw NSE CSV glob, sessions, acquisition diagnostics and security master. Added these paths to the isolated `audit/prospective-selector-tracking` workflow; commit `46f4a359f21da676cb0c92e874fb08f14ee20d90`.
 - Future-run retention proof remains PENDING; historical Run #339 raw recovery remains BLOCKED; per-file acquisition-time URL/timestamp/bytes/SHA manifest remains NOT_DONE. No old data redownloaded or provenance inferred.
 - Detail: `docs/NSE_RUN339_RAW_SOURCE_ARTIFACT_PACKAGING_ROOT_CAUSE_AND_RETENTION_FIX_CONTINUATION228_20261121.md`; Priority Queue and Historical Task Registry appended as C228. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged; ₹0; UNKNOWN never PASS.
+
+
+## Daily Pre-Market Alert Review — 2026-11-22
+
+- Re-read the current Master Continuity Ledger, 2026-11-21 morning report, 2026-11-21 nightly review, Run #416 archive, Run #339 prospective artifact and Continuation 228 before selecting today's work. Completed audits were reused; no repeated label audit, raw ZIP inventory or historical cohort recomputation.
+- 2026-11-22 is Sunday; latest archived NSE market cutoff remains 2026-11-20. NSE 2026 capital-market holiday circular NSE/CMTR/71775 lists 2026-11-24 as a holiday; next scheduled equity session is 2026-11-23.
+- Run #416 (run ID 44744602064; artifact 14632139339; ZIP SHA-256 b12ea634f24af8241ee9a901635dd743195f4b8a3a1511cc2ffe3c3246282082) provides normalized 200-session data (2026-02-16–2026-11-20), 2,999 symbols, 503,892 rows, dataset SHA-256 d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db. It lacks original raw NSE payloads and acquisition-time per-file manifest; not a raw-source replay.
+- Run #339 (run ID 44799560798; artifact 14660032260; ZIP SHA-256 23e74e7f9ef2e32bf5b6bbc5a931814c06fe065835b8bdda74f3c00dbdafd213) retained no raw files/manifest. Continuation 228 verified the exact artifact allowlist omission and committed an isolated-branch correction at 46f4a359f21da676cb0c92e874fb08f14ee20d90. Future artifact retention proof remains PENDING; per-file acquisition-time manifest NOT_DONE.
+- Latest prospective audit run #365 (run ID 44938858340) was cancelled; it does not prove the correction's future artifact retention.
+- Current 2026-11-20 shadow cohort: 8 unique symbols / 10 rows (NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP). H+1/H+3/H+5 outcomes remain PENDING/IMMATURE until the required exchange sessions occur. Qualified candidates: 0. No current target bands or stops generated from stale/missing price provenance.
+- Historical target-wise +2/+5/+10/+15/+20 capture metrics: all UNKNOWN / NOT_ADMISSIBLE because v1 forward labels/ranking lineage are contaminated; H+5 JSON/CSV count mismatch (613 vs 616) remains unresolved. Historical best-three lists for all targets: NOT_VALIDATED / BLOCKED; no names promoted.
+- Engine statuses: A V11.4 BLOCKED/NOT_ADMISSIBLE; B V11.3 cost-aware replay UNKNOWN/NOT_AUTHORIZED/NOT_RUN; C GCR UNKNOWN/BLOCKED. No ranking boosts.
+- Failure review: 2026-11-21 nightly report already audited the earlier 2026-11-19 cutoff shadow cohort; its 4/7 +2% intraday high-touch and 3 misses are descriptive only and NOT_VALIDATED due missing raw provenance. Today's 2026-11-20 cohort has no matured outcome; no false positive/missed-winner claim assigned.
+- Reused immutable lessons PW-LSN-20261121-001 (forward-label defect, VERIFIED), PW-LSN-20261121-002 (H+5 JSON/CSV mismatch, SUPPORTED; cause UNKNOWN), PW-LSN-20261121-003 (raw artifact omission, exact allowlist root cause VERIFIED; isolated fix committed; future retention PENDING; manifest NOT_DONE). No duplicate lesson IDs and no new independently proven lesson created today.
+- Daily report: docs/DAILY_UNIFIED_TOP5_SWING_WATCHLIST_20261122.md; commit b911f73b1d13a0f06c30816c594500594924b2f6.
+- Daily failure/learning log: docs/FAILURE_LESSONS_LEARNED_20261122.md; commit 8502619cae5f86e32f6c550d4559da1a21de7cf0.
+- No new workflow dispatch, NSE download, paid source, synthetic data or production change. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2 remain unchanged. UNKNOWN is never PASS.
