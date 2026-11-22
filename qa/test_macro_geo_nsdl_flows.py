@@ -8,7 +8,6 @@ class NsdlFlowWindowTests(unittest.TestCase):
     def test_official_2026_nse_holidays_are_classified(self):
         expected = {
             date(2026, 6, 26): "Muharram",
-            date(2026, 8, 26): "Id-E-Milad",
             date(2026, 9, 14): "Ganesh Chaturthi",
             date(2026, 10, 2): "Mahatma Gandhi Jayanti",
             date(2026, 10, 20): "Dussehra",
@@ -16,6 +15,8 @@ class NsdlFlowWindowTests(unittest.TestCase):
         }
         for day, name in expected.items():
             self.assertEqual(nse_trading_holiday_name(day), name)
+        # Aug 26 is a Debt Segment holiday, not a Capital Market holiday.
+        self.assertIsNone(nse_trading_holiday_name(date(2026, 8, 26)))
         # July 17 remains an unresolved archive/schema gap, not a holiday.
         self.assertIsNone(nse_trading_holiday_name(date(2026, 7, 17)))
 
