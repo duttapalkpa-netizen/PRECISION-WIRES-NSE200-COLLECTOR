@@ -204,6 +204,12 @@ def parse_xbrl(blob):
                 "unit":node.attrib.get("unitRef","") or node.attrib.get("unitref",""),
                 "dimensions":period.get("dimensions",[])})
  return facts
+class AttachmentFetchError(requests.HTTPError):
+ """Preserve per-host HTTP diagnostics when official attachment retrieval fails."""
+ def __init__(self, message, attempts):
+  super().__init__(message)
+  self.attempts = attempts
+
 def fetch_attachment(session, url):
  """Fetch an official NSE attachment, falling back between official archive hosts on 403."""
  candidates = [url]
@@ -211,20 +217,25 @@ def fetch_attachment(session, url):
   candidates.append(url.replace("https://nsearchives.nseindia.com/", "https://archives.nseindia.com/", 1))
  elif url.startswith("https://archives.nseindia.com/"):
   candidates.append(url.replace("https://archives.nseindia.com/", "https://nsearchives.nseindia.com/", 1))
- last_error = None
+ attempts = []
  for candidate in dict.fromkeys(candidates):
   try:
    response = session.get(candidate, timeout=(8, 35))
+   attempts.append({"url":candidate,"status_code":int(response.status_code),
+                    "content_type":str(response.headers.get("Content-Type","")),
+                    "bytes":len(response.content or b"")})
    if response.status_code == 403 and candidate != candidates[-1]:
-    last_error = requests.HTTPError(f"403 from official archive host: {candidate}")
     continue
    response.raise_for_status()
    return response, candidate
   except Exception as exc:
-   last_error = exc
- if last_error:
-  raise last_error
- raise RuntimeError("No official attachment URL candidates")
+   if not attempts or attempts[-1].get("url") != candidate:
+    attempts.append({"url":candidate,"error":type(exc).__name__+":"+str(exc)[:200]})
+   if isinstance(exc, requests.HTTPError):
+    raise AttachmentFetchError("Official NSE attachment retrieval failed", attempts) from exc
+ if attempts:
+  raise AttachmentFetchError("Official NSE attachment retrieval failed", attempts)
+ raise AttachmentFetchError("No official attachment URL candidates", attempts)
 
 def parse_pdf_text(blob):
  """Extract selectable PDF text; scanned/image-only PDFs remain blocked, never OCR-guessed."""
@@ -480,7 +491,11 @@ def main():
       "PAT":None if not pat else {"tag":pat.get("tag"),"context":pat.get("context"),"unit":pat.get("unit"),"period_end":pat.get("period_end"),"start_date":pat.get("start_date"),"dimensions":pat.get("dimensions",[])} ,
       "EPS":None if not eps else {"tag":eps.get("tag"),"context":eps.get("context"),"unit":eps.get("unit"),"period_end":eps.get("period_end"),"start_date":eps.get("start_date"),"dimensions":eps.get("dimensions",[])}},
      "basis_metadata":{"consolidated":str(raw.get("consolidated","")),"subject":str(r.get("SUBJECT","")),"attachment_text":str(raw.get("attchmntText",""))[:300]},"response_diagnostics":{"content_type":ctype,"bytes":len(blob),"prefix":blob[:500].decode("utf-8",errors="replace"),"contains_ix_nonfraction":bool(re.search(br"ix:nonfraction",blob,re.I)),"contains_context":bool(re.search(br"(?:xbrli:)?context",blob,re.I)),"final_url":resp.url}})
-   except Exception as exc: errors.append({"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]})
+   except Exception as exc:
+   error_row={"symbol":symbol,"url":url,"reason":type(exc).__name__+":"+str(exc)[:200]}
+   if getattr(exc,"attempts",None):
+    error_row["official_host_attempts"]=exc.attempts
+   errors.append(error_row)
   if not extracted:
    # Issuer PDF fallback is tightly scoped to the matching issuer, ISIN, period,
    # and basis declared by the NSE disclosure metadata. Never infer basis from
