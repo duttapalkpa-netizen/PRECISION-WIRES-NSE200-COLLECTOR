@@ -3793,3 +3793,9 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Current acceptance: source correction COMMITTED + READ-BACK VERIFIED; regression execution NOT YET VERIFIED; full walk-forward execution NOT YET VERIFIED; artifact denominator reconciliation NOT YET VERIFIED; C273 overall **NOT PASS**.
 - Immediate next actions: (1) monitor rerun job `137232482609` to final status; (2) if walk-forward step fails, inspect exact traceback and make only a bounded correction; (3) after Run #398 completes, rerun Run #402 regression job; (4) inspect artifact outputs and SHA-256; (5) verify per-State × target matured numerator/denominator; retain H+3 n<50 as UNKNOWN; (6) only then close C273 and move to official USD/INR historical capture.
 - Invariants retained: ₹0 spend; official/free sources; no synthetic or immature observations; UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX unchanged.
+
+
+#### Part-1 execution update — 2026-11-22
+- Rechecked rerun of Run #398 after the retry: job ID `137232482609` is **IN_PROGRESS**. Five steps have completed successfully, including `Test corrected forward labels and prospective ledger`; `Acquire normalized NSE history` is currently active. No failed or cancelled steps are reported in this retry at the latest poll.
+- Workflow job logs are not yet downloadable while the active step is running (GitHub log blob not yet available); this is not treated as failure.
+- Next: let history acquisition and downstream validation complete; inspect final job logs/artifact; only then retry the cancelled regression workflow #402 to avoid concurrency cancellation. C273 remains NOT PASS pending those checks.
