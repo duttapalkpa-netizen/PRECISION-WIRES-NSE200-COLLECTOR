@@ -1,7 +1,8 @@
 import unittest
+import inspect
 import pandas as pd
 
-from pipeline.walk_forward_backtest import _matured_state_target_metrics
+from pipeline.walk_forward_backtest import _matured_state_target_metrics, main
 
 
 class MaturedStateDenominatorTests(unittest.TestCase):
@@ -18,6 +19,12 @@ class MaturedStateDenominatorTests(unittest.TestCase):
                 "FUT5_END_DATE": None if i < null_outcomes else "2026-11-05",
             })
         return pd.DataFrame(rows)
+
+    def test_top30_prediction_rows_preserve_all_horizon_end_dates(self):
+        source = inspect.getsource(main)
+        top30_block = source.split("predictions.append({", 1)[1].split("})", 1)[0]
+        for column in ("FUT1_END_DATE", "FUT3_END_DATE", "FUT5_END_DATE"):
+            self.assertIn(f'"{column}":r["{column}"]', top30_block)
 
     def test_h3_calibration_requires_50_fully_matured_observations(self):
         result = _matured_state_target_metrics(self._frame(55, null_outcomes=6))
