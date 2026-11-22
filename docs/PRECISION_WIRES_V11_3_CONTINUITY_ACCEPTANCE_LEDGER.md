@@ -3904,3 +3904,13 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Added a symbol-level maturity ledger for all eight 2026-11-20 cutoff shadow names (NRL, V2RETAIL, SIGACHI, RSDFIN, KDDL, YATRA, KMCSHIL, HINDOILEXP): all five target scenarios remain IMMATURE; adverse excursion UNKNOWN; exact per-symbol cutoff price timestamp NOT_VERIFIED. This makes no hit/miss inference.
 - Corrected Run #45038111510 provenance wording: workflow event head dc8022b321a7adb41b0d172e792d696db410f4e9; latest attempt job 137256604023 checked out branch commit 135801ecea21460f565dd22d19439878bb0b49b3.
 - Latest report revision commit c1eb972abdade94008a46cfa4c1312758f3d14ef; content SHA-256 f5379d83e9c75ab517ba425dee5d7bc8217a9ea6e4cfd55e864d7a385f05d53e; read-back and hash reconciliation required.
+
+
+### 2026-11-22 — Macro-Geo Recovery Run #45038111510 final attempt
+- Terminal status: workflow completed/FAILURE, attempt 2; latest job 137256604023 completed/FAILURE. Steps 1–8 PASS; Step 9 `Collect P0 macro market panel and timestamped news` FAIL; steps 10–13 SKIPPED; evidence manifest and artifact upload succeeded.
+- Confirmed root cause: `KeyError: 'weekday_requests'` at `pipeline/macro_geo_collect_p0.py:530`. The bounded archive function now returns `observed_session_requests`, but its caller still indexes `weekday_requests`. It is a producer/consumer key mismatch, not a timeout. Log showed progress to 180/200 observed sessions and 1,980 rows before the exception.
+- Latest-attempt artifact ID 14759889454; GitHub ZIP digest and independently computed ZIP SHA-256 match: `618fde324b34fef465a1a9190b07825594c39e2d9ab2dc9f84917c9668cac6cb`. Earlier attempt artifact ID 14760606890 also independently matched digest `932e2ce6ab735ad23116b18a3ca3501db906e924d3d46516fbdf899b6ce843e7`.
+- Upstream QA PASS: 200/200 sessions/files, 2,999 symbols, delivery quantity and percentage coverage 100%, zero issues. Acquisition provenance PASS: 200/200 retained and fully provenanced entries, zero errors. NSE processed panel SHA-256: `d6810409dbd800e5146e08a1eb1e8b48207354461876acb62cbb2f656fba51db`.
+- All Macro-Geo outputs are MISSING, including collection manifest, source coverage, event study and `hard_gate_report.json`. Hard-gate step SKIPPED; no PASS evidence exists; candidate release remains false/not allowed. P0 source groups remain UNKNOWN/BLOCKED.
+- Next bounded action: align the caller with `observed_session_requests` (or add a backward-compatible alias), add a small producer/consumer schema regression test, rerun only the isolated recovery workflow, then inspect the generated manifest before downstream stages.
+- No production selector/ranking/CORE-672/Engine A–E/IPO-PLX changes; no synthetic data; ₹0 spend; UNKNOWN never PASS.
