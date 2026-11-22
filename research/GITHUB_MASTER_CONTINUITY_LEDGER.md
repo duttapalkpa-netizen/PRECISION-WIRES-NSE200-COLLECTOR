@@ -21,6 +21,12 @@ C250: source-policy audit found Yahoo secondary fallback and GDELT/RSS media dis
 Next: after Run #383 ends, make secondary sources ineligible for official P0 gate; remove community mirror fallback; preserve GDELT/RSS only as clearly labelled media-publication discovery.
 URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44992957027
 
+## C251 — Run #383 cancellation and Macro-Geo source-policy repair
+Run #383 ID `44992957027` concluded `cancelled`, not failed. Job log shows explicit operation cancellation at `pipeline/macro_geo_collect_p0.py` on 2026-11-22 06:26:25 UTC. No failed step was recorded. Partial artifact ID `14743330788`, SHA-256 `6c3fd376e7a1473e3ddc1f5ea58c18abcf92a46d8016e9a4bbd2105dd6953acb`. Artifact confirms 200 NSE sessions, 2,999 symbols, 100% delivery coverage and QA PASS; no completed P0 manifest/repair report, so Macro-Geo remains UNKNOWN/BLOCKED.
+C251 commits: tests `a88d001a03a88dae21015fbd11f7abe8ccb00b84`; collector official-row gate `c38266fca0566d1244498625db43ad2b88456512`; repair mirror removal `0fa47564fbe532f66ed7d69ddff80faaefbe9517`; FRED provenance/status correction `e81aeb913f426917f27f602da926c1f56201478a`. Yahoo-only observations cannot satisfy official P0 readiness; community USD/INR mirror removed; USD/INR remains BLOCKED if FRED fails and no direct official RBI/FBIL source is verified; EIA RBRTE retained as official Brent fallback; FRED explicitly identified as Federal Reserve Bank of St. Louis. Five regression tests added at `qa/test_macro_geo_official_source_policy.py`.
+Report: `research/MACRO_GEO_SOURCE_POLICY_REPAIR_CONTINUATION251_2026-11-22.md`. CI: Run #386 ID `44994006387` triggered by C251 code, initially PENDING; inspect latest run after subsequent commit before any PASS claim. C251 code COMMITTED, CI VERIFICATION PENDING.
+Next: inspect latest run/artifact; targeted and full QA; verify official source gate from artifacts; retain UNKNOWN/BLOCKED where official coverage absent. Invariants unchanged.
+ 
 ## Recent verified continuity
 
 ### C235 — Security Master fail-closed provenance
