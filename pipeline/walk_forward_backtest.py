@@ -681,7 +681,8 @@ def main():
                 "REPRICING_PRESSURE":r["REPRICING_PRESSURE"],"EXPANSION_READY":r["EXPANSION_READY"],
                 "EXHAUSTION":r["EXHAUSTION"],"RVOL20":r["RVOL20"],"RS5":r["RS5"],"RS20":r["RS20"],
                 "RET5":r["RET5"],"DIST_HIGH20":r["DIST_HIGH20"],
-                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"]})
+                "FUT1_HIGH_PCT":r["FUT1_HIGH_PCT"],"FUT3_HIGH_PCT":r["FUT3_HIGH_PCT"],"FUT5_HIGH_PCT":r["FUT5_HIGH_PCT"],
+                "FUT1_END_DATE":r["FUT1_END_DATE"],"FUT3_END_DATE":r["FUT3_END_DATE"],"FUT5_END_DATE":r["FUT5_END_DATE"]})
 
         for _,r in top.iterrows():
             vals=_independent_diagnostics(r)
