@@ -24,6 +24,20 @@ BASE="https://www.fpi.nsdl.co.in/web/"
 UA=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
 FIRST_DII=date(2026,6,1)
+# NSE Capital Market holidays verified against circular NSE/CMTR/71775 (2025-12-12).
+NSE_TRADING_HOLIDAYS_2026 = {
+    date(2026,6,26): "Muharram",
+    date(2026,8,26): "Id-E-Milad",
+    date(2026,9,14): "Ganesh Chaturthi",
+    date(2026,10,2): "Mahatma Gandhi Jayanti",
+    date(2026,10,20): "Dussehra",
+    date(2026,11,10): "Diwali-Balipratipada",
+}
+NSE_TRADING_HOLIDAY_SOURCE = "https://nsearchives.nseindia.com/content/circulars/CMTR71775.pdf"
+
+def nse_trading_holiday_name(day):
+    """Return the officially declared 2026 NSE cash-market holiday name, if any."""
+    return NSE_TRADING_HOLIDAYS_2026.get(day)
 
 def norm(s):
     return re.sub(r"[^a-z0-9]+"," ",str(s).lower()).strip()
@@ -166,7 +180,7 @@ def coverage_audit(df, start, end):
     }
 def main():
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True)
-    report={"status":"BLOCKED","source":"NSDL official public FPI/DII archives","fpi_url":FPI_URL,"dii_url":DII_URL,"groups":{},"errors":[]}
+    report={"status":"BLOCKED","source":"NSDL official public FPI/DII archives","fpi_url":FPI_URL,"dii_url":DII_URL,"groups":{},"errors":[],"non_trading_holidays":[],"holiday_calendar_source":NSE_TRADING_HOLIDAY_SOURCE}
     if not PANEL.exists():
         report["errors"].append(f"Missing canonical panel: {PANEL}")
         REPORT.write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
@@ -190,6 +204,11 @@ def main():
     dii_ok=0; day=start
     while day<=end:
         if day.weekday()<5:
+            holiday_name=nse_trading_holiday_name(day)
+            if holiday_name:
+                report["non_trading_holidays"].append({"date":day.isoformat(),"name":holiday_name,"source":NSE_TRADING_HOLIDAY_SOURCE})
+                day+=timedelta(days=1)
+                continue
             try:
                 page,url=client.post_date(DII_URL,day)
                 got=find_flow_rows(page,"DII",day,url)
