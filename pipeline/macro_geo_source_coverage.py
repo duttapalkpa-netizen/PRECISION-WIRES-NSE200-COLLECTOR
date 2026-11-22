@@ -155,9 +155,20 @@ def main():
             if (flow_info["unique_dates"] < 60 or flow_info["date_span_days"] < 90 or
                 not group_coverage or any(v["unique_dates"] < 60 or v["date_span_days"] < 90 for v in group_coverage.values())):
                 flow_info["status"]="INSUFFICIENT_HISTORICAL_COVERAGE"
+                # Reflect domain-level insufficiency in the inventory row too;
+                # file existence with two snapshot rows must not be counted as AVAILABLE.
+                flow_row=next((item for item in rows if item["source"]=="fpi_dii_flows"),None)
+                if flow_row is not None:
+                    flow_row["status"]="DATA_QUALITY_WARN"
+                    flow_row["notes"]="Insufficient historical coverage: requires >=60 distinct dated observations spanning >=90 calendar days; snapshot rows remain UNKNOWN, not usable history."
         except Exception:
             p0_rows["fpi_dii_flows"]["status"]="DATA_QUALITY_WARN"
+            flow_row=next((item for item in rows if item["source"]=="fpi_dii_flows"),None)
+            if flow_row is not None:
+                flow_row["status"]="DATA_QUALITY_WARN"
+                flow_row["notes"]="Could not validate historical FPI/DII coverage; status remains UNKNOWN."
     # Refresh available groups only after the strict per-group rules above.
+    frame=pd.DataFrame(rows)
     p0_available=[name for name,info in p0_rows.items() if info["status"]=="AVAILABLE" and info["rows"]>0]
     report={"status":"INVENTORY_COMPLETE_WITH_GAPS" if (frame.status!="AVAILABLE").any() else "SCHEMA_AND_GENERIC_QA_AVAILABLE",
             "as_of_utc":now.isoformat(),"sources_total":len(rows),"available":int((frame.status=="AVAILABLE").sum()),
