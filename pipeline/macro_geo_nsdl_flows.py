@@ -162,11 +162,14 @@ def clip_to_window(df, start, end):
     out["DATE"] = dates.loc[keep].astype("string")
     return out
 
-def coverage_audit(df, start, end):
-    """Measure DII coverage against official FPI archive dates, not weekdays."""
+def coverage_audit(df, start, end, dii_query_attempts=None):
+    """Compare official FPI archive dates and separately expose each DII date-query outcome."""
     fpi = set(df.loc[df["GROUP"] == "FPI", "DATE"].dropna().astype(str))
     dii = set(df.loc[df["GROUP"] == "DII", "DATE"].dropna().astype(str))
     missing = sorted(fpi - dii)
+    attempts = list(dii_query_attempts or [])
+    failed = sorted(str(x.get("date")) for x in attempts if x.get("status") == "FAILED")
+    succeeded = sum(x.get("status") == "SUCCESS" for x in attempts)
     return {
         "window_start": start.isoformat(),
         "window_end": end.isoformat(),
@@ -174,9 +177,23 @@ def coverage_audit(df, start, end):
         "dii_archive_dates": len(dii),
         "dii_missing_fpi_archive_dates": missing,
         "dii_coverage_vs_fpi_archive_dates_pct": round(100 * len(fpi & dii) / len(fpi), 2) if fpi else None,
-        "comparison_basis": "official FPI archive observation dates within the declared window; not a fabricated weekday calendar",
-        "quality": "AVAILABLE" if not missing else "AVAILABLE_WITH_GAPS"
+        "dii_query_attempts": len(attempts),
+        "dii_query_successes": succeeded,
+        "dii_query_failures": len(failed),
+        "dii_query_failed_dates": failed,
+        "dii_query_attempt_log": attempts,
+        "comparison_basis": "FPI archive-date alignment is separate from exact DII query outcomes; attempted dates are not asserted to be a complete official exchange-session calendar",
+        "quality": "AVAILABLE_WITH_GAPS" if missing or failed else "AVAILABLE"
     }
+
+
+def derive_collection_status(complete, errors, audit):
+    """Never label a partial or failed source collection simply AVAILABLE."""
+    if not complete:
+        return "BLOCKED_INSUFFICIENT_HISTORICAL_COVERAGE"
+    if errors or audit.get("quality") == "AVAILABLE_WITH_GAPS":
+        return "AVAILABLE_WITH_GAPS"
+    return "AVAILABLE"
 def main():
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True)
     report={"status":"BLOCKED","source":"NSDL official public FPI/DII archives","fpi_url":FPI_URL,"dii_url":DII_URL,"groups":{},"errors":[],"non_trading_holidays":[],"holiday_calendar_source":NSE_TRADING_HOLIDAY_SOURCE}
@@ -190,7 +207,7 @@ def main():
         REPORT.write_text(json.dumps(report,indent=2)); print(json.dumps(report)); return 0
     end=min(date.today(),max(dates.dt.date))
     start=max(FIRST_DII,end-timedelta(days=150))
-    client=Nsdl(); rows=[]; fpi_dates=0; dii_dates=0
+    client=Nsdl(); rows=[]; fpi_dates=0; dii_dates=0; dii_query_attempts=[]
     # FPI archive: one WebForms query per month returns daily rows for that month.
     fpi_ok=0
     for qday in month_ends(start,end):
@@ -212,8 +229,11 @@ def main():
                 page,url=client.post_date(DII_URL,day)
                 got=find_flow_rows(page,"DII",day,url)
                 rows.extend(got); dii_ok+=1
+                dii_query_attempts.append({"date":day.isoformat(),"status":"SUCCESS","rows":len(got),"source_url":url})
             except Exception as e:
-                report["errors"].append(f"DII {day}: {type(e).__name__}: {str(e)[:180]}")
+                error=f"{type(e).__name__}: {str(e)[:180]}"
+                report["errors"].append(f"DII {day}: {error}")
+                dii_query_attempts.append({"date":day.isoformat(),"status":"FAILED","error":error,"source_url":DII_URL})
         day+=timedelta(days=1)
     df=pd.DataFrame(rows,columns=["DATE","GROUP","NET_VALUE","SOURCE","SOURCE_URL","OBSERVED_AT_UTC"])
     if not df.empty:
@@ -222,7 +242,7 @@ def main():
         df=df.dropna(subset=["DATE","GROUP","NET_VALUE"]).drop_duplicates(["DATE","GROUP"]).sort_values(["DATE","GROUP"])
         # Monthly FPI postbacks return the entire month; clip to the declared P0 window.
         df=clip_to_window(df,start,end)
-    report["coverage_audit"]=coverage_audit(df,start,end)
+    report["coverage_audit"]=coverage_audit(df,start,end,dii_query_attempts)
     details={}
     for group in ("FPI","DII"):
         g=df[df["GROUP"]==group] if not df.empty else pd.DataFrame()
@@ -232,13 +252,15 @@ def main():
     report["groups"]=details
     report["fpi_month_queries_succeeded"]=fpi_ok
     report["dii_day_queries_succeeded"]=dii_ok
+    report["dii_day_queries_failed"]=sum(x["status"]=="FAILED" for x in dii_query_attempts)
+    report["dii_query_attempts"]=len(dii_query_attempts)
     report["range"]={"start":start.isoformat(),"end":end.isoformat()}
     # Both series independently meet the same maturity threshold before replacing
     # any existing P0 file. Partial snapshots are diagnostic only and cannot pass.
     complete=all(details[g]["unique_dates"]>=60 and details[g]["span_days"]>=90 for g in ("FPI","DII"))
     if complete:
         df.to_csv(OUT,index=False)
-        report["status"]="AVAILABLE"
+        report["status"]=derive_collection_status(complete,report["errors"],report["coverage_audit"])
         report["output"]=str(OUT)
     else:
         report["status"]="BLOCKED_INSUFFICIENT_HISTORICAL_COVERAGE"

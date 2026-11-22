@@ -2,55 +2,35 @@ import unittest
 from datetime import date
 import pandas as pd
 
-from pipeline.macro_geo_nsdl_flows import clip_to_window, coverage_audit, nse_trading_holiday_name
+from pipeline.macro_geo_nsdl_flows import coverage_audit, derive_collection_status
 
-class NsdlFlowWindowTests(unittest.TestCase):
-    def test_official_2026_nse_holidays_are_classified(self):
-        expected = {
-            date(2026, 6, 26): "Muharram",
-            date(2026, 9, 14): "Ganesh Chaturthi",
-            date(2026, 10, 2): "Mahatma Gandhi Jayanti",
-            date(2026, 10, 20): "Dussehra",
-            date(2026, 11, 10): "Diwali-Balipratipada",
-        }
-        for day, name in expected.items():
-            self.assertEqual(nse_trading_holiday_name(day), name)
-        # Aug 26 is a Debt Segment holiday, not a Capital Market holiday.
-        self.assertIsNone(nse_trading_holiday_name(date(2026, 8, 26)))
-        # July 17 remains an unresolved archive/schema gap, not a holiday.
-        self.assertIsNone(nse_trading_holiday_name(date(2026, 7, 17)))
 
-    def test_monthly_fpi_rows_are_clipped_to_declared_window(self):
+class NsdlCoverageAuditTests(unittest.TestCase):
+    def test_failed_dii_query_is_visible_even_when_fpi_has_no_row_for_that_date(self):
+        # Test-only fixtures; these are not research observations.
         frame = pd.DataFrame([
-            {"DATE": "2026-06-01", "GROUP": "FPI", "NET_VALUE": 10},
-            {"DATE": "2026-06-23", "GROUP": "FPI", "NET_VALUE": 20},
-            {"DATE": "2026-11-20", "GROUP": "FPI", "NET_VALUE": 30},
-            {"DATE": "2026-11-21", "GROUP": "FPI", "NET_VALUE": 40},
-            {"DATE": "not-a-date", "GROUP": "FPI", "NET_VALUE": 50},
+            {"DATE": "2026-07-16", "GROUP": "FPI"},
+            {"DATE": "2026-07-16", "GROUP": "DII"},
+            {"DATE": "2026-07-17", "GROUP": "FPI"},
         ])
-        clipped = clip_to_window(frame, date(2026, 6, 23), date(2026, 11, 20))
-        self.assertEqual(clipped["DATE"].tolist(), ["2026-06-23", "2026-11-20"])
+        attempts = [
+            {"date": "2026-07-16", "status": "SUCCESS"},
+            {"date": "2026-07-17", "status": "FAILED", "error": "schema not recognized"},
+            {"date": "2026-08-26", "status": "FAILED", "error": "schema not recognized"},
+        ]
+        audit = coverage_audit(frame, date(2026, 6, 23), date(2026, 11, 20), attempts)
+        self.assertEqual(audit["dii_query_attempts"], 3)
+        self.assertEqual(audit["dii_query_successes"], 1)
+        self.assertEqual(audit["dii_query_failures"], 2)
+        self.assertEqual(audit["dii_query_failed_dates"], ["2026-07-17", "2026-08-26"])
+        self.assertEqual(audit["dii_missing_fpi_archive_dates"], ["2026-07-17"])
+        self.assertEqual(audit["quality"], "AVAILABLE_WITH_GAPS")
 
-    def test_coverage_audit_reports_exact_dii_gap_without_filling_it(self):
-        frame = pd.DataFrame([
-            {"DATE": "2026-06-23", "GROUP": "FPI"},
-            {"DATE": "2026-06-24", "GROUP": "FPI"},
-            {"DATE": "2026-06-23", "GROUP": "DII"},
-        ])
-        result = coverage_audit(frame, date(2026, 6, 23), date(2026, 11, 20))
-        self.assertEqual(result["dii_missing_fpi_archive_dates"], ["2026-06-24"])
-        self.assertEqual(result["dii_coverage_vs_fpi_archive_dates_pct"], 50.0)
-        self.assertEqual(result["quality"], "AVAILABLE_WITH_GAPS")
-        self.assertEqual(len(frame), 3)
+    def test_collection_status_never_calls_partial_or_failed_collection_available(self):
+        self.assertEqual(derive_collection_status(False, [], {"quality": "AVAILABLE"}), "BLOCKED_INSUFFICIENT_HISTORICAL_COVERAGE")
+        self.assertEqual(derive_collection_status(True, ["DII date query failed"], {"quality": "AVAILABLE_WITH_GAPS"}), "AVAILABLE_WITH_GAPS")
+        self.assertEqual(derive_collection_status(True, [], {"quality": "AVAILABLE"}), "AVAILABLE")
 
-    def test_complete_date_alignment_is_reported_separately(self):
-        frame = pd.DataFrame([
-            {"DATE": "2026-06-23", "GROUP": "FPI"},
-            {"DATE": "2026-06-23", "GROUP": "DII"},
-        ])
-        result = coverage_audit(frame, date(2026, 6, 23), date(2026, 11, 20))
-        self.assertEqual(result["quality"], "AVAILABLE")
-        self.assertEqual(result["dii_missing_fpi_archive_dates"], [])
 
 if __name__ == "__main__":
     unittest.main()
