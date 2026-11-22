@@ -20,7 +20,7 @@ class SecurityMasterValidationTests(unittest.TestCase):
         self.payload=b"SYMBOL,ISIN,LISTING_DATE\nABC,INE000A01001,\n"
         self.master.write_bytes(self.payload)
         self.data={
-            "source_url":"https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
+            "schema_version":1,"http_status":200,\n            "source_url":"https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
             "retrieved_at_utc":"2026-11-22T00:00:00+00:00",
             "source_family":"LEGACY_EQUITY_L_CSV",
             "daily_mii_equivalence":"NOT_ESTABLISHED",
@@ -46,6 +46,19 @@ class SecurityMasterValidationTests(unittest.TestCase):
             self.assertFalse(self.manifest.exists())
         finally:
             security_master.OUT, security_master.MANIFEST = old_out, old_manifest
+
+    def test_non_200_source_status_blocks(self):
+        self.data["http_status"]=503
+        self.manifest.write_text(json.dumps(self.data),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"HTTP status"): validate(self.master,self.manifest,self.now)
+    def test_missing_manifest_schema_version_blocks(self):
+        self.data.pop("schema_version")
+        self.manifest.write_text(json.dumps(self.data),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"schema_version"): validate(self.master,self.manifest,self.now)
+    def test_non_hex_source_hash_blocks(self):
+        self.data["source_sha256"]="g"*64
+        self.manifest.write_text(json.dumps(self.data),encoding="utf-8")
+        with self.assertRaisesRegex(ValueError,"SHA-256"): validate(self.master,self.manifest,self.now)
 
     def test_valid_master_passes_without_claiming_mii_equivalence(self):
         result=validate(self.master,self.manifest,self.now)
