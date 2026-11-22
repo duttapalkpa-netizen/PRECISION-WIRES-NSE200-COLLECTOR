@@ -211,3 +211,14 @@ Latest observed step states:
 - Run #1348 / ID `45001274333` is FAILURE on the report-push commit; no job details exposed in the API at inspection. It is not evidence against the corrected collector/test SHA. Investigate only if its workflow identity/logs become available.
 No corrected full workflow acceptance, new NSDL artifact, 2026-07-17 or 2026-08-26 date-submitted response verified. Keep those data items UNKNOWN/BLOCKED. Do not launch duplicate runs or edit code while #393/#317 are active. USDINR and mature event windows remain blocked. All production invariants unchanged.
 Next: poll active jobs; allow #317 to reach the official NSDL collection step; inspect its uploaded artifact for the exact two dates and holiday metadata. Once #393 finishes, review all remaining steps and artifact; only record workflow PASS if the complete run conclusion and required acceptance artifacts support it.
+
+
+### C264 — CI poll and walk-forward continuation (2026-11-22)
+Re-fetched Master Continuity Ledger, C261 official NSDL DII triage report and collector. No PASS work repeated; no code edits.
+- Report: `research/CI_POLL_AND_WALKFORWARD_CONTINUATION264_2026-11-22.md`; actual report commit `02a2903fa28b64fb2f8d1b3121e9e57e185ebaf9`.
+- Run #393 / ID `45001043441`, corrected test SHA `9fac7d42bd09f6b0a4d9a4c0742a36451816e0a4`: corrected regression, NSE history, strict manifest/hash, legacy equity-master provenance, fail-closed security-master, normalized dataset build, strict QA, quarterly results/calendar, XBRL extraction and feature validation SUCCESS. Corrected-label walk-forward IN_PROGRESS; all subsequent P0/event-study/candidate/hard-gate/persistence steps pending. Full workflow not PASS.
+- Run #317 / ID `45001040455`, corrected collector SHA `885528a076e98996455358ee236f1a2960a276ea`: timestamp/data-quality regression, 200 official NSE sessions and canonical panel SUCCESS; P0 market/media collection IN_PROGRESS; NSDL historical FPI/DII step not yet reached. No new NSDL artifact.
+- Dedicated job wrapper returned 404; current statuses verified through Actions REST jobs URLs. This wrapper error is not workflow failure.
+- No duplicate run, code edit, production change, or unsupported source inference.
+- 2026-07-17 DII gap and 2026-08-26 query outcome remain UNKNOWN pending exact date-submitted NSDL evidence. USDINR and mature-event-window blockers remain. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged.
+- Next: poll existing runs; inspect #317 artifact after NSDL collection; inspect #393 full conclusion/artifact and matured metrics after walk-forward; preserve UNKNOWN/BLOCKED until evidence is verified.
