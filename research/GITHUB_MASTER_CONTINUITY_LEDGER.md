@@ -16,21 +16,9 @@ Constraints: audit branch only; ₹0 spend; free official sources only; no synth
 
 ## Current priority
 **IN_PROGRESS — Run #383**, workflow run ID `44992957027`, head `6eed3272521cea3ab1b4eb255b55f5eeb3ceaabf`.
+Latest verified transition (C249): corrected-label walk-forward step completed SUCCESS; P0 market panel and timestamped geopolitical news collection is now IN_PROGRESS; four-group Macro-Geo P0 repair remains PENDING. No Run #383 artifact was available at the latest check. Step execution SUCCESS is not a performance acceptance PASS until metrics and sample coverage are inspected.
+C249 report: `research/CORRECTED_LABEL_WALK_FORWARD_STEP_ACCEPTANCE_CONTINUATION249_2026-11-22.md`; commit recorded in the report commit history.
 URL: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/44992957027
-
-Latest observed job ID `137117825262`:
-- PASS: corrected-forward-label/prospective-ledger regression tests.
-- PASS: normalized NSE history acquisition.
-- PASS: strict per-file manifest/hash validation.
-- PASS: legacy NSE equity master acquisition with provenance.
-- PASS: fail-closed security-master freshness/provenance validation.
-- PASS: normalized adaptive dataset build and strict dataset QA.
-- PASS: quarterly results/board calendar collection.
-- PASS: NSE XBRL attachment extraction.
-- PASS: normalized quarterly metric validation and feature build.
-- IN_PROGRESS: corrected-label walk-forward audit.
-- PENDING: P0 market panel/news, four Macro-Geo P0 groups, source-coverage audit, macro/geo event study, frozen-selector diagnostics, matured-cutoff and retrospective audits, target-first +5% experiment, quarterly/news joins, reproducibility, Macro-Geo hard gate, label-free picks, outcome maturation, ledger reconciliation and report upload.
-No downstream pending step is PASS. No artifact was available at the last check.
 
 ## Recent verified continuity
 
