@@ -222,3 +222,13 @@ Re-fetched Master Continuity Ledger, C261 official NSDL DII triage report and co
 - No duplicate run, code edit, production change, or unsupported source inference.
 - 2026-07-17 DII gap and 2026-08-26 query outcome remain UNKNOWN pending exact date-submitted NSDL evidence. USDINR and mature-event-window blockers remain. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E unchanged.
 - Next: poll existing runs; inspect #317 artifact after NSDL collection; inspect #393 full conclusion/artifact and matured metrics after walk-forward; preserve UNKNOWN/BLOCKED until evidence is verified.
+
+
+### C265 — active-run stall diagnostic (2026-11-22)
+Re-fetched Master Ledger, C264 report and collector. No PASS work repeated; no code edits.
+- Report: `research/ACTIVE_RUN_STALL_DIAGNOSTIC265_2026-11-22.md`; actual report commit `1b5aff25d1d5db54323f55c1daa01ab921e4c310`.
+- Direct Actions API poll at 08:15:14Z: Run #393 / ID `45001043441` remains IN_PROGRESS; corrected-label walk-forward remains IN_PROGRESS after quarterly feature validation; no artifacts; updated_at unchanged at 08:07:23Z.
+- Run #317 / ID `45001040455` remains IN_PROGRESS; P0 market/media collection remains IN_PROGRESS after canonical 200-session panel; NSDL FPI/DII step not reached; no artifacts; updated_at unchanged at 08:07:02Z.
+- Both job-log downloads returned Azure BlobNotFound. This is log retrieval failure only, not run failure or acceptance evidence.
+- No defensible new PASS/FAIL. No duplicate runs, no source edits, no production changes. NSDL 2026-07-17 and 2026-08-26 outcomes remain UNKNOWN; USDINR and mature event-window blockers remain.
+- Next: re-poll when updated_at changes; inspect #317 once NSDL step is reached and #393 on completion. If unchanged, inspect checks/annotations rather than duplicating work.
