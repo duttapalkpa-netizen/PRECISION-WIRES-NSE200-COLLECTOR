@@ -245,6 +245,16 @@ def pdf_evidence_lines(text):
  for metric,pat in patterns.items():
   found[metric]=[{"line_index":i,"text":line} for i,line in enumerate(lines) if pat.search(line)][:20]
  return {"line_count":len(lines),"text_chars":len(text),"metric_candidates":found}
+def select_result_disclosures(df, max_disclosures):
+ """Select newest-first result rows and return explicit truncation diagnostics."""
+ mask=df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")
+ result_rows=df[mask].copy()
+ available=len(result_rows)
+ if max_disclosures > 0:
+  result_rows=result_rows.head(max_disclosures)
+ processed=len(result_rows)
+ return result_rows, available, processed, available-processed
+
 def parse_agel_q2fy27_pdf_metrics(pdf_path):
  """Parse AGEL Q2 FY27 statement tables by page, basis, and first quarter column.
  Values are accepted only when the issuer, reporting period, statement heading,
@@ -329,10 +339,13 @@ def main():
  # Optional hard cap keeps live attachment verification bounded in CI. Preserve
  # newest disclosures first; uncapped runs remain the default for full research.
  max_disclosures=int(os.environ.get("QUARTERLY_METRIC_MAX_DISCLOSURES", "500") or 500)
- result_rows=df[df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")].copy()
- if max_disclosures > 0 and len(result_rows) > max_disclosures:
-  result_rows=result_rows.head(max_disclosures)
-  df=pd.concat([result_rows, df[~df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")]], ignore_index=True)
+ max_attachments=int(os.environ.get("QUARTERLY_METRIC_MAX_ATTACHMENTS_PER_DISCLOSURE", "8") or 8)
+ if max_attachments < 1:
+  raise ValueError("QUARTERLY_METRIC_MAX_ATTACHMENTS_PER_DISCLOSURE must be >= 1")
+ result_rows, available_disclosures, processed_disclosures, truncated_disclosures = select_result_disclosures(df, max_disclosures)
+ result_mask=df.get("EVENT_KIND", pd.Series(dtype=str)).eq("RESULT_DISCLOSURE")
+ if truncated_disclosures:
+  df=pd.concat([result_rows, df[~result_mask]], ignore_index=True)
  sess=requests.Session(); sess.headers.update(HEADERS)
  # Establish NSE web-session cookies before requesting archived filing attachments.
  try:
@@ -379,9 +392,9 @@ def main():
   source_digest=""; source_content_type=""; evidence_path=""
   extracted=False
   # Bounded queue: rendered NSE detail HTML may link to the actual iXBRL/XML.
-  links=list(dict.fromkeys(u for u in links if u))
+  links=list(dict.fromkeys(u for u in links if u))[:max_attachments]
   link_index=0
-  while link_index < len(links) and link_index < 8:
+  while link_index < len(links) and link_index < max_attachments:
    url=links[link_index]
    link_index+=1
    attempted+=1
@@ -397,9 +410,9 @@ def main():
     evidence_path=str(ev); source_digest=digest; source_content_type=ctype
     facts=parse_xbrl(blob)
     # Follow explicit attachment links on rendered NSE IndAS Details pages only.
-    if not facts and ("html" in ctype.lower() or re.search(br"<\s*(?:!doctype\s+)?html\b",blob[:8192],re.I)) and link_index < 8:
-     for discovered_url in discover_official_attachments(blob, resp.url, limit=8):
-      if discovered_url not in links and len(links) < 8:
+    if not facts and ("html" in ctype.lower() or re.search(br"<\s*(?:!doctype\s+)?html\b",blob[:8192],re.I)) and link_index < max_attachments:
+     for discovered_url in discover_official_attachments(blob, resp.url, limit=max_attachments):
+      if discovered_url not in links and len(links) < max_attachments:
        links.append(discovered_url)
     if is_pdf:
      pdf_text=parse_pdf_text(blob)
@@ -517,7 +530,11 @@ def main():
  valid=int(result.EXTRACTION_STATUS.eq("SOURCE_LINKED_XBRL_FACTS").sum())
  superseded=int(result.EXTRACTION_STATUS.eq("SUPERSEDED_BY_LATER_DISCLOSURE").sum())
  report={"status":"COMPUTED_WITH_VERIFIED_ROWS" if valid else "BLOCKED_NO_VERIFIED_ROWS",
-  "input_result_disclosures":int((df.get("EVENT_KIND","")== "RESULT_DISCLOSURE").sum()),
+  "input_result_disclosures_available":available_disclosures,
+  "input_result_disclosures_processed":processed_disclosures,
+  "input_result_disclosures_truncated":truncated_disclosures,
+  "max_disclosures_per_run":max_disclosures,
+  "max_attachments_per_disclosure":max_attachments,
   "attachment_attempts":attempted,"ledger_rows":len(result),"verified_metric_rows":valid,
   "blocked_rows":int(result.EXTRACTION_STATUS.str.startswith("BLOCKED").sum()),"superseded_revision_rows":superseded,"ledger_path":str(OUT),"evidence_dir":str(EVIDENCE),
   "required_provenance":["SYMBOL","ISIN","PERIOD_END","BASIS","SOURCE_URL","DISCLOSED_AT","REVENUE","PAT","EPS","SOURCE_SHA256","fact tags and context refs"],
