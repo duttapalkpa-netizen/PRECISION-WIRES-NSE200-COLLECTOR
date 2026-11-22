@@ -23,6 +23,25 @@ class QuarterlyXbrlMetricTests(unittest.TestCase):
         self.assertEqual((available, processed, truncated), (2, 2, 0))
         self.assertEqual(len(selected), 2)
 
+    def test_both_official_archive_hosts_403_preserves_attempt_diagnostics(self):
+        from unittest.mock import MagicMock
+        from pipeline.quarterly_pdf_xbrl_metrics import AttachmentFetchError
+        first = MagicMock()
+        first.status_code = 403
+        first.content = b"forbidden"
+        first.headers = {"Content-Type": "text/html"}
+        second = MagicMock()
+        second.status_code = 403
+        second.content = b"forbidden"
+        second.headers = {"Content-Type": "text/html"}
+        session = MagicMock()
+        session.get.side_effect = [first, second]
+        with self.assertRaises(AttachmentFetchError) as caught:
+            fetch_attachment(session, "https://nsearchives.nseindia.com/corporate/xbrl/sample.xml")
+        self.assertEqual([x["status_code"] for x in caught.exception.attempts], [403, 403])
+        self.assertEqual(caught.exception.attempts[0]["content_type"], "text/html")
+        self.assertEqual(session.get.call_count, 2)
+
     def test_sebi_taxonomy_revenue_pat_eps_facts_are_recognized(self):
         xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <xbrl xmlns="http://www.xbrl.org/2003/instance">
