@@ -21,6 +21,10 @@ HEAD={"User-Agent":"Mozilla/5.0","Accept":"text/csv,text/plain,*/*","Referer":"h
 
 def main():
     OUT.parent.mkdir(parents=True,exist_ok=True)
+    # Remove any prior-run pair before attempting a fresh acquisition. Otherwise
+    # a failed fetch could leave a still-fresh old manifest/master that passes QA.
+    OUT.unlink(missing_ok=True)
+    MANIFEST.unlink(missing_ok=True)
     s=requests.Session();s.headers.update(HEAD)
     errors=[]
     for url in URLS:
