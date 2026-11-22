@@ -101,3 +101,14 @@ Next: inspect official FBIL frontend/download/API contract; only implement a ful
 - Matured observations only; minimum 50 fully matured observations per State for H+3 Behavioral DNA calibration. Below 50 remains UNKNOWN/uncalibrated.
 - Historical target-hit rates are not profitable trade returns.
 - Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 and Engines A–E remain unchanged.
+
+
+### C253 — FBIL official USD/INR endpoint verification
+Report: `research/FBIL_OFFICIAL_USDINR_ENDPOINT_VERIFICATION_CONTINUATION253_2026-11-22.md`
+Report commit: `5a5adad6cf75fe2eebb129907406f3ced1d12039`.
+Re-read C252 and verified latest audit-branch Actions: Run #387 / ID `44994024678` cancelled; same-head hard-gate run ID `44994024718` failed as documented in C252. No new PASS supersedes it.
+Official RBI source confirms FBIL took over USD/INR reference-rate computation/dissemination from 2018-07-10; FBIL methodology confirms transaction-based rate construction. FBIL homepage is not text-readable through the available inspection path; public search snippets show daily rates but no verified public historical API/download contract, schema, date-range parameters, or complete machine-readable coverage through 2026-11-20.
+Decision: USD/INR remains BLOCKED; no code change, guessed endpoint, community mirror, paid API, or gate relaxation. FBIL ownership/methodology VERIFIED; machine-readable archive UNKNOWN/NOT VERIFIED.
+Excluded: RBI pre-2018 archive, partial RBI Table 223 coverage, search snippets as endpoint proof, third-party mirrors and paid/keyed APIs.
+Next: (1) inspect official FBIL user-facing navigation/assets for a real downloadable archive and validate host/schema/coverage; (2) if unavailable, retain BLOCKED; (3) separately inspect existing official NSDL FPI/DII archive evidence from Run #386 without conflating it with the one-date NSE snapshot; (4) continue timestamp-grounded event publication backfill and matured-window gating.
+Invariants unchanged. PASS work skipped.
