@@ -59,3 +59,20 @@ Status at report creation:
 3. Investigate only 2026-07-17 through exact official NSDL evidence; retain UNKNOWN/BLOCKED if the date response/table cannot be retrieved.
 4. Keep USD/INR official archive and matured event-window blockers unchanged; rerun the strict hard gate only after material source evidence changes.
 5. Preserve all evidence in this ledger; skip the already validated C254 clipping work.
+
+
+## Correction addendum — segment-specific holiday scope (2026-11-22)
+A stricter re-read of the official NSE circular PDF exposed an error in the original C259 interpretation. Capital Market circular NSE/CMTR/71775 lists 2026-06-26, 2026-09-14, 2026-10-02, 2026-10-20 and 2026-11-10, but **does not list 2026-08-26**. The Id-E-Milad entry for 2026-08-26 appears in a separate NSE Debt Segment circular, NSE/DS/71968, not in the Capital Market calendar. Therefore it cannot be used to skip the NSDL DII equity-flow request.
+
+Official sources:
+- Capital Market holidays: https://nsearchives.nseindia.com/content/circulars/CMTR71775.pdf
+- Debt Segment holidays: https://nsearchives.nseindia.com/content/circulars/DS71968.pdf
+
+Corrected classification: five of the seven original dates are verified Capital Market holidays; 2026-08-26 and 2026-07-17 are not listed in the Capital Market circular and remain to be checked against the NSDL DII archive itself. Do not infer that either has a DII record; do not skip either date on the basis of the Debt Segment calendar.
+
+The collector and regression test were corrected:
+- Collector correction commit: `885528a076e98996455358ee236f1a2960a276ea`
+- Test correction commit: `9fac7d42bd09f6b0a4d9a4c0742a36451816e0a4`
+- The test now asserts 2026-08-26 is not classified as a Capital Market holiday.
+
+Important: runs #390 and #316 were still IN_PROGRESS on the original C259 commit when this correction was made; their outputs must not be treated as validation of the corrected code. A new run on the corrected commit is required. Original C259 statement that six dates were Capital Market holidays is superseded by this addendum. No production invariant changed.
