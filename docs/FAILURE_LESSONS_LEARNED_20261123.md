@@ -153,3 +153,14 @@
 - The six named missed-winner examples are incident samples, not the entire 260/41 set. Remaining cases stay UNKNOWN until the complete decision export exists.
 - No threshold, selector, ranking, production code, trade assumption or admission changed.
 - Next verification: offline session/date regression, approved label-v2 research test, and complete candidate decision denominator. All acceptance statuses OPEN / NOT_ACCEPTED.
+
+
+---
+
+## 8. Report integrity and Best-3 addendum — 23-Nov-2026
+
+- Final nightly report revision supersedes the initial 23-Nov report commit. Final report commit: 12b3996f794cf0e3c29d715f48a1e0951d36c586; final report SHA-256: 7dd603986f940f1ec0a8c859684e5bcf2f9cbcfb829cc3a9b84128a72699df8d.
+- Corrected source-file SHA-256 values: 23-Nov Daily Unified Top-5 report d227479be9d83bb0966765aef0ef5ab73d2a055b599fa7aadcfe04ce51b55d01; 22-Nov Nightly report d42514bdf1d34cf84573c60c55d83f5f7c63cca232468d2efd56ede3c36ac7ab. Earlier hashes copied into the initial report draft were not the actual file hashes; the final report contains these corrected values.
+- Target-specific Best 3 result: no target (+2/+5/+10/+15/+20) has a validated historical rank list. WELSPUNLIV remains one prospective observation-only candidate, not a ranked Best-3 selection.
+- Selection repository code SHA-256: pipeline/v11_3_abcd_e.py 7800ff3c39b0c58a3162fb196b4f0efaa023dfe3adbeefc5fbe2d5fb0c6a8bbd; pipeline/risk_modifier.py 994ac0d6637c7733e73c9756a6e5e4228d9e0bec34b25055d535ab1a9835dd0a. config/universe.csv SHA-256 6a8c89061b367041c4d0e1ab84ba684d0a5e2615674827ebdcc236b361efecb9, but the file is only 7 bytes/header-only. The alert-specific orchestrator/config hash and per-symbol decision export were not retained; therefore missed-winner causal attribution remains PARTIAL and the remaining cases UNKNOWN.
+- These corrections do not change any lesson ID, selector, ranking, threshold, production code or admission. Existing incident tests remain OPEN / NOT_ACCEPTED.
