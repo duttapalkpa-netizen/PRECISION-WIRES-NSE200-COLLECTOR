@@ -4038,3 +4038,13 @@ No new lesson IDs were created by this detail append; all entries remain Observa
 - Detailed semantic audit: `docs/NSE_200_SESSION_ARCHIVE_SEMANTIC_DATE_AUDIT_20261123.md`; commit `b266a1c9dc775d1daa3172b7751352e3444b97eb`; blob `67720a139f27a1797f0323cd765b48508abf73b7`; SHA-256 `6845eb791f378a9c073bfc38a0186ebb160a45969e84d05060738de246137ff9`.
 - Next actions: (1) holiday-aware 200-unique-session spine + DATE1 parity test; (2) 12 earlier valid sessions backfill; (3) source timezone contract and regression; (4) row-level corrected-label rerun and target-specific recomputation; (5) mature the 23-Nov cohort only after exact exchange-session windows.
 - Invariants preserved: ₹0, official/free sources only, no synthetic data, no fabricated timestamps, UNKNOWN never PASS, H+3 >=50 matured observations per State, Production Selector/RANKING_SCORE/+1 PRESSURE_FADE/CORE-672/Engines A–E/IPO-PLX V2 unchanged; no production merge or rule changes.
+
+
+## 2026-11-23 — Continuation 60: NSE FII/FPI-DII CSV basket and usage boundary
+- Report: `docs/NSE_FPI_DII_OFFICIAL_CSV_BASKET_BOUNDARY_CONTINUATION60_20261123.md`.
+- Official NSE page exposes separate NSE-only and combined NSE/BSE/MSEI CSV controls. The 28-Jul-2025 NSE research data list places NSE-only FII/FPI-DII trading activity in the First Basket (lines 50–52); combined NSE+BSE+MSEI is separately listed under First Basket Voluminous data (>2GB; Chargeable) (lines 230–240). The combined dataset is excluded under ₹0.
+- NSE Data Sharing & Usage Policy (updated 11-Dec-2025) preserves agreement/use/redistribution constraints. No unrestricted automated bulk-archival right is inferred.
+- NSE-only series is a zero-cost research candidate only, separately labelled PROVISIONAL_EXCHANGE_TRADING_ACTIVITY; it cannot replace final depository FPI or NSDL DII. Exact CSV URL/request, raw bytes, schema/hash and >=60 dates / >=90-day coverage remain NOT_VERIFIED / NOT_CAPTURED.
+- CDSL Continuation 78 archive audit was skipped as completed: retained static response through 02-Mar-2026, no date controls; no repeated capture. No NSDL forms, workflow rerun or production change.
+- Next: capture only the visible NSE-only CSV control via an auditable standard browser/runner; retain full per-response provenance and hash; if it is a one-day snapshot, do not count it toward historical P0 coverage. Do not use the combined chargeable dataset.
+- Status: policy classification PASS; source acquisition and historical coverage UNKNOWN/BLOCKED; Macro-Geo remains P0 6/8 and Hard Gate BLOCKED.
