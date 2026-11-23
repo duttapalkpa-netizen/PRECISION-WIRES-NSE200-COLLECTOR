@@ -43,13 +43,13 @@ For each of +2%, +5%, +10%, +15%, +20%: **qualified historical leaders <3 / UNKN
 
 ### WELSPUNLIV — Welspun Living Limited
 - **Exchange / identity:** NSE EQ; ISIN `INE192B01031` (matches NSE quote page and archived security master).
-- **Last official EOD data:** 20-Nov-2026 `CLOSE_PRICE ₹268.78`; same bhavdata row has `LAST_PRICE ₹263.80`. These fields differ; target scenarios below use the official CLOSE_PRICE field and the discrepancy is explicitly flagged for reconciliation. No 23-Nov live price is claimed.
+- **Last official EOD data:** 20-Nov-2026 NSE live-market table shows `LTP ₹263.80` (+4.21% vs ₹253.14 previous close); the raw bhavdata row separately records `LAST_PRICE ₹263.80` and `CLOSE_PRICE ₹268.78` (+6.18% close-field change). These official fields differ; the target scenarios below are explicitly calculated from the bhavdata CLOSE_PRICE field ₹268.78, not from LTP. Do not collapse the two fields; reconcile before any executable use. No 23-Nov live price is claimed.
 - **Price-volume / trend (188 unique sessions):** 1-session close-field return +6.18%; 5-session +7.45%; 20-session +25.63%; EMA20 ₹245.71; EMA50 ₹228.23; RSI14 63.56; 20-Nov volume 21,258,542 shares vs prior-20-session average 11,004,795 (1.93×); traded value ₹565.16 crore vs prior-20-session average ₹268.10 crore; deliverable quantity 10.71%.
-- **Relative-strength context:** 20-Nov close-field return +6.18% vs NIFTY 500 +0.80% (+5.38 percentage points); the last-trade field implies +4.21% vs prior close (+3.41 points vs NIFTY 500). This range is shown because CLOSE_PRICE and LAST_PRICE differ in the official bhavdata row.
+- **Relative-strength context:** 20-Nov NSE live-market LTP return +4.21% vs NIFTY 500 +0.80% (+3.41 percentage points); raw bhavdata CLOSE_PRICE field implies +6.18% (+5.38 points). This range is shown because CLOSE_PRICE and LAST_PRICE differ in the official bhavdata row.
 - **Industry / sector:** NSE basic industry “Other Textile Products”. Textile-specific sector-index return: UNKNOWN.
 - **Fresh catalyst:** NSE filing dated 21-Nov-2026 reports board approval for up to ₹3,200 crore capex in wholly owned Welspun Home Solutions Limited, including terry-towel capacity expansion and backward integration. The filing describes up to ₹800 crore investment by the parent and up to ₹2,400 crore subsidiary borrowing; long implementation horizon and financing/execution risks apply. Official filing link below.
 - **Liquidity:** 20-session average traded value about ₹268.10 crore; 20-Nov value ₹565.16 crore; NSE quote snapshot reports impact cost 0.05. Liquidity appears adequate in the archived session, but actual 23-Nov spread/order book is UNKNOWN.
-- **Risk / circuit / surveillance:** latest accessible NSE quote snapshot shows EQ, Active, 20% price band and 2.90% daily / 55.40% annualised volatility; it also flags P/E >50 for the prior four trailing quarters and >75% close-to-close movement over the prior six months. Current 23-Nov ASM/GSM/surveillance state and exact current band require refresh. Low delivery percentage (10.71%) increases the need to verify follow-through.
+- **Risk / circuit / surveillance:** latest accessible NSE quote snapshot dated 19-Nov shows EQ, Active, 20% price band, 2.90% daily / 55.40% annualised volatility; it also flags P/E >50 for the prior four trailing quarters and >75% close-to-close movement over the prior six months. Exact 23-Nov price band and current ASM/GSM/surveillance state are UNKNOWN until refreshed. Low delivery percentage (10.71%) increases the need to verify follow-through.
 - **Research invalidation markers, not an approved stop:** 20-Nov low ₹249.50 and computed EMA20 ₹245.71. Stop order / stop distance: UNKNOWN; no user-approved stop assumptions were supplied.
 - **Scenario target prices from ₹268.78 close (not forecasts or guaranteed returns):**
 
@@ -98,6 +98,7 @@ For each of +2%, +5%, +10%, +15%, +20%: **qualified historical leaders <3 / UNKN
 - Detailed audit: [NSE 200-session semantic date audit](NSE_200_SESSION_ARCHIVE_SEMANTIC_DATE_AUDIT_20261123.md)
 - Failure log: [2026-11-23 lessons](FAILURE_LESSONS_LEARNED_20261123.md)
 - Official NSE sources:
+  - [NSE 20-Nov live equity-market row (LTP, volume, traded value)](https://www.nseindia.in/market-data/live-equity-market?symbol=NIFTY+TOTAL+MKT)
   - [WELSPUNLIV quote / announcement page](https://www.nseindia.in/get-quote/equity/WELSPUNLIV/Welspun-Living-Limited)
   - [WELSPUNLIV official board outcome PDF](https://nsearchives.nseindia.in/corporate/WELSPUNIND_21112026191142_Reg30_Outcome_21112026_signed.pdf)
   - [20-Nov NSE bhavdata CSV](https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_20112026.csv)
