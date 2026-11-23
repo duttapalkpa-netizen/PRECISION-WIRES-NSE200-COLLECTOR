@@ -96,3 +96,9 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Selection code identities: pipeline/v11_3_abcd_e.py 7800ff3c39b0c58a3162fb196b4f0efaa023dfe3adbeefc5fbe2d5fb0c6a8bbd; pipeline/risk_modifier.py 994ac0d6637c7733e73c9756a6e5e4228d9e0bec34b25055d535ab1a9835dd0a. config/universe.csv 6a8c89061b367041c4d0e1ab84ba684d0a5e2615674827ebdcc236b361efecb9 is header-only; alert orchestration hash and row-level decisions remain unavailable.
 - Best 3 Stocks per Target: all five target-specific historical lists UNKNOWN/BLOCKED; WELSPUNLIV remains an unranked observation-only prospective candidate, not a Best-3 rank.
 - All run/artifact evidence and acceptance states remain as C64. No selector, ranking, threshold, code, production admission or trade assumption changed.
+
+
+### Continuation 64 — Addendum 2: final GitHub read-back hashes (23-Nov-2026)
+- Final report commit: 12b3996f794cf0e3c29d715f48a1e0951d36c586; SHA-256 of exact GitHub read-back content: e8b9d3cccfcecff08cacbe2176d2c010cad1057f5814df1d1e975288b61f2c84; blob SHA-1 c37aed7564cb2b68dcfbac1da0a8615c512c6f13.
+- Final Lessons Register commit: 6c4ee00e0de6fc83ab249be541fb22a687ba1b65; SHA-256 of exact GitHub read-back content: 2edbde8c37ba6fc909fdf3925b72577b98ccdd8e4d92dfbe659b16128a4fc3a2; blob SHA-1 ee43f72cc5220373dff7312d94e3525139b84d0c.
+- These exact read-back hashes supersede the pre-write hashes in C64/Addendum 1. The report and lessons contents were read back from GitHub after commit; no data/selector/production change occurred.
