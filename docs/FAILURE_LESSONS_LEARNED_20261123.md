@@ -164,3 +164,10 @@
 - Target-specific Best 3 result: no target (+2/+5/+10/+15/+20) has a validated historical rank list. WELSPUNLIV remains one prospective observation-only candidate, not a ranked Best-3 selection.
 - Selection repository code SHA-256: pipeline/v11_3_abcd_e.py 7800ff3c39b0c58a3162fb196b4f0efaa023dfe3adbeefc5fbe2d5fb0c6a8bbd; pipeline/risk_modifier.py 994ac0d6637c7733e73c9756a6e5e4228d9e0bec34b25055d535ab1a9835dd0a. config/universe.csv SHA-256 6a8c89061b367041c4d0e1ab84ba684d0a5e2615674827ebdcc236b361efecb9, but the file is only 7 bytes/header-only. The alert-specific orchestrator/config hash and per-symbol decision export were not retained; therefore missed-winner causal attribution remains PARTIAL and the remaining cases UNKNOWN.
 - These corrections do not change any lesson ID, selector, ranking, threshold, production code or admission. Existing incident tests remain OPEN / NOT_ACCEPTED.
+
+
+## 9. Final GitHub read-back SHA-256 correction — 23-Nov-2026
+
+- The final report file was re-read from GitHub after commit 12b3996f794cf0e3c29d715f48a1e0951d36c586. SHA-256 of the exact read-back content is e8b9d3cccfcecff08cacbe2176d2c010cad1057f5814df1d1e975288b61f2c84. This supersedes the pre-write content hash 7dd603986f940f1ec0a8c859684e5bcf2f9cbcfb829cc3a9b84128a72699df8d recorded in the earlier addenda; GitHub blob identity remains c37aed7564cb2b68dcfbac1da0a8615c512c6f13.
+- Verified source-file read-back SHA-256: morning alert d227479be9d83bb0966765aef0ef5ab73d2a055b599fa7aadcfe04ce51b55d01; previous 22-Nov report d42514bdf1d34cf84573c60c55d83f5f7c63cca232468d2efd56ede3c36ac7ab.
+- Final Best-3 status and selection-code/config hash limitations are in the report. No new lesson IDs or production changes.
