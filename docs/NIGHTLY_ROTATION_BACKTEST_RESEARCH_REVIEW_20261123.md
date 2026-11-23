@@ -80,10 +80,16 @@ Shadow cohort H+1: +2% intraday high-touch 2/8 (KDDL, HINDOILEXP); +5% 1/8 (HIND
 
 Run #420's 672 diagnostic shape check reports 672 columns = 56×12, but this does not override the session-spine, label and provenance blockers. Final selection remains PROVISIONAL_ONLY_FINAL_SELECTION_BLOCKED with RISK_GEO_NOT_AVAILABLE and LIVE_INTRADAY_1M_FEED_MISSING. NSE live 1m status is HTTP 403 with zero rows. GDELT timeouts and Google News RSS NameError remain recorded. The 23-Nov market snapshot (generated 15:20:05Z) shows NIFTY 50 −1.75%, NIFTY Bank −3.17%, NIFTY Midcap 100 −1.01%, India VIX +3.11%; this is context only, not a GCR performance result. The latest IMF EMDE panel workflow Run #1395 failed and exposed no job record/artifact in the retrieved run response; its cause remains UNKNOWN.
 
+### Best 3 Stocks per Target — target-specific rank status
+
+- **Historical Winners:** +2%, +5%, +10%, +15% এবং +20%—সব target-এ **UNKNOWN / BLOCKED**। Defective labels, 12 duplicate holiday dates, unresolved H+5 parity এবং incomplete raw provenance থাকায় কোনো stock-কে historical winner rank দেওয়া যাবে না।
+- **Prospective Candidates:** WELSPUNLIV একমাত্র observation-only qualified candidate; H+1-এ +2% intraday high-touch করেছে, কিন্তু close-to-close +2% করেনি। একক candidate-কে target-specific Best-1/Best-3 rank দেওয়া হচ্ছে না; +5% H+3 ও দীর্ঘ horizon এখনও immature।
+- **Final:** পাঁচ target-এর কোনোটির জন্যই evidence-backed Best 3 তালিকা নেই। সংখ্যা পূরণের জন্য stale/provisional Top-30 বা unverified ranking ব্যবহার করা হয়নি। এটি buy recommendation নয়।
+
 ## 3. Dataset, workflow, archive and integrity audit
 
-- Morning alert: [Daily Unified Top-5 — 23-Nov](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/DAILY_UNIFIED_TOP5_SWING_WATCHLIST_20261123.md), blob SHA-1 ae329664612040bd0a470800ede951a193581799, SHA-256 ef03c5b203e61885cf996e398d6d1d9c4812b7babebaad29756a0b75d07f4ebc.
-- Previous report: [Nightly Review — 22-Nov](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261122.md), SHA-256 f5379d83e9c75ab517ba425dee5d7bc8217a9ea6e4cfd55e864d7a385f05d53e.
+- Morning alert: [Daily Unified Top-5 — 23-Nov](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/DAILY_UNIFIED_TOP5_SWING_WATCHLIST_20261123.md), blob SHA-1 ae329664612040bd0a470800ede951a193581799, SHA-256 d227479be9d83bb0966765aef0ef5ab73d2a055b599fa7aadcfe04ce51b55d01.
+- Previous report: [Nightly Review — 22-Nov](https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/blob/main/docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261122.md), SHA-256 d42514bdf1d34cf84573c60c55d83f5f7c63cca232468d2efd56ede3c36ac7ab.
 - GitHub scheduled Run #420 / ID 45202379089, job 137788955150, head c9622ba253c8f963736035a77fb94df1682d8d06, conclusion SUCCESS, duration 12m11s (over the requested 10-minute ceiling). Artifact #14833925413, ZIP SHA-256 693cb2d8f68cc38a56fd9c17140f6126e11bb1617d6b0fee9ad4d2de5264686d; independently downloaded ZIP SHA matched the GitHub artifact digest. No new workflow was dispatched by this review.
 - Artifact processed dataset: 504,250 rows, 2,999 symbols, 200 requested date labels. **Only 188 are unique valid sessions**: 12 official NSE holidays are duplicate copies of the previous valid session. For all 12 date pairs, every shared symbol's normalized numeric fields matched the previous date (100%); examples include 20-Oct and 19-Oct, both 397,312-byte downloads. The 12 dates are 03-Mar, 26-Mar, 31-Mar, 03-Apr, 14-Apr, 01-May, 28-May, 26-Jun, 14-Sep, 02-Oct, 20-Oct and 10-Nov.
 - Root cause is verified in source: collector skips weekends only (lines 246–251); builder assigns DATE from the requested filename (line 49); QA counts sessions.txt rows and distinct filename-derived DATE values, without validating source DATE1/TradDt against the requested date or the official holiday calendar (lines 8–29). The bundled QA JSON says PASS, but semantic session acceptance is **FAIL / NOT_ACCEPTED**.
@@ -111,6 +117,9 @@ Key SHA-256:
 
 Source code/config SHA-256 (same commit as Run #420):
 - pipeline/walk_forward_backtest.py: dca7363ef1c5f56a097ed66b4305935f2c90975e2387b9c5b44780c4101f83e2
+- pipeline/v11_3_abcd_e.py: 7800ff3c39b0c58a3162fb196b4f0efaa023dfe3adbeefc5fbe2d5fb0c6a8bbd
+- pipeline/risk_modifier.py: 994ac0d6637c7733e73c9756a6e5e4228d9e0bec34b25055d535ab1a9835dd0a
+- config/universe.csv: 6a8c89061b367041c4d0e1ab84ba684d0a5e2615674827ebdcc236b361efecb9 (7-byte header-only file; not a populated universe configuration)
 - collector/nse_download.py: a55e6390f7e4299fc47b812baaa24047bbfae84686e397f1535e08f56c6f7e0f
 - collector/build_200_sessions.py: 7190c653a829b56eaf2041a9886cf0b873de0bd2d1af1821ce0bcb80458181a1
 - qa/validate_dataset.py: 2a7590ad14522fa0440ad4609d11e12e0414f5b25f948c10d47c59c025803c19
@@ -157,6 +166,7 @@ The remaining missed-winner cases (255 additional +2% and 35 additional +5% uniq
 - NSE archive endpoints used by the collector: https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_20112026.csv and https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_23112026.csv.
 - Retrieval timestamps are in the Run #420 log (20:41:40 IST for 20-Nov and 20:41:39 IST for 23-Nov); per-file publication timestamps and raw-byte SHA-256 are unavailable. The processed dataset hash above is the reproducibility anchor, not raw-source provenance.
 - WELSPUNLIV official quote page: https://www.nseindia.in/get-quote/equity/WELSPUNLIV/Welspun-Living-Limited. The 21-Nov filing time is preserved as unzoned source text; timezone semantics remain UNKNOWN.
+- Selector repository code identity: pipeline/v11_3_abcd_e.py SHA-256 7800ff3c39b0c58a3162fb196b4f0efaa023dfe3adbeefc5fbe2d5fb0c6a8bbd; pipeline/risk_modifier.py SHA-256 994ac0d6637c7733e73c9756a6e5e4228d9e0bec34b25055d535ab1a9835dd0a. The universe CSV is only a 7-byte header; the alert-specific orchestration/config hash and per-symbol decision export were not retained, so causal attribution remains capped at SUPPORTED/HYPOTHESIS/UNKNOWN.
 - No later outcome information was used as cutoff-time explanatory evidence. Future OHLC is used only to define the realised outcome.
 
 ## 6. Next-day highest-value research actions (Observation only)
