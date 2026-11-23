@@ -86,3 +86,13 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Acceptance: artifact ZIP integrity PASS; 12 holiday duplicates VERIFIED; source manifest PARTIAL; 188 valid-session semantic audit PASS; 200-session claim NOT_ACCEPTED; forward labels BLOCKED; H+5 JSON/CSV parity BLOCKED (619 JSON-implied vs 622 CSV hits); V11.4 NOT_VALIDATED; V11.3 NOT_AUTHORIZED; GCR BLOCKED; daily missed-winner attribution PARTIAL.
 - Next actions: offline holiday/date-semantic regression on retained artifacts; exact forward-label v2 test only after separate approval; full 1,032-row candidate-decision export and denominator reconciliation. No production or selector changes.
 - All invariants unchanged: ₹0, free official sources only; no synthetic data, forward-fill, guessed mappings, fabricated timestamps or look-ahead; UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged; Observation-only.
+
+
+### Continuation 64 — Addendum 1: final report/lesson hashes and Best-3 status (23-Nov-2026)
+- Supersedes the initial report/lesson file references in C64 without deleting history.
+- Final report commit: 12b3996f794cf0e3c29d715f48a1e0951d36c586; final report SHA-256: 7dd603986f940f1ec0a8c859684e5bcf2f9cbcfb829cc3a9b84128a72699df8d.
+- Final Lessons Register commit: e022360a2fb28dc178d3f027b716a8520c06e595; SHA-256: 03b48fa405607a8188910c5dec0630323830561af1661a8e0595cce6ffdb17df.
+- Correct source file SHA-256: 23-Nov morning alert d227479be9d83bb0966765aef0ef5ab73d2a055b599fa7aadcfe04ce51b55d01; 22-Nov nightly report d42514bdf1d34cf84573c60c55d83f5f7c63cca232468d2efd56ede3c36ac7ab.
+- Selection code identities: pipeline/v11_3_abcd_e.py 7800ff3c39b0c58a3162fb196b4f0efaa023dfe3adbeefc5fbe2d5fb0c6a8bbd; pipeline/risk_modifier.py 994ac0d6637c7733e73c9756a6e5e4228d9e0bec34b25055d535ab1a9835dd0a. config/universe.csv 6a8c89061b367041c4d0e1ab84ba684d0a5e2615674827ebdcc236b361efecb9 is header-only; alert orchestration hash and row-level decisions remain unavailable.
+- Best 3 Stocks per Target: all five target-specific historical lists UNKNOWN/BLOCKED; WELSPUNLIV remains an unranked observation-only prospective candidate, not a Best-3 rank.
+- All run/artifact evidence and acceptance states remain as C64. No selector, ranking, threshold, code, production admission or trade assumption changed.
