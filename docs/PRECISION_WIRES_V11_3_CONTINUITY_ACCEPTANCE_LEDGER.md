@@ -55,3 +55,16 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 
 ## 7. Research constraints
 ₹0; official/free sources only; no synthetic rows, fabricated timestamps, interpolation, forward-fill, proxy promotion or untrusted mirrors. UNKNOWN never PASS. H+3 State calibration requires >=50 fully matured observations per State. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2.0 unchanged. No merge or production integration without explicit approval.
+
+
+## 7. Continuation 63 — NSE session-spine correction readiness (23-Nov-2026)
+- Preflight read Mother File through Continuation 57, current Master Ledger through C62, and the C58 FBIL, C59–60 NSE CSV, C61–62 CDSL, NSE semantic audit and failure-lessons reports. PASS work was skipped; no broad workflow or Macro-Geo rerun.
+- Independently downloaded artifact #14757294944 from run #45027842316. ZIP SHA-256 `212a84103f2a9f47681865c7e165fe0247001b02d9563a5cef578636fb0b1898` verified. 200/200 retained file byte counts and SHA-256 values match the manifest.
+- Independently parsed all 200 CSV internal DATE1 values: only 188 unique observed trading dates. Twelve requested NSE holidays repeat the previous valid session's exact file/hash. The 200-session claim remains NOT_ACCEPTED.
+- Code-level root cause verified: `collector/nse_download.py` skips weekends but not NSE holidays; legacy/cached/full-delivery validation does not enforce internal DATE1 == requested trade date; `qa/validate_dataset.py` accepts sessions.txt count >=200 without checking distinct observed dates or manifest/date equality.
+- Official NSE CMTR/71775 holiday calendar cross-check supports the 12 duplicate dates. Twelve earlier weekday candidate dates before 16-Feb-2026 were identified: 29–30 Jan and 02–13 Feb 2026 (weekdays only; 26-Jan is excluded as Republic Day). These dates are calendar candidates only, not captured raw data.
+- NSE Terms of Use current page prohibits systematic/automated collection and restricts copying/storage absent applicable permission. No project-specific written permission was established. No additional NSE download, endpoint probing, workflow dispatch, code modification or production change was made.
+- Evidence report: `docs/NSE_SESSION_SPINE_CORRECTION_READINESS_CONTINUATION63_20261123.md`; report commit `bc2c1bc9bbd9a23bf59b9be6f70b252d00304613`.
+- Acceptance: artifact/hash integrity PASS; 188 unique DATE1 audit PASS; 12 holiday duplicate mappings PASS; collector holiday exclusion NOT_IMPLEMENTED; DATE1/manifest QA NOT_IMPLEMENTED; 12 earlier raw sessions NOT_CAPTURED; corrected 200-session archive BLOCKED; walk-forward metrics remain UNKNOWN / NOT_ACCEPTED.
+- Exact next action: implement a bounded offline, research-only date-semantic QA regression on retained files; fail closed on DATE1/manifest/holiday mismatch. Do not run automated NSE acquisition until a permitted zero-cost archival route is established. Only after permitted raw files exist and the corrected archive passes 200 unique-session acceptance may label-v2/walk-forward metrics be recomputed.
+- Invariants unchanged: ₹0; official sources only; no synthetic data/fabricated timestamps; UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2.0 unchanged; no merge or production integration.
