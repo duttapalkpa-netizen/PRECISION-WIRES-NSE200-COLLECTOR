@@ -4,7 +4,7 @@
 **আজকের অবস্থা:** NSE Capital Market segment বন্ধ — Prakash Gurpurb Sri Guru Nanak Dev / Guru Nanak Jayanti। সরকারি NSE 2026 holiday circular: https://nsearchives.nseindia.com/content/circulars/CMTR71775.pdf  
 **Data cutoff:** ২৩ নভেম্বর ২০২৬-এর সর্বশেষ retained processed NSE session; ২৪-Nov live equity price নেই।
 
-<badge>যোগ্য candidate: ০</badge>
+**যোগ্য candidate: ০**
 
 **সিদ্ধান্ত:** আজ/পরবর্তী session-এর জন্য কোনো qualified Top-5 alert প্রকাশ করা হয়নি। ২৩-Nov artifact-এর final readiness state `PROVISIONAL_ONLY_FINAL_SELECTION_BLOCKED`; blockers: `RISK_GEO_NOT_AVAILABLE` এবং `LIVE_INTRADAY_1M_FEED_MISSING`। Live 1m quote request HTTP 403-এ blocked। Provisional Top-N বা shadow picks-কে qualified candidate হিসেবে দেখানো হয়নি।
 
