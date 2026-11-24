@@ -138,3 +138,14 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - export_manifest.json remains NOT_PROVIDED; .dat payload mapping and original export-byte equivalence remain BLOCKED/UNKNOWN. Next exact action: obtain only export_manifest.json, map attachment ID → original filename → .dat path → expected/actual size/hash, and only then select critical payloads.
 - Report: docs/PRECISION_WIRES_V11_3_DATA_EXPORT_RECOVERY_AUDIT_PHASE2_2026-11-24.md; report commit 63b17e951857440538d0ee4c1d058e3f12236b99. Library copy saved at /PRECISION-WIRES Research Archive/PRECISION_WIRES_V11_3_DATA_EXPORT_RECOVERY_AUDIT_PHASE2_2026-11-24.md.
 - No NSE acquisition, workflow dispatch, production/selector/ranking/threshold change or merge. ₹0; official/free sources only; UNKNOWN never PASS; CORE-672, Engines A–E and IPO-PLX V2.0 unchanged.
+
+
+## 11. Continuation 67 — Attachment metadata index Phase 3 (24-Nov-2026)
+- Preflight re-read GitHub Master Continuity Ledger through C66 and Phase-2 Recovery Audit. Current pre-update ledger blob SHA: 1fd2ba68c48c97c361b5a442b682731051399397. Existing byte-verification PASS items were not repeated.
+- Re-ran a complete 975-item Library filename/path scan and semantic search for export_manifest.json, manifest, export, attachment and .dat. No original ChatGPT export_manifest.json and no .dat payload files were found. Domain-specific research manifests are unrelated and were not substituted.
+- Built a row-level metadata index from the two supplied conversation JSON files: 147 conversations; 378 attachment entries; 322 image/jpeg; 56 non-image; 55 unique non-image IDs; 53 unique non-image filenames. One non-image ID (file_00000000b08082118f5b1409a80fd4a5) appears twice and both rows were retained.
+- CSV index SHA-256: a7d85e4a1f85b90841f2ae5815d311911e50387125dabfc90a6c4e02584483c2. CSV and summary JSON saved in Library under /PRECISION-WIRES Research Archive/.
+- Acceptance: metadata index construction PASS; export-manifest discovery NOT_FOUND; .dat mapping BLOCKED; payload size/hash comparison UNKNOWN/NOT_RUN. Metadata is not payload evidence; no claim of full attachment recovery.
+- Report: docs/PRECISION_WIRES_ATTACHMENT_METADATA_INDEX_PHASE3_2026-11-24.md; commit e6d82d6dc33dd2bc7602810b8b02091023300d8c; GitHub read-back blob 7110355d91933392d6558c110f99e260d6bc3f01.
+- Exact next action: obtain original export_manifest.json from the same ChatGPT export package, then join attachment ID → .dat path and compare expected/actual bytes and hashes. No manifest reconstruction/fabrication.
+- No production, selector, ranking, threshold, workflow or data-acquisition changes. ₹0; UNKNOWN never PASS; CORE-672, Engines A–E and IPO-PLX V2.0 unchanged.
