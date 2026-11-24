@@ -64,3 +64,41 @@
 6. Validate all changes on untouched later cutoffs; no production selector/ranking/threshold changes without user approval.
 
 **Production unchanged:** Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672, Engines A–E and IPO-PLX V2.0. No user trade assumptions inferred. UNKNOWN is never PASS.
+
+
+---
+
+## Nightly addendum — ২৪-Nov-2026 (Run #421)
+
+**Preflight:** Master Continuity Ledger C69, 24-Nov morning alert, 23-Nov nightly report, Run #421 artifact ও পূর্বের Lessons Register re-read; accepted ZIP-integrity কাজ পুনরাবৃত্তি হয়নি।
+
+### Existing lesson updates — immutable IDs retained
+
+- **PW-LSN-20261121-001 — exact forward-session label defect (VERIFIED, OPEN):** Run #421 head 7cf2292e467ffebf8c95ae67981570ab4d13a2ca; pipeline/walk_forward_backtest.py Git blob SHA-1 d085f7a2d35a88b4c4eaba65144a429a06961b09, known content SHA-256 dca7363ef1c5f56a097ed66b4305935f2c90975e2387b9c5b44780c4101f83e2. future_outcomes() still uses shift(-1).rolling(h,min_periods=1).max(). H+3/H+5 are trailing/partial windows; close outcomes use max close, not terminal T+h close. No new implementation without separate approval.
+- **PW-LSN-20261121-002 — H+5 JSON/CSV parity (VERIFIED discrepancy, OPEN):** Run #421 metrics JSON implies 629 +20% H+5 Top-30 hits (0.2096667 × 3,000); prediction CSV has 632 rows >=20%; unexplained difference = 3. Canonical row-ledger reconciliation not accepted.
+- **PW-LSN-20261123-001 — holiday/session duplicates (VERIFIED, OPEN):** Run #421 has 200 DATE labels but 13 exact duplicate official-holiday content pairs; only 187 unique daily content dates. Pairs: 02/03-Mar, 25/26-Mar, 30/31-Mar, 02/03-Apr, 13/14-Apr, 30-Apr/01-May, 27/28-May, 25/26-Jun, 11/14-Sep, 01/02-Oct, 19/20-Oct, 09/10-Nov, 23/24-Nov. Each pair is identical across all non-DATE columns for every symbol in that pair. QA JSON still says PASS because its gate counts raw files/session labels and does not check unique semantic dates or source DATE1 parity.
+- **PW-LSN-20261124-001 — runtime budget (VERIFIED, OPEN):** Run #421 completed in 12m06s (15:10:17Z–15:22:23Z), still above the 10-minute maximum; five seconds faster than Run #420 but not accepted.
+- **PW-LSN-20261124-002 — fail-closed source health (VERIFIED blocker, OPEN):** Run #421 final selection remains PROVISIONAL_ONLY_FINAL_SELECTION_BLOCKED; live 1m feed HTTP 403, rows=0, symbols=0; market_open_observed=false. GDELT returned 30 article titles but one read-timeout; this does not establish a synchronized GCR panel.
+- **PW-LSN-20261124-003 — high-touch vs close-to-close distinction:** carried forward unchanged; no new matured symbol outcome on 24-Nov.
+
+### New immutable lesson
+
+**PW-LSN-20261124-004 — walk-forward evidence contract omits confidence intervals and unique-symbol denominator reconciliation**
+- Date/run: 24-Nov-2026, Run #421 / 45422367928; artifact 14936656169.
+- Expected: target/horizon-specific point estimates plus cutoff-cluster CI, fully matured/excluded counts, unique symbols, signal rows and reconciled eligible denominator.
+- Actual: walk_forward_metrics.json contains point estimates but no CI fields; prediction and full-universe CSVs require separate row/symbol reconciliation; H+5 JSON/CSV differ by 3 rows.
+- Root-cause confidence: VERIFIED for missing CI fields and observed count discrepancy; underlying H+5 serialization cause remains UNKNOWN.
+- Evidence: metrics SHA-256 ee6624f046bd910491eac0e94d90006200abb23576990b8d5570bb3ebc36d440; predictions SHA-256 e80410b11cfaf8834af774c7e0e3ed39901efd5ce63b0ed2623dd5fef46a6951; universe probabilities SHA-256 356dc3329f28fb38e6cf6920f1564f3febf7b04f98dbe36dc4da887ca9bd96a9.
+- Affected research step: V11.4 walk-forward metric serialization, target denominator and uncertainty reporting.
+- Prevention test: one canonical row ledger must independently regenerate JSON/CSV/summary; exact integer parity; report unique symbol and signal-row counts separately; emit cutoff-cluster 95% CI only after label/session acceptance.
+- Expected artifact: walk_forward_evidence_contract.json plus canonical row ledger.
+- Sample/maturity: at least five fully matured cutoffs for a correctness pilot; performance inference only after all required cutoffs mature.
+- Limitation/blocker: current forward labels and session spine are invalid; no metric is admitted. Acceptance OPEN / NOT_ACCEPTED.
+
+### Run/artifact and report linkage
+- Run #421 ID 45422367928; job 138545045702; artifact 14936656169; head commit 7cf2292e467ffebf8c95ae67981570ab4d13a2ca.
+- ZIP SHA-256 d57374c50a8b8e2fe5710fd57660225ea59a2beffd639cb9e83b77e734499954; downloaded ZIP hash independently matched GitHub artifact digest.
+- Dataset SHA-256 9f4f4305221a0b901a92088d22ffc5795614daeb2d6f78c013c78c6ec4f929f1; QA JSON SHA-256 48547e28ff82e978c8b63712c9fc5e4692268c3c99fba015bd1bfa3d7bd1af19.
+- Dated nightly report: docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261124.md; commit 9f11c8184863eb56c6bf1e701e3cfd2189bbddeb; read-back SHA-256 8b8fc16ea166155484d0696b85001ec3c0543cc292e80038559426c6a9d40538; exact read-back matched.
+- New lesson 004 is the only new lesson today; duplicate holiday/forward-label/runtime/source-health lessons were updated in place. Observation-only research note added; all acceptance tests OPEN / NOT_ACCEPTED.
+- No new workflow dispatch, no new NSE acquisition, no paid source, no production/selector/ranking/threshold change. ₹0; UNKNOWN never PASS.
