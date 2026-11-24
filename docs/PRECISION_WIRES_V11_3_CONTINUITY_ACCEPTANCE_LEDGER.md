@@ -149,3 +149,15 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Report: docs/PRECISION_WIRES_ATTACHMENT_METADATA_INDEX_PHASE3_2026-11-24.md; commit e6d82d6dc33dd2bc7602810b8b02091023300d8c; GitHub read-back blob 7110355d91933392d6558c110f99e260d6bc3f01.
 - Exact next action: obtain original export_manifest.json from the same ChatGPT export package, then join attachment ID → .dat path and compare expected/actual bytes and hashes. No manifest reconstruction/fabrication.
 - No production, selector, ranking, threshold, workflow or data-acquisition changes. ₹0; UNKNOWN never PASS; CORE-672, Engines A–E and IPO-PLX V2.0 unchanged.
+
+
+## 12. Continuation 68 — Attachment Library reconciliation Phase 4 (24-Nov-2026)
+- Preflight re-read current Master Continuity Ledger through C67, Phase-2 Recovery Audit and Phase-3 Attachment Metadata Index report. Pre-update ledger blob SHA: c2ba1eff3a3b6e8704c2167312e32be050e66d59. Prior PASS byte/hash/container checks and metadata-index construction were reused, not repeated.
+- Completed a paginated full Library listing: 959 file items. Reconciled 53 unique non-image filenames from the 56 metadata rows against exact Library filenames and source byte counts.
+- Exact filename found: 51/53. Exact filename plus byte-size match: 51/53. Size mismatches among found names: 0.
+- NOT_FOUND: CF-AN-equities-02-Aug-2026.csv (8,064 expected bytes); cpi_2479.xlsx (166,608 expected bytes; metadata carries a Library ID but current full listing does not resolve that exact filename, so pointer treated as stale/unresolved).
+- 19 filenames have duplicate exact-name Library paths; two FII/DII filenames have three paths each. No duplicate was merged, overwritten or deleted. No similarly named substitution.
+- Acceptance boundary: name/size reconciliation 51 PASS, 2 NOT_FOUND; cryptographic equivalence to export .dat remains UNKNOWN/NOT_RUN because original export_manifest.json and .dat paths are still absent. Same name and size do not prove identical bytes. 322-image audit remains open.
+- Report: docs/PRECISION_WIRES_ATTACHMENT_LIBRARY_RECONCILIATION_PHASE4_2026-11-24.md; commit 13df33f8806379e57b647435879f9a59ac22bb14; GitHub read-back blob 6f7f56e51b964da93e8abfd9c3bc235b8438bf43.
+- Exact next action: obtain the original export_manifest.json from the same export package and perform ID→.dat path→expected/actual size/hash reconciliation. Separately locate/re-upload only the two unresolved named files if required.
+- No NSE acquisition, workflow dispatch, production/selector/ranking/threshold change, merge or data mutation. ₹0; no paid services; no external contact; UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged.
