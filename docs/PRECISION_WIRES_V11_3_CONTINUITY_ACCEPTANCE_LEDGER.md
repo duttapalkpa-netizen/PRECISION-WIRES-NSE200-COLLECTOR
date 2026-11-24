@@ -161,3 +161,15 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Report: docs/PRECISION_WIRES_ATTACHMENT_LIBRARY_RECONCILIATION_PHASE4_2026-11-24.md; commit 13df33f8806379e57b647435879f9a59ac22bb14; GitHub read-back blob 6f7f56e51b964da93e8abfd9c3bc235b8438bf43.
 - Exact next action: obtain the original export_manifest.json from the same export package and perform ID→.dat path→expected/actual size/hash reconciliation. Separately locate/re-upload only the two unresolved named files if required.
 - No NSE acquisition, workflow dispatch, production/selector/ranking/threshold change, merge or data mutation. ₹0; no paid services; no external contact; UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged.
+
+
+## 13. Continuation 69 — Image attachment Library reconciliation Phase 5 (24-Nov-2026)
+- Mandatory preflight: re-read Master Continuity Ledger through C68 (pre-update blob SHA 03cf9358978cfcc8c15995ed9455a16cfd3b1265), Phase 2 recovery audit, Phase 3 metadata-index report, and Phase 4 non-image Library reconciliation report. Reused previous accepted work; no duplicate byte/hash checks.
+- Re-opened Phase 3 CSV metadata index from Library and completed a fresh paginated Library listing: 1,121 file items. Isolated the 322 image/jpeg rows.
+- Image metadata inventory: 322 rows, 322 unique attachment IDs, 315 distinct filenames; seven filenames occur twice and both source rows were retained. None of the image rows carried a Library ID in the Phase 3 index.
+- Exact filename present in current Library: 106/322; exact filename plus byte-size match: 106/322; exact-name byte-size mismatch: 0; exact filename not found: 216/322. Source sizes span 26,621–203,816 bytes.
+- Acceptance: image metadata inventory count/uniqueness PASS; Library filename+size reconciliation 106 MATCH / 216 NOT_FOUND / 0 SIZE_MISMATCH. Name and size do not prove byte identity or export provenance. Original export_manifest.json and image .dat paths remain unavailable; SHA-256 payload equivalence UNKNOWN/BLOCKED. Missing rows are not asserted deleted.
+- Report saved to Library: /PRECISION-WIRES Research Archive/PRECISION_WIRES_IMAGE_ATTACHMENT_LIBRARY_RECONCILIATION_PHASE5_2026-11-24.md (file_id file_00000000dc248211b1c577770d7ff70c; library_file_id libfile_a4cda6404688819192a658683e25b47d).
+- GitHub report: docs/PRECISION_WIRES_IMAGE_ATTACHMENT_LIBRARY_RECONCILIATION_PHASE5_2026-11-24.md; commit efb02ef5cc5ffa73f7d41bd4fdd0572f06367917; read-back blob SHA 9bdd42e7e3560a4d49763a2d9112b661ed614049.
+- Next action: obtain original export_manifest.json from the same export package; map all image attachment IDs to exact .dat paths and compare expected/actual sizes and SHA-256. No fabricated paths or hashes.
+- ₹0; no paid services, external contact, NSE acquisition, workflow dispatch, production/selector/ranking/threshold change, merge or data mutation. UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged.
