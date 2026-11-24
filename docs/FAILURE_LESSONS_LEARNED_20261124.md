@@ -102,3 +102,12 @@
 - Dated nightly report: docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261124.md; commit 9f11c8184863eb56c6bf1e701e3cfd2189bbddeb; read-back SHA-256 8b8fc16ea166155484d0696b85001ec3c0543cc292e80038559426c6a9d40538; exact read-back matched.
 - New lesson 004 is the only new lesson today; duplicate holiday/forward-label/runtime/source-health lessons were updated in place. Observation-only research note added; all acceptance tests OPEN / NOT_ACCEPTED.
 - No new workflow dispatch, no new NSE acquisition, no paid source, no production/selector/ranking/threshold change. ₹0; UNKNOWN never PASS.
+
+### PW-LSN-20261124-005 — Export-manifest filename is not proof of original-export provenance
+- **Evidence:** Library file titled `export_manifest.json`, file ID `file_00000000c34482119ed5bb0b14dea4a0`, 171 bytes; valid JSON but `artifacts`, `incomplete_corpora`, `inventory_warnings`, `omissions`, and `redactions` are all empty. Exact-byte SHA-256: `7181b2bbce551969efa1dfdb8525e68e7efbabbf782d629b90752236492f0abe`.
+- **Confirmed finding:** the Library file cannot map attachment IDs to `.dat` paths or expected payload sizes/hashes. Its filename alone does not prove it belongs to the original ChatGPT export package.
+- **Why not caught:** title-based discovery can find a file with the expected name while the file contains no artifact inventory and no package-level provenance.
+- **Prevention test:** before accepting an export manifest, parse it, require a non-empty artifact inventory when attachments are expected, verify package relationship, and confirm that manifest entries resolve to exact payload paths. Keep schema-valid-but-empty distinct from a valid recovery manifest.
+- **Result/confidence:** JSON syntax and exact-byte hash PASS; original manifest identity and payload mapping BLOCKED/UNKNOWN.
+- **Carry-forward:** request the original export ZIP or extracted root with its genuine manifest and `.dat` payload directory. Never fabricate mappings, paths or hashes; do not treat filename+size matches as byte identity.
+- **Linked report:** `docs/PRECISION_WIRES_EXPORT_MANIFEST_SOURCE_VALIDITY_AUDIT_C71_2026-11-24.md`, report commit `cff0e0508b15b57e05d5e3590e65bda973e61ff0`.
