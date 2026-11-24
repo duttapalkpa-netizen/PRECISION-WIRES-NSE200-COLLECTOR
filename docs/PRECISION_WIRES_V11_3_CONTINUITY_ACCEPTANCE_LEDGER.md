@@ -123,3 +123,18 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 ### Continuation 65 — Addendum 1: final report Markdown normalization (24-Nov-2026)
 - Daily report was re-read and its status marker normalized to standard GitHub Markdown; no research data or decision changed.
 - Final report commit: 3cde33447fe7e1349f84b8cce0a989e9acc5b3ad; final blob: 17a76517efb3285c5abe7e52953b009d070926d6; exact GitHub read-back verified; SHA-256 5a6a388e1030c09d5cbaf5d8d8aa96c69b5c6331db79985da8a83261b76464ca.
+
+
+## 10. Continuation 66 — Data Export Attachment Recovery Phase 2 (24-Nov-2026)
+- Preflight read Phase-1 Recovery Audit, Mother File Continuation 57, recovered-work index and current ledger through C65. Pre-update ledger blob SHA: 4dc8e4e7812ea9fdf56e9606ac56004231fc62d9. No accepted PASS work repeated.
+- Rechecked 147 conversation records: 378 attachment metadata entries (322 image/JPEG, 56 non-image); non-image subset = 55 unique attachment IDs and 53 distinct filenames. One attachment ID occurs twice. Metadata does not establish payload-byte recovery.
+- Five priority Library files independently materialized and hashed; CSV row parsing and ZIP/XLSX container checks completed. SHA-256:
+  - Operational-layer CSV: 5acea71d5c3961d68727718cb99622d2854ac94a748588b3f5500d0d35fceef7 (2,650 data rows).
+  - Merged NSE bhavcopy CSV: e65146b4d466eec988d0d3b92a31d6f3b7acd316c45535ef283eafa2183781ce (666,867 data rows).
+  - IMF PA ZIP: 8cb2ed4bd96c0b1c4d3f24d0530771a5868f55bba256213404d5acf22a3f2b45 (ZIP test PASS, 4 entries).
+  - Macro-Geo event-study ZIP: 3e0d07946dd54b54aeb53ea0aa02e7d49b818c08cda93ce28ac56b582f7e4b38 (ZIP test PASS, 32 entries).
+  - NSE_MASTER_DATA_1.xlsx: d98a484dfe32474cf9a31d7a21c95dadaaafa543185d2c0790ab0d794097e676 (XLSX container test PASS, 25 entries).
+- These are Library-byte integrity checks only; they do not prove equality with export .dat payloads. Full 53-name reconciliation and 322-image audit remain open.
+- export_manifest.json remains NOT_PROVIDED; .dat payload mapping and original export-byte equivalence remain BLOCKED/UNKNOWN. Next exact action: obtain only export_manifest.json, map attachment ID → original filename → .dat path → expected/actual size/hash, and only then select critical payloads.
+- Report: docs/PRECISION_WIRES_V11_3_DATA_EXPORT_RECOVERY_AUDIT_PHASE2_2026-11-24.md; report commit 63b17e951857440538d0ee4c1d058e3f12236b99. Library copy saved at /PRECISION-WIRES Research Archive/PRECISION_WIRES_V11_3_DATA_EXPORT_RECOVERY_AUDIT_PHASE2_2026-11-24.md.
+- No NSE acquisition, workflow dispatch, production/selector/ranking/threshold change or merge. ₹0; official/free sources only; UNKNOWN never PASS; CORE-672, Engines A–E and IPO-PLX V2.0 unchanged.
