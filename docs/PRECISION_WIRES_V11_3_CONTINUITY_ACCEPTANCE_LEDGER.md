@@ -173,3 +173,15 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - GitHub report: docs/PRECISION_WIRES_IMAGE_ATTACHMENT_LIBRARY_RECONCILIATION_PHASE5_2026-11-24.md; commit efb02ef5cc5ffa73f7d41bd4fdd0572f06367917; read-back blob SHA 9bdd42e7e3560a4d49763a2d9112b661ed614049.
 - Next action: obtain original export_manifest.json from the same export package; map all image attachment IDs to exact .dat paths and compare expected/actual sizes and SHA-256. No fabricated paths or hashes.
 - ₹0; no paid services, external contact, NSE acquisition, workflow dispatch, production/selector/ranking/threshold change, merge or data mutation. UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged.
+
+
+## 14. Continuation 70 — Image attachment recovery checklist Phase 6 (24-Nov-2026)
+- Mandatory preflight re-read C69 ledger (pre-task blob SHA 0d1c1446c4005c4fece8f456f78ec02498cff871), Phase 3 metadata-index report/CSV, Phase 4 non-image reconciliation report, and Phase 5 image reconciliation report. Prior PASS checks were reused, not repeated.
+- Fresh full paginated Library listing: 1144 items; no warnings. Reconciled all 322 image/jpeg metadata rows against exact filename + source byte size.
+- Result: 106 matches and 216 NOT_FOUND rows. Built a row-preserving recovery checklist with attachment ID, filename, expected size, conversation title/ID, message ID and role. Duplicate source filenames were retained as distinct rows.
+- NOT_FOUND means no exact filename+size match in the current Library listing; it does not establish deletion or irrecoverable loss. Alternate/renamed files were not inferred.
+- Checklist CSV: docs/evidence/attachment_recovery/PRECISION_WIRES_IMAGE_ATTACHMENT_RECOVERY_CHECKLIST_PHASE6_2026-11-24.csv; commit 0be39c7bf74e4c6c857797a873f1cfbeb0ab66ac.
+- Report: docs/PRECISION_WIRES_IMAGE_ATTACHMENT_RECOVERY_CHECKLIST_PHASE6_2026-11-24.md; commit 39aea60b6ca171ed5064f3082cbbe09e17455095.
+- Original export_manifest.json, .dat paths and expected hashes remain unavailable; cryptographic payload identity UNKNOWN/BLOCKED. The 106 prior matches remain presence-only, not byte-identity proof.
+- Next action: obtain the original export_manifest.json and same-export payload package; then join attachment IDs to exact .dat paths and compare actual size/SHA-256. Do not fabricate paths or hashes.
+- ₹0; no paid services, external contact, NSE acquisition, workflow dispatch, production/selector/ranking/threshold/merge/delete changes. UNKNOWN never PASS; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E, IPO-PLX V2.0 unchanged.
