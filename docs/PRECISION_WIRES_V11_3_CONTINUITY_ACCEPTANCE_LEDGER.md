@@ -118,3 +118,8 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Dated lessons: docs/FAILURE_LESSONS_LEARNED_20261124.md; commit b869025280a0c22182fb11ced97c605f0c87621f; GitHub read-back SHA-256 9bdb423ddc5f59c48a92f69c7a1e5a3cf20d536c08e7cb50519fb06139fde708; blob 1a2d382ee643369547638284a8c59cc7af863423; exact read-back content matched.
 - Acceptance: artifact ZIP byte/hash integrity PASS; 188 unique session semantic audit PASS; 200-session claim NOT_ACCEPTED; V11.4 NOT_VALIDATED; Best-3 UNKNOWN; V11.3 cost-aware replay UNKNOWN/NOT_AUTHORIZED; GCR UNKNOWN/BLOCKED; current qualified candidates 0.
 - No new NSE data acquisition, no workflow dispatch, no production change. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged. ₹0; official/free sources only; UNKNOWN never PASS.
+
+
+### Continuation 65 — Addendum 1: final report Markdown normalization (24-Nov-2026)
+- Daily report was re-read and its status marker normalized to standard GitHub Markdown; no research data or decision changed.
+- Final report commit: 3cde33447fe7e1349f84b8cce0a989e9acc5b3ad; final blob: 17a76517efb3285c5abe7e52953b009d070926d6; exact GitHub read-back verified; SHA-256 5a6a388e1030c09d5cbaf5d8d8aa96c69b5c6331db79985da8a83261b76464ca.
