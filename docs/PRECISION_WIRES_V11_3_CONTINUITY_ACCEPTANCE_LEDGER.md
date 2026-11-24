@@ -223,3 +223,13 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - C72 report: docs/PRECISION_WIRES_CONTINUATION72_PRETASK_RECONCILIATION_AND_BLOCKER_DECISION_20261125.md; report commit 2aa6625c5e0d7184ed122d4c996955bb759e4274.
 - Exact unblock requirement: original ChatGPT export ZIP or extracted root containing the genuine manifest and matching .dat payload directory. After receipt, verify package relationship before ID→path→size/SHA-256 mapping; process project-critical payloads in bounded batches.
 - No NSE acquisition, workflow dispatch, paid source, external contact, or production/selector/ranking/threshold/merge/delete change. ₹0; UNKNOWN never PASS; all production invariants preserved.
+
+
+## 17. Continuation 73 — Export manifest and Library payload inventory audit (25-Nov-2026)
+- Re-read C72 and controlling C71/C70/Phase-1/2 reports; prior scans not repeated. Recursive paginated Library listing: 1,288 file items, no warnings.
+- New inventory-bearing `export_manifest(2).json` found (210,361 bytes; Library file ID `file_00000000813c8211a09a53aa71cf8bb1`). JSON parse PASS; schema `export_files`, `logical_files`, `manifest_file`, `version`; version 1; manifest_file `export_manifest.json`.
+- Manifest declares 821 export files: 807 `.dat`, 12 `.json`, one `.txt`, one `.html`; total declared uncompressed size 720,697,430 bytes. User's 822-item count is consistent with 821 entries plus the manifest, but package provenance is not yet established.
+- Current Library snapshot contains 292 `.dat` files (181,836,813 bytes); only 191 have strict file_<32hex>.dat names. This is inventory-only, not an exact manifest join. Expected-vs-actual paths/sizes/SHA-256 remain NOT_DONE.
+- Additional 210,361-byte manifest copies exist; matching size/snippets are not cryptographic equality. Three 171-byte empty manifests remain distinct and must not be accepted as the inventory manifest.
+- Acceptance: inventory-bearing manifest discovery and JSON parse PASS; original ZIP/package provenance UNKNOWN; 821-entry payload reconciliation NOT_DONE; byte identity NOT_DONE. Next: reconcile manifest expected names/paths/sizes to Library files, then hash only exact mapped payloads in bounded batches. Preserve original package; do not bulk-scan unrelated files.
+- Report: docs/PRECISION_WIRES_CONTINUATION73_EXPORT_PACKAGE_LIBRARY_INVENTORY_AUDIT_20261125.md; commit e2baa6e76b2b8ad16e71b2a64025a9118838722d. Read-only, ₹0; no external contact, workflow dispatch, NSE acquisition, or production/selector/ranking/threshold changes. UNKNOWN never PASS.
