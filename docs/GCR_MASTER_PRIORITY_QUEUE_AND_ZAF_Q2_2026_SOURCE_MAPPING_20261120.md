@@ -1899,3 +1899,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - AGO remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Matrix gate unchanged; evidence_ref points to C236.
 - Report: docs/GCR_ANGOLA_AGO_Q2_2026_BNA_DISSEMINATION_CALENDAR_AND_PUBLIC_ACCESS_BOUNDARY_RECONCILIATION_CONTINUATION236_20261125.md (commit 7aec846aef1f3a1079ad503215fba3579f72eeae).
 - Next: supported official BNA public download/browser route for detailed Q2 portfolio A/L, otherwise advance to next fixed-cohort country after fresh route-history preflight. No guessed API, no BNA SPA repeat, no IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 237 — Albania ALB official Q2-2026 portfolio dual-leg capture (2026-11-25)
+- Preflight: current ledger/queue/registry/matrix, Library Mother File/GCR context, ALB C139–C141/C192 reread. Existing PASS sign/taxonomy and IMF rows reused; legacy Main-data route closed and not repeated.
+- New distinct official BoA Monthly Statistical Report 08/2026 PDF https://www.bankofalbania.org/rc/doc/RSM_gusht_2026_anglisht_35170.pdf; Table 2-1 is quarterly BOP in EURm and separately reports Q2 assets +156.25, liabilities +124.70, net +31.55. Published net identity exact.
+- Official PDF text captured through document reader; raw bytes/headers/hash not captured (direct download failed). Archived IMF rows reused: A=181700604.8387097 USD, L=145011618.7096774 USD (SCALE=6). No FX conversion or IMF re-query; implied ratios not admitted.
+- ALB current_stage DATA_CAPTURED; asset/liability gates REVIEW pending approved EUR/USD flow conversion; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_MONTHLY_STATISTICAL_REPORT_OFFICIAL_DUAL_LEG_CAPTURE_CONTINUATION237_20261125.md (commit 214a86283beb2ecc1cca5dfabf7d39201ac748cd).
+- Next: independent official Q2 transaction-FX conversion methodology and revision cutoff. Do not repeat legacy Main-data route or re-query IMF. ₹0; no production changes; UNKNOWN never PASS.
