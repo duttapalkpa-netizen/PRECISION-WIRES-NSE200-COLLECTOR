@@ -20,6 +20,7 @@ on:
       - "scripts/research/bceao_2024_raw_archive_trigger.txt"
       - "scripts/research/archive_bceao_2024_annual_report.py"
       - "docs/**"
+      - "PROPRIETARY-NOTICE.md"
       - "scripts/research/nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_parser.py"
       - "tests/research/test_nic_concordance_source_acquisition.py"
