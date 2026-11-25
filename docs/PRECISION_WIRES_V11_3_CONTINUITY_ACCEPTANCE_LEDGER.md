@@ -340,3 +340,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - BoA methodology metadata DOCX was linked but current reader returned unsupported DOCX MIME; no content assumed. No Q2-2026 observation-specific revision timestamp/cutoff matched to archived IMF rows. ALB asset/liability remain REVIEW, vintage UNKNOWN, FULL_PASS NO, aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_OFFICIAL_FLOW_FX_RULE_AND_REVISION_BOUNDARY_CONTINUATION238_20261125.md; report commit 01d226cb0c6d751643e988ff6f5377600e87adc7.
 - Next: reopen only on distinct BoA Q2-2026 dated revision record, detailed compilation/FX note, or official transaction-level flow-rate data. Otherwise move to next eligible fixed-cohort item after exact route-history preflight. ₹0; no production change; UNKNOWN never PASS.
+
+
+## GCR Continuation 239 — Bangladesh BGD Q2-2026 official net-only source boundary (25-Nov-2026)
+- Mandatory preflight re-read current Master Continuity Ledger, GCR Priority Queue, 63-country Historical Task Registry/matrix and Library Mother File/GCR context. Fixed cohort and archived IMF panel reused; no IMF re-query or cohort rebuild.
+- New official Bangladesh Bank Quarterly, Volume XXIII No.4, “April-June, 2026”: https://www.bb.org.bd/pub/quaterly/bbquarterly/bangladesh%20bank%20quarterly%2C%20%20vol%20xxiii%2C%20no%204.pdf. Cover confirms calendar Q2 2026. Annexure 1 Table V.1 (USD million) reports Bangladesh FY26 Q4 = Apr-Jun 2026; portfolio investment appears as a net-only line, not separate asset/liability transaction legs.
+- Table V.1 shows separate assets/liabilities in some other-investment and reserve-asset rows, but those are different instruments and cannot be substituted for portfolio legs. FY26 is provisional; no observation-specific revision timestamp or IMF-matched vintage ID found.
+- No net-to-leg back-solving, IIP substitution, IMF re-query, or cohort rebuild. BGD remains SOURCE_FOUND / PARTIAL / NOT PASS; national A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_BANGLADESH_BGD_Q2_2026_BB_Q4FY26_NET_ONLY_SOURCE_BOUNDARY_CONTINUATION239_20261125.md; report commit 68b6eb13da5ca33ba26f4f8d0ec5734f041642f3.
+- Next: reopen only on distinct official Bangladesh Bank Q2 dual-leg table/export with revision metadata; otherwise advance to next eligible fixed-cohort member after route-history preflight. ₹0; no production changes; UNKNOWN never PASS.
