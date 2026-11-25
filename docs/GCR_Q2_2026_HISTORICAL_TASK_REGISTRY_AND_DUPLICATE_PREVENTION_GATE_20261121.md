@@ -552,3 +552,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 
 - RWA matrix evidence_ref/note now points to C231; all acceptance gates unchanged (BLOCKED; asset/liability NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED).
 - Detail: docs/GCR_RWANDA_RWA_Q2_2026_BNR_WEB_DASH_ALTERNATE_ROUTE_BOUNDARY_CONTINUATION231_20261125.md. Next follow-up: SLB C132 unresolved official transaction-FX conversion-method boundary; do not use generic quarterly FX or infer conversion method. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 232 — SLB CBSI Q2 dataset locator and transaction-FX boundary (2026-11-25)
+| Country | New official route / evidence | C232 finding | Status | Duplicate prevention / reopen condition |
+|---|---|---|---|---|
+| SLB Solomon Islands | CBSI BOP page https://www.cbsi.com.sb/data-statistics/economic-statistics/balance-payments; linked Q2 workbook https://www.cbsi.com.sb/sites/default/files/2026-09/Balance-of-Payment-Statistics-2006-2026-Q2.xlsx; C99/C132 | Official page says BPM6, quarterly/annual, SB$ millions, latest 2026-Q2; XLSX URL resolves but raw byte retrieval fails (HTTP 400 unsupported XLSX MIME). Quarterly-average SBD/USD 8.08 is published, but CBSI does not say it is BOP transaction conversion rate. | PARTIAL / NOT PASS; transaction FX method NOT_ESTABLISHED; workbook bytes NOT_CAPTURED | Do not retry same XLSX through same unsupported path; reopen only on distinct supported raw-byte route or explicit CBSI BOP compilation methodology naming transaction conversion method |
+- SLB matrix evidence_ref now points to C232; asset/liability REVIEW, vintage PENDING, FULL_PASS NO and aggregate NOT_AUTHORIZED unchanged.
+- Detail: docs/GCR_SOLOMON_ISLANDS_SLB_Q2_2026_CBSI_OFFICIAL_DATASET_AND_TRANSACTION_FX_METHOD_BOUNDARY_CONTINUATION232_20261125.md. Next: SRB same-vintage/revision bridge; preflight C101/C103/C104/C109/C112 and do not repeat accepted monthly arithmetic/sign/FX work. ₹0; UNKNOWN never PASS.
