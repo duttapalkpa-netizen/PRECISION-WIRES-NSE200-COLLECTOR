@@ -1972,3 +1972,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - New official BCU Q2 report remains explicitly preliminary; Table 9 sector-level portfolio flow table is confirmed. BCU official calendar lists Q3-2026 “Cuentas Internacionales” for 30-Dec-2026. No Q2 revision identifier or observation-specific BCU↔IMF vintage bridge found.
 - URY remains DATA_CAPTURED; asset/liability numeric PASS reused; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Matrix unchanged.
 - Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_PRELIMINARY_STATUS_AND_Q3_RELEASE_VINTAGE_GATE_CONTINUATION245_20261125.md. Next: inspect Q3 publication after 30-Dec-2026 for Q2 revisions and explicit vintage bridge. No IMF re-query/cohort rebuild, ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 246 — Mexico MEX Q3 release post-publication vintage recheck (2026-11-25)
+- C244's scheduled 25-Nov post-release check was completed. Official Banxico Q3-2026 BOP PDF dated 25-Nov is now listed and inspected.
+- Its Q2 portfolio rows show assets USD 9,480m and liabilities USD 10,561m (net balance -1,082m). Previously accepted numeric dual-leg comparison is reused; no recalculation or IMF re-query.
+- The footnote identifies principal revisions in profits/dividends, direct investment and services, but does not identify whether Q2 portfolio asset/liability observations changed. No observation-specific revision timestamp/version bridge; MEX vintage remains PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_POSTPUBLICATION_VINTAGE_RECHECK_CONTINUATION246_20261125.md (commit 2a4e47d5d82933ffe11bedcc2a0738d4b8994458). Next: compare Q2 portfolio pair against the 25-Aug first-release table and capture explicit revision metadata; otherwise retain UNKNOWN and advance. ₹0; cohort immutable; production unchanged.
