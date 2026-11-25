@@ -1957,3 +1957,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - MEX existing numeric legs remain PASS at ±USD0.5m; same-vintage remains NOT_ESTABLISHED; MEX PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Exact post-release action: after 20:30 IST, inspect official Banxico page; if Q3 release appears, capture bytes/metadata/hash and inspect only its Q2 revised legs and explicit vintage/version bridge. Release date alone is not same-vintage proof. If absent, stop; no inferred publication.
 - Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_SCHEDULE_AND_VINTAGE_GATE_PRECHECK_CONTINUATION244_20261125.md; commit 86196e69abcd73f494e19e3ec2519e112f50e0d7. ₹0; invariants unchanged; UNKNOWN never PASS.
+
+
+## Continuation 245 — Uzbekistan UZB CBU Q2 latest-vintage / release-calendar boundary (2026-11-25)
+- Preflight: current Ledger/Queue/Registry/63-country matrix, Library Mother File GCR context and UZB C123 report re-read. Existing numeric comparison PASS reused; no IMF re-query/cohort rebuild or repeated prior XLSX-byte attempt.
+- New official source audit: CBU standard BOP dataset page indexed update 29-Sep-2026, Q2/2026 latest; e-GDDS calendar schedules Q2 BOP 30-Sep and Q3 BOP 31-Dec. Official H1-2026 review (29-Sep) reports net portfolio investment inflows around USD2bn only; not separate Q2 A/L. H1 statistical bulletin XLSX appears in 24-Nov statistics-page search index, but current dynamic page surface was stale and workbook bytes/headers were not exposed.
+- “million USD, end of period” remains ambiguous for BOP transaction rows without workbook headers. Same-vintage/revision bridge not established. UZB DATA_CAPTURED; existing asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_UZBEKISTAN_UZB_Q2_2026_CBU_LATEST_VINTAGE_AND_RELEASE_CALENDAR_BOUNDARY_CONTINUATION245_20261125.md (commit 5a4efbb7d5608682b482419d48e18070826ca6e9).
+- Next: distinct supported byte-preserving CBU H1-2026 XLSX/Q2 workbook route and explicit time-basis/revision metadata only. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
