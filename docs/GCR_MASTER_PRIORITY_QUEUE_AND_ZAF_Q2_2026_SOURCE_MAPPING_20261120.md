@@ -1965,3 +1965,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - “million USD, end of period” remains ambiguous for BOP transaction rows without workbook headers. Same-vintage/revision bridge not established. UZB DATA_CAPTURED; existing asset/liability PASS; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_UZBEKISTAN_UZB_Q2_2026_CBU_LATEST_VINTAGE_AND_RELEASE_CALENDAR_BOUNDARY_CONTINUATION245_20261125.md (commit 5a4efbb7d5608682b482419d48e18070826ca6e9).
 - Next: distinct supported byte-preserving CBU H1-2026 XLSX/Q2 workbook route and explicit time-basis/revision metadata only. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 245 — Uruguay URY BCU Q2 preliminary-status / Q3 release vintage gate (2026-11-25)
+- Selected URY after C244 based on fixed-cohort matrix: prior numeric dual-leg PASS already exists; same-vintage gate remains open. Existing arithmetic and IMF rows reused, not repeated.
+- New official BCU Q2 report remains explicitly preliminary; Table 9 sector-level portfolio flow table is confirmed. BCU official calendar lists Q3-2026 “Cuentas Internacionales” for 30-Dec-2026. No Q2 revision identifier or observation-specific BCU↔IMF vintage bridge found.
+- URY remains DATA_CAPTURED; asset/liability numeric PASS reused; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Matrix unchanged.
+- Report: docs/GCR_URUGUAY_URY_Q2_2026_BCU_PRELIMINARY_STATUS_AND_Q3_RELEASE_VINTAGE_GATE_CONTINUATION245_20261125.md. Next: inspect Q3 publication after 30-Dec-2026 for Q2 revisions and explicit vintage bridge. No IMF re-query/cohort rebuild, ₹0; production unchanged; UNKNOWN never PASS.

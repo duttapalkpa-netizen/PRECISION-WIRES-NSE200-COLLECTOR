@@ -434,3 +434,10 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - UZB remains DATA_CAPTURED; existing asset/liability numeric PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No matrix gate changed.
 - Report: docs/GCR_UZBEKISTAN_UZB_Q2_2026_CBU_LATEST_VINTAGE_AND_RELEASE_CALENDAR_BOUNDARY_CONTINUATION245_20261125.md; report commit 5a4efbb7d5608682b482419d48e18070826ca6e9.
 - Next: only a supported byte-preserving capture of the distinct CBU H1-2026 statistical bulletin or new Q2 workbook; inspect headers/time basis and observation-specific revision metadata. If unavailable, retain blocker and advance next eligible fixed-cohort task after preflight. ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## GCR Continuation 245 — Uruguay URY Q2 preliminary-status / Q3 release vintage gate (25-Nov-2026)
+- Mandatory preflight re-read current Ledger, Priority Queue, Historical Registry, fixed 63-country matrix, C244 report and Library Mother File / prior URY context. Reused prior URY Table 9 separate-leg numeric PASS; skipped repeated arithmetic, IMF re-query and cohort rebuild.
+- New official BCU evidence: Q2 2026 BOP/IIP report still labels figures preliminary; Table 9 provides sector-level portfolio flow detail. Official BCU statistics calendar lists “Cuentas Internacionales 3er Trimestre 2026” for 30-Dec-2026. This is a future release schedule, not evidence of a Q2 revision.
+- No Q2 revision identifier, observation-specific timestamp or explicit BCU-to-IMF vintage bridge found. URY numeric dual-leg PASS remains reused; vintage PENDING / NOT_ESTABLISHED; FULL_PASS NO; aggregate NOT_AUTHORIZED. Matrix unchanged because no gate changed.
+- Detail: docs/GCR_URUGUAY_URY_Q2_2026_BCU_PRELIMINARY_STATUS_AND_Q3_RELEASE_VINTAGE_GATE_CONTINUATION245_20261125.md; sources turn142592view0 / turn795836view0 / turn874156search0 / turn874156search4. Next: after 30-Dec-2026 inspect Q3 release for Q2 revised legs and explicit vintage bridge; if absent, retain UNKNOWN and advance after fresh preflight. ₹0; no production changes; UNKNOWN never PASS.
