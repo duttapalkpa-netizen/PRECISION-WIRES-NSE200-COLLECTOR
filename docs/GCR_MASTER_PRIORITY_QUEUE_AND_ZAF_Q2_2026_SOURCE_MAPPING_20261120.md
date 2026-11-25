@@ -1889,3 +1889,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - One distinct .px-suffix table metadata GET attempt for MNG returned “URL not accessible” from the current retrieval surface. No HTTP status/headers/body/bytes/hash; no indicator metadata or Q2 A/L values. Do not mislabel as HTTP 4xx/5xx.
 - Close this exact URL variant for repeat through the same reader. MNG remains BLOCKED/PARTIAL/NOT PASS; A/L NOT_CAPTURED; aggregate NOT_AUTHORIZED. Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_DOCUMENTED_GET_METADATA_ENDPOINT_SUFFIX_TEST_CONTINUATION235_20261125.md; report commit 08c32ffc9d205e7141118a98c71c9637bcee1ee0.
 - Next: genuinely different supported GET-capable client/browser or official Q2 export; if unavailable, move to next eligible cohort member after fresh route-history preflight. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
+
+
+
+## Continuation 236 — Angola AGO BNA dissemination schedule / public access boundary (2026-11-25)
+- Preflight: current ledger/queue/registry/matrix, C142 and Library Mother File/GCR context re-read. Existing PASS and the previously attempted BNA SPA route were skipped.
+- New official INE PASEN 2026 schedule: BNA BOP/IIP production is quarterly under MBP6; public availability is quarter n+1. BNA dissemination calendar specifies previous-quarter BOP/IIP, bimonthly, website placement after 60 days. Current IMF e-GDDS metadata says quarterly external-sector data are publicly posted on the BNA website simultaneously; hard-copy quarterly bulletin and annual BOP/IIP mailing-list language is separate.
+- The 4-Sep-2026 Q2 release announcement is timing-consistent, but public text has only account-level current-account and capital/financial totals; no portfolio A/L rows or detailed raw attachment locator/API/schema identified. This corrects the overly broad mailing-list-only reading in C142 but does not validate national values.
+- AGO remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Matrix gate unchanged; evidence_ref points to C236.
+- Report: docs/GCR_ANGOLA_AGO_Q2_2026_BNA_DISSEMINATION_CALENDAR_AND_PUBLIC_ACCESS_BOUNDARY_RECONCILIATION_CONTINUATION236_20261125.md (commit 7aec846aef1f3a1079ad503215fba3579f72eeae).
+- Next: supported official BNA public download/browser route for detailed Q2 portfolio A/L, otherwise advance to next fixed-cohort country after fresh route-history preflight. No guessed API, no BNA SPA repeat, no IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
