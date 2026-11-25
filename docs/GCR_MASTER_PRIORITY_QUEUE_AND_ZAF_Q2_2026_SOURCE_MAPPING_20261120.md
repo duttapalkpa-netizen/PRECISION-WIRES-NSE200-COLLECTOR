@@ -1999,3 +1999,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - COL remains BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Matrix row updated only with C248 evidence pointer and explanatory note; all gate states unchanged.
 - Report: docs/GCR_COLOMBIA_COL_Q2_2026_OFFICIAL_PORTFOLIO_SERIES_SCOPE_AND_ALTERNATE_ROUTE_AUDIT_CONTINUATION248_20261126.md (commit a1206349a0ae0285e97b5e406fdbfc05651296b2).
 - Next eligible country task: POL (Poland), after fresh preflight; no unsupported PLN→USD conversion. ₹0; no IMF re-query/cohort rebuild; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 249 — POL Poland NBP version-2.1 publication / latest vintage boundary (2026-11-26)
+- Re-read current Ledger, Queue, Registry, matrix, Library Mother File 1–53 and POL C163/C164/C165/C181. Prior PLN dual legs and transaction-date FX rule reused; no repeat extraction, NBP byte retry, IMF re-query or cohort rebuild.
+- NBP public reporting list shows explanatory-notes v2.1 dated 13-Jul-2026, but its attachment URL/bytes/text are not exposed in the inspected page. Retrievable v2.0 notes specify actual transaction-date/prior-day rate for other data and four-decimal reporting FX precision; this does not supply underlying Q2 currency/date weights.
+- NBP latest indexed 13-Nov monthly BOP is September and preliminary/revisable; no matched Q2 USD portfolio dual-leg or NBP–IMF same-vintage bridge found. POL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_POLAND_POL_Q2_2026_NBP_VERSION21_PUBLICATION_AND_LATEST_VINTAGE_BOUNDARY_RECHECK_CONTINUATION249_20261126.md (commit 37573606aa47bb1fa65a14ddbf66032088e98e42). Matrix note/evidence_ref updated without gate promotion.
+- Next candidate MNE; reopen only via supported CBCG table annotation extraction or distinct official export route. Do not repeat C241 failed routes. ₹0; production unchanged; UNKNOWN never PASS.
