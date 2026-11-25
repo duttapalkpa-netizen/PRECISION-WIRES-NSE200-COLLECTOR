@@ -1949,3 +1949,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Direct official CBS index recheck did not confirm the search-index “September 2026” snippet: the opened page's Latest list still begins with June 2026 and footer says 18-Aug-2026. C125/C126 June bulletin Q1 finding reused; no repeated PDF extraction.
 - WSM Q2-II portfolio A/L remain NOT_CAPTURED; SOURCE_FOUND / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not treat the search snippet as release evidence.
 - Next WSM action: wait for a later issue to appear on the direct CBS index; verify internal reporting period and Table B-1 before capture. Otherwise continue the next eligible fixed-cohort task after exact route-history preflight. Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_OFFICIAL_INDEX_RELEASE_STATUS_RECHECK_CONTINUATION243_20261125.md.
+
+
+## Continuation 244 — MEX Banxico Q3 schedule / Q2 vintage precheck (2026-11-25)
+- Re-read current Ledger, Priority Queue, Historical Registry, fixed 63-country matrix, Library Mother File GCR context, and controlling MEX C137/C208 reports. Existing Q2 dual-leg numeric PASS was reused; no repeat PDF/SIE extraction, no IMF re-query, no cohort rebuild.
+- Official Banxico BOP page schedules quarterly releases on 25-May/August/November at 09:00 and still lists Q2 (25-Aug-2026) as latest. Indexed November calendar lists Q3-2026 BOP for 25-Nov-2026. At 19:10 IST (07:40 Mexico City), the scheduled 09:00 Mexico City publication was 80 minutes away; no Q3 release/Q2 revision was captured.
+- MEX existing numeric legs remain PASS at ±USD0.5m; same-vintage remains NOT_ESTABLISHED; MEX PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Exact post-release action: after 20:30 IST, inspect official Banxico page; if Q3 release appears, capture bytes/metadata/hash and inspect only its Q2 revised legs and explicit vintage/version bridge. Release date alone is not same-vintage proof. If absent, stop; no inferred publication.
+- Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_SCHEDULE_AND_VINTAGE_GATE_PRECHECK_CONTINUATION244_20261125.md; commit 86196e69abcd73f494e19e3ec2519e112f50e0d7. ₹0; invariants unchanged; UNKNOWN never PASS.
