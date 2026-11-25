@@ -1914,3 +1914,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - New official BoA June-2014 BPM6 commentary confirms EUR BOP presentation and user conversion convention: average FX for flows, end-period FX for stocks. BoA monthly average rates to ALL are simple averages of daily official rates. IMF BPM6 §§3.105–3.106 clarify transaction/shortest-period conversion and converting underlying flows before deriving net.
 - Exact Q2-2026 portfolio-specific USD aggregation and same-vintage/revision cutoff remain NOT_ESTABLISHED. No inferred cross-rate or unweighted quarterly mean used; no conversion applied. ALB numeric gates REVIEW, vintage UNKNOWN, aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_OFFICIAL_FLOW_FX_RULE_AND_REVISION_BOUNDARY_CONTINUATION238_20261125.md (commit 01d226cb0c6d751643e988ff6f5377600e87adc7). Next: distinct dated Q2 revision/methodology/transaction-rate evidence only; else advance fixed cohort. No legacy-route repeat, IMF re-query or cohort rebuild.
+
+
+## Continuation 239 — BGD Bangladesh Q2-2026 official publication boundary (2026-11-25)
+- Selected after C238 Albania boundary and exact current matrix/registry preflight. New official Bangladesh Bank Quarterly Vol XXIII No.4 covers April-June 2026; Table V.1 is USDm and maps calendar Q2-2026 to FY26 Q4.
+- Portfolio investment is net-only in Table V.1; separate portfolio asset/liability legs are not exposed. Other-investment and reserve-asset leg rows are not portfolio substitutes. FY26 values provisional; no observation-specific vintage bridge.
+- BGD remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Report docs/GCR_BANGLADESH_BGD_Q2_2026_BB_Q4FY26_NET_ONLY_SOURCE_BOUNDARY_CONTINUATION239_20261125.md (commit 68b6eb13da5ca33ba26f4f8d0ec5734f041642f3).
+- Reopen only on distinct official Q2 dual-leg data with revision metadata. No net-to-leg backsolve, IMF re-query, cohort rebuild or production change.
