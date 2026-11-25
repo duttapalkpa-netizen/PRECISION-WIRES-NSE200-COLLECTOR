@@ -504,3 +504,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 ## C246 authoritative correction note (carried forward in C247)
 - The C246 first-pass prose above is superseded by the later direct comparison: 25-Aug Banxico Q2 asset USD8,937m vs 25-Nov Q3-release Q2 asset USD9,480m (+USD543m); liabilities USD10,561m unchanged. Archived IMF asset USD8,937.255098m now differs by USD542.744902m; liability USD10,561.285114m differs by -USD0.285114m.
 - Correct MEX gate: asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED. Fixed cohort matrix row is already synchronized and read back. Do not rely on the earlier C246 sentence saying both legs PASS. The correction report is docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_POSTPUBLICATION_VINTAGE_RECHECK_CONTINUATION246_20261125.md; addendum availability must be checked separately.
+
+
+## GCR Continuation 248 — Colombia COL Q2-2026 source-scope boundary (26-Nov-2026)
+- Mandatory preflight: current Ledger, GCR Queue, Historical Task Registry, fixed 63-country matrix, Library Mother File and COL C151/C152/C162 reports re-read. CHN C247, MEX C246 and all previously accepted PASS work skipped.
+- Official BanRep catalogue confirms separate quarterly BOP portfolio net-acquisition-of-assets and net-incurrence-of-liabilities series in current USDm through Q2-2026. A separate monthly local-market foreign portfolio flow series is not equivalent and is not admitted as a substitute. Q2 IIP positions are stocks; the Q2 financial-account aggregate includes other components; both excluded.
+- Identical SUAMECA 502/dashboard routes and desktop procedure were not repeated. No raw Q2 legs, series IDs, export bytes/hash, portfolio sign crosswalk or same-vintage bridge obtained. COL remains BLOCKED / NOT PASS; 63-country aggregate NOT_AUTHORIZED.
+- Report commit: a1206349a0ae0285e97b5e406fdbfc05651296b2; report: docs/GCR_COLOMBIA_COL_Q2_2026_OFFICIAL_PORTFOLIO_SERIES_SCOPE_AND_ALTERNATE_ROUTE_AUDIT_CONTINUATION248_20261126.md.
+- Matrix COL row evidence_ref/note updated; gate statuses unchanged. Next eligible cohort task POL, with exact preflight and no unsupported PLN→USD conversion. ₹0; no IMF re-query/cohort rebuild; production invariants unchanged; UNKNOWN never PASS.
