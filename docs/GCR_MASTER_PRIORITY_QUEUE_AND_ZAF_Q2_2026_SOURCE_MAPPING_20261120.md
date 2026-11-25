@@ -1921,3 +1921,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Portfolio investment is net-only in Table V.1; separate portfolio asset/liability legs are not exposed. Other-investment and reserve-asset leg rows are not portfolio substitutes. FY26 values provisional; no observation-specific vintage bridge.
 - BGD remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Report docs/GCR_BANGLADESH_BGD_Q2_2026_BB_Q4FY26_NET_ONLY_SOURCE_BOUNDARY_CONTINUATION239_20261125.md (commit 68b6eb13da5ca33ba26f4f8d0ec5734f041642f3).
 - Reopen only on distinct official Q2 dual-leg data with revision metadata. No net-to-leg backsolve, IMF re-query, cohort rebuild or production change.
+
+
+## Continuation 240 — TJK Tajikistan official NBT workbook route fingerprint (2026-11-25)
+| Country | New official route | C240 finding | Status | Duplicate prevention / reopen condition |
+|---|---|---|---|---|
+| TJK Tajikistan | NBT BOP page https://www.nbt.tj/en/payments_balance/; Standard 2026 XLSX https://www.nbt.tj/upload/iblock/d9d/6x5djzg70lrzfq0t9f3pibhv3vmkb71x/st_pr_2026_2.xlsx; Analytical 2026 XLSX https://www.nbt.tj/upload/iblock/1fd/gt06fcxjn5ilv466tnxmf28usqj9vnc5/an_pr_2026_2.xlsx | Official BOP source and exact 2026 workbook locators confirmed; reader rejects XLSX MIME (400), direct standard-workbook byte download failed. No raw bytes/schema/Q2 A/L/vintage/hash. | SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED | Do not repeat same reader click/direct download. Reopen only through genuinely different supported XLSX-capable byte route or distinct official NBT export with revision metadata. |
+- Detail: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_OFFICIAL_STANDARD_BOP_XLSX_LOCATOR_AND_BYTE_ACCESS_BOUNDARY_CONTINUATION240_20261125.md; report commit 35f0059e6d7a884db9f606d288c4d5919d0d1e85. No IMF re-query/cohort rebuild or production change. ₹0; UNKNOWN never PASS.
