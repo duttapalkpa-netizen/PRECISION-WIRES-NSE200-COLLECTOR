@@ -274,3 +274,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - NSDL archive rows remain NOT_CAPTURED; matched-date NSDL/CDSL reconciliation NOT_DONE. CDSL C229 arithmetic PASS retained; archive freshness/completeness remains NOT_PASS / UNKNOWN.
 - CHN/COL/POL routes remain blocked as documented; next cohort work must require a genuinely new official route and full route-history preflight. TUR's existing ZIP timeout is closed absent distinct official route/revision. No IMF re-query/cohort rebuild, paid source, external contact, workflow dispatch or production changes. ₹0; UNKNOWN never PASS.
 - Report: docs/GCR_NSDL_ARCHIVAL_PERMISSION_GATE_RECONCILIATION_CONTINUATION230_20261125.md.
+
+
+## GCR Continuation 231 — RWA BNR WebDash alternate-route boundary (25-Nov-2026)
+- Mandatory preflight completed: re-read current ledger, GCR queue, 63-country registry, RWA C97/C130, NPL C58/C94/C130, SLV C100/C131, and Library Mother File 1–53 + GCR Gap Matrix. Completed PASS work skipped.
+- NPL current-route closure check: NRB External Sector BPM6 XLSX locator unchanged; NSDP BOP SDMX link still points to stale NEPAL_BOP_2024_Q1.xml. No new official Q2 API/export route; NPL remains PARTIAL/BLOCKED; no repeated XLSX fetch.
+- RWA new official route: https://webdash.bnr.rw/ indexed Balance of Payment table shows annual USDm 2019–2023 with combined portfolio investment only; no Q2-2026 separate asset/liability legs or API/export contract. BNR June-30 portal item remains JS shell / exact URL unresolved. October MPFSS 2026H1 portfolio net +USD14m is net-only and not Q2; annual FY rows remain non-quarterly. RWA remains PARTIAL / NOT PASS; Q2 legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
+- RWA matrix note/evidence_ref updated without gate promotion. Report: docs/GCR_RWANDA_RWA_Q2_2026_BNR_WEB_DASH_ALTERNATE_ROUTE_BOUNDARY_CONTINUATION231_20261125.md; report commit 719b1482b5b1216d0a3a6cb5ea73c6a002f81025. Queue/registry/matrix updated.
+- Next: SLB official transaction-FX conversion-method boundary from C132 after exact route-history preflight. No generic quarterly FX, inferred sign/scale, IMF re-query, cohort rebuild, paid data, external contact or production changes. ₹0; Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged; UNKNOWN never PASS.
