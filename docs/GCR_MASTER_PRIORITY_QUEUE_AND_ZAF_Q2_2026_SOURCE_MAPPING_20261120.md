@@ -1875,3 +1875,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Official NBS Bulletin archive only exposes generic Select/Input/Show controls; XLS link leads to general Statistics landing page. July issue chronology is confirmed but no July Table 2.3 header/May leg capture. Known July PDF direct URL remains closed after C109–C111 timeout; no duplicate fetch.
 - SRB July-vintage May legs NOT_VERIFIED; July-to-September revision NOT_DONE; raw bytes/hash NOT_CAPTURED; national scope and USD/EUR bridge NOT_ESTABLISHED. SRB PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: ${reportPath}; report commit ${created.result.commit_sha}. Resume only with supported browser DOM/download or a genuinely new official byte route. ₹0; no IMF re-query/cohort rebuild; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 234 — Mongolia MNG official Open Data API contract advance (2026-11-25)
+- After C233 SRB route remained blocked, selected MNG from the fixed cohort after exact preflight C179/C190/C221/C222. PASS work and known failed endpoint attempts were not repeated.
+- New official NSO Open Data documentation publishes GET route example, table metadata response fields (title, variables/code/text/values/valueTexts) and JSON/XML output. NSO terms include <=1 request/second/IP, <=100,000 responses/request and CC BY 4.0.
+- Official MNG BOP table page confirms quarterly, million USD, Bank of Mongolia source, 69 Indicator and 71 Quarter values incl. 2026-2; no separate portfolio indicators yet captured. Candidate table-specific API route remains inaccessible through current retrieval surface; no HTTP response/body/hash or query claimed.
+- MNG remains BLOCKED / PARTIAL / NOT PASS; national A/L NOT_CAPTURED; aggregate NOT_AUTHORIZED. Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_OFFICIAL_OPEN_DATA_API_DOCUMENTATION_AND_TABLE_ROUTE_BOUNDARY_CONTINUATION234_20261125.md; report commit fc9d3bfb4503c75e30341f90277823977a417d52.
+- Next: exact table metadata GET via supported client, then real indicator-code identification and Q2-only capture. No guessed query, IMF re-query/cohort rebuild, paid source or production change; ₹0; UNKNOWN never PASS.
