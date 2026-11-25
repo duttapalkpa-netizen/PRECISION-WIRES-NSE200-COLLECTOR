@@ -700,3 +700,9 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | ALB Albania | BoA archive navigation exposes quarterly USD BOP and Financial Account series; legacy USD BOP child selector ends Q4-2013 and carries 11-Sep-2017 revision note; new-format USD Financial Account page shows A/L portfolio taxonomy but no Q2-2026 values and same 2017 revision note | Route discovery PASS; archive Q2-2026 ineligible; Q2 EUR→USD conversion and vintage unresolved; ALB PARTIAL / NOT PASS | Do not repeat legacy USD child URLs absent new official 2026 observations, a dated revision record or supported current export with Q2 USD portfolio dual legs |
 - Detail: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_LEGACY_USD_ARCHIVE_Q2_ELIGIBILITY_AND_VINTAGE_BOUNDARY_CONTINUATION251_20261126.md; commit 9835344450ed796d63bbaedbf633fb3bcc531296.
+
+## Continuation 252 — HUN Hungary MNB monthly BOP calendar / vintage trigger (2026-11-26)
+| Country | New official evidence | Status | Duplicate decision / reopen only if |
+|---|---|---|---|
+| HUN Hungary | MNB calendar lists 13-Nov-2026 monthly BOP for September 2026; MNB homepage BOP/IIP latest remains Q2-2026 updated 25-Sep; no monthly portfolio A/L values or Q2 revision/vintage ID exposed | Existing C138 Q2 legs remain DATA_CAPTURED; cross-currency comparison NOT_DONE; vintage NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not repeat C138 PDF/IMF or C139 monthly-data route. Reopen only on distinct monthly portfolio A/L dataset, Q2 revision artifact or Q3 BOP/IIP report with portfolio legs and revision metadata |
+- Detail: docs/GCR_HUNGARY_HUN_Q2_2026_MNB_POST_C138_RELEASE_CALENDAR_AND_MONTHLY_BOP_VINTAGE_TRIGGER_RECHECK_CONTINUATION252_20261126.md; commit 8af5f5c0e9197078651f219b6aa14c058f60b89b.
