@@ -2025,3 +2025,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Official MNB calendar lists 13-Nov monthly BOP for Sep-2026; MNB homepage still reports BOP/IIP latest Q2-2026, updated 25-Sep. No monthly portfolio A/L transaction rows or Q2 revision/vintage identifier exposed. Do not infer portfolio rows from generic monthly BOP calendar label.
 - Reuse C138 legs EUR +2,104m assets/+8,380m liabilities; net -6,277m (EUR1m displayed rounding difference retained). HUN DATA_CAPTURED / PARTIAL / NOT PASS; numeric cross-currency comparison NOT_DONE; vintage NOT_ESTABLISHED; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_HUNGARY_HUN_Q2_2026_MNB_POST_C138_RELEASE_CALENDAR_AND_MONTHLY_BOP_VINTAGE_TRIGGER_RECHECK_CONTINUATION252_20261126.md (commit 8af5f5c0e9197078651f219b6aa14c058f60b89b). Matrix updated to reflect existing capture without promotion.
+
+## Continuation 253 — CHL Chile BCCh Q3-release Q2 portfolio net revision / vintage boundary (2026-11-26)
+- Preflight re-read current Ledger, Queue, Registry, 63-country matrix, Library Mother File 1–53 and CHL C160/C161. Skipped prior BDE monthly extraction and closed credential-gated API route.
+- New BCCh Q3-2026 report (18-Nov) states Q2 BOP was revised. Q2 portfolio net now USD +154m vs +299m in prior Q2 release (-USD145m). Revision Table 3 gives total financial-account assets/liabilities only, not portfolio A/L legs.
+- Prior BDE Q2 monthly legs +5,098.91 / +5,397.51 USDm remain earlier-vintage source-page observations; no current-vintage gross A/L pair or raw export/hash captured. Do not back-solve from net or total financial-account legs.
+- CHL remains DATA_CAPTURED / PARTIAL / NOT PASS; vintage PENDING; aggregate NOT_AUTHORIZED. Report docs/GCR_CHILE_CHL_Q2_2026_BCCH_Q3_RELEASE_PORTFOLIO_NET_REVISION_AND_VINTAGE_BOUNDARY_CONTINUATION253_20261126.md; commit 02c7ff97ea91d09423ec1a30c9e589aa016a3ec2.
+- Reopen only on an authorized public BDE export or distinct official export with both Q2 portfolio legs, series IDs, vintage metadata and raw bytes/hash. ₹0; no IMF re-query/cohort rebuild; production unchanged; UNKNOWN never PASS.
