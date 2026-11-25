@@ -2007,3 +2007,9 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - NBP latest indexed 13-Nov monthly BOP is September and preliminary/revisable; no matched Q2 USD portfolio dual-leg or NBP–IMF same-vintage bridge found. POL remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_POLAND_POL_Q2_2026_NBP_VERSION21_PUBLICATION_AND_LATEST_VINTAGE_BOUNDARY_RECHECK_CONTINUATION249_20261126.md (commit 37573606aa47bb1fa65a14ddbf66032088e98e42). Matrix note/evidence_ref updated without gate promotion.
 - Next candidate MNE; reopen only via supported CBCG table annotation extraction or distinct official export route. Do not repeat C241 failed routes. ₹0; production unchanged; UNKNOWN never PASS.
+
+## Continuation 250 — MNE Montenegro CBCG official BPM6 download route fingerprint (2026-11-26)
+- Re-read current Ledger, Queue, Registry, fixed 63-country matrix, Library Mother File 1–53 and C241. Skip PASS work; do not repeat CBCG Bulletin PDF reader/byte route, old CBCG ZIP, MONSTAT NSDP SDMX/XML/Browse, IMF re-query or cohort rebuild.
+- New official CBCG BOP statistics page: https://www.cbcg.me/me/statistika/statisticki-podaci/ekonomski-odnosi-sa-inostranstvom/platni-bilans; BPM6 quarterly EUR data, page updated 19-Nov-2026. BPM6 (2010–2026) official download link resolves to https://www.cbcg.me/slike_i_fajlovi/fajlovi/fajlovi_publikacije/statistika/bop_sep_2026.zip.
+- Web reader rejects application/zip; direct byte-download failed. No ZIP bytes/hash or Q2 portfolio asset/liability legs captured. Filename is not proof of coverage. MNE remains BLOCKED / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_OFFICIAL_BPM6_DOWNLOAD_ROUTE_FINGERPRINT_CONTINUATION250_20261126.md (commit 0026acf7352ff6711b31b292fe2ab41963aad04c). Matrix note/evidence_ref updated, no gate promotion. Reopen only with supported official byte retrieval or distinct CBCG endpoint.
