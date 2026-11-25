@@ -349,3 +349,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - No net-to-leg back-solving, IIP substitution, IMF re-query, or cohort rebuild. BGD remains SOURCE_FOUND / PARTIAL / NOT PASS; national A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_BANGLADESH_BGD_Q2_2026_BB_Q4FY26_NET_ONLY_SOURCE_BOUNDARY_CONTINUATION239_20261125.md; report commit 68b6eb13da5ca33ba26f4f8d0ec5734f041642f3.
 - Next: reopen only on distinct official Bangladesh Bank Q2 dual-leg table/export with revision metadata; otherwise advance to next eligible fixed-cohort member after route-history preflight. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## GCR Continuation 240 — Tajikistan TJK official BOP workbook locator / byte-access boundary (25-Nov-2026)
+- Mandatory preflight re-read current Master Ledger, Priority Queue, 63-country Historical Task Registry/matrix and Library Mother File/GCR context. TJK is in the fixed cohort; no prior TJK-specific continuation was found in the registry. Existing IMF panel reused; no IMF re-query/cohort rebuild.
+- New official NBT Balance of Payments page (https://www.nbt.tj/en/payments_balance/) states BOP compilation is an NBT function and cites IMF BPM5/BPM6 methods. Its 2026 Standard Representation link resolves to https://www.nbt.tj/upload/iblock/d9d/6x5djzg70lrzfq0t9f3pibhv3vmkb71x/st_pr_2026_2.xlsx; Analytical Representation separately resolves to https://www.nbt.tj/upload/iblock/1fd/gt06fcxjn5ilv466tnxmf28usqj9vnc5/an_pr_2026_2.xlsx.
+- Both official XLSX links returned HTTP 400 / unsupported XLSX MIME in the document reader; direct byte download of the standard workbook also failed. No workbook bytes, headers, byte count, sheet/schema, Q2 row values, portfolio A/L legs, revision metadata or SHA-256 captured. IIP stocks, annual forecasts and unrelated banking assets/liabilities are not substitutes.
+- TJK remains SOURCE_FOUND / PARTIAL / NOT PASS; both national legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Matrix gates unchanged; evidence_ref/note points to C240.
+- Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_OFFICIAL_STANDARD_BOP_XLSX_LOCATOR_AND_BYTE_ACCESS_BOUNDARY_CONTINUATION240_20261125.md; report commit 35f0059e6d7a884db9f606d288c4d5919d0d1e85.
+- Next: use only a genuinely different supported XLSX byte-transfer/browser route or distinct official NBT export; do not repeat the same document-reader or direct-download attempts. ₹0; no production changes; UNKNOWN never PASS.
