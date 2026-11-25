@@ -374,3 +374,37 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Annex XLSX reader click returned HTTP 400 unsupported XLSX MIME; a separate direct byte-download attempt failed. No bytes/headers/size/sheets/schema/Q2 coverage/A-L values/revision metadata/hash captured. BCP BOP page confirms quarterly and annual dissemination with three-month lag; current calendar lists next quarterly release 30-Dec-2026, not proof of annex Q2 legs.
 - PRY remains SOURCE_FOUND / PARTIAL / NOT PASS; both national legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Close this annex URL's identical reader/download attempts. Reopen only with a distinct supported XLSX/API/export route.
 - Report: docs/GCR_PARAGUAY_PRY_Q2_2026_BCP_STATISTICAL_ANNEX_ALTERNATE_EXPORT_ACCESS_BOUNDARY_CONTINUATION242_20261125.md; report commit ec6e16fb0507a278cf1cc23e6c98548596cc81a5. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Chapter 57 — Ten-conversation closeout summary and page-rollover rule (25-Nov-2026)
+
+### Conversation range and scope
+- Chapter: `গবেষণা যাচাই অব্যাহত 57`
+- Counted research continuations: C233–C242 (10 conversations).
+- Purpose: fixed-cohort Q2-2026 GCR national portfolio asset/liability source validation, with source-access, period, dual-leg, vintage and duplicate-prevention gates. This chapter summary is a navigation/continuity checkpoint, not a claim that all country validations passed.
+
+### Ten-conversation summary
+1. **C233 — Serbia (SRB):** attempted July-vintage source retrieval; archive XLS redirected to the general Statistics page. July Table 2.3 header and separate May asset/liability values were not captured; revision bridge and dual-leg comparison remain incomplete. SRB remains PARTIAL / NOT PASS.
+2. **C234 — Mongolia (MNG):** official NSO documentation/metadata structure reviewed; 69 indicators, 71 quarters and Q2 code `2026-2` identified. Actual metadata response/indicator values and portfolio legs remained blocked. Documentation-level work only; MNG not passed.
+3. **C235 — Mongolia (MNG):** documented `.px` GET metadata endpoint was tested but inaccessible in the current retrieval surface; no response or data captured. Do not repeat the same route. MNG remains BLOCKED/PARTIAL.
+4. **C236 — Angola (AGO):** reconciled official INE PASEN 2026 schedule, BNA dissemination calendar and IMF e-GDDS public-access metadata. Quarterly BPM6 BOP/IIP is public in quarter n+1; BNA calendar says website publication after 60 days. This corrects the prior overly broad mailing-list-only interpretation, but public Q2 text exposes only account-level totals, not portfolio A/L. AGO remains SOURCE_FOUND / PARTIAL / NOT PASS.
+5. **C237 — Albania (ALB):** official BoA Q2-2026 report/table dual-leg capture; published assets EUR 156.25m, liabilities EUR 124.70m, net EUR 31.55m, arithmetic identity holds. Raw PDF bytes/headers/hash and independently verified FX/vintage bridge were not obtained; numeric arithmetic does not establish IMF-matched validation. ALB remains PARTIAL / NOT PASS.
+6. **C238 — Albania (ALB):** clarified BoA flow FX convention (average FX for BOP flows; end-period FX for IIP stocks) and monthly average-rate construction. Exact Q2 portfolio USD aggregation and same-vintage revision cutoff remain unestablished; no conversion applied. ALB remains REVIEW / REVIEW / UNKNOWN / NOT_AUTHORIZED.
+7. **C239 — Bangladesh (BGD):** Bangladesh Bank Quarterly Vol XXIII No.4, Table V.1 inspected. Calendar Q2-2026 maps to FY26 Q4; portfolio investment is net-only, with no separate portfolio asset/liability legs. Other investment and reserves were correctly excluded as substitutes. BGD remains SOURCE_FOUND / PARTIAL / NOT PASS.
+8. **C240 — Tajikistan (TJK):** official NBT BOP page and 2026 Standard/Analytical XLSX locators confirmed. XLSX reader returned unsupported MIME/400 and direct byte retrieval failed; no workbook bytes/schema/Q2 legs/vintage/hash. TJK remains SOURCE_FOUND / PARTIAL / NOT PASS.
+9. **C241 — Montenegro (MNE):** official CBCG Bulletin 9/2026 confirms BPM6, quarterly EUR and FX methodology; tables 5.1–5.4 download label found, but annotation target/direct export URL was not exposed and PDF byte download failed. No Q2 portfolio A/L captured. MNE remains PARTIAL / NOT PASS.
+10. **C242 — Paraguay (PRY):** distinct official BCP Statistical Annex page and current XLSX locator identified; the annex is described as including BOP statistics. XLSX reader rejected MIME/400 and byte download failed; Q2 scope, portfolio A/L, raw hash and vintage remain unverified. PRY remains PARTIAL / NOT PASS.
+
+### Chapter-level result
+- Ten country/source-boundary continuations were reviewed and documented; no country was promoted to FULL_PASS from these ten tasks.
+- New official source/dissemination evidence was added for Angola and Paraguay; Albania dual-leg arithmetic and FX methodology were clarified; Bangladesh net-only limitation was confirmed; Mongolia, Tajikistan and Montenegro retrieval boundaries were recorded; Serbia's July-vintage route remained unresolved.
+- All countries remain subject to their individual matrix statuses. The 63-country aggregate remains `NOT_AUTHORIZED`; no national validation should be represented as fully complete on the basis of source discovery or partial numeric checks alone.
+- No IMF re-query, fixed-cohort rebuild, net-to-leg back-solving, IIP-stock substitution, synthetic values, unsupported FX/sign/scale conversion or production changes.
+- Spend ₹0; free official sources only. CORE-672 (56×12), V11.3 Engines A–E, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and IPO-PLX V2.0 remain unchanged.
+
+### Fixed chapter/page rollover rule (user instruction, 25-Nov-2026)
+- Count **conversations** within each numbered research chapter/page, not tool calls, messages, commits or continuation IDs.
+- After every 10 conversations, provide a concise chapter closeout summary: work/checks completed, country/task outcomes, GitHub records updated, unresolved blockers, and next actions.
+- Explicitly tell the user that the 10-conversation block is complete and they should open the next numbered research page/chapter before continuing.
+- Reset the counter for the new page. If the user opens a new page early, continue from the current GitHub Ledger/Library continuity state; do not fabricate a 10-conversation completion.
+- Do not claim the summary has been fixed in product automation; this is the standing conversation/workflow instruction and is recorded here for continuity.
