@@ -1943,3 +1943,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Distinct official BCP Statistical Annex page states the periodically updated file includes balance-of-payments statistics. Current XLSX locator: https://www.bcp.gov.py/documents/20117/213069/Anexo_Estad%C3%ADstico_del_Informe_Econ%C3%B3mico_23_11_2026.xlsx/1fc7fda2-74cf-e07c-be5b-535f02a89ba3?t=1795456089070 . Reader click returned HTTP 400 unsupported XLSX MIME and separate byte download failed.
 - This is not the C60 Q2-specific BOP/IIP workbook URL. However, no annex bytes/sheets/Q2 coverage or portfolio A/L values were obtained. BCP BOP page confirms quarterly/annual dissemination with 3-month lag; next quarterly calendar date is 30-Dec-2026.
 - PRY remains PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. No repeat of C60 workbook URL or this same annex reader/download path. Detail: docs/GCR_PARAGUAY_PRY_Q2_2026_BCP_STATISTICAL_ANNEX_ALTERNATE_EXPORT_ACCESS_BOUNDARY_CONTINUATION242_20261125.md (commit ec6e16fb0507a278cf1cc23e6c98548596cc81a5). ₹0; production unchanged.
+
+
+## Continuation 243 — WSM Samoa release-status recheck (2026-11-25)
+- Direct official CBS index recheck did not confirm the search-index “September 2026” snippet: the opened page's Latest list still begins with June 2026 and footer says 18-Aug-2026. C125/C126 June bulletin Q1 finding reused; no repeated PDF extraction.
+- WSM Q2-II portfolio A/L remain NOT_CAPTURED; SOURCE_FOUND / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Do not treat the search snippet as release evidence.
+- Next WSM action: wait for a later issue to appear on the direct CBS index; verify internal reporting period and Table B-1 before capture. Otherwise continue the next eligible fixed-cohort task after exact route-history preflight. Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_OFFICIAL_INDEX_RELEASE_STATUS_RECHECK_CONTINUATION243_20261125.md.
