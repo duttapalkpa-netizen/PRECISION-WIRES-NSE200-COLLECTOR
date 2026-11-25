@@ -1936,3 +1936,10 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Reconfirmed official methodology text: BPM6, quarterly EUR, transaction-day and average FX conventions; bulletin data preliminary/revisable. No conversion or stock/flow substitution.
 - MNE remains PARTIAL / NOT PASS; both Q2 legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Do not repeat same PDF text extraction/download, C180 ZIP or NSDP XML/Browse routes. Reopen only with supported annotation/link extraction or distinct official export endpoint.
 - Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_ANNOTATION_ACCESS_BOUNDARY_CONTINUATION241_20261125.md (commit c7eb31705caef3183f90a848a08551210026402a). ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 242 — Paraguay PRY BCP Statistical Annex alternate export boundary (2026-11-25)
+- Re-read current Ledger/Queue/Registry/matrix, Library Mother File/GCR context and PRY C60 report. C237–C241 and PASS work skipped; no IMF re-query/cohort rebuild.
+- Distinct official BCP Statistical Annex page states the periodically updated file includes balance-of-payments statistics. Current XLSX locator: https://www.bcp.gov.py/documents/20117/213069/Anexo_Estad%C3%ADstico_del_Informe_Econ%C3%B3mico_23_11_2026.xlsx/1fc7fda2-74cf-e07c-be5b-535f02a89ba3?t=1795456089070 . Reader click returned HTTP 400 unsupported XLSX MIME and separate byte download failed.
+- This is not the C60 Q2-specific BOP/IIP workbook URL. However, no annex bytes/sheets/Q2 coverage or portfolio A/L values were obtained. BCP BOP page confirms quarterly/annual dissemination with 3-month lag; next quarterly calendar date is 30-Dec-2026.
+- PRY remains PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. No repeat of C60 workbook URL or this same annex reader/download path. Detail: docs/GCR_PARAGUAY_PRY_Q2_2026_BCP_STATISTICAL_ANNEX_ALTERNATE_EXPORT_ACCESS_BOUNDARY_CONTINUATION242_20261125.md (commit ec6e16fb0507a278cf1cc23e6c98548596cc81a5). ₹0; production unchanged.
