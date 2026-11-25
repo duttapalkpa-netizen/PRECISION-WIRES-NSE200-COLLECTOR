@@ -268,3 +268,9 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - CDSL daily 18-Nov and sector 15-Nov prior PASS evidence not repeated; NSDL archive form contract C76 reused. NSDL postback output and matched-date NSDL/CDSL reconciliation remain NOT_DONE.
 - Report: docs/GCR_CDSL_DAILY_ARCHIVE_RAW_FRESHNESS_AND_ARITHMETIC_QA_CONTINUATION229_20261125.md; report commit undefined; queue commit 7d361eb3caaa242aea590573c8054cac4918e9e1; registry commit 6759145fb9c660803ca4c00fab596b8f13403770.
 - Next exact action: fresh-state NSDL Archive interactive date selection + View Report using supported browser; if unavailable, keep NOT_DONE and do not guess POST or replay stale ViewState. No source/prod changes; ₹0; UNKNOWN never PASS.
+
+## GCR Continuation 230 — NSDL archival permission gate reconciliation (25-Nov-2026)
+- Reconciled the C76/C229 suggested NSDL public-form postback with the controlling GCR ledger rule: NSDL FPI/DII archival is BLOCKED pending written permission. No permission evidence found; no postback executed or authorized. No stale ViewState replay, guessed POST, scraping or reverse engineering.
+- NSDL archive rows remain NOT_CAPTURED; matched-date NSDL/CDSL reconciliation NOT_DONE. CDSL C229 arithmetic PASS retained; archive freshness/completeness remains NOT_PASS / UNKNOWN.
+- CHN/COL/POL routes remain blocked as documented; next cohort work must require a genuinely new official route and full route-history preflight. TUR's existing ZIP timeout is closed absent distinct official route/revision. No IMF re-query/cohort rebuild, paid source, external contact, workflow dispatch or production changes. ₹0; UNKNOWN never PASS.
+- Report: docs/GCR_NSDL_ARCHIVAL_PERMISSION_GATE_RECONCILIATION_CONTINUATION230_20261125.md.
