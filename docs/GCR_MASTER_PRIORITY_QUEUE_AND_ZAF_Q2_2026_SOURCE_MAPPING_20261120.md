@@ -1852,3 +1852,11 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Decision: NSDL postback NOT_AUTHORIZED; no postback, guessed POST, stale ViewState replay, scraping or reverse engineering. NSDL rows remain NOT_CAPTURED; matched-date reconciliation NOT_DONE. CDSL C229 arithmetic PASS retained; freshness/completeness remains NOT_PASS / UNKNOWN.
 - CHN known XLSX routes and COL desktop-only/502 routes remain blocked; POL same-vintage USD bridge remains unresolved. Next cohort candidate may be reopened only on a genuinely new official route; TUR's known ZIP timeout is closed absent a distinct official route/source revision. No IMF re-query/cohort rebuild.
 - Detail: docs/GCR_NSDL_ARCHIVAL_PERMISSION_GATE_RECONCILIATION_CONTINUATION230_20261125.md. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 231 — Rwanda RWA BNR WebDash alternate-route boundary (2026-11-25)
+- Preflight: re-read current Master Ledger, GCR queue, 63-country registry, RWA C97/C130, NPL C58/C94/C130, SLV C100/C131, and Library Mother File 1–53 + GCR Gap Matrix. PASS work skipped.
+- NPL: current NRB External Sector page still points to the known BPM6 XLSX; current NSDP BOP Download in SDMX resolves to the already known stale NEPAL_BOP_2024_Q1.xml (unsupported XML). No genuinely new official Q2 API/export route; NPL stays PARTIAL/BLOCKED. No repeated XLSX fetch.
+- RWA: distinct official https://webdash.bnr.rw/ identified. Its indexed BOP table exposes annual USDm data 2019–2023 with a combined portfolio investment row, but no Q2-2026, separate asset/liability legs, API/export contract, or raw payload. BNR June-30-2026 portal item remains JS shell / exact file unresolved. October-2026 MPFSS Table 12 remains H1 net-only +USD14m, not Q2 or dual-leg. RWA remains PARTIAL/NOT PASS; both Q2 legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
+- Matrix RWA evidence_ref/note updated only; no gate promotion. Report: docs/GCR_RWANDA_RWA_Q2_2026_BNR_WEB_DASH_ALTERNATE_ROUTE_BOUNDARY_CONTINUATION231_20261125.md (commit 719b1482b5b1216d0a3a6cb5ea73c6a002f81025).
+- Next fixed-cohort follow-up: SLB official transaction-FX conversion-method boundary from C132, after exact route-history preflight. No generic quarterly FX conversion or inferred sign/scale. ₹0; no IMF re-query/cohort rebuild; production unchanged; UNKNOWN never PASS.
