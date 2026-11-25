@@ -358,3 +358,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - TJK remains SOURCE_FOUND / PARTIAL / NOT PASS; both national legs NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Matrix gates unchanged; evidence_ref/note points to C240.
 - Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_OFFICIAL_STANDARD_BOP_XLSX_LOCATOR_AND_BYTE_ACCESS_BOUNDARY_CONTINUATION240_20261125.md; report commit 35f0059e6d7a884db9f606d288c4d5919d0d1e85.
 - Next: use only a genuinely different supported XLSX byte-transfer/browser route or distinct official NBT export; do not repeat the same document-reader or direct-download attempts. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## GCR Continuation 241 — Montenegro MNE CBCG table-annotation access boundary (25-Nov-2026)
+- Mandatory preflight re-read current Ledger/Queue/Registry/matrix, Library Mother File/GCR context, and controlling MNE C182 report. C240 TJK was recognized as already committed; C237–C240 accepted/bounded work skipped. No IMF re-query/cohort rebuild.
+- Re-opened official CBCG Bulletin 9/2026 PDF via document reader. It exposes the BoP section and “Tables 5.1–5.4 - download tables” label, but the extraction surface does not expose an annotation target or direct payload URL. Separate byte-preserving download of the same PDF failed; no PDF bytes/headers/hash claimed.
+- Official methodology text confirms BPM6, quarterly EUR reporting, transaction-day/monthly and annual average FX conventions, period-end rate for monitored valuation differences, and provisional/revisable data. No FX conversion performed. Q2 IIP calendar date is a stock release, not a substitute for BOP flows.
+- No table workbook/CSV, Q2 portfolio asset/liability legs, or revision-vintage bridge captured. MNE remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Exact PDF text-reader route is closed for identical repeat; reopen only on supported PDF-annotation extraction or distinct official CBCG export URL/API.
+- Report: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_9_2026_TABLE_ANNOTATION_ACCESS_BOUNDARY_CONTINUATION241_20261125.md; report commit c7eb31705caef3183f90a848a08551210026402a. ₹0; no production changes; UNKNOWN never PASS.
