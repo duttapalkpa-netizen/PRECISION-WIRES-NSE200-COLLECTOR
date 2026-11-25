@@ -706,3 +706,9 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | HUN Hungary | MNB calendar lists 13-Nov-2026 monthly BOP for September 2026; MNB homepage BOP/IIP latest remains Q2-2026 updated 25-Sep; no monthly portfolio A/L values or Q2 revision/vintage ID exposed | Existing C138 Q2 legs remain DATA_CAPTURED; cross-currency comparison NOT_DONE; vintage NOT_ESTABLISHED; PARTIAL / NOT PASS | Do not repeat C138 PDF/IMF or C139 monthly-data route. Reopen only on distinct monthly portfolio A/L dataset, Q2 revision artifact or Q3 BOP/IIP report with portfolio legs and revision metadata |
 - Detail: docs/GCR_HUNGARY_HUN_Q2_2026_MNB_POST_C138_RELEASE_CALENDAR_AND_MONTHLY_BOP_VINTAGE_TRIGGER_RECHECK_CONTINUATION252_20261126.md; commit 8af5f5c0e9197078651f219b6aa14c058f60b89b.
+
+## Continuation 253 — CHL Chile BCCh Q3-2026 Q2 revision / portfolio-vintage trigger (2026-11-26)
+| Country | New official evidence | Status | Duplicate decision / reopen only if |
+|---|---|---|---|
+| CHL Chile | BCCh Q3 report dated 18-Nov says Q1/Q2 BOP revised; Q2 portfolio net is USD +154m vs +299m in prior Q2 release (-USD145m). Revision table's Q2 asset/liability totals are whole financial-account aggregates, not portfolio-only legs. | Existing BDE A/L observations retained as earlier-vintage source-page evidence; current-vintage portfolio A/L NOT_CAPTURED; vintage PENDING; CHL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED | Do not repeat C160 BDE extraction or C161 credential-gated API request. Reopen only with executed authorized public BDE Excel export or distinct official export exposing both revised Q2 portfolio legs, update/vintage metadata and raw bytes/hash; never infer legs from net/aggregate totals |
+- Detail: docs/GCR_CHILE_CHL_Q2_2026_BCCH_Q3_RELEASE_PORTFOLIO_NET_REVISION_AND_VINTAGE_BOUNDARY_CONTINUATION253_20261126.md; report commit 02c7ff97ea91d09423ec1a30c9e589aa016a3ec2.
