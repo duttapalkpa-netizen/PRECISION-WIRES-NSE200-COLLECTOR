@@ -609,3 +609,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | BGD Bangladesh | Bangladesh Bank Quarterly Vol XXIII No.4, Apr-Jun 2026; Annexure 1 Table V.1; https://www.bb.org.bd/pub/quaterly/bbquarterly/bangladesh%20bank%20quarterly%2C%20%20vol%20xxiii%2C%20no%204.pdf | Calendar Q2-2026 maps to FY26 Q4; USDm; portfolio investment appears net-only. No separate portfolio A/L rows. Other-investment/reserve rows are different instruments. FY26 provisional; no exact IMF vintage ID. | SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Do not back-solve net or substitute other instruments. Reopen only on distinct official Q2 dual-leg export with revision metadata. |
 - Detail: docs/GCR_BANGLADESH_BGD_Q2_2026_BB_Q4FY26_NET_ONLY_SOURCE_BOUNDARY_CONTINUATION239_20261125.md; report commit 68b6eb13da5ca33ba26f4f8d0ec5734f041642f3.
+
+
+## Continuation 240 — TJK Tajikistan NBT workbook route fingerprint (2026-11-25)
+| Country | Authority / exact route fingerprint | Prior evidence | Last known status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| TJK Tajikistan | National Bank of Tajikistan; https://www.nbt.tj/en/payments_balance/; 2026 Standard XLSX st_pr_2026_2.xlsx and Analytical XLSX an_pr_2026_2.xlsx | C240 official page and exact 2026 locators; document reader returned unsupported XLSX MIME / HTTP 400; direct standard XLSX byte download failed; no raw bytes/schema/Q2 legs | SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED | Closed for same reader click and same direct download path; do not substitute IIP stock/operations, annual forecast or banking balance-sheet data | Distinct supported XLSX byte-transfer/browser route or new official NBT export with Q2 portfolio A/L and revision metadata |
+- Report: docs/GCR_TAJIKISTAN_TJK_Q2_2026_NBT_OFFICIAL_STANDARD_BOP_XLSX_LOCATOR_AND_BYTE_ACCESS_BOUNDARY_CONTINUATION240_20261125.md; commit 35f0059e6d7a884db9f606d288c4d5919d0d1e85.
