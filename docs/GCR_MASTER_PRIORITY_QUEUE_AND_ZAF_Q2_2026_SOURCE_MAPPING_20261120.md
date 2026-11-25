@@ -1908,3 +1908,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - ALB current_stage DATA_CAPTURED; asset/liability gates REVIEW pending approved EUR/USD flow conversion; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_MONTHLY_STATISTICAL_REPORT_OFFICIAL_DUAL_LEG_CAPTURE_CONTINUATION237_20261125.md (commit 214a86283beb2ecc1cca5dfabf7d39201ac748cd).
 - Next: independent official Q2 transaction-FX conversion methodology and revision cutoff. Do not repeat legacy Main-data route or re-query IMF. ₹0; no production changes; UNKNOWN never PASS.
+
+
+## Continuation 238 — Albania ALB official FX convention / revision boundary (2026-11-25)
+- New official BoA June-2014 BPM6 commentary confirms EUR BOP presentation and user conversion convention: average FX for flows, end-period FX for stocks. BoA monthly average rates to ALL are simple averages of daily official rates. IMF BPM6 §§3.105–3.106 clarify transaction/shortest-period conversion and converting underlying flows before deriving net.
+- Exact Q2-2026 portfolio-specific USD aggregation and same-vintage/revision cutoff remain NOT_ESTABLISHED. No inferred cross-rate or unweighted quarterly mean used; no conversion applied. ALB numeric gates REVIEW, vintage UNKNOWN, aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_OFFICIAL_FLOW_FX_RULE_AND_REVISION_BOUNDARY_CONTINUATION238_20261125.md (commit 01d226cb0c6d751643e988ff6f5377600e87adc7). Next: distinct dated Q2 revision/methodology/transaction-rate evidence only; else advance fixed cohort. No legacy-route repeat, IMF re-query or cohort rebuild.
