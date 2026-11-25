@@ -2019,3 +2019,9 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - New BoA official archive navigation lists USD quarterly BOP and Financial Account series. The legacy USD BOP selector ends Q4-2013; its 11-Sep-2017 note is a historical 2013 revision, not Q2-2026. New-format USD Financial Account page shows portfolio A/L taxonomy but no Q2-2026 values and same 2017 revision note. Not an eligible Q2 bridge.
 - Reuse C237 EURm legs +156.25 / +124.70. General flow average-rate convention PASS only; Q2-specific USD aggregation and same-vintage unresolved. ALB remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_LEGACY_USD_ARCHIVE_Q2_ELIGIBILITY_AND_VINTAGE_BOUNDARY_CONTINUATION251_20261126.md (commit 9835344450ed796d63bbaedbf633fb3bcc531296). Matrix note/evidence_ref updated without gate promotion.
+
+## Continuation 252 — HUN Hungary MNB post-C138 release-calendar / monthly-BOP vintage trigger check (2026-11-26)
+- Re-read current Ledger, Queue, Registry, matrix, Library Mother File 1–53, C251 and HUN C138/C139. Skipped repeat PDF, IMF extraction and closed monthly-data route.
+- Official MNB calendar lists 13-Nov monthly BOP for Sep-2026; MNB homepage still reports BOP/IIP latest Q2-2026, updated 25-Sep. No monthly portfolio A/L transaction rows or Q2 revision/vintage identifier exposed. Do not infer portfolio rows from generic monthly BOP calendar label.
+- Reuse C138 legs EUR +2,104m assets/+8,380m liabilities; net -6,277m (EUR1m displayed rounding difference retained). HUN DATA_CAPTURED / PARTIAL / NOT PASS; numeric cross-currency comparison NOT_DONE; vintage NOT_ESTABLISHED; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_HUNGARY_HUN_Q2_2026_MNB_POST_C138_RELEASE_CALENDAR_AND_MONTHLY_BOP_VINTAGE_TRIGGER_RECHECK_CONTINUATION252_20261126.md (commit 8af5f5c0e9197078651f219b6aa14c058f60b89b). Matrix updated to reflect existing capture without promotion.
