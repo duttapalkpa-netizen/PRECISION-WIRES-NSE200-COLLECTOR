@@ -408,3 +408,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Explicitly tell the user that the 10-conversation block is complete and they should open the next numbered research page/chapter before continuing.
 - Reset the counter for the new page. If the user opens a new page early, continue from the current GitHub Ledger/Library continuity state; do not fabricate a 10-conversation completion.
 - Do not claim the summary has been fixed in product automation; this is the standing conversation/workflow instruction and is recorded here for continuity.
+
+
+## GCR Continuation 243 — Samoa WSM official CBS index release-status recheck (25-Nov-2026)
+- Mandatory preflight re-read current Ledger, GCR Master Priority Queue, 63-country Historical Task Registry/matrix, and Library Mother File / WSM C125–C126 context. Pre-update blob SHAs: Ledger dd272c937f21b09f540e00bda834ee9236bf9f8d; Queue 0abd8c411ec731e8d5a99cd4e28d8949184a1850; Registry 202fbc104019ee59b04406efc5209956731830c; Matrix 49123248b14ecdfc7746f6ec0d288f10d3242f47. Existing accepted work reused; no IMF re-query/cohort rebuild.
+- New direct official CBS Quarterly Bulletin index inspection: https://cbs.gov.ws/quarterly-bulletin. Although the search-index snippet named “Quarterly Bulletin September 2026”, the opened official page's Latest list still starts with June 2026 and footer says last updated 18-Aug-2026. The conflicting snippet is UNCONFIRMED and is not accepted as release proof.
+- CBS page states bulletins are published with a three-month delay. C125/C126 remain controlling for the June 2026 issue: it covers Q1/March 2026 and Table B-1 ends at 2026-I. No September 2026 PDF, Q2-2026 Table B-1, portfolio A/L values, raw bytes or SHA-256 captured.
+- WSM remains SOURCE_FOUND / PARTIAL / NOT PASS; both Q2 national legs NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. Matrix evidence_ref/note updated to C243 only; no gate promotion.
+- Report: docs/GCR_SAMOA_WSM_Q2_2026_CBS_OFFICIAL_INDEX_RELEASE_STATUS_RECHECK_CONTINUATION243_20261125.md; commit 3fe2ccb003850611f6a9e7b4def92e04d13c79e9. Web direct-page evidence: turn896134view0 lines 292–308.
+- Next: reopen only when a later issue is listed directly on the official CBS index or a distinct official Q2-2026 BOP table is published; verify the internal reporting period before capture. Do not repeat June PDF extraction or accept stale search snippets. ₹0; no IMF re-query/cohort rebuild; no production changes; UNKNOWN never PASS.
