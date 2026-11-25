@@ -323,3 +323,13 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - AGO remains SOURCE_FOUND / PARTIAL / NOT PASS; national A/L NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED. Matrix gates unchanged; evidence_ref/note updated to C236.
 - Report: docs/GCR_ANGOLA_AGO_Q2_2026_BNA_DISSEMINATION_CALENDAR_AND_PUBLIC_ACCESS_BOUNDARY_RECONCILIATION_CONTINUATION236_20261125.md; report commit 7aec846aef1f3a1079ad503215fba3579f72eeae.
 - Next: use only a supported official BNA public download/browser surface if it exposes detailed Q2 BOP portfolio A/L rows; capture raw response, metadata, terms and SHA-256. Do not repeat the BNA SPA or guess an API. If unavailable, move to next fixed-cohort country after exact route-history preflight. ₹0; no IMF re-query/cohort rebuild; no production changes; UNKNOWN never PASS.
+
+
+## GCR Continuation 237 — Albania ALB official Q2 dual-leg capture (25-Nov-2026)
+- Mandatory preflight re-read current ledger/queue/registry/matrix, Library Mother File/GCR context, and ALB C139–C141/C192. PASS methodology/taxonomy and archived IMF rows reused; legacy Main-data routes closed and not repeated.
+- New distinct official Bank of Albania Monthly Statistical Report 08/2026 PDF: https://www.bankofalbania.org/rc/doc/RSM_gusht_2026_anglisht_35170.pdf. Table 2-1 (quarterly BOP, EURm) explicitly separates portfolio assets/liabilities. Q2 2026 row: assets +156.25 EURm; liabilities +124.70 EURm; portfolio net +31.55 EURm; 156.25−124.70=31.55 exact.
+- Official PDF opened via document reader; direct raw-byte download failed in current container. No raw PDF bytes/headers/receipt/SHA-256 claimed. This is a new Q2-specific official publication artifact, not the closed legacy table route.
+- Reused C139 IMF raw Q2 rows: assets 181700604.8387097 USD (SCALE=6); liabilities 145011618.7096774 USD (SCALE=6). No IMF re-query. No EUR/USD conversion applied. Diagnostic implied ratios are not accepted FX rates and are not used as reconciliation evidence.
+- ALB advances to DATA_CAPTURED; source and national EURm/sign/net identity are documented. Asset/liability numeric comparison gates remain REVIEW / NOT_PASS pending independently authorized conversion method; same-vintage/revision UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_MONTHLY_STATISTICAL_REPORT_OFFICIAL_DUAL_LEG_CAPTURE_CONTINUATION237_20261125.md; report commit 214a86283beb2ecc1cca5dfabf7d39201ac748cd.
+- Next: establish BoA's applicable Q2 transaction FX bridge and revision cutoff using an independently published official method; no inferred cross-rate, no repeat of legacy routes/PDF text scrape, no IMF re-query/cohort rebuild. ₹0; production unchanged; UNKNOWN never PASS.
