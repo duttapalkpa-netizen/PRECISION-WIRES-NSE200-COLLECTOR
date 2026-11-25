@@ -694,3 +694,9 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | MNE Montenegro | CBCG BOP statistics page updated 19-Nov-2026; BPM6 (2010–2026) official download link resolves to https://www.cbcg.me/slike_i_fajlovi/fajlovi/fajlovi_publikacije/statistika/bop_sep_2026.zip; page states quarterly EUR BPM6 and net-acquisition/net-incurrence financial-account presentation | Locator PASS only; ZIP transfer unsupported in web reader and direct download failed; no bytes/hash/Q2 separate A/L legs/signs/vintage; MNE BLOCKED / PARTIAL / NOT PASS | Do not repeat C241 Bulletin PDF reader/byte attempt, old CBCG ZIP or MONSTAT NSDP XML/Browse. Reopen only if supported official ZIP retrieval or distinct CBCG endpoint supplies bytes and Q2 portfolio legs |
 - Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_OFFICIAL_BPM6_DOWNLOAD_ROUTE_FINGERPRINT_CONTINUATION250_20261126.md; commit 0026acf7352ff6711b31b292fe2ab41963aad04c. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+## Continuation 251 — ALB Albania official USD archive Q2-2026 eligibility route fingerprint (2026-11-26)
+| Country | New official evidence | Status | Duplicate decision / reopen only if |
+|---|---|---|---|
+| ALB Albania | BoA archive navigation exposes quarterly USD BOP and Financial Account series; legacy USD BOP child selector ends Q4-2013 and carries 11-Sep-2017 revision note; new-format USD Financial Account page shows A/L portfolio taxonomy but no Q2-2026 values and same 2017 revision note | Route discovery PASS; archive Q2-2026 ineligible; Q2 EUR→USD conversion and vintage unresolved; ALB PARTIAL / NOT PASS | Do not repeat legacy USD child URLs absent new official 2026 observations, a dated revision record or supported current export with Q2 USD portfolio dual legs |
+- Detail: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_LEGACY_USD_ARCHIVE_Q2_ELIGIBILITY_AND_VINTAGE_BOUNDARY_CONTINUATION251_20261126.md; commit 9835344450ed796d63bbaedbf633fb3bcc531296.
