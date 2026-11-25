@@ -667,3 +667,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|
 | MEX Mexico | Banxico BOP publication index; Q3-2026 PDF dated 25-Nov-2026: https://www.banxico.org.mx/publicaciones-y-prensa/balanza-de-pagos/%7BFE2A999A-C9E0-98B0-F65D-01340BA453AC%7D.pdf | Q2 portfolio assets USD 9,480m; liabilities USD 10,561m; net -1,082m. Release footnote identifies principal revisions in profits/dividends, direct investment and services, not portfolio-specific revision identity. No observation-specific revision timestamp/version bridge; raw PDF bytes/hash not captured. | DATA_CAPTURED; existing asset/liability PASS reused; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED | Do not repeat the same Q3 PDF extraction. Reopen only to compare exact Q2 portfolio rows against 25-Aug first release and obtain explicit revision/vintage metadata. No IMF re-query/cohort rebuild. |
 - Detail: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_POSTPUBLICATION_VINTAGE_RECHECK_CONTINUATION246_20261125.md. ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 247 — CHN China SAFE Q2 source / sign-vintage audit (2026-11-25)
+| Country | Official source and new evidence | Status | Reopen only if |
+|---|---|---|---|
+| CHN China | SAFE Q2 2026 release 29-Sep, index 000014453-2026-0068, https://www.safe.gov.cn/en/2026/0929/2458.html; archived IMF CHN exact-sample A/L CSVs | SAFE portfolio assets -USD48.8bn and liabilities +USD43.3bn (rounded); archived IMF A +USD48.794459bn, L +USD43.286601bn. Asset sign mapping unresolved; rounded USD100m table cannot test ±USD0.5m. Q3 13-Nov standalone lacks portfolio row; cumulative table not back-solved. Detailed XLSX bytes/schema/hash/vintage bridge NOT_CAPTURED. | DATA_CAPTURED; asset REVIEW; liability PASS retained only from prior matrix; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED | Distinct supported official SAFE XLSX route or unrounded official machine-readable A/L + sign definitions + revision/vintage metadata. Do not repeat failed route or IMF query. |
+- Report: docs/GCR_CHN_C247_STATUS_20261125.md. ₹0; fixed cohort; UNKNOWN never PASS.
