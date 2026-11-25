@@ -2032,3 +2032,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Prior BDE Q2 monthly legs +5,098.91 / +5,397.51 USDm remain earlier-vintage source-page observations; no current-vintage gross A/L pair or raw export/hash captured. Do not back-solve from net or total financial-account legs.
 - CHL remains DATA_CAPTURED / PARTIAL / NOT PASS; vintage PENDING; aggregate NOT_AUTHORIZED. Report docs/GCR_CHILE_CHL_Q2_2026_BCCH_Q3_RELEASE_PORTFOLIO_NET_REVISION_AND_VINTAGE_BOUNDARY_CONTINUATION253_20261126.md; commit 02c7ff97ea91d09423ec1a30c9e589aa016a3ec2.
 - Reopen only on an authorized public BDE export or distinct official export with both Q2 portfolio legs, series IDs, vintage metadata and raw bytes/hash. ₹0; no IMF re-query/cohort rebuild; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 254 — MEX Mexico later IMF archive inventory / vintage bridge boundary (2026-11-26)
+- Preflight re-read current Ledger, Queue, Registry, 63-country matrix, Library Mother File 1–53, MEX C137/C208/C246 and archived IMF panel/receipt files. Skipped accepted numeric checks and Banxico Q3 extraction; no IMF query/cohort rebuild.
+- C246's open action was to check for an already archived later IMF vintage. The only MEX exact-key raw receipt located is 19-Nov-2026 06:45:19 UTC in `docs/evidence/imf_bop_emde_20261119/`; bounded GitHub and Library searches found no later MEX IMF snapshot/artifact. Absence is limited to the searched repository/Library records.
+- Existing IMF rows/hashes and C246 comparison reused. Banxico Q2 assets revised +543m (8,937→9,480 USDm), liabilities unchanged at 10,561m; no later IMF receipt or observation-specific Banxico revision ID available to prove same vintage. MEX asset REVIEW, liability PASS, vintage PENDING, PARTIAL / NOT PASS, aggregate NOT_AUTHORIZED.
+- Report docs/GCR_MEXICO_MEX_Q2_2026_IMF_LATER_ARCHIVE_INVENTORY_AND_VINTAGE_BRIDGE_BOUNDARY_CONTINUATION254_20261126.md; commit ab937972f13098af06f4a25e35e47f0f7d3f35a0. Matrix note/evidence_ref updated only. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
