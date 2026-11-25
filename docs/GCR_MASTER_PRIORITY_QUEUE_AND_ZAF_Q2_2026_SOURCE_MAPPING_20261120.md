@@ -1837,3 +1837,12 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Direct workflow inspection confirmed upload-artifact allowlist omitted `data/raw/sec_bhavdata_full_*.csv`, sessions, acquisition diagnostics and security master. Corrected the allowlist on isolated branch `audit/prospective-selector-tracking` only; commit `46f4a359f21da676cb0c92e874fb08f14ee20d90`.
 - Future artifact-retention correction PASS by commit; future-run proof PENDING. Historical Run #339 raw bytes remain BLOCKED; per-file provenance manifest NOT_DONE. Do not redownload or infer old URL/timestamps.
 - Detail: `docs/NSE_RUN339_RAW_SOURCE_ARTIFACT_PACKAGING_ROOT_CAUSE_AND_RETENTION_FIX_CONTINUATION228_20261121.md`. No production code/selector/ranking/CORE-672 changes; ₹0; UNKNOWN never PASS.
+
+## Continuation 229 — CDSL daily archive raw freshness and arithmetic QA (2026-11-25)
+- Reused existing verified artifact 14527092174 / run 44519322726; ZIP SHA-256 rechecked as 83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd. No new source request.
+- CDSL archive raw page capture: 19-Nov-2026 11:57:09.076562 UTC, HTTP 200, 73,784 bytes, SHA-256 aa2a03c6621772e52b0b9ac52f11b525d82f1ce80539554302eda861145304df; displayed investment/derivatives cutoff 02-Mar-2026.
+- Scoped arithmetic QA: 75/75 daily/March/YTD numeric rows and 8/8 cumulative rows satisfy purchases-sales=net; INR subtotals 3/3 exact; USD daily and March subtotal sums each differ from published total by -0.01 USDm, retained as REVIEW; YTD USD sum exact.
+- This artifact-specific 02-Mar snapshot conflicts with C39's 30-Sep and C68's 31-Oct rendered archive snapshots for the same URL. Preserve each raw capture; do not claim archive completeness or choose a canonical response. CDSL daily 18-Nov eServices and 15-Nov fortnightly sector results remain separate accepted evidence; no repeat.
+- CDSL archive parsing/arithmetic subtask: PASS. Archive freshness/completeness: NOT PASS / UNKNOWN. NSDL Archive postback and matched-date reconciliation remain NOT_DONE.
+- Detail: docs/GCR_CDSL_DAILY_ARCHIVE_RAW_FRESHNESS_AND_ARITHMETIC_QA_CONTINUATION229_20261125.md; report commit undefined.
+- Next exact action: one fresh-state NSDL Archive public date selection + View Report using supported interactive browser; if unavailable, preserve NOT_DONE and do not guess POST/ViewState. No stale-state replay.
