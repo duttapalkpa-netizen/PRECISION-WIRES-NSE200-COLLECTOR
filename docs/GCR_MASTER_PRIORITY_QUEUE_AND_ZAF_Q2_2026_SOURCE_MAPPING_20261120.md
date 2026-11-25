@@ -1985,3 +1985,7 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - SAFE official Q2 table (29-Sep) shows portfolio assets -488 and liabilities +433 in USD100m rounded units. Archived IMF rows (19-Nov, no new query): asset +48.794459bn; liability +43.286601bn.
 - Rounded display precision cannot test ±USD0.5m; asset sign crosswalk remains REVIEW. Liability PASS is prior accepted status only, not re-proven by rounded abridged display. SAFE 13-Nov Q3 release lacks standalone portfolio legs; no 9M subtraction/back-solving. Detailed XLSX bytes/schema/hash/revision bridge unavailable.
 - CHN status: asset REVIEW; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Report docs/GCR_CHN_C247_STATUS_20261125.md; matrix updated. Next distinct supported official XLSX transfer route only; no IMF re-query.
+
+
+## C246 authoritative correction note (carried forward in C247)
+The earlier C246 prose saying both MEX legs PASS is superseded by direct comparison: 25-Aug Banxico Q2 asset USD8,937m vs 25-Nov Q3-release Q2 asset USD9,480m (+USD543m); liabilities USD10,561m unchanged. Archived IMF asset USD8,937.255098m now differs by USD542.744902m; liability USD10,561.285114m differs by -USD0.285114m. Correct MEX gate: asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED. Matrix row synchronized. Do not rely on earlier C246 both-leg PASS sentence.
