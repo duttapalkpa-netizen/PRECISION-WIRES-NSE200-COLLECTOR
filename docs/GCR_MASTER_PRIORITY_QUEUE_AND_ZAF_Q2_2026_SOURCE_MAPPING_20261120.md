@@ -1846,3 +1846,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - CDSL archive parsing/arithmetic subtask: PASS. Archive freshness/completeness: NOT PASS / UNKNOWN. NSDL Archive postback and matched-date reconciliation remain NOT_DONE.
 - Detail: docs/GCR_CDSL_DAILY_ARCHIVE_RAW_FRESHNESS_AND_ARITHMETIC_QA_CONTINUATION229_20261125.md; report commit undefined.
 - Next exact action: one fresh-state NSDL Archive public date selection + View Report using supported interactive browser; if unavailable, preserve NOT_DONE and do not guess POST/ViewState. No stale-state replay.
+
+## Continuation 230 — NSDL archival permission gate reconciliation (2026-11-25)
+- Re-read current ledger, queue, registry, C76 form-contract audit and C229 CDSL raw archive QA. C76/C229 suggest a fresh-state NSDL View Report postback, but the controlling Continuity Ledger explicitly marks NSDL FPI/DII archival BLOCKED pending written permission. No written permission evidence is present.
+- Decision: NSDL postback NOT_AUTHORIZED; no postback, guessed POST, stale ViewState replay, scraping or reverse engineering. NSDL rows remain NOT_CAPTURED; matched-date reconciliation NOT_DONE. CDSL C229 arithmetic PASS retained; freshness/completeness remains NOT_PASS / UNKNOWN.
+- CHN known XLSX routes and COL desktop-only/502 routes remain blocked; POL same-vintage USD bridge remains unresolved. Next cohort candidate may be reopened only on a genuinely new official route; TUR's known ZIP timeout is closed absent a distinct official route/source revision. No IMF re-query/cohort rebuild.
+- Detail: docs/GCR_NSDL_ARCHIVAL_PERMISSION_GATE_RECONCILIATION_CONTINUATION230_20261125.md. ₹0; no production changes; UNKNOWN never PASS.
