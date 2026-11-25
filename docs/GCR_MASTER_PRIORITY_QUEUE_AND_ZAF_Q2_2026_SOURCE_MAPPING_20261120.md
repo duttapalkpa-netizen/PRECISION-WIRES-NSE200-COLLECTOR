@@ -1989,3 +1989,13 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 
 ## C246 authoritative correction note (carried forward in C247)
 The earlier C246 prose saying both MEX legs PASS is superseded by direct comparison: 25-Aug Banxico Q2 asset USD8,937m vs 25-Nov Q3-release Q2 asset USD9,480m (+USD543m); liabilities USD10,561m unchanged. Archived IMF asset USD8,937.255098m now differs by USD542.744902m; liability USD10,561.285114m differs by -USD0.285114m. Correct MEX gate: asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED. Matrix row synchronized. Do not rely on earlier C246 both-leg PASS sentence.
+
+
+## Continuation 248 — Colombia COL Q2-2026 official portfolio series scope / alternate-route audit (2026-11-26)
+- Preflight re-read current Master Ledger, Priority Queue, Historical Registry, 63-country matrix, Library Mother File and COL C151/C152/C162 reports. Reused existing cohort/IMF panel; skipped C247 CHN, C246 MEX and all PASS work.
+- Confirmed official catalogue metadata for two quarterly BOP portfolio legs through Q2-2026 in current USDm. Also identified a separate monthly local-market foreign portfolio flow series; it is not the national BOP A/L dual-leg dataset and is NOT_ADMITTED as a substitute.
+- Q2 IIP portfolio positions are stocks, and the Q2 financial-account net total includes derivatives/reserves/other components; both are excluded as substitutes.
+- Same SUAMECA 502/dashboard and documented desktop-export paths were not retried. No raw Q2 A/L observations, exact series IDs, export bytes, SHA-256, sign bridge or vintage evidence obtained.
+- COL remains BLOCKED / NOT PASS; aggregate NOT_AUTHORIZED. Matrix row updated only with C248 evidence pointer and explanatory note; all gate states unchanged.
+- Report: docs/GCR_COLOMBIA_COL_Q2_2026_OFFICIAL_PORTFOLIO_SERIES_SCOPE_AND_ALTERNATE_ROUTE_AUDIT_CONTINUATION248_20261126.md (commit a1206349a0ae0285e97b5e406fdbfc05651296b2).
+- Next eligible country task: POL (Poland), after fresh preflight; no unsupported PLN→USD conversion. ₹0; no IMF re-query/cohort rebuild; no production changes; UNKNOWN never PASS.
