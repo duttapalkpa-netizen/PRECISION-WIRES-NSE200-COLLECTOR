@@ -1979,3 +1979,9 @@ No production code, selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12)
 - Its Q2 portfolio rows show assets USD 9,480m and liabilities USD 10,561m (net balance -1,082m). Previously accepted numeric dual-leg comparison is reused; no recalculation or IMF re-query.
 - The footnote identifies principal revisions in profits/dividends, direct investment and services, but does not identify whether Q2 portfolio asset/liability observations changed. No observation-specific revision timestamp/version bridge; MEX vintage remains PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_POSTPUBLICATION_VINTAGE_RECHECK_CONTINUATION246_20261125.md (commit 2a4e47d5d82933ffe11bedcc2a0738d4b8994458). Next: compare Q2 portfolio pair against the 25-Aug first-release table and capture explicit revision metadata; otherwise retain UNKNOWN and advance. ₹0; cohort immutable; production unchanged.
+
+
+## Continuation 247 — CHN China SAFE Q2 official A/L and sign-crosswalk audit (2026-11-25)
+- SAFE official Q2 table (29-Sep) shows portfolio assets -488 and liabilities +433 in USD100m rounded units. Archived IMF rows (19-Nov, no new query): asset +48.794459bn; liability +43.286601bn.
+- Rounded display precision cannot test ±USD0.5m; asset sign crosswalk remains REVIEW. Liability PASS is prior accepted status only, not re-proven by rounded abridged display. SAFE 13-Nov Q3 release lacks standalone portfolio legs; no 9M subtraction/back-solving. Detailed XLSX bytes/schema/hash/revision bridge unavailable.
+- CHN status: asset REVIEW; liability PASS retained; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Report docs/GCR_CHN_C247_STATUS_20261125.md; matrix updated. Next distinct supported official XLSX transfer route only; no IMF re-query.
