@@ -542,3 +542,13 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - C76/C229 public-form handoff is subordinate to the current Continuity Ledger's explicit NSDL FPI/DII archival BLOCKED-pending-written-permission gate. No written permission evidence was found; no postback attempted or authorized.
 - NSDL rows NOT_CAPTURED; matched-date NSDL/CDSL reconciliation NOT_DONE. No guessed POST, stale ViewState, scraping or reverse engineering. Detail: docs/GCR_NSDL_ARCHIVAL_PERMISSION_GATE_RECONCILIATION_CONTINUATION230_20261125.md.
 - Duplicate prevention: do not execute NSDL archival until written permission is evidenced. CHN/COL/POL existing blocked routes remain closed; proceed only with a genuinely new official route after exact route-history preflight. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 231 — RWA BNR WebDash route fingerprint and NPL handoff closure (2026-11-25)
+| Country | Exact route fingerprint / prior evidence | C231 finding | Status | Duplicate decision | Reopen only if |
+|---|---|---|---|---|---|
+| NPL Nepal | NRB External Sector BPM6 XLSX + NSDP BOP SDMX; C58/C94/C130 | Current NSDP BOP SDMX link still resolves to stale NEPAL_BOP_2024_Q1.xml; known XLSX locator unchanged; no new official Q2 API/export | PARTIAL / BLOCKED | Keep both known routes closed; no repeated unsupported XLSX/XML requests | Distinct official Q2 BOP API/export or supported XLSX byte route with exact new locator |
+| RWA Rwanda | BNR https://www.bnr.rw/esstatistics June-30-2026 JS portal item; new official subdomain https://webdash.bnr.rw/; C97/C130 | WebDash indexed BOP data is annual 2019–2023, combined portfolio row; no Q2-2026 separate legs or API/export contract. BNR June item URL unresolved; H1 net +14 USDm excluded | PARTIAL / NOT PASS; Q2 legs NOT_CAPTURED | Do not retry identical JS shell or treat annual/H1 net as Q2; preserve C231 route fingerprint | Exact BNR downloadable June-2026 Q2 BOP dataset/API exposing separate asset/liability transactions, metadata and vintage |
+
+- RWA matrix evidence_ref/note now points to C231; all acceptance gates unchanged (BLOCKED; asset/liability NOT_CAPTURED; vintage UNKNOWN; FULL_PASS NO; aggregate NOT_AUTHORIZED).
+- Detail: docs/GCR_RWANDA_RWA_Q2_2026_BNR_WEB_DASH_ALTERNATE_ROUTE_BOUNDARY_CONTINUATION231_20261125.md. Next follow-up: SLB C132 unresolved official transaction-FX conversion-method boundary; do not use generic quarterly FX or infer conversion method. ₹0; UNKNOWN never PASS.
