@@ -1,0 +1,2 @@
+# CHN C247
+SAFE Q2 release inspected; archived IMF Q2 rows reused; asset sign mapping REVIEW; liability PASS retained only from prior matrix; vintage PENDING; full NO; aggregate NOT_AUTHORIZED. Detailed XLSX bytes not captured. No IMF re-query, no cohort rebuild, production unchanged.
