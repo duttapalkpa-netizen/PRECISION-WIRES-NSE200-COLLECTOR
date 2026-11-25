@@ -80,3 +80,15 @@
 5. Keep all selector, ranking, CORE-672, Engines A–E and IPO-PLX V2.0 unchanged pending user approval and leakage-safe out-of-sample validation.
 
 **Controls:** ₹0; free official sources only; no synthetic rows or guessed timestamps; no new workflow dispatch or NSE acquisition; UNKNOWN never PASS.
+
+
+---
+
+## Nightly addendum — ২৫-Nov-2026
+
+- **Existing immutable lesson updated, not duplicated:** PW-LSN-20261125-001 (holiday row incorrectly counted as next trading session). Today's nightly review rechecked the morning watchlist, Run #410 / artifact #14966627305 and the tracker maturity contract. No new post-close, calendar-correct H+1 artifact was surfaced; therefore the 23-Nov cohort (7 unique symbols / 10 signal rows) remains PENDING for H+1 outcome acceptance, despite the valid exchange close having occurred.
+- **Expected vs observed:** expected H+1 outcomes with official session date and per-symbol source timestamp; observed no new reconciled post-close row ledger in the available Actions/artifact inventory. Root cause of tracker holiday-row defect remains CONFIRMED; individual stock hit/miss remains UNKNOWN.
+- **Prevention / acceptance test:** exact official session spine; 23-Nov→25-Nov/27-Nov/01-Dec; 24-Nov excluded; every MATURED flag requires matching horizon-end date; reject missing/duplicate/non-session rows. Run on two retained artifacts, row-level deterministic output. Expected artifact calendar_aware_tracker_regression.json; acceptance OPEN / NOT_RUN.
+- **Research integration:** carry the calendar-aware regression and 23-Nov H+1 post-close reconciliation in Observation-only backlog. No new lesson ID, no duplicate; no threshold/selector/production changes.
+- **Linkage:** nightly report docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261125.md; report commit 24371d62112d6070977fda5bb242c1f5a0839575; report blob SHA-1 cdc3b9d1332733cbb0131f361251891bf829dc99; reused Run #410 / artifact #14966627305 / ZIP SHA-256 6b1673af895214ae982fb445a62d5536dd2960eb062dc310b85f955b01c8af16. No new workflow run or artifact; SHA-256 for the Markdown report itself was not independently computed.
+- **Acceptance:** lesson evidence update PARTIAL; calendar-aware fix NOT_DONE; H+1 outcome reconciliation PENDING; no performance metrics promoted.
