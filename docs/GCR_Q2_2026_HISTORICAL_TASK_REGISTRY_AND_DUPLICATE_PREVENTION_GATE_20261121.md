@@ -580,3 +580,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|
 | MNG Mongolia | Official NSO Open Data GET route pattern; candidate https://data.1212.mn/api/v1/en/NSO/NSO__Economy,%20environment__Balance%20of%20Payments/DT_NSO_0100_001V10_quarter.px; C179/C190/C221/C234 | One .px suffix route variant returned “URL not accessible” from current retrieval surface; no HTTP status/headers/body/bytes/hash; no indicator codes or Q2 national legs. | BLOCKED / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN | Do not repeat exact URL through same reader. Reopen only with genuinely different supported GET-capable client/browser or official downloadable Q2 export. |
 - Detail: docs/GCR_MONGOLIA_MNG_Q2_2026_DOCUMENTED_GET_METADATA_ENDPOINT_SUFFIX_TEST_CONTINUATION235_20261125.md; report commit 08c32ffc9d205e7141118a98c71c9637bcee1ee0. No IMF re-query/cohort rebuild, no matrix gate promotion, no production changes; ₹0; UNKNOWN never PASS.
+
+
+
+## Continuation 236 — AGO BNA dissemination-calendar / public-access route fingerprint (2026-11-25)
+| Country | New official evidence | C236 finding | Status | Duplicate prevention / reopen condition |
+|---|---|---|---|---|
+| AGO Angola | INE PASEN 2026 PDF https://ine.gov.ao/arquivos/geral/sen2026.pdf; IMF e-GDDS metadata https://dsbb.imf.org/e-gdds/dqaf-base/country/AGO/category/INR00; C142 | BNA Q2 BOP/IIP production is quarterly MBP6; public availability quarter n+1; BNA calendar says bimonthly website release after 60 days. Current IMF metadata says quarterly external-sector data are publicly posted simultaneously; this refines the earlier mailing-list-only reading. Q2 public release is confirmed but exposes only account-level totals, not portfolio A/L. No detailed attachment/API/schema or raw bytes/hash captured. | SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED | Do not repeat BNA SPA or guess API. Reopen only if supported official BNA public download/browser surface exposes detailed Q2 portfolio asset/liability rows with raw bytes, metadata and revision information. |
+- C236 report: docs/GCR_ANGOLA_AGO_Q2_2026_BNA_DISSEMINATION_CALENDAR_AND_PUBLIC_ACCESS_BOUNDARY_RECONCILIATION_CONTINUATION236_20261125.md; commit 7aec846aef1f3a1079ad503215fba3579f72eeae.
