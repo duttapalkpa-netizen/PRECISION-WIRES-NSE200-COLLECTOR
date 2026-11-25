@@ -92,3 +92,17 @@
 - **Research integration:** carry the calendar-aware regression and 23-Nov H+1 post-close reconciliation in Observation-only backlog. No new lesson ID, no duplicate; no threshold/selector/production changes.
 - **Linkage:** nightly report docs/NIGHTLY_ROTATION_BACKTEST_RESEARCH_REVIEW_20261125.md; report commit 24371d62112d6070977fda5bb242c1f5a0839575; report blob SHA-1 cdc3b9d1332733cbb0131f361251891bf829dc99; reused Run #410 / artifact #14966627305 / ZIP SHA-256 6b1673af895214ae982fb445a62d5536dd2960eb062dc310b85f955b01c8af16. No new workflow run or artifact; SHA-256 for the Markdown report itself was not independently computed.
 - **Acceptance:** lesson evidence update PARTIAL; calendar-aware fix NOT_DONE; H+1 outcome reconciliation PENDING; no performance metrics promoted.
+
+
+---
+
+## Evening addendum — next-session watchlist (25-Nov-2026, 19:53 IST)
+
+- Next official NSE equity session is 26-Nov-2026 (Thursday), checked against the official 2026 equity holiday calendar.
+- Current official NSE live-equity page rendered its quote table as Loading and market snapshot values blank in this retrieval surface. Official JNPR, SKYWAYS and FINOPB quote pages also rendered no usable price/volume values. This is a retrieval/rendering limitation, not proof that NSE itself had no EOD data.
+- Official NSE corporate-filings page listed 25-Nov entries for JNPR (order/contract), SKYWAYS (acquisition) and FINOPB (board-meeting outcome). These are filing leads only; no detailed latest filing payload + fresh EOD price/volume/RS/liquidity/circuit verification was available, so none was promoted to provisional or qualified candidate.
+- After-close next-session report: docs/DAILY_UNIFIED_TOP5_NEXT_SESSION_20261126_20261125_AFTER_CLOSE.md; commit 983ae0dd22bafa04419bd383a5378b0a227523d3; report SHA-256 8b19a10b2d5ae050675bf74e764091de07c8b790f4e2637c51a3c97ae218ce6c.
+- Run #410 / 45490518576; artifact 14966627305; previously verified ZIP SHA-256 6b1673af895214ae982fb445a62d5536dd2960eb062dc310b85f955b01c8af16. Reused; no duplicate download or new workflow dispatch.
+- No qualified or provisional picks: 0/5; all five slots UNFILLED. No scenario prices calculated. 23-Nov cohort H+1 was due after 25-Nov close but remains PENDING/NOT_VERIFIED because the official 25-Nov EOD raw file and independently reconciled outcome ledger were not captured.
+- Existing PW-LSN-20261124-002 updated with this official-page rendering/source-readiness occurrence; no new lesson ID. PW-LSN-20261125-001 carried forward: exact official-session maturity and OUTCOME_LAST_DATE test remain OPEN. No new predictive lesson inferred.
+- Next verification: capture official 25-Nov CM-UDiFF EOD file via approved route, verify source date/bytes/hash, then reconcile 23-Nov cohort H+1 separately for high-touch, close-to-close and adverse excursion. ₹0; no production/selector/ranking changes; UNKNOWN never PASS.
