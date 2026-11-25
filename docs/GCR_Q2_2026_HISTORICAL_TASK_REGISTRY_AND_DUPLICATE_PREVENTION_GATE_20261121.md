@@ -595,3 +595,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|---|
 | ALB Albania | Bank of Albania Monthly Statistical Report 08/2026 PDF https://www.bankofalbania.org/rc/doc/RSM_gusht_2026_anglisht_35170.pdf; Table 2-1, Q2 2026 | Official quarterly BOP EURm table reports portfolio assets +156.25, liabilities +124.70, net +31.55; parent arithmetic exact. PDF text reader captured; raw bytes/response receipt/SHA-256 unavailable. Existing IMF raw legs reused; no FX conversion admitted. | DATA_CAPTURED / PARTIAL / NOT PASS; asset REVIEW; liability REVIEW; vintage UNKNOWN; aggregate NOT_AUTHORIZED | Do not repeat C140/C141/C192 legacy Main-data route or identical PDF text retrieval. Reopen only for independently supported raw-byte capture, dated revision record, or explicit official transaction-FX bridge. |
 - Detail: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_MONTHLY_STATISTICAL_REPORT_OFFICIAL_DUAL_LEG_CAPTURE_CONTINUATION237_20261125.md; commit 214a86283beb2ecc1cca5dfabf7d39201ac748cd.
+
+
+## Continuation 238 — ALB BoA flow FX convention / revision route fingerprint (2026-11-25)
+| Country | New official evidence | Finding | Status / duplicate decision |
+|---|---|---|---|
+| ALB Albania | BoA June-2014 BPM6 commentary PDF; BoA monthly-average FX metadata; IMF BPM6 §§3.105–3.106 | Flow conversion convention = published average FX; stock = end-period. Monthly BoA rates to ALL are simple daily-rate averages. Exact Q2 portfolio transaction aggregation and same-vintage revision cutoff not established. | Keep numeric gates REVIEW, vintage UNKNOWN, aggregate NOT_AUTHORIZED. Do not repeat commentary PDF, C237 PDF, legacy Main-data routes or IMF query. Reopen only on distinct Q2 dated revision record, detailed FX compilation note or transaction-level official FX inputs. |
+- Detail: docs/GCR_ALBANIA_ALB_Q2_2026_BOA_OFFICIAL_FLOW_FX_RULE_AND_REVISION_BOUNDARY_CONTINUATION238_20261125.md; commit 01d226cb0c6d751643e988ff6f5377600e87adc7.
