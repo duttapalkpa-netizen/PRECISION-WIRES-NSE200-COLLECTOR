@@ -712,3 +712,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | CHL Chile | BCCh Q3 report dated 18-Nov says Q1/Q2 BOP revised; Q2 portfolio net is USD +154m vs +299m in prior Q2 release (-USD145m). Revision table's Q2 asset/liability totals are whole financial-account aggregates, not portfolio-only legs. | Existing BDE A/L observations retained as earlier-vintage source-page evidence; current-vintage portfolio A/L NOT_CAPTURED; vintage PENDING; CHL PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED | Do not repeat C160 BDE extraction or C161 credential-gated API request. Reopen only with executed authorized public BDE Excel export or distinct official export exposing both revised Q2 portfolio legs, update/vintage metadata and raw bytes/hash; never infer legs from net/aggregate totals |
 - Detail: docs/GCR_CHILE_CHL_Q2_2026_BCCH_Q3_RELEASE_PORTFOLIO_NET_REVISION_AND_VINTAGE_BOUNDARY_CONTINUATION253_20261126.md; report commit 02c7ff97ea91d09423ec1a30c9e589aa016a3ec2.
+
+
+## Continuation 254 — MEX Mexico later IMF archive inventory / revision-vintage gate (2026-11-26)
+| Country | New audit evidence | Status | Duplicate decision / reopen only if |
+|---|---|---|---|
+| MEX Mexico | Inspected 19-Nov IMF panel report, exact-sample JSON receipt and both raw CSVs; bounded GitHub/Library search located no later MEX exact-key IMF snapshot. Exact MEX receipt remains 19-Nov-2026 06:45:19 UTC. | C246 Banxico Q3 shows Q2 assets +543m revision; liabilities unchanged. Existing archived IMF rows match the earlier release, not latest asset value. Asset REVIEW; liability PASS; vintage PENDING; MEX PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. | Do not re-query IMF or repeat Banxico Q3/first-release comparison. Reopen only on later archived IMF raw receipt with timestamp/hash or Banxico observation-specific Q2 revision/version bridge. |
+- Detail: docs/GCR_MEXICO_MEX_Q2_2026_IMF_LATER_ARCHIVE_INVENTORY_AND_VINTAGE_BRIDGE_BOUNDARY_CONTINUATION254_20261126.md; commit ab937972f13098af06f4a25e35e47f0f7d3f35a0.
