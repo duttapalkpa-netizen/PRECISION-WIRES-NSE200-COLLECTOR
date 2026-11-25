@@ -259,3 +259,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - 23-Nov cohort H+1 remains PENDING until 25-Nov close; H+3 expected 27-Nov; H+5 expected 01-Dec. No premature outcome acceptance.
 - Report: `docs/PRECISION_WIRES_CONTINUATION75_HOLIDAY_TRACKER_ROOT_CAUSE_AND_LIBRARY_DELTA_AUDIT_20261125.md`; report commit 81cc382e7c45edfe890dfd4c65191c62e31c73b5.
 - Acceptance: C75 preflight/static audit PASS; calendar-aware implementation/tests OPEN; export payload reconciliation NOT_DONE. No workflow dispatch, NSE acquisition, paid source, external contact, production/selector/ranking/threshold/merge/delete changes. ₹0; UNKNOWN never PASS.
+
+## GCR Continuation 229 — CDSL daily archive raw freshness and arithmetic QA (25-Nov-2026)
+- Mandatory GCR preflight: re-read current Master Continuity Ledger, GCR Priority Queue, 63-country Historical Task Registry, C39/C68 CDSL freshness, C74 sector arithmetic, C76 NSDL form contract, and C77 CDSL daily arithmetic. Previously accepted PASS work skipped.
+- Reused artifact 14527092174 / run 44519322726. ZIP SHA-256 83048ea0bc712b6a453270f8fb5c3c6755b579857ff2ad9eb7d53c8ba1778fbd reverified. CDSL archive raw HTML 73,784 bytes, SHA-256 aa2a03c6621772e52b0b9ac52f11b525d82f1ce80539554302eda861145304df, captured 2026-11-19T11:57:09.076562Z, HTTP 200, page displays investment/derivatives cutoff 02-Mar-2026.
+- Arithmetic: daily/March/YTD 75/75 purchases-sales-net identities; cumulative 8/8; INR category subtotal sums 3/3 exact. USD daily and March subtotal sums show -0.01 USDm displayed residual; retained REVIEW. No total adjustment.
+- Material freshness finding: C229's 02-Mar snapshot conflicts with C39's 30-Sep and C68's 31-Oct rendered snapshots for same archive URL; preserve as distinct responses; archive freshness/completeness remains NOT PASS/UNKNOWN.
+- CDSL daily 18-Nov and sector 15-Nov prior PASS evidence not repeated; NSDL archive form contract C76 reused. NSDL postback output and matched-date NSDL/CDSL reconciliation remain NOT_DONE.
+- Report: docs/GCR_CDSL_DAILY_ARCHIVE_RAW_FRESHNESS_AND_ARITHMETIC_QA_CONTINUATION229_20261125.md; report commit undefined; queue commit 7d361eb3caaa242aea590573c8054cac4918e9e1; registry commit 6759145fb9c660803ca4c00fab596b8f13403770.
+- Next exact action: fresh-state NSDL Archive interactive date selection + View Report using supported browser; if unavailable, keep NOT_DONE and do not guess POST or replay stale ViewState. No source/prod changes; ₹0; UNKNOWN never PASS.
