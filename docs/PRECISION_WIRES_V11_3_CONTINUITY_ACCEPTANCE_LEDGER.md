@@ -737,3 +737,5 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Next rank-1 dated trigger: GEO NBG Q3-2026 BOP scheduled 30-Nov-2026 (C261). As of 27-Nov not due. Reopen only after actual publication and only if it contains Q2 separate portfolio A/L revision values plus methodology and observation-specific vintage evidence.
 - Macro-Geo P0 6/8; strict hard gate BLOCKED; candidate_release_allowed=false. Country capture 29/63 is not overall completion; FULL_PASS 0; aggregate NOT_AUTHORIZED; overall GCR NOT_COMPUTABLE/NOT_CERTIFIED.
 - Report: docs/GCR_CONTINUATION273_MEX_MATRIX_EVIDENCE_REF_RECONCILIATION_AND_GEO_RELEASE_TRIGGER_HANDOVER_20261127.md; commit 5797fcd1d2dc58f3f8305ad4588725ed9274051d. ₹0; no IMF query/cohort rebuild/workflow/production change; UNKNOWN never PASS.
+
+- C273 matrix QA addendum: MEX evidence_ref now points to C272; CPV's pre-existing unquoted comma in the note was corrected by quoting the note field. Matrix read-back confirms 63 data rows, 63 unique codes and 30 columns per row; no country status changed. Matrix commit 6bbb2eb094a72343dea6307fcaf4db9e069bb4b0; C273 report updated.
