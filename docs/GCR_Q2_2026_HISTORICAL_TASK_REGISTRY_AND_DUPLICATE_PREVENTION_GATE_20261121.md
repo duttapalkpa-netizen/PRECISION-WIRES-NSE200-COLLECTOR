@@ -777,3 +777,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | WSM Samoa | CBS Quarterly Bulletin index directly lists September 2026 (updated 19-Nov); official PDF `https://cbs.gov.ws/media/Quarterly-Bulletin---September-2026.pdf`; Table B-1, printed p.35/PDF p.38, 2026-II/Q2, Tala million, BPM6. | Portfolio assets +9.5; liabilities +0.2; net +9.3; internal arithmetic consistent. National dual legs CAPTURED; WSM DATA_CAPTURED / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. | Do not repeat C125/C126 June-issue extraction or C243 stale-index check. PDF raw bytes/hash unavailable; USD FX bridge and same-vintage link unresolved. Reopen only for supported byte route/hash and official conversion/vintage metadata. |
 - Detail: `docs/GCR_SAMOA_WSM_Q2_2026_CBS_SEPTEMBER_2026_BULLETIN_TABLE_B1_DUAL_LEG_CAPTURE_CONTINUATION262_20261126.md`; report commit `9844972ddad36175a2c392bf87d1f165e97759e4`; matrix commit `cc12d52820b6ca2a4f6cf117b78375c564ccde58`. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 263 — SRB Serbia September 2026 Bulletin Table 2.3 route and capture (2026-11-26)
+| Country | New official route / evidence | Status | Duplicate prevention / reopen only if |
+|---|---|---|---|
+| SRB Serbia | Distinct NBS September 2026 Statistical Bulletin PDF, Table 2.3, BPM6, preliminary EURm; Q2 monthly legs Apr/May/Jun assets +149/−25/+124; liabilities −19/+3,932/+199; net +168/−3,957/−75. Q2 sums +248/+4,112/−3,864 EURm. | National dual legs CAPTURED; quarterly arithmetic PASS; EUR/USD transaction comparison REVIEW; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. | Do not repeat C233 July PDF/XLS route. Reopen only for official NBS transaction-period EUR/USD conversion methodology, observation-specific Q2 revision/version bridge, or later official corrected Table 2.3. |
+- Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_SEPTEMBER_2026_BULLETIN_TABLE_2_3_MONTHLY_DUAL_LEG_CAPTURE_CONTINUATION263_20261126.md`; report commit 49f163b8b8a8477240060fc2b16f255314eda935; matrix commit 3dcc6132e83dbd8986796212bea09c3350f6fb81. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
