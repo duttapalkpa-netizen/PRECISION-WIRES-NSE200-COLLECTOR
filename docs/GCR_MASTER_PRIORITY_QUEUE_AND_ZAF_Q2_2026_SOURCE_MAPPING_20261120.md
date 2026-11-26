@@ -2075,3 +2075,9 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - MNE remains BLOCKED / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_10_2026_TABLE_ANNOTATION_AND_PRELIMINARY_VINTAGE_BOUNDARY_CONTINUATION259_20261126.md; report commit 63dc9b93dccc553e8e0f77cfe0ee72fafef1f88c. Reopen only on a supported annotation extraction or genuinely distinct official export/API. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
 
 - C259 matrix evidence-link reconciliation: MNE latest-evidence/evidence_ref now points to C259; 30-column row verified; all gates remain BLOCKED / NOT_CAPTURED / UNKNOWN as before; no admission promotion. Matrix commit 627add7c79f92effc7f5a21b4d9e64cdab53564d; blob 7ba199d908e441b0e3bc39cd8a35822d23576e4d.
+
+
+## Continuation 260 — CPV exact XLS route identity / duplicate closure (2026-11-26)
+- Current BCV BOP page's Q1-2012–Q2-2026 XLS link was followed; exact href matches C153 official XLS URL byte-for-byte. Reader returned HTTP 400 unsupported application/vnd.ms-excel. C153 also records a failed direct-byte route; no retry made.
+- This closes C256's unresolved attachment identity, not the workbook-data gate. No bytes, schema, Q2 portfolio A/L, hash or vintage captured. CPV remains SOURCE_FOUND / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_CABO_VERDE_CPV_Q2_2026_BCV_EXACT_XLS_ATTACHMENT_DUPLICATE_ROUTE_CLOSURE_CONTINUATION260_20261126.md; report commit 44c6004361efc7a7fd28e2f28ff7c6eab5cc9603. Matrix evidence_ref linked to C260; all gates unchanged. Reopen only on genuinely distinct official BCV API/export/file version or supported byte route not used in C153. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
