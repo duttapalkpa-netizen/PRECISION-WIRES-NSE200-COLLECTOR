@@ -646,3 +646,14 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - WSM matrix updated to DATA_CAPTURED / REVIEW / REVIEW / UNKNOWN / full NO / aggregate NOT_AUTHORIZED. 30 columns preserved; status_DATA_CAPTURED=YES; asset/liability/vintage/full PASS flags all NO. Matrix commit `cc12d52820b6ca2a4f6cf117b78375c564ccde58`.
 - Detail: `docs/GCR_SAMOA_WSM_Q2_2026_CBS_SEPTEMBER_2026_BULLETIN_TABLE_B1_DUAL_LEG_CAPTURE_CONTINUATION262_20261126.md`; report commit `9844972ddad36175a2c392bf87d1f165e97759e4`.
 - WSM remains DATA_CAPTURED / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: supported raw PDF bytes/hash, official transaction FX bridge and observation-vintage bridge; no generic FX or unsupported comparison. ₹0; UNKNOWN never PASS; no production change.
+
+
+## GCR Continuation 263 — Serbia SRB Q2-2026 NBS September 2026 Table 2.3 monthly dual-leg capture (26-Nov-2026)
+- Preflight re-read current Master Ledger, GCR Priority Queue, Historical Task Registry, immutable 63-country matrix and Library Mother File; prior PASS/closed routes skipped. MNG C234/C235 API route tests were recognized as already attempted; no repeat API call is claimed.
+- New official NBS September 2026 Statistical Bulletin PDF opened: `https://www.nbs.rs/export/sites/NBS_site/documents-eng/publikacije/sb/sb_09_26.pdf`. Table 2.3 is BPM6, EUR million, preliminary, based on data available until 17-Sep-2026.
+- Monthly Q2 portfolio transaction legs (Apr/May/Jun): assets +149/−25/+124 EURm; liabilities −19/+3,932/+199 EURm; net +168/−3,957/−75 EURm. Q2 sums: assets +248 EURm; liabilities +4,112 EURm; net −3,864 EURm. Monthly and quarterly identities reconcile.
+- Existing IMF raw Q2 rows reused without query: asset OBS_VALUE 288993091.8400176 USD SCALE=6 (blob 15449e87c9057291a1f52f2f8cd9805df55f9fb8); liability OBS_VALUE 4782903852.31975 USD SCALE=6 (blob 15f379dc42e2760eb5f2384618e48f5ddc3177f1). No EUR/USD conversion, numeric comparison or same-vintage claim.
+- NBS table is preliminary; national data cutoff 17-Sep differs from IMF archived extract date 19-Nov. This does not prove same-vintage. PDF bytes/local SHA-256 not captured.
+- SRB remains DATA_CAPTURED / PARTIAL / NOT PASS; asset REVIEW; liability REVIEW; vintage PENDING; full_pass NO; aggregate NOT_AUTHORIZED. Matrix remains 30 columns and evidence_ref now points to C263; matrix commit 3dcc6132e83dbd8986796212bea09c3350f6fb81; blob e3a592b4e4805b2d79c96a9b831c6b3a395c2823.
+- Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_SEPTEMBER_2026_BULLETIN_TABLE_2_3_MONTHLY_DUAL_LEG_CAPTURE_CONTINUATION263_20261126.md`; report commit 49f163b8b8a8477240060fc2b16f255314eda935.
+- Next: only documented NBS transaction-period EUR/USD conversion and observation-specific revision/vintage bridge. No C233 July route retry, IMF re-query/cohort rebuild, workflow dispatch or production change. ₹0; UNKNOWN never PASS.
