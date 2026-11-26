@@ -8,7 +8,7 @@
 ## 1. Run and source evidence
 
 - Re-read Master Continuity Ledger C254, 25-Nov morning/nightly reports, 25-Nov failure register, Missed-Winner Integration note and prior Run #410 evidence.
-- Run #411: run ID 45695700887; job 139492398062; artifact 15061666636; workflow head fa3220dbddf3dc204eb2f20d08a0a44af719950a; audit-branch commit f96f9e84; runtime approximately 8m35s.
+- Run #411: run ID 45695700887; job 139492398062; artifact 15061666636; workflow head fa3220dbddf3dc204eb2f20d08a0a44af719950a; audit-branch commit f96f9e8448d121b9f781cf526ed8e838ad3552e9; runtime approximately 8m35s.
 - Artifact ZIP SHA-256 independently verified: 6685f9d5d092ff4a8fe505040b0a08f4183e78339a56a53bcfaa6d666d256897.
 - Run #411 QA says 200 raw files, 200 requested dates, 3,001 symbols, 504,971 rows and 100% delivery coverage. This is not semantic acceptance: no raw per-file manifest or internal DATE1/session reconciliation is present in the artifact. Earlier reports conflict between 187 and 188 unique content sessions; unresolved.
 - Artifact output hashes: latest_picks.csv bc489366de4cfad3811042d8ca9a362489039ed3fcd6eb2fb71e7f56c9f5bedc; watchlist_ledger.csv 3d4e04063b200044ae89529dc6f3b7349bd83d81b17ab19e3748e7ab4c58f3e2; walk_forward_metrics.json 1353f7df37fbbbf3f1bdebd9b9af16c812988e1ca866c2f8b0eb762ee461ef83; qa_report.json 77ee88c0ec576ce644597492174e3ab5a498662e5adf9443b83e85627f80599c.
