@@ -784,3 +784,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | SRB Serbia | Distinct NBS September 2026 Statistical Bulletin PDF, Table 2.3, BPM6, preliminary EURm; Q2 monthly legs Apr/May/Jun assets +149/−25/+124; liabilities −19/+3,932/+199; net +168/−3,957/−75. Q2 sums +248/+4,112/−3,864 EURm. | National dual legs CAPTURED; quarterly arithmetic PASS; EUR/USD transaction comparison REVIEW; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. | Do not repeat C233 July PDF/XLS route. Reopen only for official NBS transaction-period EUR/USD conversion methodology, observation-specific Q2 revision/version bridge, or later official corrected Table 2.3. |
 - Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_SEPTEMBER_2026_BULLETIN_TABLE_2_3_MONTHLY_DUAL_LEG_CAPTURE_CONTINUATION263_20261126.md`; report commit 49f163b8b8a8477240060fc2b16f255314eda935; matrix commit 3dcc6132e83dbd8986796212bea09c3350f6fb81. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 264 — CHN China SAFE Q3 post-publication recheck (2026-11-26)
+| Country | New official evidence | Status | Duplicate prevention / reopen only if |
+|---|---|---|---|
+| CHN China | Inspected SAFE official Q3 preliminary BOP release (13-Nov-2026): Q3 and first-three-quarters aggregates, but no distinct revised Q2 portfolio A/L pair in inspected release. Reused SAFE Q2 29-Sep rounded table and archived IMF exact-key rows. | Asset sign REVIEW / NOT ESTABLISHED; liability numeric PASS retained; vintage PENDING; detailed XLSX/raw hash NOT_CAPTURED; DATA_CAPTURED / PARTIAL / NOT PASS; FULL_PASS NO; aggregate NOT_AUTHORIZED. | Do not repeat Q2/Q3 page checks, failed XLSX route or IMF query. Reopen only on distinct supported SAFE Q2 detailed export with unrounded A/L, explicit sign definitions, observation-specific vintage/revision metadata and raw bytes/hash. |
+- Detail: docs/GCR_CHINA_CHN_Q2_2026_SAFE_POSTPUBLICATION_Q3_REVISION_AND_SIGN_VINTAGE_RECHECK_CONTINUATION264_20261126.md; report commit 264e9044d0e9328056feda3fd98c8f1e91b8c754. ₹0; no cohort rebuild; UNKNOWN never PASS.
