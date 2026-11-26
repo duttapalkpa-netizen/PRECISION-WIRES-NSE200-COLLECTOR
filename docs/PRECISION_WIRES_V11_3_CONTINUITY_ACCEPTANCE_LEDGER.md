@@ -720,3 +720,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - MEX remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. No matrix status promotion or matrix edit.
 - Detail: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_CA737_IIP_TRANSACTION_CROSSCHECK_AND_SERIES_VERSION_API_ROUTE_CONTINUATION271_20261127.md; report commit 920e98a09fa43f4c0dda093b4845977a1c0ef01d.
 - Next: obtain exact series IDs through official SIE metadata controls, then inspect only the documented versions endpoint; preserve PENDING if no observation-specific Q2 lineage is returned. ₹0; no IMF re-query/cohort rebuild, workflow dispatch or production change; UNKNOWN never PASS.
+
+
+## GCR Continuation 272 — MEX Banxico SIE series-ID / revision-vintage access gate (27-Nov-2026)
+- Preflight re-read current Ledger, Priority Queue and Historical Task Registry at main head e5d5b9922d70b12ad25d6711c0ec80ef4487d904; reused C271 and prior MEX IMF-vintage evidence. No IMF re-query/cohort rebuild or repeat numeric work.
+- Official CA737 and CE174 both currently show Q2-2026 portfolio A/L +9,480 / +10,561 USDm (net -1,082). Q3 BOP release (25-Nov) principal revision note lists profits/dividends, direct investment and services, not portfolio investment; this does not prove no portfolio revision and is not an observation-specific vintage bridge.
+- Official SIE API documentation explicitly requires a token for GET /v1/series/{idSeries} metadata. Versioned-series route templates are documented, but exact asset/liability series IDs and observation-level version history remain NOT_CAPTURED; no token accessed or stored.
+- MEX remains asset REVIEW, liability PASS (carried forward), same-vintage PENDING, PARTIAL / NOT PASS, aggregate NOT_AUTHORIZED. Do not call +543m a proven revision until a dated version record links the Q2 observation.
+- Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_SERIES_ID_AND_REVISION_VINTAGE_ACCESS_GATE_CONTINUATION272_20261127.md; commit f0b33ea547bf90771c6c39753a17ce7081aec8ab. ₹0; no production/workflow/cohort/IMF change; UNKNOWN never PASS.
