@@ -48,3 +48,9 @@ Decision: A NEWER OFFICIAL CBCG BULLETIN ISSUE (10/2026) WAS OPENED AND ITS PAGE
 
 ## 6. Protected invariants
 ₹0; free official sources only; no IMF re-query, cohort rebuild, synthetic data, net-to-leg inference, stock-as-flow, guessed attachment URL, fabricated hash/timestamp or production change. UNKNOWN is neither PASS nor FAIL. Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged. No workflow dispatch, merge or production integration.
+
+
+## C259 matrix evidence-link reconciliation
+- Updated only MNE matrix `latest_evidence_or_gap` and `evidence_ref` to point to this C259 Bulletin 10/2026 route-boundary report.
+- Verified the MNE CSV row remains exactly 30 columns. Gate fields are unchanged: current_stage BLOCKED; source_gate FOUND; data_capture_gate NO; asset/liability NOT_CAPTURED; vintage UNKNOWN; full_pass NO; aggregate NOT_AUTHORIZED.
+- Matrix update commit: 627add7c79f92effc7f5a21b4d9e64cdab53564d; matrix blob SHA: 7ba199d908e441b0e3bc39cd8a35822d23576e4d.
