@@ -756,3 +756,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Detail: docs/GCR_MONTENEGRO_MNE_Q2_2026_CBCG_BULLETIN_10_2026_TABLE_ANNOTATION_AND_PRELIMINARY_VINTAGE_BOUNDARY_CONTINUATION259_20261126.md; report commit 63dc9b93dccc553e8e0f77cfe0ee72fafef1f88c. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
 
 - C259 matrix evidence-link reconciliation: MNE row evidence_ref now points to C259; exact 30-column width preserved; no gate changed. Matrix commit 627add7c79f92effc7f5a21b4d9e64cdab53564d; blob 7ba199d908e441b0e3bc39cd8a35822d23576e4d.
+
+
+## Continuation 260 — CPV Cabo Verde exact XLS attachment route fingerprint (2026-11-26)
+| Country | Official route / exact identity | Status | Duplicate prevention / reopen only if |
+|---|---|---|---|
+| CPV Cabo Verde | Current BCV BOP statistical page link resolves to the exact C153 XLS URL: `https://www.bcv.cv/pt/Estatisticas/Quadros%20Estatisticos/Sector%20Externo/quadrosestatisticos/Documents/2026/Setembro/Balan%C3%A7a%20de%20Pagamentos%20%28Estat%C3%ADsticas%20do%201%C2%BA%20trimestre%20de%202012%20a%202%C2%BA%20trimestre%20de%202026%29.xls`. Reader 400 unsupported application/vnd.ms-excel. | Exact attachment identity PASS; raw bytes/sheets/Q2 A/L/hash/vintage NOT_CAPTURED; CPV SOURCE_FOUND / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. | CLOSED as duplicate of C153. Do not repeat same browser click or direct-byte route. Reopen only on genuinely distinct official BCV API/export/file revision or supported byte-transfer route not used in C153. |
+- Detail: docs/GCR_CABO_VERDE_CPV_Q2_2026_BCV_EXACT_XLS_ATTACHMENT_DUPLICATE_ROUTE_CLOSURE_CONTINUATION260_20261126.md; report commit 44c6004361efc7a7fd28e2f28ff7c6eab5cc9603. Matrix evidence_ref linked to C260; all gate states unchanged. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
