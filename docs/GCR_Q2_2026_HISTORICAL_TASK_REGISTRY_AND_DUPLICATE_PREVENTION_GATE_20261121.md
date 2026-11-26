@@ -719,3 +719,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | MEX Mexico | Inspected 19-Nov IMF panel report, exact-sample JSON receipt and both raw CSVs; bounded GitHub/Library search located no later MEX exact-key IMF snapshot. Exact MEX receipt remains 19-Nov-2026 06:45:19 UTC. | C246 Banxico Q3 shows Q2 assets +543m revision; liabilities unchanged. Existing archived IMF rows match the earlier release, not latest asset value. Asset REVIEW; liability PASS; vintage PENDING; MEX PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. | Do not re-query IMF or repeat Banxico Q3/first-release comparison. Reopen only on later archived IMF raw receipt with timestamp/hash or Banxico observation-specific Q2 revision/version bridge. |
 - Detail: docs/GCR_MEXICO_MEX_Q2_2026_IMF_LATER_ARCHIVE_INVENTORY_AND_VINTAGE_BRIDGE_BOUNDARY_CONTINUATION254_20261126.md; commit ab937972f13098af06f4a25e35e47f0f7d3f35a0.
+
+
+## Continuation 255 — ZAF South Africa SARB EXCX135D Q2 historical coverage boundary (2026-11-26)
+| Country | New official evidence | Status | Duplicate decision / reopen only if |
+|---|---|---|---|
+| ZAF South Africa | SARB OpenAPI confirms EXCX135D Rand per US Dollar, daily bank-weighted rate around 10:30am. No-date endpoint response exposes 24 visible rows, only 3 Q2 dates (1, 2, 7-Apr); date-bounded Q2 endpoint inaccessible through current retrieval channel; no May/June, raw Q2 bytes/hash or SARB BOP conversion rule captured. | Existing liability PASS retained; asset REVIEW; Q2 daily FX coverage NOT_CAPTURED; BOP FX convention NOT_ESTABLISHED; vintage PENDING; ZAF PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED | Do not repeat no-date 24-row response, date-format guesses, IMF fetch, SARB PDF extraction or OECD quarterly-average arithmetic. Reopen only with complete official Q2 daily export plus raw provenance and SARB-specific BOP conversion method |
+- Detail: docs/GCR_SOUTH_AFRICA_ZAF_Q2_2026_SARB_EXCX135D_DAILY_SERIES_Q2_COVERAGE_AND_HISTORICAL_ENDPOINT_ACCESS_BOUNDARY_CONTINUATION255_20261126.md; report commit 81d155fe62f823d317c6d678f2f3bead446efd8e.
