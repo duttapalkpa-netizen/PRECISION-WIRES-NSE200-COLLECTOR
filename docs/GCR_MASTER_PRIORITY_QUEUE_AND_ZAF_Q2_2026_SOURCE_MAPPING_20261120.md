@@ -2160,3 +2160,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - MEX remains PARTIAL / NOT PASS; asset REVIEW / NOT MATCHED vs archived IMF; liability numeric PASS; vintage PENDING; aggregate NOT_AUTHORIZED.
 - Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_CA737_IIP_TRANSACTION_CROSSCHECK_AND_SERIES_VERSION_API_ROUTE_CONTINUATION271_20261127.md; commit 920e98a09fa43f4c0dda093b4845977a1c0ef01d.
 - Next exact action: ground parent series IDs from official SIE metadata and test the versions route; do not guess IDs, repeat PDF extraction, query IMF, or rebuild cohort.
+
+
+## Continuation 272 — MEX Banxico SIE exact-series / revision-vintage gate (2026-11-27)
+- CA737 and CE174 current Q2-2026 portfolio A/L both display +9,480 / +10,561 USDm; net -1,082. This corroborates the current pair, not its historical vintage transition.
+- SIE metadata endpoint GET /v1/series/{idSeries} requires a token. Versioned-series route is documented, but exact asset/liability IDs and observation-level version history NOT_CAPTURED. No token accessed/stored.
+- MEX remains asset REVIEW, liability PASS (carried), same-vintage PENDING, PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Reopen only with authorized exact series IDs plus official /versiones response and Q2 observation-level historical versions. Do not re-query IMF, rebuild cohort, guess IDs or treat +543m as proven revision.
+- Detail: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_SERIES_ID_AND_REVISION_VINTAGE_ACCESS_GATE_CONTINUATION272_20261127.md; report commit f0b33ea547bf90771c6c39753a17ce7081aec8ab. ₹0; no production/workflow change; UNKNOWN never PASS.
