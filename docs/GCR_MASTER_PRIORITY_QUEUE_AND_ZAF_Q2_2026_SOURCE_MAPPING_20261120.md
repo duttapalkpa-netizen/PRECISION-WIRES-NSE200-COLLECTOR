@@ -2125,3 +2125,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - New official September-2026 Statistical Bulletin, Table 6.1, USDm: Q2-2026 portfolio investment net = -14.0. No separate portfolio A/L; adjacent Assets/Liabilities rows belong to Other Investment and cannot be substituted.
 - TZA remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Reopen only on distinct official detailed portfolio A/L export with Q2 period and vintage metadata. Do not repeat this net-only table extraction.
 - Detail: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_SEPTEMBER_2026_STATISTICAL_BULLETIN_PORTFOLIO_NET_ONLY_BOUNDARY_CONTINUATION266_20261126.md; report commit e7ee982ada8a6b2624028e2aef466ed51f310765. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
+
+
+## Continuation 267 — GCR progress denominator reconciliation (2026-11-26)
+- Historical Overlay V1 62.5% was 5/8 equal-weight milestone count, not whole-project weighted completion; M6 was documented 20%, M7 0%, M8 0% at that historical checkpoint.
+- Current 63-country national-source capture is 29/63 = 46.03% only; SOURCE_FOUND 14, BLOCKED 20, FULL_PASS 0. Not an overall GCR score.
+- Latest Mother File Macro-Geo P0 remains 6/8, strict hard gate BLOCKED. Overall GCR completion must be labelled NOT_COMPUTABLE/NOT_CERTIFIED until all milestone gates are re-audited.
+- C267 report: docs/GCR_PROGRESS_BASELINE_RECONCILIATION_8_MILESTONE_VS_63_COUNTRY_CAPTURE_CONTINUATION267_20261126.md; commit bfcaef37166002e34614d0bc8caaea4119136368. Next focus: Milestone 6 permitted official source acquisition; no closed-route repeats, no terms bypass, no production change.
