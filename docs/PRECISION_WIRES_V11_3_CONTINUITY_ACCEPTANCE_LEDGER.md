@@ -728,3 +728,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Official SIE API documentation explicitly requires a token for GET /v1/series/{idSeries} metadata. Versioned-series route templates are documented, but exact asset/liability series IDs and observation-level version history remain NOT_CAPTURED; no token accessed or stored.
 - MEX remains asset REVIEW, liability PASS (carried forward), same-vintage PENDING, PARTIAL / NOT PASS, aggregate NOT_AUTHORIZED. Do not call +543m a proven revision until a dated version record links the Q2 observation.
 - Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_SERIES_ID_AND_REVISION_VINTAGE_ACCESS_GATE_CONTINUATION272_20261127.md; commit f0b33ea547bf90771c6c39753a17ce7081aec8ab. ₹0; no production/workflow/cohort/IMF change; UNKNOWN never PASS.
+
+
+## GCR Continuation 273 — MEX matrix evidence reference and next-trigger handover (27-Nov-2026)
+- Re-read current Ledger, Priority Queue, Historical Task Registry, fixed 63-country matrix, immutable cohort and Library Mother File / Recovered Work Verification Index. C272 MEX evidence reused; no duplicate Banxico or IMF work.
+- Bounded CBN reinspection found the official Q2-2026 revised BOP Highlights PDF and values are already the exact source/values used in NGA CBN six-comparison report: portfolio assets USD0.70bn, liabilities USD7.09bn; existing raw PDF SHA-256 b77c0066385cac4bb3bcbe150321c8da28da7d76c91b78423808a31deaea4cf9. No new observation-level revision/vintage bridge. NGA stays DATA_CAPTURED, both numeric legs PASS, vintage PENDING.
+- MEX matrix evidence_ref/note reconciled to C272 only; stage DATA_CAPTURED, asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED unchanged.
+- Next rank-1 dated trigger: GEO NBG Q3-2026 BOP scheduled 30-Nov-2026 (C261). As of 27-Nov not due. Reopen only after actual publication and only if it contains Q2 separate portfolio A/L revision values plus methodology and observation-specific vintage evidence.
+- Macro-Geo P0 6/8; strict hard gate BLOCKED; candidate_release_allowed=false. Country capture 29/63 is not overall completion; FULL_PASS 0; aggregate NOT_AUTHORIZED; overall GCR NOT_COMPUTABLE/NOT_CERTIFIED.
+- Report: docs/GCR_CONTINUATION273_MEX_MATRIX_EVIDENCE_REF_RECONCILIATION_AND_GEO_RELEASE_TRIGGER_HANDOVER_20261127.md; commit 5797fcd1d2dc58f3f8305ad4588725ed9274051d. ₹0; no IMF query/cohort rebuild/workflow/production change; UNKNOWN never PASS.
