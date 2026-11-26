@@ -822,3 +822,14 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - FBIL official 11-Jun-2018 methodology: actual spot USD/INR transactions during 11:30–12:30 Mumbai window; random 15-minute sample, >=10 transactions and USD25m threshold, +/-3SD filter, volume-weighted average; fallback polled quotes; published around 13:30 on Mumbai business days. This is benchmark data, not OHLC/DXY/carry.
 - NSE/SEBI data-sharing list identifies FII/FPI & DII exchange trading activity as first-basket research data; separate NSE research page states research access is restricted to accredited academic institutions/recognized research organizations/think tanks and non-commercial research. No project eligibility assumed; do not substitute provisional exchange activity for final depository FPI.
 - USD/INR remains BLOCKED/UNKNOWN; no raw daily archive or terms clearance; no collector code, workflow, or source-coverage change. Detail: docs/GCR_FBIL_USDINR_PUBLIC_REFERENCE_RATE_ARCHIVE_EXPORT_ACCESS_BOUNDARY_CONTINUATION268_20261126.md; report commit 6ebf881cd6bf72b503406c92e31612d8b566a989. ₹0; UNKNOWN never PASS; production unchanged.
+
+
+## Continuation 269 — Milestone 6 next-action precondition / duplicate prevention (26-Nov-2026)
+| Work item | Current evidence | Status | Reopen only if |
+|---|---|---|---|
+| FBIL USD/INR | C268 public rows only; complete historical export/API, schema, raw bytes/hash and reuse permission absent. | BLOCKED / UNKNOWN | Distinct documented official export/API plus terms clearance and raw observations. |
+| H.10/FRED INR | Historical source, unit/base, equivalence and byte-route audits already exist; NY noon buying rate is not FBIL benchmark. | Existing audit retained; no repeat or silent substitution. | Explicit separate source-definition decision and fresh permitted evidence. |
+| NSDL/CDSL FPI/DII | Daily routes identified; permitted export/schema and >=60-date/90-day coverage remain unverified. | BLOCKED / UNKNOWN | Documented lawful export/permission, source semantics, raw bytes/hash and coverage. |
+| UKR Q2 vintage | C258 recheck found no observation-specific Q2 revision/version identity. | Asset/liability/semantic PASS; vintage PENDING; full NO. | New official NBU Q2 revision/version artifact with observation-level vintage linkage. |
+| GEO Q2 revision | C261 NBG Q3 BOP release scheduled 30-Nov-2026. | WAIT; trigger not yet due. | After 30-Nov only if release is published and includes Q2 separate A/L revision plus vintage/methodology. |
+- No new data or acceptance promotion. Macro-Geo P0 6/8; USD/INR disconnected; FPI/DII insufficient; strict hard gate BLOCKED. Detail: docs/GCR_CONTINUATION269_MILESTONE6_NEXT_ACTION_PRECONDITION_AND_NO_DUPLICATE_ROUTE_DECISION_20261126.md; commit adeee1a2a8ab820cbe94ffcf9c768b4fdd2d91f8. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
