@@ -2119,3 +2119,9 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Official current monthly and detailed XLS routes are exposed on the NBS BOP page but return HTTP 400 unsupported Excel MIME in this retrieval channel; no workbook bytes, schema, USD Q2 A/L or hash captured. NBS 18-Nov September report gives Jan–Sep portfolio net EUR4.4bn, not Q2 separate A/L or revision metadata.
 - SRB asset/liability remain REVIEW; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Report `docs/GCR_SERBIA_SRB_Q2_2026_NBS_TRANSACTION_DATE_FX_AND_SIGN_METHODOLOGY_VINTAGE_BOUNDARY_CONTINUATION265_20261126.md` commit `9bc2128c3a56cecf749d8a18b02f4e22197a3ed5`.
 - Next: supported official USD Q2 workbook or transaction-level conversion evidence and Q2-specific revision/vintage bridge. No IMF re-query/cohort rebuild or production change.
+
+
+## Continuation 266 — TZA Tanzania Bank of Tanzania Q2-2026 portfolio net-only boundary (2026-11-26)
+- New official September-2026 Statistical Bulletin, Table 6.1, USDm: Q2-2026 portfolio investment net = -14.0. No separate portfolio A/L; adjacent Assets/Liabilities rows belong to Other Investment and cannot be substituted.
+- TZA remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Reopen only on distinct official detailed portfolio A/L export with Q2 period and vintage metadata. Do not repeat this net-only table extraction.
+- Detail: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_SEPTEMBER_2026_STATISTICAL_BULLETIN_PORTFOLIO_NET_ONLY_BOUNDARY_CONTINUATION266_20261126.md; report commit e7ee982ada8a6b2624028e2aef466ed51f310765. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
