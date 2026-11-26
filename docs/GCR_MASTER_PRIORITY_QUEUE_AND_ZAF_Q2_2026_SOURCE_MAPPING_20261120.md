@@ -2039,3 +2039,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - C246's open action was to check for an already archived later IMF vintage. The only MEX exact-key raw receipt located is 19-Nov-2026 06:45:19 UTC in `docs/evidence/imf_bop_emde_20261119/`; bounded GitHub and Library searches found no later MEX IMF snapshot/artifact. Absence is limited to the searched repository/Library records.
 - Existing IMF rows/hashes and C246 comparison reused. Banxico Q2 assets revised +543m (8,937→9,480 USDm), liabilities unchanged at 10,561m; no later IMF receipt or observation-specific Banxico revision ID available to prove same vintage. MEX asset REVIEW, liability PASS, vintage PENDING, PARTIAL / NOT PASS, aggregate NOT_AUTHORIZED.
 - Report docs/GCR_MEXICO_MEX_Q2_2026_IMF_LATER_ARCHIVE_INVENTORY_AND_VINTAGE_BRIDGE_BOUNDARY_CONTINUATION254_20261126.md; commit ab937972f13098af06f4a25e35e47f0f7d3f35a0. Matrix note/evidence_ref updated only. No IMF re-query/cohort rebuild; ₹0; production unchanged; UNKNOWN never PASS.
+
+
+## Continuation 255 — ZAF South Africa SARB EXCX135D daily FX Q2 coverage / access boundary (2026-11-26)
+- Re-read current Ledger, Queue, Registry, matrix, Library Mother File 1–53, and C127/C215. Skipped all prior IMF/SARB PDF/OECD arithmetic.
+- Official OpenAPI confirms EXCX135D = Rand per US Dollar and documents daily historical and date-bounded observations endpoints. Description: weighted average of banks' daily rates at approximately 10:30 am.
+- No-date endpoint exposes 24 visible observations; only three Q2 dates (1, 2, 7-Apr) in that response; no May/June. Date-bounded Q2 route inaccessible through current retrieval channel; daily snapshot shows 7-Aug-2026 but is not Q2 history. No raw Q2 payload/hash captured.
+- No Q2 mean/conversion performed; BOP conversion convention NOT_ESTABLISHED. ZAF asset REVIEW; liability PASS retained; vintage PENDING; PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Report docs/GCR_SOUTH_AFRICA_ZAF_Q2_2026_SARB_EXCX135D_DAILY_SERIES_Q2_COVERAGE_AND_HISTORICAL_ENDPOINT_ACCESS_BOUNDARY_CONTINUATION255_20261126.md; commit 81d155fe62f823d317c6d678f2f3bead446efd8e.
+- Reopen only on complete official Q2 daily export with provenance and SARB-specific BOP conversion method. ₹0; no IMF re-query/cohort rebuild; production unchanged; UNKNOWN never PASS.
