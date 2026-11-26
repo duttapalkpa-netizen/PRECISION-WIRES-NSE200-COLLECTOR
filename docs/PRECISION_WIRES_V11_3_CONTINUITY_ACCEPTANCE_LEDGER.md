@@ -674,3 +674,10 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - SRB: methodology/sign semantics PASS (scope only); EUR Q2 legs DATA_CAPTURED; USD Q2 pair NOT_CAPTURED; national/IMF numeric comparison REVIEW; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. No gate promoted.
 - Report `docs/GCR_SERBIA_SRB_Q2_2026_NBS_TRANSACTION_DATE_FX_AND_SIGN_METHODOLOGY_VINTAGE_BOUNDARY_CONTINUATION265_20261126.md`; commit `9bc2128c3a56cecf749d8a18b02f4e22197a3ed5`.
 - Reopen only on supported NBS official USD Q2 detailed XLS bytes/observations or transaction-level data/rates, plus Q2-specific revision/vintage metadata. ₹0; no IMF query/cohort rebuild; no production change; UNKNOWN never PASS.
+
+
+## GCR Continuation 266 — TZA Tanzania official Q2 portfolio net-only boundary (26-Nov-2026)
+- Preflight re-read current Ledger, Priority Queue, Historical Task Registry, immutable 63-country matrix and Library Mother File; skipped PASS/closed work. Selected unfinished TZA rank-1 national validation; no IMF re-query/cohort rebuild.
+- New official Bank of Tanzania September 2026 Statistical Bulletin, Vol. IV No.3, Table 6.1 (Quarterly Balance of Payments, USDm) gives Q2-2026 portfolio investment net = -14.0 USDm. The table does not split portfolio investment into net acquisition of financial assets and net incurrence of liabilities. The nearby Assets/Liabilities subrows are nested under Other Investment, not Portfolio Investment.
+- TZA national portfolio net-only observation captured; separate portfolio A/L NOT_CAPTURED; no numeric comparison; vintage UNKNOWN; TZA remains SOURCE_FOUND / PARTIAL / NOT PASS; FULL_PASS NO; aggregate NOT_AUTHORIZED. Do not substitute net for legs or relabel Other Investment rows.
+- Report: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_SEPTEMBER_2026_STATISTICAL_BULLETIN_PORTFOLIO_NET_ONLY_BOUNDARY_CONTINUATION266_20261126.md; commit e7ee982ada8a6b2624028e2aef466ed51f310765. Official source: https://www.bot.go.tz/Publications/Regular/Quarterly%20statistical%20Bulletin/en/2026110418292086.pdf. No IMF re-query/cohort rebuild, workflow dispatch or production change; ₹0; UNKNOWN never PASS.
