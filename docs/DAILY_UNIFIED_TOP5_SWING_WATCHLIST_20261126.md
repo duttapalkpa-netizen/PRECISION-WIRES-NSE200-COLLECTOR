@@ -22,7 +22,7 @@ Run #411-এর audit-only model পাঁচটি raw lead দিয়েছে,
 
 - Workflow run ID: **45695700887**; job ID: **139492398062**; run number: **411**; conclusion: SUCCESS.
 - Workflow head commit: **fa3220dbddf3dc204eb2f20d08a0a44af719950a**.
-- Audit branch commit from job log: **f96f9e84** (prospective ledger update).
+- Audit branch commit from job log: **f96f9e8448d121b9f781cf526ed8e838ad3552e9** (prospective ledger update).
 - Artifact ID: **15061666636**.
 - Artifact ZIP SHA-256 independently recalculated: **6685f9d5d092ff4a8fe505040b0a08f4183e78339a56a53bcfaa6d666d256897** — GitHub upload log digest-এর সঙ্গে মিলে।
 - Job runtime প্রায় **8m35s**; কোনো নতুন broad workflow dispatch করা হয়নি।
