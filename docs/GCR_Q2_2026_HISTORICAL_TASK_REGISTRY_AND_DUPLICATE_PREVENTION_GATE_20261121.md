@@ -805,3 +805,12 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | TZA Tanzania | Bank of Tanzania September-2026 Statistical Bulletin, Table 6.1, Quarterly BOP, USDm: Q2-2026 Portfolio investment net -14.0. No separate portfolio assets/liabilities. Adjacent A/L subrows are under Other Investment. | Net-only observation captured; separate portfolio A/L NOT_CAPTURED; TZA SOURCE_FOUND / PARTIAL / NOT PASS; vintage UNKNOWN; aggregate NOT_AUTHORIZED. | Do not use net as a leg or reclassify Other Investment A/L. Reopen only on distinct official Q2 portfolio A/L table/export with sign/unit/vintage metadata. |
 - Detail: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_SEPTEMBER_2026_STATISTICAL_BULLETIN_PORTFOLIO_NET_ONLY_BOUNDARY_CONTINUATION266_20261126.md; commit e7ee982ada8a6b2624028e2aef466ed51f310765. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 267 — GCR progress denominator reconciliation (2026-11-26)
+| Measure | Current defensible interpretation | Value |
+|---|---|---|
+| Historical Overlay V1 milestone checkpoint | 5 of 8 milestones at the historical checkpoint; not full-project weighted completion | 62.5% historical |
+| Q2-2026 63-country national-source capture | DATA_CAPTURED rows / fixed 63-country cohort | 29/63 = 46.03% |
+| Overall GCR completion | Eight milestones and dependent hard gates not fully re-audited under one explicit scoring scheme | NOT_COMPUTABLE / NOT_CERTIFIED |
+- Latest Mother File addenda 55–57 show Macro-Geo P0 6/8 and strict hard gate BLOCKED. Do not conflate denominators. C267 report docs/GCR_PROGRESS_BASELINE_RECONCILIATION_8_MILESTONE_VS_63_COUNTRY_CAPTURE_CONTINUATION267_20261126.md; commit bfcaef37166002e34614d0bc8caaea4119136368.
