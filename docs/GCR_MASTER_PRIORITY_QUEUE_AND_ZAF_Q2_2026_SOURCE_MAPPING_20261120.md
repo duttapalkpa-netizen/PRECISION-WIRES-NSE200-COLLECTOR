@@ -2152,3 +2152,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - New official Banxico Q3-2026 BOP release published 25-Nov-2026 (Cuadro 3) reports Q2 portfolio assets +USD9,480m and liabilities +USD10,561m; portfolio balance -USD1,082m. Prior 25-Aug Q2 release reported assets +USD8,937m and liabilities +USD10,561m. Q2 asset changed +USD543m; liability unchanged. Published balance differs from A-B by USD1m, consistent with whole-million rounding note.
 - Reused IMF receipt 44474458684 / artifact 14505009889 (19-Nov): A_NFA_T +8,937.255098 USDm; L_NIL_T +10,561.285114 USDm. New Banxico Q3-release Q2 asset residual -542.744902 USDm (REVIEW / NOT MATCHED); liability residual +0.285114 USDm (PASS at ±0.5). IMF receipt predates new Banxico release; same-vintage not established. Revision cause/observation-level revision ID not established.
 - MEX remains PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Detail: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_Q3_RELEASE_REVISION_VINTAGE_RECHECK_CONTINUATION270_20261126.md; report commit d65bcb9cd08485ab4271f6a9dfef65ef8bc24609. Next: official observation-level revision/version bridge only; no repeat August extraction, IMF GET, cohort rebuild or IIP substitution. ₹0; UNKNOWN never PASS; production unchanged.
+
+
+## Continuation 271 — MEX official SIE version-route follow-up (2026-11-27)
+- Rank 1 (63-country national-source validation) remains active. MEX C271 adds an official SIE CA737 Q2 transaction cross-check: portfolio assets +USD9,480m and liabilities +USD10,561m, same as C270 Q3 BOP values. This is corroboration only; no new gate promotion.
+- New distinct route fingerprint: Banxico SIE API per-series versions metadata, GET /v1/series/{idSeries}/versiones and version data route. Exact series IDs and observation-level payload NOT_CAPTURED; no API call or raw capture.
+- MEX remains PARTIAL / NOT PASS; asset REVIEW / NOT MATCHED vs archived IMF; liability numeric PASS; vintage PENDING; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_CA737_IIP_TRANSACTION_CROSSCHECK_AND_SERIES_VERSION_API_ROUTE_CONTINUATION271_20261127.md; commit 920e98a09fa43f4c0dda093b4845977a1c0ef01d.
+- Next exact action: ground parent series IDs from official SIE metadata and test the versions route; do not guess IDs, repeat PDF extraction, query IMF, or rebuild cohort.
