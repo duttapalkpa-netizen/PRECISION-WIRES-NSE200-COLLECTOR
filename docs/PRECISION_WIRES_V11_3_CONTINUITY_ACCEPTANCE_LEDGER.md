@@ -625,3 +625,13 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - CPV remains SOURCE_FOUND / PARTIAL / NOT PASS; A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Report docs/GCR_CABO_VERDE_CPV_Q2_2026_BCV_EXACT_XLS_ATTACHMENT_DUPLICATE_ROUTE_CLOSURE_CONTINUATION260_20261126.md; commit 44c6004361efc7a7fd28e2f28ff7c6eab5cc9603. Matrix evidence_ref updated to C260 with all gate columns unchanged. ₹0; no production change; UNKNOWN never PASS.
 
 - C260 matrix write/read-back: CPV exact 30-column row now links the C260 duplicate-route closure report; current_stage SOURCE_FOUND, source_gate FOUND, data_capture_gate NO, asset/liability NOT_CAPTURED, vintage UNKNOWN, full_pass NO, aggregate NOT_AUTHORIZED all preserved. Matrix update commit `0aa5108abb93bfa188e92289846da54784a29628`; matrix blob SHA `3c7893bfdf545c3a2f485e40a8dac7b82eae6cc0`. No gate promotion.
+
+
+## GCR Continuation 261 — Georgia NBG Q3 release-calendar / revision-trigger recheck (26-Nov-2026)
+- Preflight re-read the Mother File, current Master Ledger, GCR Priority Queue, Historical Task Registry and 63-country matrix; reopened GEO C154/C223. PASS work skipped; CPV C260, MNE C259 and AGO C236 duplicate/closed routes were not repeated.
+- NBG's official Advance Release Calendar lists the Q3-2026 Balance of Payments release on 30-Nov-2026 in the November column. On 26-Nov this is a future scheduled publication, not an available Q2 revision source.
+- NBG's official Data Revision Policy states preliminary prior-period data are regularly revised on release of the next period; extraordinary revisions may be notified publicly. No Q2-specific portfolio A/L revised values or BPM5/BPM6 correction was captured.
+- Q2 release still explicitly labels BPM5; C154's prior NBG methodology notice records BPM6 from Q1-2014 / presentation only in BPM6 since 2015. Conflict remains unresolved; no assumption or silent relabeling.
+- GEO remains SOURCE_FOUND / PARTIAL / NOT PASS; Q2 national portfolio A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Matrix evidence_ref points to C261; 30-column width and all gate states preserved.
+- Detail: `docs/GCR_GEORGIA_GEO_Q2_2026_NBG_Q3_RELEASE_CALENDAR_AND_REVISION_TRIGGER_RECHECK_CONTINUATION261_20261126.md`; report commit `5f37661b9378a46518356dff8a14d3da2f28b9ac`; matrix update commit `d877522820b01b6757cd697b36f450e9067de8fd`.
+- Next trigger: after 30-Nov-2026, inspect the Q3 BOP release only if actually published; seek Q2 portfolio A/L revisions, methodology correction and vintage metadata. No duplicate route retries, IMF re-query/cohort rebuild, workflow dispatch or production change. ₹0; UNKNOWN never PASS.
