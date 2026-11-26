@@ -2081,3 +2081,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Current BCV BOP page's Q1-2012–Q2-2026 XLS link was followed; exact href matches C153 official XLS URL byte-for-byte. Reader returned HTTP 400 unsupported application/vnd.ms-excel. C153 also records a failed direct-byte route; no retry made.
 - This closes C256's unresolved attachment identity, not the workbook-data gate. No bytes, schema, Q2 portfolio A/L, hash or vintage captured. CPV remains SOURCE_FOUND / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_CABO_VERDE_CPV_Q2_2026_BCV_EXACT_XLS_ATTACHMENT_DUPLICATE_ROUTE_CLOSURE_CONTINUATION260_20261126.md; report commit 44c6004361efc7a7fd28e2f28ff7c6eab5cc9603. Matrix evidence_ref linked to C260; all gates unchanged. Reopen only on genuinely distinct official BCV API/export/file version or supported byte route not used in C153. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
+
+
+## Continuation 261 — GEO scheduled Q3 publication trigger (2026-11-26)
+- The NBG official Advance Release Calendar places the Q3-2026 Balance of Payments release on 30-Nov-2026 (November column); as of 26-Nov this is not yet due. NBG's official Data Revision Policy says preliminary data are regularly revised upon the next-period release and extraordinary revisions may be notified publicly.
+- This is a dated external trigger, not Q2 data capture or a resolved vintage/methodology bridge. GEO remains SOURCE_FOUND / PARTIAL / NOT PASS; separate Q2 portfolio A/L NOT_CAPTURED; BPM5/BPM6 conflict unresolved; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
+- Reopen only after 30-Nov if the Q3 release is actually published and includes Q2 separate portfolio A/L revisions plus methodology and vintage details. Do not repeat C154/C223 pages or stale NSDP values.
+- Detail: `docs/GCR_GEORGIA_GEO_Q2_2026_NBG_Q3_RELEASE_CALENDAR_AND_REVISION_TRIGGER_RECHECK_CONTINUATION261_20261126.md`; report commit `5f37661b9378a46518356dff8a14d3da2f28b9ac`. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
