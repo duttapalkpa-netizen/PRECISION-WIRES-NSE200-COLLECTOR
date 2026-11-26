@@ -798,3 +798,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 |---|---|---|---|
 | SRB Serbia | NBS BPM6 Explanatory Notes: EURm/USDm dissemination; official NBS middle exchange rate on transaction date; assets/liabilities increase positive, decrease negative; net=assets−liabilities. Current official monthly and detailed XLS URLs found but reader returned HTTP 400 unsupported Excel MIME. NBS 18-Nov Jan–Sep report has portfolio net cumulative EUR4.4bn only. | Methodology/sign semantics PASS (scope only); C263 EUR legs retained; USD Q2 A/L NOT_CAPTURED; numeric comparison REVIEW; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. | Do not use quarter-average FX or cumulative net back-solving. Reopen only on supported official USD Q2 workbook/transaction-level source and Q2-specific revision/vintage metadata. |
 - Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_TRANSACTION_DATE_FX_AND_SIGN_METHODOLOGY_VINTAGE_BOUNDARY_CONTINUATION265_20261126.md`; report commit `9bc2128c3a56cecf749d8a18b02f4e22197a3ed5`. ₹0; no IMF re-query/cohort rebuild; UNKNOWN never PASS.
+
+
+## Continuation 266 — TZA Tanzania Bank of Tanzania Q2-2026 portfolio net-only boundary (2026-11-26)
+| Country | Official evidence | Status | Duplicate prevention / reopen only if |
+|---|---|---|---|
+| TZA Tanzania | Bank of Tanzania September-2026 Statistical Bulletin, Table 6.1, Quarterly BOP, USDm: Q2-2026 Portfolio investment net -14.0. No separate portfolio assets/liabilities. Adjacent A/L subrows are under Other Investment. | Net-only observation captured; separate portfolio A/L NOT_CAPTURED; TZA SOURCE_FOUND / PARTIAL / NOT PASS; vintage UNKNOWN; aggregate NOT_AUTHORIZED. | Do not use net as a leg or reclassify Other Investment A/L. Reopen only on distinct official Q2 portfolio A/L table/export with sign/unit/vintage metadata. |
+- Detail: docs/GCR_TANZANIA_TZA_Q2_2026_BOT_SEPTEMBER_2026_STATISTICAL_BULLETIN_PORTFOLIO_NET_ONLY_BOUNDARY_CONTINUATION266_20261126.md; commit e7ee982ada8a6b2624028e2aef466ed51f310765. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
