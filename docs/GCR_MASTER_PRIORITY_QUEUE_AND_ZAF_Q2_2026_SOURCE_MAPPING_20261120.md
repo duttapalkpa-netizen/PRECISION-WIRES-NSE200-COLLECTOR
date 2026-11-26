@@ -2167,3 +2167,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - SIE metadata endpoint GET /v1/series/{idSeries} requires a token. Versioned-series route is documented, but exact asset/liability IDs and observation-level version history NOT_CAPTURED. No token accessed/stored.
 - MEX remains asset REVIEW, liability PASS (carried), same-vintage PENDING, PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Reopen only with authorized exact series IDs plus official /versiones response and Q2 observation-level historical versions. Do not re-query IMF, rebuild cohort, guess IDs or treat +543m as proven revision.
 - Detail: docs/GCR_MEXICO_MEX_Q2_2026_BANXICO_SIE_SERIES_ID_AND_REVISION_VINTAGE_ACCESS_GATE_CONTINUATION272_20261127.md; report commit f0b33ea547bf90771c6c39753a17ce7081aec8ab. ₹0; no production/workflow change; UNKNOWN never PASS.
+
+
+## Continuation 273 — MEX evidence-ref correction / next GEO release trigger (2026-11-27)
+- C272 MEX report is now the matrix's latest evidence_ref; no gate promoted. MEX remains DATA_CAPTURED, asset REVIEW, liability PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED.
+- NGA current official CBN Q2 revised PDF surface repeats the exact source URL and values already used in NGA report; assets USD0.70bn, liabilities USD7.09bn; prior PDF SHA-256 b77c0066385cac4bb3bcbe150321c8da28da7d76c91b78423808a31deaea4cf9. No new vintage bridge; do not repeat comparison.
+- Next rank-1 external trigger is GEO NBG Q3-2026 BOP release scheduled 30-Nov-2026 per C261. Wait until publication; inspect only for Q2 separate A/L revision, BPM5/BPM6 bridge and observation-specific vintage. Do not repeat current calendar/Q2 checks.
+- Detail: docs/GCR_CONTINUATION273_MEX_MATRIX_EVIDENCE_REF_RECONCILIATION_AND_GEO_RELEASE_TRIGGER_HANDOVER_20261127.md; report commit 5797fcd1d2dc58f3f8305ad4588725ed9274051d. No IMF re-query/cohort rebuild, workflow or production change; ₹0; UNKNOWN never PASS.
