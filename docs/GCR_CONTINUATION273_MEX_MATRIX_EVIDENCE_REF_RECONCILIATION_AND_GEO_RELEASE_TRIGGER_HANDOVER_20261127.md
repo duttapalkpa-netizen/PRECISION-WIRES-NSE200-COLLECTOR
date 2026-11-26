@@ -28,3 +28,9 @@ Date: 2026-11-27 (Asia/Kolkata)
 - 63-country national-source capture remains 29/63 (46.03%) as a capture-stage ratio only. FULL_PASS remains 0; aggregate NOT_AUTHORIZED. Overall GCR completion remains NOT_COMPUTABLE / NOT_CERTIFIED.
 - ₹0; official/free sources only; no paid API, no IMF re-query, no cohort rebuild, no workflow dispatch, no synthetic values, no guessed IDs or timestamps, no stock/flow substitution.
 - Production Selector, RANKING_SCORE, +1 PRESSURE_FADE, CORE-672 (56×12), Engines A–E and IPO-PLX V2.0 unchanged. UNKNOWN never PASS.
+
+
+## 6. Matrix serialization QA addendum
+- Independent CSV read-back verified 63 data rows and 63 unique country codes. It found one pre-existing malformed CPV note containing an unquoted comma, producing 31 fields on that row. The CPV note was quoted without changing any country status or evidence value.
+- MEX evidence_ref was updated to C272 with all 30 columns preserved. Final matrix read-back must show 63 rows, 63 unique codes and exactly 30 columns on every data row.
+- Matrix correction commit: 6bbb2eb094a72343dea6307fcaf4db9e069bb4b0. No cohort or country gate changed.
