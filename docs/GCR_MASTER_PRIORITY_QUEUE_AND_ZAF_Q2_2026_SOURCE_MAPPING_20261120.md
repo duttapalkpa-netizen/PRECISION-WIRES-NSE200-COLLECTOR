@@ -2112,3 +2112,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - SAFE's 29-Sep Q2 table remains rounded USD100m: portfolio assets -488, liabilities +433, net -55; BPM6; credit positive/debit negative; balances are credit plus debit. Archived IMF rows remain +48,794.459m assets and +43,286.601m liabilities. Asset sign crosswalk is still REVIEW; liability numeric PASS retained; same-vintage PENDING; detailed XLSX/raw hash absent.
 - CHN remains DATA_CAPTURED / PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED. Report: docs/GCR_CHINA_CHN_Q2_2026_SAFE_POSTPUBLICATION_Q3_REVISION_AND_SIGN_VINTAGE_RECHECK_CONTINUATION264_20261126.md (commit 264e9044d0e9328056feda3fd98c8f1e91b8c754).
 - Next: only a distinct supported SAFE Q2 detailed machine-readable export with unrounded portfolio A/L, sign definitions and vintage metadata. No IMF re-query/cohort rebuild, repeated failed route or production change.
+
+
+## Continuation 265 — SRB Serbia NBS transaction-date FX / sign methodology and vintage boundary (2026-11-26)
+- Official NBS Explanatory Notes confirm BPM6 EURm/USDm dissemination; conversion at official NBS middle rate on each transaction date; assets/liabilities increase positive, decrease negative; net = assets − liabilities. Methodology/sign semantics PASS only; quarterly EUR aggregate cannot be converted using an unsupported quarter-average rate.
+- Official current monthly and detailed XLS routes are exposed on the NBS BOP page but return HTTP 400 unsupported Excel MIME in this retrieval channel; no workbook bytes, schema, USD Q2 A/L or hash captured. NBS 18-Nov September report gives Jan–Sep portfolio net EUR4.4bn, not Q2 separate A/L or revision metadata.
+- SRB asset/liability remain REVIEW; vintage PENDING; FULL_PASS NO; aggregate NOT_AUTHORIZED. Report `docs/GCR_SERBIA_SRB_Q2_2026_NBS_TRANSACTION_DATE_FX_AND_SIGN_METHODOLOGY_VINTAGE_BOUNDARY_CONTINUATION265_20261126.md` commit `9bc2128c3a56cecf749d8a18b02f4e22197a3ed5`.
+- Next: supported official USD Q2 workbook or transaction-level conversion evidence and Q2-specific revision/vintage bridge. No IMF re-query/cohort rebuild or production change.
