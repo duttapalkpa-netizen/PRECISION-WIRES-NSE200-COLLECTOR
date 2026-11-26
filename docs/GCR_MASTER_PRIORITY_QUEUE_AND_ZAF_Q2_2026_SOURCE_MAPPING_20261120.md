@@ -2088,3 +2088,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - This is a dated external trigger, not Q2 data capture or a resolved vintage/methodology bridge. GEO remains SOURCE_FOUND / PARTIAL / NOT PASS; separate Q2 portfolio A/L NOT_CAPTURED; BPM5/BPM6 conflict unresolved; vintage UNKNOWN; aggregate NOT_AUTHORIZED.
 - Reopen only after 30-Nov if the Q3 release is actually published and includes Q2 separate portfolio A/L revisions plus methodology and vintage details. Do not repeat C154/C223 pages or stale NSDP values.
 - Detail: `docs/GCR_GEORGIA_GEO_Q2_2026_NBG_Q3_RELEASE_CALENDAR_AND_REVISION_TRIGGER_RECHECK_CONTINUATION261_20261126.md`; report commit `5f37661b9378a46518356dff8a14d3da2f28b9ac`. No IMF re-query/cohort rebuild; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 262 — WSM Samoa official Q2-2026 dual-leg capture (2026-11-26)
+- The official CBS Quarterly Bulletin index now directly lists September 2026 as latest (updated 19-Nov); this supersedes C243's then-current direct-page state that only June 2026 was listed. The exact official September PDF is `https://cbs.gov.ws/media/Quarterly-Bulletin---September-2026.pdf`.
+- Table B-1, printed p.35 / PDF p.38, 2026-II (Q2-2026), Tala million, BPM6: portfolio assets +9.5, liabilities +0.2, net +9.3; internal arithmetic reconciles. Q1 June-bulletin work was not repeated.
+- Existing IMF raw Q2 rows reused (asset 3499391.164998622, liability 72224.22595641938; USD, SCALE=6); no IMF query, no FX conversion, no numeric residual and no same-vintage claim.
+- PDF raw bytes/local SHA-256 could not be downloaded in current retrieval path. WSM matrix now DATA_CAPTURED; asset/liability REVIEW; vintage UNKNOWN; full_pass NO; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_SAMOA_WSM_Q2_2026_CBS_SEPTEMBER_2026_BULLETIN_TABLE_B1_DUAL_LEG_CAPTURE_CONTINUATION262_20261126.md`; report commit `9844972ddad36175a2c392bf87d1f165e97759e4`; matrix commit `cc12d52820b6ca2a4f6cf117b78375c564ccde58`.
+- Next: official byte/hash capture and defensible Tala/USD transaction conversion plus same-vintage bridge. No unsupported FX or production change; ₹0; UNKNOWN never PASS.
