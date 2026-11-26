@@ -2097,3 +2097,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - PDF raw bytes/local SHA-256 could not be downloaded in current retrieval path. WSM matrix now DATA_CAPTURED; asset/liability REVIEW; vintage UNKNOWN; full_pass NO; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_SAMOA_WSM_Q2_2026_CBS_SEPTEMBER_2026_BULLETIN_TABLE_B1_DUAL_LEG_CAPTURE_CONTINUATION262_20261126.md`; report commit `9844972ddad36175a2c392bf87d1f165e97759e4`; matrix commit `cc12d52820b6ca2a4f6cf117b78375c564ccde58`.
 - Next: official byte/hash capture and defensible Tala/USD transaction conversion plus same-vintage bridge. No unsupported FX or production change; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 263 — SRB Serbia September 2026 bulletin monthly dual-leg capture (2026-11-26)
+- A distinct official NBS September 2026 Statistical Bulletin PDF supersedes the closed July-PDF route as a new issue. Table 2.3 is BPM6, EUR million, preliminary; data available until 17-Sep-2026.
+- Monthly Apr/May/Jun 2026 portfolio assets +149/−25/+124 EURm; liabilities −19/+3,932/+199 EURm; net +168/−3,957/−75 EURm. Quarterly sums assets +248, liabilities +4,112, net −3,864 EURm; arithmetic reconciles.
+- Existing IMF Q2 rows reused; no re-query. EUR/USD conversion and same-vintage bridge unresolved. SRB remains DATA_CAPTURED / PARTIAL / NOT PASS; asset/liability REVIEW; vintage PENDING; aggregate NOT_AUTHORIZED.
+- Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_SEPTEMBER_2026_BULLETIN_TABLE_2_3_MONTHLY_DUAL_LEG_CAPTURE_CONTINUATION263_20261126.md`; report commit 49f163b8b8a8477240060fc2b16f255314eda935; matrix commit 3dcc6132e83dbd8986796212bea09c3350f6fb81.
+- Next: establish official NBS transaction-period EUR/USD conversion and same-vintage/revision metadata. Do not repeat C233 July route, query IMF, rebuild cohort or change production.
