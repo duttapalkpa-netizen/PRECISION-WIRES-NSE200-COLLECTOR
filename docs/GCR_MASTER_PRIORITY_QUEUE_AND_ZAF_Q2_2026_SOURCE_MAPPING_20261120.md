@@ -2105,3 +2105,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Existing IMF Q2 rows reused; no re-query. EUR/USD conversion and same-vintage bridge unresolved. SRB remains DATA_CAPTURED / PARTIAL / NOT PASS; asset/liability REVIEW; vintage PENDING; aggregate NOT_AUTHORIZED.
 - Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_SEPTEMBER_2026_BULLETIN_TABLE_2_3_MONTHLY_DUAL_LEG_CAPTURE_CONTINUATION263_20261126.md`; report commit 49f163b8b8a8477240060fc2b16f255314eda935; matrix commit 3dcc6132e83dbd8986796212bea09c3350f6fb81.
 - Next: establish official NBS transaction-period EUR/USD conversion and same-vintage/revision metadata. Do not repeat C233 July route, query IMF, rebuild cohort or change production.
+
+
+## Continuation 264 — CHN China SAFE post-publication Q3 revision / sign-vintage recheck (2026-11-26)
+- SAFE's 13-Nov Q3 preliminary BOP release was checked against the C247 Q2 capture. It exposes Q3 and first-three-quarters aggregates, not a distinct revised Q2 portfolio A/L pair; cumulative subtraction/back-solving is rejected.
+- SAFE's 29-Sep Q2 table remains rounded USD100m: portfolio assets -488, liabilities +433, net -55; BPM6; credit positive/debit negative; balances are credit plus debit. Archived IMF rows remain +48,794.459m assets and +43,286.601m liabilities. Asset sign crosswalk is still REVIEW; liability numeric PASS retained; same-vintage PENDING; detailed XLSX/raw hash absent.
+- CHN remains DATA_CAPTURED / PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED. Report: docs/GCR_CHINA_CHN_Q2_2026_SAFE_POSTPUBLICATION_Q3_REVISION_AND_SIGN_VINTAGE_RECHECK_CONTINUATION264_20261126.md (commit 264e9044d0e9328056feda3fd98c8f1e91b8c754).
+- Next: only a distinct supported SAFE Q2 detailed machine-readable export with unrounded portfolio A/L, sign definitions and vintage metadata. No IMF re-query/cohort rebuild, repeated failed route or production change.
