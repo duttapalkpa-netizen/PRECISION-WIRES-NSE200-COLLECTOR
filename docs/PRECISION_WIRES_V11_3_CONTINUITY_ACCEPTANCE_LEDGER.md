@@ -657,3 +657,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - SRB remains DATA_CAPTURED / PARTIAL / NOT PASS; asset REVIEW; liability REVIEW; vintage PENDING; full_pass NO; aggregate NOT_AUTHORIZED. Matrix remains 30 columns and evidence_ref now points to C263; matrix commit 3dcc6132e83dbd8986796212bea09c3350f6fb81; blob e3a592b4e4805b2d79c96a9b831c6b3a395c2823.
 - Detail: `docs/GCR_SERBIA_SRB_Q2_2026_NBS_SEPTEMBER_2026_BULLETIN_TABLE_2_3_MONTHLY_DUAL_LEG_CAPTURE_CONTINUATION263_20261126.md`; report commit 49f163b8b8a8477240060fc2b16f255314eda935.
 - Next: only documented NBS transaction-period EUR/USD conversion and observation-specific revision/vintage bridge. No C233 July route retry, IMF re-query/cohort rebuild, workflow dispatch or production change. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 264 — CHN China SAFE post-publication Q3 revision / sign-vintage recheck (2026-11-26)
+- Reused C247 Q2 dual-leg capture and archived IMF rows; no IMF query or repeated numeric extraction. Inspected SAFE's official Q3 preliminary release dated 13-Nov-2026. It provides Q3 and first-three-quarters financial-account figures but no separate revised Q2 portfolio A/L pair in the inspected release; do not back-solve from cumulative/net aggregates.
+- Rechecked SAFE's 29-Sep Q2 release: BPM6; credit positive/debit negative; balance values sum credit and debit; rounded values. Q2 portfolio A/L remain assets -USD48.8bn, liabilities +USD43.3bn, net -USD5.5bn (USD100m units rounded). Archived IMF rows remain assets +USD48,794.459m and liabilities +USD43,286.601m.
+- Asset sign crosswalk remains REVIEW / NOT ESTABLISHED; liability numeric PASS retained; same-vintage/revision bridge PENDING; detailed XLSX/raw bytes/hash NOT_CAPTURED. CHN remains DATA_CAPTURED / PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED.
+- Report: docs/GCR_CHINA_CHN_Q2_2026_SAFE_POSTPUBLICATION_Q3_REVISION_AND_SIGN_VINTAGE_RECHECK_CONTINUATION264_20261126.md; commit 264e9044d0e9328056feda3fd98c8f1e91b8c754.
+- Reopen only on distinct supported SAFE machine-readable Q2 portfolio A/L observations with explicit asset sign definitions, observation-specific vintage/revision metadata and raw bytes/hash. ₹0; official/free sources; no IMF re-query/cohort rebuild; no production changes; UNKNOWN never PASS.
