@@ -635,3 +635,14 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - GEO remains SOURCE_FOUND / PARTIAL / NOT PASS; Q2 national portfolio A/L NOT_CAPTURED; vintage UNKNOWN; aggregate NOT_AUTHORIZED. Matrix evidence_ref points to C261; 30-column width and all gate states preserved.
 - Detail: `docs/GCR_GEORGIA_GEO_Q2_2026_NBG_Q3_RELEASE_CALENDAR_AND_REVISION_TRIGGER_RECHECK_CONTINUATION261_20261126.md`; report commit `5f37661b9378a46518356dff8a14d3da2f28b9ac`; matrix update commit `d877522820b01b6757cd697b36f450e9067de8fd`.
 - Next trigger: after 30-Nov-2026, inspect the Q3 BOP release only if actually published; seek Q2 portfolio A/L revisions, methodology correction and vintage metadata. No duplicate route retries, IMF re-query/cohort rebuild, workflow dispatch or production change. ₹0; UNKNOWN never PASS.
+
+
+## GCR Continuation 262 — Samoa WSM Q2-2026 official CBS dual-leg capture (26-Nov-2026)
+- Preflight re-read the Library Mother File 1–53, current Master Ledger, GCR Priority Queue, Historical Task Registry, immutable 63-country matrix and WSM C125/C126/C243 reports. All previously accepted Q1 work and the stale C243 index finding were skipped; no IMF re-query/cohort rebuild.
+- Fresh direct CBS index now lists Quarterly Bulletin September 2026, last updated 19-Nov-2026; followed the exact official PDF `https://cbs.gov.ws/media/Quarterly-Bulletin---September-2026.pdf`. Internal title/contents identify September 2026 Vol XLV No.3 and the overview covers Q2 2026; first extracted cover leaf carries an older June label, retained as a document caveat.
+- Table B-1, printed p.35 (PDF p.38), “Amounts in Tala Million”, BPM6 footnote, 2026-II/Q2 column: portfolio assets +9.5, liabilities +0.2, net +9.3 Tala million. Internal arithmetic 9.5−0.2=9.3.
+- Existing IMF WSM Q2 raw rows reused, no query: asset OBS_VALUE 3499391.164998622 SCALE=6, liability OBS_VALUE 72224.22595641938 SCALE=6, UNIT=USD; raw rows preserved. No Tala/USD conversion, numeric comparison, sign/scale bridge or same-vintage match.
+- Container byte download failed; PDF byte count/local SHA-256/retrieval receipt NOT_CAPTURED. Do not fabricate.
+- WSM matrix updated to DATA_CAPTURED / REVIEW / REVIEW / UNKNOWN / full NO / aggregate NOT_AUTHORIZED. 30 columns preserved; status_DATA_CAPTURED=YES; asset/liability/vintage/full PASS flags all NO. Matrix commit `cc12d52820b6ca2a4f6cf117b78375c564ccde58`.
+- Detail: `docs/GCR_SAMOA_WSM_Q2_2026_CBS_SEPTEMBER_2026_BULLETIN_TABLE_B1_DUAL_LEG_CAPTURE_CONTINUATION262_20261126.md`; report commit `9844972ddad36175a2c392bf87d1f165e97759e4`.
+- WSM remains DATA_CAPTURED / PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED. Next: supported raw PDF bytes/hash, official transaction FX bridge and observation-vintage bridge; no generic FX or unsupported comparison. ₹0; UNKNOWN never PASS; no production change.
