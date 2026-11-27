@@ -899,3 +899,13 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | Macro-Geo recovery | Retained Run #398 handoff artifact `14757294944` | NEXT / NOT_YET_EXECUTED; requires separate bounded authorization; no NSE raw re-acquisition. |
 | Macro-Geo P0 / GCR hard gate | Current Ledger and C278 report | BLOCKED / NOT_AUTHORIZED; candidate release false. |
 - Detail: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`.
+
+
+## Continuation 279 — official source reuse / capture gate (27-Nov-2026)
+| Work item | Evidence | Status / duplicate rule |
+|---|---|---|
+| USD/INR RBI archive | Official USD/date-range/Excel UI confirmed; request/response/schema/raw hash absent | BLOCKED / UNKNOWN; next technical task is exact official export capture. |
+| NSDL FPI/DII archive | Separate archive routes confirmed; terms prohibit reproduction/redistribution/transmission; no compatible permission established | NOT_ADMISSIBLE for automated archival under current evidence; do not download/ingest absent applicable permission. |
+| C278 isolated regression | Run `45946811444`, pytest 1 passed, JSON PASS | CLOSED / PASS; do not rerun absent code change. |
+| Strict GCR hard gate | Last artifact-backed P0 6/8 | BLOCKED / NOT_AUTHORIZED; no candidate release. |
+- Detail: `docs/GCR_CONTINUATION279_PART9_OFFICIAL_SOURCE_INGESTION_FEASIBILITY_GATE_20261127.md`.
