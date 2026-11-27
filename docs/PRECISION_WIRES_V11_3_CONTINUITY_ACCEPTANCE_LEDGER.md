@@ -804,3 +804,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Acceptance boundary: isolated AST producer/consumer contract regression PASS only. Macro-Geo P0 remains BLOCKED; strict GCR hard gate BLOCKED / NOT_AUTHORIZED; `candidate_release_allowed=false`; overall GCR NOT_COMPUTABLE / NOT_CERTIFIED. No source coverage or downstream GCR validation implied.
 - Next dependency: separately authorized <=10-minute audit-only Macro-Geo recovery using retained Run #398 artifact `14757294944`, no NSE raw re-acquisition. Stop if retained inputs are insufficient. No IMF re-query/cohort rebuild/production change; ₹0; UNKNOWN never PASS.
 - Detail: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`; report commit `81a1399de9c70248fffbe32309de4d6651c8e471`.
+
+## GCR Continuation 279 — Part-9 official source-ingestion feasibility gate (27-Nov-2026)
+- Preflight reread Ledger, Queue, Registry, C278, Failure Lessons and Library Mother File/source-route adjudication. Skipped all C273/C274/C278 PASS work, NSE archive QA and export Phase-4/5/6 reconciliations.
+- RBI Reference Rate Archive official page confirms USD/date-range/Excel export UI, but exact request, raw workbook, schema and SHA-256 were not captured. USD/INR remains BLOCKED / UNKNOWN. FBIL reference rate remains a benchmark, not OHLC/DXY/carry.
+- NSDL official listing confirms separate FPI and DII archive routes; its published terms prohibit reproduction/redistribution/transmission. No compatible reuse permission established. Do not automate/archive NSDL content absent applicable permission; do not substitute NSE provisional exchange flows or CDSL FPI for DII.
+- No new raw rows admitted. Last artifact-backed P0 remains 6/8; strict GCR hard gate BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED.
+- Next: auditable RBI official date-range Excel capture; FPI/DII needs compatible official source/permission and >=60 distinct dates spanning >=90 days. No credential bypass, external contact, mirror/proxy, IMF re-query, NSE raw re-acquisition or production change; ₹0; UNKNOWN never PASS.
+- Detail: `docs/GCR_CONTINUATION279_PART9_OFFICIAL_SOURCE_INGESTION_FEASIBILITY_GATE_20261127.md`; commit `1e5ee240805bef6dd03a6f7e346c85600e6526bd`.
