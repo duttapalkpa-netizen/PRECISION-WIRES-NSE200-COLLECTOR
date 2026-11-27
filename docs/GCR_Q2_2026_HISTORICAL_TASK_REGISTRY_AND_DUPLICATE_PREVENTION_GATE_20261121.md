@@ -890,3 +890,12 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | PW-LSN-20261122-002 | Existing isolated workflow config re-read; blob dd64726cd9da2690fea1e47b7a31b21886b0f823; no verified run/artifact | PENDING. Do not repeat patch or workflow. Require real Run URL/ID, pytest PASS and JSON artifact read-back. |
 | Data Export Phase 4–6 | Phase-4 non-image 51 match/2 missing; Phase-5 image 106 match/216 missing; Phase-6 216-row checklist built | Filename+size presence only; no cryptographic identity. Do not repeat listing/checklist; recover only with manifest and exact payload evidence. |
 - Detail: `docs/GCR_CONTINUATION277_PART7_REGRESSION_GATE_AND_EXPORT_SCOPE_RECHECK_20261127.md`.
+
+
+## Continuation 278 — regression route closed / recovery handoff (27-Nov-2026)
+| Work item | Evidence | Status / duplicate rule |
+|---|---|---|
+| PW-LSN-20261122-002 isolated regression | Run `45946811444`; job `140333274465`; pytest 1 passed; artifact `15174937795`; ZIP SHA-256 `0175914054f725206d0862771277f04c300da085f509a50a1900ba34d0e8b732`; JSON `status=PASS` | CLOSED / PASS. Do not rerun absent code change. |
+| Macro-Geo recovery | Retained Run #398 handoff artifact `14757294944` | NEXT / NOT_YET_EXECUTED; requires separate bounded authorization; no NSE raw re-acquisition. |
+| Macro-Geo P0 / GCR hard gate | Current Ledger and C278 report | BLOCKED / NOT_AUTHORIZED; candidate release false. |
+- Detail: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`.
