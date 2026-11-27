@@ -1,0 +1,27 @@
+{
+  "audit_date": "2026-11-27",
+  "cutoff": "2026-11-26",
+  "run_id": 45890145641,
+  "artifact_id": 15151761186,
+  "audit_status": "BLOCKED",
+  "eligible_universe_count": "UNKNOWN_NOT_ACCEPTED",
+  "qa_summary_symbol_count": 3009,
+  "raw_model_signal_rows": 10,
+  "raw_model_unique_symbols": 7,
+  "full_universe_symbol_cutoff_ledger_present": false,
+  "per_symbol_inclusion_exclusion_reason_present": false,
+  "per_filter_core672_trace_present": false,
+  "source_publication_and_retrieval_timestamps_present": false,
+  "dataset_source_manifest_present": false,
+  "dataset_sha256": "91b611f0e42f5bdf01b7a82fb7834281bda0374eb9851a62fb45869e77a77b6f",
+  "workflow_head_commit": "f587c0fdf58bf971e47ca27cafaac71733cc6d0d",
+  "config_sha256": "UNKNOWN_NOT_IN_ARTIFACT",
+  "code_file_sha256": "UNKNOWN_NOT_IN_ARTIFACT",
+  "blockers": [
+    "No canonical full-universe point-in-time decision ledger",
+    "No per-symbol inclusion/exclusion and CORE-672/engine decision trace",
+    "No per-file raw NSE acquisition manifest or DATE1/requested-date parity",
+    "Eligible universe denominator not independently accepted"
+  ],
+  "next_action": "Do not infer filter failures or promote any raw lead. Reopen only with cutoff-frozen ledger, exact source timestamps and code/config hashes."
+}
