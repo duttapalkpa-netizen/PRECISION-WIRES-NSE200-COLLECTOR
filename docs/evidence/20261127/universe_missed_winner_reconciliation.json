@@ -1,0 +1,29 @@
+{
+  "audit_date": "2026-11-27",
+  "cutoff": "2026-11-26",
+  "audit_status": "BLOCKED",
+  "qa_summary_symbol_count": 3009,
+  "accepted_eligible_universe_count": "UNKNOWN",
+  "unique_symbol_missed_winner_count": "UNKNOWN",
+  "signal_row_missed_winner_count": "UNKNOWN",
+  "official_raw_eod_source_manifest_present": false,
+  "official_raw_high_close_corporate_action_rows_present": false,
+  "decision_ledger_present": false,
+  "expected_horizons": {
+    "H+1": "2026-11-27 close",
+    "H+3": "2026-12-01 close",
+    "H+5": "2026-12-03 close"
+  },
+  "pre_market_maturity": "All horizons PENDING",
+  "separate_outcome_types": [
+    "intraday_high_touch",
+    "close_to_close",
+    "executable_outcome"
+  ],
+  "blockers": [
+    "No full eligible-universe point-in-time decision ledger",
+    "No accepted official 26-Nov EOD raw source bytes/manifest",
+    "Future H+1/H+3/H+5 outcomes not yet mature"
+  ],
+  "finding": "Do not state that no missed winners exist; full-universe missed-winner discovery remains UNKNOWN/BLOCKED."
+}
