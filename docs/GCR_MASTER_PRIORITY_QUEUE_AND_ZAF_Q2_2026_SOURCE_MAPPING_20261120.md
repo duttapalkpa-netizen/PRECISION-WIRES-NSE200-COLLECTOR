@@ -2184,3 +2184,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | Run #45038111510 Step 9 producer/consumer schema defect | Root cause VERIFIED; code fix and AST test already committed; dedicated 5-minute regression workflow added on audit branch (commit 12cce4a15fdf9defa099fc17fa1675e2972505ee); execution NOT_VERIFIED. | Verify run + JSON artifact. Do not repeat code patch. After regression PASS, separately authorize bounded recovery using Run #398 artifact; do not re-acquire NSE raw history. |
 | GEO | NBG Q3-2026 BOP trigger | Scheduled 30-Nov-2026; not yet due on 27-Nov. | Inspect only after publication for Q2 separate A/L revision, BPM5/BPM6 bridge and observation-specific vintage. |
 - Detail: docs/GCR_CONTINUATION274_MACRO_GEO_ARCHIVE_REPORT_CONTRACT_REGRESSION_ISOLATED_VERIFICATION_20261127.md; commit 7579afc4cde9ca4482aa997d5912501949701d42. P0 collection/hard gate remains BLOCKED; candidate_release_allowed=false. ₹0; no IMF re-query/cohort rebuild/production changes; UNKNOWN never PASS.
+
+
+## Continuation 275 — regression dispatch access boundary (2026-11-27)
+- C274's dedicated isolated regression workflow was read back on existing branch `audit/prospective-selector-tracking`; `workflow_dispatch` is configured, timeout is 5 minutes, pytest-only scope.
+- No general workflow-run list or workflow-dispatch action is exposed by the connected GitHub tool surface. The PR-only commit-run lookup returned empty and cannot establish absence of a push run; empty commit status is not PASS.
+- Regression execution and JSON artifact remain NOT_VERIFIED / PENDING. No duplicate code patch, data collection or full recovery.
+- Next: user/authorized operator manually dispatches from GitHub Actions and supplies run URL/ID. Require successful test step + JSON artifact read-back, then separately consider Run #398 bounded recovery. Macro-Geo remains BLOCKED; candidate release false.
+- Detail: `docs/GCR_CONTINUATION275_ISOLATED_REGRESSION_DISPATCH_ACCESS_BOUNDARY_20261127.md`. ₹0; UNKNOWN never PASS; production unchanged.
