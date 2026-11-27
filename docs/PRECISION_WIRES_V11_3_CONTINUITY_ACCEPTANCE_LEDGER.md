@@ -788,3 +788,10 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - `export_manifest.json` not provided/found; full 53-name reconciliation and original .dat mapping remain BLOCKED/UNKNOWN. Next export input is manifest only, not all .dat files.
 - Macro-Geo P0 BLOCKED; strict GCR hard gate BLOCKED / NOT_AUTHORIZED; candidate_release_allowed=false; overall GCR NOT_COMPUTABLE / NOT_CERTIFIED.
 - Detail: `docs/GCR_CONTINUATION276_PART6_PREFLIGHT_LIBRARY_DEDUP_AND_REGRESSION_GATE_20261127.md`; report commit `24565406917af72c1ae458365b4313a899124221`. ₹0; no IMF re-query/cohort rebuild/NSE raw re-acquisition/production change; UNKNOWN never PASS; workflow <=10 minutes.
+
+## GCR Continuation 277 — Part-7 regression and export-scope recheck (27-Nov-2026)
+- Re-read current Ledger, GCR Priority Queue, Historical Task Registry, C275/C276 reports, Failure Lessons, Library Mother File, Phase-5 image reconciliation and Phase-6 recovery checklist. No completed PASS task repeated.
+- Re-read isolated workflow on `audit/prospective-selector-tracking`; blob `dd64726cd9da2690fea1e47b7a31b21886b0f823`; 5-minute pytest-only workflow with JSON artifact upload remains configured. Actual run/job/artifact and JSON evidence NOT_VERIFIED; no connected dispatch or general run-list action. Require user/authorized operator's Run URL/ID.
+- Newer Library export records supersede the Phase-2 incomplete summary for filename/size reconciliation: Phase-4 non-image = 51 MATCH / 2 NOT_FOUND; Phase-5 image = 106 MATCH / 216 NOT_FOUND / 0 SIZE_MISMATCH; Phase-6 checklist = PASS for 216-row worklist only. These are presence/metadata checks, not byte identity. `export_manifest.json` and .dat hashes remain unavailable; original export byte identity UNKNOWN/BLOCKED.
+- GCR remains Macro-Geo P0 BLOCKED; strict hard gate BLOCKED / NOT_AUTHORIZED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED.
+- Detail: `docs/GCR_CONTINUATION277_PART7_REGRESSION_GATE_AND_EXPORT_SCOPE_RECHECK_20261127.md`; report commit `544ac24e52834c3dabadbefc6cf3e0dae9ccda1b`. No IMF re-query/cohort rebuild/NSE raw acquisition/production change; ₹0; UNKNOWN never PASS.
