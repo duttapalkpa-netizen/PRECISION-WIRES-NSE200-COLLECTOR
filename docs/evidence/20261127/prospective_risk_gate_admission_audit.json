@@ -1,0 +1,129 @@
+{
+  "audit_date": "2026-11-27",
+  "cutoff": "2026-11-26",
+  "audit_status": "NO_QUALIFIED_CANDIDATES",
+  "qualified_count": 0,
+  "provisional_count": 0,
+  "raw_model_rows": 10,
+  "raw_model_unique_symbols": 7,
+  "percentile_is_probability": false,
+  "leads": [
+    {
+      "symbol": "SHALPAINTS",
+      "company": "Shalimar Paints Limited",
+      "isin": "INE849C01026",
+      "official_identity_verified": true,
+      "official_price_cutoff_verified": false,
+      "latest_accessible_official_quote_date": "2026-11-20",
+      "latest_accessible_official_close_inr": 97.42,
+      "risk_evidence": [
+        "NSE quote page: loss-making 8 quarters",
+        "overall encumbered share >50%",
+        "impact cost 0.71"
+      ],
+      "missing": [
+        "26-Nov official close/time",
+        "cutoff price-volume/RS",
+        "sector confirmation",
+        "fresh catalyst timestamp"
+      ],
+      "decision": "NOT_QUALIFIED"
+    },
+    {
+      "symbol": "SAKUMA",
+      "company": "Sakuma Exports Limited",
+      "isin": "INE190H01024",
+      "official_identity_verified": true,
+      "official_price_cutoff_verified": false,
+      "official_filing": {
+        "date": "2026-11-25",
+        "time_ist": "16:40:17",
+        "event": "withdrawal/cancellation of proposed preferential issue; 28-Nov adjourned EGM cancelled"
+      },
+      "missing": [
+        "26-Nov official close/time",
+        "cutoff price-volume/RS",
+        "sector/liquidity",
+        "positive continuation catalyst"
+      ],
+      "decision": "NOT_QUALIFIED"
+    },
+    {
+      "symbol": "EBIX",
+      "company": "UNKNOWN",
+      "isin": "UNKNOWN",
+      "official_identity_verified": false,
+      "official_price_cutoff_verified": false,
+      "missing": [
+        "official NSE symbol/company/ISIN mapping",
+        "26-Nov official close/time",
+        "price-volume/RS",
+        "sector/liquidity/catalyst/risk"
+      ],
+      "decision": "NOT_QUALIFIED"
+    },
+    {
+      "symbol": "NGIL",
+      "company": "Nakoda Group of Industries Limited",
+      "isin": "INE236Y01012",
+      "official_identity_verified": true,
+      "official_price_cutoff_verified": false,
+      "missing": [
+        "26-Nov official close/time",
+        "cutoff price-volume/delivery/RS",
+        "sector/liquidity/catalyst/risk"
+      ],
+      "decision": "NOT_QUALIFIED"
+    },
+    {
+      "symbol": "ARIS",
+      "company": "Arisinfra Solutions Limited",
+      "isin": "INE0H9P01028",
+      "official_identity_verified": true,
+      "official_price_cutoff_verified": false,
+      "missing": [
+        "26-Nov official close/time",
+        "cutoff price-volume/delivery/RS",
+        "sector/liquidity/catalyst/risk"
+      ],
+      "decision": "NOT_QUALIFIED"
+    },
+    {
+      "symbol": "ONIXSOLAR",
+      "company": "Onix Solar Energy Limited",
+      "isin": "INE173M01012",
+      "official_identity_verified": true,
+      "official_price_cutoff_verified": false,
+      "official_surveillance": "LTASM-I",
+      "missing": [
+        "fresh official close/time",
+        "cutoff price-volume/RS",
+        "sector/liquidity/catalyst",
+        "ASM clearance"
+      ],
+      "decision": "NOT_QUALIFIED"
+    },
+    {
+      "symbol": "AIROLAM",
+      "company": "Airo Lam Limited",
+      "isin": "INE801L01010",
+      "official_identity_verified": true,
+      "official_price_cutoff_verified": false,
+      "official_surveillance": "STASM-I",
+      "missing": [
+        "fresh official close/time",
+        "cutoff price-volume/RS",
+        "sector/liquidity/catalyst",
+        "ASM clearance"
+      ],
+      "decision": "NOT_QUALIFIED"
+    }
+  ],
+  "target_probability": "UNKNOWN",
+  "target_prices": "NOT_CALCULATED_NO_ACCEPTED_REFERENCE_PRICE",
+  "source_hashes": {
+    "artifact_zip_sha256": "a5cd5ed868a3f66d9ea0cd43ca03b7fea2e5cd4ebc3b5f83e3c28fc6fdd3ca5a",
+    "dataset_sha256": "91b611f0e42f5bdf01b7a82fb7834281bda0374eb9851a62fb45869e77a77b6f",
+    "code_config_sha256": "UNKNOWN_NOT_IN_ARTIFACT"
+  }
+}
