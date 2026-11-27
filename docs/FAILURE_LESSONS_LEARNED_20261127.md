@@ -97,3 +97,11 @@ Each job ≤10 minutes; reuse retained evidence. Decision trace absent → filte
 - Acceptance remains narrowly scoped to the network-free AST producer/consumer contract. It does not close Macro-Geo P0, source availability, strict GCR hard gate or candidate release. Do not rerun absent code change.
 - Next dependency is a separate bounded/authorized audit-only Macro-Geo recovery using retained Run #398 artifact `14757294944`; no NSE raw re-acquisition, IMF re-query or cohort rebuild. Stop on missing inputs.
 - Evidence report: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`.
+
+
+## GCR C279 — archive URL is not the same as admissible raw-data access (27-Nov-2026)
+- RBI archive UI can confirm an official export surface, but cannot establish a usable data source until the exact request, raw response bytes, schema, date coverage, retrieval time and SHA-256 are captured.
+- NSDL's own published terms prohibit reproduction, redistribution and transmission of site information. Do not treat public visibility or an archive link as permission for automated archival/reuse. Require a compatible explicit permission/terms basis; do not bypass login or terms.
+- Keep final depository FPI investment, DII, and provisional exchange FPI/FII-DII trading activity as distinct series. Never substitute one for another.
+- C279 did not add raw rows or increase P0 coverage. USD/INR and FPI/DII remain BLOCKED/UNKNOWN; hard gate remains BLOCKED.
+- Detail: `docs/GCR_CONTINUATION279_PART9_OFFICIAL_SOURCE_INGESTION_FEASIBILITY_GATE_20261127.md`.
