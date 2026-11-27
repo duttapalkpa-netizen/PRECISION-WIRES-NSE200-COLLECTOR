@@ -73,3 +73,10 @@
 - Recovery workflow runs this test before P0 collection; workflow commit 1c9ecb82c29433f91b14e7bc9173652aa6ead67f; blob 546234eb9415a916038120d810946089b13c9012.
 - Status: CODE PATCH COMMITTED; REGRESSION EXECUTION PENDING; end-to-end Macro-Geo remains BLOCKED until the new run proves collection and downstream evidence. Do not mark PASS based on commits.
 - No selector, threshold, ranking, production code or admission changes. UNKNOWN remains not PASS.
+
+
+### PW-LSN-20261122-002 — 27-Nov-2026 regression execution follow-up
+- Existing collector fix (afa063959b39846c6722370afa655cb77335d4df) and AST test (491cf1ff7b94ce40129f00c9e8baea499d6087c8) were re-read and reused; no duplicate patch.
+- Added dedicated network-free workflow .github/workflows/macro_geo_archive_contract_regression.yml, isolated branch commit 12cce4a15fdf9defa099fc17fa1675e2972505ee, job timeout 5 minutes. It runs only the AST contract test and writes archive_report_contract_validation.json with source/test SHA-256.
+- GitHub combined status returned an empty list at review time; workflow run and artifact are NOT_VERIFIED. Status remains REGRESSION PENDING / NOT_ACCEPTED; do not infer PASS from workflow creation.
+- Next: retrieve the workflow run, inspect test log and JSON artifact; record run/job/artifact IDs and ZIP SHA-256. Only then consider a separate audit-only Macro-Geo recovery. No broad run, NSE raw acquisition, selector, production or hard-gate change.
