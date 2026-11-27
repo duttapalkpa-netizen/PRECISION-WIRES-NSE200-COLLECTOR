@@ -2238,3 +2238,5 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | C278 archive-contract regression | PASS and closed. | Do not rerun absent code change. |
 | GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream event study, weight tuning, or production integration until upstream P0 gates pass. |
 - Detail: `docs/GCR_CONTINUATION283_PART3_RBI_USDINR_CALENDAR_GAP_AUDIT_20261127.md`. ₹0; UNKNOWN never PASS.
+
+- Official route discovery addendum: FBIL production homepage still provides recent rows only in inspected page representation; UAT details-gated Excel/CSV interface is candidate-only and NOT_ACCEPTED. No form submission or personal details; fee-liable use-license boundary must be reviewed. Full daily historical payload remains NOT_CAPTURED / BLOCKED. See C283 report.
