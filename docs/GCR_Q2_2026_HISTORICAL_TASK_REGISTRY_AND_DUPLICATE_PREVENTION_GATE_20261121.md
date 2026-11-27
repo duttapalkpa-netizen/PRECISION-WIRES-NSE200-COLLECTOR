@@ -943,3 +943,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | Next action | Exact official machine-readable FBIL history or RBI DBIE export route. | Continue bounded official-route research only; no paid license, UAT form, personal data, external contact, proxy, mirror, or raw re-acquisition. |
 | GCR gate | Macro-Geo P0 last artifact-backed 6/8; FPI/DII separate blocker. | Strict gate BLOCKED; candidate release false. |
 - Detail: `docs/GCR_CONTINUATION284_PART4_RBI_REFERENCE_RATE_PUBLICATION_SCOPE_AUDIT_20261127.md`.
+
+
+## C285 — RBI DBIE daily interbank USD/INR source identity and export audit (27-Nov-2026)
+- Evidence: RBI DBIE Brochure 2022 explicitly lists daily interbank forex rates (USD vis-a-vis INR); RBI April-2026 Comprehensive Guide identifies DBIE as official platform and describes reusable extended time-series availability.
+- Boundary: official portal JS response did not expose catalogue/payload. Exact official table ID/key, schema, downloadable raw payload and SHA-256 NOT_VERIFIED / NOT_CAPTURED. Prototype r691 on dbie.rbihub.in remains discovery-only and is not accepted.
+- Decisions: series existence PASS; official platform/general export capability PASS; exact table identity UNKNOWN; raw payload NOT_CAPTURED; ingestion BLOCKED. Do not conflate with RBI/FBIL reference fixing or monthly USD purchase/sale table.
+- Next: ordinary-session official DBIE catalogue/export inspection by user/authorized operator; attach original export for QA. No hidden endpoint, mirror, access bypass, paid service or external contact.
+- Report: docs/GCR_CONTINUATION285_PART5_RBI_DBIE_INTERBANK_USDINR_IDENTITY_EXPORT_AUDIT_20261127.md
