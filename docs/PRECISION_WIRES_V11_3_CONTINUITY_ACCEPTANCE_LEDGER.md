@@ -829,3 +829,13 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Macro-Geo P0 last artifact-backed 6/8; strict GCR hard gate BLOCKED; `candidate_release_allowed=false`; overall GCR NOT_COMPUTABLE / NOT_CERTIFIED. FPI/DII blocker unchanged.
 - Detail: `docs/GCR_CONTINUATION281_PART2_CONTINUITY_PREFLIGHT_AND_USDINR_ATTACHMENT_GATE_20261127.md`; report commit `080b14521f84ae143736cbcb0377718d4aae20b7`.
 - Next: attach original official RBI/FBIL workbook; preserve bytes, SHA-256, source/retrieval metadata, workbook schema and >=60 distinct valid dates spanning >=90 calendar days before any ingestion acceptance. No proxy, synthetic rows, interpolation, forward-fill, IMF re-query, cohort rebuild, broad workflow or production change. ₹0; UNKNOWN never PASS.
+
+
+## GCR Continuation 282 — Part-3 RBI USD Reference Rate archive payload capture and QA (27-Nov-2026)
+- User-directed Library check identified `/BankWise.xls` and `/BankWise(1).xls`, each 57,289 bytes. Both materialized read-only; SHA-256 identical: `379318c3e4b048eeba63824bc09d26b2e6e5d9418e17bd589059d4c0b63e93e2`. No Library duplicate upload, rename, overwrite or deletion.
+- The bytes are HTML table markup saved with an .xls filename, not a native BIFF/OOXML workbook. Header `Date`, `USD (INR / 1 USD)`; 1,119 data rows; 0 malformed rows; 1,119 unique dates; 0 duplicate dates; 0 blank cells; positive numeric values 69.0530–96.8441.
+- Earliest observation 24-Jul-2018; latest 26-Nov-2026; 3,047 calendar days. User's RBI archive screenshots show USD selected and filter From 15-Jul-2018 to 26-Nov-2026. The earliest returned row is 24-Jul-2018; no synthetic dates added.
+- Syntactic/table/numeric QA PASS; minimum 60 distinct dates and 90-day coverage PASS. Calendar-aware expected-business-day completeness, exact HTTP request/response metadata, source revision history and downstream PIT integration remain NOT_VERIFIED. Treat as RBI USD/INR reference fixing only, not interbank OHLC or turnover. Native workbook sheet/schema checks are NOT_APPLICABLE because source bytes are HTML.
+- Research staging may accept the captured reference-rate payload; broader USD/INR production certification remains pending. GCR strict hard gate remains BLOCKED due separate unresolved P0/FPI-DII blockers.
+- Detail: `docs/GCR_CONTINUATION282_PART3_RBI_USDINR_ARCHIVE_PAYLOAD_CAPTURE_QA_20261127.md`; report commit `6e02a813e84ba5295ac4abb93c9340641fdf87f9`.
+- Next: official calendar-aware gap audit, capture source retrieval metadata if available, preserve raw bytes and hash, keep RBI reference fixing distinct from RBI DBIE interbank series, and continue only remaining GCR blockers. ₹0; invariants unchanged.
