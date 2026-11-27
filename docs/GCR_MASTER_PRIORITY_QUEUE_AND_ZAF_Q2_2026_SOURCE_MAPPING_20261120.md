@@ -2201,3 +2201,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | Macro-Geo recovery | BLOCKED pending regression PASS. | Only then separately consider bounded recovery from retained Run #398 artifact #14757294944; no NSE raw re-acquisition. |
 - Library export: newer Phase-4 non-image 51/2 and Phase-5 image 106/216 are filename+size presence only; Phase-6 216-row checklist generation PASS, payload recovery NOT_DONE. Manifest/.dat identity UNKNOWN. Do not repeat these audits or duplicate Library files.
 - Detail: `docs/GCR_CONTINUATION277_PART7_REGRESSION_GATE_AND_EXPORT_SCOPE_RECHECK_20261127.md`; ₹0; UNKNOWN never PASS.
+
+
+## Continuation 278 — P0 regression gate closed; next dependency handoff (27-Nov-2026)
+| Priority | Work | Status | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | C274 isolated archive-contract regression | PASS: Run `45946811444`, job `140333274465`, pytest 1 passed; artifact `15174937795`, ZIP SHA-256 `0175914054f725206d0862771277f04c300da085f509a50a1900ba34d0e8b732`; JSON read-back `status=PASS`. | Closed. Do not rerun absent code change. |
+| P0 | Macro-Geo audit-only recovery | BLOCKED / NOT_YET_EXECUTED; regression prerequisite now met. | Next dependency: separately authorized <=10-minute recovery using retained Run #398 artifact `14757294944`; no NSE raw re-acquisition. Stop if required inputs are missing. |
+| GCR | Strict hard gate | BLOCKED / NOT_AUTHORIZED; candidate release false. | No downstream event study/weights/production integration until P0 sources and all gates pass. |
+- C278 detail: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`; report commit `81a1399de9c70248fffbe32309de4d6651c8e471`. ₹0; UNKNOWN never PASS.
