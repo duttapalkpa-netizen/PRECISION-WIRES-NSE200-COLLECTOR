@@ -909,3 +909,14 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | C278 isolated regression | Run `45946811444`, pytest 1 passed, JSON PASS | CLOSED / PASS; do not rerun absent code change. |
 | Strict GCR hard gate | Last artifact-backed P0 6/8 | BLOCKED / NOT_AUTHORIZED; no candidate release. |
 - Detail: `docs/GCR_CONTINUATION279_PART9_OFFICIAL_SOURCE_INGESTION_FEASIBILITY_GATE_20261127.md`.
+
+
+## Continuation 280 — official USD/INR source verification (27-Nov-2026)
+| Work item | Evidence | Status / duplicate rule |
+|---|---|---|
+| FBIL USD/INR historical series | IMF India SDDS metadata confirms daily dissemination since 10-Jul-2018 and historical availability on FBIL site; FBIL current page exposes recent daily rows; RBI archive has USD/date/Excel UI. | Source family/availability statement CONFIRMED; exact request, raw workbook, schema, hash and row QA NOT_CAPTURED. Keep BLOCKED / UNKNOWN. |
+| Third-party compiled USD/INR datasets | Not used or promoted. | Prohibited under official-source-only rule; do not import. |
+| C278 regression | Run 45946811444 / job 140333274465 / artifact 15174937795 / JSON PASS. | CLOSED; do not rerun absent code change. |
+| FPI/DII | C279 NSDL terms/reuse boundary. | BLOCKED / NOT_ADMISSIBLE for automated archival absent compatible permission; do not substitute NSE provisional or CDSL FPI for DII. |
+| GCR hard gate | Last artifact-backed P0 6/8. | BLOCKED; candidate release false. |
+- Detail: `docs/GCR_CONTINUATION280_PART10_OFFICIAL_USDINR_HISTORICAL_SOURCE_VERIFICATION_20261127.md`; commit `203b45f333ddc9da1a9147de5d0d14983d0b74b1`.
