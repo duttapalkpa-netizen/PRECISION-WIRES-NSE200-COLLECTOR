@@ -882,3 +882,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | JSON evidence | Expected `archive_report_contract_validation.json` | NOT_VERIFIED | Read back only after actual run; capture run/job/artifact IDs and ZIP SHA-256. |
 | Macro-Geo recovery | Retained Run #398 handoff artifact #14757294944 | BLOCKED / NOT_AUTHORIZED | Consider only after regression PASS and separate bounded authorization; no NSE raw re-acquisition. |
 - Detail: `docs/GCR_CONTINUATION275_ISOLATED_REGRESSION_DISPATCH_ACCESS_BOUNDARY_20261127.md`. ₹0; UNKNOWN never PASS; no production change.
+
+
+## Continuation 277 — duplicate-prevention update (27-Nov-2026)
+| Work item | Latest evidence | Status / duplicate rule |
+|---|---|---|
+| PW-LSN-20261122-002 | Existing isolated workflow config re-read; blob dd64726cd9da2690fea1e47b7a31b21886b0f823; no verified run/artifact | PENDING. Do not repeat patch or workflow. Require real Run URL/ID, pytest PASS and JSON artifact read-back. |
+| Data Export Phase 4–6 | Phase-4 non-image 51 match/2 missing; Phase-5 image 106 match/216 missing; Phase-6 216-row checklist built | Filename+size presence only; no cryptographic identity. Do not repeat listing/checklist; recover only with manifest and exact payload evidence. |
+- Detail: `docs/GCR_CONTINUATION277_PART7_REGRESSION_GATE_AND_EXPORT_SCOPE_RECHECK_20261127.md`.
