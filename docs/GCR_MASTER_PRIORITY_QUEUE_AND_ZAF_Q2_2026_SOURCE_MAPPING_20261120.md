@@ -2210,3 +2210,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | Macro-Geo audit-only recovery | BLOCKED / NOT_YET_EXECUTED; regression prerequisite now met. | Next dependency: separately authorized <=10-minute recovery using retained Run #398 artifact `14757294944`; no NSE raw re-acquisition. Stop if required inputs are missing. |
 | GCR | Strict hard gate | BLOCKED / NOT_AUTHORIZED; candidate release false. | No downstream event study/weights/production integration until P0 sources and all gates pass. |
 - C278 detail: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`; report commit `81a1399de9c70248fffbe32309de4d6651c8e471`. ₹0; UNKNOWN never PASS.
+
+## Continuation 279 — source-ingestion blockers narrowed (27-Nov-2026)
+| Priority | Work | Status | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | USD/INR | Official RBI date-range Excel UI confirmed; export request/raw bytes/schema not captured; BLOCKED / UNKNOWN. | Capture official RBI workbook through auditable browser session; no third-party compiled data. |
+| P0 | FPI/DII | NSDL FPI and DII archive routes confirmed, but displayed terms prohibit reproduction/redistribution/transmission; reuse permission not established. | Do not automate/archive absent compatible permission. Find a distinct official source with compatible reuse terms; keep FPI and DII separate. |
+| P0 | Archive-contract regression | C278 PASS; closed. | Do not rerun absent code change. |
+| GCR | Strict hard gate | BLOCKED; candidate release false. | Do not promote until source coverage and downstream gates genuinely pass. |
+- C279: `docs/GCR_CONTINUATION279_PART9_OFFICIAL_SOURCE_INGESTION_FEASIBILITY_GATE_20261127.md`; commit `1e5ee240805bef6dd03a6f7e346c85600e6526bd`. ₹0; UNKNOWN never PASS.
