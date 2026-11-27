@@ -920,3 +920,15 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | FPI/DII | C279 NSDL terms/reuse boundary. | BLOCKED / NOT_ADMISSIBLE for automated archival absent compatible permission; do not substitute NSE provisional or CDSL FPI for DII. |
 | GCR hard gate | Last artifact-backed P0 6/8. | BLOCKED; candidate release false. |
 - Detail: `docs/GCR_CONTINUATION280_PART10_OFFICIAL_USDINR_HISTORICAL_SOURCE_VERIFICATION_20261127.md`; commit `203b45f333ddc9da1a9147de5d0d14983d0b74b1`.
+
+
+## Continuation 283 — USD/INR duplicate prevention and historical coverage gate (27-Nov-2026)
+| Work item | Evidence | Status / duplicate rule |
+|---|---|---|
+| BankWise raw payload | 57,289-byte HTML-table payload; SHA-256 `379318c3e4b048eeba63824bc09d26b2e6f5d9418e17bd589059d4c0b63e93e2`; two Library entries are exact duplicates | Raw integrity PASS; keep both existing objects unchanged; do not upload another copy. |
+| Row-level data QA | 1,119 parsed rows; 1,119 unique dates; 0 duplicate dates; 0 blank/malformed rows; positive numeric rates | PASS for the captured partial extract only. |
+| Historical coverage | 2018=1, 2019–2021=0, 2022=176, 2023=242, 2024=240, 2025=243, 2026=217; 1,358-day gap and 969 weekday dates between 24-Jul-2018 and 12-Apr-2022 | Full continuity FAIL; do not promote to complete 2018–2026 series. |
+| Calendar session completeness | 35 gaps >3 calendar days; 1,008 intervening weekdays. RBI excludes Saturdays, Sundays and Mumbai bank holidays from expected publication schedule. | UNKNOWN until official Mumbai holiday/publication calendar is joined; do not call all weekdays missing sessions. |
+| Next action | Official FBIL complete historical daily reference-rate payload not yet captured | Acquire via genuinely executable official route; preserve partial extract; then calendar join. No mirror, proxy, imputation or same failed RBI UI retry. |
+| GCR hard gate | Macro-Geo P0 last artifact-backed 6/8; FPI/DII separate blocker | BLOCKED / NOT_AUTHORIZED; candidate release false. |
+- Detail: `docs/GCR_CONTINUATION283_PART3_RBI_USDINR_CALENDAR_GAP_AUDIT_20261127.md`.
