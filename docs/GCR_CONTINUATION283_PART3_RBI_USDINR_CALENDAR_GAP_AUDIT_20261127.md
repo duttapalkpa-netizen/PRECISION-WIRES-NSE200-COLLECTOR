@@ -93,3 +93,10 @@ The earlier C282 minimum-count and minimum-span checks remain true as narrow ari
 - Macro-Geo P0 remains last artifact-backed 6/8; strict GCR hard gate BLOCKED; `candidate_release_allowed=false`; overall GCR NOT_COMPUTABLE / NOT_CERTIFIED.
 - ₹0 spend; official/free sources only; no third-party mirror, no paid API, no credential bypass, no external contact, no synthetic rows or imputation. UNKNOWN is neither PASS nor FAIL.
 - CORE-672 (56×12), Engines A–E, Production Selector, `RANKING_SCORE`, `+1 PRESSURE_FADE`, IPO-PLX V2.0 and all production logic remain unchanged.
+
+
+## Official FBIL route discovery addendum (27-Nov-2026)
+- A fresh public-web inspection of the official FBIL production homepage surfaced recent INR/1 USD observations and archive navigation, but the page representation does not expose a complete daily USD/INR historical export endpoint. Source: https://www.fbil.org.in/.
+- An FBIL UAT frontend search result (uatfrontend.fbil.org.in) shows a “Please enter your details to download the data” gate with Excel/CSV controls. This is a UAT host and a details-gated interface, not a verified production historical endpoint. No form was submitted, no user details were supplied, no download was triggered, and no data were admitted from it. Candidate route only; status NOT_ACCEPTED.
+- FBIL FAQ describes an End-User License Agreement and states that some benchmark uses (including valuation/pricing and use as a reference rate in financial transactions/products) require a fee-liable license. The intended internal research use and applicable permission/fee boundary must be checked before any such use; no license was purchased or external contact made. FAQ: https://www.fbil.org.in/uploads/FAQ_s_updates_30th_Nov_2023_edited_version_1def7b65bb.pdf.
+- Therefore the complete official historical payload remains NOT_CAPTURED; no change to BLOCKED / UNKNOWN. Do not use UAT data or submit personal details without explicit authorization and a clear free-use basis.
