@@ -1,0 +1,59 @@
+{
+  "audit_date": "2026-11-27",
+  "audit_as_of_ist": "2026-11-27T08:49:08+05:30",
+  "run_id": 45890145641,
+  "artifact_id": 15151761186,
+  "artifact_sha256": "a5cd5ed868a3f66d9ea0cd43ca03b7fea2e5cd4ebc3b5f83e3c28fc6fdd3ca5a",
+  "audit_status": "FAIL_OBSERVED",
+  "code_regression_execution": "NOT_EXECUTED",
+  "cases": [
+    {
+      "cutoff": "2026-11-23",
+      "signal_rows": 10,
+      "unique_symbols": 7,
+      "expected_h1": "2026-11-25",
+      "expected_h3": "2026-11-27",
+      "expected_h5": "2026-12-01",
+      "artifact_matured_t1_true_rows": 10,
+      "artifact_matured_t3_true_rows": 9,
+      "outcome_last_date_populated_rows": 0,
+      "finding": "H+3 marked matured in artifact created 2026-11-26T20:26:35Z before expected H+3 close; reject T1/T3 labels pending exact date/source reconciliation."
+    },
+    {
+      "cutoff": "2026-11-24",
+      "signal_rows": 10,
+      "unique_symbols": 9,
+      "expected_session": null,
+      "official_exchange_holiday": true,
+      "artifact_matured_t1_true_rows": 10,
+      "outcome_last_date_populated_rows": 0,
+      "finding": "Holiday cutoff invalid; exclude from all maturity and denominator calculations."
+    },
+    {
+      "cutoff": "2026-11-25",
+      "signal_rows": 10,
+      "unique_symbols": 7,
+      "expected_h1": "2026-11-26",
+      "expected_h3": "2026-11-30",
+      "expected_h5": "2026-12-02",
+      "artifact_matured_t1_true_rows": 10,
+      "outcome_last_date_populated_rows": 0,
+      "finding": "T1 flag present but exact outcome end date and official raw row linkage absent; keep PENDING/NOT_VERIFIED."
+    },
+    {
+      "cutoff": "2026-11-26",
+      "signal_rows": 10,
+      "unique_symbols": 7,
+      "expected_h1": "2026-11-27",
+      "expected_h3": "2026-12-01",
+      "expected_h5": "2026-12-03",
+      "artifact_matured_t1_true_rows": 0,
+      "artifact_matured_t3_true_rows": 0,
+      "artifact_matured_t5_true_rows": 0,
+      "finding": "All horizons immature at pre-market cutoff; keep PENDING."
+    }
+  ],
+  "acceptance": "Require exact official NSE session spine, horizon-specific OUTCOME_LAST_DATE, no holiday/duplicate/missing-session maturity, and separate high-touch/close-to-close/executable labels.",
+  "status": "OPEN",
+  "lesson_id": "PW-LSN-20261125-001"
+}
