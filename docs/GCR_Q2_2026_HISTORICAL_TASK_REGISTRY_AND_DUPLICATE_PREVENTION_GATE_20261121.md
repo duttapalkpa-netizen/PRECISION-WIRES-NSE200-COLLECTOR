@@ -864,3 +864,12 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Detail: docs/GCR_CONTINUATION273_MEX_MATRIX_EVIDENCE_REF_RECONCILIATION_AND_GEO_RELEASE_TRIGGER_HANDOVER_20261127.md; report commit 5797fcd1d2dc58f3f8305ad4588725ed9274051d. ₹0; no IMF query/cohort rebuild/workflow/production change; UNKNOWN never PASS.
 
 - C273 matrix serialization QA: CPV descriptive note was quoted to preserve the 30-column CSV schema; MEX evidence_ref points to C272. 63 rows / 63 unique country codes / 30 columns per row verified; no country status changed. Matrix commit 6bbb2eb094a72343dea6307fcaf4db9e069bb4b0.
+
+
+## Continuation 274 — Macro-Geo archive contract regression gate (2026-11-27)
+| Work item | Existing/new evidence | Status | Reopen / duplicate rule |
+|---|---|---|---|
+| PW-LSN-20261122-002 | Original KeyError verified in Run #45038111510; fix commit afa063959b39846c6722370afa655cb77335d4df; AST test commit 491cf1ff7b94ce40129f00c9e8baea499d6087c8; dedicated five-minute workflow commit 12cce4a15fdf9defa099fc17fa1675e2972505ee. | Regression execution NOT_VERIFIED / PENDING. | Do not repeat patch. Require successful workflow test + read-back JSON artifact before PASS. |
+| Macro-Geo recovery | Run #45038111510 Step 9 failure left P0 CSVs and downstream reports missing. | BLOCKED. | After regression PASS, separately authorize bounded recovery using retained Run #398 handoff; no NSE raw re-download. |
+| GEO Q2 vintage | C261 release calendar lists NBG Q3-2026 BOP for 30-Nov. | WAIT. | Reopen after actual release only; require Q2 separate portfolio A/L revision and vintage/methodology evidence. |
+- Detail: docs/GCR_CONTINUATION274_MACRO_GEO_ARCHIVE_REPORT_CONTRACT_REGRESSION_ISOLATED_VERIFICATION_20261127.md; commit 7579afc4cde9ca4482aa997d5912501949701d42. ₹0; no IMF re-query/cohort rebuild/production change; UNKNOWN never PASS.
