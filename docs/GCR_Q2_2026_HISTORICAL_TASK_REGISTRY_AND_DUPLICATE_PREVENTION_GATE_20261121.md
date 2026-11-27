@@ -873,3 +873,12 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | Macro-Geo recovery | Run #45038111510 Step 9 failure left P0 CSVs and downstream reports missing. | BLOCKED. | After regression PASS, separately authorize bounded recovery using retained Run #398 handoff; no NSE raw re-download. |
 | GEO Q2 vintage | C261 release calendar lists NBG Q3-2026 BOP for 30-Nov. | WAIT. | Reopen after actual release only; require Q2 separate portfolio A/L revision and vintage/methodology evidence. |
 - Detail: docs/GCR_CONTINUATION274_MACRO_GEO_ARCHIVE_REPORT_CONTRACT_REGRESSION_ISOLATED_VERIFICATION_20261127.md; commit 7579afc4cde9ca4482aa997d5912501949701d42. ₹0; no IMF re-query/cohort rebuild/production change; UNKNOWN never PASS.
+
+
+## Continuation 275 — PW-LSN-20261122-002 dispatch/access recheck (2026-11-27)
+| Work item | Evidence | Status | Next action / duplicate prevention |
+|---|---|---|---|
+| Dedicated regression workflow | Existing branch `audit/prospective-selector-tracking`; workflow blob `dd64726cd9da2690fea1e47b7a31b21886b0f823`; `workflow_dispatch`, 5-minute timeout, pytest-only, JSON artifact upload | CONFIG VERIFIED; EXECUTION NOT_VERIFIED | Manually dispatch through GitHub Actions; no connected dispatch/list-runs action. Do not repeat patch or infer PASS from empty status. |
+| JSON evidence | Expected `archive_report_contract_validation.json` | NOT_VERIFIED | Read back only after actual run; capture run/job/artifact IDs and ZIP SHA-256. |
+| Macro-Geo recovery | Retained Run #398 handoff artifact #14757294944 | BLOCKED / NOT_AUTHORIZED | Consider only after regression PASS and separate bounded authorization; no NSE raw re-acquisition. |
+- Detail: `docs/GCR_CONTINUATION275_ISOLATED_REGRESSION_DISPATCH_ACCESS_BOUNDARY_20261127.md`. ₹0; UNKNOWN never PASS; no production change.
