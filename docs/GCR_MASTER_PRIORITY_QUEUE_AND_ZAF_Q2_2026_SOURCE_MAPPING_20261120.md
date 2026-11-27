@@ -2192,3 +2192,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Regression execution and JSON artifact remain NOT_VERIFIED / PENDING. No duplicate code patch, data collection or full recovery.
 - Next: user/authorized operator manually dispatches from GitHub Actions and supplies run URL/ID. Require successful test step + JSON artifact read-back, then separately consider Run #398 bounded recovery. Macro-Geo remains BLOCKED; candidate release false.
 - Detail: `docs/GCR_CONTINUATION275_ISOLATED_REGRESSION_DISPATCH_ACCESS_BOUNDARY_20261127.md`. ₹0; UNKNOWN never PASS; production unchanged.
+
+
+## Continuation 277 — P0 regression gate status (27-Nov-2026)
+| Priority | Work | Status | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | C274 isolated archive-contract regression | Workflow config verified (5-minute pytest-only); actual run, job, artifact and JSON NOT_VERIFIED / PENDING. | User/authorized operator manually dispatches on `audit/prospective-selector-tracking` and supplies Run URL/ID. Do not repeat code patch/workflow creation. |
+| P0 | Macro-Geo recovery | BLOCKED pending regression PASS. | Only then separately consider bounded recovery from retained Run #398 artifact #14757294944; no NSE raw re-acquisition. |
+- Library export: newer Phase-4 non-image 51/2 and Phase-5 image 106/216 are filename+size presence only; Phase-6 216-row checklist generation PASS, payload recovery NOT_DONE. Manifest/.dat identity UNKNOWN. Do not repeat these audits or duplicate Library files.
+- Detail: `docs/GCR_CONTINUATION277_PART7_REGRESSION_GATE_AND_EXPORT_SCOPE_RECHECK_20261127.md`; ₹0; UNKNOWN never PASS.
