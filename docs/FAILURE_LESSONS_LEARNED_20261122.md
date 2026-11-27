@@ -80,3 +80,9 @@
 - Added dedicated network-free workflow .github/workflows/macro_geo_archive_contract_regression.yml, isolated branch commit 12cce4a15fdf9defa099fc17fa1675e2972505ee, job timeout 5 minutes. It runs only the AST contract test and writes archive_report_contract_validation.json with source/test SHA-256.
 - GitHub combined status returned an empty list at review time; workflow run and artifact are NOT_VERIFIED. Status remains REGRESSION PENDING / NOT_ACCEPTED; do not infer PASS from workflow creation.
 - Next: retrieve the workflow run, inspect test log and JSON artifact; record run/job/artifact IDs and ZIP SHA-256. Only then consider a separate audit-only Macro-Geo recovery. No broad run, NSE raw acquisition, selector, production or hard-gate change.
+
+
+### PW-LSN-20261122-002 — 27-Nov-2026 dispatch/access boundary follow-up
+- Re-read C274 workflow on branch `audit/prospective-selector-tracking`; `workflow_dispatch` is configured, job timeout 5 minutes, pytest-only AST test, JSON artifact upload.
+- Connected GitHub tool surface has no general workflow-run listing or workflow-dispatch action. Commit-associated run lookup is PR-only; empty response and empty combined status do not prove PASS or prove no push-triggered run exists.
+- Status remains CONFIG VERIFIED; EXECUTION NOT_VERIFIED / PENDING; JSON artifact NOT_VERIFIED. Next: user/authorized operator manually dispatches in Actions and supplies run URL/ID. Require pytest success and JSON read-back. Do not repeat code patch, NSE acquisition or full recovery before acceptance.
