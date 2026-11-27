@@ -86,3 +86,10 @@
 - Re-read C274 workflow on branch `audit/prospective-selector-tracking`; `workflow_dispatch` is configured, job timeout 5 minutes, pytest-only AST test, JSON artifact upload.
 - Connected GitHub tool surface has no general workflow-run listing or workflow-dispatch action. Commit-associated run lookup is PR-only; empty response and empty combined status do not prove PASS or prove no push-triggered run exists.
 - Status remains CONFIG VERIFIED; EXECUTION NOT_VERIFIED / PENDING; JSON artifact NOT_VERIFIED. Next: user/authorized operator manually dispatches in Actions and supplies run URL/ID. Require pytest success and JSON read-back. Do not repeat code patch, NSE acquisition or full recovery before acceptance.
+
+
+### PW-LSN-20261122-002 — 27-Nov-2026 Part-7 recheck
+- Re-read the isolated regression workflow; configuration remains 5-minute, pytest-only and JSON-artifact-producing. No actual run/job/artifact or JSON evidence was verified.
+- A workflow file/commit is not execution evidence. Empty status or unavailable run listing is neither PASS nor FAIL. Require actual Actions Run URL/ID, successful pytest step and artifact read-back.
+- Newer Library Phase-4/5/6 export reconciliation records exist; do not repeat filename/size scans or checklist generation. Metadata presence does not prove original .dat byte identity.
+- Detail: `docs/GCR_CONTINUATION277_PART7_REGRESSION_GATE_AND_EXPORT_SCOPE_RECHECK_20261127.md`.
