@@ -2176,3 +2176,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Detail: docs/GCR_CONTINUATION273_MEX_MATRIX_EVIDENCE_REF_RECONCILIATION_AND_GEO_RELEASE_TRIGGER_HANDOVER_20261127.md; report commit 5797fcd1d2dc58f3f8305ad4588725ed9274051d. No IMF re-query/cohort rebuild, workflow or production change; ₹0; UNKNOWN never PASS.
 
 - C273 matrix serialization QA addendum: corrected CPV's pre-existing unquoted comma by quoting only its descriptive note; MEX evidence_ref points to C272. Final CSV read-back confirms 63 rows, 63 unique codes, 30 columns per row; no country gates changed. Matrix commit 6bbb2eb094a72343dea6307fcaf4db9e069bb4b0.
+
+
+## Continuation 274 — Macro-Geo archive report contract regression (2026-11-27)
+| Priority | Work | Status | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | Run #45038111510 Step 9 producer/consumer schema defect | Root cause VERIFIED; code fix and AST test already committed; dedicated 5-minute regression workflow added on audit branch (commit 12cce4a15fdf9defa099fc17fa1675e2972505ee); execution NOT_VERIFIED. | Verify run + JSON artifact. Do not repeat code patch. After regression PASS, separately authorize bounded recovery using Run #398 artifact; do not re-acquire NSE raw history. |
+| GEO | NBG Q3-2026 BOP trigger | Scheduled 30-Nov-2026; not yet due on 27-Nov. | Inspect only after publication for Q2 separate A/L revision, BPM5/BPM6 bridge and observation-specific vintage. |
+- Detail: docs/GCR_CONTINUATION274_MACRO_GEO_ARCHIVE_REPORT_CONTRACT_REGRESSION_ISOLATED_VERIFICATION_20261127.md; commit 7579afc4cde9ca4482aa997d5912501949701d42. P0 collection/hard gate remains BLOCKED; candidate_release_allowed=false. ₹0; no IMF re-query/cohort rebuild/production changes; UNKNOWN never PASS.
