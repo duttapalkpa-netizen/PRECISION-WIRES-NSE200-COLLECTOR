@@ -2250,3 +2250,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | FPI/DII | Separate NSDL reuse/permission and CDSL historical-archive blockers remain. | Find a distinct official source with compatible terms; keep FPI and DII separate; no NSE/CDSL substitution. |
 | GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream event study, weight tuning or production integration until upstream P0 gates pass. |
 - Detail: `docs/GCR_CONTINUATION284_PART4_RBI_REFERENCE_RATE_PUBLICATION_SCOPE_AUDIT_20261127.md`; commit `79f44c684a40c0e0c79ea515e217493cbcb7dbac`. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 285 — RBI DBIE daily interbank USD/INR source identity (27-Nov-2026)
+| Priority | Work package | Current state | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | RBI DBIE daily interbank USD-vis-a-vis-INR | Official series existence PASS (RBI DBIE Brochure 2022); official DBIE portal/general reusable time-series capability PASS; exact table key/schema/export/raw bytes UNKNOWN / NOT_CAPTURED. | User/authorized operator inspect official DBIE Financial Market > Forex Market catalogue and export exact series from data.rbi.org.in; preserve original bytes/metadata/hash. Do not use prototype r691. |
+| P0 | RBI/FBIL reference fixing | C283 full continuity FAIL; partial BankWise raw QA PASS; C284 displayed-period source scope only. | Preserve partial file; seek official complete historical export and holiday-calendar evidence; do not substitute interbank series. |
+| P0 | FPI/DII | Separate permission/source blocker unresolved. | Find compatible official source; keep FPI and DII separate. |
+| GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream event study, weight tuning or production integration until upstream P0 gates pass. |
+- Detail: docs/GCR_CONTINUATION285_PART5_RBI_DBIE_INTERBANK_USDINR_IDENTITY_EXPORT_AUDIT_20261127.md. ₹0; UNKNOWN never PASS.
