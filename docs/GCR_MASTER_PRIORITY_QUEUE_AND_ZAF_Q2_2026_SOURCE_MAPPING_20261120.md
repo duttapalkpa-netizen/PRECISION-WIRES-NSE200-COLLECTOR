@@ -2240,3 +2240,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Detail: `docs/GCR_CONTINUATION283_PART3_RBI_USDINR_CALENDAR_GAP_AUDIT_20261127.md`. ₹0; UNKNOWN never PASS.
 
 - Official route discovery addendum: FBIL production homepage still provides recent rows only in inspected page representation; UAT details-gated Excel/CSV interface is candidate-only and NOT_ACCEPTED. No form submission or personal details; fee-liable use-license boundary must be reviewed. Full daily historical payload remains NOT_CAPTURED / BLOCKED. See C283 report.
+
+
+## Continuation 284 — RBI daily reference-rate table scope adjudication (27-Nov-2026)
+| Priority | Work package | Current state | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | USD/INR official daily reference fixing | RBI Tables 218/222/223 are official reference-rate observations, but inspected visible windows are only 24-Dec-2019–31-Jul-2020; 02-Jan-2023–28-Jul-2023; 01-Jan-2024–31-Jul-2024; 01-Jan-2025–31-Jul-2025; 01-Jan-2026–30-Jun-2026. Not a continuous 2018–2026 archive. | Keep as displayed-period cross-check only. Seek a genuinely documented official FBIL historical export or exact official RBI DBIE table/export. Do not re-run same RBI archive form attempt or claim full coverage. |
+| P0 | BankWise historical series | 1,119 unique rows; raw integrity PASS; C283 gap 1,358 calendar days; full continuity FAIL; full ingestion BLOCKED/UNKNOWN. | Preserve partial original bytes; no merge until full raw source and calendar QA. |
+| P0 | FPI/DII | Separate NSDL reuse/permission and CDSL historical-archive blockers remain. | Find a distinct official source with compatible terms; keep FPI and DII separate; no NSE/CDSL substitution. |
+| GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream event study, weight tuning or production integration until upstream P0 gates pass. |
+- Detail: `docs/GCR_CONTINUATION284_PART4_RBI_REFERENCE_RATE_PUBLICATION_SCOPE_AUDIT_20261127.md`; commit `79f44c684a40c0e0c79ea515e217493cbcb7dbac`. ₹0; UNKNOWN never PASS.
