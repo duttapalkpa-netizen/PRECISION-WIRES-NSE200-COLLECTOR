@@ -2219,3 +2219,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | Archive-contract regression | C278 PASS; closed. | Do not rerun absent code change. |
 | GCR | Strict hard gate | BLOCKED; candidate release false. | Do not promote until source coverage and downstream gates genuinely pass. |
 - C279: `docs/GCR_CONTINUATION279_PART9_OFFICIAL_SOURCE_INGESTION_FEASIBILITY_GATE_20261127.md`; commit `1e5ee240805bef6dd03a6f7e346c85600e6526bd`. ₹0; UNKNOWN never PASS.
+
+## Continuation 280 — updated dependency queue (27-Nov-2026)
+| Rank | Work package | Current state | Next action / duplicate prevention |
+|---:|---|---|---|
+| P0 | USD/INR official daily benchmark | FBIL source family and historical-availability statement confirmed by IMF metadata; exact official export request/workbook bytes/schema/hash not captured; BLOCKED / UNKNOWN. | Obtain original official RBI/FBIL USD historical workbook from user/authorized operator; then validate >=60 distinct dates over >=90 days and hash. Do not use third-party compiled datasets. |
+| P0 | FPI/DII | NSDL archive reuse terms unresolved/prohibit reproduction, redistribution and transmission on inspected page; BLOCKED / NOT_ADMISSIBLE for automated archival absent permission. | Find a distinct official source with compatible terms; preserve FPI and DII as separate series. |
+| P0 | C278 archive-contract regression | PASS and closed. | Do not rerun absent code change. |
+| GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream formula/backtest/production integration until upstream P0 gates pass. |
+- C280 report: `docs/GCR_CONTINUATION280_PART10_OFFICIAL_USDINR_HISTORICAL_SOURCE_VERIFICATION_20261127.md`; commit `203b45f333ddc9da1a9147de5d0d14983d0b74b1`. ₹0; UNKNOWN never PASS.
