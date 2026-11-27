@@ -932,3 +932,14 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 | Next action | Official FBIL complete historical daily reference-rate payload not yet captured | Acquire via genuinely executable official route; preserve partial extract; then calendar join. No mirror, proxy, imputation or same failed RBI UI retry. |
 | GCR hard gate | Macro-Geo P0 last artifact-backed 6/8; FPI/DII separate blocker | BLOCKED / NOT_AUTHORIZED; candidate release false. |
 - Detail: `docs/GCR_CONTINUATION283_PART3_RBI_USDINR_CALENDAR_GAP_AUDIT_20261127.md`.
+
+
+## Continuation 284 — RBI reference-rate publication scope / duplicate-prevention gate (27-Nov-2026)
+| Work item | Evidence | Status / duplicate rule |
+|---|---|---|
+| RBI Table 218/222/223 | Official pages state values are based on RBI Reference Rate and FBIL dissemination commenced 10-Jul-2018. Visible date windows: 24-Dec-2019–31-Jul-2020; 02-Jan-2023–28-Jul-2023; 01-Jan-2024–31-Jul-2024; 01-Jan-2025–31-Jul-2025; 01-Jan-2026–30-Jun-2026. | Source identity PASS; displayed-period only. Not a full 2018–2026 daily archive. No payload downloaded/hashed. |
+| BankWise / C283 gap | 1,119 unique observations; 1,358-day hole from 24-Jul-2018 to 12-Apr-2022; 2019–2021 rows absent. | Partial raw extract only; continuity FAIL; full ingestion BLOCKED/UNKNOWN. Do not infer that RBI table pages bridge the full gap. |
+| RBI DBIE interbank series | RBI DBIE brochure confirms series existence; exact current official table key, schema and downloadable raw payload not identified. | SOURCE EXISTS / TABLE KEY UNKNOWN / PAYLOAD NOT_CAPTURED. Never substitute prototype mirror. |
+| Next action | Exact official machine-readable FBIL history or RBI DBIE export route. | Continue bounded official-route research only; no paid license, UAT form, personal data, external contact, proxy, mirror, or raw re-acquisition. |
+| GCR gate | Macro-Geo P0 last artifact-backed 6/8; FPI/DII separate blocker. | Strict gate BLOCKED; candidate release false. |
+- Detail: `docs/GCR_CONTINUATION284_PART4_RBI_REFERENCE_RATE_PUBLICATION_SCOPE_AUDIT_20261127.md`.
