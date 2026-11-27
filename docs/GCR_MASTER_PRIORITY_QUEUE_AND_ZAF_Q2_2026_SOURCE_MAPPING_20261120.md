@@ -2228,3 +2228,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | C278 archive-contract regression | PASS and closed. | Do not rerun absent code change. |
 | GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream formula/backtest/production integration until upstream P0 gates pass. |
 - C280 report: `docs/GCR_CONTINUATION280_PART10_OFFICIAL_USDINR_HISTORICAL_SOURCE_VERIFICATION_20261127.md`; commit `203b45f333ddc9da1a9147de5d0d14983d0b74b1`. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 283 — USD/INR coverage adjudication (27-Nov-2026)
+| Priority | Work package | Current state | Next action / duplicate prevention |
+|---|---|---|---|
+| P0 | RBI/FBIL USD-INR reference-rate history | BankWise raw payload integrity/table QA PASS, but 1,119 observations have a 1,358-day hole (24-Jul-2018 to 12-Apr-2022; 969 intervening weekdays); no 2019–2021 rows. Full continuity FAIL; full-history ingestion BLOCKED / UNKNOWN. | Obtain complete original daily FBIL series from an official, executable route. Preserve current BankWise as partial raw extract; do not overwrite/re-upload or repeat the same RBI form extraction. Then apply authoritative Mumbai holiday calendar and classify missing sessions. |
+| P0 | FPI/DII | Separate C279/C280 permission/source blocker remains unresolved. | Find a distinct official compatible source; preserve FPI and DII separately; no NSDL terms circumvention or NSE/CDSL substitution. |
+| P0 | C278 archive-contract regression | PASS and closed. | Do not rerun absent code change. |
+| GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream event study, weight tuning, or production integration until upstream P0 gates pass. |
+- Detail: `docs/GCR_CONTINUATION283_PART3_RBI_USDINR_CALENDAR_GAP_AUDIT_20261127.md`. ₹0; UNKNOWN never PASS.
