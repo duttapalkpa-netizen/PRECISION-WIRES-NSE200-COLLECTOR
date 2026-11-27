@@ -89,3 +89,11 @@ Each job ≤10 minutes; reuse retained evidence. Decision trace absent → filte
 **গবেষণায় সংযোজন:** append Run #412 evidence to PW-LSN-20261125-001 and PW-LSN-20261126-001; no duplicate lesson ID and no new predictive lesson.
 
 **পরবর্তী যাচাই:** calendar-aware tracker regression → point-in-time decision ledger → full-universe reconciliation → prospective risk-gate admission audit.
+
+
+## GCR C278 — isolated regression run discovery and acceptance (27-Nov-2026)
+- Previous limitation statement (“no general run-list action”) was too narrow: although no dedicated dispatch/list tool existed, the generic read-only GitHub fetch endpoint can query `/actions/runs?branch=...`. A branch-scoped query discovered Run `45946811444`; future audits should use this read-only endpoint before concluding a run is not discoverable.
+- Do not infer workflow PASS from configuration or commit status. Require run conclusion, job step logs, artifact metadata, ZIP digest verification and JSON read-back. C278 satisfied these checks: pytest 1 passed; artifact `15174937795`; GitHub and downloaded ZIP SHA-256 both `0175914054f725206d0862771277f04c300da085f509a50a1900ba34d0e8b732`; JSON `status=PASS`.
+- Acceptance remains narrowly scoped to the network-free AST producer/consumer contract. It does not close Macro-Geo P0, source availability, strict GCR hard gate or candidate release. Do not rerun absent code change.
+- Next dependency is a separate bounded/authorized audit-only Macro-Geo recovery using retained Run #398 artifact `14757294944`; no NSE raw re-acquisition, IMF re-query or cohort rebuild. Stop on missing inputs.
+- Evidence report: `docs/GCR_CONTINUATION278_PART8_ARCHIVE_CONTRACT_REGRESSION_EXECUTION_AND_ARTIFACT_VERIFICATION_20261127.md`.
