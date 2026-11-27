@@ -832,7 +832,7 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 
 
 ## GCR Continuation 282 — Part-3 RBI USD Reference Rate archive payload capture and QA (27-Nov-2026)
-- User-directed Library check identified `/BankWise.xls` and `/BankWise(1).xls`, each 57,289 bytes. Both materialized read-only; SHA-256 identical: `379318c3e4b048eeba63824bc09d26b2e6e5d9418e17bd589059d4c0b63e93e2`. No Library duplicate upload, rename, overwrite or deletion.
+- User-directed Library check identified `/BankWise.xls` and `/BankWise(1).xls`, each 57,289 bytes. Both materialized read-only; SHA-256 identical: `379318c3e4b048eeba63824bc09d26b2e6f5d9418e17bd589059d4c0b63e93e2`. No Library duplicate upload, rename, overwrite or deletion.
 - The bytes are HTML table markup saved with an .xls filename, not a native BIFF/OOXML workbook. Header `Date`, `USD (INR / 1 USD)`; 1,119 data rows; 0 malformed rows; 1,119 unique dates; 0 duplicate dates; 0 blank cells; positive numeric values 69.0530–96.8441.
 - Earliest observation 24-Jul-2018; latest 26-Nov-2026; 3,047 calendar days. User's RBI archive screenshots show USD selected and filter From 15-Jul-2018 to 26-Nov-2026. The earliest returned row is 24-Jul-2018; no synthetic dates added.
 - Syntactic/table/numeric QA PASS; minimum 60 distinct dates and 90-day coverage PASS. Calendar-aware expected-business-day completeness, exact HTTP request/response metadata, source revision history and downstream PIT integration remain NOT_VERIFIED. Treat as RBI USD/INR reference fixing only, not interbank OHLC or turnover. Native workbook sheet/schema checks are NOT_APPLICABLE because source bytes are HTML.
