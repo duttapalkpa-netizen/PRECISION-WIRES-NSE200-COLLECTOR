@@ -1,0 +1,39 @@
+{
+  "audit_date": "2026-11-27",
+  "cutoff": "2026-11-26",
+  "audit_status": "PARTIAL",
+  "findings": [
+    {
+      "lesson_id": "PW-LSN-20261125-001",
+      "root_cause_class": "VERIFIED",
+      "issue": "Holiday/session-aware maturity and missing OUTCOME_LAST_DATE",
+      "evidence": "Run #412 23-Nov cohort shows 9 T3 rows MATURED before official H+3 date 27-Nov; 23-Nov and 25-Nov OUTCOME_LAST_DATE fields blank.",
+      "stock_level_return_impact": "UNKNOWN"
+    },
+    {
+      "lesson_id": "PW-LSN-20261126-001",
+      "root_cause_class": "VERIFIED_SCHEMA_GAP",
+      "issue": "Raw percentile leads are not risk-qualified admissions",
+      "evidence": "Run #412 latest_picks has percentile fields but no fresh official quote/time, current surveillance, liquidity, sector or catalyst timestamp fields.",
+      "predictive_impact": "UNKNOWN"
+    },
+    {
+      "lesson_id": null,
+      "root_cause_class": "VERIFIED_FACT_NOT_A_MISS",
+      "issue": "SAKUMA preferential issue withdrawal",
+      "evidence": "Official NSE filing dated 25-Nov-2026 reports withdrawal/cancellation; no causal forecast failure attributed.",
+      "predictive_impact": "UNKNOWN"
+    },
+    {
+      "lesson_id": null,
+      "root_cause_class": "VERIFIED_RISK_FLAG_NOT_A_MISS",
+      "issue": "AIROLAM and ONIXSOLAR surveillance",
+      "evidence": "Official NSE ASM page lists AIROLAM STASM-I and ONIXSOLAR LTASM-I.",
+      "predictive_impact": "UNKNOWN"
+    }
+  ],
+  "core672_filter_attribution": "UNKNOWN_NO_POINT_IN_TIME_DECISION_TRACE",
+  "full_universe_missed_winner_root_causes": "UNKNOWN_BLOCKED",
+  "no_hindsight_signal_added": true,
+  "production_change": false
+}
