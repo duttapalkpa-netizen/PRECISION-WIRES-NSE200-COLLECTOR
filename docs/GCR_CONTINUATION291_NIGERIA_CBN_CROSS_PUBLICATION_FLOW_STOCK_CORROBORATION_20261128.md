@@ -61,3 +61,11 @@ This evidence improves source triangulation and reduces the risk of a transcript
 
 ## Invariants
 ₹0; official/free sources only; no paid API/licence/subscription, external contact, fabricated values, unsupported FX/sign/scale transforms, IIP-stock-as-flow, net-to-leg back-solving, or silent correction. CORE-672 (56×12), Engines A–E, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and IPO-PLX V2.0 unchanged. UNKNOWN is neither PASS nor FAIL.
+
+
+## C291 post-commit latest 63-country matrix read-back (28-Nov-2026)
+- Re-fetched the current main-branch matrix CSV: `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`, blob SHA-1 `6daf8f9ea11d60fe94409b00fa777f39ebb5cbc6`.
+- Recomputed across exactly 63 rows: current_stage DATA_CAPTURED 29; SOURCE_FOUND 14; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 20; VINTAGE_PASS 0; FULL_PASS 0.
+- Therefore 34 remain below DATA_CAPTURED (14 SOURCE_FOUND + 20 BLOCKED); all 63 remain short of FULL_PASS and aggregate remains NOT_AUTHORIZED.
+- These counts supersede the earlier C201 snapshot (23 DATA_CAPTURED, 15 asset PASS, 15 liability PASS) for current status reporting. No matrix values or gates were changed in this read-back.
+- Next priority remains evidence-backed vintage closure for already captured countries, alongside separately unblocking official-source capture; do not repeat accepted asset/liability comparisons.
