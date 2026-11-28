@@ -2382,3 +2382,15 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Raw bulletin PDF | Browser rendered content only; bytes/hash absent | NOT_CAPTURED; supported raw-file capture needed |
 | WSM gate | REVIEW/REVIEW/UNKNOWN; FULL_PASS=NO | No matrix promotion; aggregate NOT_AUTHORIZED |
 - Detail: docs/GCR_CONTINUATION296_SAMOA_Q2_2026_OFFICIAL_FX_RATE_BRIDGE_FEASIBILITY_AUDIT_20261128.md; report commit 08471c59bfbd95fb197058bd185b4eaad9ed8fc3. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 297 — Samoa WSM official BOP/FX machine-readable route audit (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| SBS BOP SDMX | First-party XML locator confirmed via NSDP Download in SDMX; raw retrieval rejected XML MIME | SOURCE_ROUTE_CONFIRMED / RAW_NOT_CAPTURED |
+| CBS B1 BOP workbook | First-party XLSX locator confirmed from External Trade & Payments page; raw retrieval rejected Excel MIME | SOURCE_LOCATOR_PASS / RAW_NOT_CAPTURED |
+| CBS B11 FX workbook | First-party XLSX locator confirmed; rate direction/period semantics not inspected | SOURCE_LOCATOR_PASS / RAW_NOT_CAPTURED |
+| IMF DSBB BOP metadata | Samoa BOP category locator confirmed; body not rendered | LOCATOR_PASS / CONVERSION_METHOD_NOT_ESTABLISHED |
+| Q2 FX convention and vintage | No official transaction conversion rule or observation-specific revision/vintage bridge captured | UNKNOWN / PENDING |
+| WSM gate | REVIEW/REVIEW/UNKNOWN; FULL_PASS=NO | No matrix promotion; aggregate NOT_AUTHORIZED |
+- Detail: docs/GCR_CONTINUATION297_SAMOA_Q2_2026_BOP_SDMX_AND_CBS_FX_WORKBOOK_ROUTE_AUDIT_20261128.md; report commit f3f239a3cd5eeff6422f71207ce8308b7868797d. Next: obtain original official XML/XLSX bytes and inspect BOP conversion/revision metadata; no IMF re-query. ₹0; UNKNOWN never PASS.
