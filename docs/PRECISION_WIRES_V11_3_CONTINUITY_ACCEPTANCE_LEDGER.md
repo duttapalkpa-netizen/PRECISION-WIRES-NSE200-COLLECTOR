@@ -964,3 +964,10 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Existing C144/C145 dual-leg numeric PASSes remain unchanged; KAZ stays DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO; no matrix gate changed; aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_CONTINUATION293_KAZAKHSTAN_NBK_RELEASE_CATALOGUE_AND_VINTAGE_BOUNDARY_CORRECTION_20261128.md; report commit d0ad87ded45a7adf4519ecbf6df17ffea3632a56.
 - Next trigger: NBK BOP page lists next publication 31-Dec-2026. Inspect only the new Q3/final release for separate Q2 A/L revisions and observation-specific vintage metadata. ₹0; no production/selector changes; UNKNOWN never PASS.
+
+
+## GCR Continuation 294 — Georgia NBG Q3-2026 pre-publication trigger gate (28-Nov-2026)
+- Mandatory preflight re-read current Ledger, GCR Priority Queue, Historical Task Registry, immutable 63-country matrix, C293 and Library Mother File. Accepted work was skipped; no IMF re-query, cohort rebuild or repeated Q2 extraction.
+- Official NBG Advance Release Calendar (https://nbg.gov.ge/en/statistics/data-distribution) lists November-2026 Balance of Payments as “30 Q3/2026”, confirming the scheduled 30-Nov-2026 trigger.
+- On 28-Nov the trigger is future; no Q3 payload or Q2 revised portfolio A/L/vintage evidence is claimed. GEO remains pending; BPM5/BPM6 Q2 conflict remains unresolved; no matrix gate changed; aggregate NOT_AUTHORIZED.
+- Exact post-release inspection checklist and duplicate-prevention rules: docs/GCR_CONTINUATION294_GEORGIA_NBG_Q3_2026_RELEASE_TRIGGER_PREPUBLICATION_GATE_20261128.md. Report commit 986bb67e86622e0bb99e91975aae5dcfdc301716. ₹0; UNKNOWN never PASS; no production/selector changes.
