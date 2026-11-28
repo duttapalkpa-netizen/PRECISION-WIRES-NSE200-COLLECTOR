@@ -928,3 +928,13 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - High/Low semantics, 21-Mar Open, current segment from 01-Aug-2026 onward, and clean OHLC ingestion remain BLOCKED / NOT_CAPTURED. Strict GCR gate remains BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED.
 - Detail: docs/GCR_CONTINUATION290_RBI_REFERENCE_RATE_CROSSCHECK_20261128.md. Official source: https://www.rbi.org.in/scripts/PublicationsView.aspx?id=17359
 - ₹0; CORE-672, Engines A–E, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and IPO-PLX V2.0 unchanged; UNKNOWN never PASS.
+
+
+## GCR Continuation 291 — Nigeria Q2-2026 CBN cross-publication flow/stock corroboration (28-Nov-2026)
+- Inspected a distinct official CBN publication, CBN Economic Report Second Quarter 2026, and compared it with the already captured CBN Q2-2026 BOP Highlights.
+- Portfolio transaction flows match exactly across both CBN publications: assets USD 0.70bn and liabilities USD 7.09bn; Q1 comparators assets USD 0.26bn and liabilities USD 6.03bn.
+- Broad financial-account arithmetic: net acquisition of financial assets USD 12.58bn minus net incurrence of liabilities USD 10.84bn = net lending USD 1.74bn.
+- Explicitly separated end-June IIP stocks (portfolio assets USD 6.51bn; portfolio liabilities USD 65.23bn) from Q2 transaction flows. Stocks are not flows.
+- This adds cross-publication corroboration and concept-separation evidence only. It does not establish exact same statistical vintage against archived IMF Q2 rows; Nigeria remains DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO. No aggregate or production admission.
+- Detail: docs/GCR_CONTINUATION291_NIGERIA_CBN_CROSS_PUBLICATION_FLOW_STOCK_CORROBORATION_20261128.md. Official sources: https://www.cbn.gov.ng/Out/2026/RSD/Second%20Quarter%202026%20Economic%20Report.pdf and https://www.cbn.gov.ng/Out/2026/STD/Q2%202026%20BOP%20Highlights_%20revised.pdf
+- ₹0; no IMF re-query/cohort rebuild; all production invariants unchanged; UNKNOWN never PASS.
