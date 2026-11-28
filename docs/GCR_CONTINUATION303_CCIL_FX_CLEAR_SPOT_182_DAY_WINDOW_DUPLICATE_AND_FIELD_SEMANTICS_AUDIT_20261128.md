@@ -29,7 +29,7 @@ Each file's inclusive calendar span is <=182 days, so none violates the portal's
 - The five windows are individually under 182 days, but date ranges leave unobserved calendar intervals: 2025-05-01, 2026-06-19–28, and other gaps inside windows. 2026 later coverage is sparse: May 5 distinct dates, Jun 3, Jul 7, Aug 1, Sep 1, Oct 0, Nov 1. No official holiday/session calendar was applied; gaps are not classified as missed trading sessions.
 - Recomputed raw SHA-256 (matches C288):
   - (2) e0f97ee7167fb2ea072b35169db9ace57cc0b61339e99304f0d8d3237a76a340
-  - (3) 764b33036a304a1dea55756eb4403e4af9b1272facbea93d8308287d1d1eb9c5
+  - (3) 764b33036a304a1dea55756eb4403e4af9b1272facbea93d8308287d1d4eb9c5
   - (4) 1324770bd32559d9728e455e67e1a84ef5fdcf7748b157ac99366e3375c87413
   - (1) 077306322d2ab2691209b600affadc103e0cfb1dbb718bb0e344ccbac3a5b86d
   - base 47694e2455cf5cfa74fd2bb1a5f9906bc8f79ee764e26f0391ce87b74ace2e9f
