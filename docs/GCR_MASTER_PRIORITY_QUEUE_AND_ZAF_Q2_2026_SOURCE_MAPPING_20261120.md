@@ -2349,3 +2349,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | KAZ gates | C144/C145 dual-leg numeric PASS retained. | KAZ remains VINTAGE_PENDING / FULL_PASS=NO; no matrix change. |
 | Next trigger | Official NBK catalogue lists next BOP publication 31-Dec-2026. | Inspect only new Q3/final release for separate Q2 A/L revisions and vintage metadata; no repeated arithmetic or IMF query. |
 - Detail: docs/GCR_CONTINUATION293_KAZAKHSTAN_NBK_RELEASE_CATALOGUE_AND_VINTAGE_BOUNDARY_CORRECTION_20261128.md; commit d0ad87ded45a7adf4519ecbf6df17ffea3632a56. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 294 — GEO NBG Q3-2026 release-trigger pre-publication gate (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| Official NBG release date | Advance Release Calendar November BOP cell: “30 Q3/2026” | Trigger confirmed for 30-Nov-2026; future as of 28-Nov |
+| Q2 portfolio asset/liability revision pair | No Q3 payload yet | NOT_CAPTURED; inspect separate legs only after publication |
+| BPM5/BPM6 conflict and vintage | C261 conflict remains unresolved; no Q2-specific revision ID | PENDING / UNKNOWN; do not promote |
+| Duplicate prevention | C261 Q2 page/NSDP/IMF checks not repeated | Closed until a new official release payload exists |
+- Detail: docs/GCR_CONTINUATION294_GEORGIA_NBG_Q3_2026_RELEASE_TRIGGER_PREPUBLICATION_GATE_20261128.md; report commit 986bb67e86622e0bb99e91975aae5dcfdc301716. GEO FULL_PASS=NO; aggregate NOT_AUTHORIZED.
