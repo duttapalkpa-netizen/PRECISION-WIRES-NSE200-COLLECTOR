@@ -951,3 +951,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Decisions: series existence PASS; official platform/general export capability PASS; exact table identity UNKNOWN; raw payload NOT_CAPTURED; ingestion BLOCKED. Do not conflate with RBI/FBIL reference fixing or monthly USD purchase/sale table.
 - Next: ordinary-session official DBIE catalogue/export inspection by user/authorized operator; attach original export for QA. No hidden endpoint, mirror, access bypass, paid service or external contact.
 - Report: docs/GCR_CONTINUATION285_PART5_RBI_DBIE_INTERBANK_USDINR_IDENTITY_EXPORT_AUDIT_20261127.md
+
+
+## C286 — official DBIE report export fallback (28-Nov-2026)
+- User screenshots confirm official RBI DBIE report title and six visible fields (date, interbank open/high/low/close, RBI reference rate), stated coverage since Aug-2000. This is not proof of complete downloaded history.
+- Official RBI DBIE export guide and MoSPI dataset compendium document report export and DBIE navigation. Workaround is Excel > Reports > Forex Rates (Current Report) > Export; TXT Reports fallback. Data radio being disabled does not block report export.
+- FBIL Fetch repeated failure reported by user; server outage not established. Dataful and RSI catalogue copies are non-official discovery-only; inconsistent row counts/metadata mean not accepted or merged.
+- Export file not yet received; coverage, row QA, hash and ingestion remain blocked. Next action: attach original official DBIE Excel/TXT report export.
+- Report: docs/GCR_CONTINUATION286_PART5B_OFFICIAL_DBIE_REPORT_EXPORT_FALLBACK_20261128.md
