@@ -1055,3 +1055,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Official September data ZIP and Revision Policy PDF locators were found, but both first-party retrievals timed out; no bytes, schema, Q2 observations, headers or hashes captured. Methodological index identifies 13-Aug financial-account revision and 13-May investment-fund shares on portfolio liabilities, but no Q2-specific revision ID. July 24 press release No.2026-29 concerns currency/deposits and derivatives, not portfolio liabilities.
 - Reused prior Q2 asset PASS and liability REVIEW (USD87m residual); no arithmetic or IMF query repeated. Same-vintage NOT_ESTABLISHED; TUR remains DATA_CAPTURED / PARTIAL / NOT PASS, vintage PENDING, FULL_PASS NO, aggregate NOT_AUTHORIZED.
 - Detail: docs/GCR_TURKIYE_TUR_Q2_2026_CBRT_SEPTEMBER_RELEASE_Q2_REVISION_AND_PORTFOLIO_LEG_BOUNDARY_AUDIT_CONTINUATION301_20261128.md; commit 755643fe7b306d6547fb68624966ac703bd2bed8. Reopen only with distinct supported official Q2 monthly legs and revision metadata. ₹0; UNKNOWN never PASS.
+
+## C302 — Burundi BDI Q2-2026 BRB publication-catalogue and INSBU scope audit (28-Nov-2026)
+- Reused C155 historical BRB dual-leg table and archived IMF Q2 rows; no repeated extraction or IMF query.
+- BRB “Autres Documents” visible catalogue still shows Q4-2025 BOP monetary-policy report (26-Feb-2026), not a Q2-2026 BOP report. BRB monthly bulletin index exposes Jan–Mar 2026 only.
+- INSBU Q2-2026 provisional bulletin is listed for Aug-2026, but the page characterizes the series as foreign-trade bulletins; it is not evidence of portfolio BOP asset/liability legs.
+- No new Q2 A/L values or raw bytes/schema/vintage captured. Keep BDI SOURCE_FOUND / NOT_CAPTURED / PARTIAL; do not promote. This is a bounded index audit, not proof that no other BRB distribution route exists.
+- Detail: docs/GCR_BURUNDI_BDI_Q2_2026_BRB_PUBLICATION_CATALOGUE_AND_INSBU_QUARTERLY_SCOPE_AUDIT_CONTINUATION302_20261128.md; commit 647fe7f41653e404d7e2dad6528d528d54d93bb0. Reopen only on new official BRB Q2 BOP report, distinct machine-readable export, or dated portfolio revision record.
