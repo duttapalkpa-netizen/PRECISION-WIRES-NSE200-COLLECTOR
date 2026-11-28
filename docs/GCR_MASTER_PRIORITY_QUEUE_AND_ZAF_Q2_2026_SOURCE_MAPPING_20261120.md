@@ -2339,3 +2339,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Duplicate prevention | No IMF re-query, CBN re-download, cohort rebuild or repeated A/L arithmetic. | Closed; do not repeat. |
 | Next evidence | Public official observation-level CBN release/revision ID and corresponding IMF first-release/last-update/receipt-vintage metadata. | If unavailable, retain PENDING; no inference from ACTION=R or retrieval timestamp. |
 - Detail: docs/GCR_CONTINUATION292_NIGERIA_IMF_CBN_VINTAGE_ATTRIBUTE_SEMANTICS_AUDIT_20261128.md; commit 15b8cfb90d615793458b04a044ec818fff82c11e. ₹0; no production change; UNKNOWN never PASS.
+
+
+## Continuation 293 — Kazakhstan NBK release-catalogue correction (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| 30-Oct NBK catalogue item | Official title is “Preliminary Estimate … for the 9 months of 2026”, distinct from 30-Sep “Balance of Payments … first half of 2026”. Corrects C145 misclassification; 9M file bytes/content/hash not captured. | Catalogue classification PASS; do not infer Q2 portfolio A/L from title or file size. |
+| Revision policy | Official NBK BOP metadata: preliminary initial quarterly data, final at T+90; earlier quarters may be updated; revisions in October and April for two years prior. | Q2-2026 is revision-eligible; observation-specific Q2 portfolio revision and synchronized IMF vintage NOT_ESTABLISHED. |
+| KAZ gates | C144/C145 dual-leg numeric PASS retained. | KAZ remains VINTAGE_PENDING / FULL_PASS=NO; no matrix change. |
+| Next trigger | Official NBK catalogue lists next BOP publication 31-Dec-2026. | Inspect only new Q3/final release for separate Q2 A/L revisions and vintage metadata; no repeated arithmetic or IMF query. |
+- Detail: docs/GCR_CONTINUATION293_KAZAKHSTAN_NBK_RELEASE_CATALOGUE_AND_VINTAGE_BOUNDARY_CORRECTION_20261128.md; commit d0ad87ded45a7adf4519ecbf6df17ffea3632a56. ₹0; UNKNOWN never PASS.
