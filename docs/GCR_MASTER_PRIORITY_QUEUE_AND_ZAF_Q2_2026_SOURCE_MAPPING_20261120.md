@@ -2293,3 +2293,10 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | 2026 coverage | Monthly distinct dates fall to 5 in May, 3 in June, 7 in July, 1 in Aug, 1 in Sep, 0 in Oct and 1 in Nov. | Coverage NOT_ESTABLISHED. |
 | RBI-named XLSX | 5,302 bytes; no observation rows. | Empty/incomplete report template; not accepted. |
 - No new rows admitted to GCR. Detail: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md.
+
+
+## C288 source provenance correction — CCIL FX-Clear (28-Nov-2026)
+- Source identity is now SOURCE_CONFIRMED from user screenshot + official CCIL page: https://www.ccilindia.com/en/fx-clear. Exact scope: Forex Market > USD/INR > SPOT > Individual Trade Details > Download CSV; CCIL says FX Clear hosted at Clearcorp, spot rates in Rupees; max date range 182 days / 6 months.
+- Do not confuse with RBI DBIE OHLC/reference-rate series or FBIL fixing series.
+- Keep ingestion BLOCKED pending field semantics, duplicate policy, non-positive price reconciliation and coverage audit. 213,519 combined exact duplicates and 1,123 non-positive prices remain unresolved; late-2026 dates sparse.
+- Next: reconcile all files to 182-day export windows and official transaction-field definitions; preserve raw files.
