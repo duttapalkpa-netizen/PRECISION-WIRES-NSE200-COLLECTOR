@@ -946,3 +946,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Therefore 34 remain below DATA_CAPTURED (14 SOURCE_FOUND + 20 BLOCKED); all 63 remain short of FULL_PASS and aggregate remains NOT_AUTHORIZED.
 - These counts supersede the earlier C201 snapshot (23 DATA_CAPTURED, 15 asset PASS, 15 liability PASS) for current status reporting. No matrix values or gates were changed in this read-back.
 - Next priority remains evidence-backed vintage closure for already captured countries, alongside separately unblocking official-source capture; do not repeat accepted asset/liability comparisons.
+
+
+## GCR Continuation 292 — Nigeria IMF/CBN vintage-attribute semantics audit (28-Nov-2026)
+- Preflight re-read current Ledger, GCR Priority Queue, Historical Task Registry, immutable 63-country matrix, Library GCR materials and C291; reused existing IMF/CBN raw CSVs and CBN publications. No IMF re-query, CBN re-download, cohort rebuild or repeated A/L arithmetic.
+- Re-fetched committed IMF Nigeria A_NFA_T CSV (blob SHA-1 75b5df0e3768392dba3740cbc2f1e16faeeb9cc5) and L_NIL_T CSV (blob SHA-1 b754a4ac71fcb08e7be8c69af6e2480f1c19cd7e). Both contain ACTION=R; captured Q2-2026 STATUS values are blank; no observation-level release/revision timestamp or common CBN/IMF vintage key is present.
+- Official SDMX data-message specification defines ACTION as a message-processing instruction (Replace/Append/Delete/Information), not a statistical revision/vintage attribute. ACTION=R cannot be used as evidence of same-vintage alignment. CBN Q2-2026 BOP Highlights explicitly labels data provisional; C291 second CBN publication corroboration remains valid but is not a CBN↔IMF vintage bridge.
+- Decision: metadata semantics audit PASS; false-positive interpretation rejected; Nigeria remains DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO; aggregate NOT_AUTHORIZED. No matrix gate changed.
+- Detail: docs/GCR_CONTINUATION292_NIGERIA_IMF_CBN_VINTAGE_ATTRIBUTE_SEMANTICS_AUDIT_20261128.md; report commit 15b8cfb90d615793458b04a044ec818fff82c11e.
+- Next: seek only public official observation-level CBN release/revision ID and matching IMF first-release/last-update/receipt-vintage metadata. If unavailable, retain PENDING. ₹0; no production or selector changes; UNKNOWN never PASS.
