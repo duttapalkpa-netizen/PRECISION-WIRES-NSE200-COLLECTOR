@@ -2312,3 +2312,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Outlier | 21-Mar-2016 Open = 3,355.7300. | BLOCKED pending official correction evidence; no auto-drop. |
 | Current tail | No Aug–Nov 2026 rows. | Obtain official current segment; no forward-fill. |
 - Do not merge with CCIL transaction tape or FBIL fixing. Detailed QA: docs/GCR_CONTINUATION289_RBI_DBIE_DAILY_INTERBANK_FOREX_TXT_EXPORT_QA_20261128.md.
+
+
+## Continuation 291 — Nigeria official cross-publication corroboration
+| Work package | Evidence | Status / next action |
+|---|---|---|
+| Nigeria Q2-2026 portfolio A/L flows | CBN BOP Highlights and separate CBN Economic Report both show assets USD 0.70bn and liabilities USD 7.09bn; Q1 comparators also match. | Cross-publication corroboration PASS; no gate promotion. |
+| Financial-account consistency | USD 12.58bn net acquisition of assets - USD 10.84bn net incurrence of liabilities = USD 1.74bn net lending. | Displayed-value arithmetic PASS. |
+| Flow vs IIP stock | End-June IIP portfolio assets USD 6.51bn and liabilities USD 65.23bn are separately reported. | Concept separation PASS; never use IIP stocks as BOP flows. |
+| IMF/CBN same-vintage bridge | Observation-level release/revision identifier not established. | VINTAGE_PENDING; Nigeria FULL_PASS=NO. |
+- Detail: docs/GCR_CONTINUATION291_NIGERIA_CBN_CROSS_PUBLICATION_FLOW_STOCK_CORROBORATION_20261128.md. ₹0; no IMF re-query, no cohort rebuild, no production admission.
