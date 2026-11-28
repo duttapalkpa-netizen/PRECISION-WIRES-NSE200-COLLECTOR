@@ -2260,3 +2260,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | FPI/DII | Separate permission/source blocker unresolved. | Find compatible official source; keep FPI and DII separate. |
 | GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | No downstream event study, weight tuning or production integration until upstream P0 gates pass. |
 - Detail: docs/GCR_CONTINUATION285_PART5_RBI_DBIE_INTERBANK_USDINR_IDENTITY_EXPORT_AUDIT_20261127.md. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 286 — official DBIE report-export fallback (28-Nov-2026)
+| Priority | Work package | Current state | Next action / gate |
+|---|---|---|---|
+| P0 | RBI DBIE daily interbank USD/INR | Official report title/schema screenshot-confirmed (six fields; stated from Aug-2000). RBI export guide confirms report exports to Excel/PDF/Text/CSV. Original file not yet supplied; coverage/QA/hash not captured. | Export official report via Download > Excel > Reports > Forex Rates (Current Report) > Export; TXT Reports fallback if needed. QA original file before acceptance. |
+| P0 | FBIL reference rate | Fetch repeatedly fails per user; this is not proof of server outage. Official page is reachable; reference-rate series remains distinct from interbank OHLC. | Avoid repeated large Fetch; keep separate and blocked until official historical payload is available. |
+| GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | FPI/DII and FX source gates remain unresolved; no downstream release. |
+- Third-party Dataful/RSI index references are discovery-only, not primary or merged. Detail: docs/GCR_CONTINUATION286_PART5B_OFFICIAL_DBIE_REPORT_EXPORT_FALLBACK_20261128.md.
