@@ -2370,3 +2370,15 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Raw bytes/hash | Browser surface did not expose PDF bytes | NOT_CAPTURED; obtain supported raw-file capture |
 | FX and vintage | No verified Q2 conversion convention or observation-specific vintage bridge | PENDING / UNKNOWN; WSM FULL_PASS=NO |
 - Detail: docs/GCR_CONTINUATION295_SAMOA_CBS_Q2_2026_BOP_PRIMARY_PDF_SOURCE_AND_TABLE_AUDIT_20261128.md; report commit faf4d2b4822554afd030526e734fac98f9765b1d. No matrix gate changed; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 296 — Samoa WSM Q2-2026 FX bridge feasibility (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| CBS monthly USD/TALA averages | Apr 2.7244; May 2.7069; Jun 2.7394 Tala/USD | Official monthly averages located |
+| Quarter conversion | Calendar-day weighted proxy 2.7233835165; illustrative USDm A/L/net ≈3.4883/0.07344/3.4149 | NOT_ACCEPTED; no official BOP transaction conversion rule |
+| IMF comparison | Proxy not admissible; no new IMF request | PENDING valid conversion basis and existing archived values |
+| Vintage | Observation-specific CBS revision ID and synchronized IMF vintage absent | UNKNOWN / PENDING |
+| Raw bulletin PDF | Browser rendered content only; bytes/hash absent | NOT_CAPTURED; supported raw-file capture needed |
+| WSM gate | REVIEW/REVIEW/UNKNOWN; FULL_PASS=NO | No matrix promotion; aggregate NOT_AUTHORIZED |
+- Detail: docs/GCR_CONTINUATION296_SAMOA_Q2_2026_OFFICIAL_FX_RATE_BRIDGE_FEASIBILITY_AUDIT_20261128.md; report commit 08471c59bfbd95fb197058bd185b4eaad9ed8fc3. ₹0; UNKNOWN never PASS.
