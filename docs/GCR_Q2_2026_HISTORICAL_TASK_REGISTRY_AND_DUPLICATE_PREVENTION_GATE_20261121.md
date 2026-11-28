@@ -1021,3 +1021,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Official CBS monthly-average USD/TALA: Apr 2.7244, May 2.7069, Jun 2.7394 Tala/USD. Calendar-day weighted proxy 2.7233835165 gives illustrative USDm assets 3.4883 / liabilities 0.07344 / net 3.4149 only; this proxy is NOT an official BOP transaction conversion rule and is not accepted for IMF comparison.
 - Official Q2 BOP FX convention NOT_ESTABLISHED; observation-specific CBS/IMF vintage UNKNOWN; C295 PDF raw bytes/hash NOT_CAPTURED. WSM remains REVIEW/REVIEW/UNKNOWN, FULL_PASS=NO; no matrix promotion.
 - Detail: docs/GCR_CONTINUATION296_SAMOA_Q2_2026_OFFICIAL_FX_RATE_BRIDGE_FEASIBILITY_AUDIT_20261128.md; commit 08471c59bfbd95fb197058bd185b4eaad9ed8fc3. Next: documented BOP conversion rule, PDF raw-byte/hash capture, and vintage evidence. No duplicate PDF extraction or IMF request.
+
+
+## C297 — Samoa WSM Q2-2026 BOP SDMX and CBS FX workbook route audit (28-Nov-2026)
+- Reused C295/C296 accepted evidence; no repeated PDF extraction, IMF re-query, cohort rebuild or arithmetic.
+- SBS NSDP BOP SDMX locator confirmed: https://www.sbs.gov.ws/images/sbs-documents/SDMX/CBS/BOP_samoa.xml; XML MIME unsupported by retrieval and raw bytes not captured.
+- CBS first-party B1 BOP XLSX and B11 Foreign Currency per Tala XLSX locators confirmed: https://cbs.gov.ws/media/B1-Balance-of-Payments-9.xlsx and https://cbs.gov.ws/media/B11--Foreign-Currency-per-Tala-5.xlsx; Excel MIME unsupported and raw bytes not captured. IMF DSBB BOP metadata locator confirmed; metadata body not rendered.
+- No official Q2 transaction FX convention or synchronized vintage established. WSM remains REVIEW/REVIEW/UNKNOWN, FULL_PASS=NO; no matrix promotion.
+- Detail: docs/GCR_CONTINUATION297_SAMOA_Q2_2026_BOP_SDMX_AND_CBS_FX_WORKBOOK_ROUTE_AUDIT_20261128.md; commit f3f239a3cd5eeff6422f71207ce8308b7868797d. Next: capture official raw XML/XLSX bytes, inspect conversion/revision metadata; no IMF re-query or repeated extraction.
