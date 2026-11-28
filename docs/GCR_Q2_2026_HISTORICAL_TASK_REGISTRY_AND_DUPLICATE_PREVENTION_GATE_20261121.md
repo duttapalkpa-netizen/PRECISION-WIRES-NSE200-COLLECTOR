@@ -959,3 +959,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - FBIL Fetch repeated failure reported by user; server outage not established. Dataful and RSI catalogue copies are non-official discovery-only; inconsistent row counts/metadata mean not accepted or merged.
 - Export file not yet received; coverage, row QA, hash and ingestion remain blocked. Next action: attach original official DBIE Excel/TXT report export.
 - Report: docs/GCR_CONTINUATION286_PART5B_OFFICIAL_DBIE_REPORT_EXPORT_FALLBACK_20261128.md
+
+
+## C287 — alternative USD/INR source survey (28-Nov-2026)
+- Existing Library RBI DBIE XLSX (5,302 bytes) parsed as an empty/incomplete report template: no observation rows; do not count as captured dataset or re-upload.
+- Exact official daily interbank OHLC alternate not found. RBI Reference Rate Archive and FBIL provide reference-rate only; keep separate from interbank OHLC.
+- Dataful, Measure of India, RSI/DeepInsights, Zenodo and GitHub are secondary compilations/indexes. Dataful metadata mismatch 6,308 vs 6,331 rows; Measure vintage 09-Oct-2026 ends 30-Jun-2026 with per-series counts; RSI 31,191 rows lacks dates; Zenodo/GitHub archive is reference-rate only. Discovery/cross-check only, no raw values imported.
+- Next: stable authorized session export from official DBIE and separately collect RBI Reference Rate Archive Excel where accessible. Interbank remains BLOCKED until raw official bytes, schema/coverage QA and SHA-256.
+- Report: docs/GCR_CONTINUATION287_ALTERNATIVE_USDINR_SOURCE_SURVEY_20261128.md
