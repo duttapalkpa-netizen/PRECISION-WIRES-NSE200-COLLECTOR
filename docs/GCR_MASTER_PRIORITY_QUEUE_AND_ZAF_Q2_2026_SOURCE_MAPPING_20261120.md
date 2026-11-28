@@ -2322,3 +2322,11 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Flow vs IIP stock | End-June IIP portfolio assets USD 6.51bn and liabilities USD 65.23bn are separately reported. | Concept separation PASS; never use IIP stocks as BOP flows. |
 | IMF/CBN same-vintage bridge | Observation-level release/revision identifier not established. | VINTAGE_PENDING; Nigeria FULL_PASS=NO. |
 - Detail: docs/GCR_CONTINUATION291_NIGERIA_CBN_CROSS_PUBLICATION_FLOW_STOCK_CORROBORATION_20261128.md. ₹0; no IMF re-query, no cohort rebuild, no production admission.
+
+
+## C291 post-commit latest 63-country matrix read-back (28-Nov-2026)
+- Re-fetched the current main-branch matrix CSV: `docs/evidence/gcr/2026Q2_63_country_national_validation_master_matrix.csv`, blob SHA-1 `6daf8f9ea11d60fe94409b00fa777f39ebb5cbc6`.
+- Recomputed across exactly 63 rows: current_stage DATA_CAPTURED 29; SOURCE_FOUND 14; BLOCKED 20; ASSET_PASS 17; LIABILITY_PASS 20; VINTAGE_PASS 0; FULL_PASS 0.
+- Therefore 34 remain below DATA_CAPTURED (14 SOURCE_FOUND + 20 BLOCKED); all 63 remain short of FULL_PASS and aggregate remains NOT_AUTHORIZED.
+- These counts supersede the earlier C201 snapshot (23 DATA_CAPTURED, 15 asset PASS, 15 liability PASS) for current status reporting. No matrix values or gates were changed in this read-back.
+- Next priority remains evidence-backed vintage closure for already captured countries, alongside separately unblocking official-source capture; do not repeat accepted asset/liability comparisons.
