@@ -2330,3 +2330,12 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Therefore 34 remain below DATA_CAPTURED (14 SOURCE_FOUND + 20 BLOCKED); all 63 remain short of FULL_PASS and aggregate remains NOT_AUTHORIZED.
 - These counts supersede the earlier C201 snapshot (23 DATA_CAPTURED, 15 asset PASS, 15 liability PASS) for current status reporting. No matrix values or gates were changed in this read-back.
 - Next priority remains evidence-backed vintage closure for already captured countries, alongside separately unblocking official-source capture; do not repeat accepted asset/liability comparisons.
+
+
+## Continuation 292 — Nigeria IMF/CBN vintage semantics audit (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| Nigeria Q2-2026 vintage | Existing IMF raw A/L CSVs re-inspected; ACTION=R is SDMX message Replace instruction, not a statistical vintage flag; captured STATUS blank; no observation-level release/revision ID. CBN Q2 release explicitly provisional; C291 CBN cross-publication corroboration retained. | Semantics audit PASS; same-vintage NOT_ESTABLISHED; Nigeria remains VINTAGE_PENDING / FULL_PASS=NO. |
+| Duplicate prevention | No IMF re-query, CBN re-download, cohort rebuild or repeated A/L arithmetic. | Closed; do not repeat. |
+| Next evidence | Public official observation-level CBN release/revision ID and corresponding IMF first-release/last-update/receipt-vintage metadata. | If unavailable, retain PENDING; no inference from ACTION=R or retrieval timestamp. |
+- Detail: docs/GCR_CONTINUATION292_NIGERIA_IMF_CBN_VINTAGE_ATTRIBUTE_SEMANTICS_AUDIT_20261128.md; commit 15b8cfb90d615793458b04a044ec818fff82c11e. ₹0; no production change; UNKNOWN never PASS.
