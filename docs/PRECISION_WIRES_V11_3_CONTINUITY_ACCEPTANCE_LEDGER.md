@@ -887,3 +887,15 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Next: stable desktop/authorized session export of official DBIE `Forex Rates (Current Report)`; separately acquire RBI Reference Rate Archive Excel (USD) where accessible. Preserve six columns, original bytes and hash. No hidden endpoint/proxy/paid service/fabricated data.
 - USD/INR interbank remains BLOCKED; FPI/DII blockers separate; Macro-Geo P0 6/8; strict GCR BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. ₹0; all invariants unchanged; UNKNOWN never PASS.
 - Report: docs/GCR_CONTINUATION287_ALTERNATIVE_USDINR_SOURCE_SURVEY_20261128.md
+
+
+## GCR Continuation 288 — Library FX Clear Spot Individual CSV intake audit (28-Nov-2026)
+- Preflight re-read Ledger, Priority Queue, Historical Task Registry and C287. Inspected five new Library CSVs and the new RBI-named XLSX; no Library mutation or duplicate upload.
+- Five CSVs: 660,562 total rows, 331 unique Trade Dates (2025-01-01–2026-11-27), four columns Trade Date/Quantity/Trade Price/Trade Timestamp. SHA-256 captured in C288 report.
+- Combined exact duplicate tuples 213,519; cross-file 2025-10-01 overlap has 1,048 common tuples. Intra-file duplicate ratios range 2.93%–94.01%. 1,123 non-positive Trade Price rows (801 in file (2), 322 in file (3)); null fields 0 and timestamps parse as HH:MM:SS.
+- 2026 later coverage sparse: month distinct dates Jan20, Feb19, Mar18, Apr19, May5, Jun3, Jul7, Aug1, Sep1, Oct0, Nov1. File date order not monotonic in file (1) and base file.
+- CSVs have no source URL/publisher, currency pair, instrument ID, units or price definition. Filename alone is insufficient to assert USD/INR or official provenance. No OHLC aggregation/ingestion; no third-party values accepted.
+- New `Daily Interbank Forex Rates (USD vis-a-vis INR)(2).xlsx` (5,302 bytes) has no observation rows; empty/incomplete report template only.
+- Basic structural/null/timestamp checks PASS; source provenance, instrument semantics, duplicate resolution, non-positive prices, completeness and usage rights UNKNOWN/BLOCKED. Preserve raw files unchanged; request original source page/export metadata before ingestion.
+- USD/INR interbank remains BLOCKED; Macro-Geo P0 6/8; strict GCR BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. ₹0; invariants unchanged; UNKNOWN never PASS.
+- Detail: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md
