@@ -41,7 +41,7 @@ def _pick(row, *names):
 
 def _parse_date(value):
     s = str(value or "").strip()
-    for fmt in ("%Y-%m-%d", "%Y%m%d", "%d-%m-%Y", "%d/%m/%Y", "%d-%b-%Y"):
+    for fmt in ("%Y-%m-%d", "%Y%m%d", "%d%m%Y", "%d-%m-%Y", "%d/%m/%Y", "%d-%b-%Y"):
         try:
             from datetime import datetime
             return datetime.strptime(s, fmt).date()
@@ -175,26 +175,41 @@ def validate_legacy(content: bytes) -> bool:
         return False
 
 def validate_full_delivery(content: bytes, expected_stamp: str) -> bool:
-    """Validate NSE Full Bhavcopy and Security Deliverable CSV."""
+    """Validate structure, delivery fields, and every EQ row's embedded trade date."""
     if looks_blocked(content) or len(content) < 1000:
         return False
     try:
         import pandas as pd
-        df = pd.read_csv(io.BytesIO(content), nrows=100, dtype=str)
+        # Read the complete CSV: sampling the first 100 rows can miss mixed dates.
+        df = pd.read_csv(io.BytesIO(content), dtype=str)
         cols = {_clean_key(x): x for x in df.columns}
         def col(*names):
             return next((cols[_clean_key(n)] for n in names if _clean_key(n) in cols), None)
-        symbol, series = col("SYMBOL"), col("SERIES")
+
+        symbol, series = col("SYMBOL", "TCKRSYMB"), col("SERIES", "SCTYSRS")
         close = col("CLOSE_PRICE", "CLOSEPRICE", "CLSPRIC")
         dq = col("DELIV_QTY", "DELIVERY_QTY", "DELIVQTY")
         dp = col("DELIV_PER", "DELIVERY_PER", "DELIVPER")
-        if not all((symbol, series, close, dq, dp)):
+        trade_date = col("DATE1", "DATE", "TRADDT", "TRADING_DATE", "TRADINGDATE", "TRADE_DATE", "TRADEDATE")
+        expected_date = _parse_date(expected_stamp)
+        if not all((symbol, series, close, dq, dp, trade_date)) or expected_date is None:
             return False
+
         eq = df[df[series].astype(str).str.strip().str.upper().eq("EQ")]
+        if eq.empty:
+            return False
+
+        # Fail closed: no blank, malformed, mixed, or unexpected EQ trade dates.
+        parsed_dates = [_parse_date(value) for value in eq[trade_date].tolist()]
+        if not parsed_dates or any(value is None for value in parsed_dates):
+            return False
+        if any(value != expected_date for value in parsed_dates):
+            return False
+
         q = pd.to_numeric(eq[dq], errors="coerce")
         p = pd.to_numeric(eq[dp], errors="coerce")
         cl = pd.to_numeric(eq[close], errors="coerce")
-        return (not eq.empty and cl.notna().any() and q.notna().any()
+        return (cl.notna().any() and q.notna().any()
                 and p.notna().any() and not ((p.dropna() < 0) | (p.dropna() > 100)).any())
     except Exception as e:
         print(f"FULL_DELIVERY_VALIDATE_ERROR {type(e).__name__}: {e}", flush=True)

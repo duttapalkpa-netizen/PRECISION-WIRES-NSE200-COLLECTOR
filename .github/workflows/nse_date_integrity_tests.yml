@@ -1,0 +1,36 @@
+name: NSE Date Integrity Tests
+
+on:
+  push:
+    paths:
+      - "collector/nse_download.py"
+      - "tests/test_nse_date_integrity.py"
+      - ".github/workflows/nse_date_integrity_tests.yml"
+  pull_request:
+    paths:
+      - "collector/nse_download.py"
+      - "tests/test_nse_date_integrity.py"
+      - ".github/workflows/nse_date_integrity_tests.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nse-date-integrity-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  date-integrity-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal runtime dependencies
+        run: python -m pip install "pandas>=2.2,<3" "requests>=2.31,<3"
+      - name: Run focused date-integrity regression tests
+        run: PYTHONPATH=. python -m unittest discover -s tests -p "test_nse_date_integrity.py" -v
