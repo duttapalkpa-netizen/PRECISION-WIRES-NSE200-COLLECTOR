@@ -1062,3 +1062,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - INSBU Q2-2026 provisional bulletin is listed for Aug-2026, but the page characterizes the series as foreign-trade bulletins; it is not evidence of portfolio BOP asset/liability legs.
 - No new Q2 A/L values or raw bytes/schema/vintage captured. Keep BDI SOURCE_FOUND / NOT_CAPTURED / PARTIAL; do not promote. This is a bounded index audit, not proof that no other BRB distribution route exists.
 - Detail: docs/GCR_BURUNDI_BDI_Q2_2026_BRB_PUBLICATION_CATALOGUE_AND_INSBU_QUARTERLY_SCOPE_AUDIT_CONTINUATION302_20261128.md; commit 647fe7f41653e404d7e2dad6528d528d54d93bb0. Reopen only on new official BRB Q2 BOP report, distinct machine-readable export, or dated portfolio revision record.
+
+
+## C303 — CCIL FX-Clear USD/INR SPOT CSV 182-day window / duplicate / field-semantics audit (28-Nov-2026)
+- Re-read current continuity records and Library Mother File; C288 five raw CSVs materialized read-only and all SHA-256 values reproduced.
+- CCIL official page: SPOT/C-SPOT/R-SPOT are distinct, spot rates in Rupees, Individual Trade Details CSV max date range 182 days/six months. All five file spans are under cap but coverage completeness is not established.
+- July-2024 Forex Settlement Regulations define Spot as second-business-day settlement value date. Oct-2022 notification describes R-Spot matched spread/quantity/timestamp and reference-rate adjustment; do not apply this R-Spot price formula to ordinary SPOT without documentation.
+- Combined exact duplicate extras 213,519; 58,415 duplicate groups; maximum tuple multiplicity 240; 1,123 non-positive prices (404 negative, 719 zero). No stable trade ID, Quantity unit, status/cancellation or duplicate-export policy captured. Keep raw rows unchanged; no OHLC or GCR ingestion.
+- Detail: docs/GCR_CONTINUATION303_CCIL_FX_CLEAR_SPOT_182_DAY_WINDOW_DUPLICATE_AND_FIELD_SEMANTICS_AUDIT_20261128.md; commit b0acba4a42d41c7dc4faa39fe0a2bac9083f3128. Reopen only with official field dictionary/export metadata and approved transaction identity/dedup definition; no paid access or external contact.
