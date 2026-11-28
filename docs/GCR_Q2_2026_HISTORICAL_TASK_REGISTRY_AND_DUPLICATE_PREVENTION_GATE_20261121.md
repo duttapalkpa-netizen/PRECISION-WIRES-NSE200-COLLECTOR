@@ -992,3 +992,11 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Latest row 31-Jul-2026 (120 calendar days old on 28-Nov-2026); Aug–Nov 2026 absent. Thus historical capture materially advanced but not current or clean for ingestion.
 - Raw integrity PASS; history PARTIAL; High/Low semantics/outlier/missingness/current tail remain BLOCKED. Keep separate from CCIL spot transaction dataset and FBIL reference fixing.
 - Report: docs/GCR_CONTINUATION289_RBI_DBIE_DAILY_INTERBANK_FOREX_TXT_EXPORT_QA_20261128.md
+
+
+## C293 — Kazakhstan NBK release-catalogue correction / next vintage trigger (28-Nov-2026)
+- Existing KAZ C144/C145 dual-leg numeric work is CLOSED/PASS; do not repeat the Q2 extraction, IMF request or rounding arithmetic.
+- Correct catalogue classification: 30-Sep-2026 = “Balance of Payments … first half of 2026”; 30-Oct-2026 = distinct “Preliminary Estimate … for the 9 months of 2026” (26.38 KB). The 9M file bytes/content/hash were not captured; no Q2 portfolio-leg claims may be made from the catalogue title.
+- Official NBK BOP metadata states preliminary initial quarterly data, final at T+90, prior-quarter updates on final releases, and October/April revisions covering two prior years. KAZ Q2 is revision-eligible, but no observation-specific Q2 A/L revision key or IMF synchronized-vintage receipt is captured.
+- Current KAZ: DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO. No matrix gate changed.
+- Next permitted trigger: NBK BOP catalogue next publication 31-Dec-2026; inspect only the new Q3/final release for Q2 A/L revision and vintage evidence. Detail: docs/GCR_CONTINUATION293_KAZAKHSTAN_NBK_RELEASE_CATALOGUE_AND_VINTAGE_BOUNDARY_CORRECTION_20261128.md.
