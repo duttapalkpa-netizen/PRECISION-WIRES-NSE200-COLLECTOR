@@ -955,3 +955,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Decision: metadata semantics audit PASS; false-positive interpretation rejected; Nigeria remains DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO; aggregate NOT_AUTHORIZED. No matrix gate changed.
 - Detail: docs/GCR_CONTINUATION292_NIGERIA_IMF_CBN_VINTAGE_ATTRIBUTE_SEMANTICS_AUDIT_20261128.md; report commit 15b8cfb90d615793458b04a044ec818fff82c11e.
 - Next: seek only public official observation-level CBN release/revision ID and matching IMF first-release/last-update/receipt-vintage metadata. If unavailable, retain PENDING. ₹0; no production or selector changes; UNKNOWN never PASS.
+
+
+## GCR Continuation 293 — Kazakhstan NBK release-catalogue / vintage-boundary correction (28-Nov-2026)
+- Preflight: re-read current Ledger, GCR Priority Queue, Historical Task Registry, immutable 63-country matrix and relevant Library Mother File; reopened KAZ C144/C145. Reused existing dual-leg numeric evidence; no IMF re-query, repeated extraction, cohort rebuild or repeated arithmetic.
+- Official NBK BOP catalogue currently lists “Balance of Payments … first half of 2026” published 30-Sep-2026 and a distinct “Preliminary Estimate … for the 9 months of 2026” published 30-Oct-2026 (26.38 KB). Corrects C145 wording that described the 30-Oct item as an additional half-year report. Its file payload was not exposed/retrieved; no rows/hash claimed.
+- Official NBK BOP metadata confirms initial quarterly data are preliminary, final data at T+90 days, prior quarters can be updated when final data are released, and revisions occur in October/April covering two years before the reporting year. Q2-2026 is within the stated revision coverage, but no Q2 portfolio A/L revision ID or IMF synchronized vintage receipt was found.
+- Existing C144/C145 dual-leg numeric PASSes remain unchanged; KAZ stays DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO; no matrix gate changed; aggregate NOT_AUTHORIZED.
+- Detail: docs/GCR_CONTINUATION293_KAZAKHSTAN_NBK_RELEASE_CATALOGUE_AND_VINTAGE_BOUNDARY_CORRECTION_20261128.md; report commit d0ad87ded45a7adf4519ecbf6df17ffea3632a56.
+- Next trigger: NBK BOP page lists next publication 31-Dec-2026. Inspect only the new Q3/final release for separate Q2 A/L revisions and observation-specific vintage metadata. ₹0; no production/selector changes; UNKNOWN never PASS.
