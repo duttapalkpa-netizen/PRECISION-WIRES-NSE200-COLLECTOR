@@ -2425,3 +2425,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | IMF vintage bridge | IMF panel receipt 19-Nov is after BOT page update; no observation-level IMF revision ID or matched BOT release key | TRANSPORT CHRONOLOGY ONLY; same-vintage NOT_ESTABLISHED |
 | THA full validation | Asset/liability PASS; vintage pending | PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED |
 - Detail: docs/GCR_THAILAND_THA_Q2_2026_BOT_SEPTEMBER_ANNUAL_REVISION_AND_IMF_VINTAGE_BOUNDARY_AUDIT_CONTINUATION300_20261128.md; commit 7aa7c75a93545a3221ef42fd9d42ab118f367cff. Next: require portfolio-specific BOT revision metadata or matched IMF observation-vintage key; otherwise advance. No IMF query, BOT raw recapture or arithmetic repeat.
+
+## Continuation 301 — Türkiye TUR Q2-2026 CBRT September release / revision boundary (28-Nov-2026)
+| Evidence / test | Result | Status / next action |
+|---|---|---|
+| CBRT September-2026 BOP PDF Table 2 | Separate portfolio A/L for Sep month, Jan–Sep cumulative and 12-month: +1,972/-5,761; +19,397/+15,353; +24,082/+19,491 USDm | Official release PASS; not Q2-only |
+| September data ZIP and revision-policy PDF | Official first-party links resolved; both timed out in current reader | Locator PASS; bytes/schema/Q2 rows/hash NOT_CAPTURED |
+| Portfolio methodology index | 13-Aug financial-account revision; 13-May investment-fund shares on portfolio liabilities | Methodology leads only; no Q2 observation-specific revision ID |
+| Existing Q2 comparison | Asset PASS and liability USD87m residual REVIEW reused; no arithmetic repeated | Preserve prior gates; vintage PENDING |
+| TUR full validation | No Q2-only revised pair or matched IMF vintage | PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED |
+- Detail: docs/GCR_TURKIYE_TUR_Q2_2026_CBRT_SEPTEMBER_RELEASE_Q2_REVISION_AND_PORTFOLIO_LEG_BOUNDARY_AUDIT_CONTINUATION301_20261128.md; commit 755643fe7b306d6547fb68624966ac703bd2bed8. Next: distinct supported official data ZIP/EVDS export with Q2 A/L and revision metadata; no same-route retry, no cumulative back-solving, no IMF query.
