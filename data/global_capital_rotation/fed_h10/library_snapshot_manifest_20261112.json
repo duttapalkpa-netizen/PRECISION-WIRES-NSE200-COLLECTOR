@@ -1,0 +1,212 @@
+{
+  "schema_version": "1.0",
+  "dataset": "Federal Reserve H.10",
+  "scope": "research-only; source snapshots supplied by user in ChatGPT Library; no production integration",
+  "audit_date": "2026-11-12",
+  "source_url": "https://www.federalreserve.gov/releases/h10/",
+  "retrieval_timestamp_utc": null,
+  "retrieval_method": "user-provided Library CSV snapshots; exact download timestamp and per-file download URL not supplied",
+  "source_vintage": "observations through 2026-11-06 for daily files; monthly through 2026-10",
+  "raw_archive_library_file_id": "file_00000000d80082118df044084445d454",
+  "raw_archive_name": "fed_h10_library_raw_20261112.zip",
+  "raw_archive_bytes": 15322,
+  "raw_archive_sha256": "59a79209a6602a6cf6bc2022f8361ee7d86a0817e2d01540fc4e8dafbad7421c",
+  "raw_csv_files": [
+    {
+      "name": "FRB_H10(1).csv",
+      "bytes": 813,
+      "sha256": "c47d0f4b10e2cc5f541f91113d9c4d34bd9dfc72845b2313a99e68437ea7dad1",
+      "series": [
+        "H10/H10/JRXWTFB_N.B",
+        "H10/H10/JRXWTFN_N.B",
+        "H10/H10/JRXWTFO_N.B"
+      ],
+      "frequency": "daily",
+      "observation_count": 10,
+      "start": "2026-10-26",
+      "end": "2026-11-06",
+      "value_type": "PRICE_INDEX"
+    },
+    {
+      "name": "FRB_H10 (1)(1).csv",
+      "bytes": 3672,
+      "sha256": "cafe63d09de50d3e051f0733f5c6ded7382ebf2194447d128b9f5d28fd5012d9",
+      "series": [
+        "H10/H10/RXI$US_N.B.AL",
+        "H10/H10/RXI$US_N.B.EU",
+        "H10/H10/RXI$US_N.B.NZ",
+        "H10/H10/RXI$US_N.B.UK",
+        "H10/H10/RXI_N.B.BZ",
+        "H10/H10/RXI_N.B.CA",
+        "H10/H10/RXI_N.B.CH",
+        "H10/H10/RXI_N.B.DN",
+        "H10/H10/RXI_N.B.HK",
+        "H10/H10/RXI_N.B.IN",
+        "H10/H10/RXI_N.B.JA",
+        "H10/H10/RXI_N.B.MA",
+        "H10/H10/RXI_N.B.MX",
+        "H10/H10/RXI_N.B.NO",
+        "H10/H10/RXI_N.B.SF",
+        "H10/H10/RXI_N.B.SI",
+        "H10/H10/RXI_N.B.KO",
+        "H10/H10/RXI_N.B.SL",
+        "H10/H10/RXI_N.B.SD",
+        "H10/H10/RXI_N.B.SZ",
+        "H10/H10/RXI_N.B.TA",
+        "H10/H10/RXI_N.B.TH",
+        "H10/H10/RXI_N.B.VES"
+      ],
+      "frequency": "daily",
+      "observation_count": 10,
+      "start": "2026-10-26",
+      "end": "2026-11-06",
+      "value_type": "FX_RATE"
+    },
+    {
+      "name": "FRB_H10 (2)(1).csv",
+      "bytes": 4743,
+      "sha256": "a5d3ee6f459532e76d3df2ca1928d50859919d0fa9ed93ca7e1bbd018b3df23c",
+      "series": [
+        "H10/H10/JRXWTFB_N.M",
+        "H10/H10/JRXWTFN_N.M",
+        "H10/H10/JRXWTFO_N.M"
+      ],
+      "frequency": "monthly",
+      "observation_count": 120,
+      "start": "2016-11",
+      "end": "2026-10",
+      "value_type": "PRICE_INDEX"
+    },
+    {
+      "name": "FRB_H10 (3)(1).csv",
+      "bytes": 24877,
+      "sha256": "06159035f0388750f780444fec30489811717466e5748e1284a981b72210c09a",
+      "series": [
+        "H10/H10/RXI_N.M.IN"
+      ],
+      "frequency": "monthly",
+      "observation_count": 120,
+      "start": "2016-11",
+      "end": "2026-10",
+      "value_type": "FX_RATE",
+      "note": "File contains 23 currency columns; all preserved. Indian Rupee series is explicitly identified as RXI_N.M.IN."
+    }
+  ],
+  "qa": {
+    "csv_width_consistent": true,
+    "duplicate_periods": 0,
+    "missing_numeric_cells": 0,
+    "nonnumeric_observation_cells": 0,
+    "monthly_periods_contiguous": true,
+    "raw_files_sha256_verified": true,
+    "archive_sha256_verified": true
+  },
+  "limitations": [
+    "Library snapshots are not independently proven to have been downloaded directly from the cited Federal Reserve URL.",
+    "Exact source retrieval timestamp and individual file download URLs are UNKNOWN.",
+    "The 10 daily observations are not a full daily historical series.",
+    "Monthly FX and index observations are not flows; do not infer capital movement from them.",
+    "The raw ZIP is retained in the user's Library; this manifest-only repository change does not yet commit the binary ZIP into Git."
+  ],
+  "acceptance": {
+    "library_snapshot_integrity": "PASS",
+    "csv_structural_qa": "PASS",
+    "repository_raw_binary_ingestion": "PENDING",
+    "source_provenance_validation": "PENDING",
+    "observation_panel_build": "PENDING",
+    "production_integration": "PROHIBITED",
+    "full_history_daily_raw_download": "PASS_26_OF_26",
+    "full_history_raw_sha256_and_schema_qa": "PASS_26_OF_26",
+    "daily_panel_build_and_artifact_digest": "PASS",
+    "nse_session_and_point_in_time_vintage_reconciliation": "PENDING",
+    "exact_nse_200_session_calendar_join": "PASS_200_SESSIONS_95_PERCENT_OBSERVED_PER_SERIES",
+    "point_in_time_vintage_availability": "UNKNOWN",
+    "overlay_integration_and_matched_diagnostic_validation": "PENDING"
+  },
+  "historical_daily_panel": {
+    "workflow_name": "Fed H10 full-history daily dollar and INR panel",
+    "workflow_run_id": 43276577238,
+    "workflow_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43276577238",
+    "workflow_commit": "35c73345fc55c5c6f7e4de24da291061e9d0c19f",
+    "artifact_id": 13970661965,
+    "artifact_name": "fed-h10-full-history-daily-panel-20261112",
+    "artifact_bytes": 3462888,
+    "artifact_sha256": "a6f6af42226ed689ceba8e9c2d843867d82e9aa8f9a7761022c86bd719ef3691",
+    "retrieved_at_utc": "2026-11-12T18:09:04.918538+00:00",
+    "distribution": "FRED public CSV endpoint; source owner Board of Governors of the Federal Reserve System; release H.10 Foreign Exchange Rates",
+    "series_count": 26,
+    "dollar_index_series_count": 3,
+    "bilateral_fx_series_count": 23,
+    "total_observation_rows": 304510,
+    "numeric_observations": 291831,
+    "missing_value_markers": 12679,
+    "date_union": {
+      "unique_dates": 14570,
+      "first": "1971-01-04",
+      "last": "2026-11-06"
+    },
+    "raw_series_files_sha256_verified": 26,
+    "raw_series_manifest_sha256": "f009090fde78a034916a54e3db78a8ccd1276749b1b5f5d96b27e9b610617d3b",
+    "long_panel": {
+      "path": "daily_historical_panel_long.csv",
+      "bytes": 8078212,
+      "sha256": "3f144536ccf1b7e4e5b9f96e0db57eed26cbded7c6ab9a6eff1fd1626afbbb2c"
+    },
+    "wide_panel": {
+      "path": "daily_historical_panel_wide.csv",
+      "bytes": 2199281,
+      "sha256": "04d4b7e7ec1997bdc2e069dbc501c1304ed03a601cce0720c41694f9c6e3c406"
+    },
+    "independent_verification": {
+      "artifact_zip_sha256_matches_github_digest": true,
+      "all_26_raw_file_hashes_recomputed": true,
+      "wide_and_long_output_hashes_recomputed": true
+    },
+    "acceptance_boundary": "Full-history raw downloads and per-series schema/date/hash QA passed for the 3 H.10 dollar indexes and all 23 H.10 bilateral FX series. Does not establish point-in-time vintage availability, exact NSE 200-session intersection, RBI reference-rate equivalence, global capital flows, event-study maturity, or production readiness."
+  },
+  "nse_session_alignment": {
+    "workflow_run_id": 43277569394,
+    "workflow_url": "https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLECTOR/actions/runs/43277569394",
+    "workflow_commit": "bdf7ff311301e83ff338a07a1cf2cff02d28eb09",
+    "artifact_id": 13971506735,
+    "artifact_name": "fed-h10-nse-200-session-alignment-20261112",
+    "artifact_bytes": 47824,
+    "artifact_sha256": "8192dd5908f5fd4abe3c9bbd72507b0abe6e8216dc064efed0815b181fc1138e",
+    "independent_artifact_digest_check": true,
+    "nse_snapshot_id": "ee037b46aa2e8e7bce7df51919aada51418fd03787a1ed740a103f4b47804305",
+    "nse_manifest_sha256": "ab37d0e14458aceaa13b7684e5739d9486c27e4b3f04d2667e1911abd568a17a",
+    "nse_sessions": 200,
+    "nse_raw_files_sha256_verified": 200,
+    "h10_series_count": 26,
+    "h10_raw_files_sha256_verified": 26,
+    "observed_values_per_series": 190,
+    "coverage_pct_per_series": 95,
+    "source_missing_marker_dates": [
+      "2026-02-16",
+      "2026-05-25",
+      "2026-06-19",
+      "2026-07-03",
+      "2026-09-07",
+      "2026-10-12"
+    ],
+    "no_source_row_dates": [
+      "2026-02-01",
+      "2026-11-09",
+      "2026-11-11",
+      "2026-11-12"
+    ],
+    "missing_values_filled": 0,
+    "forward_fill": false,
+    "wide_panel": {
+      "path": "h10_nse_200_session_wide.csv",
+      "bytes": 40508,
+      "sha256": "cc0781d542a4df89b9535e655b6c2d6c370336465249ad2659db1cf2d11b48f4"
+    },
+    "long_panel": {
+      "path": "h10_nse_200_session_long.csv",
+      "bytes": 192676,
+      "sha256": "c4a82d05f1525289d2be43eff4f97a2785f9e648bd0fa631b1b7983ce51d5cf0"
+    },
+    "point_in_time_vintage_status": "UNKNOWN_NOT_VERIFIED"
+  }
+}
