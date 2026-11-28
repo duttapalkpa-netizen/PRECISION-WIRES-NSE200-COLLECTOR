@@ -919,3 +919,12 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Next: official cross-check of High/Low labels and 21-Mar-2016 outlier against RBI publication tables/metadata; capture 01-Aug-2026 onward without forward-fill; maintain raw bytes immutable.
 - Strict GCR gate remains BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED; FPI/DII separate blockers; Macro-Geo P0 last artifact-backed 6/8. ₹0; invariants unchanged; UNKNOWN never PASS.
 - Detail: docs/GCR_CONTINUATION289_RBI_DBIE_DAILY_INTERBANK_FOREX_TXT_EXPORT_QA_20261128.md
+
+
+## GCR Continuation 290 — RBI historical reference-rate cross-check (28-Nov-2026)
+- Reused C289 immutable RBI TXT; no re-download or re-parse.
+- Official RBI Table 226 (16-Sep-2016; note says data based on RBI Reference Rate) was inspected. TXT RBI Reference Rate exactly matches official RBI values on 18-Mar-2016 (66.6088), 21-Mar-2016 (66.5040), and 22-Mar-2016 (66.5411): 3/3 PASS.
+- This validates only the reference-rate field for these three dates. Table 226 is not interbank OHLC and cannot confirm High/Low labels or repair the 21-Mar-2016 Open=3,355.7300 outlier. No silent correction or column swap.
+- High/Low semantics, 21-Mar Open, current segment from 01-Aug-2026 onward, and clean OHLC ingestion remain BLOCKED / NOT_CAPTURED. Strict GCR gate remains BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED.
+- Detail: docs/GCR_CONTINUATION290_RBI_REFERENCE_RATE_CROSSCHECK_20261128.md. Official source: https://www.rbi.org.in/scripts/PublicationsView.aspx?id=17359
+- ₹0; CORE-672, Engines A–E, Production Selector, RANKING_SCORE, +1 PRESSURE_FADE and IPO-PLX V2.0 unchanged; UNKNOWN never PASS.
