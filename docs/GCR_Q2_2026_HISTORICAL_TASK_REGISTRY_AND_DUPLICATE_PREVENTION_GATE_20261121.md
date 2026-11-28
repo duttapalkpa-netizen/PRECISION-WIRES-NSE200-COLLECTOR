@@ -1000,3 +1000,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Official NBK BOP metadata states preliminary initial quarterly data, final at T+90, prior-quarter updates on final releases, and October/April revisions covering two prior years. KAZ Q2 is revision-eligible, but no observation-specific Q2 A/L revision key or IMF synchronized-vintage receipt is captured.
 - Current KAZ: DATA_CAPTURED / ASSET_PASS / LIABILITY_PASS / VINTAGE_PENDING / FULL_PASS=NO. No matrix gate changed.
 - Next permitted trigger: NBK BOP catalogue next publication 31-Dec-2026; inspect only the new Q3/final release for Q2 A/L revision and vintage evidence. Detail: docs/GCR_CONTINUATION293_KAZAKHSTAN_NBK_RELEASE_CATALOGUE_AND_VINTAGE_BOUNDARY_CORRECTION_20261128.md.
+
+
+## C294 — Georgia GEO Q3-2026 pre-publication trigger gate (28-Nov-2026)
+- Re-read current Ledger, Priority Queue, matrix, C293 and Library Mother File; no repeat of accepted Q2/calendar work beyond verifying the official current release calendar.
+- NBG Advance Release Calendar lists November Balance of Payments as “30 Q3/2026”; scheduled trigger confirmed for 30-Nov-2026. On 28-Nov, no Q3 payload is claimed.
+- GEO remains SOURCE_FOUND / no national Q2 A/L capture / BPM5-BPM6 conflict unresolved / vintage UNKNOWN / FULL_PASS=NO; no matrix promotion. After release, inspect only separate Q2 portfolio A/L revisions, methodology bridge and observation-specific vintage metadata; retain pending if absent.
+- Detail: docs/GCR_CONTINUATION294_GEORGIA_NBG_Q3_2026_RELEASE_TRIGGER_PREPUBLICATION_GATE_20261128.md; report commit 986bb67e86622e0bb99e91975aae5dcfdc301716. No IMF re-query, cohort rebuild or production change.
