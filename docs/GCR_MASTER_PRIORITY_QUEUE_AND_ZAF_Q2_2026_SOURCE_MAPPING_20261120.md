@@ -2435,3 +2435,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Existing Q2 comparison | Asset PASS and liability USD87m residual REVIEW reused; no arithmetic repeated | Preserve prior gates; vintage PENDING |
 | TUR full validation | No Q2-only revised pair or matched IMF vintage | PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED |
 - Detail: docs/GCR_TURKIYE_TUR_Q2_2026_CBRT_SEPTEMBER_RELEASE_Q2_REVISION_AND_PORTFOLIO_LEG_BOUNDARY_AUDIT_CONTINUATION301_20261128.md; commit 755643fe7b306d6547fb68624966ac703bd2bed8. Next: distinct supported official data ZIP/EVDS export with Q2 A/L and revision metadata; no same-route retry, no cumulative back-solving, no IMF query.
+
+## Continuation 302 — Burundi BDI Q2-2026 publication-catalogue boundary (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| BRB BOP publication index | “Autres Documents” exposes Q4-2025 report (26-Feb-2026) and Q3-2025; no Q2-2026 BOP report visible in captured listing | BOUNDED CATALOGUE AUDIT PASS; not proof of non-existence |
+| BRB monthly bulletins | Visible 2026 index lists Jan–Mar only | No Apr–Jun bulletin exposed in this index snapshot |
+| INSBU Q2-2026 bulletin | Provisional Q2 macro/conjoncture bulletin listed Aug-2026; page describes quarterly foreign-trade bulletins | NOT a portfolio BOP source; do not substitute |
+| BDI Q2 portfolio A/L | No new separate legs, raw bytes, schema, unit/sign map or vintage captured | SOURCE_FOUND / NOT_CAPTURED; no promotion |
+| Next action | Reopen only on a new official BRB Q2 BOP report or distinct machine-readable Q2 A/L export/revision record | Otherwise advance to next eligible fixed-cohort country |
+- Detail: docs/GCR_BURUNDI_BDI_Q2_2026_BRB_PUBLICATION_CATALOGUE_AND_INSBU_QUARTERLY_SCOPE_AUDIT_CONTINUATION302_20261128.md; commit 647fe7f41653e404d7e2dad6528d528d54d93bb0. No IMF re-query, cohort rebuild, arithmetic, net-to-leg back-solving or production admission. Aggregate NOT_AUTHORIZED.
