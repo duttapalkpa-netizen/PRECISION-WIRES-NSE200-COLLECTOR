@@ -983,3 +983,12 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - User screenshot and official CCIL FX-Clear page confirm source/product/pair/segment: CCIL > FX-Clear > USD/INR > SPOT > Individual Trade Details. Page states FX Clear hosted at Clearcorp, spot rates in Rupees, and max date range 182 days / 6 months.
 - Previous UNKNOWN publisher/pair conclusion superseded by SOURCE_CONFIRMED provenance. Data acceptance still BLOCKED for OHLC due unresolved duplicates, non-positive prices, sparse later 2026 coverage, and field semantics/usage terms.
 - Separate from RBI DBIE daily interbank OHLC and FBIL reference rates. No ingestion/deduplication until source definitions reconciled.
+
+
+## C289 — RBI DBIE interbank forex TXT export QA
+- Library TXT file is substantive RBI-labeled USD forex report, 348,819 bytes, SHA-256 `ac8cbec57bc8c87b2c4cacd5a02f68620e44672f488bd711fd0f81565ca6bf1c`.
+- 6,330 unique date rows from 08-Aug-2000 to 31-Jul-2026; six fields Date/Open/High/Low/Close/RBI Reference; no duplicate dates/records or malformed rows; reverse chronological.
+- 206 rows contain dashes/missing rates. Critical issue: reported High < Low in 6,017/6,124 complete OHLC rows; likely column inversion but unconfirmed. 140 rows have Open/Close outside reported range. 21-Mar-2016 Open is 3,355.7300. Do not silently repair.
+- Latest row 31-Jul-2026 (120 calendar days old on 28-Nov-2026); Aug–Nov 2026 absent. Thus historical capture materially advanced but not current or clean for ingestion.
+- Raw integrity PASS; history PARTIAL; High/Low semantics/outlier/missingness/current tail remain BLOCKED. Keep separate from CCIL spot transaction dataset and FBIL reference fixing.
+- Report: docs/GCR_CONTINUATION289_RBI_DBIE_DAILY_INTERBANK_FOREX_TXT_EXPORT_QA_20261128.md
