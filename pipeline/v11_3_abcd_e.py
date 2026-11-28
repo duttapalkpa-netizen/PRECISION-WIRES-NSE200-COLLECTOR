@@ -6,6 +6,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 import numpy as np, pandas as pd
 import json
+from pipeline.calibration_gate import validate_calibration_artifact
 from pipeline.walk_forward_backtest import add_features
 
 SRC=Path("data/processed/nse_eq_200_sessions.csv")
@@ -37,6 +38,10 @@ def main():
     global calib
     calib={}
     lib=Path("outputs/backtest/behavioral_dna_library.json")
+    calibration_validation=validate_calibration_artifact(lib)
+    validation_path=Path("outputs/backtest/calibration_validation.json")
+    validation_path.parent.mkdir(parents=True,exist_ok=True)
+    validation_path.write_text(json.dumps(calibration_validation,indent=2),encoding="utf-8")
     if lib.exists():
         try: calib=json.loads(lib.read_text())
         except Exception: calib={}

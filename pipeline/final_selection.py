@@ -4,9 +4,13 @@ from pathlib import Path
 import json
 import pandas as pd
 
+from pipeline.calibration_gate import validate_calibration_artifact
+
 ROOT=Path(".")
 SRC=Path("outputs/finalists/v11_3_risk_adjusted.csv")
 OUT=Path("outputs/finalists")
+CALIBRATION_ARTIFACT=Path("outputs/backtest/behavioral_dna_library.json")
+CALIBRATION_DATASET=Path("data/processed/nse_eq_200_sessions.csv")
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
@@ -31,6 +35,16 @@ def main():
     qa_path=Path("data/qa/qa_report.json")
     qa=json.loads(qa_path.read_text()) if qa_path.exists() else {}
     blockers=[]
+    # Revalidate the original artifact against the exact dataset bytes here.
+    # A detached/stale calibration_validation.json is never sufficient evidence.
+    calibration_status=validate_calibration_artifact(
+        CALIBRATION_ARTIFACT, dataset_path=CALIBRATION_DATASET
+    )
+    validation_path=Path("outputs/backtest/calibration_validation.json")
+    validation_path.parent.mkdir(parents=True,exist_ok=True)
+    validation_path.write_text(json.dumps(calibration_status,indent=2),encoding="utf-8")
+    if calibration_status.get("status") != "VALID" or calibration_status.get("block_selection") is not False:
+        blockers.append("CALIBRATION_EVIDENCE_INVALID_OR_UNKNOWN")
     if not qa.get("delivery_ready_for_final_selection",False):
         blockers.append("DELIVERY_COVERAGE_BELOW_95_PERCENT_OR_MISSING")
     for col in ["RISK_MACRO","RISK_FII_DII","RISK_GEO"]:
