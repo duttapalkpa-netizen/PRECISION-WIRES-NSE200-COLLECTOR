@@ -1,0 +1,38 @@
+name: IIP April 2026 first-release and current-series ledger QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "audit_inputs/iip_apr2026_nic2025_pdf_first_release_crosscheck.csv"
+      - "qa/validate_iip_apr2026_pdf_crosscheck.py"
+      - "qa/test_validate_iip_apr2026_pdf_crosscheck.py"
+      - "audit_inputs/iip_apr2026_current_output_ppi_nic2025_monthly_values.csv"
+      - "audit_inputs/iip_apr2026_current_series_september_release_crosscheck_20261108.md"
+      - "audit_inputs/iip_apr2026_output_ppi_supersession_and_current_series_access_audit.md"
+      - "qa/validate_iip_apr2026_current_series.py"
+      - "qa/test_validate_iip_apr2026_current_series.py"
+      - ".github/workflows/iip-ledger-qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate official-source ledger
+        run: python qa/validate_iip_apr2026_pdf_crosscheck.py audit_inputs/iip_apr2026_nic2025_pdf_first_release_crosscheck.csv
+      - name: Run regression tests
+        run: python -m unittest qa/test_validate_iip_apr2026_pdf_crosscheck.py -v
+      - name: Validate current Output-PPI NIC-2025 monthly observations
+        run: python qa/validate_iip_apr2026_current_series.py audit_inputs/iip_apr2026_current_output_ppi_nic2025_monthly_values.csv
+      - name: Run current-series regression tests
+        run: python -m unittest qa/test_validate_iip_apr2026_current_series.py -v
