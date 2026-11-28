@@ -2456,3 +2456,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Invalid prices / coverage | 1,123 non-positive prices (404 negative, 719 zero); late-2026 coverage sparse; no holiday-calendar adjudication | BLOCKED / NOT_ESTABLISHED; no OHLC |
 | Acceptance | Raw hashes reproduce C288; files preserved unchanged; no raw row admitted | RAW INTEGRITY PASS ONLY; daily OHLC/GCR ingestion NOT_ADMITTED |
 - Detail: docs/GCR_CONTINUATION303_CCIL_FX_CLEAR_SPOT_182_DAY_WINDOW_DUPLICATE_AND_FIELD_SEMANTICS_AUDIT_20261128.md; commit 66e183d1a98c475d11a05903c6fc5f2e7cee57bc. Do not merge RBI DBIE or FBIL; no Library duplication, paid access, terms bypass or production changes.
+
+
+## Continuation 304 — CCIL FX-Clear FAQ cancellation / public CSV schema boundary (28-Nov-2026)
+| Work package | New evidence / result | Status / next action |
+|---|---|---|
+| IFN300 identity / lifecycle | CCIL FAQ documents Field 20 transaction reference, Field 21 related reference, NEWT/AMND/CANC and duplicate-message/original-deal validation | SETTLEMENT-FAQ SCOPE PASS; no CSV field mapping |
+| Accepted/matched cancellation | Both counterparties must request cancellation before Spot cut-off; unmatched deal may be unilaterally cancelled with CANC | WORKFLOW DOCUMENTED; CSV representation NOT_ESTABLISHED |
+| Public Individual Trade Details CSV | No Quantity unit, Trade Price semantics, stable trade ID, cancellation/status inclusion or duplicate export rule in FAQ | NOT_ESTABLISHED / BLOCKED |
+| Data admission | C303 five raw files and all anomaly/duplicate results unchanged | NO DEDUP; NO OHLC; GCR NOT_ADMITTED |
+- Detail: docs/GCR_CONTINUATION304_CCIL_FX_CLEAR_OFFICIAL_FAQ_CANCELLATION_AND_FIELD_SEMANTICS_BOUNDARY_20261128.md; official FAQ https://dr.ccilindia.com/web/ccil/faqmoduleforex-settlement. Next: obtain current official public CSV field dictionary/report specification or export metadata; no contact or access bypass without approval. No IMF re-query/cohort rebuild/country matrix edit; ₹0; UNKNOWN never PASS.
