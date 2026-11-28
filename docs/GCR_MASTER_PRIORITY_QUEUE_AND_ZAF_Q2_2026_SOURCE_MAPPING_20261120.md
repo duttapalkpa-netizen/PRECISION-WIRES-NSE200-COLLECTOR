@@ -2269,3 +2269,16 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | P0 | FBIL reference rate | Fetch repeatedly fails per user; this is not proof of server outage. Official page is reachable; reference-rate series remains distinct from interbank OHLC. | Avoid repeated large Fetch; keep separate and blocked until official historical payload is available. |
 | GCR | Strict hard gate | BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. | FPI/DII and FX source gates remain unresolved; no downstream release. |
 - Third-party Dataful/RSI index references are discovery-only, not primary or merged. Detail: docs/GCR_CONTINUATION286_PART5B_OFFICIAL_DBIE_REPORT_EXPORT_FALLBACK_20261128.md.
+
+
+## Continuation 287 — USD/INR alternative-source survey (28-Nov-2026)
+| Work package | Evidence / state | Decision |
+|---|---|---|
+| Official RBI DBIE interbank OHLC | User screenshot confirms report schema; Library XLSX is 5,302 bytes and contains no observations. | Primary source still BLOCKED pending original full export. |
+| RBI Reference Rate Archive | Official RBI page has USD selector, date range and Excel download. | Collect separately as reference-rate only; never substitute for interbank OHLC. |
+| FBIL reference rate | Official public page, user Fetch stalls reported. | Reference-rate only; outage not proven. |
+| Dataful | RBI-attributed secondary dataset; 6,331 rows/17-Nov indexed vs 6,308 rows/30-Oct page snapshot. | Discovery/cross-check only; metadata discrepancy. |
+| Measure of India | RBI DBIE report 691 compilation, 2000-Aug to 2026-Jun; vintage 09-Oct; counts by series disclosed. | Secondary cross-check only; no original RBI bytes/hash. |
+| RSI/DeepInsights | Indicator IB_FOREX_RT_RN, 31,191 indexed rows; dates unavailable. | Discovery only. |
+| Zenodo/GitHub reference archive | RBI/FBIL reference rates, not OHLC. | Separate reference-rate cross-check only. |
+- Detail: docs/GCR_CONTINUATION287_ALTERNATIVE_USDINR_SOURCE_SURVEY_20261128.md. No secondary data ingested.
