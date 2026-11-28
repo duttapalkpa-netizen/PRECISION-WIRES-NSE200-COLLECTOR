@@ -1029,3 +1029,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - CBS first-party B1 BOP XLSX and B11 Foreign Currency per Tala XLSX locators confirmed: https://cbs.gov.ws/media/B1-Balance-of-Payments-9.xlsx and https://cbs.gov.ws/media/B11--Foreign-Currency-per-Tala-5.xlsx; Excel MIME unsupported and raw bytes not captured. IMF DSBB BOP metadata locator confirmed; metadata body not rendered.
 - No official Q2 transaction FX convention or synchronized vintage established. WSM remains REVIEW/REVIEW/UNKNOWN, FULL_PASS=NO; no matrix promotion.
 - Detail: docs/GCR_CONTINUATION297_SAMOA_Q2_2026_BOP_SDMX_AND_CBS_FX_WORKBOOK_ROUTE_AUDIT_20261128.md; commit f3f239a3cd5eeff6422f71207ce8308b7868797d. Next: capture official raw XML/XLSX bytes, inspect conversion/revision metadata; no IMF re-query or repeated extraction.
+
+
+## C298 — South Africa ZAF Q2-2026 SARB BOP transaction and FX methodology boundary (28-Nov-2026)
+- Re-read current Ledger, Priority Queue, Registry, fixed cohort, C297/C255 and Library Mother File. WSM exact official XML/XLSX capture attempts failed (unsupported MIME / direct download failure); no raw bytes/hash. WSM remains pending; moved to next cohort country ZAF per C297 fallback.
+- SARB B03 Guide May-2021 confirms accrual/economic-ownership timing, gross assets/liabilities, thousand-ZAR reporting currency, quarterly transactions vs quarter-end stocks, asset/liability flow signs and separate revaluations. It does not disclose the published Q2 portfolio-flow FX rate source/fixing/frequency.
+- IMF BPM6 Compilation Guide general guidance is not proof of SARB implementation. EXCX135D remains candidate only; no Q2 average/reconciliation recalculation. ZAF asset REVIEW, liability PASS carried, vintage PENDING, FULL_PASS NO.
+- Detail: docs/GCR_CONTINUATION298_SOUTH_AFRICA_ZAF_Q2_2026_SARB_BOP_TRANSACTION_FX_METHODOLOGY_BOUNDARY_20261128.md; commit 49ae67793a08ba083f98a13470db8484961db70c. Next: only use EXCX135D if an explicit SARB BOP conversion link and full supported Q2 series are captured; otherwise advance to next unfinished cohort country.
