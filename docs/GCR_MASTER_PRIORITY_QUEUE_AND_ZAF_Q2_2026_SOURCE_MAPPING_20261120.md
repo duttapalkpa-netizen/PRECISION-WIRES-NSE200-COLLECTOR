@@ -2405,3 +2405,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | EXCX135D | Official ZAR/USD ~10:30 weighted bank rate known from C255; no link proving its use in BOP conversion | CANDIDATE ONLY |
 | ZAF numeric gates | Asset REVIEW, liability PASS carried forward; no FX arithmetic repeated | PARTIAL / NOT PASS |
 - Detail: docs/GCR_CONTINUATION298_SOUTH_AFRICA_ZAF_Q2_2026_SARB_BOP_TRANSACTION_FX_METHODOLOGY_BOUNDARY_20261128.md; commit 49ae67793a08ba083f98a13470db8484961db70c. Next: require explicit SARB BOP FX rule and supported complete Q2 series before calculation; otherwise advance to next unfinished country. Aggregate NOT_AUTHORIZED.
+
+## C299 — Malaysia MYS Q2-2026 publication-vintage gate update (28-Nov-2026)
+| Work package | New evidence / result | Status / next action |
+|---|---|---|
+| DOSM Q3-2026 BOP revision practice | Official Technical Notes p.90: preliminary release seven weeks after quarter; previous-year revisions in Q1; final one year after revised data | METHODOLOGY PASS; not an observation-specific BNM/IMF vintage bridge |
+| DOSM Q2 portfolio net | Q3-2026 release (18-Nov) reports Q2 portfolio net outflow RM35.2bn | NET-ONLY CORROBORATION; no gross A/L inference |
+| BNM Q2 A/L | Q3 Annex Table 3 values remain preliminary; prior A/L numeric checks unchanged | ASSET PASS / LIABILITY PASS carried forward |
+| IMF receipt | Existing panel receipt 19-Nov-2026 06:43–06:45 UTC, after BNM Q3 publication 18-Nov | TRANSPORT CHRONOLOGY ONLY; same-vintage NOT_ESTABLISHED |
+| MYS full validation | Vintage pending; full pass no | PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED |
+- Detail: docs/GCR_MALAYSIA_MYS_Q2_2026_BNM_IMF_PUBLICATION_VINTAGE_REVISION_CUTOFF_AUDIT_CONTINUATION299_20261128.md; commit 6167dbafb46c270c720d663c88eeab66c8ae0658. Next: require observation-specific BNM/DOSM revision record or IMF source-vintage metadata; otherwise proceed to next eligible cohort country. No IMF re-query, FX re-download or arithmetic repeat.
