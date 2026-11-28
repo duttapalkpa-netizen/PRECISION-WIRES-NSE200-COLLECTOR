@@ -899,3 +899,11 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Basic structural/null/timestamp checks PASS; source provenance, instrument semantics, duplicate resolution, non-positive prices, completeness and usage rights UNKNOWN/BLOCKED. Preserve raw files unchanged; request original source page/export metadata before ingestion.
 - USD/INR interbank remains BLOCKED; Macro-Geo P0 6/8; strict GCR BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED. ₹0; invariants unchanged; UNKNOWN never PASS.
 - Detail: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md
+
+
+## C288 provenance correction — CCIL FX-Clear USD/INR SPOT confirmed (28-Nov-2026)
+- User screenshot shows ccilindia.com > Forex Market > USD/INR > SPOT > Individual Trade Details > Download CSV, timestamp 28-Nov-2026 13:46:12. Screen labels source as FX Clear hosted at Clearcorp and spot rates in Rupees.
+- Official CCIL FX-Clear page corroborates same download section and max 182-day/6-month date window: https://www.ccilindia.com/en/fx-clear
+- Correct C288 source status: SOURCE_CONFIRMED for CCIL / FX-Clear / USD-INR / SPOT / Individual Trade Details. Earlier statement that source provenance was unknown is superseded.
+- Still not accepted for daily OHLC: 213,519 combined exact duplicate tuples; 1,123 non-positive prices; sparse late-2026 captured dates; transaction-field semantics and duplicate policy not established. Do not silently dedupe. CCIL tape is separate from RBI DBIE interbank OHLC and FBIL reference fixing.
+- Full correction and next steps: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md
