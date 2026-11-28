@@ -2394,3 +2394,14 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | Q2 FX convention and vintage | No official transaction conversion rule or observation-specific revision/vintage bridge captured | UNKNOWN / PENDING |
 | WSM gate | REVIEW/REVIEW/UNKNOWN; FULL_PASS=NO | No matrix promotion; aggregate NOT_AUTHORIZED |
 - Detail: docs/GCR_CONTINUATION297_SAMOA_Q2_2026_BOP_SDMX_AND_CBS_FX_WORKBOOK_ROUTE_AUDIT_20261128.md; report commit f3f239a3cd5eeff6422f71207ce8308b7868797d. Next: obtain original official XML/XLSX bytes and inspect BOP conversion/revision metadata; no IMF re-query. ₹0; UNKNOWN never PASS.
+
+
+## Continuation 298 — ZAF BOP transaction timing / FX admissibility update (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| WSM raw official source capture | C297 exact SBS XML and CBS B1/B11 XLSX locators reattempted; MIME unsupported and direct download failed | NOT_CAPTURED; keep WSM pending; no promotion |
+| ZAF SARB B03 guide | Official accrual/economic-ownership timing, gross A/L, thousand-ZAR, quarter-flow vs quarter-end stock, separate revaluation and signs | METHODOLOGY PASS |
+| ZAF Q2 portfolio-flow FX rule | B03 does not state exact conversion source/fixing/frequency; IMF BPM6 general guide is not country implementation evidence | NOT_ESTABLISHED |
+| EXCX135D | Official ZAR/USD ~10:30 weighted bank rate known from C255; no link proving its use in BOP conversion | CANDIDATE ONLY |
+| ZAF numeric gates | Asset REVIEW, liability PASS carried forward; no FX arithmetic repeated | PARTIAL / NOT PASS |
+- Detail: docs/GCR_CONTINUATION298_SOUTH_AFRICA_ZAF_Q2_2026_SARB_BOP_TRANSACTION_FX_METHODOLOGY_BOUNDARY_20261128.md; commit 49ae67793a08ba083f98a13470db8484961db70c. Next: require explicit SARB BOP FX rule and supported complete Q2 series before calculation; otherwise advance to next unfinished country. Aggregate NOT_AUTHORIZED.
