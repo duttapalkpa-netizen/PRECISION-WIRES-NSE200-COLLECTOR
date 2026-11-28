@@ -907,3 +907,15 @@ Repository: https://github.com/duttapalkpa-netizen/PRECISION-WIRES-NSE200-COLLEC
 - Correct C288 source status: SOURCE_CONFIRMED for CCIL / FX-Clear / USD-INR / SPOT / Individual Trade Details. Earlier statement that source provenance was unknown is superseded.
 - Still not accepted for daily OHLC: 213,519 combined exact duplicate tuples; 1,123 non-positive prices; sparse late-2026 captured dates; transaction-field semantics and duplicate policy not established. Do not silently dedupe. CCIL tape is separate from RBI DBIE interbank OHLC and FBIL reference fixing.
 - Full correction and next steps: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md
+
+
+## GCR Continuation 289 — RBI DBIE interbank forex TXT intake (28-Nov-2026)
+- New Library file `Daily Interbank Forex Rates (USD vis-a-vis INR) (1).txt`, 348,819 bytes, SHA-256 `ac8cbec57bc8c87b2c4cacd5a02f68620e44672f488bd711fd0f81565ca6bf1c`, was read-only materialized and parsed. TXT source header says Reserve Bank of India; USD forex rates; figures in Rs.; six columns Date, Interbank Open/High/Low/Close, RBI Reference Rate.
+- 6,330 data rows, 6,330 unique dates, 0 duplicate dates/full records, 0 malformed rows, reverse chronological; date span 08-Aug-2000–31-Jul-2026. Latest observation 120 calendar days old as of 28-Nov-2026; Aug–Nov 2026 absent. 2026 has 140 rows Jan–Jul only.
+- 6,124 rows all five rates present; 206 rows with missing values. Missing counts Open199, High193, Low192, Close194, Reference49; 141 rows all OHLC missing but reference present; 49 all five missing; 16 partial missing patterns.
+- Critical anomalies: reported High < reported Low in 6,017/6,124 complete OHLC rows (possible systematic column inversion, NOT confirmed; do not swap automatically); 140 rows have Open/Close outside reported high-low interval; 21-Mar-2016 Open is 3,355.7300 (likely misprint; do not auto-correct). No duplicate records; no malformed dates.
+- Intake decision: raw acquisition/readability and structure/chronology PASS; historical data captured PARTIAL; current coverage FAIL/NOT CAPTURED; High/Low semantics, missing rows, extreme outlier and expected-session completeness BLOCKED pending official adjudication. No normalized derivative or production ingestion yet.
+- Keep this RBI daily interbank series separate from CCIL FX-Clear spot transactions and FBIL reference fixings. No Library mutation/duplicate upload.
+- Next: official cross-check of High/Low labels and 21-Mar-2016 outlier against RBI publication tables/metadata; capture 01-Aug-2026 onward without forward-fill; maintain raw bytes immutable.
+- Strict GCR gate remains BLOCKED; candidate_release_allowed=false; overall NOT_COMPUTABLE / NOT_CERTIFIED; FPI/DII separate blockers; Macro-Geo P0 last artifact-backed 6/8. ₹0; invariants unchanged; UNKNOWN never PASS.
+- Detail: docs/GCR_CONTINUATION289_RBI_DBIE_DAILY_INTERBANK_FOREX_TXT_EXPORT_QA_20261128.md
