@@ -1014,3 +1014,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Official CBS index: https://cbs.gov.ws/quarterly-bulletin; direct official PDF: https://cbs.gov.ws/media/Quarterly-Bulletin---September-2026.pdf. Interior cover/body confirms September 2026 Vol XLV No.3. Table B-1 p.34 confirms 2026-II, Tala million: portfolio assets +9.5, liabilities +0.2, net +9.3; arithmetic identity and BPM6 note pass.
 - First graphic PDF page is stale June 2026 cover, conflicting with interior cover; retain document-control warning. Raw PDF bytes/hash not captured through browser surface. FX conversion and observation-specific vintage remain pending; WSM REVIEW/REVIEW/UNKNOWN, FULL_PASS=NO; no matrix change.
 - Detail: docs/GCR_CONTINUATION295_SAMOA_CBS_Q2_2026_BOP_PRIMARY_PDF_SOURCE_AND_TABLE_AUDIT_20261128.md; report commit faf4d2b4822554afd030526e734fac98f9765b1d. Do not repeat PDF text extraction; next raw-byte capture and official FX/vintage bridge only.
+
+
+## C296 — Samoa WSM Q2-2026 official FX-rate bridge feasibility audit (28-Nov-2026)
+- Reused C295 Tala-million dual-leg values and existing IMF cohort; no IMF re-query, cohort rebuild or repeated arithmetic.
+- Official CBS monthly-average USD/TALA: Apr 2.7244, May 2.7069, Jun 2.7394 Tala/USD. Calendar-day weighted proxy 2.7233835165 gives illustrative USDm assets 3.4883 / liabilities 0.07344 / net 3.4149 only; this proxy is NOT an official BOP transaction conversion rule and is not accepted for IMF comparison.
+- Official Q2 BOP FX convention NOT_ESTABLISHED; observation-specific CBS/IMF vintage UNKNOWN; C295 PDF raw bytes/hash NOT_CAPTURED. WSM remains REVIEW/REVIEW/UNKNOWN, FULL_PASS=NO; no matrix promotion.
+- Detail: docs/GCR_CONTINUATION296_SAMOA_Q2_2026_OFFICIAL_FX_RATE_BRIDGE_FEASIBILITY_AUDIT_20261128.md; commit 08471c59bfbd95fb197058bd185b4eaad9ed8fc3. Next: documented BOP conversion rule, PDF raw-byte/hash capture, and vintage evidence. No duplicate PDF extraction or IMF request.
