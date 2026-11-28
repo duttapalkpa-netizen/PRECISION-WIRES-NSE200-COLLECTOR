@@ -2359,3 +2359,14 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | BPM5/BPM6 conflict and vintage | C261 conflict remains unresolved; no Q2-specific revision ID | PENDING / UNKNOWN; do not promote |
 | Duplicate prevention | C261 Q2 page/NSDP/IMF checks not repeated | Closed until a new official release payload exists |
 - Detail: docs/GCR_CONTINUATION294_GEORGIA_NBG_Q3_2026_RELEASE_TRIGGER_PREPUBLICATION_GATE_20261128.md; report commit 986bb67e86622e0bb99e91975aae5dcfdc301716. GEO FULL_PASS=NO; aggregate NOT_AUTHORIZED.
+
+
+## Continuation 295 — WSM Samoa official Q2 BOP PDF and Table B-1 source audit (28-Nov-2026)
+| Work package | Evidence / result | Status / next action |
+|---|---|---|
+| Official CBS source | September 2026 Quarterly Bulletin index and direct PDF verified | PASS; preserve direct URL |
+| Table B-1 Q2-2026 | Tala million; portfolio assets +9.5, liabilities +0.2, net +9.3; arithmetic 9.5−0.2=9.3; BPM6 footnote | Source/table semantics PASS; reuses C262 values |
+| Document-control | First graphic page says June 2026; interior cover/body says September 2026 Vol XLV No.3 | WARNING; disclose, do not normalize silently |
+| Raw bytes/hash | Browser surface did not expose PDF bytes | NOT_CAPTURED; obtain supported raw-file capture |
+| FX and vintage | No verified Q2 conversion convention or observation-specific vintage bridge | PENDING / UNKNOWN; WSM FULL_PASS=NO |
+- Detail: docs/GCR_CONTINUATION295_SAMOA_CBS_Q2_2026_BOP_PRIMARY_PDF_SOURCE_AND_TABLE_AUDIT_20261128.md; report commit faf4d2b4822554afd030526e734fac98f9765b1d. No matrix gate changed; aggregate NOT_AUTHORIZED.
