@@ -967,3 +967,13 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - Dataful, Measure of India, RSI/DeepInsights, Zenodo and GitHub are secondary compilations/indexes. Dataful metadata mismatch 6,308 vs 6,331 rows; Measure vintage 09-Oct-2026 ends 30-Jun-2026 with per-series counts; RSI 31,191 rows lacks dates; Zenodo/GitHub archive is reference-rate only. Discovery/cross-check only, no raw values imported.
 - Next: stable authorized session export from official DBIE and separately collect RBI Reference Rate Archive Excel where accessible. Interbank remains BLOCKED until raw official bytes, schema/coverage QA and SHA-256.
 - Report: docs/GCR_CONTINUATION287_ALTERNATIVE_USDINR_SOURCE_SURVEY_20261128.md
+
+
+## C288 — Library FX Clear Spot CSV intake audit (28-Nov-2026)
+- Five new Library CSVs inspected; 660,562 rows, 331 unique dates, 2025-01-01–2026-11-27. Fields: Trade Date, Quantity, Trade Price, Trade Timestamp.
+- Combined exact duplicate tuples 213,519; overlap date 2025-10-01 has 1,048 common exact tuples between files (3)/(4). Intra-file duplicate ratios 2.93%, 19.02%, 17.10%, 42.58%, 94.01% respectively.
+- 1,123 zero/negative price rows in files (2)/(3); 0 nulls; timestamp shape HH:MM:SS. 2026 late-year date coverage sparse, October absent.
+- No source URL/publisher, currency pair, instrument identifier, units or price definition. Cannot assume USD/INR or compute OHLC. Preserve raw files unchanged; no ingestion.
+- RBI-named XLSX (5,302 bytes) is still empty/incomplete template with no observations.
+- Next: obtain original source URL/portal screenshot and data dictionary; then establish publisher, instrument, units, record semantics, duplicate handling and expected-date completeness. GCR interbank blocker remains BLOCKED.
+- Report: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md
