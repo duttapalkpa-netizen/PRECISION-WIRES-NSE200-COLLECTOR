@@ -2445,3 +2445,14 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | BDI Q2 portfolio A/L | No new separate legs, raw bytes, schema, unit/sign map or vintage captured | SOURCE_FOUND / NOT_CAPTURED; no promotion |
 | Next action | Reopen only on a new official BRB Q2 BOP report or distinct machine-readable Q2 A/L export/revision record | Otherwise advance to next eligible fixed-cohort country |
 - Detail: docs/GCR_BURUNDI_BDI_Q2_2026_BRB_PUBLICATION_CATALOGUE_AND_INSBU_QUARTERLY_SCOPE_AUDIT_CONTINUATION302_20261128.md; commit 647fe7f41653e404d7e2dad6528d528d54d93bb0. No IMF re-query, cohort rebuild, arithmetic, net-to-leg back-solving or production admission. Aggregate NOT_AUTHORIZED.
+
+
+## Continuation 303 — CCIL FX-Clear USD/INR SPOT export-window and data-quality boundary (28-Nov-2026)
+| Work package | New evidence / result | Status / next action |
+|---|---|---|
+| Official product/window | CCIL FX-Clear page identifies SPOT/C-SPOT/R-SPOT separately, rupee spot rates, Individual Trade Details CSV and 182-day/6-month maximum | SOURCE_CONFIRMED; all five file calendar spans 92–169 days (within cap), not coverage proof |
+| Field semantics | July-2024 Forex Settlement Regulations define Spot value date as T+2 business days; Oct-2022 notification is specifically R-Spot price-spread mechanics | Settlement/mode distinction PASS; CSV Quantity unit and ordinary SPOT Trade Price/status semantics NOT_ESTABLISHED |
+| Duplicate QA | 660,562 rows; 213,519 exact-tuple duplicate extras; 58,415 duplicate groups; max multiplicity 240; 1,048 exact tuples overlap on 2025-10-01 | BLOCKED pending trade ID/export duplicate definition; no silent dedup |
+| Invalid prices / coverage | 1,123 non-positive prices (404 negative, 719 zero); late-2026 coverage sparse; no holiday-calendar adjudication | BLOCKED / NOT_ESTABLISHED; no OHLC |
+| Acceptance | Raw hashes reproduce C288; files preserved unchanged; no raw row admitted | RAW INTEGRITY PASS ONLY; daily OHLC/GCR ingestion NOT_ADMITTED |
+- Detail: docs/GCR_CONTINUATION303_CCIL_FX_CLEAR_SPOT_182_DAY_WINDOW_DUPLICATE_AND_FIELD_SEMANTICS_AUDIT_20261128.md; commit b0acba4a42d41c7dc4faa39fe0a2bac9083f3128. Do not merge RBI DBIE or FBIL; no Library duplication, paid access, terms bypass or production changes.
