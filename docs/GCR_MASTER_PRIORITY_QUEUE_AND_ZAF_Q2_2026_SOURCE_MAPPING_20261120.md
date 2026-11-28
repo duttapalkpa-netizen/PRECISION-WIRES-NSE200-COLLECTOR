@@ -2282,3 +2282,14 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | RSI/DeepInsights | Indicator IB_FOREX_RT_RN, 31,191 indexed rows; dates unavailable. | Discovery only. |
 | Zenodo/GitHub reference archive | RBI/FBIL reference rates, not OHLC. | Separate reference-rate cross-check only. |
 - Detail: docs/GCR_CONTINUATION287_ALTERNATIVE_USDINR_SOURCE_SURVEY_20261128.md. No secondary data ingested.
+
+
+## Continuation 288 — Library FX Clear Spot CSV intake audit (28-Nov-2026)
+| Dataset | Observed evidence | Decision |
+|---|---|---|
+| Five Fx_Clear_Spot_Individual CSVs | 660,562 rows; 331 unique dates, 2025-01-01–2026-11-27; 4 transaction columns; SHA-256s in C288. | Raw readability/integrity PASS only. No publisher, pair, instrument ID, units or price semantics. |
+| Duplicate integrity | 213,519 exact duplicate tuples combined; 1,048 common tuples across 2025-10-01 overlap; individual duplicate ratios 2.93%–94.01%. | BLOCKED pending documented duplicate policy/source export definition. |
+| Price quality | 1,123 non-positive Trade Price rows in two 2025 files. | BLOCKED; do not calculate OHLC. |
+| 2026 coverage | Monthly distinct dates fall to 5 in May, 3 in June, 7 in July, 1 in Aug, 1 in Sep, 0 in Oct and 1 in Nov. | Coverage NOT_ESTABLISHED. |
+| RBI-named XLSX | 5,302 bytes; no observation rows. | Empty/incomplete report template; not accepted. |
+- No new rows admitted to GCR. Detail: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md.
