@@ -2300,3 +2300,15 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 - Do not confuse with RBI DBIE OHLC/reference-rate series or FBIL fixing series.
 - Keep ingestion BLOCKED pending field semantics, duplicate policy, non-positive price reconciliation and coverage audit. 213,519 combined exact duplicates and 1,123 non-positive prices remain unresolved; late-2026 dates sparse.
 - Next: reconcile all files to 182-day export windows and official transaction-field definitions; preserve raw files.
+
+
+## Continuation 289 — RBI DBIE interbank forex TXT intake
+| Work package | Evidence | Status / action |
+|---|---|---|
+| Raw RBI DBIE TXT | 348,819 bytes; SHA-256 in C289; six-column report header says RBI source. | Raw acquisition/readability PASS. |
+| Historical rows | 6,330 unique dates, 08-Aug-2000–31-Jul-2026; no duplicate dates/records, malformed rows 0. | Historical capture PARTIAL; current through 28-Nov-2026 not achieved (latest 120 days old). |
+| Missing rates | 206 affected rows; per-field missing counts Open199/High193/Low192/Close194/Reference49. | Calendar/publication status adjudication pending. |
+| High/Low semantics | In 6,017/6,124 complete rows, labelled High < Low; possible systematic inversion unconfirmed. | BLOCKED; no silent swap. |
+| Outlier | 21-Mar-2016 Open = 3,355.7300. | BLOCKED pending official correction evidence; no auto-drop. |
+| Current tail | No Aug–Nov 2026 rows. | Obtain official current segment; no forward-fill. |
+- Do not merge with CCIL transaction tape or FBIL fixing. Detailed QA: docs/GCR_CONTINUATION289_RBI_DBIE_DAILY_INTERBANK_FOREX_TXT_EXPORT_QA_20261128.md.
