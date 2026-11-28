@@ -1007,3 +1007,10 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - NBG Advance Release Calendar lists November Balance of Payments as “30 Q3/2026”; scheduled trigger confirmed for 30-Nov-2026. On 28-Nov, no Q3 payload is claimed.
 - GEO remains SOURCE_FOUND / no national Q2 A/L capture / BPM5-BPM6 conflict unresolved / vintage UNKNOWN / FULL_PASS=NO; no matrix promotion. After release, inspect only separate Q2 portfolio A/L revisions, methodology bridge and observation-specific vintage metadata; retain pending if absent.
 - Detail: docs/GCR_CONTINUATION294_GEORGIA_NBG_Q3_2026_RELEASE_TRIGGER_PREPUBLICATION_GATE_20261128.md; report commit 986bb67e86622e0bb99e91975aae5dcfdc301716. No IMF re-query, cohort rebuild or production change.
+
+
+## C295 — Samoa WSM official PDF source and Q2 BOP Table B-1 verification (28-Nov-2026)
+- Re-read current Ledger, Priority Queue, immutable matrix, C294 and Library Mother File. Reused C262 numeric extraction; no IMF re-query, cohort rebuild or repeated arithmetic.
+- Official CBS index: https://cbs.gov.ws/quarterly-bulletin; direct official PDF: https://cbs.gov.ws/media/Quarterly-Bulletin---September-2026.pdf. Interior cover/body confirms September 2026 Vol XLV No.3. Table B-1 p.34 confirms 2026-II, Tala million: portfolio assets +9.5, liabilities +0.2, net +9.3; arithmetic identity and BPM6 note pass.
+- First graphic PDF page is stale June 2026 cover, conflicting with interior cover; retain document-control warning. Raw PDF bytes/hash not captured through browser surface. FX conversion and observation-specific vintage remain pending; WSM REVIEW/REVIEW/UNKNOWN, FULL_PASS=NO; no matrix change.
+- Detail: docs/GCR_CONTINUATION295_SAMOA_CBS_Q2_2026_BOP_PRIMARY_PDF_SOURCE_AND_TABLE_AUDIT_20261128.md; report commit faf4d2b4822554afd030526e734fac98f9765b1d. Do not repeat PDF text extraction; next raw-byte capture and official FX/vintage bridge only.
