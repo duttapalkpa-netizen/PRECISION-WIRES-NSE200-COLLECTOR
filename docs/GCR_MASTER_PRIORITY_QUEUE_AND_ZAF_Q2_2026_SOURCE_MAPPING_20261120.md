@@ -2415,3 +2415,13 @@ The earlier C246 prose saying both MEX legs PASS is superseded by direct compari
 | IMF receipt | Existing panel receipt 19-Nov-2026 06:43–06:45 UTC, after BNM Q3 publication 18-Nov | TRANSPORT CHRONOLOGY ONLY; same-vintage NOT_ESTABLISHED |
 | MYS full validation | Vintage pending; full pass no | PARTIAL / NOT PASS; aggregate NOT_AUTHORIZED |
 - Detail: docs/GCR_MALAYSIA_MYS_Q2_2026_BNM_IMF_PUBLICATION_VINTAGE_REVISION_CUTOFF_AUDIT_CONTINUATION299_20261128.md; commit 6167dbafb46c270c720d663c88eeab66c8ae0658. Next: require observation-specific BNM/DOSM revision record or IMF source-vintage metadata; otherwise proceed to next eligible cohort country. No IMF re-query, FX re-download or arithmetic repeat.
+
+## Continuation 300 — Thailand THA Q2-2026 BOT September annual revision / vintage boundary (28-Nov-2026)
+| Evidence / test | Result | Status / next action |
+|---|---|---|
+| NESDC Q3-2026 revision policy | BOT annual BOP revision conducted Sep-2026 after July preliminary release; H1-2026 current-account deficit revised USD16.3bn → USD4.3bn | METHODOLOGY PASS; not portfolio-specific |
+| BPM7 note | NESDC identifies September BPM7 conformity for international trade data | Narrow-scope PASS; no portfolio-wide BPM7 inference |
+| BOT Q2 portfolio A/L | Existing +4,679.07 / -238.36 USDm pair and 2/2 numeric checks reused; BOT page remains Q2 p, last updated 30-Sep | PASS carried forward; no recapture/recalculation |
+| IMF vintage bridge | IMF panel receipt 19-Nov is after BOT page update; no observation-level IMF revision ID or matched BOT release key | TRANSPORT CHRONOLOGY ONLY; same-vintage NOT_ESTABLISHED |
+| THA full validation | Asset/liability PASS; vintage pending | PARTIAL / NOT PASS; FULL_PASS=NO; aggregate NOT_AUTHORIZED |
+- Detail: docs/GCR_THAILAND_THA_Q2_2026_BOT_SEPTEMBER_ANNUAL_REVISION_AND_IMF_VINTAGE_BOUNDARY_AUDIT_CONTINUATION300_20261128.md; commit 7aa7c75a93545a3221ef42fd9d42ab118f367cff. Next: require portfolio-specific BOT revision metadata or matched IMF observation-vintage key; otherwise advance. No IMF query, BOT raw recapture or arithmetic repeat.
