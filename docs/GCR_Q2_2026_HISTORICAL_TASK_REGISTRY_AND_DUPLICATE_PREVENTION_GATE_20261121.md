@@ -977,3 +977,9 @@ Free official sources only; ₹0; no IMF re-query/cohort rebuild; no synthetic d
 - RBI-named XLSX (5,302 bytes) is still empty/incomplete template with no observations.
 - Next: obtain original source URL/portal screenshot and data dictionary; then establish publisher, instrument, units, record semantics, duplicate handling and expected-date completeness. GCR interbank blocker remains BLOCKED.
 - Report: docs/GCR_CONTINUATION288_LIBRARY_FX_CLEAR_SPOT_CSV_INTAKE_AUDIT_20261128.md
+
+
+## C288 provenance correction — CCIL FX-Clear USD/INR SPOT
+- User screenshot and official CCIL FX-Clear page confirm source/product/pair/segment: CCIL > FX-Clear > USD/INR > SPOT > Individual Trade Details. Page states FX Clear hosted at Clearcorp, spot rates in Rupees, and max date range 182 days / 6 months.
+- Previous UNKNOWN publisher/pair conclusion superseded by SOURCE_CONFIRMED provenance. Data acceptance still BLOCKED for OHLC due unresolved duplicates, non-positive prices, sparse later 2026 coverage, and field semantics/usage terms.
+- Separate from RBI DBIE daily interbank OHLC and FBIL reference rates. No ingestion/deduplication until source definitions reconciled.
